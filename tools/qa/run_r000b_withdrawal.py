@@ -50,7 +50,8 @@ HEALTHY_REFRESH_PROGRESS = """() => {
   if(f?.state!=='ready')throw Error('Expected the existing ready fixture');
   return {elapsedMs:performance.now()-f.started,maxElapsedMs:f.maxElapsedMs,
           clockOrigin:{started:f.started,startUtc:f.startUtc},
-          latest:f.latest,ledger:f.ledger.filter(request=>request.kind==='weather')};
+          latest:f.latest,ledger:f.ledger.filter(request=>request.kind==='weather'),
+          consoleErrors:f.consoleErrors,error:f.error};
 }"""
 EXPECTED_COVERAGE = [0.92, 0.90, 0.60]
 INITIAL_SOURCE_UTC = 1788900300000  # 2026-09-08 20:45:00Z = 23:45 Asia/Riyadh
@@ -615,6 +616,90 @@ def _healthy_refresh_receipt(receipt, wall, receipts):
                     for key in ('sourceValidAt', 'retrievedAt')))
 
 
+def _healthy_refresh_refined(state, layer):
+    """Join accepted diagnostics to the independently displayed physical frame.
+
+    accept() can replace last before publishComposition commits it. Displayed
+    has no cloud receipt: equal native clouds never fill that missing evidence.
+    Only the observed newer-last/older-displayed/null-composition shape is a
+    pending acquisition condition; it is never a qualified full sample.
+    """
+    bad = {'status': 'unhealthy', 'reason': 'Refined physical frame or native identity is unbound'}
+    sky = state.get('celestial') or {}
+    refined = sky.get('refined') or {}
+    last, displayed = refined.get('last') or {}, refined.get('displayed') or {}
+    native, observer = last.get('native') or {}, last.get('observer') or {}
+    accepted_utc, displayed_utc = last.get('utcMs'), displayed.get('utcMs')
+    if not (refined.get('physical') is True
+            and all(_finite_number(value) for value in (accepted_utc, displayed_utc, state.get('wallUtcMs')))
+            and displayed_utc <= accepted_utc <= state['wallUtcMs']
+            and observer.get('utcMs') == accepted_utc
+            and refined.get('presentationUtcMs') == displayed_utc
+            and layer.get('frameUtcMs') == displayed_utc
+            and (sky.get('owner') != 'refined' or sky.get('frameUtcMs') == displayed_utc)
+            and isinstance(native.get('identity'), str) and native['identity']
+            and displayed.get('identity') == native['identity']
+            and native.get('generation') == state.get('runtimeGeneration')
+            and isinstance(state.get('sceneIdentity'), str) and state['sceneIdentity']
+            and native.get('sceneIdentity') == state['sceneIdentity']):
+        return bad
+    composition = last.get('composition')
+    selected_matches = sky.get('owner') != 'refined' or sky.get('composition') == composition
+    if (accepted_utc == displayed_utc and isinstance(composition, dict) and composition
+            and layer.get('composition') == composition and selected_matches):
+        return {'status': 'ready', 'reason': 'Accepted composition is bound to this displayed physical frame'}
+    if (accepted_utc > displayed_utc and composition is None and layer.get('composition') is None
+            and sky.get('owner') == 'refined' and sky.get('composition') is None
+            and len(sky.get('visibleForegrounds') or []) == 1):
+        return {'status': 'pending', 'reason': 'Newer accepted refined frame has not published composition for the displayed frame',
+                'acceptedUtcMs': accepted_utc, 'displayedUtcMs': displayed_utc}
+    return bad
+
+
+def _healthy_refresh_full_state(state, receipts):
+    """Classify full material without granting a pending diagnostic authority."""
+    bad = {'status': 'unhealthy', 'reason': 'Full native, record, target, rain or foreground material is unhealthy/unobserved'}
+    cloud, sky, raw = state.get('actualCloud') or {}, state.get('celestial') or {}, state.get('raw') or {}
+    candidate, coverage = state.get('candidate') or {}, state.get('coverage')
+    layers, targets = sky.get('visibleForegrounds'), cloud.get('targets')
+    try:
+        if not (healthy_cloud(state) and rain_origin(state)
+                and state.get('modelIsNull') is False
+                and state.get('prayer', {}).get('modelIsNull') is False and state.get('selected') is True
+                and cloud.get('publication') == state['publication']
+                and cloud.get('coverage') == coverage and isinstance(targets, list) and len(targets) == 3
+                and all(_finite_number(a) and abs(a - b) < 1e-9 for a, b in zip(targets, EXPECTED_COVERAGE))
+                and (raw.get('currentValidAt'), raw.get('retrievedAt')) == (candidate['sourceValidAt'], candidate['retrievedAt'])
+                and raw.get('target') == state.get('target')
+                and _healthy_refresh_target_projection(state.get('target')) == receipts[0]['target']
+                and state.get('runtimeGeneration') == receipts[0]['target']['generation']
+                and isinstance(layers, list) and layers
+                and state.get('foregroundOwner') == sky.get('owner')
+                and any(layer.get('owner') == sky.get('owner') for layer in layers)):
+            return bad
+        pending = None
+        for layer in layers:
+            canvas, composition = layer.get('canvas') or {}, layer.get('composition') or {}
+            if not (canvas.get('visibility') == 'visible' and canvas.get('display') != 'none'
+                    and _finite_number(canvas.get('opacity')) and canvas['opacity'] > 0 and _bounds(canvas.get('bounds'))
+                    and canvas.get('rgbNonzero', 0) > 0 and canvas.get('maxRGB', 0) > canvas.get('minRGB', 0)):
+                return bad
+            if layer.get('owner') == 'refined':
+                binding = _healthy_refresh_refined(state, layer)
+                if binding['status'] == 'unhealthy':
+                    return binding
+                if binding['status'] == 'pending':
+                    pending = binding
+                    continue
+            maximum, mean = composition.get('maxCloudAlpha'), composition.get('meanCloudAlpha')
+            if not (_finite_number(maximum) and _finite_number(mean) and 0 < mean <= maximum <= 1
+                    and _healthy_refresh_receipt(composition.get('cloudAuthority'), state['wallUtcMs'], receipts)):
+                return bad
+        return pending or {'status': 'ready', 'reason': 'All observed full material and displayed composition bindings are healthy'}
+    except (AttributeError, IndexError, KeyError, TypeError, ValueError):
+        return bad
+
+
 def _healthy_refresh_sample(state, receipts, full=False):
     """Check every retained sample using exactly the fields that it observes."""
     candidate, coverage = state.get('candidate') or {}, state.get('coverage')
@@ -630,35 +715,142 @@ def _healthy_refresh_sample(state, receipts, full=False):
             and state.get('foregroundVisible') is True and state.get('foregroundHasCloudMask') is True
             and state.get('precip') == 'on' and state.get('lightning') == 'off'):
         return False
-    if not full:
-        return True
-    cloud, sky, raw = state.get('actualCloud') or {}, state.get('celestial') or {}, state.get('raw') or {}
-    layers, targets = sky.get('visibleForegrounds'), cloud.get('targets')
+    return not full or _healthy_refresh_full_state(state, receipts)['status'] == 'ready'
+
+
+def recovery_endpoint(state, original):
+    """Only a fully joined healthy recovery can anchor the unchanged watch."""
+    bad = {'status': 'unhealthy', 'reason': 'Recovery model, record, native authority, target, celestial or error evidence failed'}
     try:
-        if not (healthy_cloud(state) and rain_origin(state)
-                and state.get('prayer', {}).get('modelIsNull') is False and state.get('selected') is True
-                and cloud.get('publication') == state['publication']
-                and cloud.get('coverage') == coverage and isinstance(targets, list) and len(targets) == 3
-                and all(_finite_number(a) and abs(a - b) < 1e-9 for a, b in zip(targets, EXPECTED_COVERAGE))
-                and (raw.get('currentValidAt'), raw.get('retrievedAt')) == (candidate['sourceValidAt'], candidate['retrievedAt'])
-                and raw.get('target') == state.get('target')
-                and _healthy_refresh_target_projection(state.get('target')) == receipts[0]['target']
-                and state.get('runtimeGeneration') == receipts[0]['target']['generation']
-                and isinstance(layers, list) and layers
-                and any(layer.get('owner') == sky.get('owner') for layer in layers)):
-            return False
-        for layer in layers:
-            canvas, composition = layer.get('canvas') or {}, layer.get('composition') or {}
-            maximum, mean = composition.get('maxCloudAlpha'), composition.get('meanCloudAlpha')
-            if not (canvas.get('visibility') == 'visible' and canvas.get('display') != 'none'
-                    and _finite_number(canvas.get('opacity')) and canvas['opacity'] > 0 and _bounds(canvas.get('bounds'))
-                    and canvas.get('rgbNonzero', 0) > 0 and canvas.get('maxRGB', 0) > canvas.get('minRGB', 0)
-                    and _finite_number(maximum) and _finite_number(mean) and 0 < mean <= maximum <= 1
-                    and _healthy_refresh_receipt(composition.get('cloudAuthority'), state['wallUtcMs'], receipts)):
-                return False
-    except (KeyError, TypeError, ValueError):
-        return False
-    return True
+        record = healthy_refresh_record(state)
+        errors = [field for field in observed_sky_error_fields(state) if field['observed']]
+        if not (record and state.get('prayer', {}).get('todayDay') == '09-09-2026'
+                and record['sourceValidAt'] > INITIAL_SOURCE_UTC
+                and all(state.get(key) == original.get(key) for key in ('target', 'sceneIdentity', 'runtimeGeneration'))
+                and _healthy_refresh_sample(state, [record['publication']])
+                and independent_celestial(state) and errors and all(not field['value'] for field in errors)):
+            return bad
+        return _healthy_refresh_full_state(state, [record['publication']])
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return bad
+
+
+def recovery_progress_evidence(progress, original, origin, prior, full_motions, mode):
+    """Validate only the passive fields actually returned by this read.
+
+    latest may be an older, repeated immutable sample. Keep its own time and
+    receipt; do not turn the progress-read time into a new sample or borrow a
+    full capture's composition/record. The returned owned request ledger binds
+    each observed candidate/publication record in its own clock domains.
+    """
+    result = {'schema': 'r000b-recovery-passive-progress/v1', 'status': 'unhealthy',
+              'reason': 'Required passive health, ownership, timing or error evidence is missing/unhealthy',
+              'unobserved': ['candidate raw target provenance', 'displayed cloud receipt',
+                             'full raster/mask alpha', 'physical-frame composition']}
+    try:
+        if not isinstance(progress, dict) or not isinstance(progress.get('latest'), dict):
+            return result
+        sample = progress['latest']
+        candidate, publication, motion = (sample.get(key) or {} for key in ('candidate', 'publication', 'motion'))
+        at, wall, read_at = sample.get('elapsedMs'), sample.get('wallUtcMs'), progress.get('elapsedMs')
+        target = _healthy_refresh_target_projection(original.get('target'))
+        if not (isinstance(origin, dict) and progress.get('clockOrigin') == origin
+                and progress.get('maxElapsedMs') == 240000
+                and isinstance(progress.get('ledger'), list)
+                and isinstance(progress.get('consoleErrors'), list) and not progress['consoleErrors']
+                and progress.get('error') is None
+                and all(_finite_number(value) for value in (at, wall, read_at, origin.get('startUtc')))
+                and 0 <= at <= read_at and wall == math.floor(wall)
+                and wall <= origin['startUtc'] + math.ceil(read_at)
+                and target is not None and target['generation'] == original.get('runtimeGeneration')):
+            return result
+        # Projection of fields genuinely observed in this passive sample, only
+        # for the existing clock/request matcher; not a fabricated full read.
+        captured = {'elapsedMs': at, 'wallUtcMs': wall, 'actualCloud': {'motion': motion}}
+        if _healthy_refresh_clock(captured, origin) is None:
+            result['reason'] = 'Passive sample has no matching observed fixture/native clock origin'
+            return result
+        result['sampleIdentity'] = {'elapsedMs': at, 'wallUtcMs': wall, 'readElapsedMs': read_at,
+                                    'ageAtReadMs': read_at - at}
+        coverage = sample.get('coverage')
+        if not (sample.get('modelIsNull') is False and sample.get('loopStarted') is True
+                and sample.get('currentDay') == sample.get('todayDay') == '09-09-2026'
+                and sample.get('cloudReady') is True and isinstance(coverage, list) and len(coverage) == 3
+                and all(_finite_number(a) and abs(a - b) < 1e-9 for a, b in zip(coverage, EXPECTED_COVERAGE))
+                and sample.get('documentHidden') is False and sample.get('documentVisibility') == 'visible'
+                and sample.get('cardPaused') is False and motion.get('paused') is False
+                and sample.get('foregroundOwner') in ('preview', 'refined')
+                and sample.get('foregroundVisible') is True and sample.get('foregroundHasCloudMask') is True
+                and sample.get('temperature') == '24°' and sample.get('fx') == 'rain'
+                and sample.get('precip') == 'on' and sample.get('lightning') == 'off'
+                and candidate.get('eligible') is True and 'reason' in candidate and candidate['reason'] is None
+                and all(_finite_number(candidate.get(key)) for key in
+                        ('sourceValidAt', 'retrievedAt', 'sourceAgeMs', 'receiptAgeMs'))
+                and candidate['sourceAgeMs'] == wall - candidate['sourceValidAt']
+                and candidate['receiptAgeMs'] == wall - candidate['retrievedAt']
+                and 0 <= candidate['sourceAgeMs'] <= 900000 and 0 <= candidate['receiptAgeMs'] <= 900000
+                and publication.get('state') == 'eligible-published' and publication.get('lane') == 'live'
+                and publication.get('conditionState') == 'model-estimated-rain'
+                and publication.get('target') == target
+                and all(_finite_number(publication.get(key)) for key in ('sourceValidAt', 'retrievedAt', 'revision', 'at'))
+                and publication['revision'] > 0 and publication['revision'] == math.floor(publication['revision'])
+                and publication['retrievedAt'] <= publication['at'] <= wall
+                and all(0 <= wall - publication[key] <= 900000 for key in ('sourceValidAt', 'retrievedAt'))
+                and candidate['sourceValidAt'] >= publication['sourceValidAt']
+                and candidate['retrievedAt'] >= publication['retrievedAt']):
+            return result
+        result['sampleRelation'] = 'first'
+        if prior:
+            previous = prior[-1]['progress']; old = previous['latest']
+            if read_at < previous['elapsedMs'] or at < old['elapsedMs']:
+                result['reason'] = 'Observed progress or passive sample time moved backwards'
+                return result
+            if at == old['elapsedMs']:
+                if sample != old:
+                    result['reason'] = 'Repeated passive sample time has contradictory observed content'
+                    return result
+                result['sampleRelation'] = 'duplicate'
+            else:
+                result['sampleRelation'] = 'advanced'
+                if (any(candidate[key] < old['candidate'][key] or publication[key] < old['publication'][key]
+                        for key in ('sourceValidAt', 'retrievedAt'))
+                        or publication['revision'] < old['publication']['revision']
+                        or publication['revision'] == old['publication']['revision'] and publication != old['publication']):
+                    result['reason'] = 'Observed candidate/publication ownership rolled back or an immutable receipt changed'
+                    return result
+        active_record = {key: publication[key] for key in ('sourceValidAt', 'retrievedAt', 'target')}
+        # Passive has no raw candidate target. Bind the actual response owner's
+        # generation to the declared target; do not claim a raw-target witness.
+        candidate_record = {'sourceValidAt': candidate['sourceValidAt'],
+                            'retrievedAt': candidate['retrievedAt'], 'target': target}
+        active_request = _healthy_refresh_request(active_record, captured, progress['ledger'], origin)
+        candidate_request = _healthy_refresh_request(candidate_record, captured, progress['ledger'], origin)
+        if active_request is None or candidate_request is None:
+            result['reason'] = 'Passive publication/candidate lacks its own unique consumed owned response'
+            return result
+        result['ownedRequests'] = {'publication': active_request, 'candidate': candidate_request}
+        distinct = []
+        for observation in [*(record['progress']['latest'] for record in prior), sample]:
+            if observation not in distinct:
+                distinct.append(observation)
+        result['distinctPassiveSamples'] = len(distinct)
+        result['duplicatePassiveObservations'] = len(prior) + 1 - len(distinct)
+        # Retain all read records above; exact duplicate samples contribute no
+        # invented motion step. Sort genuine observations by their own times.
+        motions = []
+        for point in [*full_motions, *({'elapsedMs': state['elapsedMs'], 'motion': state['motion']} for state in distinct)]:
+            if point not in motions:
+                motions.append(point)
+        motions.sort(key=lambda point: point['elapsedMs'])
+        result['motion'] = cloud_motion_continuity(motions, mode)
+        result['distinctMotionSamples'] = len(motions)
+        if not result['motion']['ok']:
+            result['reason'] = 'Observed passive/full native motion continuity failed'
+            return result
+        result.update(status='healthy', reason='Observed passive health, owned record, time and motion evidence is coherent')
+        return result
+    except (AttributeError, IndexError, KeyError, TypeError, ValueError):
+        return result
 
 
 def healthy_refresh_pair(before, after, ledger, clock=None):
@@ -960,9 +1152,14 @@ def main():
                                        "const s=f?.state==='ready'?f.latest:null;return !!s&&(" + expression + ');')
             wait(page, predicate, timeout)
 
-        def record_state(stage, state, screenshot=True):
-            artifacts = retain_media(out, stage, state)
+        def record_state(stage, state, screenshot=True, artifacts=None, acquisition=None):
+            if stage in artifacts_by_stage:
+                raise ValueError('Refusing to overwrite an observed stage: ' + stage)
+            if artifacts is None:
+                artifacts = retain_media(out, stage, state)
             observation = {'stage': stage, 'hostMonotonic': time.monotonic(), 'state': state, 'artifacts': artifacts}
+            if acquisition is not None:
+                observation['acquisition'] = acquisition
             if screenshot:
                 start = time.monotonic()
                 for suffix, clip in [('viewport', None), ('card', {k: state['card'][k] for k in ('left', 'top', 'width', 'height')})]:
@@ -1075,7 +1272,94 @@ def main():
             row['checks']['replacementCannotReviveOldDeck'] = actual_empty(replacement) and joined_empty(replacement) and effects_off(replacement)
             row['checks']['replacementHeaderStillModel'] = replacement['header']['temperature'] == '24°' and replacement['lastWeatherHeader']['observedPresent'] is False
             await_state('s.elapsedMs>=100000&&!s.modelIsNull&&s.candidate.eligible&&s.cloudReady&&s.precip===\'on\'&&s.foregroundVisible&&s.foregroundHasCloudMask', 100000)
-            recovered = capture('recovered')
+            recovery_progress = page.evaluate(HEALTHY_REFRESH_PROGRESS)
+            initial_progress = recovery_progress if isinstance(recovery_progress, dict) else {}
+            recovery_clock_origin = initial_progress.get('clockOrigin')
+            recovery_acquisition = row['recoveryAcquisition'] = {
+                'schema': 'r000b-recovery-endpoint-acquisition/v1', 'attempts': [],
+                'firstPassiveRecoveryAtRead': initial_progress.get('latest'), 'progressObservations': [],
+                'firstObservedRecovery': None, 'selectedStage': None,
+                'fixtureMaxElapsedMs': initial_progress.get('maxElapsedMs'),
+                'captureDeadlineElapsedMs': 235000, 'reservedWatchMs': 30000,
+                'latestWatchStartElapsedMs': 205000, 'clockOrigin': recovery_clock_origin,
+                'scope': 'Wait only for the observed healthy accepted-ahead/displayed-old diagnostic; never substitute current native authority for missing displayed composition'}
+            recovery_motions = [{'elapsedMs': replacement['elapsedMs'], 'motion': replacement['actualCloud']['motion']}]
+
+            def retain_recovery_progress(progress, boundary):
+                prior = recovery_acquisition['progressObservations']
+                classification = recovery_progress_evidence(progress, current, recovery_clock_origin,
+                                                            prior, recovery_motions, args.mode)
+                name = 'recovery-progress-' + str(len(prior) + 1).zfill(3) + '.json'
+                observation = {'file': name, 'boundary': boundary, 'hostMonotonic': time.monotonic(),
+                               'progress': progress, 'classification': classification}
+                prior.append(observation)
+                dump(out / name, observation)
+                if classification['status'] != 'healthy':
+                    recovery_acquisition['failure'] = {'progressFile': name, 'boundary': boundary,
+                                                       'classification': classification}
+                    dump(out / 'progress.json', row)
+                    raise ValueError('Observed passive recovery evidence must not be skipped: ' + classification['reason'])
+                dump(out / 'progress.json', row)
+                return progress
+
+            recovery_progress = retain_recovery_progress(recovery_progress, 'initial')
+            while True:
+                if recovery_progress.get('maxElapsedMs') != 240000:
+                    raise ValueError('Recovery acquisition requires the unchanged240-second fixture budget')
+                if recovery_progress.get('clockOrigin') != recovery_clock_origin:
+                    raise ValueError('Observed fixture clock origin changed during recovery acquisition')
+                remaining = 205000 - recovery_progress['elapsedMs']
+                if remaining <= 0:
+                    raise TimeoutError('No coherent recovered endpoint with30 seconds reserved inside the235-second capture cutoff')
+                number = len(recovery_acquisition['attempts']) + 1
+                # Decode once, retain original media under a unique neutral
+                # capture name, then name this same read by its actual result.
+                # No second full read can race with the selected endpoint.
+                snapshot = page.evaluate(READ)
+                media = retain_media(out, 'recovery-capture-' + str(number).zfill(3), snapshot)
+                decision = recovery_endpoint(snapshot, current)
+                stage = 'recovered' if decision['status'] == 'ready' else 'recovery-pending-' + str(number).zfill(3)
+                snapshot = record_state(stage, snapshot, artifacts=media, acquisition=decision)
+                attempt = {'stage': stage, 'file': stage + '.json', 'elapsedMs': snapshot['elapsedMs'],
+                           'wallUtcMs': snapshot['wallUtcMs'], **decision}
+                recovery_acquisition['attempts'].append(attempt)
+                if recovery_acquisition['firstObservedRecovery'] is None:
+                    recovery_acquisition['firstObservedRecovery'] = dict(attempt)
+                recovery_motions.append({'elapsedMs': snapshot['elapsedMs'], 'motion': snapshot['actualCloud']['motion']})
+                recovery_acquisition['motion'] = cloud_motion_continuity(recovery_motions, args.mode)
+                dump(out / 'progress.json', row)
+                stage_checks = [value for name, value in row['checks'].items() if name.startswith(stage + '/')]
+                if (decision['status'] == 'unhealthy' or not all(value is True for value in stage_checks)
+                        or not recovery_acquisition['motion']['ok']
+                        or row['pageErrors'] or row['consoleErrors'] or row['unexpectedNetwork']
+                        or any(request.get('status', 200) >= 400 for request in row['httpRequests'])):
+                    recovery_acquisition['failure'] = {
+                        'endpoint': decision, 'captureChecksHealthy': all(value is True for value in stage_checks),
+                        'motionHealthy': recovery_acquisition['motion']['ok'],
+                        'browserErrorsObserved': bool(row['pageErrors'] or row['consoleErrors']),
+                        'networkFailureObserved': bool(row['unexpectedNetwork'] or any(
+                            request.get('status', 200) >= 400 for request in row['httpRequests']))}
+                    dump(out / 'progress.json', row)
+                    raise ValueError('Recovery finding must not be waited away: ' + json.dumps(recovery_acquisition['failure']))
+                if _healthy_refresh_clock(snapshot, recovery_clock_origin) is None:
+                    raise ValueError('Recovery snapshot lacks the observed fixture/native clock origin')
+                recovery_progress = retain_recovery_progress(page.evaluate(HEALTHY_REFRESH_PROGRESS), 'post-capture')
+                if (recovery_progress.get('maxElapsedMs') != 240000
+                        or recovery_progress.get('clockOrigin') != recovery_clock_origin):
+                    raise ValueError('Fixture budget or clock changed at recovery capture')
+                if recovery_progress.get('consoleErrors') or recovery_progress.get('error'):
+                    raise ValueError('Observed fixture error during recovery acquisition')
+                remaining = 205000 - recovery_progress['elapsedMs']
+                if remaining <= 0:
+                    raise TimeoutError('Recovery capture overhead consumed the reserved30-second watch budget')
+                if decision['status'] == 'ready':
+                    recovered = snapshot
+                    recovery_acquisition.update(selectedStage=stage, selectedElapsedMs=snapshot['elapsedMs'],
+                        watchStartBudgetReadElapsedMs=recovery_progress['elapsedMs'])
+                    row['checks']['recoveredDisplayedEndpointBound'] = True
+                    break
+                page.wait_for_timeout(min(1000, remaining))
+                recovery_progress = retain_recovery_progress(page.evaluate(HEALTHY_REFRESH_PROGRESS), 'post-wait')
             row['checks']['ordinaryPrayerRecovery'] = recovered['prayer']['todayDay'] == '09-09-2026' and not recovered['modelIsNull'] and healthy_cloud(recovered)
             receipt = recovered['actualCloud']['publication'] or {}
             row['checks']['recoveredOnlyCurrentAuthority'] = (receipt.get('state') == 'eligible-published'
@@ -1111,10 +1395,14 @@ def main():
                 raise ValueError('Recovered capture lacks a bound current record/native receipt')
             refresh_progress = page.evaluate(HEALTHY_REFRESH_PROGRESS)
             refresh_clock_origin = refresh_progress.get('clockOrigin')
+            if refresh_clock_origin != recovery_clock_origin:
+                raise ValueError('Fixture clock changed between recovery selection and the unchanged watch')
             if _healthy_refresh_clock(recovered, refresh_clock_origin) is None:
                 raise ValueError('Observed fixture clock origin is missing or inconsistent with native motion')
             if refresh_progress['maxElapsedMs'] != 240000:
                 raise ValueError('Healthy refresh requires the unchanged240-second fixture budget')
+            if refresh_progress['elapsedMs'] >= 235000:
+                raise TimeoutError('Recovered watch capture exceeded the unchanged235-second capture cutoff')
             refresh_after_stage = 'recovered-30s'
             refresh_pair = healthy_refresh_pair(recovered, final, refresh_progress['ledger'], refresh_clock_origin)
             refresh_acquisition = row['healthyRefreshAcquisition'] = {
