@@ -324,8 +324,29 @@ The installed executable, sandbox request and all consumer predicates are preser
 The workflow records the actual pushed commit/tree,
 binary identity, dependency version and setup/collection outcomes. Its source
 binding is the retained precommit integration receipt, not a substitute for the
-current checked-out commit. A future native result must be received and reviewed
-before any further attempt or acceptance conclusion.
+current checked-out commit.
+
+The first Windows C19 observation,
+[run42829315626](https://github.com/theislampill/salah_widget/actions/runs/42829315626),
+at `46f4a8d24efe59da5df754f12e9b35a27477b106`, remains **failed**. Artifact13770935929,
+ZIP SHA256 `e81964563c4c6f5a36bc1cb4917b2638fbb6d0a10bc7297bf977305af61790a0`,
+retains an `INCOMPLETE` result/exit1. Setup and Chrome startup succeeded, but
+Playwright's bare readiness expression used deferred string evaluation that the
+wrapper's enforced CSP rejected. The trace records an automatic SVG HTTP200 and
+successful terminal; final document/served-byte/decode/pixel gates were not reached,
+and the smoke context was not attempted. This is partial transport evidence, not
+favicon acceptance. Observer cleanup and direct absence of the returned owned
+processes/profile were recorded, within the startup-inventory scope.
+
+The bounded observer correction wraps the unchanged readiness predicate in a
+zero-argument function, which Playwright caches before later polling callbacks.
+It retains the same remaining-deadline argument, readiness and success conditions,
+CSP, automatic-request/error predicates and cleanup. It changes no application or
+fixture source and enables no CSP bypass. Source-only controls of the exact
+installed poller reproduce the original deferred-eval failure and pass all seven
+corrected cases, including delayed readiness and persistent unready states. The
+actual corrected native outcome must be received and independently reviewed before
+any further attempt or acceptance conclusion.
 
 The PNG failure has a separate lifecycle owner. The exact
 [R0021 receiving packet](https://github.com/theislampill/salah_widget/issues/33#issuecomment-6768062051)

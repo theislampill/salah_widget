@@ -118,7 +118,8 @@ def main(root, out):
                     page.goto(row["url"],wait_until="domcontentloaded",timeout=min(limit,15000))
                     remaining=max(1,limit-(time.monotonic()-began)*1000)
                     predicate="window.__widgetFixture && ['ready','error'].includes(window.__widgetFixture.state)" if name=="wrapper" else "!!window.__smoke"
-                    page.wait_for_function(predicate,timeout=remaining)
+                    # A callable is cached before later polls; no deferred string eval under CSP.
+                    page.wait_for_function(f"() => ({predicate})",timeout=remaining)
                     row["readyObservedMs"]=(time.monotonic()-began)*1000
                     row["document"]=page.evaluate("""() => ({
                       url:location.href, readyState:document.readyState,
