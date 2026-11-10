@@ -27,6 +27,7 @@ DRIVER = "tools/cp9/r0007_browser.py"
 FIXTURE = "tests/rlgwo/prayer-browser-fixture.cjs"
 RUNTIME = "tools/cp9/browser_runtime.py"
 FONT_OBSERVER = "tools/cp9/r0007_font_observer.js"
+FONT_INGRESS = "tools/cp9/r0007_font_ingress.py"
 DEFAULT_RECIPE = "tests/rlgwo/R0007-next-event-recipes.json"
 
 
@@ -106,6 +107,8 @@ def bind_packet(root, recipe_path, identity, selected):
     packet = copy.deepcopy(original)
     required = {"src/native/index.html", "index.html", "offline.html", "config.js", DRIVER, FIXTURE, RUNTIME, FONT_OBSERVER,
                 "tools/qualification/r0007_native.py", recipe_path.relative_to(root).as_posix()}
+    if any("fontIngress" in case for case in selected):
+        required.add(FONT_INGRESS)
     required.update(original.get("sourceFiles", {}))
     required.update(original.get("bindingInstructions", {}).get("sourcePaths", []))
     # Bind the tracked runtime once, without copying generated offline payloads.

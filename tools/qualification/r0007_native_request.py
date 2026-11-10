@@ -12,6 +12,7 @@ import r0007_native as native
 
 REQUEST = "tests/rlgwo/R0007-native-request.json"
 FONT_USE_RECIPE = "tests/rlgwo/R0007-font-use-recipes.json"
+FONT_INGRESS_RECIPE = "tests/rlgwo/R0007-font-ingress-recipes.json"
 BARRIERS = ["NE07-recovery24", "NE07-recovery12", "NE07-dst-recovery24",
             "NE07-dst-recovery12", "NE07-mut-remove-next-dirty"]
 FIREFOX_FAILED_HEALTHY = ["NE07-ordinary24", "NE07-recovery24", "NE07-equal-polar",
@@ -53,6 +54,9 @@ def plan_request(request, recipe):
     elif profile == "firefox-font-use":
         engines, video_only = ["firefox"], True
         requested = ["NE07-fall24", "NE07-font-fallback-fall24"]
+    elif profile == "firefox-font-ingress":
+        engines, video_only = ["firefox"], True
+        requested = ["NE07-fall24", "NE07-font-fallback-fall24"]
     elif profile == "chromium-recovery":
         engines, video_only = ["chromium"], False
         requested = BARRIERS
@@ -71,6 +75,8 @@ def plan_request(request, recipe):
         arguments.append("--video-only")
     if profile == "firefox-font-use":
         arguments += ["--recipe", FONT_USE_RECIPE]
+    elif profile == "firefox-font-ingress":
+        arguments += ["--recipe", FONT_INGRESS_RECIPE]
     arguments += [value for case_id in case_ids for value in ("--case-id", case_id)]
     return {"profile": profile, "engines": engines, "videoOnly": video_only,
             "requestedCaseIds": requested, "selectedCaseIds": case_ids,
@@ -108,6 +114,8 @@ def main(argv=None):
             receipt["requestSha256"] = None
         recipe_path = (FONT_USE_RECIPE if isinstance(request, dict) and request.get("profile") == "firefox-font-use"
                        else native.DEFAULT_RECIPE)
+        if isinstance(request, dict) and request.get("profile") == "firefox-font-ingress":
+            recipe_path = FONT_INGRESS_RECIPE
         recipe = json.loads((root / recipe_path).read_text(encoding="utf-8"))
         selection = plan_request(request, recipe)
         receipt.update(identity=identity, request=request, selection=selection,

@@ -55,7 +55,41 @@ def wait_async_observation(frame, action, trace, index):
             if failure is None:raise
         finally:state.dispose()
 
-def observe_operation(trace, action_index, operation, callback):
+def wait_font_ingress_observation(frame, action, trace, index, error_boundary):
+    """Same async predicate, with diagnostic-only error custody and cleanup order."""
+    state=frame.evaluate_handle(ASYNC_WAIT_STATE)
+    receipt={"actionIndex":index,"predicateSha256":digest(action["predicate"].encode()),"status":"FAILED","errors":[]}
+    trace.setdefault("asyncWaitReceipts",[]).append(receipt)
+    primary=None;result=None
+    def failed(error,operation):
+        nonlocal primary
+        receipt["errors"].append({"operation":operation,**error_boundary.error_receipt(error)})
+        receipt["status"]="FAILED"
+        if primary is None:primary=error_boundary.sanitized_exception(error)
+    try:
+        result=frame.wait_for_function(ASYNC_WAIT_POLL,arg={"state":state,"source":action["predicate"]},
+            timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf"))
+        if result.json_value() is not True:raise error_boundary.DiagnosticError("async observer did not fulfill true")
+        receipt["status"]="AWAITED_TRUE"
+    except Exception as error:failed(error,"wait")
+    if result is not None:
+        try:result.dispose()
+        except Exception as error:failed(error,"result-dispose")
+    try:
+        value=state.evaluate("s=>{s.cancelled=true;return {...s,finishedAt:performance.now()};}")
+        # The owned state has these scalar fields. Never persist its arbitrary error text.
+        safe={key:value[key] for key in ("pending","accepted","cancelled","attempts","falseResults","startedAt","acceptedAt","finishedAt") if key in value}
+        safe["error"]=None if value.get("error") is None else error_boundary.OMITTED_ERROR_TEXT
+        if safe["error"] is not None:
+            safe["errorProvenance"]=error_boundary.OMITTED_ERROR_TEXT
+            if primary is None:failed(error_boundary.DiagnosticError("async observation reported failure"),"state")
+        receipt.update(safe)
+    except Exception as error:failed(error,"state-cleanup")
+    try:state.dispose()
+    except Exception as error:failed(error,"state-dispose")
+    if primary is not None:raise primary from None
+
+def observe_operation(trace, action_index, operation, callback, *, error_boundary=None):
     """Time an existing host operation without changing its result or exception.
 
     This adds no page call, retry, sleep, deadline or acceptance decision. Host
@@ -69,7 +103,8 @@ def observe_operation(trace, action_index, operation, callback):
         row["returned"]=True
         return result
     except BaseException as error:
-        row["errorType"]=type(error).__name__
+        row["errorType"]=error_boundary.error_receipt(error)["errorType"] if error_boundary else type(error).__name__
+        if error_boundary and isinstance(error,Exception):raise error_boundary.sanitized_exception(error) from None
         raise
     finally:
         row["finished"]=time.monotonic_ns()
@@ -102,6 +137,21 @@ def dump(path, value):
         json.dump(value,stream,indent=2,ensure_ascii=False)
         stream.write('\n')
 
+def load_font_ingress(packet, root):
+    """Load only a selected helper, after verifying its bound bytes before import."""
+    selected=[case for case in packet["cases"] if "fontIngress" in case]
+    if not selected:return None
+    relative="tools/cp9/r0007_font_ingress.py"
+    path=root/relative
+    expected=packet["sourceFiles"].get(relative)
+    if (not expected or path.is_symlink() or not path.is_file()
+            or not path.resolve().is_relative_to(root.resolve()) or digest(path.read_bytes())!=expected):
+        raise ValueError("font ingress helper binding is missing or drifted")
+    spec=importlib.util.spec_from_file_location("r0007_bound_font_ingress",path)
+    helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
+    for case in selected:helper.validate_font_ingress(case,packet["issue"])
+    return helper
+
 def validate_cases(packet, root):
     if packet.get("schema") != "remaining-prayer-cases/v1":
         raise ValueError("case schema mismatch")
@@ -113,6 +163,7 @@ def validate_cases(packet, root):
         path=(root/relative).resolve()
         if not path.is_relative_to(root.resolve()) or digest(path.read_bytes()) != expected:
             raise ValueError("bound source bytes drifted: "+relative)
+    load_font_ingress(packet,root)
     names=set()
     if not packet['cases']:raise ValueError('native case selection cannot be empty')
     for case in packet["cases"]:
@@ -220,7 +271,51 @@ def check_expected(trace, expected):
                 if html.count('data-prayer-key="'+prayer+'"')!=1:raise AssertionError('actual timetable lacks one '+prayer+' row')
             if row['dom']['.arc'].get('tagName')!='svg' or '<path' not in row['dom']['.arc'].get('html',''):raise AssertionError('actual arc SVG is absent')
 
+def finish_font_ingress_case(trace, controller, context, browser, playwright, server, thread, candidate_status, error_boundary):
+    """Diagnostic-only cleanup; preserve primary failure and reach every owner."""
+    def failed(error, stage):
+        if "failure" not in trace:
+            trace["failure"]=error_boundary.error_text(error);trace["failureStage"]=stage
+            trace["failureError"]=error_boundary.error_receipt(error)
+        else:trace.setdefault("secondaryFailures",[]).append({"stage":stage,"error":error_boundary.error_text(error),
+                                                             "errorDetails":error_boundary.error_receipt(error)})
+        trace["status"]="FAIL"
+    if controller is not None:
+        try:
+            receipt=controller.close()
+            if receipt.get("status")!="CLOSED":
+                controller.check()
+                raise error_boundary.DiagnosticError("unresolved controller cleanup")
+        except Exception as error:failed(error,"font-ingress-close")
+    cleanup=trace.setdefault("fontIngressNativeCleanup",[])
+    for name, owner, method in [("context.close",context,"close"),("browser.close",browser,"close"),
+                                ("playwright.stop",playwright,"stop"),("server.shutdown",server,"shutdown"),
+                                ("server.server_close",server,"server_close"),("thread.join",thread,"join")]:
+        if owner is None:continue
+        row={"operation":name,"returned":False};cleanup.append(row)
+        try:
+            if name=="thread.join":owner.join(timeout=2)
+            else:getattr(owner,method)()
+            row["returned"]=True
+            if name=="thread.join" and owner.is_alive():
+                raise error_boundary.DiagnosticError("server thread remains alive after existing join")
+        except Exception as error:
+            row["error"]=error_boundary.error_text(error);row["errorDetails"]=error_boundary.error_receipt(error);failed(error,name)
+    trace["nativeCleanupEstablished"]=all(row["returned"] and "error" not in row for row in cleanup)
+    if controller is not None:
+        try:controller.check()
+        except Exception as error:failed(error,"font-ingress-final-latch")
+    if "failure" not in trace and candidate_status is not None:
+        trace["status"]=candidate_status
+
 def main(argv=None):
+    error_boundary={}
+    try:return _main(argv,error_boundary)
+    except Exception as error:
+        if error_boundary.get("helper"):raise error_boundary["helper"].sanitized_exception(error) from None
+        raise
+
+def _main(argv,error_boundary):
     p=argparse.ArgumentParser()
     p.add_argument("--issue",type=int,required=True)
     p.add_argument("--engine",choices=["chromium","firefox"],required=True)
@@ -240,6 +335,9 @@ def main(argv=None):
     if packet["issue"]!=args.issue:
         raise ValueError("issue identity mismatch")
     summary=validate_cases(packet,root)
+    ingress_module=load_font_ingress(packet,root)
+    if ingress_module and any("fontIngress" in case for case in packet["cases"] if not args.case_id or case["caseId"] in args.case_id):
+        error_boundary["helper"]=ingress_module
     dump(output/"input-manifest.json",{"caseFile":str(args.cases.resolve()),"caseSha256":digest(args.cases.read_bytes()),"engineRequested":args.engine,"sourceRoot":str(root),**summary})
     if args.validate_only:
         print(json.dumps(summary));return 0
@@ -259,7 +357,9 @@ def main(argv=None):
     os.environ["SALAH_BROWSER"]=args.engine
     from playwright.sync_api import sync_playwright
     receipts=[]
+    diagnostic_cleanup_failed=False;unattempted=[]
     for case in selected:
+        error_boundary["helper"]=ingress_module if "fontIngress" in case else None
         if case.get("cacheSeedsFromCase"):
             previous=output/case["cacheSeedsFromCase"]/"trace.json"
             prior=json.loads(previous.read_text(encoding="utf-8"))
@@ -282,6 +382,9 @@ def main(argv=None):
         thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
         trace={"caseId":case["caseId"],"status":"FAIL","actions":[],"snapshots":[],"captureMismatches":[],"variant":case.get('variant'),"expectedOracleFailure":case.get('expectedFailure',False)}
         playwright=None;browser=None;context=None;frame=None
+        ingress=None;candidate_status=None;ingress_active="fontIngress" in case
+        def measure(action_index,operation,callback):
+            return observe_operation(trace,action_index,operation,callback,error_boundary=ingress_module if ingress_active else None)
         failure_stage="browser-launch"
         try:
             playwright=sync_playwright().start()
@@ -297,7 +400,12 @@ def main(argv=None):
                 context=browser.new_context(viewport={"width":370,"height":570},device_scale_factor=1,timezone_id="America/New_York",reduced_motion=case.get("motionPreference","no-preference"),record_video_dir=str(case_output/"video"),record_video_size={"width":370,"height":570})
                 if args.issue==7:
                     context.add_init_script((root/"tools/cp9/r0007_font_observer.js").read_text(encoding="utf-8"))
-                page=context.new_page();errors=[];page.on("pageerror",lambda error:errors.append(str(error)))
+                page=context.new_page();errors=[]
+                page.on("pageerror",lambda error:errors.append(ingress_module.error_receipt(error) if ingress_active else str(error)))
+                if ingress_active:
+                    failure_stage="font-ingress-install"
+                    ingress=ingress_module.FontIngressController(page,case_output,trace,case)
+                    ingress.install()
                 if case.get('offline'):
                     # The static local origin supplies the installed document/assets.
                     # All other native network requests, including fonts, fail offline;
@@ -326,12 +434,13 @@ def main(argv=None):
                 consumer=None
                 failure_stage="navigation"
                 if case.get("iframe"):
-                    observe_operation(trace,None,"navigation",lambda:page.goto(f"http://127.0.0.1:{server.server_port}/__iframe.html",wait_until="domcontentloaded"))
+                    measure(None,"navigation",lambda:page.goto(f"http://127.0.0.1:{server.server_port}/__iframe.html",wait_until="domcontentloaded"))
                     consumer=page.frame_locator("#actual-consumer")
                     frame=next(f for f in page.frames if f!=page.main_frame)
                 else:
-                    observe_operation(trace,None,"navigation",lambda:page.goto(f"http://127.0.0.1:{server.server_port}/{case['entry']}?case={quote(case['caseId'])}"+case["hash"],wait_until="domcontentloaded"))
+                    measure(None,"navigation",lambda:page.goto(f"http://127.0.0.1:{server.server_port}/{case['entry']}?case={quote(case['caseId'])}"+case["hash"],wait_until="domcontentloaded"))
                     frame=page.main_frame
+                if ingress is not None:ingress.check()
                 failure_stage="case-actions"
                 for action_index,action in enumerate(case["orderedActions"]):
                     trace["actions"].append(action)
@@ -347,10 +456,11 @@ def main(argv=None):
                         image_receipts.append({"stage":"native-image-release","url":route.request.url,"rule":target["id"],"alpha":target["alpha"],"at":time.monotonic()})
                     elif kind=="wait":
                         if args.issue==7 and action.get("awaitResult") is True:
-                            observe_operation(trace,action_index,"wait.async",lambda:wait_async_observation(frame,action,trace,action_index))
-                        else:observe_operation(trace,action_index,"wait",lambda:frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf")))
+                            measure(action_index,"wait.async",lambda:wait_font_ingress_observation(frame,action,trace,action_index,ingress_module)
+                                    if ingress_active else wait_async_observation(frame,action,trace,action_index))
+                        else:measure(action_index,"wait",lambda:frame.wait_for_function(action["predicate"],timeout=action.get("timeoutMs",15000),polling=action.get("polling","raf")))
                     elif kind=="sleep":time.sleep(action["ms"]/1000)
-                    elif kind=="release" or kind=="reject":observe_operation(trace,action_index,kind,lambda:frame.evaluate("([type,id,n])=>window.__prayerFixture[type](id,n)",[kind,action["id"],action.get("occurrence",1)]))
+                    elif kind=="release" or kind=="reject":measure(action_index,kind,lambda:frame.evaluate("([type,id,n])=>window.__prayerFixture[type](id,n)",[kind,action["id"],action.get("occurrence",1)]))
                     elif kind=="setRule":frame.evaluate("([id,patch])=>window.__prayerFixture.setRule(id,patch)",[action["id"],action["patch"]])
                     elif kind=="clock":frame.evaluate("epoch=>window.__prayerFixture.setClock(epoch)",action["epoch"])
                     elif kind=="settings":
@@ -376,20 +486,20 @@ def main(argv=None):
                         if action.get('firstRender'):
                             predicate=action.get('firstPredicate')
                             if not predicate:raise ValueError('first-render assertion requires an explicit observation predicate')
-                            row=observe_operation(trace,action_index,"capture.first-receipt",lambda:frame.evaluate("window.__prayerFixture.snapshots.find(s=>"+predicate+")"))
-                        else:row=observe_operation(trace,action_index,"capture.receipt",lambda:frame.evaluate("window.__prayerFixture.readSnapshot()" if kind=="checkpoint" or action.get('readOnly') else "window.__prayerFixture.snapshots.filter(s=>s.stage!=='read-only-checkpoint').at(-1)"))
+                            row=measure(action_index,"capture.first-receipt",lambda:frame.evaluate("window.__prayerFixture.snapshots.find(s=>"+predicate+")"))
+                        else:row=measure(action_index,"capture.receipt",lambda:frame.evaluate("window.__prayerFixture.readSnapshot()" if kind=="checkpoint" or action.get('readOnly') else "window.__prayerFixture.snapshots.filter(s=>s.stage!=='read-only-checkpoint').at(-1)"))
                         if not row:raise AssertionError("no completed original render")
                         row["checkpoint"]=action["name"];trace["snapshots"].append(row)
                         if kind=="capture":
-                            before=observe_operation(trace,action_index,"capture.before-ordinal",lambda:frame.evaluate("window.__prayerFixture.ordinal"))
+                            before=measure(action_index,"capture.before-ordinal",lambda:frame.evaluate("window.__prayerFixture.ordinal"))
                             # Even page.screenshot(clip=...) changes recorded compositor
                             # dimensions in these engines. Keep the native viewport intact;
                             # retain the requested bounds for optional offline image crops.
-                            bounds=observe_operation(trace,action_index,"capture.bounds",lambda:frame.locator(action.get("selector",".c")).bounding_box())
+                            bounds=measure(action_index,"capture.bounds",lambda:frame.locator(action.get("selector",".c")).bounding_box())
                             if not args.video_only:
-                                observe_operation(trace,action_index,"capture.screenshot",lambda:page.screenshot(path=str(case_output/(action["name"]+".png"))))
-                            after=observe_operation(trace,action_index,"capture.after-ordinal",lambda:frame.evaluate("window.__prayerFixture.ordinal"))
-                            observe_operation(trace,action_index,"capture.presentation-write",lambda:dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size,
+                                measure(action_index,"capture.screenshot",lambda:page.screenshot(path=str(case_output/(action["name"]+".png"))))
+                            after=measure(action_index,"capture.after-ordinal",lambda:frame.evaluate("window.__prayerFixture.ordinal"))
+                            measure(action_index,"capture.presentation-write",lambda:dump(case_output/(action["name"]+"-presentation.json"),{"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"],"capture":"native-video-only" if args.video_only else "native-full-viewport","requestedSelector":action.get("selector",".c"),"requestedBounds":bounds,"viewport":page.viewport_size,
                                 "firstRenderRequested":bool(action.get("firstRender")),"firstPredicate":action.get("firstPredicate"),
                                 "selectionKind":"first-matching-render" if action.get("firstRender") else "read-only-checkpoint" if action.get("readOnly") else "latest-render"}))
                             if action.get("preservation"):
@@ -413,12 +523,18 @@ def main(argv=None):
                                 # Preserve the failed still association. Continue collecting the
                                 # native video and original assertions; this is not a first-frame PASS.
                                 trace["captureMismatches"].append({"capture":action["name"],"beforeOrdinal":before,"afterOrdinal":after,"receiptOrdinal":row["renderOrdinal"]})
+                if ingress is not None:
+                    failure_stage="font-ingress-run"
+                    ingress.run(frame)
                 if args.video_only:
                     # Completed DOM writes can precede the recorder's next frame.
                     # Keep observing through native presentation before closing;
                     # do not advance the fixture clock or call product rendering.
                     page.wait_for_timeout(1000)
                     trace["nativePresentationTailMs"]=1000
+                if ingress is not None:
+                    failure_stage="font-ingress-tail"
+                    ingress.check()
                 export_expression="(()=>{const f=window.__prayerFixture;return {startedPerformance:f.started,events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,activeTimers:f.activeTimers(),storage:f.storage(),pending:f.pending(),unexpected:f.unexpected,assetEvents:f.assets,resourceTiming:f.resourceTiming(),fontSettlement:window.__r0007FontSettlement?.read()??null,fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight,display:f.display}))}}})()"
                 # Fast previews produce thousands of complete render receipts. Seal
                 # the observation cut in fixture-owned storage, then transport every
@@ -436,24 +552,44 @@ def main(argv=None):
                 trace["nativeImageReceipts"]=image_receipts
                 check_expected(trace,case["expected"])
                 if raw["unexpected"] or errors:raise AssertionError("unmatched provider or page error")
-                trace["status"]="PARTIAL_FIRST_PRESENTATION_REVIEW_REQUIRED" if trace["captureMismatches"] else "PASS_ASSERTIONS_PENDING_PIXEL_REVIEW"
+                if ingress is not None:
+                    failure_stage="font-ingress-finalize"
+                    ingress.finalize(frame)
+                    candidate_status="PARTIAL_FIRST_PRESENTATION_REVIEW_REQUIRED" if trace["captureMismatches"] else "PASS_ASSERTIONS_PENDING_PIXEL_REVIEW"
+                else:
+                    trace["status"]="PARTIAL_FIRST_PRESENTATION_REVIEW_REQUIRED" if trace["captureMismatches"] else "PASS_ASSERTIONS_PENDING_PIXEL_REVIEW"
         except Exception as error:
-            trace["failure"]=repr(error)
+            trace["failure"]=ingress_module.error_text(error) if ingress_active else repr(error)
+            if ingress_active:trace["failureError"]=ingress_module.error_receipt(error)
             trace["failureStage"]=failure_stage
             try:
                 trace["rawOnFailure"]=frame.evaluate("(()=>{const f=window.__prayerFixture;return {events:f.events,snapshots:f.snapshots,requests:f.requests,storageLog:f.storageLog,timerLog:f.timerLog,unexpected:f.unexpected,fontSettlement:window.__r0007FontSettlement?.read(),fonts:{status:document.fonts.status,faces:[...document.fonts].map(f=>({family:f.family,status:f.status,style:f.style,weight:f.weight,display:f.display}))}}})()")
                 if not args.video_only:
                     page.screenshot(path=str(case_output/"failure.png"))
-            except Exception as capture_error:trace["failureCapture"]=repr(capture_error)
+            except Exception as capture_error:
+                trace["failureCapture"]=ingress_module.error_text(capture_error) if ingress_active else repr(capture_error)
+                if ingress_active:trace["failureCaptureError"]=ingress_module.error_receipt(capture_error)
         finally:
-            dump(case_output/"trace.json",trace)
-            if context:context.close()
-            if browser:browser.close()
-            if playwright:playwright.stop()
-            server.shutdown();server.server_close();thread.join(timeout=2)
+            if ingress_active:
+                finish_font_ingress_case(trace,ingress,context,browser,playwright,server,thread,candidate_status,ingress_module)
+                dump(case_output/"trace.json",trace)
+            else:
+                dump(case_output/"trace.json",trace)
+                if context:context.close()
+                if browser:browser.close()
+                if playwright:playwright.stop()
+                server.shutdown();server.server_close();thread.join(timeout=2)
         receipts.append({"caseId":case["caseId"],"status":trace["status"],"trace":str(case_output/"trace.json")})
         print(args.engine,case["caseId"],trace["status"],trace.get("failure",""),flush=True)
-    dump(output/"summary.json",{"status":"PARTIAL_NATIVE_REVIEW_REQUIRED","receipts":receipts,"preservation":"NOT_QUALIFIED_BY_DRIVER","leaseSha256":digest(args.capacity_lease.read_bytes())})
+        if ingress_active and not trace.get("nativeCleanupEstablished"):
+            diagnostic_cleanup_failed=True
+            unattempted=[{"caseId":pending["caseId"],"reason":"previous diagnostic native cleanup not established"}
+                         for pending in selected[len(receipts):]]
+            break
+    final_summary={"status":"PARTIAL_NATIVE_REVIEW_REQUIRED","receipts":receipts,"preservation":"NOT_QUALIFIED_BY_DRIVER","leaseSha256":digest(args.capacity_lease.read_bytes())}
+    if diagnostic_cleanup_failed:
+        final_summary.update(status="DIAGNOSTIC_CLEANUP_NOT_ESTABLISHED",unattempted=unattempted)
+    dump(output/"summary.json",final_summary)
     return 1 if any(r["status"]=="FAIL" for r in receipts) else 0
 
 if __name__=="__main__":
