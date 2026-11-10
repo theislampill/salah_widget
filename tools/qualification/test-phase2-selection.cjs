@@ -18,6 +18,7 @@ async function execute(options,passiveOptions){
  observedPublicReadback=async()=>({passed:true,simulated:true});`,context,{filename:file});
  const api={ROOT:root,OUT:out,EXPECTED:'eebba178172f96b3ffe5ab3845bc0fffd57c6e1b',result:{cases:[]},sha:b=>crypto.createHash('sha256').update(b).digest('hex'),
   startSession:()=>{throw Error('Native session forbidden in selection control');},
+  preload:()=>{throw Error('Preload execution forbidden in selection-only control');},
   write:(p,v)=>writes.set(path.relative(out,p),JSON.parse(JSON.stringify(v))),identify:()=>{identified++;},remainingBudgetMs:()=>960000,operationTimeout:n=>n,launchBlock:()=>null,publicReadback:async()=>({simulated:true}),
   notAttempted:(p,reason)=>api.result.cases.push({...p,status:'NOT_ATTEMPTED',reason}),
   testLaunch:p=>{launches.push(JSON.parse(JSON.stringify(p)));api.result.cases.push({name:p.name,status:'SIMULATED_BOUNDARY_ONLY'});}};
@@ -100,6 +101,7 @@ function diagnosticReceipt(id,attempted){
   const tokens=commands[0].trim().split(/\s+/);assert.equal(tokens[1],'qualification/tools/qualification/r0017-windows-passive.cjs');
   const args=entry.parse(tokens.slice(2)),cases=['chromium-public-healthy-no-preference','chromium-public-healthy-reduce'];
   assert.equal(args['network-observation'],'passive');assert.equal(args.groups,'public');assert.equal(args.cases,cases.join(','));
+  assert.equal(args['security-provenance'],'csp');assert.equal(args['image-assignment-provenance'],'src');
   const baseHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'r0017-windows-proof.cjs'))).digest('hex');
   assert.equal(args['base-sha'],baseHash);assert.equal(entry.BOUND_BASE_SHA,baseHash);
   const x=await execute({groups:args.groups,cases:args.cases},args);

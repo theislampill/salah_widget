@@ -78,7 +78,7 @@ async function harness(name,options={}){
  function event(method,id,url=PUBLIC+'index.html',extra={}){session.bidi.ws.message({method,params:{context:null,navigation:null,timestamp:1794089691000,redirectCount:0,isBlocked:false,request:{request:id,url,method:'GET'},...extra}});}
  async function start(mode='passive',engine='chromium',origin=PUBLIC){const row={schema:'r0017-passive-simulation/v1',name:'simulated-case',engine,status:'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE',stage:'observation',plannedTopLevelDocuments:1,checks:{},screenshots:[{sha256:'simulated'}]};const dir=path.join(out,row.name);fs.mkdirSync(dir,{recursive:true});api.result.cases.push(row);if(options.securityProvenance){require(entryFile).configure(api,{groups:'public',cases:selected.join(','),'network-observation':'passive','security-provenance':options.securityProvenance});await api.startSession(engine,'reduce',{width:1100,height:900},1,row,dir,origin);}else await api.startSession(engine,'reduce',{width:1100,height:900},1,row,dir,origin,...(mode==='default'?[]:[mode]));return {row,dir};}
  async function finish(row,dir){await consumers.finishOwnedCase(api,row,session,dir,Date.now(),false);const cut=api.result.cases.find(x=>x.name===row.name);return {row:copy(cut),stored:JSON.parse(fs.readFileSync(path.join(dir,'result.json'))),summary:JSON.parse(fs.readFileSync(path.join(out,'summary.json'))).cases.find(x=>x.name===row.name),frozen:Object.isFrozen(cut)&&Object.isFrozen(cut.network)};}
- async function publicCase(pref='reduce'){const entry=require(entryFile);if(api.networkObservation===undefined)entry.configure(api,{groups:'public',cases:selected.join(','),'network-observation':'passive',...(options.securityProvenance?{'security-provenance':options.securityProvenance}:{})});await consumers.collectPublic(api,'chromium',pref,declared);const row=api.result.cases.at(-1);return {row:copy(row),stored:JSON.parse(fs.readFileSync(path.join(out,row.name,'result.json'))),summary:JSON.parse(fs.readFileSync(path.join(out,'summary.json'))).cases.at(-1),frozen:Object.isFrozen(row)};}
+ async function publicCase(pref='reduce'){const entry=require(entryFile);if(api.networkObservation===undefined)entry.configure(api,{groups:'public',cases:selected.join(','),'network-observation':'passive',...(options.securityProvenance?{'security-provenance':options.securityProvenance}:{}),...(options.imageAssignmentProvenance?{'image-assignment-provenance':options.imageAssignmentProvenance}:{})});await consumers.collectPublic(api,'chromium',pref,declared);const row=api.result.cases.at(-1);return {row:copy(row),stored:JSON.parse(fs.readFileSync(path.join(out,row.name,'result.json'))),summary:JSON.parse(fs.readFileSync(path.join(out,'summary.json'))).cases.at(-1),frozen:Object.isFrozen(row)};}
  async function dispose(){for(const s of sockets)s.release();await delay(10);for(const id of timers)clearTimeout(id);timers.clear();if(!evidence)fs.rmSync(home,{recursive:true,force:true});}
  return {api,start,finish,publicCase,readback:()=>consumers.observedPublicReadback(api),fetches,event,snapshot,delay,dispose,get session(){return session;},get inventoryCalls(){return inventoryCalls;},get spawnCount(){return spawnCount;},get sent(){return sockets.flatMap(x=>x.sent);},get exitCode(){return proc.exitCode;},home};
 }
@@ -87,6 +87,27 @@ function equalCuts(x){assert.deepEqual(x.row,x.stored);assert.deepEqual(x.stored
 function failed(x){assert(!/PASSED/.test(x.row.status));}
 function before(h,id,url,extra){h.event('network.beforeRequestSent',id,url,extra);}
 function complete(h,id,url,extra){h.event('network.responseCompleted',id,url,{response:{url:url||PUBLIC+'index.html',status:200,statusText:'OK'},...extra});}
+const IMAGE_MARKER='R0017_IMAGE_ASSIGNMENT ';
+function imageOptions(){return {groups:'public',cases:selected.join(','),'network-observation':'passive','security-provenance':'csp','image-assignment-provenance':'src'};}
+function imageRealm(preload,options={}){
+ const calls=[],logs=[],storage=new Map(),listeners=[],nativeFailure=Error('SIMULATED native setter exception');let debugFailures=options.debugFailures||0,openCalls=0;
+ class ImageElement{}
+ const originalGet=function(){return this.value;};
+ const originalSet=function(value){calls.push({receiver:this,value});if(!(this instanceof ImageElement))throw nativeFailure;if(value==='throw-native')throw nativeFailure;this.value=String(value);return 73;};
+ Object.defineProperty(ImageElement.prototype,'src',{get:originalGet,set:originalSet,enumerable:true,configurable:!options.nonconfigurable});
+ const ctx={HTMLImageElement:ImageElement,Image:ImageElement,location:{origin:options.foreign?'https://other.example':new URL(PUBLIC).origin,href:PUBLIC+'tests/widget-fixture.html?attempt=15#phase'},
+  crypto:{randomUUID:()=>options.nonce||'simulated-realm-0001'},Date:{now:()=>1794284293000},performance:{now:()=>123.5},devicePixelRatio:1,
+  console:{debug(text){if(debugFailures-->0)throw Error('SIMULATED console transport unavailable');logs.push(text);options.onLog?.(text);}},
+  localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,value)},matchMedia:()=>({matches:false}),
+  document:{readyState:'complete',open(){openCalls++;listeners.length=0;return ctx.document;},addEventListener:(...args)=>listeners.push(args)},
+  addEventListener:(...args)=>listeners.push(args),originalCalls:0};
+ ctx.window=ctx;ctx.top=ctx;ctx.document.defaultView=ctx;const context=vm.createContext(ctx),originalOpen=ctx.document.open;
+ const returnValue=vm.runInContext('('+preload+')()',context,{filename:'SIMULATION_ONLY_combined-preload.js'});
+ return {ctx,context,calls,logs,storage,listeners,originalGet,originalSet,originalOpen,nativeFailure,returnValue,ImageElement,
+  get openCalls(){return openCalls;},markers:()=>logs.filter(v=>v.startsWith(IMAGE_MARKER)).map(v=>JSON.parse(v.slice(IMAGE_MARKER.length)))};
+}
+function publicAbsentSeed(h){return Object.fromEntries(Object.keys(h.api.seeds('absent')).map(key=>[key,null]));}
+function configuredImagePreload(h){require(entryFile).configure(h.api,imageOptions());return h.api.preload(publicAbsentSeed(h),PUBLIC,false);}
 (async()=>{
  await check('passive-installed-core-is-admitted-before-acquisition-and-owned-by-setup-and-cleanup',async make=>{const h=await make(),{row,dir}=await h.start();assert.equal(h.session.inventoryHost,row.inventoryHost);assert.equal(Object.isFrozen(row.inventoryHost),true);assert.equal(Object.isFrozen(row.inventoryHost.versionEvidence),true);assert.throws(()=>{h.session.inventoryHost={};},TypeError);assert.equal(row.inventoryHost.executablePath,CORE_PATH);assert.equal(row.inventoryHost.sha256,CORE_SHA);assert.equal(row.inventoryHost.runtimeReadback.status,'ADMITTED_IDENTICAL_EXECUTABLE');assert.equal(row.inventoryHost.versionEvidence.version,'7.6.9');assert.equal(row.inventoryHost.versionEvidence.kind,'PRIOR_S0_OBSERVATION_BOUND_TO_IDENTICAL_EXECUTABLE');assert.equal(row.inventoryHost.versionEvidence.runId,'42433584408');await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');const x=await h.finish(row,dir);equalCuts(x);assert.equal(x.row.cleanup.ok,true);assert.deepEqual(x.row.cleanup.inventoryHost,x.row.inventoryHost);assert.equal(h.inventoryCalls.length,5);for(const call of h.inventoryCalls){assert.equal(call.executable,CORE_PATH);originalQuery(call);}return {simulatedInventoryCalls:h.inventoryCalls.length,executable:CORE_PATH,versionReadback:'PRIOR_S0_ONLY',standaloneVersionInvocations:0};});
  await check('passive-installed-core-missing-refuses-before-acquisition-without-fallback',async make=>{const h=await make({missingCore:true});await assert.rejects(h.start(),/Core.*missing|inventory.*admission|missing/i);assert.equal(h.spawnCount,0);assert.equal(h.inventoryCalls.length,0);const r=h.api.result.cases[0].inventoryHost;assert.equal(r.runtimeReadback.status,'REFUSED');assert.equal(Object.isFrozen(r),true);return {spawnCount:0,inventoryCalls:0,status:r.runtimeReadback.status};});
@@ -209,6 +230,101 @@ function complete(h,id,url,extra){h.event('network.responseCompleted',id,url,{re
   const x=await h.finish(row,dir);equalCuts(x);failed(x);assert.equal(x.row.checks.passiveRequestsAccounted,true);
   assert.equal(x.row.network.fetchErrors[0].errorText,'net::ERR_ABORTED');assert.equal(x.row.checks.passiveObservationClean,false);
   return {fetchErrorRetained:true,consumerStatus:x.row.status};
+ });
+
+ // C17: execute the actual configured preload against simulated browser
+ // primitives, then retain its raw debug events through the real observer.
+ await check('c17-option-is-explicit-exact-and-requires-security-correlation',async()=>{
+  const entry=require(entryFile),args=['--network-observation','passive','--groups','public','--cases',selected.join(','),'--base-file',baseFile,'--base-sha',hash(base),'--root',root,'--out','simulation'];
+  assert.equal(entry.parse([...args,'--security-provenance','csp','--image-assignment-provenance','src'])['image-assignment-provenance'],'src');
+  assert.equal(entry.parse(args)['image-assignment-provenance'],undefined);
+  for(const value of ['all','off','SRC','decode'])assert.throws(()=>entry.parse([...args,'--security-provenance','csp','--image-assignment-provenance',value]));
+  assert.throws(()=>entry.parse([...args,'--image-assignment-provenance','src']));
+  assert.throws(()=>entry.configure({startSession(){},preload(){}},{...imageOptions(),'image-assignment-provenance':'all'}));
+  return {explicitMode:'src',requiresSecurity:true};
+ });
+ await check('c17-unselected-default-keeps-original-preload-function-and-bytes',async make=>{
+  const h=await make(),original=h.api.preload,seed=h.api.seeds('absent'),bytes=original(seed,PUBLIC,false);
+  require(entryFile).configure(h.api,{groups:'public',cases:selected.join(','),'network-observation':'passive','security-provenance':'csp'});
+  assert.equal(h.api.preload,original);assert.equal(h.api.preload(seed,PUBLIC,false),bytes);
+  const r=imageRealm(bytes);assert.equal(Object.getOwnPropertyDescriptor(r.ImageElement.prototype,'src').set,r.originalSet);assert.equal(r.markers().length,0);
+  return {defaultPreloadUnchanged:true};
+ });
+ await check('c17-configured-preload-preserves-original-storage-and-origin-fence',async make=>{
+  const h=await make(),preload=configuredImagePreload(h),r=imageRealm(preload);
+  assert.equal(r.ctx.__r0017Recorder.schema,'r0017-storage/v1');assert.deepEqual(copy(r.ctx.__r0017Recorder.before),publicAbsentSeed(h));assert.equal(r.storage.size,0);
+  assert.equal(r.ctx.__r0017Recorder.entries.filter(e=>e.event==='document-preload').length,1);assert.equal(r.markers().filter(e=>e.event==='installed').length,1);
+  const foreign=imageRealm(preload,{foreign:true});assert.equal(foreign.ctx.__r0017Recorder,undefined);assert.equal(foreign.logs.length,0);assert.equal(Object.getOwnPropertyDescriptor(foreign.ImageElement.prototype,'src').set,foreign.originalSet);
+  return {originalStoragePreloadOnce:true,publicSeedWrites:0,foreignMutation:false};
+ });
+ await check('c17-wrapper-preserves-original-preload-return-and-exception',async()=>{
+  const entry=require(entryFile),api={startSession(){},preload(){return '()=>{window.originalCalls++;return 91;}';}};
+  entry.configure(api,imageOptions());const r=imageRealm(api.preload({},PUBLIC,false));assert.equal(r.returnValue,91);assert.equal(r.ctx.originalCalls,1);assert.equal(r.markers().filter(e=>e.event==='installed').length,1);
+  const throwing={startSession(){},preload(){return '()=>{window.originalCalls++;throw Error("original-preload-failure");}';}};
+  entry.configure(throwing,imageOptions());assert.throws(()=>imageRealm(throwing.preload({},PUBLIC,false)),/original-preload-failure/);
+  return {originalReturnPreserved:true,originalExceptionPreserved:true};
+ });
+ await check('c17-full-string-stack-and-image-sequence-bind-assignment-and-empty-cancellation',async make=>{
+  const h=await make(),r=imageRealm(configuredImagePreload(h));r.ctx.__widgetFixture={run:'run-c17',attempt:15,documentId:'fixture-15',hash:'original-hash',mode:'healthy',sourceSha256:'a'.repeat(64)};
+  const full='data:image/png;base64,'+'A'.repeat(39064),a=new r.ImageElement(),b=new r.ImageElement(),desc=Object.getOwnPropertyDescriptor(r.ImageElement.prototype,'src');
+  assert.equal(desc.get,r.originalGet);assert.equal(desc.enumerable,true);assert.equal(desc.configurable,true);assert.notEqual(desc.set,r.originalSet);
+  function actualPublishingCaller(){return desc.set.call(a,full);}assert.equal(actualPublishingCaller(),73);desc.set.call(a,'');desc.set.call(b,full);
+  const rows=r.markers().filter(e=>e.event==='setter-invocation-attempt');assert.equal(rows.length,3);assert.equal(rows[0].assignedString,full);assert.equal(rows[1].assignedString,'');assert.equal(rows[0].imageId,rows[1].imageId);assert.notEqual(rows[0].imageId,rows[2].imageId);
+  assert(rows[0].stack.includes('actualPublishingCaller'));assert.equal(rows[0].fixture.documentId,'fixture-15');assert.equal(rows[0].fixture.attempt,15);
+  assert.equal(rows[0].purpose,'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT');assert.equal(rows[0].phase,'BEFORE_NATIVE_SETTER');assert(rows.every(e=>e.realmNonce==='simulated-realm-0001'));
+  assert(rows.every((e,i)=>i===0||e.sequence>rows[i-1].sequence));assert.equal(r.calls.length,3);assert.equal(r.calls[0].receiver,a);assert.equal(r.calls[0].value,full);
+  return {fullStringCodeUnits:full.length,imageIds:2,assignments:3,acceptanceCredit:false};
+ });
+ await check('c17-nonstring-coercion-receiver-and-native-exception-preserved-exactly-once',async make=>{
+  const h=await make(),r=imageRealm(configuredImagePreload(h)),a=new r.ImageElement(),setter=Object.getOwnPropertyDescriptor(r.ImageElement.prototype,'src').set;let coercions=0;
+  const value={toString(){coercions++;return 'coerced-by-native-only';}};assert.equal(setter.call(a,value),73);assert.equal(coercions,1);assert.equal(r.calls[0].value,value);assert.equal(a.src,'coerced-by-native-only');
+  assert.throws(()=>setter.call(a,'throw-native'),e=>e===r.nativeFailure);assert.throws(()=>setter.call(null,'invalid-receiver'),e=>e===r.nativeFailure);assert.equal(r.calls.length,3);
+  const row=r.markers().find(e=>e.event==='setter-invocation-attempt'&&e.valueType==='object');assert(row);assert.equal(Object.hasOwn(row,'assignedString'),false);assert.equal(row.stringCoverage,'NON_STRING_NOT_COERCED');
+  return {coercions:1,nativeCalls:3,nativeExceptionIdentityPreserved:true};
+ });
+ await check('c17-console-failure-cannot-skip-or-double-native-setter-and-is-visible-later',async make=>{
+  const h=await make(),r=imageRealm(configuredImagePreload(h),{debugFailures:2}),a=new r.ImageElement();a.src='first';a.src='second';
+  assert.equal(r.calls.length,2);assert.equal(a.src,'second');const row=r.markers().find(e=>e.assignedString==='second');assert(row);assert(row.recordingFailuresBefore>=2);assert(row.sequence>=3);
+  return {nativeCalls:2,priorRecordingFailuresVisible:true};
+ });
+ await check('c17-installation-failure-is-diagnostic-and-leaves-native-setter-usable',async make=>{
+  const h=await make(),r=imageRealm(configuredImagePreload(h),{nonconfigurable:true}),a=new r.ImageElement();a.src='native-still-works';
+  assert.equal(a.src,'native-still-works');assert.equal(r.calls.length,1);assert.equal(Object.getOwnPropertyDescriptor(r.ImageElement.prototype,'src').set,r.originalSet);
+  assert(r.markers().some(e=>e.event==='installation-failed'));assert.equal(r.markers().filter(e=>e.event==='installed').length,0);
+  return {diagnosticFailureRetained:true,originalSetterRetained:true};
+ });
+ await check('c17-real-clocks-console-and-prototype-survive-fixture-clock-and-document-open',async make=>{
+  const h=await make(),r=imageRealm(configuredImagePreload(h));r.ctx.Date.now=()=>-100;r.ctx.performance.now=()=>-200;r.ctx.console.debug=()=>{throw Error('replacement console must not be used');};
+  assert.equal(r.ctx.document.open,r.originalOpen);r.ctx.document.open();const a=new r.ImageElement();a.src='after-document-open';
+  const row=r.markers().find(e=>e.assignedString==='after-document-open');assert(row);assert.equal(row.realEpochMs,1794284293000);assert.equal(row.realPerformanceMs,123.5);assert.equal(r.listeners.length,0);assert.equal(r.openCalls,1);
+  return {capturedRealClocks:true,additionalLifecycleListeners:0,documentOpenReplaced:false,simulationOnly:true};
+ });
+ await check('c17-actual-public-consumer-retains-exact-combined-preload-and-diagnostic-binding',async make=>{
+  const h=await make({securityProvenance:'csp',imageAssignmentProvenance:'src'}),x=await h.publicCase('no-preference');equalCuts(x);
+  const sent=h.sent.filter(c=>c.method==='script.addPreloadScript');assert.equal(sent.length,1);const source=sent[0].params.functionDeclaration;
+  const saved=fs.readFileSync(path.join(h.home,'receipts',x.row.name,'preload.js'),'utf8');assert.equal(saved,source+'\n');assert.equal(x.row.preloadSha256,hash(source));assert(source.includes(IMAGE_MARKER));
+  assert.equal(x.row.imageAssignmentProvenance.purpose,'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT');assert.equal(x.row.imageAssignmentProvenance.probeSourceSha256,hash(require(entryFile).imageAssignmentProbe.toString()));
+  assert.equal(h.sent.filter(c=>c.method.startsWith('goog:cdp.')).length,3);assert.equal(h.sent.filter(c=>c.method.startsWith('network.')).length,0);assert.equal(h.sent.filter(c=>c.method==='browsingContext.navigate').length,2);
+  assert.equal(x.row.checks.fullOriginalHealthy,true);assert.equal(x.row.smoke.pass,141);assert.equal(x.row.smoke.required.executed,30);
+  const r=imageRealm(source);const a=new r.ImageElement();a.src='data:image/png;base64,YQ==';assert(r.markers().some(e=>e.assignedString==='data:image/png;base64,YQ=='));
+  return {preloadByteIdentity:true,existingCdpCommands:3,newConnections:0,nativeExecutions:0};
+ });
+ await check('c17-real-callback-keeps-full-debug-marker-and-all-raw-failures-at-final-cut',async make=>{
+  const h=await make({securityProvenance:'csp'}),preload=configuredImagePreload(h);
+  // configure above is the sole owner; use the actual configured start directly.
+  const row={name:'c17-debug-simulation',engine:'chromium',status:'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE',stage:'observation',plannedTopLevelDocuments:1,checks:{},screenshots:[{sha256:'simulated'}]},dir=path.join(h.home,'receipts',row.name);fs.mkdirSync(dir);h.api.result.cases.push(row);
+  await h.api.startSession('chromium','reduce',{width:1100,height:900},1,row,dir,PUBLIC);await h.session.navigate(PUBLIC+'tests/smoke.html?fixture=healthy');
+  const r=imageRealm(preload,{onLog:text=>h.session.bidi.ws.message({method:'log.entryAdded',params:{type:'console',method:'debug',level:'debug',source:{realm:'simulated-image-realm',context:'simulated-top'},timestamp:1794284293000,args:[{type:'string',value:text}],text}})});
+  const a=new r.ImageElement(),full='data:image/png;base64,'+'B'.repeat(39064);a.src=full;
+  before(h,'failed-csp',full);h.event('network.fetchError','failed-csp',full,{errorText:''});before(h,'unfinished');const x=await h.finish(row,dir);equalCuts(x);failed(x);
+  const logs=fs.readFileSync(path.join(dir,'console.jsonl'),'utf8').trim().split('\n').map(v=>JSON.parse(v)),marker=logs.find(e=>e.args?.[0]?.value?.includes(full));assert(marker);assert.equal(marker.source.realm,'simulated-image-realm');assert(marker.trace.eventReceiptId);
+  assert.equal(x.row.network.consoleErrors.length,0);assert.equal(x.row.network.fetchErrors.length,1);assert.equal(x.row.network.requests.find(q=>q.requestId==='unfinished').terminalEvents.length,0);assert.equal(x.row.checks.passiveObservationIntegrity,false);assert.equal(x.row.checks.passiveObservationClean,false);
+  const next=await h.publicCase('reduce');assert.equal(next.row.status,'NOT_ATTEMPTED');assert.equal(h.spawnCount,1);
+  return {rawFullDebugRetained:true,cspAndPendingRetained:true,next:next.row.status};
+ });
+ await check('c17-diagnostic-opt-in-never-supplies-missing-original-case-credit',async make=>{
+  const h=await make({securityProvenance:'csp',imageAssignmentProvenance:'src',missingCase:true}),x=await h.publicCase('reduce');equalCuts(x);failed(x);assert.equal(x.row.smoke.required.executed,29);assert.equal(x.row.checks.fullOriginalHealthy,false);
+  return {missingCaseRemainsFailure:true,nativeExecutions:0};
  });
 
  // C16: opt-in security diagnostic. Real entry/session/consumer/finalizer,
