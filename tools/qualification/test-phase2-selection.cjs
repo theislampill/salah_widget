@@ -11,15 +11,15 @@ async function check(name,fn){try{results.push({name,passed:true,detail:await fn
 async function execute(options,passiveOptions){
  const out=fs.mkdtempSync(path.join(os.tmpdir(),'r0017-selection-')),launches=[],writes=new Map(),localProcess={platform:'win32',exitCode:0};let identified=0;
  const module={exports:{}};
- const context={require,module,exports:module.exports,Buffer,URL,URLSearchParams,performance,console,process:localProcess,WebSocket:function(){},__filename:file,__dirname};
+ const context={require,module,exports:module.exports,Buffer,URL,URLSearchParams,AbortSignal,performance,console,process:localProcess,WebSocket:function(){},fetch:async(raw,init)=>{const url=String(raw);assert.equal(url,'https://theislampill.github.io/salah_widget/real-sky/native-data.js');assert.equal(init.redirect,'error');const bytes=fs.readFileSync(path.join(root,'real-sky/native-data.js'));return {ok:true,status:200,url,headers:{get:()=>null},arrayBuffer:async()=>bytes};},__filename:file,__dirname};
  vm.runInNewContext(source+`\nvariantServer=async()=>({origin:'http://simulated.invalid/',close:async()=>{}});
  collectProbe=async(api,server,p,engine,declared)=>{api.testLaunch({name:engine+'-'+p.id,engine,engines:p.engines,group:p.group,kind:p.kind,preference:p.preference,history:p.history,responseOverrides:Object.keys(p.overrides),originalDenominator:{cases:declared.length,assertions:declared.reduce((n,x)=>n+x[1],0)}});return true;};
  collectPublic=async(api,engine,preference)=>{api.testLaunch({name:engine+'-public-healthy-'+preference,group:'public'});return true;};
  observedPublicReadback=async()=>({passed:true,simulated:true});`,context,{filename:file});
- const api={ROOT:root,OUT:out,EXPECTED:'eebba178172f96b3ffe5ab3845bc0fffd57c6e1b',result:{cases:[]},sha:b=>crypto.createHash('sha256').update(b).digest('hex'),
+ const api={ROOT:root,OUT:out,PUBLIC:'https://theislampill.github.io/salah_widget/',EXPECTED:'eebba178172f96b3ffe5ab3845bc0fffd57c6e1b',result:{cases:[]},sha:b=>crypto.createHash('sha256').update(b).digest('hex'),
   startSession:()=>{throw Error('Native session forbidden in selection control');},
   preload:()=>{throw Error('Preload execution forbidden in selection-only control');},
-  write:(p,v)=>writes.set(path.relative(out,p),JSON.parse(JSON.stringify(v))),identify:()=>{identified++;},remainingBudgetMs:()=>960000,operationTimeout:n=>n,launchBlock:()=>null,publicReadback:async()=>({simulated:true}),
+  write:(p,v)=>writes.set(path.relative(out,p),JSON.parse(JSON.stringify(v))),identify:()=>{identified++;},remainingBudgetMs:()=>960000,operationTimeout:n=>n,launchBlock:()=>null,publicReadback:async()=>passiveOptions?.['request-accounting']==='observed-records'?Object.entries(require('./r0017-request-accounting.cjs').PINNED_SOURCE).filter(([file])=>file!=='real-sky/native-data.js').map(([file,pin])=>({file,...pin,status:200,matches:true})):({simulated:true}),
   notAttempted:(p,reason)=>api.result.cases.push({...p,status:'NOT_ATTEMPTED',reason}),
   testLaunch:p=>{launches.push(JSON.parse(JSON.stringify(p)));api.result.cases.push({name:p.name,status:'SIMULATED_BOUNDARY_ONLY'});}};
  if(passiveOptions)require('./r0017-windows-passive.cjs').configure(api,passiveOptions);
@@ -95,25 +95,26 @@ function diagnosticReceipt(id,attempted){
  });
  await check('C13 case is refused by the actual default groups',()=>rejected({cases:waningCase}));
  await check('C13 case is refused by the legacy diagnostic group',()=>rejected({groups:'calendar-diagnostics',cases:waningCase}));
- await check('C14 workflow explicit passive caller selects only two public contexts and three meaningful documents',async()=>{
+ await check('C18 workflow selects observed-record accounting and only two public contexts without setter instrumentation',async()=>{
   const workflow=fs.readFileSync(path.join(root,'.github/workflows/r0017-windows-phase2.yml'),'utf8'),entry=require('./r0017-windows-passive.cjs');
   const commands=workflow.split('\n').filter(line=>line.trim().startsWith('node qualification/tools/qualification/'));assert.equal(commands.length,1);
   const tokens=commands[0].trim().split(/\s+/);assert.equal(tokens[1],'qualification/tools/qualification/r0017-windows-passive.cjs');
   const args=entry.parse(tokens.slice(2)),cases=['chromium-public-healthy-no-preference','chromium-public-healthy-reduce'];
   assert.equal(args['network-observation'],'passive');assert.equal(args.groups,'public');assert.equal(args.cases,cases.join(','));
-  assert.equal(args['security-provenance'],'csp');assert.equal(args['image-assignment-provenance'],'src');
+  assert.equal(args['security-provenance'],'csp');assert.equal(args['image-assignment-provenance'],undefined);assert.equal(args['request-accounting'],'observed-records');
   const baseHash=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'r0017-windows-proof.cjs'))).digest('hex');
   assert.equal(args['base-sha'],baseHash);assert.equal(entry.BOUND_BASE_SHA,baseHash);
   const x=await execute({groups:args.groups,cases:args.cases},args);
-  assert.deepEqual(x.launches.map(r=>r.name),cases);assert.equal(x.plan.plans.length,0);assert.equal(x.plan.publicContexts.length,2);
-  assert.equal(x.result.schema,'r0017-windows-passive/v1');assert.equal(x.result.networkObservation.method,'passive-bidi/v1');assert.equal(x.result.qualification,'PARTIAL');
+  assert.equal(x.result.publicReadbackError,undefined);assert.deepEqual(x.launches.map(r=>r.name),cases);assert.equal(x.plan.plans.length,0);assert.equal(x.plan.publicContexts.length,2);
+  assert.equal(x.result.schema,'r0017-windows-passive/v2');assert.equal(x.result.networkObservation.method,'passive-bidi-cdp/v2');assert.equal(x.result.qualification,'PARTIAL');
   assert.equal(x.result.documentPlan.nativeSessions,2);assert.equal(x.result.documentPlan.topLevelNavigations,3);assert.equal(x.result.documentPlan.additionalPublicBaselineDocuments,1);assert.equal(x.result.documentPlan.initializationDocuments,2);
   const receiptCases=workflow.match(/^\s+plannedCases = @\(([^\n]+)\)$/m);assert(receiptCases);assert.equal(receiptCases[1],cases.map(s=>"'"+s+"'").join(', '));
   for(const [field,count] of [['plannedNativeSessions',2],['plannedTopLevelDocuments',3],['plannedInitializationDocuments',2],['plannedCalendarPrerequisiteDocuments',0],['plannedCalendarTargetDocuments',0]])assert.equal(Number(workflow.match(new RegExp('^\\s+'+field+' = (\\d+)$','m'))?.[1]),count,field);
-  assert(workflow.includes("networkObservation = 'passive-bidi/v1'"));assert(workflow.includes("interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'"));
+  assert(workflow.includes("networkObservation = 'passive-bidi-cdp/v2'"));assert(workflow.includes("interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'"));
   assert(workflow.includes('timeout-minutes: 20')&&workflow.includes('timeout-minutes: 17')&&workflow.includes('AddMinutes(16)'));
   return {nativeExecutions:0,simulatedLaunches:x.launches,documentPlan:x.result.documentPlan};
  });
+ await check('legacy explicit passive selection retains v1 schema and original two-case orchestration',async()=>{const args={groups:'public',cases:'chromium-public-healthy-no-preference,chromium-public-healthy-reduce','network-observation':'passive'};const x=await execute({groups:args.groups,cases:args.cases},args);assert.equal(x.result.schema,'r0017-windows-passive/v1');assert.equal(x.result.networkObservation.method,'passive-bidi/v1');assert.deepEqual(x.launches.map(r=>r.name),args.cases.split(','));assert.equal(x.exitCode,0);});
  await check('C14 actual orchestration refuses expanded population before source setup or launch',async()=>{
   const args={groups:'public',cases:'chromium-public-healthy-no-preference,chromium-public-healthy-reduce','network-observation':'passive'};
   let observed;try{await execute({groups:'current,public',cases:args.cases},args);}catch(e){observed=e;}

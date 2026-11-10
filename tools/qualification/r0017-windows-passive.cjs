@@ -4,10 +4,12 @@
 // entry and historical verdicts. Root must admit these exact bytes before use.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const passive=require('./r0017-passive-network.cjs');
-const BOUND_BASE_SHA='c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755';
+const accounting=require('./r0017-request-accounting.cjs');
+const BOUND_BASE_SHA='da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279';
 const hash=value=>crypto.createHash('sha256').update(value).digest('hex');
 function assertDiagnostics(options){
  passive.assertSelection(options);
+ if(options['request-accounting']!==undefined&&(options['request-accounting']!=='observed-records'||options['security-provenance']!=='csp'||options['image-assignment-provenance']!==undefined))throw Error('Observed-record accounting requires explicit observed-records mode, csp provenance and no image assignment instrumentation');
  if(options['image-assignment-provenance']!==undefined&&(options['image-assignment-provenance']!=='src'||options['security-provenance']!=='csp'))throw Error('Image assignment provenance requires explicit src mode and csp security correlation');
 }
 // Serialized into the existing original preload only under the explicit C17
@@ -60,7 +62,7 @@ function imageAssignmentPreload(original,origin){
  return '()=>{const originalResult=('+original+')();if(location.origin==='+JSON.stringify(new URL(origin).origin)+'){('+imageAssignmentProbe.toString()+')();}return originalResult;}';
 }
 function parse(tokens){
- const allowed=new Set(['network-observation','groups','cases','base-file','base-sha','root','out','payload-sha','security-provenance','image-assignment-provenance']),args={};
+ const allowed=new Set(['network-observation','groups','cases','base-file','base-sha','root','out','payload-sha','security-provenance','image-assignment-provenance','request-accounting']),args={};
  if(tokens.length%2)throw Error('Arguments must be explicit --name VALUE pairs');
  for(let i=0;i<tokens.length;i+=2){const key=tokens[i].startsWith('--')?tokens[i].slice(2):null;if(!allowed.has(key)||Object.hasOwn(args,key)||!tokens[i+1]||tokens[i+1].startsWith('--'))throw Error('Unknown, duplicate or missing passive argument: '+tokens[i]);args[key]=tokens[i+1];}
  assertDiagnostics(args);
@@ -76,9 +78,15 @@ function configure(api,options){
   if(args.length!==3||args[2]!==false)throw Error('Image assignment diagnostic requires the unchanged public storage preload signature');
   return imageAssignmentPreload(Reflect.apply(originalPreload,this,args),args[1]);
  };
- const start=api.startSession;api.networkObservation=passive.METHOD;
+ const observedRecords=options['request-accounting']==='observed-records';
+ const start=api.startSession;api.networkObservation=observedRecords?accounting.METHOD:passive.METHOD;
  api.startSession=(...args)=>{
   if(args.length!==7)throw Error('Passive session caller signature changed');
+  if(observedRecords){
+   if(Object.hasOwn(args[4],'requestAccountingRequest'))throw Error('Request accounting already owned');
+   const source=accounting.admitSource(api.ROOT,api.source),served=accounting.admitPublicReadback(source,api.result.publicReadback);
+   Object.assign(args[4],{requestAccountingRequest:Object.freeze({schema:'r0017-accounting-request/v1',method:accounting.METHOD}),requestAccountingSource:source,requestAccountingPublicSource:served});
+  }
   if(options['security-provenance']==='csp'){
    if(Object.hasOwn(args[4],'securityProvenanceRequest'))throw Error('Security provenance request already owned');
    Object.defineProperty(args[4],'securityProvenanceRequest',{enumerable:true,value:Object.freeze({schema:'r0017-security-provenance-request/v1',mode:'csp'})});
@@ -101,8 +109,8 @@ async function main(){
  const prefix=text.slice('#!/usr/bin/env node\n'.length,text.indexOf(marker));
  const exportInterface=`\nmodule.exports={ROOT,OUT,EXPECTED,PUBLIC,runId,result,sha,write,record,seeds,mime,identify,locate,startSession,preload,SNAPSHOT,PROGRESS,checkCommon,screenshot,publicReadback,remainingBudgetMs,operationTimeout,launchBlock,notAttempted,get source(){return source;},get declared(){return declared;}};\n`;
  const loaded={exports:{}};new Function('require','module','exports','__filename','__dirname',prefix+exportInterface)(require,loaded,loaded.exports,baseFile,path.dirname(baseFile));
- const api=configure(loaded.exports,args),files=['r0017-windows-passive.cjs','r0017-passive-network.cjs','r0017-phase2-controls.cjs','r0017-windows-proof.cjs'];
- api.result.loader={schema:'r0017-passive-loader/v1',method:passive.METHOD,baseSha256:BOUND_BASE_SHA,compiledPrefixSha256:hash(prefix),exportInterfaceSha256:hash(exportInterface),baseReuse:'Exact base function source; first-phase main withheld; default enforced path unchanged',sourceFiles:files.map(file=>({file,sha256:hash(fs.readFileSync(path.join(__dirname,file)))}))};
+ const api=configure(loaded.exports,args),files=['r0017-windows-passive.cjs','r0017-passive-network.cjs','r0017-request-accounting.cjs','r0017-phase2-controls.cjs','r0017-windows-proof.cjs'];
+ api.result.loader={schema:'r0017-passive-loader/v2',method:api.networkObservation,baseSha256:BOUND_BASE_SHA,compiledPrefixSha256:hash(prefix),exportInterfaceSha256:hash(exportInterface),baseReuse:'Exact base function source; first-phase main withheld; default enforced path unchanged',sourceFiles:files.map(file=>({file,sha256:hash(fs.readFileSync(path.join(__dirname,file)))}))};
  for(const file of files)fs.copyFileSync(path.join(__dirname,file),path.join(api.OUT,file));fs.writeFileSync(path.join(api.OUT,'base-export-interface.js'),exportInterface);
  try{return await require('./r0017-phase2-controls.cjs').run(api,{groups:args.groups,cases:args.cases});}
  catch(e){api.result.qualification='PARTIAL';api.result.status='PASSIVE_UNHANDLED_COLLECTOR_FAILURE';api.result.error=String(e.stack||e);api.result.finishedUtc=new Date().toISOString();api.write(path.join(api.OUT,'summary.json'),api.result);process.exitCode=1;}

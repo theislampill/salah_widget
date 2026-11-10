@@ -6,7 +6,7 @@
  * No source file is edited, and the phase-1 matrix is not re-executed here.
  */
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
-const REVIEWED_BASE_SHA='c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755';
+const REVIEWED_BASE_SHA='da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279';
 const argv={};for(let i=2;i<process.argv.length;i+=2){if(!process.argv[i]?.startsWith('--')||!process.argv[i+1])throw Error('Arguments must be --name VALUE pairs');argv[process.argv[i].slice(2)]=process.argv[i+1];}
 if(!argv['base-file']||!/^[a-f0-9]{64}$/.test(argv['base-sha']||''))throw Error('Explicit reviewed --base-file and --base-sha are required');
 if(argv['base-sha']!==REVIEWED_BASE_SHA)throw Error('Phase-2 source is bound to a different reviewed base; re-review this loader before rebinding');

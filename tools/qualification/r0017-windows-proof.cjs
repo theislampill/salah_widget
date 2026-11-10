@@ -402,7 +402,7 @@ function checkCommon(row,s,viewport,dpr,seed){const c=row.checks;
  c.storageSeedInstalled=!!s.storage&&same(s.storage.before,seed);
  c.rawOriginBytesPreserved=!!s.storage&&same(s.storage.after,seed);
  c.noRealOriginGetterUse=!!s.storage&&Array.isArray(s.storage.entries)&&!s.storage.entries.some(x=>x.event==='real-origin-storage-get');
- if(row.network?.method==='passive-bidi/v1')Object.assign(c,require('./r0017-passive-network.cjs').checks(row));
+ if(['passive-bidi/v1','passive-bidi-cdp/v2'].includes(row.network?.method))Object.assign(c,require('./r0017-passive-network.cjs').checks(row));
  else{
  c.networkInterceptionsClean=row.network?.interceptErrors.length===0;
  c.noUnexpectedNetwork=row.network?.blockedURLs.every(u=>/^https:\/\/fonts\.(googleapis|gstatic)\.com\//.test(u)||u==='https://theislampill.github.io/favicon.ico');

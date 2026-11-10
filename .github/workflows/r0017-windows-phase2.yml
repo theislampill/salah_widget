@@ -1,4 +1,4 @@
-name: R0017 C17 image assignment diagnostic
+name: R0017 C18 observed request qualification
 
 on:
   push:
@@ -10,6 +10,7 @@ on:
       - tools/qualification/r0017-phase2-controls.cjs
       - tools/qualification/r0017-windows-passive.cjs
       - tools/qualification/r0017-passive-network.cjs
+      - tools/qualification/r0017-request-accounting.cjs
       - tools/qualification/r0017-windows-proof.cjs
 
 permissions:
@@ -62,12 +63,12 @@ jobs:
             vendor
             docs/state-contracts
 
-      - name: Capture C17 image assignment provenance for the bounded Chromium public population
+      - name: Qualify C18 accounting for the bounded Chromium public population
         id: native_collection
         timeout-minutes: 17
         shell: pwsh
         run: |
-          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --security-provenance csp --image-assignment-provenance src --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce
+          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --security-provenance csp --request-accounting observed-records --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce
           exit $LASTEXITCODE
 
       - name: Preserve workflow setup outcomes on every result
@@ -84,12 +85,13 @@ jobs:
           $r0017Summary = Join-Path $r0017Output 'summary.json'
           $r0017Receipt = [ordered]@{
             schema = 'r0017-workflow-passive-outcomes/v1'
-            phase = 'C17'
-            purpose = 'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT_FROM_INSTRUMENTED_EXECUTION'
-            evidenceQuestion = 'Which full Image.src assignment, caller stack and image instance precede the CSP data-PNG request, and is a later empty assignment observed?'
-            securityProvenance = 'csp; existing owned top-target session; Log and Audits only'
-            imageAssignmentProvenance = 'src; existing original storage preload then origin-scoped setter probe; no lifecycle listeners; timing perturbation possible'
-            networkObservation = 'passive-bidi/v1'
+            phase = 'C18'
+            purpose = 'BOUNDED_QUALIFICATION_CANDIDATE_NO_AUTOMATIC_ACCEPTANCE'
+            evidenceQuestion = 'Do the original consumers qualify with exact observed-record accounting, truthful unknown outcomes and retained errors?'
+            securityProvenance = 'csp; same owned connection and setup; source and security receipts retained'
+            imageAssignmentProvenance = 'NOT_REQUESTED; unchanged original storage preload'
+            networkObservation = 'passive-bidi-cdp/v2'
+            requestAccounting = 'observed-records; outcomes remain completed, error or unknown'
             interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'
             plannedCases = @('chromium-public-healthy-no-preference', 'chromium-public-healthy-reduce')
             plannedNativeSessions = 2
@@ -99,10 +101,10 @@ jobs:
             plannedCalendarPrerequisiteDocuments = 0
             plannedCalendarTargetDocuments = 0
             historicalActiveRecords = 'UNCHANGED; no C12 gate change or upstream-fix claim'
-            healthyCredit = 0
+            healthyCredit = 'NOT_PREASSIGNED; inspect actual original consumers, errors and independent acceptance'
             fullOriginalSmoke = 'DECLARED_30_CASES_141_ASSERTIONS_EACH_CONTEXT; inspect actual collector outcomes'
             automaticRepeat = $false
-            baseCollectorSha256 = 'c095924a71b4358677ff0d2bdf8630b9fdb11cd5d14969ac789ae4f17ac9d755'
+            baseCollectorSha256 = 'da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279'
             qualification = 'PARTIAL'
             recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
             runId = $env:GITHUB_RUN_ID

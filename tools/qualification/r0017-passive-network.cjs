@@ -3,6 +3,7 @@
 // interceptor does not use this module. See README.md's C14 contract map.
 const path=require('node:path');
 const METHOD='passive-bidi/v1',SCHEMA='r0017-passive-network/v1';
+const ACCOUNTED='passive-bidi-cdp/v2';
 const PUBLIC='https://theislampill.github.io/salah_widget/';
 const CASES=Object.freeze(['chromium-public-healthy-no-preference','chromium-public-healthy-reduce']);
 // C15: documented BiDi+ event forwarding on this same connection, for diagnosis
@@ -29,6 +30,7 @@ function assertSelection(options){
 }
 function assertSession(engine,preference,viewport,dpr,row,origin){
  if(engine!=='chromium'||origin!==PUBLIC||!['no-preference','reduce'].includes(preference)||viewport?.width!==1100||viewport?.height!==900||dpr!==1||row.plannedTopLevelDocuments!==(preference==='no-preference'?2:1))throw Error('Passive observation scope is the commissioned Chromium public preference population only');
+ if(row.requestAccountingRequest!==undefined){if(row.requestAccountingRequest?.schema!=='r0017-accounting-request/v1'||row.requestAccountingRequest.method!==ACCOUNTED||row.securityProvenanceRequest?.mode!=='csp'||row.imageAssignmentProvenance!==undefined)throw Error('Invalid observed-record case admission');require('./r0017-request-accounting.cjs').assertSourceAdmission(row);}
 }
 function policy(raw,origin){
  try{const u=new URL(raw),o=new URL(origin);
@@ -51,8 +53,10 @@ function create({row,dir,origin,record,networkRecord,urlEvidence}){
  const state=row.network={schema:SCHEMA,method:METHOD,identity:null,subscription:{events:[...events],scope:'global session subscription; no contexts filter',issued:null,acknowledged:null},requests:[],lifecycle:[],connectionEvents:[],navigations:[],policyViolations:[],httpErrors:[],fetchErrors:[],consoleErrors:[],protocolErrors:[],captureErrors:[],commandRefusals:[],observationErrors:[],finalBoundary:null,lateReceipts:[],
   diagnosticProvenance:{schema:'r0017-cdp-provenance/v1',purpose:'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT',transport:'EXISTING_BIDI_CONNECTION_ONLY',events:[...CDP_EVENTS],support:'INSPECT_ACTUAL_SUBSCRIPTION_AND_RAW_RECEIPTS',joining:'UNCLASSIFIED_RAW_EVENTS_NO_TERMINAL_SYNTHESIS'},
   interception:{requested:false,verdict:'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'},coverage:{source:'Installed driver BiDi event stream only',requests:'Only emitted request identities are accounted; absence is not proof of no background traffic',workers:'Raw emitted realm type/owners only; null context or missing owner is not reassigned to a page or worker',redirects:'Connection + request ID + reported redirect count; a new hop never fabricates a prior hop completion',timestamps:'BiDi source timestamp and Node process-local monotonic receipt milliseconds are separate clocks',normalFavicon:'Exact origin-root favicon URL is allowed as a location; its HTTP/fetch errors still fail',finalCut:'After the existing owned callback/socket join, without extending its 5000 ms deadline'}};
+ if(row.requestAccountingRequest){state.schema='r0017-passive-network/v2';state.method=ACCOUNTED;state.observedNetworkEvents=[];state.diagnosticProvenance.purpose='OBSERVED_RECORD_ACCOUNTING_WITH_RAW_OUTCOMES';state.diagnosticProvenance.joining='EXACT_CONNECTION_SESSION_REQUEST_AND_ATTACHMENT_IDENTITIES_NO_SYNTHETIC_TERMINALS';state.coverage.source='Emitted BiDi and forwarded CDP records on the one owned connection';}
  const byKey=new Map(); // Index only: its values are the same objects in state.requests.
  const security=securityRequested?(state.securityProvenance={schema:'r0017-security-provenance/v1',mode:'csp',purpose:'DIAGNOSTIC_ONLY_NO_ACCEPTANCE_CREDIT',status:'PENDING',events:[...SECURITY_EVENTS],context:null,session:null,commands:[],coverage:'Log and Audits enabled only on resolved owned top-target session; Page and Runtime rely on existing mapper enablement. Global subscription is not global domain enablement.',attribution:'Raw sessions, source timestamps and receipt order only. Enable may replay stored events; data scheme and temporal proximity do not establish a request join. Absence is not proof of no violation.'}):null;
+ if(security&&state.method===ACCOUNTED)security.purpose='RAW_SECURITY_AND_DOCUMENT_PROVENANCE_FOR_OBSERVED_RECORD_ACCOUNTING';
  let bidi=null,securityCommand=null;
  function error(kind,detail){state.observationErrors.push({kind,...copy(detail)});}
  function capture(file,value){try{record(path.join(dir,file),value);}catch(e){state.captureErrors.push({file,error:String(e),eventReceiptId:value.trace?.eventReceiptId??null});throw e;}}
@@ -134,6 +138,7 @@ function create({row,dir,origin,record,networkRecord,urlEvidence}){
   if(!v.method.startsWith('network.')){const item={method:v.method,params:copy(p),trace:receipt};state.lifecycle.push(item);capture('lifecycle.jsonl',item);return;}
   const item={...networkRecord(v,receipt),redirectCount:p.redirectCount??null};
   item.initiator=copy(p.initiator??null);item.request.destination=copy(p.request?.destination??null);
+  if(state.method===ACCOUNTED)state.observedNetworkEvents.push(copy(item));
   if(!state.subscription.acknowledged)error('EVENT_BEFORE_SUBSCRIPTION_ACK',receipt);
   if(p.isBlocked===true)error('BLOCKED_REQUEST_OBSERVED_NO_CONTINUATION',receipt);
   if(v.method==='network.authRequired')error('AUTHENTICATION_REQUIRED_NO_RESPONSE',receipt);
@@ -160,15 +165,24 @@ function create({row,dir,origin,record,networkRecord,urlEvidence}){
  return {attach,subscribe,event};
 }
 function checks(row,final=false){
- const s=row.network,valid=s?.schema===SCHEMA&&s.method===METHOD&&s.identity?.connectionId===row.bidiTrace?.connectionId;
+ const s=row.network,accounted=s?.method===ACCOUNTED,valid=(s?.schema===SCHEMA&&s.method===METHOD||s?.schema==='r0017-passive-network/v2'&&accounted)&&s.identity?.connectionId===row.bidiTrace?.connectionId;
  if(!valid)return {passiveMethodIdentified:false};
  const c={passiveMethodIdentified:true,passiveSubscriptionObserved:!!s.subscription.acknowledged&&s.subscription.acknowledged.association==='pending',passiveObservationClean:[s.httpErrors,s.fetchErrors,s.consoleErrors,s.protocolErrors,s.captureErrors,s.commandRefusals,s.observationErrors].every(a=>Array.isArray(a)&&a.length===0),noUnexpectedNetwork:s.policyViolations.length===0};
  if(final){const problems=requestProblems(s);
   c.passiveFinalBoundaryRecorded=!!s.finalBoundary&&s.finalBoundary.pendingProtocolCommands.length===0;
   c.passiveRequestsAccounted=s.requests.length>0&&Object.values(problems).every(a=>a.length===0)&&s.requests.every(r=>r.beforeEvents.length===1&&r.terminalEvents.length===1);
   c.passiveTopDocumentsObserved=s.navigations.length===row.plannedTopLevelDocuments&&s.navigations.every(n=>n.response?.protocol.type==='success'&&typeof n.response.protocol.navigation==='string'&&n.issued.traceSequence>s.subscription.acknowledged?.traceSequence&&s.requests.some(r=>r.context===n.context&&r.navigation===n.response.protocol.navigation&&withoutHash(r.url)===withoutHash(n.url)&&r.beforeEvents.length===1));
+  if(accounted){const a=s.accounting,cut=a?.schema==='r0017-observed-record-accounting/v1'&&a.method===ACCOUNTED&&a.finalBoundaryTraceSequence===s.finalBoundary?.traceSequence;
+   c.passiveRequestsAccounted=cut&&a.allObservedRecordsReconciled===true;
+   c.passiveSourceClaimsBound=cut&&a.sourceClaimsBound===true;
+   c.passiveRequiredConsumersObserved=cut&&a.requiredConsumerEvidence?.satisfied===true;
+   c.passiveObservationClean=c.passiveObservationClean&&cut&&a.observedErrors.length===0;
+   c.noUnexpectedNetwork=c.noUnexpectedNetwork&&cut&&a.policyViolations.length===0;
+  }
   c.passiveObservationIntegrity=c.passiveMethodIdentified&&c.passiveSubscriptionObserved&&c.passiveFinalBoundaryRecorded&&c.passiveRequestsAccounted&&c.passiveTopDocumentsObserved&&[s.protocolErrors,s.captureErrors,s.commandRefusals,s.observationErrors,s.lateReceipts].every(a=>a.length===0);
+  if(accounted)c.passiveObservationIntegrity=c.passiveObservationIntegrity&&c.passiveSourceClaimsBound===true;
  }
  return c;
 }
-module.exports={METHOD,SCHEMA,CASES,EVENTS,assertSelection,assertSession,admitInventoryHost,create,checks};
+function finalize(row){if(row.network?.method!==ACCOUNTED)throw Error('Observed-record finalizer requires its explicitly admitted method');if(row.network.accounting!==undefined)throw Error('Observed-record accounting is finalized once');row.network.accounting=require('./r0017-request-accounting.cjs').reconcile(row,policy);return row.network.accounting;}
+module.exports={METHOD,SCHEMA,CASES,EVENTS,assertSelection,assertSession,admitInventoryHost,create,checks,finalize};

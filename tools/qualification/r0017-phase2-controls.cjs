@@ -458,11 +458,12 @@ async function finishOwnedCase(api,row,session,dir,started,withControl){
  // Finalize against the last owned callback, not the earlier common-check cut.
  if(session?.bidi)session.bidi.boundary('case-final-cut');
  if(row.bidiTrace){
-  if(row.network?.method==='passive-bidi/v1'){
+  if(['passive-bidi/v1','passive-bidi-cdp/v2'].includes(row.network?.method)){
+   if(row.network.method==='passive-bidi-cdp/v2')try{const ledger=require('./r0017-passive-network.cjs').finalize(row);api.write(path.join(dir,'request-accounting.json'),ledger);}catch(e){row.network.captureErrors.push({file:'request-accounting.json',error:String(e.stack||e)});}
    const passiveChecks=require('./r0017-passive-network.cjs').checks(row,true);Object.assign(row.checks,passiveChecks);
-   const intact=passiveChecks.passiveObservationIntegrity===true,reason='Passive protocol, capture, identity or terminal accounting is not trustworthy; block further equivalent-engine acquisition';
-   row.passiveObservationContinuation={schema:'r0017-passive-observation-continuation/v1',decision:intact?'NO_OBSERVATION_INTEGRITY_BLOCK':'BLOCK_EQUIVALENT_ENGINE',case:row.name,engine:row.engine,receipt:row.name+'/result.json',finalBoundaryTraceSequence:row.network.finalBoundary?.traceSequence??null,failedIntegrityChecks:['passiveMethodIdentified','passiveSubscriptionObserved','passiveFinalBoundaryRecorded','passiveRequestsAccounted','passiveTopDocumentsObserved','passiveObservationIntegrity'].filter(key=>passiveChecks[key]!==true),reason:intact?'Observed HTTP/fetch/product verdicts retain their failures; existing cleanup, finalization and launch guards still apply':reason};
-   if(!intact&&!api.result.engineSetupBlocks[row.engine])api.result.engineSetupBlocks[row.engine]={kind:'engine-observation-integrity',case:row.name,receipt:row.name+'/result.json',reason};
+   const intact=passiveChecks.passiveObservationIntegrity===true,forbidden=row.network.method==='passive-bidi-cdp/v2'&&passiveChecks.noUnexpectedNetwork!==true,reason=forbidden&&intact?'Observed forbidden traffic blocks the next selected consumer':'Passive protocol, capture, source, identity or accounting is not trustworthy; block further equivalent-engine acquisition';
+   row.passiveObservationContinuation={schema:'r0017-passive-observation-continuation/v1',decision:!intact?'BLOCK_EQUIVALENT_ENGINE':forbidden?'BLOCK_UNEXPECTED_NETWORK':'NO_OBSERVATION_INTEGRITY_BLOCK',case:row.name,engine:row.engine,receipt:row.name+'/result.json',finalBoundaryTraceSequence:row.network.finalBoundary?.traceSequence??null,failedIntegrityChecks:['passiveMethodIdentified','passiveSubscriptionObserved','passiveFinalBoundaryRecorded','passiveRequestsAccounted','passiveTopDocumentsObserved',...(row.network.method==='passive-bidi-cdp/v2'?['passiveSourceClaimsBound']:[]),'passiveObservationIntegrity'].filter(key=>passiveChecks[key]!==true),reason:intact&&!forbidden?'Observed HTTP/fetch/product verdicts retain their failures; existing cleanup, finalization and launch guards still apply':reason};
+   if((!intact||forbidden)&&!api.result.engineSetupBlocks[row.engine])api.result.engineSetupBlocks[row.engine]={kind:forbidden&&intact?'engine-unexpected-network':'engine-observation-integrity',case:row.name,receipt:row.name+'/result.json',reason};
   }
   else{
   row.checks.networkInterceptionsClean=Array.isArray(row.network?.interceptErrors)&&row.network.interceptErrors.length===0;
@@ -574,6 +575,7 @@ async function publicNativeNoPreferenceBaseline(api,session,row,dir,viewport,dpr
  const x=baseline.data,c=baseline.checks;
  c.actualWithinOriginalBound=observed.matched;c.currentNativeOwner=exactOwner(x,baseline.expectedSourceSha256)&&x.fixture.run===run&&x.fixture.attempt===1&&x.fixture.mode==='healthy'&&x.hash===hash&&x.url===url&&x.fixture.scriptProfile==='split-moon';
  c.nativeFunctionUntouched=x?.originalMatchMediaRestored===true;c.nativeNoPreference=x?.nativeReduced===false;c.noFullOverride=x?.motionFull===false&&!new URLSearchParams(hash).has('motion');
+ if(row.requestAccountingRequest){c.actualCurrentJSONConsumed=Array.isArray(x?.fixture?.ledger)&&x.fixture.ledger.some(r=>{try{const u=new URL(r.url);return r.attempt===x.fixture.attempt&&u.origin==='https://api.aladhan.com'&&u.pathname==='/v1/timings/07-09-2026'&&r.jsonReads>0&&r.result==='json-consumed';}catch{return false;}});}
  c.actualNoonConsumer=pulseConsumer(x)&&x.pulse!==1&&x.qa.cache.prayerDate==='07-09-2026'&&x.qa.render.currentKey==='Dhuhr'&&x.qa.render.nextKey==='Asr'&&x.qa.render.leftMin===180&&x.model.nextTime==='15:30';
  if(baseline.snapshot){const b={...row,checks:{}};api.checkCommon(b,baseline.snapshot,viewport,dpr,seed);baseline.commonChecks=b.checks;c.nativePlatformAndStorage=allTrue(b.checks);}
  else c.nativePlatformAndStorage=false;
@@ -584,7 +586,7 @@ async function publicNativeNoPreferenceBaseline(api,session,row,dir,viewport,dpr
  return allTrue(c);
 }
 async function collectPublic(api,engine,preference,declared){
- const passive=api.networkObservation==='passive-bidi/v1',schema=passive?'r0017-public-passive-proof/v1':'r0017-public-native-proof/v3';
+ const passive=['passive-bidi/v1','passive-bidi-cdp/v2'].includes(api.networkObservation),accounted=api.networkObservation==='passive-bidi-cdp/v2',schema=accounted?'r0017-public-passive-proof/v2':passive?'r0017-public-passive-proof/v1':'r0017-public-native-proof/v3';
  if(api.networkObservation!==undefined&&!passive)throw Error('Unknown public network observation method');
  if(passive&&(engine!=='chromium'||!['no-preference','reduce'].includes(preference)))throw Error('Uncommissioned passive public consumer');
  const name=engine+'-public-healthy-'+preference,planned={name,engine,group:'public',mode:'healthy',preference,storage:'absent',schema};
@@ -597,7 +599,7 @@ async function collectPublic(api,engine,preference,declared){
  const viewport={width:1100,height:900},dpr=1,seed=Object.fromEntries(Object.keys(api.seeds('absent')).map(k=>[k,null]));let session;const started=Date.now();row.stage='setup';row.executionStarted=false;
  try{
   session=await api.startSession(engine,preference,viewport,dpr,row,dir,api.PUBLIC);
-  if(passive&&row.network?.method!=='passive-bidi/v1')throw observationError('Passive public caller received a different network observation method');
+  if(passive&&row.network?.method!==api.networkObservation)throw observationError('Passive public caller received a different network observation method');
   if(typeof session.navigate!=='function'||typeof session.eval!=='function')throw observationError('Corrected page-realm/navigation interface is missing');
   const preload=nativePreload(api,seed,api.PUBLIC);fs.writeFileSync(path.join(dir,'preload.js'),preload+'\n');row.preloadSha256=api.sha(preload);await session.bidi.call('script.addPreloadScript',{functionDeclaration:preload});
   requireObservationReserve(api);row.executionStarted=true;
@@ -629,34 +631,54 @@ async function collectPublic(api,engine,preference,declared){
  return row.status==='PUBLIC_HEALTHY_PASSED_NOT_CLOSURE';
 }
 
+// V2 closes the finite executable set before the first native acquisition.
+// Existing preflight rows and their separate-readback claim are retained.
+async function accountingPublicReadback(api){
+ const file='real-sky/native-data.js',pin=require('./r0017-request-accounting.cjs').PINNED_SOURCE[file],url=new URL(file,api.PUBLIC).href;
+ if(!Array.isArray(api.result.publicReadback))throw Error('Accounting public source preflight rows missing');
+ const r=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(api.operationTimeout(20000))}),bytes=Buffer.from(await r.arrayBuffer());
+ const extra={file,retrievedUtc:new Date().toISOString(),url:r.url,status:r.status,bytes:bytes.length,sha256:api.sha(bytes),expectedSha256:pin.sha256,etag:r.headers.get('etag'),lastModified:r.headers.get('last-modified')};extra.matches=r.ok&&extra.sha256===pin.sha256&&extra.bytes===pin.bytes;
+ const rows=[...api.result.publicReadback,extra];api.write(path.join(api.OUT,'public-source-readback.json'),rows);
+ if(!extra.matches)throw Error('Accounting public source mismatch: '+file);return rows;
+}
 async function observedPublicReadback(api){
- const paths=new Set(),unmapped=[];
- const schema=api.networkObservation==='passive-bidi/v1'?'r0017-public-passive-proof/v1':'r0017-public-native-proof/v3';
+ const paths=new Set(),unmapped=[],forbidden=[],missingLedgers=[];
+ const accounted=api.networkObservation==='passive-bidi-cdp/v2',schema=accounted?'r0017-public-passive-proof/v2':api.networkObservation==='passive-bidi/v1'?'r0017-public-passive-proof/v1':'r0017-public-native-proof/v3';
+ function include(row,raw,status,reference=null){
+  if(typeof raw!=='string'||!raw.startsWith(api.PUBLIC))return;
+  try{const u=new URL(raw),prefix=new URL(api.PUBLIC).pathname;let relative=decodeURIComponent(u.pathname.slice(prefix.length))||'index.html';if(relative.endsWith('/'))relative+='index.html';if(api.source.files[relative])paths.add(relative);else unmapped.push({case:row.name,url:raw,status,reference});}catch(error){unmapped.push({case:row.name,url:raw,status,reference,error:String(error)});}
+ }
  for(const row of api.result.cases.filter(x=>x.schema===schema)){
-  const file=path.join(api.OUT,row.name,'network.jsonl');if(!fs.existsSync(file))continue;
-  for(const line of fs.readFileSync(file,'utf8').split('\n').filter(Boolean)){const event=JSON.parse(line),raw=event.request?.url;if(typeof raw!=='string'||!raw.startsWith(api.PUBLIC))continue;const u=new URL(raw),prefix=new URL(api.PUBLIC).pathname;let relative=decodeURIComponent(u.pathname.slice(prefix.length))||'index.html';if(relative.endsWith('/'))relative+='index.html';if(api.source.files[relative])paths.add(relative);else unmapped.push({case:row.name,url:raw,status:event.response?.status??null});}
+  if(row.status==='NOT_ATTEMPTED')continue;
+  if(accounted){
+   if(!row.network?.accounting){missingLedgers.push(row.name);continue;}
+   for(const d of require('./r0017-request-accounting.cjs').publicDependencies(row.network.accounting)){if(!d.policy.allowed)forbidden.push({case:row.name,...d});include(row,d.url,null,d.observations);}
+  }else{
+   const file=path.join(api.OUT,row.name,'network.jsonl');if(!fs.existsSync(file))continue;
+   for(const line of fs.readFileSync(file,'utf8').split('\n').filter(Boolean)){const event=JSON.parse(line);include(row,event.request?.url,event.response?.status??null);}
+  }
  }
  const plannedPaths=[...paths].sort(),rows=[];
  for(const file of plannedPaths){
   const url=new URL(file,api.PUBLIC).href,fetchStartedUtc=new Date().toISOString(),expected={commit:api.EXPECTED,path:file,sha256:api.source.files[file].sha256};
   try{const r=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(api.operationTimeout(20000))}),b=Buffer.from(await r.arrayBuffer());rows.push({file,url,fetchStartedUtc,fetchFinishedUtc:new Date().toISOString(),status:r.status,bytes:b.length,sha256:api.sha(b),expected,matches:r.ok&&api.sha(b)===expected.sha256});}
   catch(e){rows.push({file,url,fetchStartedUtc,fetchFinishedUtc:new Date().toISOString(),expected,matches:false,error:String(e)});if(e.code==='R0017_BUDGET_EXHAUSTED'){api.result.stopLaunches={kind:'orchestration-budget',reason:String(e),receipt:'public-observed-dependencies.json'};break;}}
-  api.write(path.join(api.OUT,'public-observed-dependencies.json'),{scope:'Readback of same-origin paths actually requested by these public contexts; not every delivered route',plannedPaths,unmapped,rows});
+  api.write(path.join(api.OUT,'public-observed-dependencies.json'),{scope:'Readback of paths actually observed by these public contexts; not every delivered route',plannedPaths,unmapped,forbidden,missingLedgers,rows});
  }
- const unreadPaths=plannedPaths.filter(file=>!rows.some(r=>r.file===file)),receipt={scope:'Observed consumer dependencies only; broader final delivery map remains a review gate',plannedPaths,unreadPaths,unmapped,rows,passed:rows.length>0&&unreadPaths.length===0&&unmapped.length===0&&rows.every(r=>r.matches)};
+ const unreadPaths=plannedPaths.filter(file=>!rows.some(r=>r.file===file)),receipt={scope:accounted?'Complete emitted BiDi/CDP union including response/redirect destinations; separate readback, not browser response-body hashing':'Observed consumer dependencies only; broader final delivery map remains a review gate',plannedPaths,unreadPaths,unmapped,forbidden,missingLedgers,rows,passed:rows.length>0&&unreadPaths.length===0&&unmapped.length===0&&forbidden.length===0&&missingLedgers.length===0&&rows.every(r=>r.matches)};
  api.write(path.join(api.OUT,'public-observed-dependencies.json'),receipt);return receipt;
 }
 async function run(api,options={}){
- const passive=api.networkObservation==='passive-bidi/v1';
+ const passive=['passive-bidi/v1','passive-bidi-cdp/v2'].includes(api.networkObservation),accounted=api.networkObservation==='passive-bidi-cdp/v2',publicSchema=accounted?'r0017-public-passive-proof/v2':'r0017-public-passive-proof/v1';
  if(api.networkObservation!==undefined&&!passive)throw Error('Unknown phase-2 network observation method');
  if(passive)require('./r0017-passive-network.cjs').assertSelection({...options,'network-observation':'passive'});
  const groups=(options.groups||'current,public,calendar-diagnostics').split(',').filter(Boolean),allowed=['current','public','calendar-diagnostics','waning-diagnostic','optional-recorder','optional-config-storage'];
  if(!groups.length||new Set(groups).size!==groups.length||groups.some(x=>!allowed.includes(x)))throw Error('Use a unique explicit selection from '+allowed.join(','));
- const population=selectPopulation(groups,options.cases),planned=passive?Object.freeze(population.planned.map(p=>Object.freeze({...p,schema:'r0017-public-passive-proof/v1'}))):population.planned,publicRows=planned.filter(p=>p.group==='public');
+ const population=selectPopulation(groups,options.cases),planned=passive?Object.freeze(population.planned.map(p=>Object.freeze({...p,schema:publicSchema}))):population.planned,publicRows=planned.filter(p=>p.group==='public');
  const baselineDocuments=publicRows.filter(p=>p.preference==='no-preference').length,calendarDocuments=planned.filter(p=>p.kind==='calendar-diagnostic').length;
- api.result.schema=passive?'r0017-windows-passive/v1':'r0017-windows-phase2/v2';api.result.qualification='PARTIAL';api.result.status='STARTED';api.result.scope='Explicit finite second-phase population; only plannedCases are commissioned in this execution. Narrow controls, public consumers and original calendar diagnostics retain their own evidence limits; no unselected-case credit';api.result.groups=groups;api.result.selection={requestedCaseNames:population.requestedCaseNames,notSelected:population.notSelected};api.result.history=HISTORY;api.result.plannedCases=planned;api.result.plannedCount=planned.length;
+ api.result.schema=accounted?'r0017-windows-passive/v2':passive?'r0017-windows-passive/v1':'r0017-windows-phase2/v2';api.result.qualification='PARTIAL';api.result.status='STARTED';api.result.scope='Explicit finite second-phase population; only plannedCases are commissioned in this execution. Narrow controls, public consumers and original calendar diagnostics retain their own evidence limits; no unselected-case credit';api.result.groups=groups;api.result.selection={requestedCaseNames:population.requestedCaseNames,notSelected:population.notSelected};api.result.history=HISTORY;api.result.plannedCases=planned;api.result.plannedCount=planned.length;
  api.result.documentPlan={nativeSessions:planned.length,topLevelNavigations:planned.length+baselineDocuments,additionalPublicBaselineDocuments:baselineDocuments,calendarPrerequisiteDocuments:calendarDocuments,calendarTargetDocuments:calendarDocuments,ordering:'Selected calendar diagnostics by declared engine first, then selected current/optional groups by engine, then selected public contexts; no retries',scope:'Counts describe only selected planned stages, not actual execution; public full-smoke fixture attempts are recorded from the original instrument'};
- if(passive){api.result.networkObservation={method:'passive-bidi/v1',interception:'NOT_REQUESTED_NO_INTERCEPTION_CREDIT',scope:'Separate C14 instrument; no C12 gate change, upstream repair or historical failure disposition'};api.result.documentPlan.initializationDocuments=planned.length;api.result.documentPlan.initializationScope='Driver-created blank contexts; excluded from the three meaningful public navigations';}
+ if(passive){api.result.networkObservation={method:api.networkObservation,interception:'NOT_REQUESTED_NO_INTERCEPTION_CREDIT',scope:accounted?'C18 observed-record accounting; unknown outcomes and original errors/consumers remain separate; no historical rewrite':'Separate C14 instrument; no C12 gate change, upstream repair or historical failure disposition'};api.result.documentPlan.initializationDocuments=planned.length;api.result.documentPlan.initializationScope='Driver-created blank contexts; excluded from the three meaningful public navigations';}
  api.result.pending=['Retain first native run 42388898271 and corrected base run 42390915224 as separate actual outcomes; no assumed PASS','Assess the two original Firefox calendar diagnostics without assigning a cause to the older Linux result','Independent admission of historical pure subproof transfer from exact raw receipts and dependency lineage','Reconcile all first-phase outcomes and every retained failure; no rerun-until-green credit','Complete final served-source/documentation/currentness map and independent pixel/contract review','Original eight exceptions/four TODOs and all limitations individually retained','Root-owned evidence publication and conditional closure; this collector has no such authority'];
  api.write(path.join(api.OUT,'summary.json'),api.result);let server;let ok=true;
  try{
@@ -674,7 +696,7 @@ async function run(api,options={}){
   }
   if(publicRows.length){
    let publicBound=!api.result.stopLaunches;
-   if(publicBound)try{api.result.publicReadback=await api.publicReadback();}catch(e){publicBound=false;ok=false;api.result.publicReadbackError=String(e.stack||e);if(e.code==='R0017_BUDGET_EXHAUSTED')api.result.stopLaunches={kind:'orchestration-budget',reason:String(e),receipt:'summary.json#publicReadbackError'};}
+   if(publicBound)try{api.result.publicReadback=await api.publicReadback();if(accounted)api.result.publicReadback=await accountingPublicReadback(api);}catch(e){publicBound=false;ok=false;api.result.publicReadbackError=String(e.stack||e);if(e.code==='R0017_BUDGET_EXHAUSTED')api.result.stopLaunches={kind:'orchestration-budget',reason:String(e),receipt:'summary.json#publicReadbackError'};}
    if(publicBound){for(const p of publicRows)if(!await collectPublic(api,p.engine,p.preference,catalog.declared))ok=false;
     if(!api.result.stopLaunches){api.result.publicObservedReadback=await observedPublicReadback(api);if(!api.result.publicObservedReadback.passed)ok=false;}else{ok=false;api.result.publicObservedReadback={status:'NOT_ATTEMPTED',reference:api.result.stopLaunches};}
    }else{ok=false;api.result.publicContextsNotRun={reason:api.result.stopLaunches?.reason||'Public source identity not established',reference:api.result.stopLaunches||api.result.publicReadbackError,planned:planned.filter(p=>p.group==='public').map(p=>p.name)};for(const p of planned.filter(p=>p.group==='public'))api.notAttempted(p,api.result.publicContextsNotRun.reason,api.result.publicContextsNotRun.reference);}

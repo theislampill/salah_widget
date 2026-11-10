@@ -72,7 +72,7 @@ The main R0017 evaluator contract remains [the source contract](../../docs/state
 
 ## C14 separate passive public observation
 
-`r0017-windows-passive.cjs` is an explicit entry with `--network-observation passive --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce`. The existing phase-two workflow now selects this route once on its admitted push. Its population is exactly two fresh Chromium public sessions: one no-preference session with the existing direct-wrapper native baseline followed by the original full smoke, then one reduced-motion session with that full smoke. These are three meaningful top-level documents. Two driver-created blank initialization contexts are labelled separately. There is no warmup, application retry, full-matrix expansion, or public storage seed write.
+`r0017-windows-passive.cjs` is an explicit entry with `--network-observation passive --groups public --cases chromium-public-healthy-no-preference,chromium-public-healthy-reduce`. The C14 phase-two workflow selected this route once on its admitted push. Its population is exactly two fresh Chromium public sessions: one no-preference session with the existing direct-wrapper native baseline followed by the original full smoke, then one reduced-motion session with that full smoke. These are three meaningful top-level documents. Two driver-created blank initialization contexts are labelled separately. There is no warmup, application retry, full-matrix expansion, or public storage seed write.
 
 C14 uses `passive-bidi/v1`, `r0017-passive-network/v1`, `r0017-public-passive-proof/v1` and aggregate `r0017-windows-passive/v1`. These separate schemas do not alter the original enforced route's `networkInterceptionsClean` gate or its recorded active-network errors. Existing C12, C13 and earlier results remain their original failures, partial observations and unresolved causes. A new passive observation neither proves an upstream protocol repair nor supplies a disposition for an older fault. All qualification remains `PARTIAL`; browser-free controls supply zero native evidence.
 
@@ -161,4 +161,83 @@ A setter-invocation-attempt marker is emitted **before** the native call. It pro
 
 Stack collection, full-string JSON encoding and console emission add work before the setter and can change timing. This instrumented execution is diagnostic and receives **no healthy acceptance credit**; nonreproduction is not a repair. There are no new lifecycle listeners, Document.open, decode or cancellation-method hooks, new connections, protocol commands, CSP changes, network mutations, sleeps or extended bounds. Existing Page/Runtime events supply only their recorded lifecycle information. Document.open removes Document/Window listeners, which is an additional reason not to add preload dismissal listeners.
 
-The finite workflow keeps the original ordered two-case maximum, three meaningful top-level documents plus two initialization documents, pinned application/base source, 30/141 denominator, original readiness/expected values/deadlines and integrity stop rule. All raw failures remain failures. Twelve new source controls exercise the configured preload, browser primitive boundaries, actual public consumer, raw debug callback and finalizer. The corrected RED inputs gave 60/70 passing on unchanged C16 production code; ten controls exposed missing diagnostic behavior and two existing default/failure-preservation controls already passed. The first RED used incorrect simulated public-seed/navigation inputs; both records are preserved. Source controls do not establish native prototype survival, mapper delivery or browser qualification.
+The C17 workflow kept the original ordered two-case maximum, three meaningful top-level documents plus two initialization documents, pinned application/base source, 30/141 denominator, original readiness/expected values/deadlines and integrity stop rule. All raw failures remain failures. Twelve new source controls exercise the configured preload, browser primitive boundaries, actual public consumer, raw debug callback and finalizer. The corrected RED inputs gave 60/70 passing on unchanged C16 production code; ten controls exposed missing diagnostic behavior and two existing default/failure-preservation controls already passed. The first RED used incorrect simulated public-seed/navigation inputs; both records are preserved. Source controls do not establish native prototype survival, mapper delivery or browser qualification.
+
+
+## C18 prospective observed-record accounting
+
+The current workflow explicitly selects `--request-accounting observed-records`
+with `--security-provenance csp`, without C17's image setter probe. The method is
+`passive-bidi-cdp/v2`; the public case and summary use their v2 schemas. Omitting
+the new option retains the strict `passive-bidi/v1` method and its original
+terminal-per-start semantics. The enforced entry also retains its behavior.
+This source is a qualification candidate, not a native PASS or closure claim.
+
+`r0017-request-accounting.cjs` conserves the emitted BiDi and forwarded CDP union
+on the one owned connection. Exact connection/session/request identities govern
+association. A bootstrap terminal on a child session requires one unique
+attachment whose target ID is the parent's request ID. CDP's separately reported
+URL fragment is joined explicitly when comparing its document request with BiDi.
+URL similarity, timing, detach and process exit never manufacture a terminal.
+Unsupported redirects, conflicting/duplicate identities, orphan events and
+invalid receipts retain their records, destinations and named integrity gaps.
+
+The final ledger distinguishes observed completion, observed error and unknown
+outcome. `allNetworkOutcomesObserved` is informational and can be false while
+all captured records have justified dispositions. It is not included in the
+all-true mandatory checks. All actual HTTP, fetch, console and enforced security
+errors still fail cleanliness, including CDP-only failures. Unexpected providers
+remain forbidden and stop continuation. Original consumer failures stay failed.
+
+The source claim is deliberately finite. Before acquisition, nine actual local
+files are hashed against immutable pins: the index, config, smoke, fixture,
+script adapter, native-sky bundle, both generated workers and native-data.
+The required public executable responses, including native-data, also receive
+separate readback before acquisition; this is not browser response-body hashing.
+The exact HTTPS split-moon profile has two Window blob producers (Moon refinement
+and native sky); only Moon creates nested shards. Moon's parent fetches the
+reviewed DEM/colour assets; native sky consumes the supplied pack. The pinned
+native-data body is one data assignment. An observed executable outside this
+closed set defeats that source claim even if its network outcome completed.
+
+An unknown bootstrap needs actual fixture run/attempt/hash/document/source and
+profile evidence, the exact creating frame/document request/loader/opened event,
+matching default Runtime/window realm, and the relevant session/attachment
+chain. Unknown Moon assets additionally need their exact worker bootstrap and
+pinned read/from/boot/onmessage initiator stack. The exact direct producer can
+remain unknown inside the proved two-producer set. Arbitrary same-origin blobs
+or assets receive no optional-resource exemption. Reported realm disposal,
+creator lifetime, observed outcomes and identity-safe owned process exit remain
+separate. No individual resource is declared JSON-consumed from a fixture ledger
+that has no protocol request ID.
+
+The actual finalizer computes this ledger after owned close/join and
+`case-final-cut`, before freezing the identical case and summary. The actual
+next-consumer guard rejects corrupt, unbound or materially incomplete observation
+and unverified cleanup. Source-explained unknowns with intact capture may allow
+the next selected preference once. The original 30 names/141 assertions,
+request-to-JSON-to-prayer/render evidence, storage, preferences, 4/8/3-second
+readiness limits, 120-second public window and five-second finalizer remain.
+The no-preference baseline independently checks its own current JSON read;
+later smoke success cannot replace it. The observed dependency readback consumes
+the full union, including CDP-only and response/redirect destinations, with the
+existing 20-second cap and explicit unmapped/unread/forbidden evidence.
+
+C17 run 42760896413 remains failed and earns zero healthy credit: 30/30 required
+callbacks and 141 passing assertions coexisted with one CSP fetch failure and 41
+missing BiDi terminals; reduce was not attempted. Its retained exact setter and
+protocol stack bind the failure to an outgoing fixture's pagehide retirement:
+refined disposal invokes the preview handoff, which assigns a new mask image.
+Refined and preview publishers are distinct. R000B introduced the handoff and
+R0021 owns the relevant publication/disposal dependency; this observer correction
+does not alter that application behavior or import its product authority.
+No original named R0017 assertion or unexpected provider failure is demonstrated
+by that specific image; its raw error and failed diagnostic verdict remain.
+
+The C18 offline C16 replay accounts for 389 starts, 325 completions, one error and 63
+unknown outcomes, including 49 exact cross-session completions. It leaves C16's
+original missing waning callback, actual errors and failed status untouched.
+Later available readback in that analysis is not retroactive preflight evidence.
+Source controls and replay provide no native qualification credit. Publication,
+finite native execution, whole-contract review and exact final merge remain
+separate gates; F03 historical noncompliance and F04 formal limits persist.
