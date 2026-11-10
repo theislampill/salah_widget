@@ -3,6 +3,23 @@
 Context for a fresh agent picking up this repo. The durable design/process docs already exist — read those first
 and don't expect this file to repeat them.
 
+## R000B corrective engineering
+
+Read [the R000B state contract](docs/state-contracts/R000B.md) before continuing
+the missing-timetable weather withdrawal correction. Its engineering baseline
+is `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`. Source-state tests, native pixels,
+generated identity, exact independent review, merge approval and delivery are
+separate gates; the state contract records the current qualification boundary.
+
+The owner permits independent engineering on isolated R0017, R0007 and R000B
+branches. Merge order remains R0017 corrective work, then R0007, then R000B.
+Reconcile accepted main before final acceptance and rerun affected qualification.
+Do not mutate another thread's branch or treat historical approval as authority
+for this candidate. Keep the original failing evidence and consumed-publication
+diagnostics; weather expiry must never retain cloud pixels because prayers are
+unavailable. The full original B ledger and all fifteen ES0B criteria remain in
+the acceptance denominator.
+
 ## R0021 startup integration on delivered R0022
 
 The current branch starts from delivered main

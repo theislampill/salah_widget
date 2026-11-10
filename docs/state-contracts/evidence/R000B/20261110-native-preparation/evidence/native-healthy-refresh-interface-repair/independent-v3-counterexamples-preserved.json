@@ -1,0 +1,183 @@
+{
+  "allExpectedFrozenBehaviorsReproduced": true,
+  "driverSha256": "9c4931b82f39f559f0e876943c1d0bb1bd0e2c43a25e9501d8fe661aba76420e",
+  "fixtureSha256": "5bdce6f58fc01b2a8d88d55348163bea71b13fa3a83b49a5799e2511d8b62b5c",
+  "limit": "Pure synthetic observations through actual frozen predicates; neither product execution nor native evidence. Passing tests do not rebut HR1/HR2.",
+  "probes": [
+    {
+      "detail": {
+        "scope": "Invented existing factory, compact targets and epoch deadlines; positive control only, not a production-shaped success."
+      },
+      "expectedFrozenBehavior": true,
+      "id": "P0-factory-positive",
+      "observed": true,
+      "reproduced": true
+    },
+    {
+      "detail": {
+        "defect": "HR1",
+        "expectedForHealthyActualInterfaces": "The same owned generation/lat/lon identity should be accepted despite richer provenance metadata.",
+        "rawTarget": {
+          "accuracyM": null,
+          "acquiredAt": null,
+          "area": null,
+          "bounds": null,
+          "generation": 7,
+          "intent": "fixed-site",
+          "lat": 24.7136,
+          "lon": 46.6753,
+          "provider": null,
+          "source": "hash"
+        },
+        "reason": "Both full captures must bind current record and native consumed receipt",
+        "receiptTarget": {
+          "generation": 7,
+          "lat": 24.7136,
+          "lon": 46.6753
+        },
+        "snapshotTarget": {
+          "accuracyM": null,
+          "acquiredAt": null,
+          "area": null,
+          "bounds": null,
+          "generation": 7,
+          "intent": "fixed-site",
+          "lat": 24.7136,
+          "lon": 46.6753,
+          "provider": null,
+          "source": "hash"
+        }
+      },
+      "expectedFrozenBehavior": {
+        "pairOk": false,
+        "recordSelected": false,
+        "verdictOk": false
+      },
+      "id": "P1-HR1-production-target-shapes",
+      "observed": {
+        "pairOk": false,
+        "recordSelected": false,
+        "verdictOk": false
+      },
+      "reproduced": true
+    },
+    {
+      "detail": {
+        "defect": "HR1",
+        "expectedForHealthyActualInterfaces": true,
+        "scope": "Actual full-sample predicate tested independently of record selection; no predicate repair or mock."
+      },
+      "expectedFrozenBehavior": false,
+      "id": "P2-HR1-full-sample-repeat",
+      "observed": false,
+      "reproduced": true
+    },
+    {
+      "detail": {
+        "bodyAndReceiptBeforeDeadline": true,
+        "bodySettledRt": 180130.25,
+        "defect": "HR2",
+        "derivedReceiptRtForControlOnly": 180135.25,
+        "expectedForHealthyActualInterfaces": "Consumed owned response and retrieval both precede native monotonic deadline; matching should succeed.",
+        "fixtureStarted": 125.25,
+        "jsonElapsedMs": 180005,
+        "nativeDeadlineAt": 190125.25,
+        "reason": "No distinct owned response consumed by an ordinary request after recovery",
+        "receiptEpoch": 1788901370010,
+        "requestElapsedMs": 180000,
+        "scope": "Compact targets retained solely to isolate HR2. The finite native origin is invented data of the actual interface shape; no product executed."
+      },
+      "expectedFrozenBehavior": {
+        "pairOk": false,
+        "recordSelected": true,
+        "requestMatched": false,
+        "verdictOk": false
+      },
+      "id": "P3-HR2-monotonic-native-deadline",
+      "observed": {
+        "pairOk": false,
+        "recordSelected": true,
+        "requestMatched": false,
+        "verdictOk": false
+      },
+      "reproduced": true
+    },
+    {
+      "detail": {
+        "expectedForHealthyActualInterfaces": true,
+        "reason": "Both full captures must bind current record and native consumed receipt",
+        "scope": "HR1 prevents selection before HR2 can match requests. P1/P3 isolate each independently."
+      },
+      "expectedFrozenBehavior": false,
+      "id": "P4-both-production-interfaces",
+      "observed": false,
+      "reproduced": true
+    },
+    {
+      "detail": {
+        "scope": "Held-out negative; duplicate equally matching owner/body rows must not prove one ordinary response."
+      },
+      "expectedFrozenBehavior": false,
+      "id": "P5-duplicate-response-ambiguity",
+      "observed": false,
+      "reproduced": true
+    },
+    {
+      "detail": {
+        "scope": "Accepted stricter interval: a third receipt within retained observations cannot disappear behind healthy A/B endpoints."
+      },
+      "expectedFrozenBehavior": {
+        "pairOk": true,
+        "verdictOk": false
+      },
+      "id": "P6-third-consumed-record-conservatively-rejected",
+      "observed": {
+        "pairOk": true,
+        "verdictOk": false
+      },
+      "reproduced": true
+    },
+    {
+      "detail": {
+        "negativeControls": [
+          {
+            "field": "generation",
+            "location": "target",
+            "verdictOk": false
+          },
+          {
+            "field": "lat",
+            "location": "target",
+            "verdictOk": false
+          },
+          {
+            "field": "lon",
+            "location": "target",
+            "verdictOk": false
+          },
+          {
+            "field": "generation",
+            "location": "raw",
+            "verdictOk": false
+          },
+          {
+            "field": "lat",
+            "location": "raw",
+            "verdictOk": false
+          },
+          {
+            "field": "lon",
+            "location": "raw",
+            "verdictOk": false
+          }
+        ],
+        "scope": "The six exact-coordinate/generation mutations below all reject the isolated current factory; replacement shape adapter must preserve these negatives."
+      },
+      "expectedFrozenBehavior": null,
+      "id": "P7-projected-target-identity-mismatch",
+      "observed": null,
+      "reproduced": true
+    }
+  ],
+  "sourceInterfaceSha256": "b17801b33cc99c95710b916016dfd542eddce304145b493c0adecc4c3412e37f"
+}

@@ -18,14 +18,23 @@ function section(start,end){
  assert.ok(a>=0&&b>a,'actual source section '+start);return html.slice(a,b);
 }
 const lifecycle=section('let _skySceneKey=null','// A current V5 receiver presentation');
-const celestial=section('function paintCelestialWithoutTimetable(){','function atmosphere(');
+const celestial=section('function paintCelestialWithoutTimetable(decision=weatherDecision()){','function atmosphere(');
+// The scene invalidator now consumes the real cloud-publication owner. Bind its
+// target and receipt dependencies from source instead of fabricating ready state.
+const cloudPublication=[
+ section('function wxNumber(','\nfunction wxValue('),
+ section('function captureWeatherTarget(','\nfunction loadWx('),
+ section('let _cloudFieldSeed=0;','\nconst _CLOUD_NOISE_PERIOD=')
+].join('\n');
 const boot=section('async function boot(){','// SINGLE rAF render clock');
 function setup(){
  const r=rig({initial:true,deferWorker:true}),c=r.context;r.head();
  const card={classList:{add(){},remove(){}},style:{setProperty(){}}};
  Object.assign(c,{
-  _runtimeGeneration:0,_cfgMode:'bare',QA:false,lat:28.5,lon:-81.4,_needsDetect:false,
-  $:()=>card,cloudState:{},_colDens:null,_cloudCtx:null,_cloudCv:null,
+  _runtimeGeneration:0,_cfgMode:'bare',QA:false,lat:28.5,lon:-81.4,CONFIG:null,_needsDetect:false,
+  // This handoff fixture uses ordinary weather mode; the actual receipt owner reads it.
+  SIM:{wx:null},ADVANCING:false,_clockPreview:false,
+  $:()=>card,
   updateSkySurface(){},skySceneIdentity:()=>r.state.sceneIdentity,
   nowParts:()=>({h:2,mi:0,s:0}),moonGeometryObservation:()=>({fresh:true}),
   renderMoon(){},projectStars(){},simDate:()=>new Date(),
@@ -39,7 +48,7 @@ function setup(){
  });
  r.w.SalahNativeSkyHost={cloudLighting:()=>({sun:{altDeg:-20}})};
  r.w.SalahStartSkyPreview=()=>{};
- vm.runInContext(lifecycle+'\n'+celestial+'\n'+boot,c);
+ vm.runInContext(cloudPublication+'\n'+lifecycle+'\n'+celestial+'\n'+boot,c);
  c.render=()=>vm.runInContext('paintCelestialWithoutTimetable()',c);
  return r;
 }

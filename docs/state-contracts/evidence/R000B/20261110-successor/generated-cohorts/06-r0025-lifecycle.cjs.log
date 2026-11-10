@@ -1,0 +1,17 @@
+PASS live reduced/full toggles hold all axes and rebase without a substituted epoch
+PASS motion=full respects the explicit override under a reduced OS signal
+PASS hidden/resumed repeats freeze and rebase while retaining exactly one loop
+PASS a missing-frame gap over two seconds is bounded suspension, followed by resumed travel
+PASS ordinary wall corrections preserve visual axes at the same monotonic instant
+PASS explicit forward/backward seeks reconstruct deterministic scene axes
+PASS frozen explicit preview stays frozen when only monotonic time advances
+PASS 2026-09-09T00:00:00Z retains lifecycle identity through ordinary preview travel
+PASS 2026-10-01T00:00:00Z retains lifecycle identity through ordinary preview travel
+PASS 2027-01-01T00:00:00Z retains lifecycle identity through ordinary preview travel
+PASS all decks advance once with coverage-independent state and equal-time idempotence
+PASS new speed/heading/gust affect subsequent travel without changing accumulated axes
+PASS periodic edge copies keep actual painter commands continuous at phase wrap
+PASS accelerated motion remains finite and bounded with a fixed amount of retained state
+PASS clear scene paints no puffs or density while its hidden decks keep evolving
+PASS rain columns follow actual visible copies without granting particle permission
+{"sourcePath":"/workspace/scratch/d9a9ea2be931/r000b-build-successor/index.html","sourceSha256":"e8da0b7646ad4c3b04e1571739dcc295c605cca8e46af59c11d5f1fefd120657","fixtureSha256":"54ec8d26ac8904a451cc217ec9f27794d9710ade91b18cd13de1c51c56a48bee","pass":16,"fail":0,"limits":"source clocks/loop/axes/painter commands; no native pixels/elapsed-motion/cost"}

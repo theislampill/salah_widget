@@ -1,0 +1,230 @@
+--- frozen-v3/tools/qa/run_r000b_withdrawal.py
++++ hr-interface-repair/tools/qa/run_r000b_withdrawal.py
+@@ -14,6 +14,7 @@
+ 
+ # R000B_HN2_HN3_HN4_NATIVE_ORACLES_V2
+ # R000B_F01_HEALTHY_REFRESH_EXTENSION_V1
++# R000B_HR1_HR2_INTERFACE_REPAIR_V1
+ import argparse
+ import base64
+ import datetime
+@@ -48,6 +49,7 @@
+   if(f?.state==='error')throw Error(f.error);
+   if(f?.state!=='ready')throw Error('Expected the existing ready fixture');
+   return {elapsedMs:performance.now()-f.started,maxElapsedMs:f.maxElapsedMs,
++          clockOrigin:{started:f.started,startUtc:f.startUtc},
+           latest:f.latest,ledger:f.ledger.filter(request=>request.kind==='weather')};
+ }"""
+ EXPECTED_COVERAGE = [0.92, 0.90, 0.60]
+@@ -492,16 +494,47 @@
+     return result
+ 
+ 
++def _healthy_refresh_target_projection(target):
++    """Match the product receipt's generation/lat/lon identity projection."""
++    if not isinstance(target, dict) or not all(_finite_number(target.get(key)) for key in ('generation', 'lat', 'lon')):
++        return None
++    return {key: target[key] for key in ('generation', 'lat', 'lon')}
++
++
++def _healthy_refresh_clock(captured, origin):
++    """Bind the observed fixture origins to an existing native motion sample."""
++    if not isinstance(origin, dict):
++        return None
++    started, start_utc = origin.get('started'), origin.get('startUtc')
++    motion = captured.get('actualCloud', {}).get('motion') or {}
++    values = [started, start_utc, captured.get('elapsedMs'), captured.get('wallUtcMs'),
++              motion.get('lastRt'), motion.get('elapsedRtMs')]
++    if not all(_finite_number(value) for value in values):
++        return None
++    # Only an equality-of-origin floating-point allowance; this never extends an
++    # attempt deadline. The epoch is checked against the already declared case.
++    residual = motion['lastRt'] - motion['elapsedRtMs'] - started
++    if not (started >= 0 and start_utc == INITIAL_SOURCE_UTC + 890000
++            and 0 <= motion['elapsedRtMs'] <= captured['elapsedMs']
++            and abs(residual) <= 1e-7
++            and captured['wallUtcMs'] == math.floor(captured['wallUtcMs'])
++            and captured['wallUtcMs'] >= start_utc + math.floor(captured['elapsedMs'])):
++        return None
++    return {'started': started, 'startUtc': start_utc, 'motionOriginResidualMs': residual}
++
++
+ def healthy_refresh_record(state):
+     """Identity of a full capture whose native publication consumes its record."""
+     cloud, raw = state.get('actualCloud') or {}, state.get('raw') or {}
+     receipt, candidate = cloud.get('publication') or {}, state.get('candidate') or {}
+     target = state.get('target')
++    projection = _healthy_refresh_target_projection(target)
+     source, retrieved = raw.get('currentValidAt'), raw.get('retrievedAt')
+     if not (state.get('modelIsNull') is False and state.get('selected') is True
+             and _finite_number(source) and _finite_number(retrieved)
+             and receipt.get('state') == 'eligible-published' and receipt.get('lane') == 'live'
+-            and receipt.get('target') == target == raw.get('target')
++            and projection is not None and receipt.get('target') == projection
++            and target == raw.get('target')
+             and receipt.get('conditionState') == 'model-estimated-rain'
+             and receipt.get('sourceValidAt') == source and receipt.get('retrievedAt') == retrieved
+             and candidate.get('eligible') is True and candidate.get('sourceValidAt') == source
+@@ -513,8 +546,19 @@
+             'lane': receipt['lane'], 'publication': receipt}
+ 
+ 
+-def _healthy_refresh_request(record, captured, ledger):
+-    """Find the actual owned/consumed synthetic response for a record receipt."""
++def _healthy_refresh_request(record, captured, ledger, clock=None):
++    """Bind a consumed response in its observed epoch and monotonic domains."""
++    origin = _healthy_refresh_clock(captured, clock)
++    if origin is None or not isinstance(record, dict) or _healthy_refresh_target_projection(record.get('target')) is None:
++        return None
++    started, start_utc = origin['started'], origin['startUtc']
++    retrieved = record.get('retrievedAt')
++    if not _finite_number(retrieved) or retrieved != math.floor(retrieved) or retrieved < start_utc:
++        return None
++    # Date.now() is startUtc+floor(performance.now()-started). Subtract the
++    # integer epochs first, preserving the observed fractional monotonic origin.
++    receipt_lower = started + (retrieved - start_utc)
++    receipt_upper = receipt_lower + 1
+     matches = []
+     for request in ledger:
+         if not isinstance(request, dict) or request.get('kind') != 'weather':
+@@ -530,23 +574,35 @@
+         except (ValueError, OverflowError):
+             continue
+         numbers = [request.get('elapsedMs'), request.get('wallUtcMs'), request.get('jsonElapsedMs'),
+-                   owner.get('deadlineAt'), request.get('weatherOrdinal'), captured.get('elapsedMs'), captured.get('wallUtcMs')]
++                   owner.get('deadlineAt'), request.get('weatherOrdinal')]
+         if not all(_finite_number(value) for value in numbers):
+             continue
+-        json_wall = INITIAL_SOURCE_UTC + 890000 + math.floor(request['jsonElapsedMs'])
++        request_native = started + request['elapsedMs']
++        json_native = started + request['jsonElapsedMs']
++        deadline = owner['deadlineAt']
++        json_wall_lower = start_utc + math.floor(request['jsonElapsedMs'])
+         if (request.get('status') == 200 and request.get('jsonReads') == 1 and request.get('jsonSettled') is True
+                 and request.get('result') == 'json-consumed' and body.get('timezone') == 'Asia/Riyadh'
+                 and current.get('interval') == 900 and source == record['sourceValidAt']
+                 and owner.get('operationId') is not None and owner.get('attemptId') is not None
+                 and owner.get('generation') == record['target']['generation']
+                 and 0 <= request['elapsedMs'] <= request['jsonElapsedMs'] <= captured['elapsedMs']
+-                and request['wallUtcMs'] <= record['retrievedAt'] < owner['deadlineAt']
+-                and json_wall <= record['retrievedAt'] <= captured['wallUtcMs']):
++                and start_utc + math.floor(request['elapsedMs']) <= request['wallUtcMs'] <= retrieved
++                and json_wall_lower <= retrieved <= captured['wallUtcMs']
++                # beginAttempt precedes this fixture request and the frozen
++                # weather owner gives it a 10000 ms budget. Epoch-shaped or
++                # unrelated deadlines cannot be silently accepted as monotonic.
++                and request_native < deadline <= request_native + 10000 + 1e-7
++                and json_native < deadline and receipt_upper < deadline):
+             matches.append({'weatherOrdinal': request['weatherOrdinal'], 'elapsedMs': request['elapsedMs'],
+                 'wallUtcMs': request['wallUtcMs'], 'jsonElapsedMs': request['jsonElapsedMs'],
+                 'status': request['status'], 'jsonReads': request['jsonReads'], 'jsonSettled': request['jsonSettled'],
+                 'result': request['result'], 'inputSourceTime': current['time'], 'inputSourceUtc': source,
+-                'nativeOwner': owner})
++                'nativeOwner': owner, 'clockOrigin': origin,
++                'timing': {'requestPerformanceMs': request_native, 'jsonPerformanceMs': json_native,
++                    'retrievalPerformanceInterval': [receipt_lower, receipt_upper], 'intervalUpperExclusive': True,
++                    'deadlinePerformanceMs': deadline, 'deadlineMarginFromReceiptUpperMs': deadline - receipt_upper,
++                    'conservatism': 'The entire one-millisecond integer receipt interval must finish strictly before the native deadline; a valid receipt in the final millisecond can therefore be refused.'}})
+     return matches[0] if len(matches) == 1 else None
+ 
+ 
+@@ -585,7 +641,9 @@
+                 and cloud.get('coverage') == coverage and isinstance(targets, list) and len(targets) == 3
+                 and all(_finite_number(a) and abs(a - b) < 1e-9 for a, b in zip(targets, EXPECTED_COVERAGE))
+                 and (raw.get('currentValidAt'), raw.get('retrievedAt')) == (candidate['sourceValidAt'], candidate['retrievedAt'])
+-                and raw.get('target') == receipts[0]['target']
++                and raw.get('target') == state.get('target')
++                and _healthy_refresh_target_projection(state.get('target')) == receipts[0]['target']
++                and state.get('runtimeGeneration') == receipts[0]['target']['generation']
+                 and isinstance(layers, list) and layers
+                 and any(layer.get('owner') == sky.get('owner') for layer in layers)):
+             return False
+@@ -603,11 +661,11 @@
+     return True
+ 
+ 
+-def healthy_refresh_pair(before, after, ledger):
++def healthy_refresh_pair(before, after, ledger, clock=None):
+     """Select a real post-recovery replacement, never timestamp-only renewal."""
+     left, right = healthy_refresh_record(before), healthy_refresh_record(after)
+     result = {'schema': 'r000b-healthy-refresh-pair/v1', 'ok': False,
+-              'beforeRecord': left, 'afterRecord': right, 'reason': None}
++              'beforeRecord': left, 'afterRecord': right, 'clockOrigin': clock, 'reason': None}
+     if left is None or right is None:
+         result['reason'] = 'Both full captures must bind current record and native consumed receipt'
+         return result
+@@ -618,8 +676,8 @@
+             and before['elapsedMs'] < after['elapsedMs']):
+         result['reason'] = 'No genuinely newer source and retrieval after the recovered capture'
+         return result
+-    before_request = _healthy_refresh_request(left, before, ledger)
+-    after_request = _healthy_refresh_request(right, after, ledger)
++    before_request = _healthy_refresh_request(left, before, ledger, clock)
++    after_request = _healthy_refresh_request(right, after, ledger, clock)
+     result.update(beforeRequest=before_request, afterRequest=after_request)
+     if not (before_request and after_request and after_request['elapsedMs'] > before['elapsedMs']
+             and after_request['weatherOrdinal'] > before_request['weatherOrdinal']
+@@ -640,9 +698,9 @@
+     return result
+ 
+ 
+-def healthy_refresh_evidence(before, after, passive, full_samples, ledger, mode):
++def healthy_refresh_evidence(before, after, passive, full_samples, ledger, mode, clock=None):
+     """Qualify all retained healthy-interval samples; clean endpoints cannot erase a gap."""
+-    pair = healthy_refresh_pair(before, after, ledger)
++    pair = healthy_refresh_pair(before, after, ledger, clock)
+     result = {'schema': 'r000b-healthy-refresh-continuity/v1', 'ok': False, 'pair': pair,
+               'checks': {'ordinaryConsumedReplacementAfterRecovery': pair['ok']}, 'sampleFailures': [],
+               'samplingLimit': 'Every retained passive sample checks model/ready/coverage/immutable active receipt/displayed mask presence; actual raster and mask alpha are checked on every retained full snapshot. The original continuous clip remains required. No forced capture-before-render ordering is claimed.'}
+@@ -1052,12 +1110,15 @@
+             if refresh_before is None:
+                 raise ValueError('Recovered capture lacks a bound current record/native receipt')
+             refresh_progress = page.evaluate(HEALTHY_REFRESH_PROGRESS)
++            refresh_clock_origin = refresh_progress.get('clockOrigin')
++            if _healthy_refresh_clock(recovered, refresh_clock_origin) is None:
++                raise ValueError('Observed fixture clock origin is missing or inconsistent with native motion')
+             if refresh_progress['maxElapsedMs'] != 240000:
+                 raise ValueError('Healthy refresh requires the unchanged240-second fixture budget')
+             refresh_after_stage = 'recovered-30s'
+-            refresh_pair = healthy_refresh_pair(recovered, final, refresh_progress['ledger'])
++            refresh_pair = healthy_refresh_pair(recovered, final, refresh_progress['ledger'], refresh_clock_origin)
+             refresh_acquisition = row['healthyRefreshAcquisition'] = {
+-                'beforeStage': 'recovered', 'afterStage': refresh_after_stage,
++                'beforeStage': 'recovered', 'afterStage': refresh_after_stage, 'clockOrigin': refresh_clock_origin,
+                 'reusedRecoveredWatchCaptures': refresh_pair['ok'], 'captureAttemptsAfterWatch': 0,
+                 'fixtureMaxElapsedMs': refresh_progress['maxElapsedMs'], 'captureDeadlineElapsedMs': 235000,
+                 'captureHeadroomMs': 5000, 'waitStartElapsedMs': refresh_progress['elapsedMs'],
+@@ -1068,6 +1129,8 @@
+                 print(json.dumps({'stage': 'await-ordinary-healthy-refresh', 'case': row['id'],
+                                   'captureDeadlineElapsedMs': 235000}), flush=True)
+             while not refresh_pair['ok']:
++                if refresh_progress.get('clockOrigin') != refresh_clock_origin:
++                    raise ValueError('Observed fixture clock origin changed during healthy refresh acquisition')
+                 remaining = refresh_acquisition['captureDeadlineElapsedMs'] - refresh_progress['elapsedMs']
+                 if remaining <= 0:
+                     raise TimeoutError('No owned healthy full publication after prayer recovery within the remaining240-second fixture budget: ' + str(refresh_pair['reason']))
+@@ -1084,7 +1147,9 @@
+                     refresh_after_stage = 'healthy-refresh-' + str(refresh_acquisition['captureAttemptsAfterWatch']).zfill(3)
+                     final = capture(refresh_after_stage)
+                     refresh_progress = page.evaluate(HEALTHY_REFRESH_PROGRESS)
+-                    refresh_pair = healthy_refresh_pair(recovered, final, refresh_progress['ledger'])
++                    if refresh_progress.get('clockOrigin') != refresh_clock_origin:
++                        raise ValueError('Observed fixture clock origin changed at the healthy refresh capture')
++                    refresh_pair = healthy_refresh_pair(recovered, final, refresh_progress['ledger'], refresh_clock_origin)
+                     refresh_acquisition.update(afterStage=refresh_after_stage, lastPairSelection=refresh_pair)
+                     row['checks']['healthyRefreshAcquired'] = refresh_pair['ok']
+                     if refresh_pair['ok']:
+@@ -1108,10 +1173,12 @@
+                 opportunity['state'] = {'savedAs': 'resume-opportunity-' + str(opportunity['frame']).zfill(3) + '.json'}
+         row['fixture'] = fixture
+         if args.expect == 'withdrawal':
++            if {'started': fixture.get('started'), 'startUtc': fixture.get('startUtc')} != refresh_clock_origin:
++                raise ValueError('Final fixture clock origin differs from the observed acquisition origin')
+             refresh_observations = [observation for observation in row['observations']
+                 if recovered['elapsedMs'] <= observation['state']['elapsedMs'] <= final['elapsedMs']]
+             refresh_evidence = healthy_refresh_evidence(recovered, final, fixture['passive'],
+-                [observation['state'] for observation in refresh_observations], fixture['ledger'], args.mode)
++                [observation['state'] for observation in refresh_observations], fixture['ledger'], args.mode, refresh_clock_origin)
+             refresh_trace_path = out / 'healthy-refresh-passive.json'
+             dump(refresh_trace_path, [sample for sample in fixture['passive']
+                 if recovered['elapsedMs'] <= sample['elapsedMs'] <= final['elapsedMs']])

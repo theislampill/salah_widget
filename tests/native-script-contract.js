@@ -10,11 +10,16 @@
   }
   const requireSetup=(condition,message)=>{if(!condition)throw new SetupError(message);};
   const MOON_FILE_BOOTSTRAP='if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;';
-  // Reviewed generated prerequisite bodies at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
+  // R000B first-paint rebind: reviewed composition and preview-host changes on
+  // engineering baseline eebba178172f96b3ffe5ab3845bc0fffd57c6e1b, with uncommitted
+  // frozen owners (not a source-revision claim for the separate plan HEAD):
+  // real-sky/native-composition.mjs SHA256 d3e5d216cad8942e923c9418ed18458f8d8a6e719238c7001288c730323e4fb5
+  // real-sky/native-preview-host.mjs SHA256 2d77893c59b5fd25fcbe5a647133e6a9e7aacd986f143666975e811d3412b3e8
+  // Moon bodies retain the review at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
   // A new delivery requires explicit source review/rebinding, never an automatic
   // update from the same untrusted body whose admission is being checked.
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'3591c4460aeb291e487ef1f750071b6b7436fa904b619fb3b54659c6fa4b83ed',
+    'first-paint':'be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7',
     'moon-initial':'837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });

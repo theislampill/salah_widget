@@ -8,6 +8,9 @@ window.SalahNativeSkyHost=Object.freeze({
   _cp9SiteElevation=Object.freeze({heightM,generation,lat:latitude,lon:longitude});return true;
  },
  lunarSurface(){return window.SalahMoonRuntime?.surface()??null;},
+ // Capture is a consumer; final-publication currentness is a pure read.
+ reconcileClouds(){return reconcileCloudPublication();},
+ cloudsCurrent(receipt){return cloudPublicationCurrent(receipt);},
  cloudLighting(){
   if(window.SalahNativeCloudLighting==null)return null;
   const snapshot=this.capture(false);

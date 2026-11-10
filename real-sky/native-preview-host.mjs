@@ -34,7 +34,7 @@ export function startNativeSkyPreview(){
   status.retained=true;status.reason=reason;status.publication={utcMs:s.utcMs,ageMs:Math.abs(s.utcMs-first.utcMs),at:performance.now(),retained:true,source:'initial-head'};return true;
  }
  function retireFirstPaint(){document.querySelector('#native-first-paint')?.remove();window.SalahFirstPaint=null;}
- function clear(reason){solarPublication.cancel();pendingValue=null;if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
+ function clear(reason){host.reconcileClouds();solarPublication.cancel();pendingValue=null;if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
  function prepareForeground(){
   const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom),capture=foreground.capture(rows);
   let mask=null;
@@ -48,7 +48,7 @@ export function startNativeSkyPreview(){
  function paintFailed(e,next,retried){
    if(disposed||card.classList.contains('real-sky-composed'))return;
    const reason=String(e.message??e);
-    if(value){const retained=host.capture(false);if(!retained.paused&&publishable(value,retained))retain(reason,retained);else{missed(value,'preview exception lacks currentness headroom: '+reason,retained);clear(reason);retryPreview(retried);}}
+    if(value){const retained=host.capture(false);if(!retained.paused&&publishable(value,retained)&&host.cloudsCurrent(status.composition?.cloudAuthority))retain(reason,retained);else{missed(value,'preview exception lacks currentness headroom: '+reason,retained);clear(reason);retryPreview(retried);}}
     else{
      const retained=host.capture(false);
      if(!retainFirstPaint(reason,retained)){
@@ -62,6 +62,7 @@ export function startNativeSkyPreview(){
   const {next,pixels,base,image,revision,retried,bottom,rows,capture}=prepared;
     if(pendingValue===next)pendingValue=null;
     if(disposed||card.classList.contains('real-sky-composed')||catalogueRevision!==revision)return false;
+    if(!host.cloudsCurrent(capture.cloudAuthority)){missed(next,'preview cloud authority superseded during mask decode');return retryPreview(retried);}
     const accepted=host.capture(false);
     if(accepted.paused||!publishable(next,accepted)){
      missed(next,'preview superseded during mask decode',accepted);return retryPreview(retried);
@@ -74,6 +75,7 @@ export function startNativeSkyPreview(){
      if(published.paused||!publishable(next,published)){
      missed(next,'preview final publication lacks currentness headroom',published);clear('preview final publication expired');return retryPreview(retried);
     }
+     if(!host.cloudsCurrent(capture.cloudAuthority)){missed(next,'preview cloud authority superseded during detail composition');return retryPreview(retried);}
      // The decoded mask, immutable foreground and completed detail commit in
      // one turn. Until here the previous background and ownership stay intact.
      if(pixels)ctx.putImageData(pixels,0,0);
@@ -121,6 +123,8 @@ export function startNativeSkyPreview(){
   try{
    if(value&&!nativeResultCurrent(value.job,s))clear('preview target changed or expired');
    if(pendingValue&&!publishable(pendingValue,s)){solarPublication.cancel();pendingValue=null;}
+   host.reconcileClouds();
+   if(solarPublication.pending&&!host.cloudsCurrent(solarPublication.pendingContext?.capture?.cloudAuthority)){solarPublication.cancel();pendingValue=null;}
    if(solarPublication.pending)return;
    // Fast playback needs room for calculation AND the next compositor turn
    // inside the unchanged 30 accepted-second fence. Do not wait until 20s old.
@@ -147,7 +151,7 @@ export function startNativeSkyPreview(){
     if(paint(next,pixels,prepared,retried)===false)retryPreview(retried);return;
    }
    if(paint(value,null,null,retried)===false)retryPreview(retried);
-   }catch(e){const reason=String(e.message??e);if(value){const retained=host.capture(false);if(!retained.paused&&publishable(value,retained))retain(reason,retained);else{missed(value,'preview preparation exception lacks currentness headroom: '+reason,retained);retryPreview(retried);}}else if(!retainFirstPaint(reason,host.capture(false)))clear(reason);}
+   }catch(e){const reason=String(e.message??e);if(value){const retained=host.capture(false);if(!retained.paused&&publishable(value,retained)&&host.cloudsCurrent(status.composition?.cloudAuthority))retain(reason,retained);else{missed(value,'preview preparation exception lacks currentness headroom: '+reason,retained);retryPreview(retried);}}else if(!retainFirstPaint(reason,host.capture(false)))clear(reason);}
  }
  function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(catalogueRevision!==paintedCatalogueRevision||Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
  function tick(now){if(disposed||nativeDriven)return;present(now);raf=requestAnimationFrame(tick);}

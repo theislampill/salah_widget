@@ -49,6 +49,9 @@ function harness(options={}){
     }
     const n=owner?owner.node:query(selector);if(owner&&n)nodes.set(selector,n);
     if(!n||classesRecorded.has(n))return n;classesRecorded.add(n);
+    // The existing style sink does not compute or render CSS. The exact lunar
+    // withdrawal helper may read its empty style boundary without inventing pixels.
+    n.style.getPropertyValue=()=>"";
     const read=()=>new Set((n.getAttribute("class")||"").split(/\s+/).filter(Boolean)),write=values=>n.setAttribute("class",[...values].join(" "));
     n.classList={contains:value=>read().has(value),add:(...values)=>{const set=read();values.forEach(v=>set.add(v));write(set);},
       remove:(...values)=>{const set=read();values.forEach(v=>set.delete(v));write(set);},
@@ -81,10 +84,14 @@ function harness(options={}){
     // Header withdrawal is now independent of prayer readiness. These are
     // weather-boundary doubles, like fetchWeather above; actual header/effects
     // are exercised by hotfix-prayer-weather and the full-runtime browser tests.
-    "function weatherDecision(){return {record:null};} function weatherHeader(){return {};} function paintWeatherHeader(){}\n"+
+    "function weatherDecision(){return {record:null,conditionState:'unavailable',target:currentWeatherTarget(),lane:null};} function weatherHeader(){return {};} function paintWeatherHeader(){}\n"+
     "function buildStars(){recordSkyBuilder('stars');} function buildWeather(){recordSkyBuilder('weather');} function renderMoon(){} function fitCn(){} function applyTheme(){recordPrayerPaint();}\n"+
     "function moonNow(){return {phase:0.5};} function phaseEmoji(){return 'moon';} function moonGeometryObservation(){return {fresh:true};} function paintClouds(){} function tieRainToClouds(){} function updateSimClock(){}\n"+
     "function enableSettingsAffordance(){} function openSettings(){}\n"+
+    // The unavailable weather double uses the real current target; exact source
+    // cloud receipts below retain their own revision and invalidation state.
+    slice("function wxNumber(","\nfunction wxValue(")+"\n"+
+    slice("function captureWeatherTarget(","\nfunction loadWx(")+"\n"+
     // Exact production declarations/helpers: no copied ready flags or boundary substitutes.
     slice("const _RAD=Math.PI/180,","function _sunCoords(d){")+"\n"+
     slice("let _mAlb=null,","(function loadMoonMaps(){")+"\n"+

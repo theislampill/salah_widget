@@ -1,0 +1,56 @@
+✔ authored test ingress retains exact runtime bytes and rejects malformed, missing or duplicate owners (19.278818ms)
+✖ withdrawn painter opportunities do not republish unchanged weather DOM sinks (168.307261ms)
+✖ explicit preview lane keeps eligible supported clouds beyond live TTL: &simWx=3&simCloud=95 (67.573574ms)
+✔ explicit preview lane keeps eligible supported clouds beyond live TTL: &timeScale=2 (89.84392ms)
+✔ obsolete weather settlement cannot install or clear a published successor after A-to-B-to-A (120.486244ms)
+✔ real-consumer mutation discriminator: bypass no-model withdrawal (246.462683ms)
+✔ real-consumer mutation discriminator: header-only repair (156.489739ms)
+✔ real-consumer mutation discriminator: zero numeric state but retain raster (129.228172ms)
+✔ real-consumer mutation discriminator: expiry checked only at acquisition (214.56801ms)
+✔ real-consumer mutation discriminator: source age reset on receipt (121.955346ms)
+✔ real-consumer mutation discriminator: reseed every tick (142.092792ms)
+✔ real-consumer mutation discriminator: unknown labelled observed-clear (149.665544ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 10
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1314.453953
+
+✖ failing tests:
+
+test at tests/weather-withdrawal-authority.test.cjs:11:1
+✖ withdrawn painter opportunities do not republish unchanged weather DOM sinks (168.307261ms)
+  AssertionError [ERR_ASSERTION]: an unchanged withdrawn receipt has no repeated CSS publication
+  
+  78 !== 0
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-withdrawal-authority.test.cjs:14:39)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 78,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-withdrawal-authority.test.cjs:16:59
+✖ explicit preview lane keeps eligible supported clouds beyond live TTL: &simWx=3&simCloud=95 (67.573574ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert(initial.selected)
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-withdrawal-authority.test.cjs:17:49)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

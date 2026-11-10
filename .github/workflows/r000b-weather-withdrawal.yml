@@ -1,0 +1,117 @@
+name: R000B weather withdrawal qualification
+
+on:
+  push:
+    branches: [pro/r000b-explicit-weather-withdrawal-20261106]
+    # Evidence/doc updates do not change the native experiment. Every product,
+    # fixture, expected-native-manifest, builder or workflow change still runs.
+    paths-ignore:
+      - 'docs/state-contracts/evidence/R000B/**'
+      - 'docs/state-contracts/R000B*.md'
+      - 'docs/state-contracts/r000b-generated-manifest.json'
+      - 'README.md'
+      - 'DESIGN.md'
+      - 'HANDOFF.md'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r000b-weather-withdrawal-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  assemble:
+    if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/pro/r000b-explicit-weather-withdrawal-20261106'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    outputs:
+      candidate: ${{ steps.seal.outputs.candidate }}
+      baseline: ${{ steps.seal.outputs.baseline }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; retained repository pin
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+      - name: Assemble only expected generated outputs on the owned ref
+        id: seal
+        run: python3 tools/qa/r000b_assemble_candidate.py --manifest docs/state-contracts/r000b-generated-manifest.json --receipt "$RUNNER_TEMP/r000b-assembly/receipt.json" --publish
+      - name: Preserve assembly outcome
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4; retained repository pin
+        with:
+          name: r000b-assembly-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r000b-assembly
+          if-no-files-found: error
+
+  native:
+    needs: assemble
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - product: baseline
+            mode: default
+            expect: baseline-defect
+            visibility: visible
+          - product: candidate
+            mode: default
+            expect: withdrawal
+            visibility: visible
+          - product: candidate
+            mode: reduced
+            expect: withdrawal
+            visibility: visible
+          - product: candidate
+            mode: full
+            expect: withdrawal
+            visibility: visible
+          - product: candidate
+            mode: default
+            expect: withdrawal
+            visibility: controlled-hidden
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ needs.assemble.outputs.candidate }}
+          path: candidate
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        if: matrix.product == 'baseline'
+        with:
+          ref: ${{ needs.assemble.outputs.baseline }}
+          path: baseline
+          persist-credentials: false
+      - name: Install the bounded native qualification dependency
+        run: |
+          python3 -m pip install playwright==1.57.0
+          python3 -m playwright install --with-deps chromium
+      - name: Capture unmodified native consumers and motion
+        env:
+          R000B_PRODUCT: ${{ matrix.product }}
+          R000B_MODE: ${{ matrix.mode }}
+          R000B_EXPECT: ${{ matrix.expect }}
+          R000B_VISIBILITY: ${{ matrix.visibility }}
+        run: |
+          r000b_visibility_args=()
+          if [ "$R000B_VISIBILITY" = "controlled-hidden" ]; then
+            r000b_visibility_args=(--hidden-expiry)
+          fi
+          python3 candidate/tools/qa/run_r000b_withdrawal.py \
+            --root "$GITHUB_WORKSPACE/$R000B_PRODUCT" \
+            --fixture-root "$GITHUB_WORKSPACE/candidate" \
+            --expected-manifest "$GITHUB_WORKSPACE/candidate/docs/state-contracts/r000b-native-$R000B_PRODUCT.json" \
+            --out "$RUNNER_TEMP/r000b-native" \
+            --browser chromium --mode "$R000B_MODE" --expect "$R000B_EXPECT" "${r000b_visibility_args[@]}"
+      - name: Preserve original evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r000b-${{ matrix.product }}-${{ matrix.mode }}-${{ matrix.visibility }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r000b-native
+          if-no-files-found: error

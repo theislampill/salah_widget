@@ -12,25 +12,25 @@ for(const [name,patch] of [['speed','weather.wind=3.1'],['heading reversal','wea
     assert.deepEqual(b.trace,a.trace);assert.deepEqual(b.columns,a.columns);
   });
 test('ordinary UTC boundary preserves procedural population coordinates',()=>{
-  const h=fixture('&timeScale=1');h.run('_simBase=Date.parse("2026-09-08T23:59:59.962Z");_rafT0=0;TIMESCALE=1');
+  const h=fixture('&timeScale=1');h.run('_simBase=Date.parse("2026-09-08T23:59:59.962Z");_rafT0=0;TIMESCALE=1');h.publish({admitPrayerDay:true});
   const a=established(h),b=h.step(76);
   const identity=s=>s.noise.filter(n=>n[1]===2||n[1]===3||n[1]===5).map(n=>n.slice(0,2));
   assert.deepEqual(identity(b),identity(a));
 });
 test('actual positive elapsed interval changes puff geometry and lifecycle',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');const a=established(h);let b;
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();const a=established(h);let b;
   for(let i=0;i<15;i++)b=h.step(1000);
   assert.notDeepEqual(b.trace,a.trace);assert.notDeepEqual(b.noise,a.noise);
   assert.ok(b.trace.length>20,'cloud field remains nonempty');
 });
 test('old velocity integrates before a newly received speed is installed',()=>{
-  const a=fixture('&timeScale=1'),b=fixture('&timeScale=1');a.run('TIMESCALE=1');b.run('TIMESCALE=1');established(a);established(b);
+  const a=fixture('&timeScale=1'),b=fixture('&timeScale=1');a.run('TIMESCALE=1');b.run('TIMESCALE=1');a.publish();b.publish();established(a);established(b);
   a.clock.now=b.clock.now=1000;a.clock.wall+=1000;b.clock.wall+=1000;
   a.run('weather.wind=3.1;render();');b.run('render();');
   assert.deepEqual(a.paint().trace,b.paint().trace);
 });
 test('empty deck and visible deck share lifecycle during the same elapsed steps',()=>{
-  const a=fixture('&timeScale=1'),b=fixture('&timeScale=1');a.run('TIMESCALE=1');b.run('TIMESCALE=1');established(a);established(b);
+  const a=fixture('&timeScale=1'),b=fixture('&timeScale=1');a.run('TIMESCALE=1');b.run('TIMESCALE=1');a.publish();b.publish();established(a);established(b);
   a.run('globalThis.__priorCov=[cloudState.covLow,cloudState.covMid,cloudState.covHigh];cloudState.covLow=cloudState.covMid=cloudState.covHigh=0');
   a.step(1000);b.step(1000);a.run('[cloudState.covLow,cloudState.covMid,cloudState.covHigh]=__priorCov');
   assert.deepEqual(a.paint().trace,b.paint().trace);

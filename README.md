@@ -339,6 +339,11 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   cannot replace it. A later eligible current response must pass admission
   before restoring the weather display. Open-Meteo recovery remains a model
   estimate, not proof of observed local precipitation.
+  Weather withdrawal does not depend on prayer availability. Expired clouds
+  are removed even when the next prayer timetable is unavailable. An already
+  displayed deck may remain only while its own record is current; fresh
+  replacement weather without a timetable waits for a complete atmosphere
+  before establishing clouds. Independent celestial output remains usable.
   The weather cache's six-hour retention window is storage compatibility, not
   live authority. Retained legacy records without valid source metadata remain
   unavailable until a healthy eligible response arrives; failed refreshes cannot

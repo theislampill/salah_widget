@@ -1,0 +1,130 @@
+--- v1/tests/rlgwo/r000b-no-timetable-fixture.html
++++ v2/tests/rlgwo/r000b-no-timetable-fixture.html
+@@ -7,6 +7,7 @@
+ </head>
+ <body><pre id="fixture-error">Loading verified widget source…</pre>
+ <script>
++// R000B_HN1_HN4_READ_ONLY_OBSERVER_V2
+ // Test-only document and transport wrapper. Every product script body is kept
+ // byte-for-byte. The appended bridge only reads existing owners and pixels.
+ (function(){
+@@ -117,7 +118,13 @@
+     const copy=value=>value==null?null:JSON.parse(JSON.stringify(value,(_,v)=>typeof v==="number"&&!Number.isFinite(v)?{$nativeNonFiniteNumber:String(v)}:v));
+     const rect=(el,parent)=>{const r=el.getBoundingClientRect(),p=parent?parent.getBoundingClientRect():{left:0,top:0};return {left:r.left-p.left,top:r.top-p.top,width:r.width,height:r.height,right:r.right-p.left,bottom:r.bottom-p.top};};
+     const publication=()=>typeof cloudPublicationReceipt==="function"?copy(cloudPublicationReceipt()):null;
+-    const motion=()=>({key:_cloudMotion.key,population:_cloudMotion.population,phase:[..._cloudMotion.phase],life:[..._cloudMotion.life],wander:_cloudMotion.wander,lastRt:_cloudMotion.lastRt,paused:_cloudMotion.paused,reduced:_cloudMotion.reduced,fieldSeed:_cloudFieldSeed});
++    const motion=()=>({key:_cloudMotion.key,population:_cloudMotion.population,phase:[..._cloudMotion.phase],life:[..._cloudMotion.life],wander:_cloudMotion.wander,
++      lastRt:_cloudMotion.lastRt,elapsedRtMs:_cloudMotion.lastRt==null?null:_cloudMotion.lastRt-report.started,
++      paused:_cloudMotion.paused,reduced:_cloudMotion.reduced,fieldSeed:_cloudFieldSeed,wind:{wx:cloudState.wx,wspd:cloudState.wspd}});
++    const actuallyDisplayed=el=>{
++      if(!el)return false;const style=getComputedStyle(el),bounds=el.getBoundingClientRect();
++      return style.display!=="none"&&style.visibility==="visible"&&Number(style.opacity)>0&&bounds.width>0&&bounds.height>0;
++    };
+     function passive(){
+       const elapsedMs=performance.now()-report.started,at=Date.now(),M=model(),e=weatherEligibility(weather,at),c=document.querySelector(".c");
+       const foregroundOwner=c?.classList.contains("real-sky-composed")?"refined":c?.classList.contains("real-sky-preview-ready")?"preview":null;
+@@ -143,7 +150,9 @@
+       }
+       media[name]=cv.toDataURL("image/png");const style=getComputedStyle(cv);
+       return {width:cv.width,height:cv.height,alphaSum:sum,alphaMax:max,alphaNonzero:nonzero,meanAlpha:sum/(255*cv.width*cv.height),
+-        alphaCentroid:sum?{x:mx/sum,y:my/sum}:null,columnAlpha:columns,rgbNonzero,minRGB,maxRGB,display:style.display,visibility:style.visibility,opacity:Number(style.opacity)};
++        alphaCentroid:sum?{x:mx/sum,y:my/sum}:null,columnAlpha:columns,rgbNonzero,minRGB,maxRGB,
++        bounds:rect(cv,document.querySelector(".c")),filter:style.filter,maskImage:style.maskImage||style.webkitMaskImage||"none",
++        display:style.display,visibility:style.visibility,opacity:Number(style.opacity)};
+     }
+     function snapshot(){
+       const state=passive(),c=document.querySelector(".c"),cs=getComputedStyle(c),media={};
+@@ -152,9 +161,24 @@
+         const style=getComputedStyle(el),leftPercent=parseFloat(el.style.left)||50,col=density.length?Math.min(density.length-1,Math.max(0,(leftPercent/100*density.length)|0)):null;
+         const bounds=rect(el,c),displayed=style.display!=="none"&&style.visibility==="visible"&&Number(style.opacity)>.03&&
+           bounds.right>0&&bounds.left<325&&bounds.bottom>0&&bounds.top<530&&c.dataset.precip==="on";
++        // The source column belongs to the untransformed CSS base position.
++        // Keep the currently visible segment separately; its opacity/translation
++        // must never be mistaken for the invisible start of the fall animation.
++        const parent=el.offsetParent,pixels=value=>/^-?[0-9.]+px$/.test(value)?Number.parseFloat(value):null;
++        const position={left:pixels(style.left),top:pixels(style.top),width:pixels(style.width),height:pixels(style.height)};
++        const parentGeometry=parent?{bounds:rect(parent,c),clientLeft:parent.clientLeft,clientTop:parent.clientTop,
++          clientWidth:parent.clientWidth,clientHeight:parent.clientHeight,offsetWidth:parent.offsetWidth,offsetHeight:parent.offsetHeight,classes:String(parent.className)}:null;
++        // R000B_HN_GEOMETRY_CONSTRUCTOR_V2_1
++        const matrix=style.transform==="none"?new DOMMatrixReadOnly():new DOMMatrixReadOnly(style.transform);
++        const transform={is2D:matrix.is2D,a:matrix.a,b:matrix.b,c:matrix.c,d:matrix.d,e:matrix.e,f:matrix.f};
++        const baseOrigin=parentGeometry&&Object.values(position).every(Number.isFinite)?{
++          left:parentGeometry.bounds.left+parentGeometry.clientLeft+position.left,
++          top:parentGeometry.bounds.top+parentGeometry.clientTop+position.top,width:position.width,height:position.height}:null;
+         return {index,kind:el.classList.contains("drop")?"rain":"snow",leftPercent,column:col,density:col==null?null:density[col],
+           normalizedDensity:col==null||densityMax===0?null:density[col]/densityMax,inlineDisplay:el.style.display,display:style.display,
+-          visibility:style.visibility,opacity:Number(style.opacity),displayed,originTop:style.top,rect:bounds,animation:style.animationName,animationPlayState:style.animationPlayState};
++          visibility:style.visibility,opacity:Number(style.opacity),displayed,originTop:style.top,rect:bounds,animation:style.animationName,animationPlayState:style.animationPlayState,
++          originGeometry:{position,parent:parentGeometry,transform,baseOrigin,transformText:style.transform,
++            contract:"CSS base top19%; assigned untransformed cloud column; visible segment is base plus current translation"}};
+       });
+       const nativeCloud=canvasRead(".cloudcanvas",media,"native-cloud");
+       const refinedCanvas=canvasRead(".real-sky-canvas",media,"refined-foreground"),previewCanvas=canvasRead(".real-sky-preview",media,"preview-foreground");
+@@ -163,6 +187,13 @@
+       const active=owner==="refined"?refined:owner==="preview"?preview:null;
+       const composition=owner==="refined"?refined?.last?.composition:owner==="preview"?preview?.composition:null;
+       const frameUtcMs=owner==="refined"?(refined?.displayed?.utcMs??refined?.presentationUtcMs):preview?.utcMs;
++      const visibleForegrounds=[
++        {owner:"refined",canvas:refinedCanvas,status:refined?.status??null,composition:copy(refined?.last?.composition),frameUtcMs:refined?.displayed?.utcMs??refined?.presentationUtcMs??null},
++        {owner:"preview",canvas:previewCanvas,status:preview?.status??null,composition:copy(preview?.composition),frameUtcMs:preview?.utcMs??null}
++      ].filter(layer=>layer.canvas&&layer.canvas.display!=="none"&&layer.canvas.visibility==="visible"&&layer.canvas.opacity>0&&layer.canvas.bounds.width>0&&layer.canvas.bounds.height>0);
++      const photo=document.querySelector(".mphoto"),moonGroup=document.querySelector(".moon");
++      const moonDOM={photoHrefPresent:!!photo?.getAttribute("href"),photoBounds:photo?rect(photo,c):null,
++        groupBounds:moonGroup?rect(moonGroup,c):null,groupOpacity:moonGroup?Number(getComputedStyle(moonGroup).opacity):null};
+       const solarMask=c.style.getPropertyValue("--native-sun-cloud-mask");
+       const cacheKey=wxKey(),cacheBytes=localStorage.getItem(cacheKey);
+       return {...state,identity:control.identity(),clock:{TIMESCALE,FOLLOW_WALL_CLOCK,ADVANCING},
+@@ -184,7 +215,8 @@
+         celestial:{owner,status:active?.status??null,frameUtcMs,frameAgeMs:Number.isFinite(frameUtcMs)?state.wallUtcMs-frameUtcMs:null,
+           activeCanvas:owner==="refined"?refinedCanvas:owner==="preview"?previewCanvas:null,composition:copy(composition),refined,preview,
+           skyPending:c.classList.contains("sky-pending"),moonReady:c.classList.contains("moon-ready"),moonPresence:_skyMoonPresence,
+-          moonGeometry:copy(moonSky),moonRuntime:copy(window.SalahMoonRuntime?.state),solarMask},
++          moonGeometry:copy(moonSky),moonDOM,visibleForegrounds,solarMask,
++          diagnosticReadLimit:"Moon runtime state/surface/presentation getters are not read; handled Moon worker diagnostic errors are uninspected"},
+         rows:[...document.querySelectorAll(".p")].map(el=>({key:el.dataset.prayerKey,time:el.querySelector(".tm")?.textContent,text:el.textContent,rect:rect(el,c)})),
+         card:rect(c),footer:rect(document.querySelector(".d"),c),countdown:document.querySelector(".left").textContent,
+         resources:{canvases:document.querySelectorAll("canvas").length,cloudCanvases:document.querySelectorAll(".cloudcanvas").length,particles:particles.length,sceneBuilt:_sceneBuilt,loopStarted:_loopStarted},media};
+@@ -206,17 +238,25 @@
+       read(owner){control.assertOwned(owner);const value=snapshot();report.events.push({action:"consumer-read",elapsedMs:value.elapsedMs,wallUtcMs:value.wallUtcMs});return value;},
+       observeResume(owner){
+         control.assertOwned(owner);if(report.resumeObservationArmed)throw Error("Resume observation is single-use");report.resumeObservationArmed=true;
+-        const begin=performance.now();let frames=0;
++        const begin=performance.now();let frames=0;report.resumeOpportunities=[];
+         const readFrame=()=>{
+           if(report.state!=="ready")return;
+           try{
+-            frames++;const first=!report.resumeFirstRaf,c=document.querySelector(".c"),visible=c.classList.contains("real-sky-composed")||c.classList.contains("real-sky-preview-ready");
++            frames++;const first=frames===1;
++            // CSS visibility, dimensions and opacity determine observation.
++            // A pending diagnostic status never suppresses displayed pixels.
++            const visible=actuallyDisplayed(document.querySelector(".real-sky-canvas"))||actuallyDisplayed(document.querySelector(".real-sky-preview"));
+             const value=first||visible?snapshot():null;
++            report.resumeOpportunities.push({frame:frames,elapsedMs:performance.now()-report.started,visible,state:value});
+             if(first)report.resumeFirstRaf=value;
+-            if(value?.celestial?.owner&&value.celestial.status==="ready"&&value.celestial.activeCanvas?.visibility==="visible"){
+-              report.resumeFirstVisible=value;report.resumeObservation={frames,elapsedMs:performance.now()-begin,kind:"read-only post-event rAF observer"};return;
++            if(visible&&!report.resumeFirstVisible)report.resumeFirstVisible=value;
++            // Ready recovery is a separate endpoint after every earlier
++            // actually visible opportunity has been retained for checking.
++            const ready=value?.celestial?.visibleForegrounds.some(layer=>layer.owner===value.celestial.owner&&layer.status==="ready");
++            if(ready){
++              report.resumeReady=value;report.resumeObservation={complete:true,frames,elapsedMs:performance.now()-begin,kind:"all visible post-event rAF opportunities retained independently of diagnostic readiness"};return;
+             }
+-            if(frames>=120||performance.now()-begin>5000)throw Error("No eligible visible foreground within bounded resume observation");
++            if(frames>=120||performance.now()-begin>5000)throw Error("No ready foreground within bounded resume observation; visible pending frames retained");
+             requestAnimationFrame(readFrame);
+           }catch(error){report.error=String(error.message||error);report.state="error";}
+         };
+@@ -274,6 +314,12 @@
+         visibility.hidden=hidden;const event={hidden,elapsedMs:t,wallUtcMs:wall(),kind:"controlled document property plus visibilitychange; not OS visibility"};
+         visibility.changes.push(event);report.events.push({action:hidden?"visibility-hidden":"visibility-visible",...event});
+         document.dispatchEvent(new Event("visibilitychange"));
++        // Passive values after the product's own pause/resume listeners establish
++        // exact elapsed boundaries for the no-backlog continuity oracle.
++        event.nativeMotionAfter={key:_cloudMotion.key,population:_cloudMotion.population,phase:[..._cloudMotion.phase],life:[..._cloudMotion.life],wander:_cloudMotion.wander,
++          lastRt:_cloudMotion.lastRt,elapsedRtMs:_cloudMotion.lastRt==null?null:_cloudMotion.lastRt-started,paused:_cloudMotion.paused,reduced:_cloudMotion.reduced,
++          fieldSeed:_cloudFieldSeed,wind:{wx:cloudState.wx,wspd:cloudState.wspd}};
++        event.elapsedAfterDispatchMs=elapsed();
+         if(!hidden)window.__withdrawalRead.observeResume(owner);
+         return event;
+       }});

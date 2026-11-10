@@ -327,6 +327,23 @@ precipitation or lightning effects. The neutral sky remains decorative; hourly
 data cannot substitute for live current. Prayer-cache stale state remains separate,
 and cache retention is not an offline-app guarantee.
 
+Weather withdrawal does not depend on prayer availability. The cloud consumer
+records the exact admitted record, target generation and lane used for its
+last complete publication. A warm deck may survive a missing timetable only
+while that same authority remains current. A cold or withdrawn consumer stays
+empty; a fresh replacement cannot lend its timestamps to the older deck.
+Ordinary recovery through a real complete atmosphere establishes current
+coverage. No prayer model, source timestamp or request is manufactured.
+
+The existing render, cloud painter and foreground capture boundaries reconcile
+this consumed authority. Withdrawal clears coverage targets, live coverage,
+readiness, column density and the backing canvas together; pending foreground
+decodes are fenced against the receipt they captured. Population and integrated
+motion remain independent of coverage permission. The no-timetable path
+withholds particles and optional weather optics while retaining independently
+current celestial output. See [R000B](docs/state-contracts/R000B.md) for the
+state, writer and qualification map.
+
 - Fresh, correct-target `current` WMO categories supply condition emojis and
   `data-fx`. Titles/accessible labels/QA disclose provider, model status and the
   absence of direct local observation. Unknown weather is an em dash with no

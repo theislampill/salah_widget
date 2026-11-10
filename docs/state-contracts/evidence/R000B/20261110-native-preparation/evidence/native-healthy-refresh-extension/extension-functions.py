@@ -1,0 +1,190 @@
+def healthy_refresh_record(state):
+    """Identity of a full capture whose native publication consumes its record."""
+    cloud, raw = state.get('actualCloud') or {}, state.get('raw') or {}
+    receipt, candidate = cloud.get('publication') or {}, state.get('candidate') or {}
+    target = state.get('target')
+    source, retrieved = raw.get('currentValidAt'), raw.get('retrievedAt')
+    if not (state.get('modelIsNull') is False and state.get('selected') is True
+            and _finite_number(source) and _finite_number(retrieved)
+            and receipt.get('state') == 'eligible-published' and receipt.get('lane') == 'live'
+            and receipt.get('target') == target == raw.get('target')
+            and receipt.get('conditionState') == 'model-estimated-rain'
+            and receipt.get('sourceValidAt') == source and receipt.get('retrievedAt') == retrieved
+            and candidate.get('eligible') is True and candidate.get('sourceValidAt') == source
+            and candidate.get('retrievedAt') == retrieved
+            and _finite_number(receipt.get('revision')) and isinstance(target, dict) and _finite_number(target.get('generation'))
+            and target.get('generation') == state.get('runtimeGeneration')):
+        return None
+    return {'sourceValidAt': source, 'retrievedAt': retrieved, 'target': target,
+            'lane': receipt['lane'], 'publication': receipt}
+
+
+def _healthy_refresh_request(record, captured, ledger):
+    """Find the actual owned/consumed synthetic response for a record receipt."""
+    matches = []
+    for request in ledger:
+        if not isinstance(request, dict) or request.get('kind') != 'weather':
+            continue
+        owner, body = request.get('nativeOwner') or {}, request.get('inputBody') or {}
+        current = body.get('current') or {}
+        try:
+            value = current.get('time')
+            if not isinstance(value, str) or not re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}', value):
+                continue
+            source = int(datetime.datetime.strptime(value, '%Y-%m-%dT%H:%M').replace(
+                tzinfo=datetime.timezone(datetime.timedelta(hours=3))).timestamp() * 1000)
+        except (ValueError, OverflowError):
+            continue
+        numbers = [request.get('elapsedMs'), request.get('wallUtcMs'), request.get('jsonElapsedMs'),
+                   owner.get('deadlineAt'), request.get('weatherOrdinal'), captured.get('elapsedMs'), captured.get('wallUtcMs')]
+        if not all(_finite_number(value) for value in numbers):
+            continue
+        json_wall = INITIAL_SOURCE_UTC + 890000 + math.floor(request['jsonElapsedMs'])
+        if (request.get('status') == 200 and request.get('jsonReads') == 1 and request.get('jsonSettled') is True
+                and request.get('result') == 'json-consumed' and body.get('timezone') == 'Asia/Riyadh'
+                and current.get('interval') == 900 and source == record['sourceValidAt']
+                and owner.get('operationId') is not None and owner.get('attemptId') is not None
+                and owner.get('generation') == record['target']['generation']
+                and 0 <= request['elapsedMs'] <= request['jsonElapsedMs'] <= captured['elapsedMs']
+                and request['wallUtcMs'] <= record['retrievedAt'] < owner['deadlineAt']
+                and json_wall <= record['retrievedAt'] <= captured['wallUtcMs']):
+            matches.append({'weatherOrdinal': request['weatherOrdinal'], 'elapsedMs': request['elapsedMs'],
+                'wallUtcMs': request['wallUtcMs'], 'jsonElapsedMs': request['jsonElapsedMs'],
+                'status': request['status'], 'jsonReads': request['jsonReads'], 'jsonSettled': request['jsonSettled'],
+                'result': request['result'], 'inputSourceTime': current['time'], 'inputSourceUtc': source,
+                'nativeOwner': owner})
+    return matches[0] if len(matches) == 1 else None
+
+
+def _healthy_refresh_receipt(receipt, wall, receipts):
+    """A may stay active while B is a candidate; A must keep its own lease."""
+    return (isinstance(receipt, dict) and receipt in receipts and _finite_number(wall)
+            and receipt.get('state') == 'eligible-published' and receipt.get('lane') == 'live'
+            and receipt.get('conditionState') == 'model-estimated-rain'
+            and all(_finite_number(receipt.get(key)) and 0 <= wall - receipt[key] <= 900000
+                    for key in ('sourceValidAt', 'retrievedAt')))
+
+
+def _healthy_refresh_sample(state, receipts, full=False):
+    """Check every retained sample using exactly the fields that it observes."""
+    candidate, coverage = state.get('candidate') or {}, state.get('coverage')
+    known_records = [(receipt.get('sourceValidAt'), receipt.get('retrievedAt')) for receipt in receipts]
+    if not (state.get('modelIsNull') is False and state.get('loopStarted') is True
+            and state.get('cloudReady') is True and isinstance(coverage, list) and len(coverage) == 3
+            and all(_finite_number(a) and abs(a - b) < 1e-9 for a, b in zip(coverage, EXPECTED_COVERAGE))
+            and state.get('documentHidden') is False and state.get('cardPaused') is False
+            and candidate.get('eligible') is True
+            and (candidate.get('sourceValidAt'), candidate.get('retrievedAt')) in known_records
+            and _healthy_refresh_receipt(state.get('publication'), state.get('wallUtcMs'), receipts)
+            and state.get('foregroundOwner') in ('preview', 'refined')
+            and state.get('foregroundVisible') is True and state.get('foregroundHasCloudMask') is True
+            and state.get('precip') == 'on' and state.get('lightning') == 'off'):
+        return False
+    if not full:
+        return True
+    cloud, sky, raw = state.get('actualCloud') or {}, state.get('celestial') or {}, state.get('raw') or {}
+    layers, targets = sky.get('visibleForegrounds'), cloud.get('targets')
+    try:
+        if not (healthy_cloud(state) and rain_origin(state)
+                and state.get('prayer', {}).get('modelIsNull') is False and state.get('selected') is True
+                and cloud.get('publication') == state['publication']
+                and cloud.get('coverage') == coverage and isinstance(targets, list) and len(targets) == 3
+                and all(_finite_number(a) and abs(a - b) < 1e-9 for a, b in zip(targets, EXPECTED_COVERAGE))
+                and (raw.get('currentValidAt'), raw.get('retrievedAt')) == (candidate['sourceValidAt'], candidate['retrievedAt'])
+                and raw.get('target') == receipts[0]['target']
+                and isinstance(layers, list) and layers
+                and any(layer.get('owner') == sky.get('owner') for layer in layers)):
+            return False
+        for layer in layers:
+            canvas, composition = layer.get('canvas') or {}, layer.get('composition') or {}
+            maximum, mean = composition.get('maxCloudAlpha'), composition.get('meanCloudAlpha')
+            if not (canvas.get('visibility') == 'visible' and canvas.get('display') != 'none'
+                    and _finite_number(canvas.get('opacity')) and canvas['opacity'] > 0 and _bounds(canvas.get('bounds'))
+                    and canvas.get('rgbNonzero', 0) > 0 and canvas.get('maxRGB', 0) > canvas.get('minRGB', 0)
+                    and _finite_number(maximum) and _finite_number(mean) and 0 < mean <= maximum <= 1
+                    and _healthy_refresh_receipt(composition.get('cloudAuthority'), state['wallUtcMs'], receipts)):
+                return False
+    except (KeyError, TypeError, ValueError):
+        return False
+    return True
+
+
+def healthy_refresh_pair(before, after, ledger):
+    """Select a real post-recovery replacement, never timestamp-only renewal."""
+    left, right = healthy_refresh_record(before), healthy_refresh_record(after)
+    result = {'schema': 'r000b-healthy-refresh-pair/v1', 'ok': False,
+              'beforeRecord': left, 'afterRecord': right, 'reason': None}
+    if left is None or right is None:
+        result['reason'] = 'Both full captures must bind current record and native consumed receipt'
+        return result
+    if not (right['sourceValidAt'] > left['sourceValidAt'] and right['retrievedAt'] > left['retrievedAt']
+            and right['publication']['revision'] > left['publication']['revision']
+            and left['target'] == right['target'] and left['lane'] == right['lane']
+            and _finite_number(before.get('elapsedMs')) and _finite_number(after.get('elapsedMs'))
+            and before['elapsedMs'] < after['elapsedMs']):
+        result['reason'] = 'No genuinely newer source and retrieval after the recovered capture'
+        return result
+    before_request = _healthy_refresh_request(left, before, ledger)
+    after_request = _healthy_refresh_request(right, after, ledger)
+    result.update(beforeRequest=before_request, afterRequest=after_request)
+    if not (before_request and after_request and after_request['elapsedMs'] > before['elapsedMs']
+            and after_request['weatherOrdinal'] > before_request['weatherOrdinal']
+            and after_request['wallUtcMs'] - before_request['wallUtcMs'] >= 60000
+            and after_request['nativeOwner']['operationId'] != before_request['nativeOwner']['operationId']
+            and after_request['nativeOwner']['attemptId'] != before_request['nativeOwner']['attemptId']):
+        result['reason'] = 'No distinct owned response consumed by an ordinary request after recovery'
+        return result
+    receipts = [left['publication'], right['publication']]
+    for state, record in ((before, left), (after, right)):
+        if not (_healthy_refresh_sample(state, receipts, full=True) and independent_celestial(state)
+                and state['celestial'].get('composition', {}).get('cloudAuthority') == record['publication']
+                and all(layer.get('composition', {}).get('cloudAuthority') == record['publication']
+                        for layer in state['celestial']['visibleForegrounds'])):
+            result['reason'] = 'Paired full captures must contain healthy raster/mask and the matching foreground publication'
+            return result
+    result.update(ok=True, reason='Owned ordinary response replaced the recovered record and reached full native/foreground publication')
+    return result
+
+
+def healthy_refresh_evidence(before, after, passive, full_samples, ledger, mode):
+    """Qualify all retained healthy-interval samples; clean endpoints cannot erase a gap."""
+    pair = healthy_refresh_pair(before, after, ledger)
+    result = {'schema': 'r000b-healthy-refresh-continuity/v1', 'ok': False, 'pair': pair,
+              'checks': {'ordinaryConsumedReplacementAfterRecovery': pair['ok']}, 'sampleFailures': [],
+              'samplingLimit': 'Every retained passive sample checks model/ready/coverage/immutable active receipt/displayed mask presence; actual raster and mask alpha are checked on every retained full snapshot. The original continuous clip remains required. No forced capture-before-render ordering is claimed.'}
+    start, end = before.get('elapsedMs'), after.get('elapsedMs')
+    if not (_finite_number(start) and _finite_number(end) and end > start):
+        result['sampleFailures'].append({'reason': 'Invalid bounded healthy interval'})
+        return result
+    result['intervalElapsedMs'] = [start, end]
+    result['checks']['retainedSampleTimestampsObserved'] = all(isinstance(sample, dict) and _finite_number(sample.get('elapsedMs'))
+                                                              for sample in [*passive, *full_samples])
+    trace = [sample for sample in passive if _finite_number(sample.get('elapsedMs')) and start <= sample['elapsedMs'] <= end]
+    full = [sample for sample in full_samples
+            if _finite_number(sample.get('elapsedMs')) and start <= sample['elapsedMs'] <= end]
+    if before not in full:
+        full.insert(0, before)
+    if after not in full:
+        full.append(after)
+    receipts = [record['publication'] for record in (pair['beforeRecord'], pair['afterRecord']) if record is not None]
+    result['sampleCounts'] = {'passive': len(trace), 'full': len(full)}
+    ordered_trace = sorted(trace, key=lambda sample: sample['elapsedMs'])
+    boundaries = [start, *(sample['elapsedMs'] for sample in ordered_trace), end]
+    result['maxPassiveObservationGapMs'] = max(b - a for a, b in zip(boundaries, boundaries[1:]))
+    for channel, samples, is_full in [('passive', trace, False), ('full', full, True)]:
+        for index, sample in enumerate(samples):
+            if not receipts or not _healthy_refresh_sample(sample, receipts, full=is_full):
+                result['sampleFailures'].append({'channel': channel, 'index': index, 'elapsedMs': sample['elapsedMs'],
+                                                'reason': 'Model, active lease, ready deck, geometry-backed material or displayed foreground continuity failed'})
+        result['checks']['allRetained' + channel.title() + 'SamplesHealthy'] = bool(samples) and not any(
+            failure.get('channel') == channel for failure in result['sampleFailures'])
+    chronology = sorted([*trace, *full], key=lambda sample: sample['elapsedMs'])
+    positions = [receipts.index(sample['publication']) if sample.get('publication') in receipts else -1 for sample in chronology]
+    result['checks']['consumedPublicationMovesOnlyFromAToB'] = (bool(receipts) and bool(positions)
+        and positions[0] == 0 and positions[-1] == len(receipts) - 1 and all(a <= b for a, b in zip(positions, positions[1:])))
+    motions = [{'elapsedMs': sample['elapsedMs'], 'motion': sample.get('actualCloud', {}).get('motion', sample.get('motion'))}
+               for sample in chronology]
+    result['motion'] = cloud_motion_continuity(motions, mode)
+    result['checks']['signedPhaseLifeWanderAndPopulationContinuity'] = result['motion']['ok']
+    result['ok'] = all(result['checks'].values())
+    return result

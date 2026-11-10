@@ -1,0 +1,126 @@
+✔ F01 healthy full-model refresh keeps normal easing: capture-before-render (224.038978ms)
+✔ F01 healthy full-model refresh keeps normal easing: render-before-capture (128.992605ms)
+✔ F01 repeated captures and final checks retain A without a producer, timestamp or easing mutation (143.365771ms)
+✔ F01 fresh B cannot retain A after the genuine model becomes unavailable (94.174455ms)
+✔ F01 cold consumer cannot restore a deck from weather and model availability alone (108.937908ms)
+✔ F01 already-withdrawn consumer cannot restore a deck from weather and model availability alone (149.515785ms)
+✔ F01 owns A currentValidAt boundary with fresh B: 899999 (124.782745ms)
+✔ F01 owns A currentValidAt boundary with fresh B: 900000 (99.756374ms)
+✔ F01 owns A currentValidAt boundary with fresh B: 900001 (102.33061ms)
+✔ F01 owns A currentValidAt boundary with fresh B: -1 (81.998777ms)
+✔ F01 owns A retrievedAt boundary with fresh B: 899999 (141.068342ms)
+✔ F01 owns A retrievedAt boundary with fresh B: 900000 (117.408442ms)
+✔ F01 owns A retrievedAt boundary with fresh B: 900001 (153.086911ms)
+✔ F01 owns A retrievedAt boundary with fresh B: -1 (89.280537ms)
+✔ F01 successive fresh B/C records do not renew A or its cached decision lifetime (107.155814ms)
+✔ F01 generation replacement cannot reuse the old active receipt (121.765878ms)
+✔ F01 coordinates replacement cannot reuse the old active receipt (127.509771ms)
+✔ F01 scene replacement cannot reuse the old active receipt (81.363131ms)
+✔ F01 mode replacement cannot reuse the old active receipt (91.074962ms)
+✔ F01 genuine simulation object turnover; missing model=false (53.019068ms)
+✔ F01 genuine simulation object turnover; missing model=true (58.309211ms)
+✔ F01 genuine forecast object turnover; missing model=false (97.156662ms)
+✔ F01 genuine forecast object turnover; missing model=true (96.40914ms)
+✔ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=false (50.567177ms)
+✔ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=true (57.779816ms)
+✔ F02 same-record present lease reaches no-model raster at 999ms (55.15897ms)
+✖ F02 same-record present lease reaches no-model raster at 1000ms (46.801323ms)
+✖ F02 same-record present lease reaches no-model raster at 1001ms (53.331467ms)
+✖ F02 same-record replacement publishes the actual wet receipt (56.579693ms)
+✖ F02 same-record replacement publishes the actual dry receipt (57.103956ms)
+✖ F02 no-model same-record replacement stays withheld until genuine full publication (56.861132ms)
+✔ F01 actual consumer mutant: missing-model guard (186.756538ms)
+✔ F01 actual consumer mutant: borrowed-B age (482.199756ms)
+✔ F01 actual consumer mutant: dropped active-receipt identity (226.88893ms)
+✔ F01 pending actual solar decode respects active receipt; B published=false (90.248411ms)
+✔ F01 pending actual solar decode respects active receipt; B published=true (99.138057ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 31
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4308.087388
+
+✖ failing tests:
+
+test at tests/weather-no-timetable-handoff.test.cjs:229:1
+✖ F02 same-record present lease reaches no-model raster at 1000ms (46.801323ms)
+  AssertionError [ERR_ASSERTION]: F02 expired present lease must fence its old receipt
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:237:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:229:1
+✖ F02 same-record present lease reaches no-model raster at 1001ms (53.331467ms)
+  AssertionError [ERR_ASSERTION]: F02 expired present lease must fence its old receipt
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:237:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:243:34
+✖ F02 same-record replacement publishes the actual wet receipt (56.579693ms)
+  AssertionError [ERR_ASSERTION]: F02 actual new evidence must receive a new publication identity
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:252:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { revision: 3, state: 'eligible-published', reason: 'complete atmosphere', target: { generation: 0, lat: 24.47, lon: 39.61 }, lane: 'simulation-fixture', sourceValidAt: null, retrievedAt: null, conditionState: 'simulation-fixture-rain', at: 1788901190000 },
+    expected: { revision: 3, state: 'eligible-published', reason: 'complete atmosphere', target: { generation: 0, lat: 24.47, lon: 39.61 }, lane: 'simulation-fixture', sourceValidAt: null, retrievedAt: null, conditionState: 'simulation-fixture-rain', at: 1788901190000 },
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:243:34
+✖ F02 same-record replacement publishes the actual dry receipt (57.103956ms)
+  AssertionError [ERR_ASSERTION]: F02 actual new evidence must receive a new publication identity
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:252:9)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { revision: 3, state: 'eligible-published', reason: 'complete atmosphere', target: { generation: 0, lat: 24.47, lon: 39.61 }, lane: 'simulation-fixture', sourceValidAt: null, retrievedAt: null, conditionState: 'simulation-fixture-rain', at: 1788901190000 },
+    expected: { revision: 3, state: 'eligible-published', reason: 'complete atmosphere', target: { generation: 0, lat: 24.47, lon: 39.61 }, lane: 'simulation-fixture', sourceValidAt: null, retrievedAt: null, conditionState: 'simulation-fixture-rain', at: 1788901190000 },
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:261:1
+✖ F02 no-model same-record replacement stays withheld until genuine full publication (56.861132ms)
+  AssertionError [ERR_ASSERTION]: pure final guard refuses the old authority
+  
+  true !== false
+  
+      at refused (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:75:9)
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:266:8)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
