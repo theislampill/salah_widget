@@ -1,0 +1,41 @@
+name: R000B recovery materialization
+on:
+  push:
+    branches: [pro/r000b-recovery-materialization-20261110]
+permissions:
+  contents: read
+concurrency:
+  group: r000b-recovery-materialization
+  cancel-in-progress: false
+jobs:
+  carrier:
+    if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/pro/r000b-recovery-materialization-20261110'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/r000b-transport/
+            .github/workflows/r000b-recovery-materialization.yml
+      - name: Verify complete bundle and publish only the coherent staging carrier
+        env:
+          R000B_GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python3 .github/r000b-transport/receive.py receive
+          --repo "$GITHUB_WORKSPACE"
+          --manifest-sha256 704deee31c3189bc17f59a8a40d02a7acd6d25768fdb1ec6cb2e1d846f70a395
+          --receipt "$RUNNER_TEMP/r000b-transport/receipt.json"
+          --publish-staging
+      - name: Preserve transport outcome including failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r000b-transport-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r000b-transport
+          if-no-files-found: error
