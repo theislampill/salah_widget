@@ -45,6 +45,10 @@ def plan_request(request, recipe):
     elif profile == "firefox-reordered-timing":
         engines, video_only = ["firefox"], True
         requested = ["NE07-reordered24"]
+    elif profile == "firefox-reordered-companions":
+        engines, video_only = ["firefox"], True
+        requested = ["NE07-mut-hardcoded-fajr", "NE07-mut-name-order",
+                     "NE07-mut-lost-date", "NE07-mut-independent-label"]
     elif profile == "chromium-recovery":
         engines, video_only = ["chromium"], False
         requested = BARRIERS

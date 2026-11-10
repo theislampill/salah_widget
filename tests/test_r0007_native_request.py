@@ -48,6 +48,23 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(plan["plannedCells"], 1)
         self.assertTrue(plan["videoOnly"])
 
+    def test_reordered_companions_keeps_both_fresh_controls_and_only_four_dependents(self):
+        original = copy.deepcopy(RECIPE)
+        plan = SELECTOR.plan_request(request("firefox-reordered-companions"), RECIPE)
+        self.assertEqual(plan["engines"], ["firefox"])
+        self.assertTrue(plan["videoOnly"])
+        self.assertEqual(plan["plannedCells"], 6)
+        self.assertEqual(plan["selectedCaseIds"], [
+            "NE07-reordered24", "NE07-ordinary24", "NE07-mut-hardcoded-fajr",
+            "NE07-mut-name-order", "NE07-mut-lost-date", "NE07-mut-independent-label"])
+        cases = {case["caseId"]: case for case in RECIPE["cases"]}
+        for case_id in plan["selectedCaseIds"][2:]:
+            self.assertEqual(cases[case_id]["healthyControlCaseIds"],
+                             ["NE07-reordered24", "NE07-ordinary24"])
+        self.assertEqual(RECIPE, original)
+        self.assertNotIn("--case-timeout-seconds", plan["arguments"])
+        self.assertNotIn("--mutation-only", plan["arguments"])
+
     def test_chromium_recaptures_all_five_barriers(self):
         plan = SELECTOR.plan_request(request("chromium-recovery"), RECIPE)
         self.assertEqual(plan["engines"], ["chromium"])
