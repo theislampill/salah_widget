@@ -129,6 +129,17 @@ function publicAbsentSeed(h){return Object.fromEntries(Object.keys(h.api.seeds('
 function configuredImagePreload(h){require(entryFile).configure(h.api,imageOptions());return h.api.preload(publicAbsentSeed(h),PUBLIC,false);}
 (async()=>{
  const v2={requestAccounting:'observed-records',securityProvenance:'csp',accountingUnknown:true};
+ for(const fault of ['matching','wrong-url','missing-url','wrong-type','wrong-parent-frame'])await check('c18 unknown bootstrap '+fault+' attachment governs the actual next consumer without a terminal',async make=>{
+  const h=await make({...v2,onClose:({socket})=>{
+   const targetInfo={targetId:'unknown-2',type:'worker',url:'blob:https://theislampill.github.io/simulated-owned-worker',parentFrameId:'simulated-fixture'};
+   if(fault==='wrong-url')targetInfo.url=PUBLIC+'tests/widget-fixture.html';if(fault==='missing-url')delete targetInfo.url;if(fault==='wrong-type')targetInfo.type='iframe';if(fault==='wrong-parent-frame')targetInfo.parentFrameId='ALIEN';
+   cdpEvent(socket,'Target.attachedToTarget',{sessionId:'unknown-child',targetInfo,waitingForDebugger:false});
+  }}),first=await h.publicCase('no-preference'),second=await h.publicCase('reduce');equalCuts(first);if(fault==='matching')equalCuts(second);else{assert.deepEqual(second.row,second.stored);assert.deepEqual(second.stored,second.summary);}
+  const a=first.row.network.accounting,record=a.records.find(x=>x.requestId==='unknown-2');assert.equal(record.outcome,'unobserved');assert.equal(record.terminals.length,0);assert.equal(a.allNetworkOutcomesObserved,false);
+  if(fault==='matching'){assert.equal(a.sourceClaimsBound,true);assert.equal(a.captureProblems.length,0);assert.equal(first.row.status,'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE');assert.equal(second.row.status,'PUBLIC_HEALTHY_PASSED_NOT_CLOSURE');assert.equal(h.spawnCount,2);}
+  else{assert.equal(a.sourceClaimsBound,false);assert(a.captureProblems.length>0);assert.equal(first.row.status,'PUBLIC_HEALTHY_FAILURE');assert.equal(first.row.checks.passiveObservationIntegrity,false);assert.equal(first.row.passiveObservationContinuation.decision,'BLOCK_EQUIVALENT_ENGINE');assert.equal(second.row.status,'NOT_ATTEMPTED');assert.equal(h.spawnCount,1);}
+  return {firstStatus:first.row.status,outcome:record.outcome,secondStatus:second.row.status,simulatedSpawnCount:h.spawnCount};
+ });
  await check('c18 contradictory attachment cannot complete a required script or admit the actual next consumer',async make=>{
   const h=await make({...v2,onClose:({socket})=>{
    cdpEvent(socket,'Network.requestWillBeSent',{requestId:'contradictory-required',request:{url:PUBLIC+'config.js',method:'GET'},documentURL:PUBLIC+'tests/smoke.html',loaderId:'',type:'Script',initiator:{type:'parser',url:PUBLIC+'tests/smoke.html'}});
