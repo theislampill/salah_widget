@@ -1,5 +1,25 @@
 # R0007 continuation frontier
 
+## Current successor cut — 2026-11-10T21:13:26.929442+00:00
+
+Issue7 remains OPEN; [PR73](https://github.com/theislampill/salah_widget/pull/73) is draft/unmerged. The recovered complete product candidate has been published, and source engineering is independently received. The exact published runtime/diagnostic head is 1075bd47b9a392cf2a7760c6f722c04911ffad54/tree4d209e02084c99002ddf0f7f7509d62f3c409b79. This documentation-only successor preserves source/generated/protected/V1/workflow/request files. Use the [same40-row ledger](acceptance-ledger.md) and [current evidence index](successor-evidence-index.md), not the old future-tense native/publication paragraphs below.
+
+Completed: retained288 source controls; original native/preservation findings; C6 Chromium recovery/sec-only pair; F1 Firefox reordered timing; F2 Firefox NY sec-only/healthy pair; F6 fresh reordered/ordinary plus four intended negatives; final source and native-pixel receiving for each. F6 report revision2 corrects set-status/per-face wording with revision1 retained. Historical failures remain historical failures.
+
+FUSE run42898554321 completed and its exact artifact59ab89acf24f5f8c8b16da6a7af914ec9a0ccc8781a83d407050734f936945db has final independent source/pixel receiving. Both source outcomes succeed; neither video recurs with missing text. Its declared result is INCONCLUSIVE, not a font cause/cure or production fix.
+
+Technical frontier:23 recorded missing-text intervals remain open across first/loading/error/recovery phases. Existing clean observations cannot erase them. Independent next-action review recommends one finite controlled optional-font ingress pair: preserve the seven original prayer actions, then release held optional CSS and font delivery under a fixed reviewed schedule. This facility is not yet implemented or executed; neither-recurrence again would end that repeat line as inconclusive. No repeat-until-green run, selector rewrite, changed prayer deadline/oracle or broad provider/renderer/science campaign is authorized by a finding alone. A concrete warranted repair remains within the owner's execution commission and must receive prospective effects and independent review.
+
+Integration frontier: actual main eebba178172f96b3ffe5ab3845bc0fffd57c6e1b; PR71head38e67bb96889528c70fd27647604818d50781b7d remains OPEN/non-draft/unmerged at the readback. Strict order R0017 corrective → R0007 → R000B. Final accepted-main reconciliation and exact whole-contract review precede the owner's exact merge approval. Merge/main/tree, configured public delivery/served consumers, final certificate and deliberate CLOSED/completed verification have not happened.
+
+Custody: root alone writes this branch. Continuity G0009 receipt ef586463da096e6daaeb96993034dfb9216202b3 is the current controller receipt at this cut. Checkpointversion9 is365971278B, SHA393e8393e2eb6daa8218973ec5a7c0a81df9fa4b81cca45efac0f6d53b01ec58 and has3462 verified payload members plus its manifest. Original artifacts, report revisions, derivative indices and local-record recovery limits are preserved there. This custody is distinct from public delivery. Reconcile actual effects before retrying any uncertain operation.
+
+## Preserved predecessor frontier
+
+Everything below is an unchanged historical checkpoint. Its prior unpublished/native-not-started/source-review-pending/17-case and oldPR71 statements do not describe the current successor state.
+
+# R0007 continuation frontier
+
 The initial engineering candidate d641741df1397659da6ef817fa41aa975f7f3930 passed278 affected source tests. Independent review returned GAP-REVISE for lost day-edge gap bounds and padded-year eligibility. Both are repaired in the successor at source/review-successor-summary.json identities;288 affected tests and V1 pass. The ten added controls reproduce six behavior failures on d641741 and all ten pass after repair. Independent successor review remains pending; no native or final acceptance is implied.
 
 The whole-owner acceptance-ledger.md is authoritative: original7.01–7.16, A01–A09, ES07-01–15 and terminal gates remain visible. Native qualification, independent current-candidate review, latest accepted main including preceding R0017 corrective work, exact owner merge approval and delivery/certificate/issue closure remain pending.
