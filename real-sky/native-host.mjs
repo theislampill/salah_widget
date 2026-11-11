@@ -256,7 +256,9 @@ export function startNativeSky(pack,workerSource,physical){
  const readState=()=>({...structuredClone(status),lifecycle:lifecycle.state});
  // Retirement (constructing -> active/pending -> retiring -> disposed) is owned by
  // this instance: status.retirement records the asset owner's intent before the
- // lifecycle withdrawal runs; shared card/registry slots clear only while owned.
+ // lifecycle withdrawal runs. That withdrawal (`clear`) is a live owner's and
+ // removes the composed class/mask itself; the registry slot (and this dispose's
+ // own card clear) change only while this instance is still registered.
  // Every owned release completes even if withdrawal throws; the cause rethrows.
  window.SalahRealSky=instance={request,compose,invalidate:reason=>lifecycle.invalidate(reason),get state(){return readState();},dispose({previewHandoff=true}={}){if(disposed||status.retirement)return;const owner=window.SalahRealSky===instance;status.retirement={previewHandoff};status.status='retiring';let failure=null;try{lifecycle.dispose();}catch(error){failure=error;}disposed=true;if(owner){card.classList.remove('real-sky-composed');card.style.removeProperty('--native-sun-cloud-mask');}const cleanup=release();frame=null;job=null;previousPresentation=null;previousSolarMask=null;status.last=null;status.status='disposed';if(failure??cleanup)throw failure??cleanup;}};
  own(()=>{if(window.SalahRealSky===instance){window.SalahRealSky=null;window.realSkyFrame=()=>null;}});

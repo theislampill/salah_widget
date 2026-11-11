@@ -411,8 +411,10 @@ test('handoff is not suppressed for a live instance while the document is hidden
   h.context.document.hidden=false;await h.finishMasks();
   h.dispatch('pagehide');h.dispatch('pageshow',{persisted:true});await flush();await h.finishMasks();
   assert.equal(h.window.SalahRealSkyAssets.state.status,'ready');
-  h.changeMask();issued=h.issued.length;h.window.SalahRealSky.invalidate('live withdrawal after resume');
-  assert.equal(h.issued.length,issued+1,'a resumed (not suspended) loader keeps the live handoff');
+  // Disposal through the asset reset itself: the resumed loader is not suspended,
+  // so its own intent must keep the live handoff.
+  h.changeMask();issued=h.issued.length;const retried=h.window.SalahRealSkyAssets.retry();
+  assert.equal(h.issued.length,issued+1,'a resumed (not suspended) loader keeps the live handoff');await retried;await h.finishMasks();
  }finally{h.close();}
 });
 

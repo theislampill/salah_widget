@@ -133,7 +133,7 @@ for(const stage of ['url','interval','frame'])test(`ES21-02 Moon wrapper failure
  assert.equal(r.w.SalahMoonDetail??null,null,'no orphan registered detail');
  assert.equal(r.canvases.filter(c=>c.className==='moon-detail-canvas'&&!c.removedCount).length,0,'detail canvas released or never created');
  assert.equal(r.listeners.get('visibilitychange')?.size??0,0);assert.equal(r.intervals.size,0);assert.equal(r.frames.size,0);
- assert.ok(!r.w.SalahMoonRuntime||r.w.SalahMoonRuntime.disposed===true,'any registered runtime reports disposed');
+ assert.equal(r.w.SalahMoonRuntime??null,null,'a half-built runtime does not stay registered');
  // Recovery: a new wrapper installs exactly one live runtime.
  r.run(wrapper());r.frame();r.frame();
  assert.equal(r.w.SalahMoonRuntime.disposed,false);assert.ok(r.w.SalahMoonDetail);assert.equal(r.intervals.size,1);assert.equal(r.workers.length,1);

@@ -4126,6 +4126,7 @@ try{const text=atob("U01IMRwCU/8CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
  // It is acquired at the registration boundary; a throw before the runtime is
  // complete releases exactly this wrapper's detail, slot, listener and timers.
  const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
+ let registered=null;
  try{
  document.addEventListener('visibilitychange',visibility);
  window.SalahMoonDetail=detail;
@@ -4165,16 +4166,19 @@ try{const text=atob("U01IMRwCU/8CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   get state(){const s=capture(),current=presentation(s),target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});},
   dispose(){if(disposed)return;clear('disposed');disposed=true;clearInterval(timer);clearTimeout(deadline);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;document.removeEventListener('visibilitychange',visibility);closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status='disposed';}
  };
+ registered=window.SalahMoonRuntime;
  timer=setInterval(()=>poll(),250);
  // Full asset/decode/row preparation must not compete with the synchronous
  // first surface. Give its already-published scene a browser paint opportunity;
  // explicit retry and disposal revoke this deferred start. No readiness gate.
  startFrame=requestAnimationFrame(()=>{startFrame=requestAnimationFrame(start);});
  }catch(error){
-  // construction-failed -> cleaned; a registered runtime here reports disposed.
+  // construction-failed -> cleaned: the half-built runtime reports disposed and
+  // its registry slot clears while it still holds this runtime.
   disposed=true;clearInterval(timer);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;
   document.removeEventListener('visibilitychange',visibility);closeWorker();
   if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();
+  status.status='disposed';if(registered&&window.SalahMoonRuntime===registered)window.SalahMoonRuntime=null;
   throw error;
  }
 })();
