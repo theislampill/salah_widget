@@ -61,7 +61,7 @@ def main() -> int:
     env = os.environ.copy()
     env.update(POWERSHELL_TELEMETRY_OPTOUT="1", DOTNET_CLI_TELEMETRY_OPTOUT="1",
                POWERSHELL_UPDATECHECK="Off")
-    hosts = {"ps51": Path(env["SystemRoot"]) / "System32/WindowsPowerShell/v1.0/powershell.exe",
+    hosts = {"ps51": Path(env["SYSTEMROOT"]) / "System32/WindowsPowerShell/v1.0/powershell.exe",
              "ps7": Path(env["INSTALL_TEST_PS7"])}
     # A separate subject root is created by each child; the runner never changes
     # permissions of any preexisting parent or browser profile.
