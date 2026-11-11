@@ -260,22 +260,31 @@ SPECS = [
 
 
 def invoke_pwsh(pwsh: Path, code: str, prefix: Path, timeout: int = 180) -> dict:
+    # Bind both sides of the receipt transport. Windows' parent locale must not
+    # reinterpret UTF-8 Unicode fixture paths as cp1252 text.
+    code = "[Console]::OutputEncoding=New-Object Text.UTF8Encoding $false;\n" + code
     encoded = base64.b64encode(code.encode("utf-16-le")).decode("ascii")
     started = time.monotonic()
     command = [str(pwsh), "-NoLogo", "-NoProfile", "-NonInteractive", "-EncodedCommand", encoded]
     try:
-        result = subprocess.run(command, capture_output=True, text=True, timeout=timeout)
+        result = subprocess.run(command, capture_output=True, timeout=timeout)
     except subprocess.TimeoutExpired as error:
-        stdout = (error.stdout or b"").decode(errors="replace") if isinstance(error.stdout, bytes) else (error.stdout or "")
-        stderr = (error.stderr or b"").decode(errors="replace") if isinstance(error.stderr, bytes) else (error.stderr or "")
-        prefix.with_suffix(".stdout.txt").write_text(stdout)
-        prefix.with_suffix(".stderr.txt").write_text(stderr)
+        for stream, raw in (("stdout", error.stdout or b""), ("stderr", error.stderr or b"")):
+            prefix.with_suffix("." + stream + ".bin").write_bytes(raw)
+            prefix.with_suffix("." + stream + ".txt").write_text(raw.decode("utf-8", errors="replace"), encoding="utf-8")
         return {"exit": None, "status": "ACQUISITION_TIMEOUT", "seconds": time.monotonic() - started}
-    prefix.with_suffix(".stdout.txt").write_text(result.stdout)
-    prefix.with_suffix(".stderr.txt").write_text(result.stderr)
+    prefix.with_suffix(".stdout.bin").write_bytes(result.stdout)
+    prefix.with_suffix(".stderr.bin").write_bytes(result.stderr)
     try:
-        receipt = json_output(result.stdout)
-        prefix.with_suffix(".json").write_text(json.dumps(receipt, indent=2, ensure_ascii=True) + "\n")
+        stdout = result.stdout.decode("utf-8-sig")
+        stderr = result.stderr.decode("utf-8-sig")
+    except UnicodeDecodeError as error:
+        return {"exit": result.returncode, "status": "INVALID_UTF8_RECEIPT", "error": str(error), "seconds": time.monotonic() - started}
+    prefix.with_suffix(".stdout.txt").write_text(stdout, encoding="utf-8")
+    prefix.with_suffix(".stderr.txt").write_text(stderr, encoding="utf-8")
+    try:
+        receipt = json_output(stdout)
+        prefix.with_suffix(".json").write_text(json.dumps(receipt, indent=2, ensure_ascii=True) + "\n", encoding="utf-8")
     except (ValueError, json.JSONDecodeError) as error:
         return {"exit": result.returncode, "status": "INVALID_RECEIPT", "error": str(error), "seconds": time.monotonic() - started}
     return {"exit": result.returncode, "status": "OBSERVED", "seconds": time.monotonic() - started, "receipt": receipt}

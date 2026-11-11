@@ -11,6 +11,7 @@ param(
 # Linux PowerShell is supplemental; it does not qualify Windows ACL/NTFS behavior.
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
+[Console]::OutputEncoding = New-Object Text.UTF8Encoding $false
 $script:results = @()
 $script:caseEvents = @()
 $script:caseNotes = [ordered]@{}
@@ -196,10 +197,20 @@ try {
         $script:fixtureUid=((& id -u) -join '').Trim()
         $script:actualNativeBootstrap=${function:Initialize-StagingNative}
         if (-not $script:actualNativeBootstrap) { throw 'SETUP: source has no explicit native staging boundary to adapt.' }
+        $nativeDefinitions=@($sourceAst.EndBlock.Statements | Where-Object {$_ -is [Management.Automation.Language.FunctionDefinitionAst] -and $_.Name -ceq 'Initialize-StagingNative'})
+        $nativeLiterals=@($nativeDefinitions[0].FindAll({param($node) $node -is [Management.Automation.Language.StringConstantExpressionAst] -and $node.StringConstantType -eq [Management.Automation.Language.StringConstantType]::SingleQuotedHereString -and $node.Value.StartsWith('using System;',[StringComparison]::Ordinal)},$true))
+        if($nativeDefinitions.Count -ne 1 -or $nativeLiterals.Count -ne 1) {throw 'SETUP: actual native C# payload is not uniquely identifiable.'}
+        $script:fixtureNativeSource=$nativeLiterals[0].Value
         # Only native platform boundaries are adapted. Actual production
         # acquisition, admission, validation, publication, callers and cleanup
         # remain in use. Native Windows ACL/lease claims are expressly excluded.
         function Initialize-StagingNative {
+            # Production now correctly rejects unsupported hosts before any
+            # compilation. This fixture explicitly loads only its exact literal
+            # C# payload after New-Case has installed owned temporary parents.
+            # A dry call must still reach the real first guard without loading.
+            if($DryRun) { & $script:actualNativeBootstrap; return }
+            if(-not ('SalahInstaller.StageNative' -as [type])) {Add-Type -TypeDefinition $script:fixtureNativeSource}
             try { & $script:actualNativeBootstrap }
             catch {
                 if ($DryRun -or -not ('SalahInstaller.StageNative' -as [type]) -or $_.Exception.Message -notlike '*R0015 native staging requires Windows*') { throw }
@@ -252,6 +263,32 @@ try {
             $file.Dispose()
             [IO.File]::SetUnixFileMode($Path,[IO.UnixFileMode]384)
             return Get-StagingPathInfo $Path
+        }
+    }
+
+    # Preserve the actual creation result/exception. Failed native acquisition
+    # needs its requested path and Win32 chain, not a guessed path-length cause.
+    $script:observedPrivateFileCreator=(Get-Command New-PrivateStagingFile).ScriptBlock
+    function New-PrivateStagingFile([string]$Path) {
+        try { return & $script:observedPrivateFileCreator $Path }
+        catch {
+            $originalError=$_
+            $chain=@();$exception=$originalError.Exception;$depth=0
+            while($exception -and $depth -lt 12) {
+                $nativeCode=$null
+                if($exception.PSObject.Properties['NativeErrorCode']) {$nativeCode=$exception.NativeErrorCode}
+                $chain += [pscustomobject]@{type=$exception.GetType().FullName;message=$exception.Message;hresult=$exception.HResult;nativeErrorCode=$nativeCode}
+                $exception=$exception.InnerException;$depth++
+            }
+            $parent=[IO.Path]::GetDirectoryName($Path);$facts=$null;$factsError=$null;$sddl=$null;$aclError=$null
+            try { $facts=Get-StagingPathInfo $parent } catch {$factsError=$_.Exception.Message}
+            if([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
+                try {$sddl=(Get-Acl -LiteralPath $parent).Sddl} catch {$aclError=$_.Exception.Message}
+            }
+            $observed=[pscustomobject]@{requestedPath=$Path;pathLength=$Path.Length;parent=$parent;parentLength=$parent.Length;exceptionChain=$chain;parentFacts=$facts;parentFactsError=$factsError;parentSddl=$sddl;parentAclError=$aclError}
+            if(-not $script:caseNotes.Contains('privateFileFailures')) {$script:caseNotes.privateFileFailures=@()}
+            $script:caseNotes.privateFileFailures += $observed
+            throw $originalError
         }
     }
 

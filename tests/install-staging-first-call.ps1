@@ -4,12 +4,16 @@ param(
     [string]$OutputRoot,
     [string]$ChildContext
 )
-# Independent R0015 observation probe. No installer main, transport, browser,
+# Independent R0015 compiler-custody observer. Derived without replacing the
+# native2 original probe SHA1cc468a93f9990015797b5d2ab60edf8e99e70fd56d169cc58f0bbddb1ba7073.
+# The old artifact-parent check is a later boundary, not first compiler custody.
+# No installer main, transport, browser,
 # clipboard, real profile, machine policy, or persistent environment changes.
 # Only newly allocated fixture directories receive ACL changes.
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $ProbeUtf8 = New-Object Text.UTF8Encoding $false
+[Console]::OutputEncoding = $ProbeUtf8
 $NativeWindows = [Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT
 
 function Write-ProbeText([string]$Path, [string]$Text) {
@@ -21,13 +25,20 @@ function Get-ProbeHash([string]$Path) {
     finally { $sha.Dispose() }
 }
 function Write-ProbeJson([string]$Path, $Value) {
-    Write-ProbeText $Path (ConvertTo-Json -InputObject $Value -Depth 18)
+    Publish-ProbeText $Path (ConvertTo-Json -InputObject $Value -Depth 22)
+}
+function Publish-ProbeText([string]$Path, [string]$Text) {
+    # Control publications are exclusive and atomic inside the fresh control
+    # directory, outside the watched TEMP. A reader cannot see partial JSON.
+    $partial=$Path+'.publishing-'+[guid]::NewGuid().ToString('N')
+    Write-ProbeText $partial $Text
+    [IO.File]::Move($partial,$Path)
 }
 function Read-ProbeJson([string]$Path) {
     return ConvertFrom-Json -InputObject ([IO.File]::ReadAllText($Path, [Text.Encoding]::UTF8))
 }
 function Add-ProbePhase([string]$Name, [string]$Detail='') {
-    $row=[ordered]@{phase=$Name;utc=[DateTime]::UtcNow.ToString('o');pid=$PID;detail=$Detail}
+    $row=[ordered]@{phase=$Name;utc=[DateTime]::UtcNow.ToString('o');pid=$PID;nonce=$script:ProbeContext.nonce;detail=$Detail}
     [IO.File]::AppendAllText($script:ProbeContext.phases, ((ConvertTo-Json -InputObject $row -Compress)+[Environment]::NewLine), $ProbeUtf8)
 }
 function Get-ProbeSnapshot([string]$Root) {
@@ -45,6 +56,50 @@ function Get-ProbeSnapshot([string]$Root) {
         }
     }
     return ,@($rows.ToArray() | Sort-Object path)
+}
+function Get-ProbeStringHash([string]$Text) {
+    $sha=[Security.Cryptography.SHA256]::Create()
+    try{return [BitConverter]::ToString($sha.ComputeHash($ProbeUtf8.GetBytes($Text))).Replace('-','').ToLowerInvariant()}
+    finally{$sha.Dispose()}
+}
+function Test-ProbeContainedPath([string]$Path,[string]$Root) {
+    return [bool]($Path -and $Root -and ([string]::Equals($Path,$Root,[StringComparison]::OrdinalIgnoreCase) -or $Path.StartsWith($Root+'\',[StringComparison]::OrdinalIgnoreCase)))
+}
+function Get-ProbeCompilerContext {
+    $context=$script:CompilerScratch
+    if(-not $context){return $null}
+    $parents=@($context.Leases|ForEach-Object{[pscustomobject]@{path=$_.Facts.Path;identity=$_.Facts.Identity;owner=$_.Facts.Owner;trustedAncestor=$_.Facts.TrustedAncestor;trustedParent=$_.Facts.TrustedParent;closed=$_.Handle.IsClosed}})
+    $root=if($context.RootLease){[ordered]@{path=$context.RootLease.Facts.Path;identity=$context.RootLease.Facts.Identity;owner=$context.RootLease.Facts.Owner;private=$context.RootLease.Facts.Private;closed=$context.RootLease.Handle.IsClosed}}else{$null}
+    return [ordered]@{id=$context.Id;status=$context.Status;path=$context.Path;identity=$context.Identity;sid=$context.Sid;created=$context.Created;cleanupError=$context.CleanupError;rootLease=$root;parentLeases=$parents;exists=$(if($context.Path){[IO.Directory]::Exists($context.Path)}else{$false})}
+}
+function Get-ProbeCompilerReadback {
+    $context=$script:CompilerScratch
+    if(-not $context -or -not $context.Created -or -not $context.Path){return $null}
+    $lease=$null;$facts=$null;$snapshot=$null;$aclRows=@();$readbackError=$null
+    try {
+        $lease=& $script:OriginalProbeCompilerOpen $context.Path $context.Sid ''
+        $facts=$lease.Facts
+        $snapshot=Get-ProbeSnapshot $context.Path
+        $paths=@($context.Path)+@($snapshot|Where-Object{$_.attributes -notmatch 'ReparsePoint'}|ForEach-Object{$context.Path+$_.path})
+        foreach($path in $paths){
+            $acl=Get-Acl -LiteralPath $path
+            $aclRows += [pscustomobject]@{path=$path;owner=$acl.GetOwner([Security.Principal.SecurityIdentifier]).Value;protected=$acl.AreAccessRulesProtected;sddl=$acl.Sddl}
+        }
+    } catch {$readbackError=$_.Exception.Message}
+    finally {if($lease){$lease.Handle.Dispose()}}
+    return [ordered]@{facts=$facts;snapshot=$snapshot;acl=$aclRows;error=$readbackError}
+}
+function Wait-ProbeCompilerBoundary([string]$Stage,$Facts) {
+    $path=if($Stage -ceq 'before'){$script:ProbeContext.compilerBefore}else{$script:ProbeContext.compilerAfter}
+    $ack=if($Stage -ceq 'before'){$script:ProbeContext.compilerBeforeAck}else{$script:ProbeContext.compilerAfterAck}
+    Write-ProbeJson $path ([ordered]@{pid=$PID;nonce=$script:ProbeContext.nonce;sourceSha256=$SourceHash;stage=$Stage;utc=[DateTime]::UtcNow.ToString('o');facts=$Facts})
+    $clock=[Diagnostics.Stopwatch]::StartNew()
+    while(-not [IO.File]::Exists($ack)) {
+        if($clock.Elapsed.TotalSeconds -gt 10){throw ('OBSERVER: compiler '+$Stage+' boundary was not released.')}
+        [Threading.Thread]::Sleep(25)
+    }
+    if([IO.File]::ReadAllText($ack) -cne $script:ProbeContext.nonce){throw ('OBSERVER: compiler '+$Stage+' boundary nonce differs.')}
+    Add-ProbePhase ('compiler-'+$Stage+'-boundary-released')
 }
 
 if(-not $NativeWindows) {
@@ -74,54 +129,77 @@ if($ChildContext) {
         }
         $script:DryRun=$false
         $script:StagingAttempt=$null
+        $script:CompilerScratch=$null
+        $script:ProbeCompilerCalls=@()
+        $script:ProbeObserverErrors=@()
         $script:WorkRoot=$null
         $script:DownloadRoot=$null
         $script:PresetRoot=$null
         $typeAbsent=-not ('SalahInstaller.StageNative' -as [type])
+        $compilerTypeAbsent=-not ('SalahInstaller.CompilerNative' -as [type])
         $nativeTemp=[IO.Path]::GetFullPath([IO.Path]::GetTempPath()).TrimEnd('\')
-        if(-not $typeAbsent){throw 'BOOTSTRAP: production native type was already loaded.'}
+        if(-not $typeAbsent -or -not $compilerTypeAbsent){throw 'BOOTSTRAP: production native type was already loaded.'}
         if(-not $nativeTemp.Equals(([IO.Path]::GetFullPath($script:ProbeContext.temp)).TrimEnd('\'),[StringComparison]::OrdinalIgnoreCase)){throw ('BOOTSTRAP: native temp resolution escaped the observed directory: '+$nativeTemp)}
         $script:OriginalProbeTrustedParent=(Get-Command Get-TrustedStagingParent -CommandType Function).ScriptBlock
+        $script:OriginalProbeCompilerOpen=(Get-Command Open-CompilerDirectoryLease -CommandType Function).ScriptBlock
+        $script:OriginalProbeCompilerContext=(Get-Command New-StagingCompilerContext -CommandType Function).ScriptBlock
+        function New-StagingCompilerContext {
+            Add-ProbePhase 'compiler-context-enter'
+            try {
+                $value=& $script:OriginalProbeCompilerContext
+                Add-ProbePhase 'compiler-context-owned' $value.Path
+                return $value
+            } catch {Add-ProbePhase 'compiler-context-threw' $_.Exception.Message;throw}
+        }
         $script:ProbeParentCalls=0
         function Get-TrustedStagingParent([string]$Path) {
             $script:ProbeParentCalls++
-            Add-ProbePhase 'native-parent-check-enter' $Path
-            if($script:ProbeParentCalls -eq 1) {
-                Write-ProbeJson $script:ProbeContext.boundary ([ordered]@{pid=$PID;nonce=$script:ProbeContext.nonce;path=$Path;utc=[DateTime]::UtcNow.ToString('o')})
-                $wait=[Diagnostics.Stopwatch]::StartNew()
-                while(-not [IO.File]::Exists($script:ProbeContext.boundaryAck)) {
-                    if($wait.Elapsed.TotalSeconds -gt 10){throw 'OBSERVER: first native parent check was not released.'}
-                    [Threading.Thread]::Sleep(25)
-                }
-                if([IO.File]::ReadAllText($script:ProbeContext.boundaryAck) -cne $script:ProbeContext.nonce){throw 'OBSERVER: first parent check acknowledgement nonce differs.'}
-                Add-ProbePhase 'native-parent-check-released' $Path
-            }
+            Add-ProbePhase 'later-artifact-parent-check-enter' $Path
             try {
                 $value=& $script:OriginalProbeTrustedParent $Path
-                Add-ProbePhase 'native-parent-check-returned' $Path
+                Add-ProbePhase 'later-artifact-parent-check-returned' $Path
                 return $value
-            } catch {Add-ProbePhase 'native-parent-check-threw' $_.Exception.Message;throw}
+            } catch {Add-ProbePhase 'later-artifact-parent-check-threw' $_.Exception.Message;throw}
         }
-        # These are the exact two Add-Type parameter sets used by this source.
-        # The production compiler/type text and native cmdlet are unchanged.
+        # Forward the actual source's parameters, including PS5.1's exact
+        # CompilerParameters object. Only the named compile-failure control
+        # appends invalid input; its original and supplied C# hashes are retained.
         function Add-Type {
             [CmdletBinding(DefaultParameterSetName='Type')]
             param(
                 [Parameter(Mandatory=$true,ParameterSetName='Type')][string]$TypeDefinition,
-                [Parameter(Mandatory=$true,ParameterSetName='Assembly')][string[]]$AssemblyName
+                [Parameter(Mandatory=$true,ParameterSetName='Assembly')][string[]]$AssemblyName,
+                [Parameter(ParameterSetName='Type')][object]$CompilerParameters
             )
             Add-ProbePhase 'native-add-type-enter' $PSCmdlet.ParameterSetName
+            if($PSCmdlet.ParameterSetName -ceq 'Assembly') {
+                try {Microsoft.PowerShell.Utility\Add-Type @PSBoundParameters;Add-ProbePhase 'native-add-type-returned' 'Assembly'}
+                catch {Add-ProbePhase 'native-add-type-threw' $_.Exception.Message;throw}
+                return
+            }
+            $forward=@{};foreach($name in $PSBoundParameters.Keys){$forward[$name]=$PSBoundParameters[$name]}
+            $injected=$script:ProbeContext.case -ceq 'compile-failure'
+            if($injected){$forward.TypeDefinition=$TypeDefinition+"`n deliberately invalid compiler input !"}
+            $call=[ordered]@{context=(Get-ProbeCompilerContext);temp=$env:TEMP;tmp=$env:TMP;nativeTemp=[IO.Path]::GetTempPath();originalTypeSha256=(Get-ProbeStringHash $TypeDefinition);suppliedTypeSha256=(Get-ProbeStringHash $forward.TypeDefinition);failureInjected=$injected;compilerParametersSupplied=$PSBoundParameters.ContainsKey('CompilerParameters');compilerParameterIdentity=$(if($CompilerParameters){[Runtime.CompilerServices.RuntimeHelpers]::GetHashCode($CompilerParameters)}else{$null});compilerTempDir=$(if($CompilerParameters){$CompilerParameters.TempFiles.TempDir}else{$null});keepFiles=$(if($CompilerParameters){$CompilerParameters.TempFiles.KeepFiles}else{$null})}
+            $script:ProbeCompilerCalls += $call
+            try {Wait-ProbeCompilerBoundary 'before' $call}
+            catch {$script:ProbeObserverErrors += $_.Exception.Message;throw}
+            $nativeError=$null
             try {
-                Microsoft.PowerShell.Utility\Add-Type @PSBoundParameters
-                Add-ProbePhase 'native-add-type-returned' $PSCmdlet.ParameterSetName
-            } catch {Add-ProbePhase 'native-add-type-threw' $_.Exception.Message;throw}
+                Microsoft.PowerShell.Utility\Add-Type @forward
+                Add-ProbePhase 'native-add-type-returned' 'Type'
+            } catch {$nativeError=$_;Add-ProbePhase 'native-add-type-threw' $_.Exception.Message}
+            $after=[ordered]@{context=(Get-ProbeCompilerContext);readback=(Get-ProbeCompilerReadback);outcome=$(if($nativeError){'threw'}else{'returned'});nativeError=$(if($nativeError){$nativeError.Exception.Message}else{$null});nativeTypePresent=[bool]('SalahInstaller.StageNative' -as [type]);temp=$env:TEMP;tmp=$env:TMP;nativeTemp=[IO.Path]::GetTempPath()}
+            try {Wait-ProbeCompilerBoundary 'after' $after}
+            catch {$script:ProbeObserverErrors += $_.Exception.Message;throw}
+            if($nativeError){throw $nativeError}
         }
-        $ready=[ordered]@{pid=$PID;nonce=$script:ProbeContext.nonce;sourceSha256=$SourceHash;typeAbsent=$typeAbsent;nativeTemp=$nativeTemp;temp=$env:TEMP;tmp=$env:TMP;hostVersion=$PSVersionTable.PSVersion.ToString();hostExecutable=[Diagnostics.Process]::GetCurrentProcess().MainModule.FileName}
+        $ready=[ordered]@{pid=$PID;nonce=$script:ProbeContext.nonce;sourceSha256=$SourceHash;typeAbsent=$typeAbsent;compilerTypeAbsent=$compilerTypeAbsent;nativeTemp=$nativeTemp;temp=$env:TEMP;tmp=$env:TMP;hostVersion=$PSVersionTable.PSVersion.ToString();hostExecutable=[Diagnostics.Process]::GetCurrentProcess().MainModule.FileName}
         Write-ProbeJson $script:ProbeContext.ready $ready
         Add-ProbePhase 'observer-ready'
         $wait=[Diagnostics.Stopwatch]::StartNew()
         while(-not [IO.File]::Exists($script:ProbeContext.go)) {
-            if($wait.Elapsed.TotalSeconds -gt 15){throw 'OBSERVER: call was not released.'}
+            if($wait.Elapsed.TotalSeconds -gt 60){throw 'OBSERVER: call was not released.'}
             [Threading.Thread]::Sleep(25)
         }
         if([IO.File]::ReadAllText($script:ProbeContext.go) -cne $script:ProbeContext.nonce){throw 'OBSERVER: call release nonce differs.'}
@@ -134,7 +212,7 @@ if($ChildContext) {
             try {Clear-OwnedScratch;Add-ProbePhase 'actual-clear-owned-scratch-returned'}
             catch {$cleanupError=$_.Exception.Message;Add-ProbePhase 'actual-clear-owned-scratch-threw' $cleanupError}
         }
-        $receipt=[ordered]@{status='OBSERVATION_COMPLETED';pid=$PID;nonce=$script:ProbeContext.nonce;sourceSha256=$SourceHash;nativeTemp=$nativeTemp;typeAbsentBefore=$typeAbsent;typePresentAfter=[bool]('SalahInstaller.StageNative' -as [type]);initialized=$initialized;initializationError=$initializationError;parentCheckCalls=$script:ProbeParentCalls;beforeCleanup=$beforeCleanup;afterCleanupStatus=$(if($script:StagingAttempt){$script:StagingAttempt.Status}else{$null});cleanupError=$cleanupError}
+        $receipt=[ordered]@{status=$(if($script:ProbeObserverErrors.Count){'BOOTSTRAP_OR_OBSERVER_BLOCKED'}else{'OBSERVATION_COMPLETED'});pid=$PID;nonce=$script:ProbeContext.nonce;sourceSha256=$SourceHash;nativeTemp=$nativeTemp;typeAbsentBefore=$typeAbsent;compilerTypeAbsentBefore=$compilerTypeAbsent;typePresentAfter=[bool]('SalahInstaller.StageNative' -as [type]);compilerTypePresentAfter=[bool]('SalahInstaller.CompilerNative' -as [type]);initialized=$initialized;initializationError=$initializationError;parentCheckCalls=$script:ProbeParentCalls;compilerContext=(Get-ProbeCompilerContext);compilerCalls=$script:ProbeCompilerCalls;observerErrors=$script:ProbeObserverErrors;restoredTemp=$env:TEMP;restoredTmp=$env:TMP;beforeCleanup=$beforeCleanup;afterCleanupStatus=$(if($script:StagingAttempt){$script:StagingAttempt.Status}else{$null});cleanupError=$cleanupError}
         Write-ProbeJson $script:ProbeContext.receipt $receipt
         Add-ProbePhase 'child-completed'
         exit 0
@@ -176,12 +254,12 @@ $caseRoot=Join-Path $script:ProbeFixtureRoot 'matched-parent'
 $temp=Join-Path $caseRoot 'temp'
 $profile=Join-Path $caseRoot 'profile'
 foreach($path in @($caseRoot,$temp,$profile)){[void][IO.Directory]::CreateDirectory($path);Set-ProbeAcl $path}
-foreach($caseName in @('foreign-create-parent','owned-parent')) {
+foreach($caseName in @('foreign-create-parent','owned-parent','compile-failure')) {
     $foreign=$caseName -ceq 'foreign-create-parent'
     Set-ProbeAcl $temp $foreign
     $control=Join-Path $script:ProbeFixtureRoot ($caseName+'-control')
     [void][IO.Directory]::CreateDirectory($control);Set-ProbeAcl $control
-    $context=[ordered]@{sourceSha256=$SourceHash;nonce=[guid]::NewGuid().ToString('N');temp=$temp;profile=$profile;control=$control;ready=(Join-Path $control 'ready.json');go=(Join-Path $control 'go.txt');boundary=(Join-Path $control 'boundary.json');boundaryAck=(Join-Path $control 'boundary-ack.txt');receipt=(Join-Path $control 'child-receipt.json');phases=(Join-Path $control 'phases.jsonl')}
+    $context=[ordered]@{case=$caseName;sourceSha256=$SourceHash;nonce=[guid]::NewGuid().ToString('N');temp=$temp;profile=$profile;control=$control;ready=(Join-Path $control 'ready.json');go=(Join-Path $control 'go.txt');compilerBefore=(Join-Path $control 'compiler-before.json');compilerBeforeAck=(Join-Path $control 'compiler-before-ack.txt');compilerAfter=(Join-Path $control 'compiler-after.json');compilerAfterAck=(Join-Path $control 'compiler-after-ack.txt');receipt=(Join-Path $control 'child-receipt.json');phases=(Join-Path $control 'phases.jsonl')}
     $contextFile=Join-Path $control 'context.json';Write-ProbeJson $contextFile $context
     $acl=Get-Acl -LiteralPath $temp
     $aclFacts=[ordered]@{path=$temp;ownerSid=$acl.GetOwner([Security.Principal.SecurityIdentifier]).Value;protected=$acl.AreAccessRulesProtected;sddl=$acl.Sddl;foreignCreateGrant=$foreign}
@@ -196,7 +274,7 @@ foreach($caseName in @('foreign-create-parent','owned-parent')) {
     foreach($key in $environment.Keys){$psi.EnvironmentVariables[[string]$key]=[string]$environment[$key]}
     $child=New-Object Diagnostics.Process;$child.StartInfo=$psi
     $events=New-Object 'System.Collections.Generic.List[object]'
-    $identifiers=@();$watcher=$null;$ready=$null;$receipt=$null;$timedOut=$false;$boundaryReleased=$false;$observerError=$null;$started=$false;$outTask=$null;$errTask=$null
+    $identifiers=@();$watcher=$null;$ready=$null;$receipt=$null;$timedOut=$false;$beforeReleased=$false;$afterReleased=$false;$compilerBefore=$null;$compilerAfter=$null;$observerError=$null;$started=$false;$outTask=$null;$errTask=$null;$stdoutDrained=$false;$stderrDrained=$false
     $marker=Join-Path $temp ('observer-control-'+$context.nonce+'.txt')
     function Receive-ProbeEvents([string]$Phase) {
         foreach($identifier in $identifiers) {
@@ -218,7 +296,7 @@ foreach($caseName in @('foreign-create-parent','owned-parent')) {
         while(-not [IO.File]::Exists($context.ready) -and -not $child.HasExited -and $clock.Elapsed.TotalSeconds -lt 60){[Threading.Thread]::Sleep(25)}
         if(-not [IO.File]::Exists($context.ready)){throw 'BOOTSTRAP: fresh child did not produce observer-ready within 60 seconds.'}
         $ready=Read-ProbeJson $context.ready
-        if($ready.pid -ne $child.Id -or $ready.nonce -cne $context.nonce -or $ready.sourceSha256 -cne $SourceHash -or -not $ready.typeAbsent){throw 'BOOTSTRAP: PID/nonce/hash/cold-type readiness differs.'}
+        if($ready.pid -ne $child.Id -or $ready.nonce -cne $context.nonce -or $ready.sourceSha256 -cne $SourceHash -or -not $ready.typeAbsent -or -not $ready.compilerTypeAbsent){throw 'BOOTSTRAP: PID/nonce/hash/cold-type readiness differs.'}
         $watcher=New-Object IO.FileSystemWatcher $temp
         $watcher.IncludeSubdirectories=$true;$watcher.InternalBufferSize=65536
         $watcher.NotifyFilter=[IO.NotifyFilters]'FileName,DirectoryName,LastWrite,Size,CreationTime'
@@ -236,49 +314,74 @@ foreach($caseName in @('foreign-create-parent','owned-parent')) {
             $deleted=@($events.ToArray() | Where-Object {$_.observerControl -and $_.event -eq 'Deleted'}).Count
         } while((-not $created -or -not $deleted) -and $clock.Elapsed.TotalSeconds -lt 2)
         if(-not $created -or -not $deleted){throw 'OBSERVER: known create/delete control was not acquired.'}
-        Write-ProbeText $context.go $context.nonce
+        Publish-ProbeText $context.go $context.nonce
         $clock.Restart()
         while(-not $child.HasExited -and $clock.Elapsed.TotalSeconds -lt 25) {
-            if(-not $boundaryReleased -and [IO.File]::Exists($context.boundary)) {
-                $boundary=Read-ProbeJson $context.boundary
-                if($boundary.pid -ne $child.Id -or $boundary.nonce -cne $context.nonce -or $boundary.path -cne $temp){throw 'OBSERVER: first native parent-check boundary differs.'}
+            if(-not $beforeReleased -and [IO.File]::Exists($context.compilerBefore)) {
+                $compilerBefore=Read-ProbeJson $context.compilerBefore
+                if($compilerBefore.pid -ne $child.Id -or $compilerBefore.nonce -cne $context.nonce -or $compilerBefore.sourceSha256 -cne $SourceHash -or $compilerBefore.stage -cne 'before'){throw 'OBSERVER: native compiler before-boundary identity differs.'}
                 [Threading.Thread]::Sleep(200)
-                Receive-ProbeEvents 'before-first-native-parent-check'
-                Write-ProbeText $context.boundaryAck $context.nonce
-                $boundaryReleased=$true
+                Receive-ProbeEvents 'before-native-type-call'
+                Publish-ProbeText $context.compilerBeforeAck $context.nonce
+                $beforeReleased=$true
             }
-            Receive-ProbeEvents $(if($boundaryReleased){'after-first-parent-check-release'}else{'before-first-native-parent-check'})
+            if(-not $afterReleased -and [IO.File]::Exists($context.compilerAfter)) {
+                $compilerAfter=Read-ProbeJson $context.compilerAfter
+                if(-not $beforeReleased -or $compilerAfter.pid -ne $child.Id -or $compilerAfter.nonce -cne $context.nonce -or $compilerAfter.sourceSha256 -cne $SourceHash -or $compilerAfter.stage -cne 'after'){throw 'OBSERVER: native compiler after-boundary identity differs.'}
+                [Threading.Thread]::Sleep(200)
+                Receive-ProbeEvents 'during-native-type-call'
+                Publish-ProbeText $context.compilerAfterAck $context.nonce
+                $afterReleased=$true
+            }
+            Receive-ProbeEvents $(if($afterReleased){'after-native-type-call'}elseif($beforeReleased){'during-native-type-call'}else{'before-native-type-call'})
             [Threading.Thread]::Sleep(25)
         }
         if(-not $child.HasExited){$timedOut=$true;throw 'OBSERVER: actual call did not terminate within 25 seconds.'}
     } catch {$observerError=$_.Exception.Message}
     finally {
-        if($started -and -not $child.HasExited){$timedOut=$true;$child.Kill();$child.WaitForExit()}
+        if($started -and -not $child.HasExited){$timedOut=$true;try{$child.Kill()}catch{};[void]$child.WaitForExit(5000)}
         if($watcher){[Threading.Thread]::Sleep(200);Receive-ProbeEvents 'child-terminal';$watcher.EnableRaisingEvents=$false}
         foreach($identifier in $identifiers){Unregister-Event -SourceIdentifier $identifier -ErrorAction SilentlyContinue;Get-Event -SourceIdentifier $identifier -ErrorAction SilentlyContinue | Remove-Event -ErrorAction SilentlyContinue}
         if($watcher){$watcher.Dispose()}
     }
-    $stdout=if($outTask){$outTask.GetAwaiter().GetResult()}else{''}
-    $stderr=if($errTask){$errTask.GetAwaiter().GetResult()}else{''}
+    if($outTask){$stdoutDrained=$outTask.Wait(5000)}
+    if($errTask){$stderrDrained=$errTask.Wait(5000)}
+    $stdout=if($stdoutDrained){$outTask.Result}else{''}
+    $stderr=if($stderrDrained){$errTask.Result}else{''}
+    if($started -and (-not $stdoutDrained -or -not $stderrDrained)){$observerError='OBSERVER: child stdout/stderr did not drain within the bounded read.'}
     Write-ProbeText (Join-Path $control 'stdout.txt') $stdout
     Write-ProbeText (Join-Path $control 'stderr.txt') $stderr
     if([IO.File]::Exists($context.receipt)){$receipt=Read-ProbeJson $context.receipt}
-    $after=Get-ProbeSnapshot $caseRoot
+    $after=$null;$snapshotError=$null
+    try{$after=Get-ProbeSnapshot $caseRoot}catch{$snapshotError=$_.Exception.Message}
     $allEvents=@($events.ToArray())
-    $productEvents=@($allEvents | Where-Object {-not $_.observerControl})
-    $preAdmissionEvents=@($productEvents | Where-Object {$_.observedPhase -ceq 'before-first-native-parent-check'})
+    $productEvents=@($allEvents | Where-Object {-not $_.observerControl -and $_.event -ne 'Error'})
+    $compilerEvents=@($productEvents|Where-Object{$_.observedPhase -in @('before-native-type-call','during-native-type-call')})
+    $ownedCompilerPath=if($compilerBefore){[string]$compilerBefore.facts.context.path}else{$null}
+    $outsideCompilerRoot=@($compilerEvents|Where-Object{-not (Test-ProbeContainedPath $_.path $ownedCompilerPath) -or ($_.oldPath -and -not (Test-ProbeContainedPath $_.oldPath $ownedCompilerPath))})
     $watcherErrors=@($allEvents | Where-Object {$_.event -eq 'Error'})
-    $acquired=$null -eq $observerError -and -not $timedOut -and $null -ne $ready -and $boundaryReleased -and $watcherErrors.Count -eq 0 -and $receipt -and $receipt.status -ceq 'OBSERVATION_COMPLETED' -and $receipt.pid -eq $child.Id -and $receipt.nonce -ceq $context.nonce
-    $guardObserved=$acquired -and -not $receipt.initialized -and $receipt.initializationError -ceq 'Staging parent is not owned by this user with trusted write access.' -and $receipt.parentCheckCalls -eq 1
-    $healthyObserved=$acquired -and $receipt.initialized -and $receipt.afterCleanupStatus -ceq 'closed' -and -not $receipt.cleanupError
-    $status=if(-not $acquired){'BOOTSTRAP_OR_OBSERVER_BLOCKED'}elseif($foreign -and -not $guardObserved){'UNEXPECTED_PARENT_BEHAVIOR'}elseif(-not $foreign -and -not $healthyObserved){'HEALTHY_CONTROL_FAILED'}elseif($foreign -and $preAdmissionEvents.Count){'OBSERVED_PRE_ADMISSION_TEMP_EFFECTS'}elseif($foreign){'NO_OBSERVED_PRE_ADMISSION_TEMP_EFFECTS'}else{'HEALTHY_INITIALIZATION_OBSERVED'}
-    $row=[pscustomobject][ordered]@{case=$caseName;status=$status;acquired=[bool]$acquired;guardObserved=[bool]$guardObserved;healthyObserved=[bool]$healthyObserved;fixture=$caseRoot;control=$control;pid=$(if($started){$child.Id}else{$null});exit=$(if($started){$child.ExitCode}else{$null});timedOut=$timedOut;observerError=$observerError;sourceSha256=$SourceHash;probeSha256=$ProbeHash;acl=$aclFacts;readiness=$ready;boundaryReleased=$boundaryReleased;childReceipt=$receipt;events=$allEvents;preAdmissionEvents=$preAdmissionEvents;before=$before;after=$after;stdout=$stdout;stderr=$stderr}
+    $hasCompilerCall=$receipt -and @($receipt.compilerCalls).Count -gt 0
+    $boundariesAcquired=if($hasCompilerCall){$beforeReleased -and $afterReleased}else{-not $beforeReleased -and -not $afterReleased}
+    $acquired=$null -eq $observerError -and $null -eq $snapshotError -and -not $timedOut -and $null -ne $ready -and $boundariesAcquired -and $watcherErrors.Count -eq 0 -and $receipt -and $receipt.status -ceq 'OBSERVATION_COMPLETED' -and $receipt.pid -eq $child.Id -and $receipt.nonce -ceq $context.nonce -and $receipt.sourceSha256 -ceq $SourceHash -and $stdoutDrained -and $stderrDrained
+    $environmentRestored=$receipt -and $receipt.restoredTemp -ceq $temp -and $receipt.restoredTmp -ceq $temp
+    $guardObserved=$acquired -and -not $receipt.initialized -and -not $hasCompilerCall -and -not $receipt.typePresentAfter -and $receipt.compilerContext.status -ceq 'refused-before-create' -and -not $receipt.compilerContext.created -and $receipt.initializationError -ceq 'Compiler parent is not owned by this user with trusted write access.' -and $receipt.parentCheckCalls -eq 0 -and $environmentRestored
+    $custodyObserved=$false
+    if($hasCompilerCall -and $compilerBefore){
+        $facts=$compilerBefore.facts;$owned=$facts.context;$lease=$owned.rootLease
+        $custodyObserved=$owned.created -and $owned.status -ceq 'compiling' -and $owned.identity -and $lease.identity -ceq $owned.identity -and $lease.owner -ceq $owned.sid -and $owned.sid -ceq $script:ProbeSid.Value -and $lease.private -and -not $lease.closed -and @($owned.parentLeases).Count -gt 0 -and @($owned.parentLeases|Where-Object{$_.closed -or -not $_.trustedAncestor -or -not $_.identity}).Count -eq 0 -and $owned.parentLeases[-1].trustedParent -and $owned.parentLeases[-1].path.TrimEnd('\') -ceq $temp.TrimEnd('\') -and $owned.path -ceq ($temp+'\SalahWidgetCompiler-'+$owned.id) -and $facts.temp -ceq $owned.path -and $facts.tmp -ceq $owned.path -and $facts.nativeTemp.TrimEnd('\') -ceq $owned.path.TrimEnd('\')
+        if($PSVersionTable.PSVersion.Major -eq 5){$custodyObserved=$custodyObserved -and $facts.compilerParametersSupplied -and $facts.keepFiles -and $facts.compilerTempDir -ceq $owned.path}
+    }
+    $readbackObserved=$compilerAfter -and -not $compilerAfter.facts.readback.error -and $compilerAfter.facts.readback.facts.Private -and $compilerAfter.facts.readback.facts.Identity -ceq $receipt.compilerContext.identity -and $compilerAfter.facts.readback.facts.Owner -ceq $script:ProbeSid.Value
+    $healthyObserved=$acquired -and $custodyObserved -and $readbackObserved -and $environmentRestored -and $receipt.initialized -and $receipt.parentCheckCalls -eq 2 -and $receipt.afterCleanupStatus -ceq 'closed' -and -not $receipt.cleanupError -and $receipt.compilerContext.status -ceq 'closed' -and -not $receipt.compilerContext.exists -and $compilerAfter.facts.outcome -ceq 'returned' -and $compilerAfter.facts.nativeTypePresent -and -not $compilerBefore.facts.failureInjected -and $compilerBefore.facts.originalTypeSha256 -ceq $compilerBefore.facts.suppliedTypeSha256
+    $failureObserved=$acquired -and $custodyObserved -and $readbackObserved -and $environmentRestored -and -not $receipt.initialized -and $receipt.parentCheckCalls -eq 0 -and -not $receipt.typePresentAfter -and $receipt.initializationError -and $receipt.compilerContext.status -ceq 'retained-compilation-failed' -and $receipt.compilerContext.exists -and $compilerAfter.facts.outcome -ceq 'threw' -and $compilerBefore.facts.failureInjected
+    $status=if(-not $acquired){'BOOTSTRAP_OR_OBSERVER_BLOCKED'}elseif($foreign -and -not $guardObserved){'UNEXPECTED_PARENT_BEHAVIOR'}elseif($foreign -and $productEvents.Count){'OBSERVED_UNSAFE_PARENT_TEMP_EFFECTS'}elseif($foreign){'UNSAFE_PARENT_REFUSED_WITH_NO_OBSERVED_TEMP_EFFECTS'}elseif($outsideCompilerRoot.Count){'OBSERVED_COMPILER_EFFECTS_OUTSIDE_OWNED_ROOT'}elseif($caseName -ceq 'compile-failure' -and $failureObserved){'COMPILER_FAILURE_RETAINED_PRIVATE_OUTPUT'}elseif($caseName -ceq 'compile-failure'){'UNEXPECTED_COMPILER_FAILURE_BEHAVIOR'}elseif($healthyObserved){'HEALTHY_PRIVATE_COMPILER_AND_STAGING_OBSERVED'}else{'HEALTHY_CONTROL_FAILED'}
+    $row=[pscustomobject][ordered]@{case=$caseName;status=$status;acquired=[bool]$acquired;installerQualified=$false;guardObserved=[bool]$guardObserved;compilerCustodyObserved=[bool]$custodyObserved;healthyObserved=[bool]$healthyObserved;compileFailureObserved=[bool]$failureObserved;environmentRestored=[bool]$environmentRestored;fixture=$caseRoot;control=$control;pid=$(if($started){$child.Id}else{$null});exit=$(if($started -and $child.HasExited){$child.ExitCode}else{$null});timedOut=$timedOut;observerError=$observerError;snapshotError=$snapshotError;stdoutDrained=$stdoutDrained;stderrDrained=$stderrDrained;sourceSha256=$SourceHash;probeSha256=$ProbeHash;acl=$aclFacts;readiness=$ready;compilerBeforeReleased=$beforeReleased;compilerAfterReleased=$afterReleased;compilerBefore=$compilerBefore;compilerAfter=$compilerAfter;childReceipt=$receipt;events=$allEvents;compilerPeriodEvents=$compilerEvents;compilerOutsideOwnedRootEvents=$outsideCompilerRoot;before=$before;after=$after;stdout=$stdout;stderr=$stderr}
     Write-ProbeJson (Join-Path $control 'observation.json') $row
     $results.Add($row)
     $child.Dispose()
 }
-$summary=[ordered]@{schema='r0015-independent-native-first-call-observation-v1';sourceFile=$SourceFile;sourceSha256=$SourceHash;probeSha256=$ProbeHash;fixture=$script:ProbeFixtureRoot;hostExecutable=$HostExecutable;hostVersion=$PSVersionTable.PSVersion.ToString();subjectSid=$script:ProbeSid.Value;actualWindows=$true;complete=(@($results.ToArray() | Where-Object {-not $_.acquired}).Count -eq 0);scope='Actual Initialize-Staging with exact source functions; native Add-Type delegated unchanged; first parent check delayed for event drain. No installer main or transport. Watcher covers only verified TEMP/TMP, not every possible process file effect. A missing event is not global proof of no writes.';results=@($results.ToArray())}
+$summary=[ordered]@{schema='r0015-independent-native-compiler-custody-observation-v2';sourceFile=$SourceFile;sourceSha256=$SourceHash;probeSha256=$ProbeHash;originalProbeSha256='1cc468a93f9990015797b5d2ab60edf8e99e70fd56d169cc58f0bbddb1ba7073';fixture=$script:ProbeFixtureRoot;hostExecutable=$HostExecutable;hostVersion=$PSVersionTable.PSVersion.ToString();subjectSid=$script:ProbeSid.Value;actualWindows=$true;installerQualified=$false;complete=(@($results.ToArray() | Where-Object {-not $_.acquired}).Count -eq 0);scope='Actual cold Initialize-Staging and compiler custody. Add-Type parameters are forwarded, including the same PS5.1 CompilerParameters object. Only the named compile-failure row appends declared invalid C# input; both hashes are recorded. Compiler calls pause before and after for event drain while custody leases remain held. Later artifact-parent checks are separately observed. Whole verified TEMP/TMP is watched; this is not a global process trace. Acquired observations, including adverse findings, require independent adjudication and do not imply installer qualification.';results=@($results.ToArray())}
 Write-ProbeJson (Join-Path $script:ProbeFixtureRoot 'summary.json') $summary
-[Console]::Out.WriteLine((ConvertTo-Json -InputObject $summary -Depth 18))
+[Console]::Out.WriteLine((ConvertTo-Json -InputObject $summary -Depth 22))
 if(-not $summary.complete){exit 2}
 exit 0

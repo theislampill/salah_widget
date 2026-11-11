@@ -106,12 +106,14 @@ shown default. An unavailable terminal or end of input is a refusal, not a
 default answer. Use the reviewed local-file route from an interactive terminal
 if a remote command runner cannot provide one.
 
-On Windows, `Invoke-WebRequest -OutFile` keeps the downloaded file bytes. Review
+On Windows, set `FULL_REVIEWED_COMMIT_SHA` to the full reviewed candidate commit.
+`Invoke-WebRequest -OutFile` keeps the downloaded file bytes. Review
 with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1" -OutFile ".\install.ps1"
+$InstallCommit = 'FULL_REVIEWED_COMMIT_SHA'
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/$InstallCommit/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
 powershell.exe -NoProfile -File ".\install.ps1"

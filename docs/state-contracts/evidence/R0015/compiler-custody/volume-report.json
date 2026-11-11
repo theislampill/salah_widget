@@ -1,0 +1,238 @@
+{
+  "schema": "r0015-volume-admission-replay.v1",
+  "recordedAt": "2026-11-11T09:39:50.874009+00:00",
+  "disposition": "PASS: bounded supplemental policy RED/GREEN and causal mutations; BLOCKED: native Windows replay",
+  "sourceSha256": "7e6950359b6f28e165e02793e56cb1842db092403fd09abea9f0f9c595ba5114",
+  "sourceUnchanged": true,
+  "fixtureSha256": "dc671aa0365d6fb318fbf838472a8c8512931ddf371e2c3527433bcb22f41e7d",
+  "originalFixtureSha256": "22e9391bc411fd6b304887e5d7d22db5bb567d3ab3fa561653279f855cda8062",
+  "localHost": {
+    "system": "Linux",
+    "release": "6.18.57",
+    "machine": "x86_64",
+    "powershell": "7.6.6",
+    "nativeWindows": false
+  },
+  "primarySource": {
+    "url": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/ns-fileapi-by_handle_file_information",
+    "section": "nFileIndexLow and Remarks",
+    "basis": "ReFS has 128-bit identifiers; BY_HANDLE_FILE_INFORMATION 64-bit identifier is not guaranteed unique on ReFS. Scope admission to NTFS while retaining the existing identity algorithm."
+  },
+  "observations": [
+    {
+      "case": "original actual-source policy RED",
+      "status": "CONFIRMED RED",
+      "sourceSha256": "358bf1da1bf385b74e0ce2019e81d8018797fedecbe0ece186027872213602e1",
+      "fixtureSha256": "22e9391bc411fd6b304887e5d7d22db5bb567d3ab3fa561653279f855cda8062",
+      "receipt": "red.stdout.json",
+      "receiptSha256": "ab4efde203d524c3ec69a73f8fed93319723311d1c7317a49d5e3604a529972f",
+      "unsupportedAccepted": [
+        "C# reported ReFS",
+        "C# reported unknown filesystem",
+        "C# reported unsupported filesystem",
+        "PowerShell reported ReFS",
+        "PowerShell reported unknown filesystem",
+        "PowerShell reported unsupported filesystem"
+      ],
+      "healthyControlsPass": true
+    },
+    {
+      "case": "final-fixture original-source RED",
+      "status": "CONFIRMED RED",
+      "receipt": "red-final.stdout.json",
+      "receiptSha256": "8f5960b45b905e834c9ab0b9a19be913933bf122646783c06cb8c7da7d823d8c",
+      "failedRows": [
+        "C# reported ReFS",
+        "C# reported unknown filesystem",
+        "C# reported unsupported filesystem",
+        "PowerShell reported ReFS",
+        "PowerShell reported unknown filesystem",
+        "PowerShell reported unsupported filesystem"
+      ],
+      "healthyControlsPass": true
+    },
+    {
+      "case": "corrected-source policy GREEN",
+      "status": "PASS",
+      "receipt": "green.stdout.json",
+      "receiptSha256": "0e7854be5ba717b9b579bb8aaae02edb5a236a14a2f68245e8d0b66041b85706",
+      "policyRowsPassed": 12,
+      "nativeRowStatus": "BLOCKED_NATIVE_HOST"
+    },
+    {
+      "case": "single-guard causal mutations",
+      "status": "PASS",
+      "receipt": "mutants.stdout.json",
+      "receiptSha256": "b52417bfa34a0ddadd19fdb20fffcfcab2abc423592e8bedfe72d8a50317fb75",
+      "mutants": [
+        {
+          "case": "csharp-missing-ntfs-guard",
+          "pass": true,
+          "sourceSha256": "3e625e7a04f33485039409a8a3291087d75e6f636aca2ae8a5f2146fd498465b",
+          "removedGuard": "      if (!String.Equals(format.ToString(), \"NTFS\", StringComparison.OrdinalIgnoreCase)) throw new IOException(\"Staging requires the supported NTFS filesystem.\");\n",
+          "childExitCode": 1,
+          "seconds": 0.89,
+          "expectedFailures": [
+            "C# reported ReFS",
+            "C# reported unknown filesystem",
+            "C# reported unsupported filesystem"
+          ],
+          "observedFailures": [
+            "C# reported ReFS",
+            "C# reported unknown filesystem",
+            "C# reported unsupported filesystem"
+          ],
+          "pairedHealthyControls": [
+            {
+              "case": "C# reported NTFS",
+              "pass": true
+            },
+            {
+              "case": "C# NTFS without persistent ACLs",
+              "pass": true
+            },
+            {
+              "case": "C# volume query failure",
+              "pass": true
+            },
+            {
+              "case": "PowerShell reported NTFS",
+              "pass": true
+            },
+            {
+              "case": "PowerShell NTFS without persistent ACLs",
+              "pass": true
+            },
+            {
+              "case": "PowerShell volume query failure",
+              "pass": true
+            }
+          ],
+          "nativeWindows": false,
+          "nativeNTFSHealthy": null,
+          "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final/csharp-missing-ntfs-guard.stdout.json",
+          "receiptSha256": "8bf91bc6f31e6a2554bf37a621c2a1edbcd18e3dff4e9fc60b131f3752d5e897",
+          "stderr": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final/csharp-missing-ntfs-guard.stderr.txt",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "command": [
+            "/workspace/scratch/b8359a7e27bf/runtime/pwsh7/pwsh",
+            "-NoLogo",
+            "-NoProfile",
+            "-NonInteractive",
+            "-File",
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/install-volume-policy.ps1",
+            "-SourceFile",
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final/csharp-missing-ntfs-guard.ps1",
+            "-OutputRoot",
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final"
+          ]
+        },
+        {
+          "case": "powershell-missing-ntfs-guard",
+          "pass": true,
+          "sourceSha256": "508ffaa43653db5d3c6d1bedc4da7480ac935635b12265be6dfd37ca5fe820ac",
+          "removedGuard": "        if (-not [string]::Equals($format.ToString(),'NTFS',[StringComparison]::OrdinalIgnoreCase)) { throw 'Compiler scratch requires the supported NTFS filesystem.' }\n",
+          "childExitCode": 1,
+          "seconds": 0.947,
+          "expectedFailures": [
+            "PowerShell reported ReFS",
+            "PowerShell reported unknown filesystem",
+            "PowerShell reported unsupported filesystem"
+          ],
+          "observedFailures": [
+            "PowerShell reported ReFS",
+            "PowerShell reported unknown filesystem",
+            "PowerShell reported unsupported filesystem"
+          ],
+          "pairedHealthyControls": [
+            {
+              "case": "C# reported NTFS",
+              "pass": true
+            },
+            {
+              "case": "C# NTFS without persistent ACLs",
+              "pass": true
+            },
+            {
+              "case": "C# volume query failure",
+              "pass": true
+            },
+            {
+              "case": "PowerShell reported NTFS",
+              "pass": true
+            },
+            {
+              "case": "PowerShell NTFS without persistent ACLs",
+              "pass": true
+            },
+            {
+              "case": "PowerShell volume query failure",
+              "pass": true
+            }
+          ],
+          "nativeWindows": false,
+          "nativeNTFSHealthy": null,
+          "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final/powershell-missing-ntfs-guard.stdout.json",
+          "receiptSha256": "0b76f8a36eb0aaa0bc1402f046e78eb49050c76b4b286285dd285d71790b6516",
+          "stderr": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final/powershell-missing-ntfs-guard.stderr.txt",
+          "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "command": [
+            "/workspace/scratch/b8359a7e27bf/runtime/pwsh7/pwsh",
+            "-NoLogo",
+            "-NoProfile",
+            "-NonInteractive",
+            "-File",
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/install-volume-policy.ps1",
+            "-SourceFile",
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final/powershell-missing-ntfs-guard.ps1",
+            "-OutputRoot",
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-admission/mutants-final"
+          ]
+        }
+      ]
+    }
+  ],
+  "nativeCollector": {
+    "fixture": "install-volume-policy.ps1",
+    "parameters": [
+      "-SourceFile <exact installer source>",
+      "-OutputRoot <owned disposable fixture parent>"
+    ],
+    "stdout": "one JSON object; schema r0015-volume-admission-policy.v1; nonempty results (13 rows)",
+    "artifacts": "Fresh r0015-volume-policy-<GUID> child under OutputRoot, with results.json and control/actual and derived source fragments. Keep full subtree in archive.",
+    "expectedExitCode": 0,
+    "requiredChecks": [
+      "source/test hashes equal approved inputs and sourceUnchanged/testUnchanged true",
+      "nativeWindows true on each actual Windows host",
+      "nativeNTFSHealthy.pass true and filesystem NTFS",
+      "all 13 result rows pass true",
+      "all 12 policy rows report filesystemBufferRequested true and exactly one volume call",
+      "No missing stderr/process or incomplete acquisition is credited"
+    ],
+    "hostMatrix": [
+      "Windows PowerShell 5.1 on supported NTFS host",
+      "PowerShell 7.6.6 on supported NTFS host"
+    ],
+    "processTimeoutSeconds": 180,
+    "durationBasis": "1.17\u20131.19 seconds measured locally; 180 seconds is a proposed native acquisition cap including already observed slow PS5.1 startup, not a measured native duration.",
+    "optionalMutantDriver": {
+      "script": "replay-mutants.py",
+      "parameters": [
+        "--source <exact source>",
+        "--fixture <exact policy fixture>",
+        "--pwsh <native shell executable>",
+        "--output-root <fresh nonexistent child path>",
+        "--timeout-seconds 180"
+      ],
+      "parentTimeoutSeconds": 390,
+      "stdout": "r0015-volume-admission-mutants.v1, 2 result rows; child exit 1 is expected only for the exact three named failures and paired healthy controls."
+    }
+  },
+  "limitations": [
+    "No ReFS or other unsupported filesystem was created, mounted, modified or executed. Reported names are explicit API-response counterfactuals.",
+    "Linux execution uses declared path/drive/SID read adapters and cannot qualify Windows ACLs, leases, exclusive creation or NTFS native identity.",
+    "Native positive invokes actual Initialize-Staging without volume adaptations before any derived policy type is used; actual PS5.1 and PS7 receipts remain required.",
+    "The finding is unsupported-volume admission, not a demonstrated NTFS flaw, ReFS collision or exploit.",
+    "This packet has no source mutation, publication, acceptance or audit-closure authority."
+  ]
+}

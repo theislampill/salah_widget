@@ -8,10 +8,13 @@ separate original R0015 Bash/host obligations.
 
 ## Manual files and lifetime
 
-After an eligible target is selected, the wizard creates two new private roots:
+After an eligible target is selected, a cold Windows process first establishes
+a private compiler workspace. The actual staging attempt then has separate
+scratch and retained roots:
 
 | Root | Purpose | Lifetime |
 | --- | --- | --- |
+| `native temporary directory\SalahWidgetCompiler-<random id>` | Compiler input and output, after physical-parent, identity and ACL admission | Successful compilation removes only this verified private workspace. A compiler failure or failed cleanup proof retains it and reports its actual location; it is never an admitted download or manual bundle. |
 | `%TEMP%\SalahWidgetAttempt-<random attempt id>` | Download and rewrite candidates that have no ready status | The wizard attempts to remove only its own verified scratch root in `finally`. If custody or descendant checks fail, it retains the material and reports the skipped cleanup. |
 | `%USERPROFILE%\SalahWidgetBundle-<random attempt id>` | Admitted ZIP/XPI downloads, preset JSON, and unpacked extension candidates | Retained for manual browser operations. The wizard never deletes an earlier bundle. |
 
@@ -31,9 +34,28 @@ new invocation's download cache.
 
 `Initialize-StagingNative` and the narrow native wrappers are guarded before
 assembly loading, native identity acquisition or path probing. Production
-staging requires Windows and a supported local filesystem with persistent ACLs.
+staging requires Windows and a local NTFS volume with persistent ACLs.
 An unsupported host or unprovable boundary produces an error; it does not fall
 back to a shared directory.
+
+The first native interop declarations use in-memory reflection emit, before any
+CodeDOM compilation. `New-StagingCompilerContext` checks the reported filesystem,
+physical ancestry, owner and permissions, takes no-delete-sharing directory
+leases, and exclusively creates its protected current-user workspace. Only then
+does `Initialize-StagingNative` set both process `TEMP` and `TMP` to that workspace
+and invoke `Add-Type`. Windows PowerShell 5.1 also receives an explicit
+`CompilerParameters.TempFiles` location. Both environment variables are restored
+in `finally`, including their originally absent state. Cleanup requires fresh
+identity, owner, descendant and non-reparse checks and retains ancestry leases
+through deletion. A failed compiler invocation keeps the owned workspace for
+diagnosis without granting artifact readiness.
+
+Both the compiler boundary and `StageNative.RequireLocalAclVolume` require a
+successful filesystem-name query that reports NTFS. The existing file-identity
+scheme uses `BY_HANDLE_FILE_INFORMATION`; Microsoft documents that its 64-bit
+identifier is not guaranteed unique on ReFS. Other filesystem names and unknown
+names are therefore refused rather than treated as qualified NTFS identities.
+See [Microsoft's structure documentation](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/ns-fileapi-by_handle_file_information).
 
 `Get-TrustedStagingParent` requires a self-owned immediate parent with no
 untrusted write grant and checks every physical ancestor without accepting

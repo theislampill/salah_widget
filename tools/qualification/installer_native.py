@@ -235,25 +235,37 @@ def main():
             if args.phase in ("r0015", "r0016"):
                 files.append("install-powershell-transactions.ps1")
                 files.append("install-staging-windows.ps1")
+                files.append("install-compiler-custody.ps1")
+                files.append("install-volume-policy.ps1")
             if args.phase == "r0016":
                 files.append("install-preview.ps1")
             for test in files:
                 command = [executable, "-NoProfile", "-File", str(root / "tests" / test), "-SourceFile", str(root / "install.ps1")]
                 if test == "install-powershell-transactions.ps1":
                     command.extend(["-PresetFile", str(root / "presets/salah-widget.tablissng.json")])
-                if test == "install-host-bootstrap.ps1":
+                if test in ("install-host-bootstrap.ps1", "install-volume-policy.ps1"):
                     command.extend(["-OutputRoot", tempfile.gettempdir()])
-                run(name + "-" + test[:-4], command, timeout=360 if test == "install-host-bootstrap.ps1" else 240,
+                if test == "install-compiler-custody.ps1":
+                    command.extend(["-FixtureParent", tempfile.gettempdir()])
+                # Nine cold native compiler children each have a bounded90s
+                # acquisition budget. Preserve every terminal/raw observation.
+                timeout = {"install-compiler-custody.ps1": 900, "install-host-bootstrap.ps1": 360,
+                           "install-volume-policy.ps1": 180}.get(test, 240)
+                run(name + "-" + test[:-4], command, timeout=timeout,
                     diagnostic=test == "install-host-bootstrap.ps1")
             run(name + "-discovery-mutations", [sys.executable, str(root / "tests/install-discovery-mutations.py"), str(root / "install.ps1"), executable])
             if args.phase in ("r0015", "r0016"):
+                volume_root = str(Path(tempfile.gettempdir()) / ("r0015-volume-mutants-" + name + "-" + uuid.uuid4().hex))
+                run(name + "-volume-mutations", [sys.executable, str(root / "tests/install-volume-mutations.py"),
+                    "--source", str(root / "install.ps1"), "--fixture", str(root / "tests/install-volume-policy.ps1"),
+                    "--pwsh", executable, "--output-root", volume_root, "--timeout-seconds", "180"], timeout=390)
                 mutation_root = str(Path(tempfile.gettempdir()) / ("r0015-mutations-" + name + "-" + uuid.uuid4().hex))
                 run(name + "-transaction-mutations", [sys.executable, str(root / "tests/install-powershell-mutations.py"),
                     "--source", str(root / "install.ps1"), "--test", str(root / "tests/install-powershell-transactions.ps1"),
                     "--preset", str(root / "presets/salah-widget.tablissng.json"), "--native-test", str(root / "tests/install-staging-windows.ps1"),
                     "--pwsh", executable, "--out", mutation_root], timeout=600)
                 run(name + "-first-call-observation", [executable, "-NoProfile", "-NonInteractive", "-File", str(root / "tests/install-staging-first-call.ps1"),
-                    "-SourceFile", str(root / "install.ps1"), "-OutputRoot", tempfile.gettempdir()], diagnostic=True)
+                    "-SourceFile", str(root / "install.ps1"), "-OutputRoot", tempfile.gettempdir()], timeout=360, diagnostic=True)
         entry_command = [sys.executable, str(root / "tests/install-entry-native.py"), str(root / "install.ps1")]
         if args.phase == "r0015":
             # The changed lease and fixture ancestry affect normal consumers.

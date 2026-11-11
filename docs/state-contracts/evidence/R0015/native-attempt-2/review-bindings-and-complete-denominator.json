@@ -1,0 +1,201 @@
+{
+  "schema": "r0015-native2-review-bindings.v1",
+  "scope": "Exact independent receiving fields; each full51-row denominator is preserved in a separately hashed adjacent file. Original full reviews/raw originals remain retained in the execution checkpoint. No failed workflow is relabeled.",
+  "reports": {
+    "native-run2-windows-review.json": {
+      "originalSha256": "dea8c934210818457fa27ca7107b9366ab46e063927316612e6df59a16f09fd9",
+      "originalBytes": 271428,
+      "independentCheckCount": 634,
+      "completeDenominatorFile": "windows-complete-denominator.json",
+      "completeDenominatorSha256": "cdbe24b26a77af54950c857888c71d80aa80624aa9e2f64244e6e0e288e509f1",
+      "extract": {
+        "schema": "r0015-independent-native-windows-review/2",
+        "reviewer": "/root/r0013_review",
+        "capturedAt": "2026-11-11T09:12:41.837056+00:00",
+        "candidate": {
+          "commit": "65410ae4dca07a3305e337c8215173a197abe4de",
+          "tree": "886621be95d6789ae2b27ab5aa864a24217266d9",
+          "sourceSha256": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff"
+        },
+        "archive": {
+          "artifactId": 13840572772,
+          "zipSha256": "80132bbfa1b2575eaafdb663ed98a862c0fcc9056816975c55786bafea4315a5",
+          "tarSha256": "4688a280f99b2acfdfaf2e84e84247d540cdb3744824d4a2262d3798b82a85dc",
+          "members": 2182
+        },
+        "host": {
+          "system": "Windows",
+          "platform": "Windows-2022Server-10.0.20348-SP0",
+          "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+          "image_version": "20261101.353.1",
+          "ps51": {
+            "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "version": "5.1.20348.5773"
+          },
+          "ps7": {
+            "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+            "version": "7.6.6"
+          }
+        },
+        "collectorStatus": "FAIL",
+        "qualificationStatus": "FAIL",
+        "diagnosticAcquisitionStatus": "COMPLETE",
+        "sourceBindings": {
+          "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+          "install.ps1": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff",
+          "tests\\install-bash.py": "01115e6145b4001b7fd3fae56f2612894676f79116973017e72943e98bd6a145",
+          "tests\\install-builder.cjs": "4889acc96ac6036368c34cad1a539e5d445f6b3dd1356c6a0ace157cd3f383c1",
+          "tests\\install-detectors.py": "aafd6b6ea1840a2c8cbebd86f3683d6bf4a89a49264043c60574a5059f9762ab",
+          "tests\\install-discovery-mutations.py": "390130f05c14e79aed586a6cd5e7161b4f820e5d816fa7816f1662988111cd0b",
+          "tests\\install-discovery.ps1": "4712c0855689e08a552444820171f3054cd79ce1b6aaca6053097563a871cfdb",
+          "tests\\install-discovery.py": "1f648540634cec866fb7e93e1cfd4a9b9279002c0958898b4f76e61fe19d5bb7",
+          "tests\\install-entry-bash.py": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+          "tests\\install-entry-native.py": "223b8ed54b342c23e7d0380bc669072a5fd87f2e42eeadb276b024aa8aa29819",
+          "tests\\install-entry.ps1": "bf488439bba1cf0db034477d91c325a2077af38598de717b6f2b48641686e6b3",
+          "tests\\install-host-bootstrap.ps1": "a553c9790f04c34ddbe672b469e157ddf6c5d4903484b1f3b17eb82bd2f86510",
+          "tests\\install-linux-owner.py": "bd43e5675400966b08bb5b29e80ddf9ebb66cf53181991ccc4d2a4f455da9ae5",
+          "tests\\install-mutations.py": "7638ee1a79edaa472d7f78345436d01fab54358c7540e85f810c260a5558a43b",
+          "tests\\install-native-receipts.py": "c9c5cc6e6ad8e037b232e53167af766948c48bad0fd4e263369989c6475b57c5",
+          "tests\\install-powershell-guards.ps1": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4",
+          "tests\\install-powershell-mutations.py": "7a3839e3e150e3881011beb36e84bb9776078d27bad7cabb2fa09ad4896180c8",
+          "tests\\install-powershell-transactions.ps1": "165843ea69e72f1d2f71b5a835779b25013fac322539c738736dac781aabbb6d",
+          "tests\\install-powershell.ps1": "6f7bd2c6e9e260d199ec99e615bd629076b5d96e1f2ec4f80bfaaed700c68e10",
+          "tests\\install-staging-first-call.ps1": "1cc468a93f9990015797b5d2ab60edf8e99e70fd56d169cc58f0bbddb1ba7073",
+          "tests\\install-staging-native.py": "53f137b41c3726dbc3bbce2f715e1eaa85137376d0126daf0cf3425887839c65",
+          "tests\\install-staging-windows.ps1": "d11449d18861c2be9890f226c26b116c08c7903845b102191399ddd3720a124d"
+        },
+        "findings": {
+          "Critical": [],
+          "Important": [
+            {
+              "id": "R15-NATIVE-04",
+              "category": "source bootstrap custody",
+              "source": "install.ps1@65410ae: Initialize-StagingNative (Add-Type TypeDefinition) is called by Initialize-Staging before Get-TrustedStagingParent.",
+              "observation": "Native PS5.1 fresh child with verified TEMP/TMP, positive watcher, exact PID/nonce and absent initial native type records32 pre-admission non-control events. Compiler .cs/.dll/.cmdline/.out/.err files and parent-level RES*.tmp are created before the first native parent delegate is released. The original initializer subsequently rejects that terminal parent; no scratch/retained roots were admitted.",
+              "effect": "The installer performs normal-mode compiler filesystem effects outside its verified attempt roots before establishing parent custody. No native compiler-object identity/ACL/isolation proof is present to discharge ES15-10. Successful later refusal or transient deletion does not establish a zero-effect boundary.",
+              "severityLimit": "Important contract/source defect, not an observed exploit or a claim of administrator/same-user isolation. No Critical finding.",
+              "healthyControl": "Same-path matched owned-parent fresh PS5.1 child initializes and cleans owned scratch successfully; PS7 monitored TEMP pre-events are empty but no global zero-effect claim is made.",
+              "disposition": "Open; sole source writer owns bounded bootstrap repair and native qualification."
+            },
+            {
+              "id": "R15-NATIVE-05",
+              "category": "native mutation qualification",
+              "source": "tests/install-powershell-mutations.py actual PS7 unchanged-source baseline in native run2",
+              "observation": "Ten of13 baseline controls fail, primarily CreatePrivateFile exceptions; three rows pass. Driver exits1 with complete=false and no mutant files/executions.",
+              "effect": "The required nine PS7 transaction mutation mechanisms and added failure controls do not earn native qualification from this run. Existing transaction28 and full-file normal successes remain separately valid.",
+              "causalAttribution": "Undetermined: current receipt omits failing requested path, Win32 NativeErrorCode and immediate native path facts. Long nested fixture paths are a hypothesis only; PS5.1 succeeds with at least one longer path.",
+              "disposition": "Acquire exact path/code/ancestry with test-only delegation and rethrow; do not change production based on the generic exception or credit unexecuted mutants."
+            }
+          ],
+          "Minor": [
+            {
+              "id": "R15-RECEIPT-01",
+              "category": "Unicode receipt transport",
+              "source": "tests/install-powershell-mutations.py invoke_pwsh: text=True without an explicit output-encoding contract, followed by reserialized stdout receipts.",
+              "observation": "Both recorded baseline fixture names end in U+00D8 U+00B5, while the original archive contains the same exact fixture GUID followed by U+0635, as constructed explicitly by the actual test source.",
+              "effect": "Recorded non-ASCII path text is not a byte-faithful native pathname. Native fixture bytes and specific GUID/source-defined suffix still permit bounded archival attribution; this mismatch is not evidence that production changed the filesystem path.",
+              "causalAttribution": "Output acquisition/decoding is implicated by the mismatch and unspecified decoder; the original pre-decoding stdout byte stream was not retained, so a precise historical decoder is not independently asserted.",
+              "disposition": "Preserve original receipts, acquire a strict UTF8 child/parent contract with raw stdout/stderr bytes, and verify a Unicode marker before claiming exact path transport."
+            }
+          ]
+        },
+        "resolvedFindings": [
+          {
+            "id": "R15-NATIVE-01",
+            "disposition": "Resolved for exact9e8fd3 native lease mask: held sharing violation32 and released same-root positive with unchanged identity/ACL/bytes on both actual Windows hosts."
+          },
+          {
+            "id": "R15-NATIVE-02",
+            "disposition": "Revised owned fixture parent setup is actual-native qualified: protected immediate/case/root parents and unchanged outside ancestors permit all four normal/NoOpen consumers. Production ACL policy was not weakened."
+          }
+        ],
+        "denominator": {
+          "original": 17,
+          "residual": 9,
+          "NovemberES": 18,
+          "terminal": 7,
+          "total": 51
+        },
+        "engineeringDisposition": "Not engineering-ready: native source bootstrap custody and PS7 mutation qualification remain open. Received lease/normal-caller repairs are valid within their scope. Overall native Windows FAIL is retained; acquired diagnostic labels are not acceptance. No whole-contract or merge approval.",
+        "declinedToJudge": [
+          {
+            "item": "Exact PS7 Win32 baseline cause",
+            "reason": "Generic exception loses NativeErrorCode and failed request path; no causal native probe yet."
+          },
+          {
+            "item": "Underlying PS5.1 startup delay",
+            "reason": "No-installer cold/warm native measurements are received; causality is owned separately by root/R16. Warm runs still take about19.4\u201319.5seconds."
+          },
+          {
+            "item": "Exploitability or all-process absence of compiler effects",
+            "reason": "Watcher bounds observed TEMP/TMP, not every process path; no attacking process or universal trace was exercised."
+          },
+          {
+            "item": "Merged delivery and lifecycle/approval",
+            "reason": "Source corrections, final delivery, exact owner approval and root currentness/order gates remain."
+          }
+        ],
+        "mutationStatement": "No source/shared test/checkout/index/branch/remote/governor mutation. Only exact Git-object/raw regular archive-member reads and attributed report/verifier writes. No native suites rerun and no fixture archives extracted."
+      },
+      "leaseDiscriminatorsCount": 2,
+      "fullFileNormalEntriesCount": 4,
+      "nativePS51MutationsCount": 9,
+      "nativePS51FailureStagesCount": 1,
+      "firstCallObservationsCount": 4,
+      "noInstallerTimingCount": 8
+    },
+    "publication-native-export-review-65410ae.json": {
+      "originalSha256": "5f734904b0a18ec6e1f32f66945ec8c78e1cb79b4363b4382afe072f8168731c",
+      "originalBytes": 115978,
+      "independentCheckCount": 300,
+      "completeDenominatorFile": "posix-export-complete-denominator.json",
+      "completeDenominatorSha256": "4f13efbaa4d0da355ebd92ca86c7094aaa40edfdee0933fadec154f7e9346f7a",
+      "extract": {
+        "schema": "r0015-independent-publication-native-export-review-v2",
+        "reviewer": "/root/r0013_review",
+        "capturedAt": "2026-11-11T08:44:31.956270+00:00",
+        "candidate": {
+          "commit": "65410ae4dca07a3305e337c8215173a197abe4de",
+          "tree": "886621be95d6789ae2b27ab5aa864a24217266d9",
+          "parent": "00a08b69661b5c09e1b6890da032e88265802b9b",
+          "reviewedHashes": {
+            "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+            "install.ps1": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff",
+            "tests/install-staging-windows.ps1": "d11449d18861c2be9890f226c26b116c08c7903845b102191399ddd3720a124d",
+            "tests/install-entry-native.py": "223b8ed54b342c23e7d0380bc669072a5fd87f2e42eeadb276b024aa8aa29819",
+            "tests/install-host-bootstrap.ps1": "a553c9790f04c34ddbe672b469e157ddf6c5d4903484b1f3b17eb82bd2f86510",
+            "tests/install-linux-owner.py": "bd43e5675400966b08bb5b29e80ddf9ebb66cf53181991ccc4d2a4f455da9ae5",
+            "tests/install-powershell-mutations.py": "7a3839e3e150e3881011beb36e84bb9776078d27bad7cabb2fa09ad4896180c8",
+            "tests/install-staging-first-call.ps1": "1cc468a93f9990015797b5d2ab60edf8e99e70fd56d169cc58f0bbddb1ba7073",
+            "tools/qualification/installer_native.py": "d1f7aa29919d3b1f747e6a131830b2bf2e0e46d0a42a2a8395e48e5036b746a5"
+          }
+        },
+        "findings": {
+          "Critical": [],
+          "Important": [],
+          "Minor": []
+        },
+        "resolvedFinding": {
+          "id": "R15-NATIVE-03",
+          "status": "resolved for exact native run2 candidate",
+          "reason": "All10 original fixture entries and original observation are acquired without changing the tested source UID/mode. UID0 producer to UID1001 collector transfer and every nested raw byte/metadata binding are verified. Old run1 missing bytes and FAIL remain historical facts."
+        },
+        "denominator": {
+          "original": 17,
+          "residual": 9,
+          "NovemberES": 18,
+          "terminal": 7,
+          "total": 51
+        },
+        "disposition": "Published candidate exactly binds the reviewed source, instruments and reports. Bounded native Linux owner/export evidence closes its prior acquisition gap. Apple/Linux staging source remains identical and their native2 commands pass. Windows corrected lease, normal consumers, first-call observations and final documentation/order/owner gates remain unadjudicated here; no whole-contract or merge approval.",
+        "limitations": [
+          "Only affected owner/export and publication delta deeply rechecked; no duplicate suite execution. Earlier exact-source native staging review carries forward through unchanged Bash/test bytes.",
+          "Source native identities are receipt facts acquired on the native runner; this receiving review verifies original archives and does not claim current remote object liveness.",
+          "Historical failures are preserved and not relabeled.",
+          "Parent retains currentness, order, exact approval, public delivery and lifecycle/merge authority."
+        ],
+        "mutationStatement": "No source, test, checkout, branch, index, governor or remote mutation. Nested archive is read only in memory, never extracted; only attributed reviewer artifacts written."
+      }
+    }
+  }
+}
