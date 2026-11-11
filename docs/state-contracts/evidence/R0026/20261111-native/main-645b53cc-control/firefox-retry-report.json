@@ -1,0 +1,773 @@
+{
+  "argv": [
+    "tools/qa/run_r0026_native.py",
+    "--engine",
+    "firefox",
+    "--root",
+    "C:\\Users\\theis\\AppData\\Local\\Temp\\main645",
+    "--tag",
+    "firefox-retry",
+    "--out",
+    "docs/state-contracts/evidence/R0026/20261111-native/main-645b53cc-control"
+  ],
+  "engine": "firefox",
+  "headed": false,
+  "playwright": "1.62.0",
+  "root": "main645",
+  "served": {
+    "index.html": "e41ba4341cb22741f97719dc08bccfad895f8fe5f11bc67288ad70663913f1f5",
+    "builder.html": "66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81",
+    "offline.html": "d6505a0f9fca522fe7ea80ad2ca816c55a8b9d0154b1fe6337b8bb967a4725e8"
+  },
+  "cells": {
+    "builderDetect": {
+      "pass": false,
+      "tip": "Detected: Fixture999 (approx.)",
+      "form": [
+        "90.00000",
+        "180.00000"
+      ]
+    },
+    "builderAdmitted": {
+      "pass": true,
+      "tip": "Found: London, England, United Kingdom",
+      "form": [
+        "51.50000",
+        "-0.12000"
+      ],
+      "formBefore": [
+        "90.00000",
+        "180.00000"
+      ]
+    },
+    "builderNoMatch": {
+      "pass": true,
+      "tip": "Couldn’t find that — try the pin (browser location) or enter coordinates.",
+      "form": [
+        "51.50000",
+        "-0.12000"
+      ],
+      "formBefore": [
+        "51.50000",
+        "-0.12000"
+      ]
+    },
+    "builderUnavailable": {
+      "pass": false,
+      "tip": "Found: Paris, Ile-de-France, France",
+      "form": [
+        "48.86000",
+        "2.35000"
+      ],
+      "formBefore": [
+        "51.50000",
+        "-0.12000"
+      ]
+    },
+    "builderPartial": {
+      "pass": false,
+      "tip": "Found: Toronto, Ontario, Canada",
+      "form": [
+        "43.64000",
+        "-79.39000"
+      ],
+      "formBefore": [
+        "48.86000",
+        "2.35000"
+      ]
+    },
+    "builderInvalidPosition": {
+      "pass": false,
+      "tip": "Using browser position · accuracy 20 m.",
+      "form": [
+        "999.00000",
+        "10.00000"
+      ],
+      "geoCalls": 1
+    },
+    "builderStale_error": {
+      "pass": true,
+      "tip": "Found: Cairo, Cairo, Egypt",
+      "form": [
+        "30.04000",
+        "31.24000"
+      ]
+    },
+    "builderStale_success": {
+      "pass": true,
+      "tip": "Found: Cairo, Cairo, Egypt",
+      "form": [
+        "30.04000",
+        "31.24000"
+      ]
+    },
+    "widgetBootDetect": {
+      "pass": false,
+      "config": {
+        "lat": 90,
+        "lon": 180,
+        "label": "Fixture999",
+        "status": "ok",
+        "source": "GeoJS"
+      }
+    },
+    "settingsNoMatch": {
+      "pass": true,
+      "status": "Couldn’t find “Nowhere”. Set coordinates below, or tap the pin for browser location.",
+      "form": [
+        "90",
+        "180"
+      ],
+      "formBefore": [
+        "90",
+        "180"
+      ],
+      "errClass": true
+    },
+    "settingsUnavailable": {
+      "pass": false,
+      "status": "Found: Paris, Ile-de-France, France",
+      "form": [
+        "48.86000",
+        "2.35000"
+      ],
+      "formBefore": [
+        "90",
+        "180"
+      ],
+      "errClass": false
+    },
+    "settingsPartial": {
+      "pass": false,
+      "status": "Found: Toronto, Ontario, Canada",
+      "form": [
+        "43.64000",
+        "-79.39000"
+      ],
+      "formBefore": [
+        "48.86000",
+        "2.35000"
+      ],
+      "errClass": false
+    },
+    "settingsAdmitted": {
+      "pass": true,
+      "status": "Found: London, England, United Kingdom",
+      "form": [
+        "51.50000",
+        "-0.12000"
+      ],
+      "formBefore": [
+        "43.64000",
+        "-79.39000"
+      ],
+      "errClass": false
+    },
+    "settingsInvalidPosition": {
+      "pass": false,
+      "status": "Browser position · accuracy 20 m · fix 0 min old — click to refresh",
+      "form": [
+        "NaN",
+        "10.00000"
+      ]
+    },
+    "settingsStale_error": {
+      "pass": true,
+      "status": "Found: Cairo, Cairo, Egypt",
+      "form": [
+        "30.04000",
+        "31.24000"
+      ]
+    },
+    "settingsResultingConfig": {
+      "pass": true,
+      "config": {
+        "lat": 30.04,
+        "lon": 31.24,
+        "label": "Cairo"
+      },
+      "formAtClose": [
+        "30.04000",
+        "31.24000"
+      ]
+    }
+  },
+  "external": [
+    [
+      "get.geojs.io",
+      "/v1/ip/geo.json",
+      "stub geojs invalid"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim London"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim Nowhere"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim Paris"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim M5V2T6"
+    ],
+    [
+      "api.zippopotam.us",
+      "/ca/M5V",
+      "stub zippopotam 503"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.bigdatacloud.net",
+      "/data/reverse-geocode-client",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim held"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim Cairo"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim held"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim Cairo"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "fonts.googleapis.com",
+      "/css2",
+      "aborted"
+    ],
+    [
+      "get.geojs.io",
+      "/v1/ip/geo.json",
+      "stub geojs invalid"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim Nowhere"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim Paris"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim M5V2T6"
+    ],
+    [
+      "api.zippopotam.us",
+      "/ca/M5V",
+      "stub zippopotam 503"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim London"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim held"
+    ],
+    [
+      "nominatim.openstreetmap.org",
+      "/search",
+      "stub nominatim Cairo"
+    ],
+    [
+      "api.open-meteo.com",
+      "/v1/forecast",
+      "aborted"
+    ],
+    [
+      "api.rainviewer.com",
+      "/public/weather-maps.json",
+      "aborted"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/11-11-2026",
+      "stub aladhan"
+    ],
+    [
+      "api.aladhan.com",
+      "/v1/timings/12-11-2026",
+      "stub aladhan"
+    ]
+  ],
+  "console": [
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=90&longitude=180&current=temperature_2"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=51.5&longitude=-0.12&current=temperatu"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=51.5&longitude=-0.12&current=temperatu"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=48.86&longitude=2.35&current=temperatu"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"NS_BINDING_ABORTED: \" {file: \"chrome://juggler/content/content/WorkerMain.js\" line: 6}]"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=43.64&longitude=-79.39&current=tempera"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=999.00000&longitude="
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=43.64&longitude=-79.39&current=tempera"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=90&longitude=10&current=temperature_2m"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=90&longitude=10&current=temperature_2m"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=30.04&longitude=31.24&current=temperat"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=30.04&longitude=31.24&current=temperat"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=30.04&longitude=31.24&current=temperat"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=90&longitude=180&current=temperature_2"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.open-meteo.com/v1/forecast?latitude=30.04&longitude=31.24&current=temperat"
+    ],
+    [
+      "error",
+      "[JavaScript Error: \"Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at https://api.rainviewer.com/public/weather-maps.json. (Reason: CORS request did not suc"
+    ]
+  ],
+  "browserVersion": "153.0",
+  "serverResets": 3,
+  "builderCode": "lat=30.04&lon=31.24&label=Cairo&method=4&school=0&appearance=glass",
+  "externalHosts": [
+    "api.aladhan.com",
+    "api.bigdatacloud.net",
+    "api.open-meteo.com",
+    "api.rainviewer.com",
+    "api.zippopotam.us",
+    "fonts.googleapis.com",
+    "get.geojs.io",
+    "nominatim.openstreetmap.org"
+  ],
+  "unhandledExternal": [],
+  "noRequestLeft": true,
+  "pass": false
+}

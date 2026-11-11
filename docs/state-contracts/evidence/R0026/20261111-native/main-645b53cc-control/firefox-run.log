@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "C:\workspace\ai\salah_widget\.claude\worktrees\r0026\tools\qa\run_r0026_native.py", line 197, in <module>
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.tag or o.engine) else 1)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\salah_widget\.claude\worktrees\r0026\tools\qa\run_r0026_native.py", line 122, in run
+    before = form(); settled = search(q, expect); t, f = tip(), form()
+                               ^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\salah_widget\.claude\worktrees\r0026\tools\qa\run_r0026_native.py", line 116, in search
+    return wait(page, '(re)=>new RegExp(re).test(document.getElementById("geotip").textContent)', expect, 6000)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\workspace\ai\salah_widget\.claude\worktrees\r0026\tools\qa\run_r0026_native.py", line 50, in wait
+    page.wait_for_timeout(100)
+  File "C:\Users\theis\AppData\Local\Temp\claude\3a624686b9d4bc78\bd7739dc-98e9-42b7-8720-e836e41f37e3\scratchpad\r0007\independent-ci\venv\Lib\site-packages\playwright\sync_api\_generated.py", line 12696, in wait_for_timeout
+    self._sync(
+  File "C:\Users\theis\AppData\Local\Temp\claude\3a624686b9d4bc78\bd7739dc-98e9-42b7-8720-e836e41f37e3\scratchpad\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "C:\Users\theis\AppData\Local\Temp\claude\3a624686b9d4bc78\bd7739dc-98e9-42b7-8720-e836e41f37e3\scratchpad\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_page.py", line 1142, in wait_for_timeout
+    await self._main_frame.wait_for_timeout(timeout)
+  File "C:\Users\theis\AppData\Local\Temp\claude\3a624686b9d4bc78\bd7739dc-98e9-42b7-8720-e836e41f37e3\scratchpad\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_frame.py", line 924, in wait_for_timeout
+    await self._channel.send("waitForTimeout", None, {"waitTimeout": timeout})
+  File "C:\Users\theis\AppData\Local\Temp\claude\3a624686b9d4bc78\bd7739dc-98e9-42b7-8720-e836e41f37e3\scratchpad\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_connection.py", line 76, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\theis\AppData\Local\Temp\claude\3a624686b9d4bc78\bd7739dc-98e9-42b7-8720-e836e41f37e3\scratchpad\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_connection.py", line 632, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.TargetClosedError: Page.wait_for_timeout: Page crashed
