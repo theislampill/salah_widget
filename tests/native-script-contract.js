@@ -22,13 +22,13 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
-    // R0007 gated web-font activation at 58fc4af; explicitly rebound like the
+    // R0007 gated web-font activation at ec69edf; explicitly rebound like the
     // 5e946fe inputs below, which remain admitted unchanged.
-    '88740f02ef00fdcf821331b56f7ef387ec4f852d450b0e1f1765891bbe4a7ad4':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'58fc4afcfef2ca15cc03f845aaf79cc0084a60c1',path:'src/native/index.html',layout:'config,native'}),
-    'ae29298b28f7ab72acb8e6803b672a1817012744d68fff7ddd41c3361e7c1f54':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'58fc4afcfef2ca15cc03f845aaf79cc0084a60c1',path:'index.html',
-      parentSha256:'a6a2bec1333122b5dfe944cb33268172d13f886d00a423287e5b1d2e01324c0e',
+    'e059305e2602adead696c2639c5332656e240f1b58628dde05924414ea99bc8d':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ec69edf863cae569462d91a4a5ae2feb6554fbe1',path:'src/native/index.html',layout:'config,native'}),
+    '494b8424a5e35108aec7604cb2e2fbda7ca33c61522005786e3674176fb5aa15':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ec69edf863cae569462d91a4a5ae2feb6554fbe1',path:'index.html',
+      parentSha256:'5a200d9ab428c24ad7967253ee57156fcbca3483c123eed228bd88fd354dd6ab',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0007 source reviewed at 5e946fe; these complete inputs are admitted by

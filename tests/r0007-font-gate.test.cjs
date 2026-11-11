@@ -7,7 +7,7 @@ const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const source=fs.readFileSync(path.join(__dirname,'../src/native/index.html'),'utf8').replace(/\r\n/g,'\n');
 const style=source.slice(source.indexOf('<style>'),source.indexOf('</style>'));
 const START='// Optional web typography.',END='// Size the present-prayer name';
-const FACES=['400 14px Inter','500 14px Inter','600 14px Inter','600 14px Fraunces'];
+const FACES=['400 14px Inter','600 14px Inter','600 14px Fraunces'];
 const WEB=/\b(Inter|Fraunces)\b/;
 
 function rules(css){
@@ -65,21 +65,21 @@ test('no face is requested before the stylesheet applies; activation waits for e
  assert.deepEqual(s.calls,[],'nothing is requested while the stylesheet is pending');
  s.loadStylesheet();
  assert.deepEqual(s.calls,FACES,'exactly the faces used by visible UI');
- for(const [index,settler] of s.settlers.slice(0,3).entries()){
+ for(const [index,settler] of s.settlers.slice(0,2).entries()){
   settler.resolve([{family:'face'+index}]);await s.settle();
   assert.equal(s.classes.has('webfonts'),false,'partial loads keep fallback stacks');
   assert.equal(s.context._cnFit,'cached-fallback-fit');
  }
- s.settlers[3].resolve([{family:'Fraunces'}]);await s.settle();
+ s.settlers[2].resolve([{family:'Fraunces'}]);await s.settle();
  assert.equal(s.classes.has('webfonts'),true,'all loads non-empty activates the full stacks');
  assert.equal(s.context._cnFit,'','activation invalidates the .cn fit cache');
  assert.equal(s.context._renderDirty,true,'activation schedules the re-fit render');
- s.loadStylesheet();assert.equal(s.calls.length,4,'a later load event requests nothing again');
+ s.loadStylesheet();assert.equal(s.calls.length,3,'a later load event requests nothing again');
 });
 
 test('a rejected or empty load leaves fallback stacks permanently with no retry',async()=>{
  for(const failing of [d=>d.includes('Fraunces')?Promise.resolve([]):Promise.resolve([{}]),
-                       d=>d.startsWith('500')?Promise.reject(new Error('network')):Promise.resolve([{}]),
+                       d=>d.startsWith('600 14px Inter')?Promise.reject(new Error('network')):Promise.resolve([{}]),
                        ()=>{throw new Error('syntax');}]){
   const s=scene({loads:failing});
   s.loadStylesheet();await s.settle();await s.settle();
