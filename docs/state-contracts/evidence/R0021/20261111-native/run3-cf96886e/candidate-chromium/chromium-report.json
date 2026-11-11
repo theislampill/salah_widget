@@ -1,0 +1,689 @@
+{
+  "schema": "r0021-native/2",
+  "engine": "chromium",
+  "headed": false,
+  "out": "candidate-chromium",
+  "complete": true,
+  "evidenceLevel": "request-level (CDP) and page-level",
+  "root": "repository",
+  "policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'",
+  "policyDelivery": "response header on index.html",
+  "served": {
+    "index.html": "0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb",
+    "real-sky/native-sky.js": "d5780cbf840d35231c6c7202e1abd93796f9a4633a4eed648f237b70c8d172f8",
+    "real-sky/native-worker.js": "30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745",
+    "real-sky/native-data.js": "649d7ecc4fae05d655c934c4b2e69467427b9d215e0f1e6ae95701364e29167f",
+    "moon/moon-host.js": "fee33628b4a0173f973af34a10181f657b74114d2b1e0df7fa373c5833819b20",
+    "moon/moon-worker.js": "62b8753d518d8047e268c86d378de76c70d4b4e33b4467283feab06e3f3bb42e",
+    "config.js": "719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80"
+  },
+  "options": {
+    "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1",
+    "cells": [
+      "first-boot",
+      "live-handoff",
+      "retirement",
+      "construction",
+      "cycles",
+      "moon-replay",
+      "recovery-visual",
+      "night",
+      "navigation"
+    ],
+    "cyclesWaitMs": 200,
+    "cyclesSettleMs": 500,
+    "cyclesFreshPage": false,
+    "composedWaitMs": 60000
+  },
+  "cells": {
+    "first-boot": {
+      "pass": true,
+      "moonDisposedField": "exposed",
+      "sky": 1,
+      "preview": 1,
+      "detail": 1,
+      "workersLive": 2,
+      "urlsLive": 2,
+      "vis": 2,
+      "assets": "ready",
+      "skyStatus": "pending",
+      "previewStatus": "ready",
+      "previewDraws": 4,
+      "moonRuntime": true,
+      "moonDisposed": false,
+      "moonDetail": true
+    },
+    "live-handoff": {
+      "pass": true,
+      "invalidationHandoff": true,
+      "retryHandoff": true,
+      "after": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 2,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 19,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "retirement": {
+      "pass": false,
+      "status": "precondition-not-met",
+      "cleanRetirement": true,
+      "maskChangingAtPagehide": false,
+      "maskPrefixes": [
+        "linear-gradient(#fff,#fff)",
+        "linear-gradient(#fff,#fff)"
+      ],
+      "refinedComposedBeforePagehide": true,
+      "retiringImages": [],
+      "retiringViolations": [],
+      "retiringCdp": [],
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 31,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "afterPagehide": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "suspended",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 40,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "resumed": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 41,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "requestLevel": true
+    },
+    "construction": {
+      "pass": true,
+      "baseline": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 41,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "nativeLoopStarted": true,
+      "contextRefusal1": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 46,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "contextRefusal2": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 51,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "intervalFailure": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 57,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "recovered": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 58,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "cycles": {
+      "nativeLoopStarted": true,
+      "visibilityListenerLog": [
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:12:180) |     at http://127.0.0.1:49733/index.html:4131:11 |     at http://127.0.0.1:49733/index.html:4184:3 |     at http://127.0.0.1:49733/index.html:4194:3",
+          "phase": "load",
+          "t": 286.7999999821186
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:12:180) |     at startNativeSky (http://127.0.0.1:49733/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:49733/real-sky/native-sky.js:2310:95)",
+          "phase": "load",
+          "t": 692.7999999821186
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:13:188) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:49733/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:49733/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 8607.199999988079
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:12:180) |     at startNativeSky (http://127.0.0.1:49733/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:49733/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 8882.40000000596
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:13:188) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:49733/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:49733/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 9459.09999999404
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:12:180) |     at startNativeSky (http://127.0.0.1:49733/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:49733/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 9759.59999999404
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:13:188) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:49733/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:49733/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 10338.40000000596
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:12:180) |     at startNativeSky (http://127.0.0.1:49733/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:49733/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 10633.199999988079
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:13:188) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:49733/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:49733/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 11214.799999982119
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:12:180) |     at startNativeSky (http://127.0.0.1:49733/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:49733/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 11494.09999999404
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:13:188) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:49733/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:49733/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 12061.199999988079
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:12:180) |     at startNativeSky (http://127.0.0.1:49733/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:49733/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:49733/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 12329.09999999404
+        }
+      ],
+      "pass": true,
+      "start": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 58,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "cycles": [
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 65,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 73,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 81,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 88,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 95,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        }
+      ],
+      "freshPage": false,
+      "waitMs": 200,
+      "settleMs": 500
+    },
+    "moon-replay": {
+      "pass": true,
+      "outcome": {
+        "errors": [
+          "Uncaught Error: Moon wrapper replay refused: a live Moon runtime is installed"
+        ],
+        "same": true,
+        "disposed": false
+      },
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 95,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "after": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 100,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "recovery-visual": {
+      "pass": true,
+      "changedPixelFraction3s": 0.0018519593613933237,
+      "humanReview": [
+        "chromium-3a-motion.png",
+        "chromium-3b-motion.png"
+      ]
+    },
+    "night": {
+      "pass": true,
+      "status": "human-review",
+      "nightMoonCrop": true,
+      "moonTruth": {
+        "phaseFraction": 0.5,
+        "waxing": true,
+        "moonAltitudeDeg": 40,
+        "moonSkyFresh": null,
+        "lastConsumed": null,
+        "currentGeometry": null,
+        "lunarLight": null,
+        "surface": {
+          "status": "v5-terrain",
+          "quality": "preview",
+          "visibleSource": "terrain-preview",
+          "identity": "743ff58d28e4fb7e6bca6e33dc18c21dddde3abbef513d658cbbad9c8017f1db",
+          "legacyDecoded": false,
+          "legacyVisible": false,
+          "texture": "V5 DEM intersections, terrain shadows and colour"
+        },
+        "physicalMoonVisible": false,
+        "calendarMoonVisible": false,
+        "displayMode": "debug-hidden",
+        "moonSkyOpacity": 0,
+        "moonCalendarOpacity": 0,
+        "moonFeatureOpacity": 0,
+        "moonlightOpacity": 0,
+        "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+        "reason": "near-new / cloud → subordinate calendar presentation"
+      },
+      "nightCounts": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 37,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "navigation": {
+      "pass": true,
+      "navigationCdp": []
+    }
+  },
+  "console": [
+    [
+      "main",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "main",
+      "error",
+      "Connecting to 'https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0' violates the following Content Security Policy directive: \"connect-src 'self'\". The action has been blocked."
+    ],
+    [
+      "main",
+      "error",
+      "Fetch API cannot load https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0. Refused to connect because it violates the document's Content Security Policy."
+    ],
+    [
+      "main",
+      "error",
+      "Connecting to 'https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0' violates the following Content Security Policy directive: \"connect-src 'self'\". The action has been blocked."
+    ],
+    [
+      "main",
+      "error",
+      "Fetch API cannot load https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0. Refused to connect because it violates the document's Content Security Policy."
+    ],
+    [
+      "main",
+      "error",
+      "Connecting to 'https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0' violates the following Content Security Policy directive: \"connect-src 'self'\". The action has been blocked."
+    ],
+    [
+      "main",
+      "error",
+      "Fetch API cannot load https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0. Refused to connect because it violates the document's Content Security Policy."
+    ],
+    [
+      "main",
+      "pageerror",
+      "Moon wrapper replay refused: a live Moon runtime is installed"
+    ],
+    [
+      "night",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "night",
+      "error",
+      "Connecting to 'https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0' violates the following Content Security Policy directive: \"connect-src 'self'\". The action has been blocked."
+    ],
+    [
+      "night",
+      "error",
+      "Fetch API cannot load https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0. Refused to connect because it violates the document's Content Security Policy."
+    ],
+    [
+      "night",
+      "error",
+      "Connecting to 'https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0' violates the following Content Security Policy directive: \"connect-src 'self'\". The action has been blocked."
+    ],
+    [
+      "night",
+      "error",
+      "Fetch API cannot load https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0. Refused to connect because it violates the document's Content Security Policy."
+    ],
+    [
+      "night",
+      "error",
+      "Connecting to 'https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0' violates the following Content Security Policy directive: \"connect-src 'self'\". The action has been blocked."
+    ],
+    [
+      "night",
+      "error",
+      "Fetch API cannot load https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0. Refused to connect because it violates the document's Content Security Policy."
+    ]
+  ],
+  "cdp": [
+    {
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/16",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/db",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/e5",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/e5",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/e5",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/e5",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "active-retry",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/fb",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "phase": "resume",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/6d",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "construction",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/c8",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "construction",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/72",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "cycles-0-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/69",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "cycles-1-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/f9",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "cycles-2-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/97",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "cycles-3-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/40",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "cycles-4-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:49733/83",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:49733/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1\"}"
+    },
+    {
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "954021B7895F59C8F71850436F3E813A",
+      "initiator": "{\"type\": \"other\"}"
+    }
+  ],
+  "crashes": [],
+  "browserVersion": "148.0.7778.96",
+  "pass": false
+}
