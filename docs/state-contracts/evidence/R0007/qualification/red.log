@@ -1,0 +1,463 @@
+test_q01_valid_terminal_source_assertions_do_not_accept_pixels (__main__.CollectorTests.test_q01_valid_terminal_source_assertions_do_not_accept_pixels) ... ok
+test_q02_missing_final_summary_cannot_be_accepted (__main__.CollectorTests.test_q02_missing_final_summary_cannot_be_accepted) ... ok
+test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) ... 
+  test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[]) ... FAIL
+  test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[{'caseId': 'another', 'status': 'PASS_ASSERTIONS_PENDING_PIXEL_REVIEW', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}]) ... FAIL
+  test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[{'caseId': 'healthy', 'status': 'PASS_ASSERTIONS_PENDING_PIXEL_REVIEW', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}, {'caseId': 'healthy', 'status': 'PASS_ASSERTIONS_PENDING_PIXEL_REVIEW', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}]) ... FAIL
+  test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[{'caseId': 'healthy', 'status': 'FAIL', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}]) ... FAIL
+test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) ... 
+  test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='summary.json', malformed='{') ... FAIL
+  test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='summary.json', malformed='[]') ... FAIL
+  test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='summary.json', malformed='null') ... FAIL
+  test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='trace.json', malformed='{') ... FAIL
+  test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='trace.json', malformed='[]') ... FAIL
+  test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='trace.json', malformed='null') ... FAIL
+test_q04_sole_final_result_with_unverified_cleanup_fails_aggregate (__main__.CollectorTests.test_q04_sole_final_result_with_unverified_cleanup_fails_aggregate) ... FAIL
+test_q05_intended_mutant_requires_healthy_controls_and_terminal_summary (__main__.CollectorTests.test_q05_intended_mutant_requires_healthy_controls_and_terminal_summary) ... FAIL
+test_q05_unrelated_mutant_exit_never_discriminates (__main__.CollectorTests.test_q05_unrelated_mutant_exit_never_discriminates) ... 
+  test_q05_unrelated_mutant_exit_never_discriminates (__main__.CollectorTests.test_q05_unrelated_mutant_exit_never_discriminates) (failure=None) ... FAIL
+test_q06_no_browser_empty_mismatches_do_not_record_presentation (__main__.CollectorTests.test_q06_no_browser_empty_mismatches_do_not_record_presentation) ... FAIL
+test_q07_latest_recovery_capture_is_only_eventual_state (__main__.CollectorTests.test_q07_latest_recovery_capture_is_only_eventual_state) ... FAIL
+test_q07_missing_capture_is_unverified_even_with_empty_mismatches (__main__.CollectorTests.test_q07_missing_capture_is_unverified_even_with_empty_mismatches) ... FAIL
+test_q09_matching_first_receipt_still_requires_independent_pixels (__main__.CollectorTests.test_q09_matching_first_receipt_still_requires_independent_pixels) ... FAIL
+test_q09_mismatch_remains_unverified_despite_source_success (__main__.CollectorTests.test_q09_mismatch_remains_unverified_despite_source_success) ... FAIL
+test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) ... 
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={}) ... FAIL
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'firefox', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True}) ... FAIL
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'firefox', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True}) ... FAIL
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': 'explicit system chromium if available; otherwise Playwright managed engine', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True}) ... FAIL
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '0000000000000000000000000000000000000000000000000000000000000000', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True}) ... FAIL
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': '', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True}) ... FAIL
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'invented-platform', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True}) ... FAIL
+  test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': False}) ... FAIL
+test_q11_malformed_identity_fails_closed (__main__.CollectorTests.test_q11_malformed_identity_fails_closed) ... 
+  test_q11_malformed_identity_fails_closed (__main__.CollectorTests.test_q11_malformed_identity_fails_closed) (malformed='{') ... FAIL
+  test_q11_malformed_identity_fails_closed (__main__.CollectorTests.test_q11_malformed_identity_fails_closed) (malformed='null') ... FAIL
+  test_q11_malformed_identity_fails_closed (__main__.CollectorTests.test_q11_malformed_identity_fails_closed) (malformed='[]') ... FAIL
+test_q08_first_capture_mismatch_retains_evidence_and_continues_for_any_name (__main__.DriverTests.test_q08_first_capture_mismatch_retains_evidence_and_continues_for_any_name) ... 
+  test_q08_first_capture_mismatch_retains_evidence_and_continues_for_any_name (__main__.DriverTests.test_q08_first_capture_mismatch_retains_evidence_and_continues_for_any_name) (name='unavailable') ... FAIL
+test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) ... 
+  test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='chromium', selection='explicit') ... FAIL
+  test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='chromium', selection='system') ... FAIL
+  test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='chromium', selection='managed') ... FAIL
+  test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='firefox', selection='managed') ... FAIL
+
+======================================================================
+FAIL: test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 124, in test_q03_final_summary_must_match_the_single_terminal_trace
+    self.assertFalse(result["accepted"], "terminal receipt mismatch must gate source credit")
+AssertionError: True is not false : terminal receipt mismatch must gate source credit
+
+======================================================================
+FAIL: test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[{'caseId': 'another', 'status': 'PASS_ASSERTIONS_PENDING_PIXEL_REVIEW', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 124, in test_q03_final_summary_must_match_the_single_terminal_trace
+    self.assertFalse(result["accepted"], "terminal receipt mismatch must gate source credit")
+AssertionError: True is not false : terminal receipt mismatch must gate source credit
+
+======================================================================
+FAIL: test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[{'caseId': 'healthy', 'status': 'PASS_ASSERTIONS_PENDING_PIXEL_REVIEW', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}, {'caseId': 'healthy', 'status': 'PASS_ASSERTIONS_PENDING_PIXEL_REVIEW', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 124, in test_q03_final_summary_must_match_the_single_terminal_trace
+    self.assertFalse(result["accepted"], "terminal receipt mismatch must gate source credit")
+AssertionError: True is not false : terminal receipt mismatch must gate source credit
+
+======================================================================
+FAIL: test_q03_final_summary_must_match_the_single_terminal_trace (__main__.CollectorTests.test_q03_final_summary_must_match_the_single_terminal_trace) (receipts=[{'caseId': 'healthy', 'status': 'FAIL', 'trace': '/tmp/r0007-qualification-test-qi_qq95i/consumer/healthy/trace.json'}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 124, in test_q03_final_summary_must_match_the_single_terminal_trace
+    self.assertFalse(result["accepted"], "terminal receipt mismatch must gate source credit")
+AssertionError: True is not false : terminal receipt mismatch must gate source credit
+
+======================================================================
+FAIL: test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='summary.json', malformed='{')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 94, in adjudicate
+    return NATIVE.adjudicate(self.case, self.output, self.producer, self.files, controls or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tools/qualification/r0007_native.py", line 187, in adjudicate
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 354, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 133, in test_q03_malformed_summary_or_trace_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+                     ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 96, in adjudicate
+    self.fail("malformed evidence must be rejected, not escape adjudication: " + repr(error))
+AssertionError: malformed evidence must be rejected, not escape adjudication: JSONDecodeError('Expecting property name enclosed in double quotes: line 1 column 2 (char 1)')
+
+======================================================================
+FAIL: test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='summary.json', malformed='[]')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 94, in adjudicate
+    return NATIVE.adjudicate(self.case, self.output, self.producer, self.files, controls or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tools/qualification/r0007_native.py", line 190, in adjudicate
+    result["cleanupEstablished"] = len(summary.get("receipts", [])) == 1 and summary["receipts"][0].get("caseId") == case["caseId"]
+                                       ^^^^^^^^^^^
+AttributeError: 'list' object has no attribute 'get'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 133, in test_q03_malformed_summary_or_trace_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+                     ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 96, in adjudicate
+    self.fail("malformed evidence must be rejected, not escape adjudication: " + repr(error))
+AssertionError: malformed evidence must be rejected, not escape adjudication: AttributeError("'list' object has no attribute 'get'")
+
+======================================================================
+FAIL: test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='summary.json', malformed='null')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 94, in adjudicate
+    return NATIVE.adjudicate(self.case, self.output, self.producer, self.files, controls or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tools/qualification/r0007_native.py", line 190, in adjudicate
+    result["cleanupEstablished"] = len(summary.get("receipts", [])) == 1 and summary["receipts"][0].get("caseId") == case["caseId"]
+                                       ^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 133, in test_q03_malformed_summary_or_trace_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+                     ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 96, in adjudicate
+    self.fail("malformed evidence must be rejected, not escape adjudication: " + repr(error))
+AssertionError: malformed evidence must be rejected, not escape adjudication: AttributeError("'NoneType' object has no attribute 'get'")
+
+======================================================================
+FAIL: test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='trace.json', malformed='{')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 94, in adjudicate
+    return NATIVE.adjudicate(self.case, self.output, self.producer, self.files, controls or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tools/qualification/r0007_native.py", line 188, in adjudicate
+    trace = json.loads(trace_path.read_text(encoding="utf-8"))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 354, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 133, in test_q03_malformed_summary_or_trace_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+                     ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 96, in adjudicate
+    self.fail("malformed evidence must be rejected, not escape adjudication: " + repr(error))
+AssertionError: malformed evidence must be rejected, not escape adjudication: JSONDecodeError('Expecting property name enclosed in double quotes: line 1 column 2 (char 1)')
+
+======================================================================
+FAIL: test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='trace.json', malformed='[]')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 94, in adjudicate
+    return NATIVE.adjudicate(self.case, self.output, self.producer, self.files, controls or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tools/qualification/r0007_native.py", line 189, in adjudicate
+    result.update(actualStatus=trace.get("status"), failure=trace.get("failure"), traceSha256=sha(trace_path))
+                               ^^^^^^^^^
+AttributeError: 'list' object has no attribute 'get'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 133, in test_q03_malformed_summary_or_trace_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+                     ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 96, in adjudicate
+    self.fail("malformed evidence must be rejected, not escape adjudication: " + repr(error))
+AssertionError: malformed evidence must be rejected, not escape adjudication: AttributeError("'list' object has no attribute 'get'")
+
+======================================================================
+FAIL: test_q03_malformed_summary_or_trace_fails_closed (__main__.CollectorTests.test_q03_malformed_summary_or_trace_fails_closed) (path='trace.json', malformed='null')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 94, in adjudicate
+    return NATIVE.adjudicate(self.case, self.output, self.producer, self.files, controls or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tools/qualification/r0007_native.py", line 189, in adjudicate
+    result.update(actualStatus=trace.get("status"), failure=trace.get("failure"), traceSha256=sha(trace_path))
+                               ^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'get'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 133, in test_q03_malformed_summary_or_trace_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+                     ^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 96, in adjudicate
+    self.fail("malformed evidence must be rejected, not escape adjudication: " + repr(error))
+AssertionError: malformed evidence must be rejected, not escape adjudication: AttributeError("'NoneType' object has no attribute 'get'")
+
+======================================================================
+FAIL: test_q04_sole_final_result_with_unverified_cleanup_fails_aggregate (__main__.CollectorTests.test_q04_sole_final_result_with_unverified_cleanup_fails_aggregate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 154, in test_q04_sole_final_result_with_unverified_cleanup_fails_aggregate
+    self.assertEqual(exit_code, 1)
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_q05_intended_mutant_requires_healthy_controls_and_terminal_summary (__main__.CollectorTests.test_q05_intended_mutant_requires_healthy_controls_and_terminal_summary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 172, in test_q05_intended_mutant_requires_healthy_controls_and_terminal_summary
+    self.assertFalse(self.adjudicate({"healthy-control": True})["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q05_unrelated_mutant_exit_never_discriminates (__main__.CollectorTests.test_q05_unrelated_mutant_exit_never_discriminates) (failure=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 94, in adjudicate
+    return NATIVE.adjudicate(self.case, self.output, self.producer, self.files, controls or {})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tools/qualification/r0007_native.py", line 214, in adjudicate
+    and failure.startswith("AssertionError(") and case["expectedFailureContains"] in failure)
+        ^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'startswith'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 180, in test_q05_unrelated_mutant_exit_never_discriminates
+    self.assertFalse(self.adjudicate({"healthy-control": True})["accepted"])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 96, in adjudicate
+    self.fail("malformed evidence must be rejected, not escape adjudication: " + repr(error))
+AssertionError: malformed evidence must be rejected, not escape adjudication: AttributeError("'NoneType' object has no attribute 'startswith'")
+
+======================================================================
+FAIL: test_q06_no_browser_empty_mismatches_do_not_record_presentation (__main__.CollectorTests.test_q06_no_browser_empty_mismatches_do_not_record_presentation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 192, in test_q06_no_browser_empty_mismatches_do_not_record_presentation
+    self.assertEqual(result.get("firstPresentationAssociation"), "UNVERIFIED_NO_NATIVE_SETUP")
+AssertionError: 'RECORDED_REQUIRES_PIXEL_REVIEW' != 'UNVERIFIED_NO_NATIVE_SETUP'
+- RECORDED_REQUIRES_PIXEL_REVIEW
++ UNVERIFIED_NO_NATIVE_SETUP
+
+
+======================================================================
+FAIL: test_q07_latest_recovery_capture_is_only_eventual_state (__main__.CollectorTests.test_q07_latest_recovery_capture_is_only_eventual_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 207, in test_q07_latest_recovery_capture_is_only_eventual_state
+    self.assertEqual(self.association(result)["status"], "EVENTUAL_STATE_ONLY")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 100, in association
+    self.assertEqual(len(records), 1, "each declared capture needs its own evidence disposition")
+AssertionError: 0 != 1 : each declared capture needs its own evidence disposition
+
+======================================================================
+FAIL: test_q07_missing_capture_is_unverified_even_with_empty_mismatches (__main__.CollectorTests.test_q07_missing_capture_is_unverified_even_with_empty_mismatches)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 198, in test_q07_missing_capture_is_unverified_even_with_empty_mismatches
+    self.assertEqual(self.association(result)["status"], "UNVERIFIED_NO_CAPTURE_ARTIFACT")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 100, in association
+    self.assertEqual(len(records), 1, "each declared capture needs its own evidence disposition")
+AssertionError: 0 != 1 : each declared capture needs its own evidence disposition
+
+======================================================================
+FAIL: test_q09_matching_first_receipt_still_requires_independent_pixels (__main__.CollectorTests.test_q09_matching_first_receipt_still_requires_independent_pixels)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 212, in test_q09_matching_first_receipt_still_requires_independent_pixels
+    self.assertEqual(self.association(result)["status"], "RECORDED_PENDING_INDEPENDENT_REVIEW")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 100, in association
+    self.assertEqual(len(records), 1, "each declared capture needs its own evidence disposition")
+AssertionError: 0 != 1 : each declared capture needs its own evidence disposition
+
+======================================================================
+FAIL: test_q09_mismatch_remains_unverified_despite_source_success (__main__.CollectorTests.test_q09_mismatch_remains_unverified_despite_source_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 224, in test_q09_mismatch_remains_unverified_despite_source_success
+    self.assertEqual(self.association(result)["status"], "UNVERIFIED_ORDINAL_MISMATCH")
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 100, in association
+    self.assertEqual(len(records), 1, "each declared capture needs its own evidence disposition")
+AssertionError: 0 != 1 : each declared capture needs its own evidence disposition
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'firefox', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'firefox', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': 'explicit system chromium if available; otherwise Playwright managed engine', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '0000000000000000000000000000000000000000000000000000000000000000', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': '', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'invented-platform', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_identity_requires_real_requested_engine_and_executable_binding (__main__.CollectorTests.test_q11_identity_requires_real_requested_engine_and_executable_binding) (identity={'family': 'chromium', 'engineRequested': 'chromium', 'version': 'TEST.1', 'os': 'Linux', 'machine': 'x86_64', 'headless': False, 'executable': '/tmp/r0007-qualification-test-ibou53xe/synthetic-browser.exe', 'executableSha256': '33e2b60e1211faf7e7276f9ba987bb1c2d402a966bfc8356d2d7bb4fac0ad6ff', 'executableSelection': 'runtime-selected', 'chromiumSandboxRequested': False})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 235, in test_q11_identity_requires_real_requested_engine_and_executable_binding
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_malformed_identity_fails_closed (__main__.CollectorTests.test_q11_malformed_identity_fails_closed) (malformed='{')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 241, in test_q11_malformed_identity_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_malformed_identity_fails_closed (__main__.CollectorTests.test_q11_malformed_identity_fails_closed) (malformed='null')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 241, in test_q11_malformed_identity_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q11_malformed_identity_fails_closed (__main__.CollectorTests.test_q11_malformed_identity_fails_closed) (malformed='[]')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 241, in test_q11_malformed_identity_fails_closed
+    self.assertFalse(self.adjudicate()["accepted"])
+AssertionError: True is not false
+
+======================================================================
+FAIL: test_q08_first_capture_mismatch_retains_evidence_and_continues_for_any_name (__main__.DriverTests.test_q08_first_capture_mismatch_retains_evidence_and_continues_for_any_name) (name='unavailable')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 345, in test_q08_first_capture_mismatch_retains_evidence_and_continues_for_any_name
+    self.assertEqual(code, 0, "ordinal mismatch must not abort later actual acquisition")
+AssertionError: 1 != 0 : ordinal mismatch must not abort later actual acquisition
+
+======================================================================
+FAIL: test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='chromium', selection='explicit')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 358, in test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change
+    self.assertEqual(identity.get("executable"), str(executable.resolve()))
+AssertionError: 'explicit system chromium if available; otherwise Playwright managed engine' != '/tmp/tmp_n2k1btx/test-browser.exe'
+- explicit system chromium if available; otherwise Playwright managed engine
++ /tmp/tmp_n2k1btx/test-browser.exe
+
+
+======================================================================
+FAIL: test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='chromium', selection='system')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 358, in test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change
+    self.assertEqual(identity.get("executable"), str(executable.resolve()))
+AssertionError: 'explicit system chromium if available; otherwise Playwright managed engine' != '/tmp/tmp7sobutoa/test-browser.exe'
+- explicit system chromium if available; otherwise Playwright managed engine
++ /tmp/tmp7sobutoa/test-browser.exe
+
+
+======================================================================
+FAIL: test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='chromium', selection='managed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 358, in test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change
+    self.assertEqual(identity.get("executable"), str(executable.resolve()))
+AssertionError: 'explicit system chromium if available; otherwise Playwright managed engine' != '/tmp/tmp9zgczb3k/test-browser.exe'
+- explicit system chromium if available; otherwise Playwright managed engine
++ /tmp/tmp9zgczb3k/test-browser.exe
+
+
+======================================================================
+FAIL: test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change (__main__.DriverTests.test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change) (engine='firefox', selection='managed')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/8726e3e6def5/r0007-work/tests/test_r0007_native_qualification.py", line 358, in test_q10_actual_selected_executable_and_hash_bind_the_launch_without_sandbox_change
+    self.assertEqual(identity.get("executable"), str(executable.resolve()))
+AssertionError: 'explicit system chromium if available; otherwise Playwright managed engine' != '/tmp/tmp4tmjhuer/test-browser.exe'
+- explicit system chromium if available; otherwise Playwright managed engine
++ /tmp/tmp4tmjhuer/test-browser.exe
+
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.039s
+
+FAILED (failures=34)

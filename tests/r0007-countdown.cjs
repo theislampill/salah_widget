@@ -95,7 +95,7 @@ test('actual repeated model consumer reuses the same day profile', () => {
   const c=modelRealm({intl,zone:'UTC',wall:Date.parse('2026-09-07T01:30Z'),globals:{today:prayerRecord('2026-09-07','UTC')}});
   c.run('model()'); const before=counts.projections;
   for(let i=0;i<20;i++) {c.clock.wall+=1000; assert.equal(c.run('model().nextKey'),'Fajr');}
-  assert.equal(counts.projections-before,40,'one wall projection and one endpoint check per model; no day rebuild');
+  assert.equal(counts.projections-before,140,'one wall projection and six bounded candidate checks per model; no day rebuild');
 });
 
 test('invalid explicit model exits before nonfinite wall projection', () => {
@@ -114,7 +114,8 @@ test('wall-minute subtraction and today-plus-24h mutants are caught while ordina
   assert.equal(withModel(wall,'2026-09-07T01:30-04:00','2026-09-07').leftMin,210);
   assert.equal(withModel(wall,'2026-03-08T01:30-05:00','2026-03-08').leftMin,210);
   assert.equal(withModel(wall,'2026-11-01T01:30-04:00','2026-11-01').leftMin,210);
-  const elapsed24=modelSource.replace('const nextEpoch=nextDay ?','const nextEpoch=tomorrowFlag && currentDay ? epochForTzTime(currentDay.y,currentDay.mo,currentDay.d,nextHour,nextMinute,nextZone)+86400000 : nextDay ?'); assert.notEqual(elapsed24,modelSource);
+  const altered=require('./rlgwo/prayer-browser-fixture.cjs').instrument(source,{variant:'epoch-plus24'});
+  const elapsed24=require('./r0008-clock-harness.cjs').slice('// build everything render() needs','// draw the solar-prayer arc',altered); assert.notEqual(elapsed24,modelSource);
   const m=withModel(elapsed24,'2026-03-07T23:30-05:00','2026-03-07',prayerRecord('2026-03-08','America/New_York'));
   assert.equal(m.leftMin,330); assert.notEqual(m.leftMin,270);
   console.log(`MUTANT wall-minutes ${sha256(wall)} / elapsed-24h ${sha256(elapsed24)} rejected`);

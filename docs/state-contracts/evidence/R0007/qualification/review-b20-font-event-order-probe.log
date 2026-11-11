@@ -1,0 +1,90 @@
+{"id":"NE07-recovery24","before":{"barrierAccepted":true,"terminalEventPending":true,"dirty":false},"afterTerminalEvent":{"renderedTarget":"00:31"},"scope":"SYNTHETIC_SPEC_PERMITTED_ORDER_ONLY"}
+{"id":"NE07-recovery12","before":{"barrierAccepted":true,"terminalEventPending":true,"dirty":false},"afterTerminalEvent":{"renderedTarget":"00:31"},"scope":"SYNTHETIC_SPEC_PERMITTED_ORDER_ONLY"}
+{"id":"NE07-dst-recovery24","before":{"barrierAccepted":true,"terminalEventPending":true,"dirty":false},"afterTerminalEvent":{"renderedTarget":"00:31"},"scope":"SYNTHETIC_SPEC_PERMITTED_ORDER_ONLY"}
+{"id":"NE07-mut-remove-next-dirty","before":{"barrierAccepted":true,"terminalEventPending":true,"dirty":false},"afterTerminalEvent":{"renderedTarget":"00:31"},"scope":"SYNTHETIC_SPEC_PERMITTED_ORDER_ONLY"}
+✖ NE07-recovery24 must not release while a real product font dirty callback is still queued (3.327328ms)
+✔ NE07-recovery24 positive: a consumed terminal callback allows settled fallback (0.751537ms)
+✖ NE07-recovery12 must not release while a real product font dirty callback is still queued (0.806179ms)
+✔ NE07-recovery12 positive: a consumed terminal callback allows settled fallback (0.56068ms)
+✖ NE07-dst-recovery24 must not release while a real product font dirty callback is still queued (1.704725ms)
+✔ NE07-dst-recovery24 positive: a consumed terminal callback allows settled fallback (0.587581ms)
+✖ NE07-mut-remove-next-dirty must not release while a real product font dirty callback is still queued (0.772809ms)
+✔ NE07-mut-remove-next-dirty positive: a consumed terminal callback allows settled fallback (0.692879ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 4
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 100.068528
+
+✖ failing tests:
+
+test at analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:40:2
+✖ NE07-recovery24 must not release while a real product font dirty callback is still queued (3.327328ms)
+  AssertionError [ERR_ASSERTION]: ready + loaded + clear-dirty admits before queued loadingdone
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:52:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:40:2
+✖ NE07-recovery12 must not release while a real product font dirty callback is still queued (0.806179ms)
+  AssertionError [ERR_ASSERTION]: ready + loaded + clear-dirty admits before queued loadingdone
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:52:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:40:2
+✖ NE07-dst-recovery24 must not release while a real product font dirty callback is still queued (1.704725ms)
+  AssertionError [ERR_ASSERTION]: ready + loaded + clear-dirty admits before queued loadingdone
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:52:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:40:2
+✖ NE07-mut-remove-next-dirty must not release while a real product font dirty callback is still queued (0.772809ms)
+  AssertionError [ERR_ASSERTION]: ready + loaded + clear-dirty admits before queued loadingdone
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/analysis-r0007/qualification-review-b20e3aa/font-event-order-probe.cjs:52:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

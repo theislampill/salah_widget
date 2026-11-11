@@ -1,0 +1,97 @@
+✔ QUAL-01 pending stylesheet with empty loaded font set cannot release (4.557522ms)
+✔ an unrelated LINK receipt and preconnect completion cannot supply stylesheet terminality (12.812135ms)
+✔ a loaded stylesheet must have its actual media activation applied (4.052225ms)
+✔ terminal stylesheet failure permits settled fallback with no registered font faces (4.573246ms)
+✔ terminal active stylesheet and settled fonts with clear dirty flag permit release (5.56966ms)
+✔ font loading is awaited without releasing the held reply (10.471672ms)
+✔ read-only layout precedes ready so stylesheet application can expose pending font work (4.807462ms)
+✔ actual product font completion callback keeps release held until original dirty work clears (4.867662ms)
+✔ existing dirty work and a missing stylesheet cannot be treated as a settled barrier (7.985605ms)
+✖ ready before queued loadingdone cannot release before dispatch, deferred receipt and dirty clearance (3.147847ms)
+✔ terminal event before ready is also supported without requiring a fabricated later event (4.875574ms)
+✖ mixed successful and failed faces require their own terminal type in either event order (1.199505ms)
+✖ loaded face without a real event receipt remains diagnostically unavailable (1.231372ms)
+✖ a replacement font object cannot inherit an old same-family completion receipt (1.186346ms)
+✔ unused relevant faces and unrelated font families do not invent product dirty callbacks (7.585772ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 11
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 84.894677
+
+✖ failing tests:
+
+test at tests/r0007-recovery-precondition.test.cjs:84:1
+✖ ready before queued loadingdone cannot release before dispatch, deferred receipt and dirty clearance (3.147847ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24 terminal event still queued
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:86:10
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:43:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:96:1
+✖ mixed successful and failed faces require their own terminal type in either event order (1.199505ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24 missing loadingerror
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:101:12
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:43:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:106:1
+✖ loaded face without a real event receipt remains diagnostically unavailable (1.231372ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:107:10
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:43:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:109:1
+✖ a replacement font object cannot inherit an old same-family completion receipt (1.186346ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24 replacement
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:112:36
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:43:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

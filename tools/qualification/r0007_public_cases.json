@@ -1,0 +1,777 @@
+{
+  "schema": "r0007-public-consumer-cases/v1",
+  "requiredCaseIds": [
+    "public-reordered24",
+    "public-ordinary24",
+    "public-missing24",
+    "public-recovery24"
+  ],
+  "optionalCaseIds": [
+    "public-reordered-offline"
+  ],
+  "cases": [
+    {
+      "caseId": "public-reordered24",
+      "sourceRecipeId": "NE07-reordered24",
+      "entry": "index.html",
+      "mode": "ready",
+      "epoch": "2026-09-07T23:00:00Z",
+      "hash": "#lat=40.71&lon=-74.01&label=UTCfixture&method=2&school=0&time=24&tz=UTC&simTime=23%3A00",
+      "todayPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "tomorrowPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:31"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "expectedUnavailable": {
+        "stage": "unavailable",
+        "equals": {
+          "render/selectionState": "next-day-required",
+          "render/nextKey": null,
+          "render/nextTime": null,
+          "render/nextDate": null,
+          "render/nextZone": null,
+          "render/nextEpoch": {
+            "finite": false,
+            "value": null
+          },
+          "render/leftMin": {
+            "finite": false,
+            "value": null
+          },
+          "currentDay": "07-09-2026",
+          "dom/.nt/text": "—",
+          "dom/.left/text": "Countdown unavailable",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s)(?!.*class=\"p on).*",
+          "dom/.arc/html": "(?s)(?!.*class=\"dot next).*",
+          "dom/#ce/text": "(?s).*2026.*"
+        },
+        "noInvalidText": true
+      },
+      "expectedFinal": {
+        "stage": "first-current",
+        "equals": {
+          "render/nextKey": "Isha",
+          "render/nextTime": "00:31",
+          "render/nextDate": "08-09-2026",
+          "render/nextZone": "UTC",
+          "render/nextEpoch": 1788827460000,
+          "render/acceptedUtcMs": 1788822000000,
+          "render/leftMin": 91,
+          "render/selectionState": "next-day-target",
+          "currentDay": "07-09-2026",
+          "timezone": "UTC",
+          "dom/.nt/text": "00:31",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530,
+          "render/prevMin": 1080,
+          "render/nextMin": 1471,
+          "render/progressKind": "wall-interval",
+          "render/progress": 0.7672634271099744,
+          "dom/.left/text": "1h 31m left until Isha"
+        },
+        "contains": {
+          "dom/.left/text": "until Isha"
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s).*class=\"p on[^\"]*\" data-prayer-key=\"Isha\"><b>Isha</b><span class=\"tm\">00:31</span></div>.*",
+          "dom/.arc/html": "(?s).*class=\"dot next[^\"]*\"[^>]*data-prayer-key=\"Isha\".*"
+        },
+        "noInvalidText": true
+      },
+      "required": true,
+      "holdBoundary": "Actual HTTP response held before headers for missing/recovery; native fetch/timers unchanged",
+      "claims": "Controlled admitted-input delivery behavior only; no live provider incidence or earliest presented frame claim",
+      "literalDurationOracle": "1h 31m left until Isha"
+    },
+    {
+      "caseId": "public-ordinary24",
+      "sourceRecipeId": "NE07-ordinary24",
+      "entry": "index.html",
+      "mode": "ready",
+      "epoch": "2026-09-07T23:00:00Z",
+      "hash": "#lat=40.71&lon=-74.01&label=UTCfixture&method=2&school=0&time=24&tz=UTC&simTime=23%3A00",
+      "todayPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "tomorrowPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "19:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "expectedUnavailable": {
+        "stage": "unavailable",
+        "equals": {
+          "render/selectionState": "next-day-required",
+          "render/nextKey": null,
+          "render/nextTime": null,
+          "render/nextDate": null,
+          "render/nextZone": null,
+          "render/nextEpoch": {
+            "finite": false,
+            "value": null
+          },
+          "render/leftMin": {
+            "finite": false,
+            "value": null
+          },
+          "currentDay": "07-09-2026",
+          "dom/.nt/text": "—",
+          "dom/.left/text": "Countdown unavailable",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s)(?!.*class=\"p on).*",
+          "dom/.arc/html": "(?s)(?!.*class=\"dot next).*",
+          "dom/#ce/text": "(?s).*2026.*"
+        },
+        "noInvalidText": true
+      },
+      "expectedFinal": {
+        "stage": "first-current",
+        "equals": {
+          "render/nextKey": "Fajr",
+          "render/nextTime": "05:00",
+          "render/nextDate": "08-09-2026",
+          "render/nextZone": "UTC",
+          "render/nextEpoch": 1788843600000,
+          "render/acceptedUtcMs": 1788822000000,
+          "render/leftMin": 360,
+          "render/selectionState": "next-day-target",
+          "currentDay": "07-09-2026",
+          "timezone": "UTC",
+          "dom/.nt/text": "05:00",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530,
+          "render/prevMin": 1170,
+          "render/nextMin": 1740,
+          "render/progressKind": "wall-interval",
+          "dom/.left/text": "6h 0m left until Fajr"
+        },
+        "contains": {
+          "dom/.left/text": "until Fajr"
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s).*class=\"p on[^\"]*\" data-prayer-key=\"Fajr\"><b>Fajr</b><span class=\"tm\">05:00</span></div>.*",
+          "dom/.arc/html": "(?s).*class=\"dot next[^\"]*\"[^>]*data-prayer-key=\"Fajr\".*"
+        },
+        "noInvalidText": true
+      },
+      "required": true,
+      "holdBoundary": "Actual HTTP response held before headers for missing/recovery; native fetch/timers unchanged",
+      "claims": "Controlled admitted-input delivery behavior only; no live provider incidence or earliest presented frame claim",
+      "literalDurationOracle": "6h 0m left until Fajr"
+    },
+    {
+      "caseId": "public-missing24",
+      "sourceRecipeId": "NE07-missing",
+      "entry": "index.html",
+      "mode": "missing",
+      "epoch": "2026-09-07T23:00:00Z",
+      "hash": "#lat=40.71&lon=-74.01&label=UTCfixture&method=2&school=0&time=24&tz=UTC&simTime=23%3A00",
+      "todayPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "tomorrowPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:31"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "expectedUnavailable": {
+        "stage": "unavailable",
+        "equals": {
+          "render/selectionState": "next-day-required",
+          "render/nextKey": null,
+          "render/nextTime": null,
+          "render/nextDate": null,
+          "render/nextZone": null,
+          "render/nextEpoch": {
+            "finite": false,
+            "value": null
+          },
+          "render/leftMin": {
+            "finite": false,
+            "value": null
+          },
+          "currentDay": "07-09-2026",
+          "dom/.nt/text": "—",
+          "dom/.left/text": "Countdown unavailable",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s)(?!.*class=\"p on).*",
+          "dom/.arc/html": "(?s)(?!.*class=\"dot next).*",
+          "dom/#ce/text": "(?s).*2026.*"
+        },
+        "noInvalidText": true
+      },
+      "expectedFinal": null,
+      "required": true,
+      "holdBoundary": "Actual HTTP response held before headers for missing/recovery; native fetch/timers unchanged",
+      "claims": "Controlled admitted-input delivery behavior only; no live provider incidence or earliest presented frame claim"
+    },
+    {
+      "caseId": "public-recovery24",
+      "sourceRecipeId": "NE07-recovery24",
+      "entry": "index.html",
+      "mode": "recovery",
+      "epoch": "2026-09-07T23:00:00Z",
+      "hash": "#lat=40.71&lon=-74.01&label=UTCfixture&method=2&school=0&time=24&tz=UTC&simTime=23%3A00",
+      "todayPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "tomorrowPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:31"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "expectedUnavailable": {
+        "stage": "unavailable",
+        "equals": {
+          "render/selectionState": "next-day-required",
+          "render/nextKey": null,
+          "render/nextTime": null,
+          "render/nextDate": null,
+          "render/nextZone": null,
+          "render/nextEpoch": {
+            "finite": false,
+            "value": null
+          },
+          "render/leftMin": {
+            "finite": false,
+            "value": null
+          },
+          "currentDay": "07-09-2026",
+          "dom/.nt/text": "—",
+          "dom/.left/text": "Countdown unavailable",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s)(?!.*class=\"p on).*",
+          "dom/.arc/html": "(?s)(?!.*class=\"dot next).*",
+          "dom/#ce/text": "(?s).*2026.*"
+        },
+        "noInvalidText": true
+      },
+      "expectedFinal": {
+        "stage": "after-next-settlement",
+        "equals": {
+          "render/nextKey": "Isha",
+          "render/nextTime": "00:31",
+          "render/nextDate": "08-09-2026",
+          "render/nextZone": "UTC",
+          "render/nextEpoch": 1788827460000,
+          "render/acceptedUtcMs": 1788822000000,
+          "render/leftMin": 91,
+          "render/selectionState": "next-day-target",
+          "currentDay": "07-09-2026",
+          "timezone": "UTC",
+          "dom/.nt/text": "00:31",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530,
+          "render/prevMin": 1080,
+          "render/nextMin": 1471,
+          "render/progressKind": "wall-interval",
+          "dom/.left/text": "1h 31m left until Isha"
+        },
+        "contains": {
+          "dom/.left/text": "until Isha"
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s).*class=\"p on[^\"]*\" data-prayer-key=\"Isha\"><b>Isha</b><span class=\"tm\">00:31</span></div>.*",
+          "dom/.arc/html": "(?s).*class=\"dot next[^\"]*\"[^>]*data-prayer-key=\"Isha\".*"
+        },
+        "noInvalidText": true
+      },
+      "required": true,
+      "holdBoundary": "Actual HTTP response held before headers for missing/recovery; native fetch/timers unchanged",
+      "claims": "Controlled admitted-input delivery behavior only; no live provider incidence or earliest presented frame claim",
+      "literalDurationOracle": "1h 31m left until Isha"
+    },
+    {
+      "caseId": "public-reordered-offline",
+      "sourceRecipeId": "NE07-reordered-offline",
+      "entry": "offline.html",
+      "mode": "ready",
+      "epoch": "2026-09-07T23:00:00Z",
+      "hash": "#lat=40.71&lon=-74.01&label=UTCfixture&method=2&school=0&time=24&tz=UTC&simTime=23%3A00",
+      "todayPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:30"
+          },
+          "date": {
+            "gregorian": {
+              "date": "07-09-2026",
+              "day": "07",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "tomorrowPayload": {
+        "code": 200,
+        "status": "OK",
+        "data": {
+          "timings": {
+            "Fajr": "05:00",
+            "Sunrise": "06:00",
+            "Dhuhr": "12:00",
+            "Asr": "15:30",
+            "Sunset": "18:00",
+            "Maghrib": "18:00",
+            "Isha": "00:31"
+          },
+          "date": {
+            "gregorian": {
+              "date": "08-09-2026",
+              "day": "08",
+              "month": {
+                "number": 9,
+                "en": "Fixture month"
+              },
+              "year": "2026"
+            },
+            "hijri": {
+              "date": "19-02-1448",
+              "day": "19",
+              "month": {
+                "number": 2,
+                "en": "Safar"
+              },
+              "year": "1448"
+            }
+          },
+          "meta": {
+            "timezone": "UTC"
+          }
+        }
+      },
+      "expectedUnavailable": {
+        "stage": "unavailable",
+        "equals": {
+          "render/selectionState": "next-day-required",
+          "render/nextKey": null,
+          "render/nextTime": null,
+          "render/nextDate": null,
+          "render/nextZone": null,
+          "render/nextEpoch": {
+            "finite": false,
+            "value": null
+          },
+          "render/leftMin": {
+            "finite": false,
+            "value": null
+          },
+          "currentDay": "07-09-2026",
+          "dom/.nt/text": "—",
+          "dom/.left/text": "Countdown unavailable",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s)(?!.*class=\"p on).*",
+          "dom/.arc/html": "(?s)(?!.*class=\"dot next).*",
+          "dom/#ce/text": "(?s).*2026.*"
+        },
+        "noInvalidText": true
+      },
+      "expectedFinal": {
+        "stage": "first-current",
+        "equals": {
+          "render/nextKey": "Isha",
+          "render/nextTime": "00:31",
+          "render/nextDate": "08-09-2026",
+          "render/nextZone": "UTC",
+          "render/nextEpoch": 1788827460000,
+          "render/acceptedUtcMs": 1788822000000,
+          "render/leftMin": 91,
+          "render/selectionState": "next-day-target",
+          "currentDay": "07-09-2026",
+          "timezone": "UTC",
+          "dom/.nt/text": "00:31",
+          "dom/.c/geometry/width": 325,
+          "dom/.c/geometry/height": 530,
+          "render/prevMin": 1080,
+          "render/nextMin": 1471,
+          "render/progressKind": "wall-interval",
+          "render/progress": 0.7672634271099744,
+          "dom/.left/text": "1h 31m left until Isha"
+        },
+        "contains": {
+          "dom/.left/text": "until Isha"
+        },
+        "numberRange": {
+          "render/progress": [
+            0,
+            1
+          ]
+        },
+        "regex": {
+          "dom/.times/html": "(?s).*class=\"p on[^\"]*\" data-prayer-key=\"Isha\"><b>Isha</b><span class=\"tm\">00:31</span></div>.*",
+          "dom/.arc/html": "(?s).*class=\"dot next[^\"]*\"[^>]*data-prayer-key=\"Isha\".*"
+        },
+        "noInvalidText": true
+      },
+      "required": false,
+      "holdBoundary": "Actual HTTP response held before headers for missing/recovery; native fetch/timers unchanged",
+      "claims": "Controlled admitted-input delivery behavior only; no live provider incidence or earliest presented frame claim",
+      "literalDurationOracle": "1h 31m left until Isha"
+    }
+  ],
+  "originalRecipeSha256": "0c878d11d368137a9171ec1abeeb63cc687d7bfc50fca27455f59029c3c591ea",
+  "clockContract": "Only pre-boot Date ingress is fixed; performance/rAF/timers/render/boot remain native and unmodified."
+}

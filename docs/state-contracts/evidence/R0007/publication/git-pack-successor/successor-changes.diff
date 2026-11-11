@@ -1,0 +1,187 @@
+--- baseline/templates/materialize.py
++++ templates/materialize.py
+@@ -46,8 +46,10 @@
+ 
+ 
+ def child_env():
+-    # The builder and Git subprocesses have no need for our API upload token.
+-    result = os.environ.copy()
++    # Controlled children must not inherit independent Git diagnostic sinks.
++    # Token-free children stay token-free; the push credential is added later.
++    result = {key: value for key, value in os.environ.items()
++              if not key.startswith("GIT_TRACE") and key != "GIT_CURL_VERBOSE"}
+     result.pop("R0007_UPLOAD_TOKEN", None)
+     result.pop("R0007_PUSH_TOKEN", None)
+     result["GIT_LITERAL_PATHSPECS"] = "1"
+@@ -253,10 +255,10 @@
+             raise ValueError("intermediate is not a single forward child of expected seed")
+         # Read names only: existing auth values must never reach captured diagnostics.
+         keys = git(root, "config", "--includes", "--name-only", "--list").lower().splitlines()
+-        if any(k == "core.hookspath" or k.startswith("credential.")
++        if any(k == "core.hookspath" or k.startswith("credential.") or k.startswith("trace2.")
+                or (k.startswith("url.") and (k.endswith(".insteadof") or k.endswith(".pushinsteadof")))
+                or (k.startswith("http.") and k.endswith("extraheader")) for k in keys):
+-            raise ValueError("existing hook, rewrite or credential configuration requires review")
++            raise ValueError("existing hook, rewrite, credential or diagnostic configuration requires review")
+         tls = subprocess.run(["git", "-C", str(root), "config", "--get-urlmatch", "http.sslVerify", REMOTE],
+                              env=child_env(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+         if tls.returncode not in (0, 1) or (tls.returncode == 0 and tls.stdout.strip().lower() not in (b"true", b"yes", b"on", b"1")):
+--- /dev/null
++++ tests/test_trace_boundary.py
+@@ -0,0 +1,156 @@
++#!/usr/bin/env python3
++"""Real local Git witnesses for inherited trace environment and config paths.
++
++Synthetic credentials have no authority. All Git endpoints are disposable file://
++repositories. Trace files and RED evidence are retained, never scrubbed or deleted.
++"""
++import hashlib
++import json
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import tempfile
++import types
++import unittest
++from unittest.mock import patch
++
++
++ROOT = Path(__file__).resolve().parents[1]
++HELPER = ROOT / 'templates/materialize.py'
++REF = 'refs/heads/pro/r0007-explicit-next-event-state-20261106'
++
++
++class TraceBoundary(unittest.TestCase):
++    def exercise(self, channel):
++        raw = HELPER.read_bytes()
++        subject = types.ModuleType('pack_trace_subject')
++        subject.__file__ = str(HELPER)
++        exec(compile(raw, str(HELPER), 'exec'), subject.__dict__)
++        fixtures = ROOT / 'test-runs-trace'
++        fixtures.mkdir(exist_ok=True)
++        root = Path(tempfile.mkdtemp(prefix=channel + '-', dir=fixtures))
++        work, bare, evidence = root / 'work', root / 'remote.git', root / 'evidence'
++        evidence.mkdir()
++        environment = {'PATH': os.environ.get('PATH', '/usr/bin:/bin'),
++                       'GIT_CONFIG_NOSYSTEM': '1', 'GIT_CONFIG_GLOBAL': os.devnull,
++                       'GIT_TERMINAL_PROMPT': '0', 'LC_ALL': 'C',
++                       'PYTHONDONTWRITEBYTECODE': '1'}
++
++        def git(cwd, *arguments):
++            result = subprocess.run(['git', '-C', str(cwd), *arguments], env=environment,
++                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
++            return result.stdout.decode().strip()
++
++        git(root, 'init', '--quiet', '--initial-branch=fixture', str(work))
++        git(root, 'init', '--quiet', '--bare', str(bare))
++        git(work, 'config', 'user.name', 'Local trace-boundary fixture')
++        git(work, 'config', 'user.email', 'fixture@example.invalid')
++
++        def commit(label):
++            (work / 'payload.txt').write_text(label + '\n')
++            git(work, 'add', 'payload.txt')
++            git(work, 'commit', '--quiet', '-m', label)
++            return git(work, 'rev-parse', 'HEAD')
++
++        seed = commit('synthetic seed')
++        intermediate = commit('synthetic intermediate')
++        remote = bare.as_uri()
++        git(work, 'push', '--quiet', remote, seed + ':' + REF)
++        trace = evidence / 'git-trace-output'
++        token = 'R0007_SUCCESSOR_SYNTHETIC_CREDENTIAL_NO_AUTHORITY'
++        ambient = dict(environment)
++        configs = []
++        environment_targets = {'environment': 'GIT_TRACE2_EVENT',
++                               'environment-normal': 'GIT_TRACE2',
++                               'environment-perf': 'GIT_TRACE2_PERF'}
++        if channel in environment_targets:
++            ambient.update({environment_targets[channel]: str(trace),
++                            'GIT_TRACE2_ENV_VARS': 'R0007_PUSH_TOKEN', 'GIT_CURL_VERBOSE': '1'})
++        elif channel == 'injected-count':
++            ambient.update(GIT_CONFIG_COUNT='2', GIT_CONFIG_KEY_0='trace2.envVars',
++                           GIT_CONFIG_VALUE_0='R0007_PUSH_TOKEN',
++                           GIT_CONFIG_KEY_1='trace2.eventTarget', GIT_CONFIG_VALUE_1=str(trace))
++        else:
++            config = root / 'global.gitconfig'
++            diagnostic_config = root / 'included.gitconfig' if channel == 'included-global' else config
++            target = 'eventTarget' if channel == 'included-global' else channel
++            git(work, 'config', '--file', str(diagnostic_config), 'trace2.envVars', 'R0007_PUSH_TOKEN')
++            git(work, 'config', '--file', str(diagnostic_config), 'trace2.' + target, str(trace))
++            if channel == 'included-global':
++                git(work, 'config', '--file', str(config), 'include.path', str(diagnostic_config))
++                configs.append(diagnostic_config)
++            configs.append(config)
++            ambient['GIT_CONFIG_GLOBAL'] = str(config)
++        config_before = {config: config.read_bytes() for config in configs}
++        repository_config_before = (work / '.git/config').read_bytes()
++        with patch.dict(os.environ, ambient, clear=True), patch.object(subject, 'REMOTE', remote):
++            result = subject.publish_intermediate(work, intermediate, seed, evidence, token)
++            ambient_unchanged = all(os.environ.get(key) == value for key, value in ambient.items())
++            controlled_environment = subject.child_env()
++        observed = git(bare, 'rev-parse', REF)
++        leaked = [str(file.relative_to(root)) for file in root.rglob('*')
++                  if file.is_file() and token.encode() in file.read_bytes()]
++        config_unchanged = all(config.read_bytes() == content for config, content in config_before.items())
++        repository_config_unchanged = (work / '.git/config').read_bytes() == repository_config_before
++        git_executable = Path(shutil.which('git', path=environment['PATH'])).resolve()
++        record = {'schema': 'r0007-successor-trace-boundary/v1', 'channel': channel,
++                  'localFixtureOnly': True, 'productionRemoteContacted': False,
++                  'helperSha256': hashlib.sha256(raw).hexdigest(),
++                  'publicationStatus': result['status'], 'refUpdated': result['refUpdated'],
++                  'pushAttempts': result.get('pushAttempts'),
++                  'expectedSeed': seed, 'expectedIntermediate': intermediate,
++                  'observedRemote': observed, 'traceFilePresent': trace.exists(),
++                  'syntheticCredentialPersisted': bool(leaked), 'credentialFilePaths': leaked,
++                  'configurationUnchanged': config_unchanged and repository_config_unchanged,
++                  'ambientEnvironmentUnchanged': ambient_unchanged,
++                  'structuredReceiptContainsCredential': token in json.dumps(result),
++                  'gitVersion': git(root, '--version'), 'gitExecutable': str(git_executable),
++                  'gitExecutableSha256': hashlib.sha256(git_executable.read_bytes()).hexdigest()}
++        (root / 'witness.json').write_text(json.dumps(record, indent=2) + '\n')
++        print(json.dumps(record, sort_keys=True), flush=True)
++        self.assertFalse(leaked, 'Git tracing persisted the synthetic push credential')
++        self.assertTrue(config_unchanged and repository_config_unchanged,
++                        'existing configuration was changed')
++        self.assertTrue(ambient_unchanged, 'parent environment was changed')
++        self.assertNotIn(token, json.dumps(result))
++        if channel in environment_targets:
++            self.assertEqual(result['status'], 'REMOTE_REF_VERIFIED_INTERMEDIATE')
++            self.assertIs(result['refUpdated'], True)
++            self.assertEqual(observed, intermediate)
++            self.assertFalse(trace.exists(), 'inherited trace environment reached controlled Git children')
++            self.assertFalse(any(key.startswith('GIT_TRACE') or key == 'GIT_CURL_VERBOSE'
++                                 for key in controlled_environment))
++        else:
++            self.assertEqual(result['status'], 'REFUSED_BEFORE_PUSH')
++            self.assertIs(result['refUpdated'], False)
++            self.assertEqual(result['pushAttempts'], 0)
++            self.assertEqual(observed, seed)
++
++    def test_inherited_trace_environment_cannot_persist_push_credential(self):
++        self.exercise('environment')
++
++    def test_global_trace2_normal_target_refuses_before_push(self):
++        self.exercise('normalTarget')
++
++    def test_global_trace2_event_target_refuses_before_push(self):
++        self.exercise('eventTarget')
++
++    def test_global_trace2_perf_target_refuses_before_push(self):
++        self.exercise('perfTarget')
++
++    def test_inherited_normal_trace_environment_cannot_persist_push_credential(self):
++        self.exercise('environment-normal')
++
++    def test_inherited_performance_trace_environment_cannot_persist_push_credential(self):
++        self.exercise('environment-perf')
++
++    def test_included_global_trace_configuration_refuses_before_push(self):
++        self.exercise('included-global')
++
++    def test_injected_count_trace_configuration_refuses_before_push(self):
++        self.exercise('injected-count')
++
++
++if __name__ == '__main__':
++    unittest.main(verbosity=2)

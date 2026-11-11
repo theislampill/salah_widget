@@ -80,9 +80,10 @@ test('annotated admitted clocks use the same source clock parser as the model',(
   assert.equal(h.run('admitPrayerRecord(today,lastDate).ok'),true);
   verify(h,['past','past','now','on','',''],'Dhuhr','Asr');
 });
-test('missing tomorrow preserves next-key precedence while actual countdown stays unavailable',()=>{
+test('missing tomorrow preserves current rows without claiming an unsupported next event',()=>{
   const h=fixture('23:00:00',{},source(),false);
-  const {model}=verify(h,['on','past','past','past','past','now'],'Isha','Fajr');
+  const {model}=verify(h,['past','past','past','past','past','now'],'Isha',null);
+  assert.equal(model.selection.state,'next-day-required');
   assert.equal(Number.isFinite(model.nextEpoch),false);assert.equal(Number.isFinite(model.leftMin),false);
   assert.equal(h.nodes.get('.left').textContent,'Countdown unavailable');
 });

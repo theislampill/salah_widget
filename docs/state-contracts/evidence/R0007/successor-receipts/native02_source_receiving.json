@@ -1,0 +1,363 @@
+{
+  "schema": "r0007-native02-source-receiving/v1",
+  "reportStage": "FINAL",
+  "status": "FINAL_FINDINGS_ONLY",
+  "nativeOutcome": "BOTH_CASES_FAIL",
+  "pairStatus": "UNREALIZED",
+  "authority": "Findings only; root retains repository/ref/index/controller/publication and receiving/closure decisions. No product repair, native acceptance, whole-contract or font/Gecko causation authority.",
+  "run": 42925667946,
+  "attempt": 1,
+  "job": 130211384092,
+  "artifact": 13814161433,
+  "candidate": {
+    "commit": "1e3610d97b0e33c0bfaa45f528befc998b5209d5",
+    "tree": "8ae07f9737f6ec44c8abccbe2f353cb5d76ba829",
+    "parent": "4bac6a4781fce62f08ab550a20fe5234d3ebb746"
+  },
+  "archive": {
+    "members": 34,
+    "bytes": 1974128,
+    "sha256": "213c715555a8daa818a4204cdc48231a3470ef39a403cce6d6c5fb626e162ee2"
+  },
+  "comparedOriginalRun": 42920631317,
+  "findings": [
+    {
+      "id": "N02-S01",
+      "status": "RECEIVED",
+      "finding": "Exact artifact and candidate bindings match.",
+      "evidence": [
+        "input-custody.json",
+        "source-binding.json",
+        "platform-receipt-projection.json"
+      ],
+      "requirementOwner": "Root source/publication receiving; immutable request02 candidate and original artifact custody.",
+      "consequence": "34 exact new members; both 150-file source manifests match their respective immutable commits; all 14 publication packet files match; original cases unchanged. This is provenance, not native acceptance.",
+      "smallestNextDiscriminator": null
+    },
+    {
+      "id": "N02-S02",
+      "status": "MEASURED_BOUNDARY_NOT_CAUSE",
+      "finding": "New records partition the entire capture-write-to-release-start interval inside the sleep operation bracket.",
+      "evidence": [
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-fall24/attempt-0001/consumer/NE07-fall24/trace.json",
+          "jsonPointers": [
+            "/operationTimings/6",
+            "/operationTimings/7",
+            "/operationTimings/8"
+          ],
+          "partitionNs": [
+            0,
+            8141000000,
+            0
+          ]
+        },
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-font-fallback-fall24/attempt-0001/consumer/NE07-font-fallback-fall24/trace.json",
+          "jsonPointers": [
+            "/operationTimings/6",
+            "/operationTimings/7",
+            "/operationTimings/8"
+          ],
+          "partitionNs": [
+            0,
+            5812000000,
+            0
+          ]
+        },
+        "tools/cp9/r0007_browser.py:observe_operation and ingress-active sleep branch"
+      ],
+      "requirementOwner": "Host timing observation; preserve original 250ms request, seven actions and 10s product deadline.",
+      "consequence": "Elapsed residence is newly located. Bracket contains bookkeeping/callback and cannot attribute kernel sleep, Python scheduler, OS, browser, recorder or Gecko. Zero adjacent recorded intervals are resolution-limited.",
+      "smallestNextDiscriminator": "Only if later component attribution is commissioned: evidence of host runnable/descheduled/native sleep residence and clock calibration for this actual interval. No native replay is authorized by this finding."
+    },
+    {
+      "id": "N02-S03",
+      "status": "ORIGINAL_PREREQUISITE_LOST",
+      "finding": "Both original held-current bodies reached their unchanged 10,000ms deadline and were aborted before any successful release receipt.",
+      "evidence": [
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-fall24/attempt-0001/consumer/NE07-fall24/trace.json",
+          "jsonPointers": [
+            "/rawOnFailure/timerLog",
+            "/rawOnFailure/events",
+            "/operationTimings/8",
+            "/failureError"
+          ]
+        },
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-font-fallback-fall24/attempt-0001/consumer/NE07-font-fallback-fall24/trace.json",
+          "jsonPointers": [
+            "/rawOnFailure/timerLog",
+            "/rawOnFailure/events",
+            "/operationTimings/8",
+            "/failureError"
+          ]
+        }
+      ],
+      "requirementOwner": "Product-owned full-body attempt deadline; fixture-owned held boundary; original acquisition action 3.",
+      "consequence": "Both traces failed at case-actions/release. No release or capture-current JSON settlement event exists. Source removes the pending key on nonignored abort; absent-key rejection is supported source inference, not a recovered external exception message.",
+      "smallestNextDiscriminator": "Retain failure. A future separately reviewed safe structured prerequisite receipt at release could distinguish pending-key/attempt state without preserving external text; it would not recover this run or justify rerunning it."
+    },
+    {
+      "id": "N02-S04",
+      "status": "UNREALIZED_PAIR",
+      "finding": "Neither arm reached optional-CSS admission or font-ingress intervention.",
+      "evidence": [
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-fall24/attempt-0001/consumer/NE07-fall24/trace.json",
+          "jsonPointers": [
+            "/actions",
+            "/fontIngress/css",
+            "/fontIngress/observations",
+            "/fontIngress/hostEvaluations",
+            "/fontIngress/fontRequestCount"
+          ]
+        },
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-font-fallback-fall24/attempt-0001/consumer/NE07-font-fallback-fall24/trace.json",
+          "jsonPointers": [
+            "/actions",
+            "/fontIngress/css",
+            "/fontIngress/observations",
+            "/fontIngress/hostEvaluations",
+            "/fontIngress/fontRequestCount"
+          ]
+        }
+      ],
+      "requirementOwner": "Plan v2 FI-P2/FI-P3 and exact recipe comparisonRequirements; independently received native pair.",
+      "consequence": "No delivered CSS hashes, retained API/native CSS bytes, native response/finished binding, trusted application, media observations, demanded faces/font bodies, release/settlement/tail/finalization. No baseline-only/both/fallback-only/neither font-loss interpretation is eligible.",
+      "smallestNextDiscriminator": "No comparable delivered pair exists in these artifacts. Preserve unrealized disposition; no automatic repeat, deadline extension, wait replacement or product repair follows."
+    },
+    {
+      "id": "N02-S05",
+      "status": "RAW_VALUES_MATCH_ACQUISITION_FAILED",
+      "finding": "Both failure exports contain correct populated retry renders, while named capture assertions were never reached.",
+      "evidence": [
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-fall24/attempt-0001/consumer/NE07-fall24/trace.json",
+          "jsonPointers": [
+            "/rawOnFailure/snapshots/2",
+            "/rawOnFailure/snapshots/3"
+          ]
+        },
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-font-fallback-fall24/attempt-0001/consumer/NE07-font-fallback-fall24/trace.json",
+          "jsonPointers": [
+            "/rawOnFailure/snapshots/2",
+            "/rawOnFailure/snapshots/3"
+          ]
+        },
+        "run-analysis.json:rawSnapshots.literalValueChecks"
+      ],
+      "requirementOwner": "Original literal source oracles; independent native pixel receiving.",
+      "consequence": "Isha/Fajr05:00/270min/date/zone/epochs, marker, six rows, card geometry and retained literal checks match in raw ordinals 2/3. Raw retry values do not complete actions4–6 or prove earliest/readable presented pixels.",
+      "smallestNextDiscriminator": "Independent original-video review owns actual visibility. No source rerun is needed to establish these retained raw values."
+    },
+    {
+      "id": "N02-S06",
+      "status": "INCOMPLETE_FAILURE_EXPORT",
+      "finding": "Failure export lacks normal top-level setup/assertion/export fields and explicit phase/video alignment.",
+      "evidence": [
+        "tools/cp9/r0007_browser.py:failure export versus normal export",
+        "tools/qualification/r0007_native.py:adjudicate",
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-fall24/attempt-0001/consumer/NE07-fall24/trace.json",
+          "jsonPointer": "/fontIngress/videoClockAssociation"
+        },
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-font-fallback-fall24/attempt-0001/consumer/NE07-font-fallback-fall24/trace.json",
+          "jsonPointer": "/fontIngress/videoClockAssociation"
+        }
+      ],
+      "requirementOwner": "Native collector setup/capture admission and evidence clock custody.",
+      "consequence": "nativeSetupEstablished=false is a failed evidence conjunction, not dependency installation/Firefox launch failure. Missing pageErrors is unknown; fixed Date.now is not acquisition UTC; no exact page/host/video time conversion is established.",
+      "smallestNextDiscriminator": "Use actual original pixels without invented timestamp alignment; only explicit receipt anchors can support future cross-clock claims."
+    },
+    {
+      "id": "N02-S07",
+      "status": "SECONDARY_CLASSIFICATION_BOUNDARY",
+      "finding": "Successful deliberate CSS aborts are accompanied by failed native terminals and failed helper close, while all six native teardown calls returned.",
+      "evidence": [
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-fall24/attempt-0001/consumer/NE07-fall24/trace.json",
+          "jsonPointers": [
+            "/fontIngress/requests/0",
+            "/fontIngress/firstError",
+            "/fontIngress/close",
+            "/secondaryFailures",
+            "/fontIngressNativeCleanup"
+          ]
+        },
+        {
+          "trace": "native-artifacts/42925667946-1-original/r0007-native-ul9zfxnh/firefox/NE07-font-fallback-fall24/attempt-0001/consumer/NE07-font-fallback-fall24/trace.json",
+          "jsonPointers": [
+            "/fontIngress/requests/0",
+            "/fontIngress/firstError",
+            "/fontIngress/close",
+            "/secondaryFailures",
+            "/fontIngressNativeCleanup"
+          ]
+        },
+        "tools/cp9/r0007_font_ingress.py:_terminal ignores only disposition aborting; _dispose_route sets aborted after return",
+        "tests/test_r0007_font_ingress.py:Route.abort boundary double emits requestfailed synchronously"
+      ],
+      "requirementOwner": "Helper callback/disposition classification and separate native ownership cleanup.",
+      "consequence": "Keep close.status=FAILED and fixed diagnostic reason as secondary; do not relabel the primary Error or call this a failed CSS service/teardown operation. Source supports a later terminal being latched after abort has returned. Original run fallback had the same helper but CLOSED.",
+      "smallestNextDiscriminator": "If a cleanup-classification correction is commissioned, one pure real-helper control should deliver requestfailed after abort returns and before listener removal. It cannot repair pre-ingress expiry or authorize another native acquisition."
+    },
+    {
+      "id": "N02-S08",
+      "status": "NO_REPAIR_OR_ACCEPTANCE_CREDIT",
+      "finding": "Request02 improves observation but does not repair the native acquisition or qualify the controlled pair.",
+      "evidence": [
+        "source-binding.json:driverOnlyChangeIsExactSleepBracket",
+        "run-analysis.json:new and original runs",
+        "recovery/font-ingress-plan-v2.md:decision branches"
+      ],
+      "requirementOwner": "Root bounded diagnosis/receiving; original readability and acceptance owners retain authority.",
+      "consequence": "Retain both failures, newly located spans, correct raw retry values and independent pixels. Timing variation between the two finite runs does not attribute improvement/regression to the bracket. No product/font/Gecko cause, acceptance-row closure or whole-R0007 closure follows.",
+      "smallestNextDiscriminator": null
+    }
+  ],
+  "hostPartitions": {
+    "NE07-fall24": {
+      "clock": "host-monotonic-ns",
+      "captureWriteFinishedNs": 415984000000,
+      "releaseStartedNs": 424125000000,
+      "totalNs": 8141000000,
+      "sleepRequestedMs": 250,
+      "interpretation": "Operation bracket includes observe_operation bookkeeping and callback; no kernel-sleep/OS-component attribution.",
+      "sleepStartedNs": 415984000000,
+      "sleepFinishedNs": 424125000000,
+      "beforeSleepNs": 0,
+      "insideSleepNs": 8141000000,
+      "afterSleepNs": 0,
+      "exactSum": true
+    },
+    "NE07-font-fallback-fall24": {
+      "clock": "host-monotonic-ns",
+      "captureWriteFinishedNs": 448000000000,
+      "releaseStartedNs": 453812000000,
+      "totalNs": 5812000000,
+      "sleepRequestedMs": 250,
+      "interpretation": "Operation bracket includes observe_operation bookkeeping and callback; no kernel-sleep/OS-component attribution.",
+      "sleepStartedNs": 448000000000,
+      "sleepFinishedNs": 453812000000,
+      "beforeSleepNs": 0,
+      "insideSleepNs": 5812000000,
+      "afterSleepNs": 0,
+      "exactSum": true
+    }
+  },
+  "rawValueChecks": {
+    "NE07-fall24": true,
+    "NE07-font-fallback-fall24": true
+  },
+  "normalAssertionsExecuted": false,
+  "actions4Through6Reached": false,
+  "controlledFontInterventionRealized": false,
+  "knownFailure": {
+    "stage": "case-actions",
+    "operation": "release",
+    "type": "Error",
+    "messageProvenance": "OMITTED_UNTRUSTED_ERROR_TEXT"
+  },
+  "cleanup": {
+    "nativeCleanupEstablished": [
+      true,
+      true
+    ],
+    "controllerClose": [
+      "FAILED",
+      "FAILED"
+    ],
+    "terminalClassification": "Intentional abort returned; subsequent failed terminal latched while closing; no external service failure inferred."
+  },
+  "unknowns": [
+    "Exact omitted underlying primary Error text and separate pageErrors list.",
+    "Component causing long host operation spans; no OS/kernel/Gecko/recorder causal attribution.",
+    "Exact cross-clock calibration; helper phase/video alignment absent.",
+    "Exact pending/activeTimers state at failed release; failure export is narrower than normal export.",
+    "Native sandbox runtime status, system-font inventory, and per-glyph selected font.",
+    "CSS delivery/native-body/application and optional-font demand/face/media comparison: phases unstarted.",
+    "Readable native pixels and first-visible-frame associations: separate pixel receiving.",
+    "Product repair, original readability acceptance, whole-contract and closure are not established."
+  ],
+  "freshVerification": {
+    "path": "recovery/native02-source-receiving/verification.json",
+    "bytes": 27125,
+    "sha256": "62eb2806bbc42afdcc78f6a13ea8e2b821efe1066a9c57d8c88c90e03cafb055"
+  },
+  "readScope": {
+    "path": "recovery/native02-source-receiving/read-scope.json",
+    "bytes": 5531,
+    "sha256": "b52b7b805f8c6ca86afbe6f5beeb3dd299ab2f4e3a69c2debc1a4819b0ec282e"
+  },
+  "supportingEvidence": [
+    {
+      "path": "recovery/native02-source-receiving/input-custody.json",
+      "bytes": 19365,
+      "sha256": "d3d8c51434420f5b723421ccd119dbd6f4b2078a5b0f305a42a7b6562edb57be"
+    },
+    {
+      "path": "recovery/native02-source-receiving/platform-receipt-projection.json",
+      "bytes": 2941,
+      "sha256": "7a343472f8b964e00812fda33a992027db68982a54f8ca2ee3ce2546b1c3d110"
+    },
+    {
+      "path": "recovery/native02-source-receiving/read-scope.json",
+      "bytes": 5531,
+      "sha256": "b52b7b805f8c6ca86afbe6f5beeb3dd299ab2f4e3a69c2debc1a4819b0ec282e"
+    },
+    {
+      "path": "recovery/native02-source-receiving/receive_native02.py",
+      "bytes": 21266,
+      "sha256": "59d190a2c8d7121a2dbded0d7564c64bd9bdb01a0bd191b8ae3f1461039e517a"
+    },
+    {
+      "path": "recovery/native02-source-receiving/report-template.md",
+      "bytes": 20009,
+      "sha256": "351b8468bbcfbb859f671de5d32bb7d90ce5c57fb43ea71455f63a2cfac63c70"
+    },
+    {
+      "path": "recovery/native02-source-receiving/run-analysis.json",
+      "bytes": 682616,
+      "sha256": "7c9870e397a082068279120ebaaa8799c29b70713f03864953df13aeee006252"
+    },
+    {
+      "path": "recovery/native02-source-receiving/source-binding.json",
+      "bytes": 143562,
+      "sha256": "968b6bd006c1ee371c63cedccb42f3dbb73e78792a9421266b4cebbdc59b63aa"
+    },
+    {
+      "path": "recovery/native02-source-receiving/verification.json",
+      "bytes": 27125,
+      "sha256": "62eb2806bbc42afdcc78f6a13ea8e2b821efe1066a9c57d8c88c90e03cafb055"
+    },
+    {
+      "path": "recovery/native02-source-receiving/write_report.py",
+      "bytes": 14996,
+      "sha256": "2f9e92b95000db7bea3a848112c2a50be26f99ba0dc977144ac035312889b69c"
+    }
+  ],
+  "markdownReport": {
+    "path": "recovery/reviews/native02_source_receiving.md",
+    "bytes": 20009,
+    "sha256": "351b8468bbcfbb859f671de5d32bb7d90ce5c57fb43ea71455f63a2cfac63c70"
+  },
+  "operations": {
+    "writes": [
+      "recovery/native02-source-receiving/",
+      "recovery/reviews/native02_source_receiving.md",
+      "recovery/reviews/native02_source_receiving.json"
+    ],
+    "tests": 0,
+    "nativeRuns": 0,
+    "networkQueries": 0,
+    "repositoryMutations": 0,
+    "controllerMutations": 0,
+    "videoPixelClaims": 0
+  },
+  "finishedUtc": "2026-11-10T23:58:35.819507+00:00"
+}

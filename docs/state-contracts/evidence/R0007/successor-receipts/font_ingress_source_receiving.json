@@ -1,0 +1,346 @@
+{
+  "schema": "r0007-font-ingress-source-receiving/v1",
+  "reportStage": "FINAL",
+  "nativeOutcome": "PARTIAL_FAILED_ACQUISITION",
+  "pairStatus": "UNREALIZED_NO_PAIRED_CAUSATION",
+  "authority": "FINDINGS_ONLY_NO_ACCEPTANCE_CURRENTNESS_OR_LIFECYCLE",
+  "reviewer": {
+    "task": "/root/font_ingress_source_receiving",
+    "authoringIndependent": true,
+    "authoredHarnessOrAcquisition": false,
+    "priorSourceReviewReadOnlyForProvenance": true,
+    "priorVerdictUsedAsNativeAcceptance": false
+  },
+  "scope": {
+    "commit": "4bac6a4781fce62f08ab550a20fe5234d3ebb746",
+    "tree": "a5e51a591200296e3e73b9ecedbd8c0539e07ee5",
+    "parent": "c373cbdc706cf3b27ab8c45dbde02a998bd1fbd4",
+    "run": 42920631317,
+    "attempt": 1,
+    "job": 130194259457,
+    "artifact": 13811167788,
+    "cases": [
+      "NE07-fall24",
+      "NE07-font-fallback-fall24"
+    ],
+    "jobArtifactIdsSource": "Root receiving envelope; no service query performed"
+  },
+  "archive": {
+    "path": "/workspace/scratch/66b3aaff4329/native-artifacts/r0007-windows-native-42920631317-1.zip",
+    "bytes": 3111326,
+    "sha256": "50e90fb8196e73d9a9af5ac5bc68ba9f95df032c524980e73a4fdb0aa028e5e5",
+    "memberCount": 40,
+    "allMembersEqualExtraction": true,
+    "extraExtractionFiles": []
+  },
+  "findings": [
+    {
+      "id": "SRC-01",
+      "status": "OBSERVED",
+      "title": "Fallback failed before ingress",
+      "evidence": {
+        "failureStage": "case-actions",
+        "actionIndex": 3,
+        "operation": "release",
+        "hostStartSeconds": 291.468,
+        "hostFinishSeconds": 291.546,
+        "returned": false,
+        "errorType": "Error",
+        "message": "OMITTED_UNTRUSTED_ERROR_TEXT",
+        "actionsRecorded": 4,
+        "actionsNotReached": [
+          4,
+          5,
+          6
+        ],
+        "ingressObservations": 0,
+        "ingressHostEvaluations": 0,
+        "fontRequestCount": 0,
+        "retainedFontBytes": 0
+      },
+      "conclusion": "Lost original held-body prerequisite; no realized fallback CSS/font intervention."
+    },
+    {
+      "id": "SRC-02",
+      "status": "OBSERVED_WITH_CAUSE_LIMIT",
+      "title": "Body deadline and host gaps",
+      "evidence": {
+        "baselineGapSeconds": 5.328,
+        "fallbackGapSeconds": 7.64,
+        "gapBoundary": "capture.presentation-write.finished to release.started",
+        "gapSourcePath": "end of capture branch, loop dispatch/action bookkeeping, time.sleep(0.25); no in-gap browser call or ingress.check",
+        "fallbackTimer": {
+          "id": 5,
+          "startElapsedMs": 840,
+          "requestedMs": 10000,
+          "nominalDueElapsedMs": 10840,
+          "fireElapsedMs": 10856,
+          "bodyAbortElapsedMs": 10856,
+          "ignoreAbort": false,
+          "followingRetrySleepMs": 900
+        },
+        "baselineTimer": {
+          "id": 6,
+          "startElapsedMs": 845,
+          "releaseElapsedMs": 10660,
+          "jsonSettleElapsedMs": 10661,
+          "clearElapsedMs": 10662,
+          "marginBeforeNominalDueMs": 183
+        }
+      },
+      "conclusion": "Original deadline fire/body abort established; source abort deletes pending key. Exact sanitized release error and reason for long host region are not established. Existing receipts cannot subdivide actual sleep versus dispatch/scheduling."
+    },
+    {
+      "id": "SRC-03",
+      "status": "VERIFIED_SOURCE_BINDINGS",
+      "title": "Exact source and input bindings",
+      "evidence": {
+        "archiveMembers": 40,
+        "allArchiveMembersEqualExtraction": true,
+        "extraExtractionFiles": 0,
+        "boundSources": 150,
+        "allBoundSourcesMatchCommit": true,
+        "caseInputsEqualBoundPublishedAndFUSEPlusMode": true,
+        "candidateManifestEntriesMatch": 8
+      },
+      "conclusion": "No changed source/input/oracle is demonstrated; source review result supplies code provenance only."
+    },
+    {
+      "id": "SRC-04",
+      "status": "SOURCE_ASSERTIONS_ONLY",
+      "title": "Baseline source oracles agree",
+      "evidence": {
+        "eligibleOriginalRenderOrdinals": [
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "currentKey": "Isha",
+        "nextKey": "Fajr",
+        "nextTime": "05:00",
+        "acceptedUtcMs": 1793511000000,
+        "nextEpoch": 1793527200000,
+        "leftMin": 270,
+        "countdownText": "4h 30m left until Fajr",
+        "currentDate": "01-11-2026",
+        "nextDate": "01-11-2026",
+        "zone": "America/New_York",
+        "firstCurrentReceiptOrdinal": 2,
+        "captureBeforeAfterOrdinals": [
+          3,
+          3
+        ]
+      },
+      "conclusion": "Literal source assertions match; first presentation/readability still require original pixels. Fallback source oracles are unrealized."
+    },
+    {
+      "id": "SRC-05",
+      "status": "BASELINE_CUSTODY_RECEIVED",
+      "title": "Baseline native CSS/font custody",
+      "evidence": {
+        "cssSha256": "6568c2adf86e353a7d1d8641deb8b5cecdd49d571377c6c90e9f48dd3bef8e18",
+        "cssBytes": 8938,
+        "cssApiDeliveredNativeHashesEqual": true,
+        "nativeCssBody": "captured",
+        "fontNativeRequests": 3,
+        "distinctFontBodies": 2,
+        "retainedFontBytes": 164368,
+        "demandedLoadedFaceIds": [
+          3,
+          10,
+          24
+        ],
+        "unusedUnloadedFaces": 21,
+        "observations": 5,
+        "finalizedHostSeconds": 275.109,
+        "settlementDeadlineHostSeconds": 278.093
+      },
+      "conclusion": "Demanded faces and native bodies complete for baseline; no all-24-loading requirement or per-glyph selection claim."
+    },
+    {
+      "id": "SRC-06",
+      "status": "NOT_REALIZED",
+      "title": "Pair CSS comparability prerequisite absent",
+      "evidence": {
+        "baselineDeliveredCssSha256": "6568c2adf86e353a7d1d8641deb8b5cecdd49d571377c6c90e9f48dd3bef8e18",
+        "fallbackDeliveredCssSha256": null,
+        "fallbackCssBody": null,
+        "fallbackCssResponse": null,
+        "fallbackTrustedApplication": null,
+        "hashEqualityOrBoundEquivalencePossible": false
+      },
+      "conclusion": "No baseline-only/both/fallback-only/neither paired interpretation. Unrouted historical FUSE is not a matched routed control."
+    },
+    {
+      "id": "SRC-07",
+      "status": "CLEANUP_RECEIVED",
+      "title": "Primary preserved and cleanup returned",
+      "evidence": {
+        "bothNativeCleanupEstablished": true,
+        "sixNativeOwnersReturnedEach": true,
+        "bothControllerClose": "CLOSED",
+        "helperErrorsBoth": [],
+        "fallbackCssAbortAtHostSeconds": 291.593,
+        "fallbackCssFailedTerminalAtHostSeconds": 291.609,
+        "recordedSecondaryFailures": []
+      },
+      "conclusion": "Fallback CSS failure terminal is cleanup of a held request, not primary font service failure. Fallback failure export omits pageErrors list, so absence is not proof of no page error."
+    },
+    {
+      "id": "SRC-08",
+      "status": "LIMIT",
+      "title": "No clock alignment or source-only product repair",
+      "evidence": {
+        "videoOffset": null,
+        "videoClockStatus": "UNKNOWN_NO_FRAME_ALIGNMENT",
+        "mediaMutationDeliveryPageMs": 13615,
+        "mediaTiming": "DELIVERY_UPPER_BOUND_NOT_ATTRIBUTE_WRITE_TIME",
+        "sourceOnlyProductContradiction": false
+      },
+      "conclusion": "Phase/read/host brackets cannot align a physical frame. Native baseline visual witness does not repair missing comparator or assign historical/Gecko cause."
+    }
+  ],
+  "minimumSupportedNextAction": {
+    "now": "Root retains failed prerequisite and partial/unrealized comparison with original failure and separate pixel findings; no automatic rerun or product repair.",
+    "conditionalProposal": "If root separately chooses bounded observability work, measure the existing action-2 sleep/dispatch region and safely retain pending/attempt/timer state at failed release; preserve all original stimuli, deadlines, readable-surface requirements and error-text safeguards.",
+    "authorizedByThisReport": false
+  },
+  "freshVerification": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python /workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/receive_original.py",
+    "cwd": "/workspace/scratch/66b3aaff4329",
+    "exitCode": 0,
+    "scope": "Read-derived files/JSON/ZIP/hash and immutable git blobs only; no harness/test/native execution.",
+    "script": {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/receive_original.py",
+      "bytes": 16222,
+      "sha256": "e60e15d2c69011c56b7ebeee7a2d1d3cd4b61b1f2f2dec3a1345ae606969dd7b"
+    },
+    "analysis": {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/read-analysis.json",
+      "bytes": 145180,
+      "sha256": "ba68ed16987c7e3733ba2eac9bab204b3c2bfcb522294da26546d0787baccc9b"
+    },
+    "inventory": {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/input-custody.json",
+      "bytes": 10417,
+      "sha256": "88e18062a3cc3fcb353fe00b21584c1742409d2564e5fdc25180ef8fd38f4f60"
+    }
+  },
+  "sourceHashes": [
+    {
+      "path": "src/native/index.html",
+      "sha256": "e8603192a095cd8682c35416f3ecca00938d772f5152324b37f9928077eac037"
+    },
+    {
+      "path": "index.html",
+      "sha256": "983f8b609eba48821e8d8c539cca7d0b9e40caf3f35a924514a4e93eb24766e9"
+    },
+    {
+      "path": "offline.html",
+      "sha256": "697ed290d2f71a777b9c1a44c3d7b12350cd51dfc66648e8c8907ff897e9be57"
+    },
+    {
+      "path": "tests/rlgwo/prayer-browser-fixture.cjs",
+      "sha256": "50642398dbb3ebacb36912cb2977b69e1520d60aaaf5f2dc4d2de63db6c107d2"
+    },
+    {
+      "path": "tools/cp9/browser_runtime.py",
+      "sha256": "af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0"
+    },
+    {
+      "path": "tools/cp9/r0007_browser.py",
+      "sha256": "080e9a9529b21134ae923a713cef14168297c53b7ddee8ffeb18f3d6e673f397"
+    },
+    {
+      "path": "tools/cp9/r0007_font_ingress.py",
+      "sha256": "988f58d68c72f9ae62537f77b4ef7a47bf87eee29cfb6a31fb173c59944647ab"
+    },
+    {
+      "path": "tools/cp9/r0007_font_observer.js",
+      "sha256": "9b5adb0d9398a8c98dd41fbdd333dd6b7e2b250e1cd4459cbd99929f24f867c0"
+    },
+    {
+      "path": "tools/qualification/r0007_native.py",
+      "sha256": "5df9d426b3b03cb49a7516db37213896f151af9261f4d62df4399809811d4856"
+    },
+    {
+      "path": "tools/qualification/r0007_native_request.py",
+      "sha256": "56e52f6525d18111658fe79e880f7f25fe5830d3f328eeb5e53b72df09b3bac1"
+    },
+    {
+      "path": "tests/rlgwo/R0007-font-ingress-recipes.json",
+      "sha256": "e67108cd22a73489dd3a8fc9e96796fb0b40795836edf247dc15c474a92f1fe4"
+    },
+    {
+      "path": "tests/rlgwo/R0007-native-request.json",
+      "sha256": "de8c00da173b60a79d888e6a682d595ff87d9afef071aabc12ddeda9bcb923d3"
+    },
+    {
+      "path": ".github/workflows/r0007-native.yml",
+      "sha256": "d6f3fb404a8622bb283bade798efb74d62cb77d23b005d57eff2ddab75aa10c2"
+    }
+  ],
+  "evidence": [
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/native-receipt-projection.json",
+      "bytes": 154638,
+      "sha256": "45bc93400b7e71ce34996617c4d2c1500d624722f012cd3d6bcd95c67e70328f"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/css-font-byte-metadata.json",
+      "bytes": 11426,
+      "sha256": "f49b97cc4aee35aecc53dd249b2b9c6711b4957a4ea00604b36507016f1fd96a"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/candidate-provenance-checks.json",
+      "bytes": 3373,
+      "sha256": "a748cd87947d6b9c71ef7a95122066b5224a867e925561f654b43ee95da552b7"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/source-binding-verification.json",
+      "bytes": 47346,
+      "sha256": "60b3b135f4258e5d4d745d6a1fe6e916a61a99a77783cd0c1573ef08ad79c308"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/font-ingress-source-receiving/published-source-hashes.json",
+      "bytes": 3712,
+      "sha256": "e0833eb8a83c7a8fcf1ee9ed86c995edf745bac0699524baf78f606b1a88e054"
+    }
+  ],
+  "limitations": [
+    "No exact video/page/host alignment; no physical frame attribution.",
+    "Windows executable not locally retained for second independent rehash; source and native launch receipts bind it.",
+    "Generated served document bytes not separately retained; hashes received, no regeneration.",
+    "Computed candidates/demand/loaded faces do not prove per-glyph selection.",
+    "Optional WOFF2 binary-name/axis decode unavailable due missing Brotli; no package install.",
+    "Fallback pageErrors list, pending keys, active timers and fixture clock origin are absent from raw failure export.",
+    "No product-owner repair or host scheduling cause established.",
+    "No CSS equivalence review possible against nonexistent fallback body.",
+    "No native acceptance, whole-contract acceptance, historical23interval reattribution, tolerance/deadline waiver, broader campaign or automatic rerun."
+  ],
+  "operations": {
+    "browserLaunches": 0,
+    "networkActions": 0,
+    "workflowActions": 0,
+    "testsRun": 0,
+    "nativeReplays": 0,
+    "productHarnessTestMutations": 0,
+    "refsIndexControllerPublicationMutations": 0,
+    "secretsCredentialsInspected": false,
+    "promptInjectionInstructionsFollowed": false,
+    "intentionalWriteScopes": [
+      "recovery/reviews/font_ingress_source_receiving.md",
+      "recovery/reviews/font_ingress_source_receiving.json",
+      "recovery/font-ingress-source-receiving/"
+    ]
+  },
+  "markdownReport": {
+    "path": "/workspace/scratch/66b3aaff4329/recovery/reviews/font_ingress_source_receiving.md",
+    "bytes": 29853,
+    "sha256": "241dd6f60e8a2e6347bf92b3ff933773a2f2e6833ec14b04e80648e36a194b0b"
+  },
+  "finishedUtc": "2026-11-10T23:23:59.373819+00:00"
+}

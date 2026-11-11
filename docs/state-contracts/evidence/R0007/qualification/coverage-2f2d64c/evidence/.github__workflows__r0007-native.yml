@@ -1,0 +1,90 @@
+name: R0007 native Windows qualification
+
+on:
+  push:
+    branches:
+      - pro/r0007-explicit-next-event-state-20261106
+    paths:
+      - .github/workflows/r0007-native.yml
+      - tests/rlgwo/R0007-native-request.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0007-native-windows-qualification
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    if: github.repository == 'theislampill/salah_widget'
+    runs-on: windows-2022
+    timeout-minutes: 55
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+      PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/r0007-browsers
+      SALAH_BROWSER_EXECUTABLE: ''
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Prepare private native dependencies and preserve setup outcomes
+        shell: pwsh
+        run: |
+          $r0007Evidence = Join-Path $env:RUNNER_TEMP 'r0007-native-evidence'
+          New-Item -ItemType Directory -Path $r0007Evidence -Force | Out-Null
+          "R0007_EVIDENCE=$r0007Evidence" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $r0007Setup = [ordered]@{ schema = 'r0007-windows-setup/v1'; qualification = 'PARTIAL'; candidate = $env:GITHUB_SHA; runnerOS = $env:RUNNER_OS; imageVersion = $env:ImageVersion; commands = @() }
+          $r0007Setup | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $r0007Evidence 'setup.json') -Encoding utf8
+          $PSNativeCommandUseErrorActionPreference = $false
+          function Invoke-R0007Setup($r0007Executable, $r0007Arguments, $r0007Name) {
+            $r0007Started = [DateTimeOffset]::UtcNow.ToString('o')
+            $r0007Error = $null
+            try {
+              & $r0007Executable @r0007Arguments *> (Join-Path $r0007Evidence "$r0007Name.log")
+              $r0007Exit = $LASTEXITCODE
+            } catch {
+              $r0007Exit = $null
+              $r0007Error = $_.ToString()
+            }
+            $r0007Setup.commands += [ordered]@{ executable = $r0007Executable; arguments = $r0007Arguments; startedUtc = $r0007Started; finishedUtc = [DateTimeOffset]::UtcNow.ToString('o'); exitCode = $r0007Exit; error = $r0007Error; log = "$r0007Name.log" }
+            $r0007Setup | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $r0007Evidence 'setup.json') -Encoding utf8
+            if ($r0007Error -or $r0007Exit -ne 0) { throw "R0007 setup command $r0007Name failed: exit=$r0007Exit error=$r0007Error" }
+          }
+          Invoke-R0007Setup 'python' @('--version') 'python-version'
+          Invoke-R0007Setup 'node' @('--version') 'node-version'
+          $r0007Venv = Join-Path $env:RUNNER_TEMP 'r0007-venv'
+          Invoke-R0007Setup 'python' @('-m', 'venv', $r0007Venv) 'venv'
+          $r0007Python = Join-Path $r0007Venv 'Scripts/python.exe'
+          Invoke-R0007Setup $r0007Python @('-m', 'pip', 'install', 'playwright==1.62.0') 'playwright-package'
+          Invoke-R0007Setup $r0007Python @('-m', 'playwright', 'install', 'chromium', 'firefox') 'playwright-browsers'
+          "R0007_PYTHON=$r0007Python" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Observe exact candidate through serial Chromium and Firefox consumers
+        timeout-minutes: 45
+        shell: pwsh
+        run: |
+          $r0007Started = [DateTimeOffset]::UtcNow.ToString('o')
+          $PSNativeCommandUseErrorActionPreference = $false
+          # This is a new browser environment. Include the small preserved
+          # motion/Moon subset instead of assuming historical pixel equivalence.
+          $r0007Recipe = Get-Content -LiteralPath 'tests/rlgwo/R0007-next-event-recipes.json' -Raw | ConvertFrom-Json
+          $r0007CaseIds = @($r0007Recipe.execution.defaultCaseIds) + @($r0007Recipe.execution.conditionalPreservationCaseIds)
+          $r0007CaseArguments = @()
+          foreach ($r0007CaseId in $r0007CaseIds) { $r0007CaseArguments += @('--case-id', $r0007CaseId) }
+          & $env:R0007_PYTHON tools/qualification/r0007_native.py --source-root $env:GITHUB_WORKSPACE --evidence-root $env:R0007_EVIDENCE --engine chromium --engine firefox --include-mutants --headed @r0007CaseArguments *> (Join-Path $env:R0007_EVIDENCE 'launcher.log')
+          $r0007Exit = $LASTEXITCODE
+          [ordered]@{ schema = 'r0007-launcher-producer/v1'; qualification = 'PARTIAL'; startedUtc = $r0007Started; finishedUtc = [DateTimeOffset]::UtcNow.ToString('o'); exitCode = $r0007Exit; candidate = $env:GITHUB_SHA } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $env:R0007_EVIDENCE 'launcher-producer.json') -Encoding utf8
+          Get-Content -LiteralPath (Join-Path $env:R0007_EVIDENCE 'launcher.log') -Tail 25
+          exit $r0007Exit
+      - name: Retain every setup outcome, trace and original native video
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0007-windows-native-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r0007-native-evidence/
+          if-no-files-found: error
+          retention-days: 14

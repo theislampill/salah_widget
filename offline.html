@@ -7,16 +7,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Typography is optional: a slow font service cannot delay accepted sky/UI inputs.
-     The same stylesheet and existing fallback stack apply when it is available. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+     Text keeps the fallback stacks until the used faces have loaded (see "Optional web typography"). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap" id="webfont-css" media="print" onload="this.media='all'">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent}
 body{color:#fff7df;
-  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-display:Georgia,"Times New Roman",serif;
   font:14px var(--font-body);font-optical-sizing:auto;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+/* Web families join the stacks only after their faces have loaded (main script, "Optional web typography"). */
+html.webfonts body{
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;}
 .c{
   --g1:#0b1430;--g2:#070a1c;--g3:#0d1024;
   --glow:rgba(70,90,180,0);--horizon:rgba(40,40,90,0);--sunx:50%;--suny:30%;
@@ -436,10 +440,10 @@ body{color:#fff7df;
 .date-trigger:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
 .date-value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .date-unavailable{font-size:.78em;font-weight:600;color:color-mix(in srgb,#ffc27a 76%,var(--text));unicode-bidi:isolate}
-.date-dialog{box-sizing:border-box;width:calc(100vw - 28px);max-width:297px;max-height:calc(100vh - 28px);margin:auto;padding:16px;border:1px solid #ffffff35;border-radius:16px;color:#f0edf8;background:rgba(9,17,28,.97);box-shadow:0 12px 32px #0006;font-family:Inter,system-ui,sans-serif;overflow-y:auto;overflow-x:hidden;text-align:left;direction:ltr}
+.date-dialog{box-sizing:border-box;width:calc(100vw - 28px);max-width:297px;max-height:calc(100vh - 28px);margin:auto;padding:16px;border:1px solid #ffffff35;border-radius:16px;color:#f0edf8;background:rgba(9,17,28,.97);box-shadow:0 12px 32px #0006;font-family:var(--font-body);overflow-y:auto;overflow-x:hidden;text-align:left;direction:ltr}
 .date-dialog::backdrop{background:rgba(3,6,12,.42)}
 .date-dialog header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.date-dialog h2{margin:0;font-family:Fraunces,Georgia,serif;font-size:20px;font-weight:600}
+.date-dialog h2{margin:0;font-family:var(--font-display);font-size:20px;font-weight:600}
 .date-dialog button{border:1px solid #ffffff35;border-radius:8px;padding:6px 9px;background:#ffffff10;color:inherit;font:inherit;font-size:12px;cursor:pointer}
 .date-dialog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .date-dialog dl{margin:0;display:grid;gap:5px}
@@ -5995,53 +5999,108 @@ function prayerDayFields(record){
   const g=record && record.date && record.date.gregorian;
   if(!g) return null;
   const y=+g.year, mo=+(g.month && g.month.number), d=+g.day;
-  return y>0 && Number.isFinite(utcFields(y,mo,d)) ? {y,mo,d,dateStr:`${pad(d)}-${pad(mo)}-${y}`} : null;
+  return y>0 && Number.isFinite(utcFields(y,mo,d)) ? {y,mo,d,dateStr:`${pad(d)}-${pad(mo)}-${String(y).padStart(4,"0")}`} : null;
+}
+// Ephemeral derived events retain the admitted source identity. Only the existing
+// unique inverse supplies a precise epoch; profile bounds never become endpoints.
+function prayerEventCandidates(record,generation){
+  const day=prayerDayFields(record), zone=record.meta.timezone;
+  return Object.freeze(prayers.map((key,rank)=>{
+    const clock=record.timings[key], minute=mins(clock);
+    const epoch=epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone);
+    let lowerEpoch=epoch, upperEpoch=epoch, unavailableReason=null;
+    if(!Number.isFinite(epoch)){
+      lowerEpoch=-Infinity; upperEpoch=Infinity;
+      const profile=zoneDay(day.y,day.mo,day.d,zone), entry=profile.minutes && profile.minutes[minute];
+      unavailableReason=entry && entry.length>1 ? "fold" : entry && !entry.length ? "gap" : "unsupported-inverse";
+      if(entry && entry.length>1){ lowerEpoch=Math.min(...entry); upperEpoch=Math.max(...entry); }
+      else if(entry && !entry.length){
+        let before=minute-1, after=minute+1;
+        while(before>=0 && !profile.minutes[before].length) before--;
+        while(after<1440 && !profile.minutes[after].length) after++;
+        // Keep each known bound at a day-edge gap; the absent side remains
+        // unbounded. Retain all fold alternatives, never an invented endpoint.
+        const lower=before>=0?Math.min(...profile.minutes[before]):-Infinity;
+        const upper=after<1440?Math.max(...profile.minutes[after]):Infinity;
+        if(lower<=upper){ lowerEpoch=lower; upperEpoch=upper; }
+      }
+    }
+    return Object.freeze({key,clock,dateStr:day.dateStr,zone,minute,rank,generation,sourceRecord:record,
+      epoch,unavailableReason,lowerEpoch,upperEpoch});
+  }));
+}
+function selectPrayerEvent(currentRecord,nextRecord,nowEpoch,wallParts){
+  const generation=_runtimeGeneration;
+  let currentCandidates=Object.freeze([]);
+  const result=(state,target=null,reason=null,dayOffset=0)=>Object.freeze({state,target,reason,dayOffset,nowEpoch,generation,currentCandidates});
+  const eligible=(record,day)=>!!(day && record && record.timings && record.meta?.timezone===tz &&
+    record.date.gregorian.date===day.dateStr && prayers.every(key=>{
+      const minute=mins(record.timings[key]); return Number.isFinite(minute) && minute>=0 && minute<1440;
+    }));
+  const currentDay=prayerDayFields(currentRecord);
+  if(!Number.isFinite(nowEpoch) || _prayerRecordsGeneration!==generation || !eligible(currentRecord,currentDay) ||
+    currentDay.y!==wallParts.y || currentDay.mo!==wallParts.mo || currentDay.d!==wallParts.d)
+    return result("current-record-unavailable",null,"current-record-ineligible");
+  const choose=candidates=>{
+    const target=candidates.filter(candidate=>Number.isFinite(candidate.epoch) && candidate.epoch>nowEpoch)
+      .sort((a,b)=>a.epoch-b.epoch || a.rank-b.rank)[0] || null;
+    const unresolved=candidates.find(candidate=>!Number.isFinite(candidate.epoch) && candidate.upperEpoch>nowEpoch &&
+      (!target || candidate.lowerEpoch<=target.epoch));
+    return {target,unresolved};
+  };
+  currentCandidates=prayerEventCandidates(currentRecord,generation);
+  const current=choose(currentCandidates);
+  if(current.unresolved) return result("endpoint-unresolved",null,current.unresolved.key+":"+current.unresolved.unavailableReason);
+  if(current.target) return result("same-day-target",current.target);
+  const successor=new Date(utcFields(currentDay.y,currentDay.mo,currentDay.d)); successor.setUTCDate(successor.getUTCDate()+1);
+  const nextDay=prayerDayFields(nextRecord);
+  if(!eligible(nextRecord,nextDay) || nextDay.y!==successor.getUTCFullYear() || nextDay.mo!==successor.getUTCMonth()+1 || nextDay.d!==successor.getUTCDate())
+    return result("next-day-required",null,"matching-next-day-unavailable",1);
+  const nextCandidates=prayerEventCandidates(nextRecord,generation);
+  const next=choose(nextCandidates);
+  if(next.unresolved) return result("endpoint-unresolved",null,next.unresolved.key+":"+next.unresolved.unavailableReason,1);
+  return next.target ? result("next-day-target",next.target,null,1) : result("endpoint-unresolved",null,"no-supported-future-event",1);
 }
 function model(){
   if(!today || !today.timings || _prayerRecordsGeneration!==_runtimeGeneration) return null;
   const nowEpoch=simNow(); if(!Number.isFinite(nowEpoch)) return null;
   const n=partsInTz(nowEpoch), nowMin=n.h*60+n.mi+n.s/60, t=today.timings;
-  const recordDay=prayerDayFields(today);
-  if(!recordDay||recordDay.y!==n.y||recordDay.mo!==n.mo||recordDay.d!==n.d||today.meta?.timezone!==tz)return null;
-  const list=prayers.map(k=>({k,m:mins(t[k]),t:t[k]})).sort((a,b)=>a.m-b.m);
+  const selection=selectPrayerEvent(today,tomorrow,nowEpoch,n);
+  if(selection.state==="current-record-unavailable") return null;
+  const list=prayers.map((k,rank)=>({k,m:mins(t[k]),rank})).sort((a,b)=>a.m-b.m || a.rank-b.rank);
   const sunsetMin=mins(t.Sunset||t.Maghrib);
-  // Ingress owns full validation; this defense prevents nonfinite or unbounded bypassed minutes from
-  // entering the normalization loops. Equal/reordered finite polar clocks remain supported.
-  if(!Number.isFinite(nowMin) || list.some(x=>!Number.isFinite(x.m) || x.m<0 || x.m>=1440) || !Number.isFinite(sunsetMin) || sunsetMin<0 || sunsetMin>=1440) return null;
+  // Ingress owns full validation; this defense prevents nonfinite or unbounded
+  // bypassed minutes entering normalization. Equal/reordered clocks stay valid.
+  if(!Number.isFinite(nowMin) || !Number.isFinite(sunsetMin) || sunsetMin<0 || sunsetMin>=1440) return null;
   const noon=mins(t.Dhuhr), start=noon-720;
   const norm=x=>{ while(x<start)x+=1440; while(x>=start+1440)x-=1440; return x; };
-  // sort the six waypoints by time-of-day so "next"/"current" stay correct even if the timings
-  // aren't in the usual Fajr→Isha order (e.g. a mis-set time zone shifts them around the clock).
-  const i=list.findIndex(x=>x.m>nowMin);
-  const currentDay=prayerDayFields(today);
-  let next, nextMin, prevMin, tomorrowFlag, nextDay=currentDay, nextRecord=today;
-  if(i>=0){ next=list[i]; nextMin=next.m; prevMin=i>0?list[i-1].m:list[list.length-1].m-1440; tomorrowFlag=false; }
-  else {
-    nextDay=prayerDayFields(tomorrow); nextRecord=tomorrow;
-    if(currentDay){
-      const successor=new Date(utcFields(currentDay.y,currentDay.mo,currentDay.d)); successor.setUTCDate(successor.getUTCDate()+1);
-      if(!nextDay || nextDay.y!==successor.getUTCFullYear() || nextDay.mo!==successor.getUTCMonth()+1 || nextDay.d!==successor.getUTCDate()) nextDay=null;
-    }else nextDay=null;
-    const ft=tomorrow && tomorrow.timings ? tomorrow.timings.Fajr : t.Fajr;
-    next={k:"Fajr",t:ft,m:mins(ft)}; nextMin=next.m+1440; prevMin=list[list.length-1].m; tomorrowFlag=true;
-    if(!Number.isFinite(next.m) || next.m<0 || next.m>=1440){ nextDay=null; nextMin=mins(t.Fajr)+1440; }
-  }
-  const nextZone=nextRecord && nextRecord.meta && nextRecord.meta.timezone || tz;
-  const [nextHour,nextMinute]=clean(next.t).split(":").map(Number);
-  const nextEpoch=nextDay ? epochForTzTime(nextDay.y,nextDay.mo,nextDay.d,nextHour,nextMinute,nextZone) : NaN;
+  const target=selection.target, tomorrowFlag=selection.dayOffset===1;
+  const passed=list.filter(x=>x.m<=nowMin), previous=passed[passed.length-1] || null;
+  // Current labels remain a wall-schedule convention, including before-first
+  // Isha and last declared rank at equal elapsed clocks; no past day is invented.
+  let cur=previous?previous.k:"Isha";
+  if(cur==="Sunrise" && nowMin>=mins(t.Sunrise)+20) cur="Forenoon";
+  const previousCandidate=previous && selection.currentCandidates.find(candidate=>candidate.key===previous.k);
+  const observedPrevious=previousCandidate && Number.isFinite(previousCandidate.epoch) && previousCandidate.epoch<=nowEpoch;
+  const wallNext=list.find(x=>x.m>nowMin);
+  const prevMin=previous?previous.m:list[list.length-1].m-1440;
+  const nextMin=target ? target.minute+(tomorrowFlag?1440:0) : wallNext?wallNext.m:list[0].m+1440;
+  let progressKind=!target?"decorative-endpoint-unavailable":!previous?"decorative-before-first":!observedPrevious?"decorative-previous-unresolved":"wall-interval";
+  const span=nextMin-prevMin;
+  const progress=Number.isFinite(span) && span>0 ? clamp((nowMin-prevMin)/span) : 0;
+  if(!Number.isFinite(span) || span<=0) progressKind="decorative-degenerate";
+  const nextEpoch=target?target.epoch:NaN;
   const leftMin=Number.isFinite(nextEpoch) && nextEpoch>nowEpoch ? (nextEpoch-nowEpoch)/60000 : NaN;
-  const passed=list.filter(x=>x.m<=nowMin); let cur=passed.length?passed[passed.length-1].k:"Isha";
-  // "Sunrise" only lingers 20 min; the rest of the morning (until Dhuhr) is "Forenoon"
-  if(cur==="Sunrise" && nowMin >= mins(t.Sunrise)+20) cur="Forenoon";
   const doy=Math.floor((Date.UTC(n.y,n.mo-1,n.d)-Date.UTC(n.y,0,0))/86400000);
   const decl=23.44*Math.PI/180*Math.sin(2*Math.PI*(doy-80)/365.25);   // solar declination (rad), from the date
   return {
     t, noon, decl, doy, sunrise:norm(mins(t.Sunrise)), sunset:norm(sunsetMin),
-    nowMin, nowAbs:norm(nowMin), warmEnd: tomorrowFlag ? start+1440 : norm(next.m),
-    dots: prayers.map(k=>({k, abs:norm(k===next.k&&tomorrowFlag?next.m:mins(t[k]))})),
-    currentKey:cur, nextKey:next.k, nextTime:next.t,
-    leftMin, nowEpoch, nextEpoch, nextDateStr:nextDay && nextDay.dateStr, nextZone,
-    progress:clamp((nowMin-prevMin)/(nextMin-prevMin)),
+    nowMin, nowAbs:norm(nowMin), nowWall:{...n,dateStr:selection.currentCandidates[0].dateStr}, warmEnd:target?(tomorrowFlag?start+1440:norm(target.minute)):null,
+    dots:prayers.map(k=>({k,abs:norm(target && k===target.key && tomorrowFlag?target.minute:mins(t[k]))})),
+    currentKey:cur, nextKey:target?target.key:null, nextTime:target?target.clock:null,
+    leftMin, nowEpoch, nextEpoch, nextDateStr:target?target.dateStr:null, nextZone:target?target.zone:null,
+    selection, progress, progressKind, prevMin, nextMin,
+    previousEpoch:observedPrevious?previousCandidate.epoch:null, previousDateStr:observedPrevious?previousCandidate.dateStr:null,
     needTomorrow:tomorrowFlag
   };
 }
@@ -6919,6 +6978,36 @@ function applyTheme(M){
   }
 }
 
+// Optional web typography. The head stylesheet applies late (media print -> all on load) so a slow
+// font service can never delay the card. Gecko gives font-display:swap faces a short block period
+// (gfx.downloadable_fonts.fallback_delay_short, ~100 ms) in which text resolving to a still-loading face
+// is painted invisible; landing on already-painted text, that blanked the card's web-font text. So the
+// custom properties keep the fallback stacks until the faces visible UI uses have loaded (Inter 400/600
+// and Fraunces 600; heavier Inter weights match the 600 face, and the only 500 weight is monospace),
+// then html.webfonts adds the families and the .cn fit is invalidated as for any font change. A rejected or empty load fails closed:
+// fallback stays for this page life, with no retry. A stylesheet that never loads requests nothing.
+const WEBFONT_FACES=Object.freeze(["400 14px Inter","600 14px Inter","600 14px Fraunces"]);
+let _webfontsRequested=false;
+function requestWebfonts(){
+  if(_webfontsRequested) return;
+  _webfontsRequested=true;
+  const fonts=document.fonts;
+  if(typeof fonts?.load!=="function") return;
+  let loads;
+  try{ loads=WEBFONT_FACES.map(face=>fonts.load(face)); }catch(e){ return; }
+  Promise.all(loads).then(sets=>{
+    if(!sets.every(set=>set && set.length>0)) return;
+    document.documentElement.classList.add("webfonts");
+    cnFontChanged();
+  },()=>{});
+}
+{
+  const link=document.getElementById?.("webfont-css");
+  // The attribute handler sets media first; it may already have run before this script.
+  if(link?.media==="all") requestWebfonts();
+  else link?.addEventListener("load",()=>{ if(link.media==="all") requestWebfonts(); });
+}
+
 // Size the present-prayer name to the live arc: keep 1 M of clearance from the curve on each side
 // (the arc is narrower on short days, wider on long ones — so we fit per day, not a fixed size) and
 // sit the text baseline 1/2 M above the horizon, WITHOUT moving the hero time (it stays centred
@@ -7061,7 +7150,7 @@ function render(){
   $(".arc").innerHTML = drawArc(M);
   fitCn(M);
   $(".times").innerHTML = prayers.map(k=>{
-    const on   = k===M.nextKey;                      // next → coloured (incl. tomorrow's Fajr overnight)
+    const on   = k===M.nextKey;                      // next supported event → coloured, using the selected record clock
     const now  = k===M.currentKey;                   // present → bordered (not coloured)
     const dim  = !now && !on && mins(M.t[k])<M.nowMin; // only elapsed events fade; row order does not imply time
     return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}" data-prayer-key="${k}"><b>${k}</b><span class="tm">${fmt(on?M.nextTime:M.t[k])}</span></div>`;
@@ -7072,9 +7161,10 @@ function render(){
   applyTheme(M);
   // OBSERVABILITY: capture the state actually rendered this tick (read by qaState().render — a real last-render
   // summary, not a recompute), so the next failure is diagnosable.
-  _lastRender={ atMs:Math.round(_RAFNOW()), sim:`${nowParts().dateStr} ${pad(nowParts().h)}:${pad(nowParts().mi)}`,
+  _lastRender={ atMs:Math.round(_RAFNOW()), sim:`${M.nowWall.dateStr} ${pad(M.nowWall.h)}:${pad(M.nowWall.mi)}`,
     currentKey:M.currentKey,nextKey:M.nextKey,leftMin:M.leftMin,progress:M.progress,fx:$(".c").dataset.fx,
-    generation:_runtimeGeneration,acceptedUtcMs:M.nowEpoch,timetableDate:prayerDayFields(today)?.dateStr,nextDate:M.nextDateStr,nextEpoch:M.nextEpoch,nextTime:M.nextTime,zone:tz,timetable:{...M.t} };
+    generation:M.selection.generation,acceptedUtcMs:M.nowEpoch,timetableDate:M.nowWall.dateStr,nextDate:M.nextDateStr,nextEpoch:M.nextEpoch,nextTime:M.nextTime,nextZone:M.nextZone,zone:tz,timetable:{...M.t},
+    selectionState:M.selection.state,selectionReason:M.selection.reason,progressKind:M.progressKind,prevMin:M.prevMin,nextMin:M.nextMin,previousEpoch:M.previousEpoch,previousDate:M.previousDateStr };
   // regenerate the branching bolt each ~2.6s strike-window while a thunderstorm is active (deterministic from simTime)
   if($(".c").dataset.lightning==="on"){ const bk=Math.floor(simNow()/2600); if(bk!==_lastBolt){ _lastBolt=bk; const bp=document.querySelector(".bolt path"); if(bp) bp.setAttribute("d",genLightning(bk)); } }
 }

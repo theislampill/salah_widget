@@ -1,0 +1,360 @@
+✖ R0005 completed prefetch promotes at midnight while network is offline (7.313981ms)
+✖ R0005 positive normal next-day prefetch remains tomorrow before midnight (5.162902ms)
+✖ R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day (5.272346ms)
+✖ R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF (4.871263ms)
+✖ R0005 held-out warm 100-frame control avoids repeated admission/Intl construction (6.562542ms)
+✖ R0005 late next-day prefetch rescues current when midnight acquisition exhausts (7.325547ms)
+✖ R0005 payload neither current nor successor is discarded after further day movement (9.487905ms)
+✖ R0005 backward correction reclassifies and acquires the actual earlier civil day (5.142661ms)
+✖ R0005 hidden next-day completion marks dirty and paints once on frozen visible resume (6.457194ms)
+✖ R0005 usable next-day record suppresses redundant work; promotion allows one new successor (6.695251ms)
+✖ R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC (6.858687ms)
+✖ R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC (7.06059ms)
+✖ R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York (5.320268ms)
+✖ R0005 mutant removing promotion is killed by offline completed prefetch (11.566405ms)
+✖ R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate (11.021877ms)
+✖ R0005 mutant removing dirty consumer is killed by frozen async visible resume (7.497666ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 0
+ℹ fail 16
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 125.428038
+
+✖ failing tests:
+
+test at tests/r0005-adoption.test.cjs:4:1
+✖ R0005 completed prefetch promotes at midnight while network is offline (7.313981ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:5:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:10:1
+✖ R0005 positive normal next-day prefetch remains tomorrow before midnight (5.162902ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:11:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:15:1
+✖ R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day (5.272346ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:16:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:22:1
+✖ R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF (4.871263ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:23:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:29:1
+✖ R0005 held-out warm 100-frame control avoids repeated admission/Intl construction (6.562542ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:30:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:40:1
+✖ R0005 late next-day prefetch rescues current when midnight acquisition exhausts (7.325547ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:41:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:48:1
+✖ R0005 payload neither current nor successor is discarded after further day movement (9.487905ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:49:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:53:1
+✖ R0005 backward correction reclassifies and acquires the actual earlier civil day (5.142661ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:54:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:58:1
+✖ R0005 hidden next-day completion marks dirty and paints once on frozen visible resume (6.457194ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:59:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:64:1
+✖ R0005 usable next-day record suppresses redundant work; promotion allows one new successor (6.695251ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:65:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:73:3
+✖ R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC (6.858687ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:74:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:73:3
+✖ R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC (7.06059ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:74:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:73:3
+✖ R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York (5.320268ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:74:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:77:1
+✖ R0005 mutant removing promotion is killed by offline completed prefetch (11.566405ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:79:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:82:1
+✖ R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate (11.021877ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:84:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0005-adoption.test.cjs:88:1
+✖ R0005 mutant removing dirty consumer is killed by frozen async visible resume (7.497666ms)
+  AssertionError [ERR_ASSERTION]: source owner missing: let _starEls=[], / function refreshStarAppearance(A){
+      at between (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:15:85)
+      at slice (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:25:22)
+      at harness (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0003-harness.cjs:91:5)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0005-adoption.test.cjs:90:11)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

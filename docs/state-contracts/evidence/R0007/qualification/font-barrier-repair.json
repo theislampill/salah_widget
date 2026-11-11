@@ -1,0 +1,16 @@
+{
+  "scope": "four held-recovery recipe predicates only",
+  "priorHead": "3fa33a3bf07841082da711a89ceff0691c16937e",
+  "finding": "QUAL-01",
+  "changedCaseIds": [
+    "NE07-recovery24",
+    "NE07-recovery12",
+    "NE07-dst-recovery24",
+    "NE07-mut-remove-next-dirty"
+  ],
+  "oraclesClockIngressAndDeadlinesUnchanged": true,
+  "precondition": "async () => { const f=window.__prayerFixture, link=document.querySelector('link[rel=\"stylesheet\"][href^=\"https://fonts.googleapis.com/css2?\"]'); if(!link) return false; const terminal=f.assets.filter(a=>a.tagName==='LINK'&&a.url===link.href&&(a.event==='load'||a.event==='error')).at(-1); if(!terminal||(terminal.event==='load'&&link.media!=='all')) return false; f.readSnapshot(); await document.fonts.ready; const snapshot=f.readSnapshot(); return document.fonts.status==='loaded'&&snapshot.dirty===false; }",
+  "sourceBasis": "Authored nonblocking stylesheet may register fonts after first render; existing font completion callbacks set dirty. Observe terminal CSS and actual native font/layout settlement before checking dirty.",
+  "nativeExecution": false,
+  "recipeSha256": "dd9b1c82e5f758909049cf5b404c759890c4b138fbdeee22326e1a2de0e14ec7"
+}
