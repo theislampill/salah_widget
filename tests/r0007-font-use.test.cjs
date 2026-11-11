@@ -22,8 +22,9 @@ test('font-use control changes only the optional families in the existing stacks
  assert.ok(actual.includes('--font-display:Georgia,"Times New Roman",serif;'));
  assert.equal((actual.match(/https:\/\/fonts\.googleapis\.com\/css2[^\"]*/g)||[])[0],
    (source.match(/https:\/\/fonts\.googleapis\.com\/css2[^\"]*/g)||[])[0]);
- assert.ok(actual.includes('font-family:Inter,system-ui,sans-serif'));
- assert.ok(actual.includes('font-family:Fraunces,Georgia,serif'));
+ // The date dialog now follows the same gated custom properties as the card.
+ assert.ok(actual.includes('font-family:var(--font-body);overflow-y:auto'));
+ assert.ok(actual.includes('.date-dialog h2{margin:0;font-family:var(--font-display);'));
 });
 
 test('missing or duplicated font anchors refuse the disposable intervention',()=>{
