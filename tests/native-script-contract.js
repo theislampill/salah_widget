@@ -18,8 +18,14 @@
   // Moon bodies retain the review at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
   // A new delivery requires explicit source review/rebinding, never an automatic
   // update from the same untrusted body whose admission is being checked.
+  // R0027 first-paint rebind: the only change to the generated first-paint body is
+  // the reviewed retention-only spectral transform (tools/native_core_spectral_cache.py,
+  // generated real-sky/core/src/spectral.mjs SHA256
+  // 4fcda07d1fc5a210d7d748a4c33518ed3068dbbf25eacf7415fa10abaad14489) on accepted main
+  // 645b53cc5d04d35444f6da0e27bf5a5b6b11ce67. Previous (R000B) pin, kept as history:
+  // be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7.
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7',
+    'first-paint':'8817c6599ff3958574b8d34f0cf9355368522ce03a6bc4e70fa5adfcedddcd8b',
     'moon-initial':'837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });
@@ -27,6 +33,14 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0027 generated spectral retention on accepted main 645b53cc: only the generated
+    // root index.html changed (authored src/native/index.html unchanged, so its
+    // R000D identity below stays current); the R000D inputs below remain admitted unchanged.
+    '902f326da4b79e3e64b56877b8a2a93421174f6e893a00f423b049f13d57f052':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'77014952203f373d3646cef7ea291a2196833aa6',path:'index.html',
+      parentSha256:'df1c6e9daf008247d9c6377275a6a905039ff58e2d4c21694d8824590022b37f',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R000D elapsed retry record at ba0851ae on accepted main da126880;
     // explicitly rebound like the d5ede8b9 inputs below, which remain admitted unchanged.
     '2444e2a9017a4ce3e54c5a3f186668798f29b883fe0fe869f036dcf80f44c81c':Object.freeze({
