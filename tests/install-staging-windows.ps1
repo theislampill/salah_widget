@@ -176,12 +176,37 @@ try {
             $fixture=New-NativeFixture 'live-lease'
             Initialize-Staging
             $scratch=$script:StagingAttempt.Scratch.Path
+            $before=Get-CustodyObservation $scratch
+            $proof=New-OwnedStagingFile $scratch 'lease-proof.txt'
+            [IO.File]::WriteAllText($proof,'native lease positive bytes',$script:utf8)
+            $script:notes.initialization=[pscustomobject]@{status=$script:StagingAttempt.Status;scratch=$before;proofHash=(Get-StagedFileDigest $proof).Hash}
+            Assert-Native ($script:StagingAttempt.Status -eq 'active' -and $before.private) 'Healthy native initialization did not reach an owned artifact write.'
             $moved=Join-Path $fixture.Temp 'attempt-renamed'
-            $refused=$false; $reason=$null
-            try {[IO.Directory]::Move($scratch,$moved)}catch{$refused=$true;$reason=$_.Exception.Message}
-            $script:notes.rename=[pscustomobject]@{refused=$refused;reason=$reason}
+            $refused=$false; $reason=$null; $nativeCode=$null
+            try {[IO.Directory]::Move($scratch,$moved)}catch{
+                $refused=$true; $cause=$_.Exception.GetBaseException(); $reason=$cause.Message
+                $nativeCode=$cause.HResult -band 0xFFFF
+            }
+            $script:notes.rename=[pscustomobject]@{refused=$refused;reason=$reason;nativeCode=$nativeCode}
             Assert-Native $refused 'The held native root lease allowed replacement by rename.'
-            Assert-Native ((Get-StagingPathInfo $scratch).Identity -ceq $script:StagingAttempt.Scratch.Identity) 'Live root identity changed.'
+            Assert-Native ($nativeCode -eq 32) 'Live rename failed for a reason other than a native sharing violation.'
+            Assert-Native ((Get-StagingPathInfo $scratch).Identity -ceq $before.identity) 'Live root identity changed.'
+            Assert-Native (-not [IO.Directory]::Exists($moved)) 'The refused live rename created its destination.'
+
+            # Change only the root lease lifetime. Parent leases and the same
+            # root identity, ACL, proof bytes and rename destination remain.
+            $rootLeases=@($script:StagingAttempt.Leases | Where-Object {$_.Facts.Path.Equals($scratch,[StringComparison]::OrdinalIgnoreCase)})
+            Assert-Native ($rootLeases.Count -gt 0) 'The live root had no actual directory lease.'
+            foreach($lease in $rootLeases){$lease.Dispose()}
+            [IO.Directory]::Move($scratch,$moved)
+            $after=Get-CustodyObservation $moved
+            $movedProof=Join-Path $moved 'lease-proof.txt'
+            $script:notes.afterDisposal=[pscustomobject]@{renamed=$true;rootLeaseCount=$rootLeases.Count;scratch=$after;proofHash=(Get-FileHash -LiteralPath $movedProof -Algorithm SHA256).Hash.ToLowerInvariant()}
+            Assert-Native (-not [IO.Directory]::Exists($scratch) -and $after.identity -ceq $before.identity) 'Disposing the lease did not permit moving the same native root.'
+            Assert-Native ($after.sddl -ceq $before.sddl -and $script:notes.afterDisposal.proofHash -ceq $script:notes.initialization.proofHash) 'Post-disposal rename changed ACLs or proof bytes.'
+            [IO.Directory]::Move($moved,$scratch)
+            [void]$script:StagingAttempt.Leases.Add((Open-StagingDirectoryLease $scratch))
+            $script:notes.restored=[pscustomobject]@{path=$scratch;identity=(Get-StagingPathInfo $scratch).Identity}
         }
 
         Invoke-NativeCase 'native cleanup holds ancestors and retains fresh-consumer output' {

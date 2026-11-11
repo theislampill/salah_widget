@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 """Direct native -File entry with private startup spies; no owner profile is used."""
-import base64, collections, hashlib, json, os, pathlib, secrets, subprocess, sys, tempfile, zipfile
+import argparse, base64, collections, datetime, hashlib, json, os, pathlib, secrets, subprocess, sys, tempfile, time, zipfile
 import xml.etree.ElementTree as ET
 
-SOURCE = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[1]/'install.ps1').resolve()
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('source', type=pathlib.Path, nargs='?', default=pathlib.Path(__file__).resolve().parents[1]/'install.ps1')
+parser.add_argument('--host', action='append', choices=('ps51','ps7'))
+SCENARIOS = ('github','cached','store','ask','installed','mixed','legacy','none','missing-preset','bad-option','positive','no-open')
+parser.add_argument('--scenario', action='append', choices=SCENARIOS)
+parser.add_argument('--preset', type=pathlib.Path, default=pathlib.Path(__file__).resolve().parents[1]/'presets/salah-widget.tablissng.json')
+args = parser.parse_args()
+SOURCE = args.source.resolve()
+PRESET = args.preset.resolve()
+ENTRY_TIMEOUT_SECONDS = 60  # Native PS5.1 cold readiness alone measured 19.615-22.770s.
 PS7 = os.environ.get('INSTALL_TEST_PS7', r'C:\Program Files\PowerShell\7\pwsh.exe')
 HOSTS = [('ps51', r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe', r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\Modules'),
          ('ps7', PS7, str(pathlib.Path(PS7).parent/'Modules'))]
@@ -75,23 +84,71 @@ def ready(root, env):
 def protect_parents(root, host, native_modules, paths):
     """Create the self-owned Windows premise only on newly owned fixture parents."""
     for path in paths:
-        require(path.is_dir() and path.is_relative_to(root), 'ACL setup escaped the owned fixture')
+        require(path.is_dir() and (path == ROOT or path.is_relative_to(ROOT)), 'ACL setup escaped the owned fixture')
+        require(not (path.lstat().st_file_attributes & 0x400), 'ACL setup refused a reparse point')
     code = r'''
 $ErrorActionPreference='Stop'
 $sid=[Security.Principal.WindowsIdentity]::GetCurrent().User
-foreach($parent in $env:INSTALL_OWNED_PARENTS.Split('|')) {
+$owned=@($env:INSTALL_OWNED_PARENTS.Split('|'))
+$observed=@()
+foreach($parent in $owned) {
+    $cursor=[IO.DirectoryInfo]::new($parent)
+    while($cursor) {
+        if($observed -notcontains $cursor.FullName){$observed += $cursor.FullName}
+        $cursor=$cursor.Parent
+    }
+}
+function Read-ParentFacts([string[]]$Paths) {
+    foreach($path in $Paths) {
+        $item=Get-Item -LiteralPath $path -Force
+        $acl=Get-Acl -LiteralPath $path
+        [pscustomobject]@{
+            path=$item.FullName; attributes=[int]$item.Attributes;
+            owner=$acl.GetOwner([Security.Principal.SecurityIdentifier]).Value;
+            group=$acl.GetGroup([Security.Principal.SecurityIdentifier]).Value;
+            sddl=$acl.GetSecurityDescriptorSddlForm([Security.AccessControl.AccessControlSections]'Access,Owner,Group');
+            protected=$acl.AreAccessRulesProtected;
+            rules=@($acl.GetAccessRules($true,$true,[Security.Principal.SecurityIdentifier])|ForEach-Object{
+                [pscustomobject]@{sid=$_.IdentityReference.Value; rights=[int64]$_.FileSystemRights; type=[string]$_.AccessControlType; inherited=$_.IsInherited; inheritance=[string]$_.InheritanceFlags; propagation=[string]$_.PropagationFlags}
+            })
+        }
+    }
+}
+$before=@(Read-ParentFacts $observed)
+[IO.File]::WriteAllText($env:INSTALL_ACL_BEFORE,($before|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+foreach($parent in $owned) {
+    $full=[IO.Path]::GetFullPath($parent)
+    if($full -cne $env:INSTALL_FIXTURE_ROOT -and -not $full.StartsWith($env:INSTALL_FIXTURE_ROOT+[IO.Path]::DirectorySeparatorChar,[StringComparison]::OrdinalIgnoreCase)){throw 'ACL setup escaped owned root'}
+    if(([IO.File]::GetAttributes($full) -band [IO.FileAttributes]::ReparsePoint) -ne 0){throw 'ACL setup refused reparse point'}
     $acl=New-Object Security.AccessControl.DirectorySecurity
     $acl.SetOwner($sid); $acl.SetAccessRuleProtection($true,$false)
     $rule=New-Object Security.AccessControl.FileSystemAccessRule($sid,[Security.AccessControl.FileSystemRights]::FullControl,[Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit',[Security.AccessControl.PropagationFlags]::None,[Security.AccessControl.AccessControlType]::Allow)
     $acl.AddAccessRule($rule)
     Set-Acl -LiteralPath $parent -AclObject $acl
 }
+$after=@(Read-ParentFacts $observed)
+[IO.File]::WriteAllText($env:INSTALL_ACL_AFTER,($after|ConvertTo-Json -Depth 10),[Text.UTF8Encoding]::new($false))
+foreach($row in $after) {
+    if($owned -contains $row.path) {
+        if($row.owner -cne $sid.Value -or -not $row.protected -or $row.rules.Count -ne 1 -or $row.rules[0].sid -cne $sid.Value -or $row.rules[0].type -cne 'Allow' -or $row.rules[0].rights -ne [int64][Security.AccessControl.FileSystemRights]::FullControl){throw 'Owned parent ACL readback failed'}
+    } else {
+        $prior=@($before|Where-Object{$_.path -ceq $row.path})
+        if($prior.Count -ne 1 -or $prior[0].sddl -cne $row.sddl){throw 'An external ancestor ACL changed'}
+    }
+}
 '''
-    env=dict(os.environ, INSTALL_OWNED_PARENTS='|'.join(map(str,paths)))
+    env=dict(os.environ, INSTALL_OWNED_PARENTS='|'.join(map(str,paths)),
+             INSTALL_FIXTURE_ROOT=str(ROOT), INSTALL_ACL_BEFORE=str(root/'parent-acl-before.json'),
+             INSTALL_ACL_AFTER=str(root/'parent-acl-after.json'))
     for key in list(env):
         if key.upper() == 'PSMODULEPATH': del env[key]
     env['PSModulePath']=native_modules
-    result=subprocess.run([host,'-NoProfile','-EncodedCommand',base64.b64encode(code.encode('utf-16le')).decode('ascii')],env=env,capture_output=True,timeout=25)
+    try:
+        result=subprocess.run([host,'-NoProfile','-EncodedCommand',base64.b64encode(code.encode('utf-16le')).decode('ascii')],env=env,capture_output=True,timeout=60)
+    except subprocess.TimeoutExpired as error:
+        (root/'parent-acl-setup.stdout.txt').write_bytes(error.stdout or b'')
+        (root/'parent-acl-setup.stderr.txt').write_bytes(error.stderr or b'')
+        raise
     (root/'parent-acl-setup.stdout.txt').write_bytes(result.stdout)
     (root/'parent-acl-setup.stderr.txt').write_bytes(result.stderr)
     require(result.returncode==0, 'Owned parent ACL setup failed before installer execution')
@@ -111,7 +168,7 @@ def case(host_name, host, native_modules, scenario):
     env['HOME'] = env['USERPROFILE'] = str(host_home)
     if os.name == 'nt':
         try:
-            protect_parents(root,host,native_modules,[subject/'temp',host_home])
+            protect_parents(root,host,native_modules,[ROOT,root,subject,subject/'temp',host_home])
         except (AssertionError,OSError,subprocess.TimeoutExpired) as error:
             RESULTS.append(dict(host=host_name,case=scenario,pass_=False,classification='BOOTSTRAP_BLOCKED',error=str(error),observation=dict(fixture=str(root),stage='owned-parent-acl-setup',installerExecuted=False)))
             return False
@@ -126,7 +183,7 @@ def case(host_name, host, native_modules, scenario):
     asset = root/'fixture.zip'
     with zipfile.ZipFile(asset,'w') as archive: archive.writestr('manifest.json','{"manifest_version":3,"name":"Fixture","version":"1.0"}')
     preset_fixture=root/'canonical-preset.json'
-    preset_fixture.write_bytes((SOURCE.parent/'presets/salah-widget.tablissng.json').read_bytes())
+    preset_fixture.write_bytes(PRESET.read_bytes())
     if scenario == 'cached':
         cache = subject/'temp/SalahWidgetInstaller/downloads/v-fixture'; cache.mkdir(parents=True)
         for name in ('tabliss-chromium.zip','tabliss-firefox-signed.xpi'): (cache/name).write_bytes(asset.read_bytes())
@@ -153,8 +210,10 @@ def case(host_name, host, native_modules, scenario):
     if scenario == 'no-open': command += ['-NoOpen']
     before = snapshot(subject)
     (root/'subject-before.json').write_text(json.dumps(before,indent=2),encoding='utf-8')
+    command_started = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    command_clock = time.monotonic()
     try:
-        run = subprocess.run(command,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=25)
+        run = subprocess.run(command,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=ENTRY_TIMEOUT_SECONDS)
     except (subprocess.TimeoutExpired, OSError) as error:
         partial_out=getattr(error,'stdout',None) or b''
         partial_err=getattr(error,'stderr',None) or b''
@@ -167,6 +226,7 @@ def case(host_name, host, native_modules, scenario):
         RESULTS.append(dict(host=host_name,case=scenario,pass_=False,error=str(error),
                             classification='ENTRY_TIMEOUT' if ready(root,env) else 'BOOTSTRAP_BLOCKED',
                             observation=dict(command=command,fixture=str(root),interceptionLoaded=ready(root,env),
+                            commandStartedUtc=command_started,elapsedSeconds=time.monotonic()-command_clock,timeoutSeconds=ENTRY_TIMEOUT_SECONDS,
                             bootstrapPhases=phases,snapshotUnchanged=before==after,effects=effects,
                             stdout=str(root/'stdout.txt'),stderr=str(root/'stderr.txt'))))
         return False
@@ -177,7 +237,7 @@ def case(host_name, host, native_modules, scenario):
     after=snapshot(subject)
     (root/'subject-after.json').write_text(json.dumps(after,indent=2),encoding='utf-8')
     unchanged = before == after
-    observation = dict(command=command,fixture=str(root),entryExit=run.returncode,interceptionLoaded=ready(root,env),readinessNonce=env['INSTALL_READY_NONCE'],snapshotUnchanged=unchanged,effects=effects,hostStartupState=snapshot(host_home),stdout=str(root/'stdout.txt'),stderr=str(root/'stderr.txt'))
+    observation = dict(command=command,fixture=str(root),entryExit=run.returncode,interceptionLoaded=ready(root,env),readinessNonce=env['INSTALL_READY_NONCE'],snapshotUnchanged=unchanged,effects=effects,hostStartupState=snapshot(host_home),stdout=str(root/'stdout.txt'),stderr=str(root/'stderr.txt'),commandStartedUtc=command_started,elapsedSeconds=time.monotonic()-command_clock,timeoutSeconds=ENTRY_TIMEOUT_SECONDS)
     try:
         if scenario != 'bad-option': require(ready(root,env),'BOOTSTRAP_BLOCKED: final startup interception nonce missing or wrong')
         if normal:
@@ -222,8 +282,9 @@ def case(host_name, host, native_modules, scenario):
     return scenario=='bad-option' or ready(root,env)
 
 for host_name, host, native_modules in HOSTS:
-    for scenario in ('github','cached','store','ask','installed','mixed','legacy','none','missing-preset','bad-option','positive','no-open'):
+    if args.host and host_name not in args.host: continue
+    for scenario in args.scenario or SCENARIOS:
         if not case(host_name,host,native_modules,scenario):
             break  # Retain a terminal receipt; do not repeat a failed host bootstrap.
-print(json.dumps(dict(source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),results=RESULTS),indent=2))
+print(json.dumps(dict(source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),preset=hashlib.sha256(PRESET.read_bytes()).hexdigest(),fixture=str(ROOT),selectedHosts=args.host or ['ps51','ps7'],selectedScenarios=args.scenario or SCENARIOS,results=RESULTS),indent=2))
 sys.exit(1 if any(not row['pass_'] for row in RESULTS) else 0)

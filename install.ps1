@@ -235,7 +235,8 @@ namespace SalahInstaller {
       }
     }
     public static DirectoryLease OpenDirectory(string path, string sid) {
-      SafeFileHandle file = CreateFileW(path, 0x20080, 3, IntPtr.Zero, 3, 0x02200000, IntPtr.Zero);
+      // FILE_LIST_DIRECTORY participates in delete sharing; metadata-only access does not.
+      SafeFileHandle file = CreateFileW(path, 0x20081, 3, IntPtr.Zero, 3, 0x02200000, IntPtr.Zero);
       if (file.IsInvalid) { file.Dispose(); throw Error("Lock staging directory identity"); }
       try { PathFacts facts = Read(file, path, sid); if (!facts.Directory) throw new IOException("Expected staging directory."); return new DirectoryLease { Handle=file, Facts=facts }; }
       catch { file.Dispose(); throw; }

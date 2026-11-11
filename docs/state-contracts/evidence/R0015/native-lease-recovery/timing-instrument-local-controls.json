@@ -1,0 +1,101 @@
+{
+  "name": "probe",
+  "scope": "Linux PowerShell7.6.6 fixture mechanics only; no installer or Windows qualification",
+  "command": [
+    "/workspace/scratch/b8359a7e27bf/runtime/pwsh7/pwsh",
+    "-NoProfile",
+    "-File",
+    "/workspace/scratch/b8359a7e27bf/recovery/r0016-tests/r0013-native-bootstrap-timing.ps1",
+    "-SourceFile",
+    "/workspace/scratch/b8359a7e27bf/r0013/install.ps1",
+    "-OutputRoot",
+    "/workspace/scratch/b8359a7e27bf/recovery/r0016-tests/r0013-run4-timing/probe-2dy44e07/out",
+    "-ChildTimeoutSeconds",
+    "60",
+    "-VariantSet",
+    "Minimal"
+  ],
+  "exit": 0,
+  "raw": "/workspace/scratch/b8359a7e27bf/recovery/r0016-tests/r0013-run4-timing/probe-2dy44e07/stdout.json",
+  "stderr": "",
+  "root": "/workspace/scratch/b8359a7e27bf/recovery/r0016-tests/r0013-run4-timing/probe-2dy44e07",
+  "pass_": true,
+  "testSha256": "a553c9790f04c34ddbe672b469e157ddf6c5d4903484b1f3b17eb82bd2f86510",
+  "librarySha256": null,
+  "nativeWindows": false,
+  "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0016-tests/r0013-run4-timing/probe-2dy44e07/out/r0013-native-bootstrap-timing-06d69bf32c0c4dcb98da1708b775320b",
+  "rows": [
+    {
+      "case": "native-only-cold",
+      "pass": true,
+      "timedOut": false,
+      "budget": 60,
+      "elapsedMs": 347.9876,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "priorColdCompleted": null
+    },
+    {
+      "case": "native-only-warm",
+      "pass": true,
+      "timedOut": false,
+      "budget": 60,
+      "elapsedMs": 356.6653,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "priorColdCompleted": true
+    },
+    {
+      "case": "private-wildcard-cmdlets-cold",
+      "pass": true,
+      "timedOut": false,
+      "budget": 60,
+      "elapsedMs": 383.6556,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "priorColdCompleted": null
+    },
+    {
+      "case": "private-wildcard-cmdlets-warm",
+      "pass": true,
+      "timedOut": false,
+      "budget": 60,
+      "elapsedMs": 370.7366,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "priorColdCompleted": true
+    }
+  ]
+}

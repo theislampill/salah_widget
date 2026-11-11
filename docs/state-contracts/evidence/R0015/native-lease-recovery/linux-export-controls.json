@@ -1,0 +1,138 @@
+{
+  "schema": "r0015-export-local-controls/v1",
+  "derivative": "/workspace/scratch/b8359a7e27bf/recovery/r0015-linux-export/install-linux-owner-export.py",
+  "derivative_sha256": "bd43e5675400966b08bb5b29e80ddf9ebb66cf53181991ccc4d2a4f455da9ae5",
+  "test_sha256": "bd033913377fd7b15376fa52a69540074d45a4af1e312dded980887fe642c98b",
+  "host": {
+    "system": "linux",
+    "uid": 1000,
+    "euid": 1000,
+    "gid": 1000
+  },
+  "scope": "actual local Linux filesystem export/collector guards only; no distinct-UID native acquisition credit",
+  "fixtures": [
+    "/tmp/r0015-owner-export-control-l9mdlu33",
+    "/tmp/r0015-owner-export-control-k3__kl3t",
+    "/tmp/r0015-owner-export-control-tbwya2uu",
+    "/tmp/r0015-owner-export-control-o28zh_cq",
+    "/tmp/r0015-owner-export-control-o28zh_cq-displaced",
+    "/tmp/r0015-owner-export-control-8m4wo7zp",
+    "/tmp/r0015-owner-export-control-a4npagqe",
+    "/tmp/r0015-owner-export-control-zri6jh9o",
+    "/tmp/r0015-owner-export-control-4achwc3r",
+    "/tmp/r0015-owner-export-control-trzyq0wg",
+    "/tmp/r0015-owner-export-control-8rryypfl",
+    "/tmp/r0015-owner-export-control-42ywra7w"
+  ],
+  "results": [
+    {
+      "case": "complete private files and literal symlinks survive export and collector readback",
+      "pass_": true,
+      "detail": {
+        "fixture": "/tmp/r0015-owner-export-control-l9mdlu33",
+        "archive": "/workspace/scratch/b8359a7e27bf/recovery/r0015-linux-export/verified-collector-copy-r0015-owner-export-control-l9mdlu33.tar.gz",
+        "sha256": "ccbea25b6f72492d4df90e02d2ddc1857f413cdfb73614e6cb2179d907089f0f",
+        "original_members": 5
+      },
+      "elapsed": 0.005746810995333362
+    },
+    {
+      "case": "successful evidence transfer preserves an earlier failed observation",
+      "pass_": true,
+      "detail": {
+        "fixture": "/tmp/r0015-owner-export-control-k3__kl3t",
+        "original_status": "FAIL",
+        "export_status": "VERIFIED"
+      },
+      "elapsed": 0.003942642004403751
+    },
+    {
+      "case": "export request outside captured root refuses before output",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: requested root is outside the captured fixture"
+      },
+      "elapsed": 7.660299888812006e-05
+    },
+    {
+      "case": "replaced source root pathname refuses before output",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: captured root pathname or identity changed",
+        "displaced": "/tmp/r0015-owner-export-control-o28zh_cq-displaced"
+      },
+      "elapsed": 0.0002566379989730194
+    },
+    {
+      "case": "source hardlink outside exact fixture is refused",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: source regular file has unbounded hard links",
+        "outside": "/tmp/r0015-export-outside-zrkxhrb4"
+      },
+      "elapsed": 0.00010958099301205948
+    },
+    {
+      "case": "source FIFO is refused without opening it",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: special source member fifo"
+      },
+      "elapsed": 0.00010744900646386668
+    },
+    {
+      "case": "collector refuses archive symlink replacement",
+      "pass_": true,
+      "detail": {
+        "error": "[Errno 40] Too many levels of symbolic links: 'fixture.tar.gz'",
+        "fixture": "/tmp/r0015-owner-export-control-zri6jh9o"
+      },
+      "elapsed": 0.0038616930032731034
+    },
+    {
+      "case": "collector refuses changed archive bytes and identity",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: readback archive identity changed",
+        "fixture": "/tmp/r0015-owner-export-control-4achwc3r"
+      },
+      "elapsed": 0.005296937997627538
+    },
+    {
+      "case": "manifest detects content tamper despite refreshed archive digest",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: regular member bytes differ",
+        "original_sha256": "5778bd23936b03f45e86ba70769507929db03ca79da945b6941230634842eef8",
+        "mutant_sha256": "43ee670a558e22c74f751e99681e42299959fc02cba5cac2637623740290e059"
+      },
+      "elapsed": 0.006381106999469921
+    },
+    {
+      "case": "manifest rejects additional unmanifested member",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: unmanifested archive member",
+        "original_sha256": "f8568e33e32b452ca402b71bf3283ea668507d8f2fdfebcc80b63029a3506824",
+        "mutant_sha256": "49804a42c11249d9a7ed2b23310e0a6b65585493a90865bb874220b384227702"
+      },
+      "elapsed": 0.00792024600377772
+    },
+    {
+      "case": "export child exclusion requires its acquired native identity",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: new export directory identity changed"
+      },
+      "elapsed": 0.0005269670000416227
+    },
+    {
+      "case": "collector refuses missing export without private-tree fallback",
+      "pass_": true,
+      "detail": {
+        "error": "Fixture export refused: no verified export receipt"
+      },
+      "elapsed": 4.616995283868164e-06
+    }
+  ]
+}

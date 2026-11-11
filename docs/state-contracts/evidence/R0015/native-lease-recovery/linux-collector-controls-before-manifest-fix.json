@@ -1,0 +1,34 @@
+{
+  "scope": "local sameUID acquisition controls, not independent UID/native host proof",
+  "fixture": "/tmp/r15-collector-export-va55dv3g",
+  "sourceObservationStatus": "BLOCKED_ACQUISITION",
+  "collectorSha256": "090e9b54ddc090cca7e6d233544f2d132ccab6d1fe3ca6d034c15ceffc37794d",
+  "exporterSha256": "bd43e5675400966b08bb5b29e80ddf9ebb66cf53181991ccc4d2a4f455da9ae5",
+  "results": [
+    {
+      "case": "actual local export copied byte-for-byte without extraction",
+      "pass": true,
+      "observation": [
+        {
+          "original": "/tmp/r0015-owner-k53r__zd",
+          "archive_file": "install-linux-owner-fixture.tar.gz",
+          "sha256": "2734c5dff5ebe876d4d69703166e283f20a2b0f392e143af2f543b50c7c357e6",
+          "source_manifest": "install-linux-owner-fixture-manifest.json",
+          "source_manifest_sha256": "4699c42d5fc02c101dc5dda1ee7a66fd9a76040815e2eb49150d4c8828715029",
+          "original_entries": 10,
+          "extracted": false
+        }
+      ]
+    },
+    {
+      "case": "out-of-fixture export refused without copytree fallback",
+      "pass": true,
+      "error": "Fixture export refused: export path is outside the exact fixture"
+    },
+    {
+      "case": "tampered export digest refused before copy",
+      "pass": true,
+      "error": "Fixture export refused: archive digest mismatch"
+    }
+  ]
+}

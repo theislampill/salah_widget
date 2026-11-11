@@ -1,0 +1,76 @@
+{
+  "schema": "r0015-native-lease-candidate/v1",
+  "finding": "R15-NATIVE-01",
+  "frozen_at_utc": "2026-11-11T08:14:00.395746+00:00",
+  "source_custody": "Returned to root; child has no further installer/source mutation authority",
+  "dependency_commit": "00a08b69661b5c09e1b6890da032e88265802b9b",
+  "source_before_sha256": "a2b36da7c4b07f52cb22cff1fdeaa1e9cffd60f5f95188d8b7f65ce9fa4fa8f8",
+  "source_after_sha256": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff",
+  "native_test_before_sha256": "1a8b76c03c9a60e750d27400302c5a2d4a0119418a4014e6e91062b24ca21623",
+  "native_test_after_sha256": "d11449d18861c2be9890f226c26b116c08c7903845b102191399ddd3720a124d",
+  "production_delta": "StageNative.OpenDirectory desiredAccess0x20080\u21920x20081 plus explanatory comment; no other production byte changes",
+  "unchanged": [
+    "StageNative.Inspect metadata-only mask/share",
+    "public helper signatures",
+    "DryRun gates",
+    "first-call Add-Type behavior",
+    "R0013 discovery/strict JSON",
+    "R0014 selection",
+    "Bash installer"
+  ],
+  "native_red": {
+    "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-lease-fix/native-red.json",
+    "sha256": "af64a777604dbd6419e485e120aca97c7e3ff23aa99d74c3b1d5a85cbafe5def",
+    "status": "DEMONSTRATED on actual Windows PS5.1 and PS7.6.6; held root renamed"
+  },
+  "local_verification": {
+    "syntax_sha256": "c6a80e4ae0c96c5b97535e2466f04276a2a5e6b18412b826c760105f1db7d3c0",
+    "focused_receipt_sha256": "ff684e0023afff76a79f558583d93bc3893525b5c173780dc8b44503b7563b39",
+    "runtime": "Linux PowerShell7.6.6",
+    "syntax": "source and revised native test parse",
+    "focused_controls": 3,
+    "status": "PASS_SUPPLEMENTAL",
+    "native_boundary_adapter": true,
+    "windows_semantics_claim": false
+  },
+  "native_candidate_qualification": "PENDING actual Windows PS5.1 and PS7.6.6 execution",
+  "primary_sources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-fsa/82b364ce-6d7b-422f-8d88-4db32eea809a",
+      "title": "MS-FSA 2.1.5.1.2.1 Algorithm to Check Access to an Existing File",
+      "observed_lines": "66-83",
+      "supports": "Delete-sharing conflict checks are gated by data/execute/write/append/delete rights; metadata-only rights are not in the specified set."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/fileio/file-access-rights-constants",
+      "title": "File Access Rights Constants",
+      "observed_lines": "61-70",
+      "supports": "FILE_LIST_DIRECTORY and FILE_READ_DATA use access bit1; FILE_READ_ATTRIBUTES is bit0x80."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew",
+      "title": "CreateFileW",
+      "observed_lines": "70-95",
+      "supports": "Attribute access requests are not controlled by share flags; FILE_SHARE_DELETE allows delete/rename; handle sharing options last until closure."
+    }
+  ],
+  "expected_native_discriminator": [
+    "Healthy actual staging initialization/private root and guarded artifact write succeeds",
+    "Same-root rename with actual live lease fails with ERROR_SHARING_VIOLATION32, original identity remains and destination absent",
+    "Disposing only matching root leases permits same source/destination rename while ancestors remain held",
+    "Renamed root retains native identity, ACL and exact proof bytes",
+    "Restore root path and re-acquire actual lease for ordinary cleanup"
+  ],
+  "files": {
+    "source-after-9e8fd3.ps1": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff",
+    "syntax.json": "c6a80e4ae0c96c5b97535e2466f04276a2a5e6b18412b826c760105f1db7d3c0",
+    "native-test-after-d11449.ps1": "d11449d18861c2be9890f226c26b116c08c7903845b102191399ddd3720a124d",
+    "local-focused.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-red.json": "af64a777604dbd6419e485e120aca97c7e3ff23aa99d74c3b1d5a85cbafe5def",
+    "bounded-candidate.diff": "831d5d9af3e33b8354f7a22a29361f10afb82447afcea346e63ce084a8e597b7",
+    "local-focused.json": "ff684e0023afff76a79f558583d93bc3893525b5c173780dc8b44503b7563b39",
+    "syntax.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "native-test-before-1a8b76.ps1": "1a8b76c03c9a60e750d27400302c5a2d4a0119418a4014e6e91062b24ca21623",
+    "source-before-a2b36d.ps1": "a2b36da7c4b07f52cb22cff1fdeaa1e9cffd60f5f95188d8b7f65ce9fa4fa8f8"
+  }
+}
