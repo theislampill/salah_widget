@@ -305,7 +305,7 @@ class FontIngressController:
         if terminal == 'failed':
             row['failure'] = OMITTED_ERROR_TEXT
             row['failureProvenance'] = OMITTED_ERROR_TEXT
-            if row['disposition'] != 'aborting':
+            if row['disposition'] not in {'aborting','aborted'}:
                 self._latch(DiagnosticError('native request failed'), 'requestfailed', row)
 
     def _finished(self, request): self._terminal(request, 'finished')

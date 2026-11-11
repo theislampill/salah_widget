@@ -107,7 +107,9 @@ class Route:
         self.actions.append(('abort', {}))
         if self.page.abort_error: raise self.page.abort_error
         self.request.failure = 'aborted'
-        self.page.emit('requestfailed', self.request)
+        if self.page.defer_abort_terminal:
+            self.page.unroute_hook=lambda:self.page.emit('requestfailed',self.request)
+        else:self.page.emit('requestfailed', self.request)
 
 class Page:
     def __init__(self, demand=1):
@@ -119,6 +121,7 @@ class Page:
         self.fetch_error = self.abort_error = self.dispose_error = self.body_error = self.continue_error = None
         self.body_delay, self.native_css_error = 0, None
         self.wait_hook = self.body_hook = self.unroute_hook = None
+        self.defer_abort_terminal=False
         self.api = APIResponse(self)
         self.face_error = self.lifecycle_error = False
         self.media_state=None;self.media_close_error=None
@@ -222,6 +225,8 @@ class ControllerTests(unittest.TestCase):
         self.page.auto_finish=False
         request,_=self.page.font();request.failure=str(protocol_error())
         self.page.emit('requestfailed',request)
+        self.assertEqual(self.trace['fontIngress']['firstError']['message'],'native request failed')
+        self.assertEqual(self.trace['fontIngress']['requests'][-1]['disposition'],'continued')
         with self.assertRaises(Exception):control.finalize(self.page)
         self.assertEqual(control.close()['status'],'FAILED')
         assert_external_error_omitted(self,self.trace)
@@ -394,13 +399,53 @@ class ControllerTests(unittest.TestCase):
                     request.failure='lost';self.page.emit('requestfailed',request)
                 with self.assertRaises(Exception): control.finalize(self.page)
                 control.close()
+    def test_close_accepts_owned_abort_terminal_before_or_after_return(self):
+        """Break: a deferred terminal turns a returned intentional cleanup abort into a failure."""
+        for deferred in [False,True]:
+            with self.subTest(deferred=deferred):
+                self.page=Page();self.trace={};self.page.defer_abort_terminal=deferred
+                control=self.controller();request,route=self.page.css()
+                deliveries=[];actual_emit=self.page.emit
+                def record_delivery(name,value):
+                    if name=='requestfailed':
+                        row=self.trace['fontIngress']['requests'][0]
+                        deliveries.append((control.phase,row['disposition'],row['attempts'][0]['returned'],
+                                           len(self.page.handlers['requestfailed'])))
+                    actual_emit(name,value)
+                with patch.object(self.page,'emit',side_effect=record_delivery):receipt=control.close()
+                self.assertEqual(deliveries,[('closing','aborted',True,1) if deferred else ('closing','aborting',False,1)])
+                row=self.trace['fontIngress']['requests'][0]
+                self.assertEqual((row['terminal'],row['disposition']),('failed','aborted'))
+                self.assertEqual((row['failure'],row['failureProvenance']),('OMITTED_UNTRUSTED_ERROR_TEXT',)*2)
+                self.assertEqual(route.actions,[('abort',{})])
+                self.assertEqual(self.page.handlers['requestfailed'],[])
+                self.assertEqual(receipt['status'],'CLOSED')
+                self.assertEqual(receipt['errors'],[])
+
+    def test_owned_abort_does_not_hide_duplicate_or_contradictory_terminal(self):
+        """Break: recognizing an owned abort also hides a second native terminal."""
+        for event in ['requestfailed','requestfinished']:
+            with self.subTest(event=event):
+                self.page=Page();self.trace={}
+                control=self.controller();request,_=self.page.css()
+                self.page.unroute_hook=lambda:self.page.emit(event,request)
+                receipt=control.close()
+                self.assertEqual(receipt['status'],'FAILED')
+                self.assertEqual([(row['operation'],row['message']) for row in receipt['errors']],
+                                 [(event,'duplicate/contradictory native terminal')])
+                self.assertEqual(self.trace['fontIngress']['requests'][0]['terminal'],'failed')
+
     def test_close_retains_abort_failure_and_is_idempotent(self):
         """Break: successful release receipt for failed abort, or duplicate effects on close."""
-        control=self.controller(); _,route=self.page.css(); self.page.abort_error=RuntimeError('abort broke')
+        control=self.controller(); request,route=self.page.css(); self.page.abort_error=RuntimeError('abort broke')
+        self.page.unroute_hook=lambda:self.page.emit('requestfailed',request)
         first=control.close(); second=control.close()
         self.assertEqual(first,second); self.assertEqual(first['status'],'FAILED')
         self.assertEqual(route.actions,[('abort',{})])
-        self.assertTrue(any(r.get('disposition')=='abort-failed' for r in self.trace['fontIngress']['requests']))
+        row=self.trace['fontIngress']['requests'][0]
+        self.assertEqual((row['disposition'],row['terminal'],row['attempts'][0]['returned']),('abort-failed','failed',False))
+        self.assertEqual([(error['operation'],error['message']) for error in first['errors']],
+                         [('route-abort','OMITTED_UNTRUSTED_ERROR_TEXT'),('requestfailed','native request failed')])
     def test_failed_out_of_scope_pass_through_is_cleaned_up(self):
         """Break: losing custody of an intercepted route whose unchanged continuation raises."""
         control=self.controller();self.page.continue_error=RuntimeError('pass failed')
@@ -911,6 +956,20 @@ class DriverLifecycleTests(unittest.TestCase):
         self.assertEqual([(row['action'], row['returned']) for row in css['attempts']], [('abort', False)])
         self.assertTrue(any(row['operation']=='route-abort' and row['errorType']=='RuntimeError' for row in ingress['close']['errors']))
         self.assertTrue(run.trace['secondaryFailures'])
+        self.assert_all_native_cleanup(run)
+
+    def test_primary_failure_survives_deferred_owned_abort_terminal(self):
+        """Break: correcting expected cleanup classification erases the existing action failure."""
+        page=DriverLifecyclePage(action_error=ValueError('primary action broke'))
+        page.defer_abort_terminal=True
+        run=self.run_driver(page=page)
+        self.assert_received(run,'FAIL',1)
+        self.assertEqual(run.trace['failureStage'],'case-actions')
+        self.assertEqual(run.trace['failureError'],{'errorType':'ValueError','message':'OMITTED_UNTRUSTED_ERROR_TEXT',
+                                                  'messageProvenance':'OMITTED_UNTRUSTED_ERROR_TEXT'})
+        self.assertEqual(run.trace['fontIngress']['close']['status'],'CLOSED')
+        self.assertEqual(run.trace['fontIngress']['close']['errors'],[])
+        self.assertEqual(run.trace.get('secondaryFailures',[]),[])
         self.assert_all_native_cleanup(run)
 
     def test_native_cleanup_failure_still_reaches_every_later_cleanup(self):
