@@ -15,6 +15,7 @@ $script:creates=@()
 $script:fixtureRoot=$null
 $script:StagingAttempt=$null
 $script:oldTemp=$env:TEMP
+$script:oldTmp=$env:TMP
 $script:oldProfile=$env:USERPROFILE
 $script:utf8=New-Object Text.UTF8Encoding $false
 $script:sourceHash=(Get-FileHash -LiteralPath $SourceFile -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -52,7 +53,10 @@ function New-NativeFixture([string]$Name) {
     $tempParent=Join-Path $root 'temp'
     $profileParent=Join-Path $root 'profile'
     foreach($parent in @($tempParent,$profileParent)) { [void][IO.Directory]::CreateDirectory($parent); Set-FixtureDirectoryAcl $parent }
-    $env:TEMP=$tempParent; $env:USERPROFILE=$profileParent
+    $env:TEMP=$tempParent; $env:TMP=$tempParent; $env:USERPROFILE=$profileParent
+    $nativeTemp=[IO.Path]::GetTempPath()
+    $script:notes.compilerParent=[pscustomobject]@{temp=$env:TEMP;tmp=$env:TMP;native=$nativeTemp}
+    Assert-Native ([string]::Equals($nativeTemp.TrimEnd('\'),$tempParent.TrimEnd('\'),[StringComparison]::OrdinalIgnoreCase)) 'SETUP: native compiler parent escaped the owned fixture.'
     $script:DryRun=$false; $script:WorkRoot=$null; $script:DownloadRoot=$null; $script:PresetRoot=$null
     $script:creates=@()
     $script:notes.fixture=$root
@@ -303,7 +307,7 @@ try {
     $script:results += [pscustomobject]@{case='native fixture/bootstrap';pass_=$false;pass=$false;status='SETUP_ERROR';error=$_.Exception.Message}
 } finally {
     if($script:StagingAttempt) { $script:DryRun=$false; Clear-OwnedScratch }
-    $env:TEMP=$script:oldTemp; $env:USERPROFILE=$script:oldProfile
+    $env:TEMP=$script:oldTemp; $env:TMP=$script:oldTmp; $env:USERPROFILE=$script:oldProfile
 }
 
 [pscustomobject]@{

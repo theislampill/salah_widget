@@ -26,6 +26,7 @@ $script:sourceText = [IO.File]::ReadAllText($SourceFile, [Text.Encoding]::UTF8)
 $script:canonicalPresetText = [IO.File]::ReadAllText($PresetFile, [Text.Encoding]::UTF8)
 $script:utf8 = New-Object Text.UTF8Encoding $false
 $script:oldTemp = $env:TEMP
+$script:oldTmp = $env:TMP
 $script:oldUserProfile = $env:USERPROFILE
 
 function Assert-Case($Condition, [string]$Message) {
@@ -124,6 +125,7 @@ function New-Case([string]$Name, [byte[]]$Bytes) {
         }
     }
     $env:TEMP = $tempParent
+    $env:TMP = $tempParent
     $env:USERPROFILE = $profileParent
     $script:DryRun = $false
     $script:NoOpen = $false
@@ -139,6 +141,11 @@ function New-Case([string]$Name, [byte[]]$Bytes) {
     $asset = New-TestAsset 101 $Bytes
     $script:releaseFixture = [pscustomobject]@{id=201; tag_name='v-fixture'; assets=@($asset)}
     Set-DownloadPlan @((New-DownloadStep $Bytes))
+    if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
+        $nativeTemp = [IO.Path]::GetTempPath()
+        $script:caseNotes.compilerParent = [pscustomobject]@{temp=$env:TEMP;tmp=$env:TMP;native=$nativeTemp}
+        Assert-Case ([string]::Equals($nativeTemp.TrimEnd('\'),$tempParent.TrimEnd('\'),[StringComparison]::OrdinalIgnoreCase)) 'SETUP: native compiler parent escaped the owned fixture.'
+    }
     $null = Initialize-Staging
     Assert-FixturePath $script:WorkRoot
     $script:caseNotes.root = $script:caseRoot
@@ -688,6 +695,7 @@ try {
     $script:results += [pscustomobject]@{case='fixture/bootstrap'; pass_=$false; pass=$false; status='SETUP_ERROR'; error=$_.Exception.Message}
 } finally {
     $env:TEMP = $script:oldTemp
+    $env:TMP = $script:oldTmp
     $env:USERPROFILE = $script:oldUserProfile
 }
 

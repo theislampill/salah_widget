@@ -111,7 +111,7 @@ function Open-CompilerDirectoryLease([string]$Path, [string]$Sid, [string]$Trust
         foreach ($ace in $security.DiscretionaryAcl) {
             if ($ace -isnot [Security.AccessControl.CommonAce] -or $ace.IsCallback) { $parentSafe=$false; $ancestorSafe=$false; $private=$false; continue }
             $allowed = $ace.AceQualifier -eq [Security.AccessControl.AceQualifier]::AccessAllowed
-            $inheritOnly = ($ace.AceFlags -band [Security.AccessControl.AceFlags]::InheritOnly) -ne 0
+            $inheritOnly = ([int]$ace.AceFlags -band [int][Security.AccessControl.AceFlags]::InheritOnly) -ne 0
             $principal = $ace.SecurityIdentifier.Value
             $mask = [uint64][BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$ace.AccessMask),0)
             # Keep these masks and trusted-owner rules identical to StageNative.Read.

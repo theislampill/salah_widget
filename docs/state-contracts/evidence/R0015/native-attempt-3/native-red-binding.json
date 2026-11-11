@@ -1,0 +1,38 @@
+{
+  "schema": "r0015-native3-correction-red-v1",
+  "head": "83e66a26c2966c1e225b6694b00d9e6a385440ad",
+  "sourceSha256": "7e6950359b6f28e165e02793e56cb1842db092403fd09abea9f0f9c595ba5114",
+  "run": 42999142185,
+  "originals": {
+    "ps51-install-volume-policy.stderr.txt": "bab991b453dead99606639a21909d724be60e1a4d4aa1279b9ebf349220ab0fa",
+    "ps51-first-call-observation.json": "d8dac6d2d61786307858b4166c516afb2130563a4ff98697b5d76ff4f5e2e672",
+    "install-entry-native.json": "a0fc965aad5251a32b06fc4a888fed8fa8ea7af3507566317a652920b2795188",
+    "ps7-install-powershell-transactions.json": "fd699f8f056a97407ab31b280515b8ff2b15865e24dd64804fc87fccd32adfc6",
+    "ps7-install-staging-windows.json": "3c23c64be9b31e5391c039f610bcf0e1d9df74e401b85f9899b4cdd42bf77add",
+    "ps7-transaction-mutations.json": "f180faec31ca143f92b881de9dc1fca43ce6bb8f4f06ffaacee36c7ebf8bd1d5"
+  },
+  "findings": [
+    {
+      "id": "PS51-AceFlags",
+      "actual": "Full -File normal and NoOpen throw InvalidCastException at actual Open-CompilerDirectoryLease AceFlags -band before compilation",
+      "correction": "Convert actual AceFlags and InheritOnly flag operands to int before the same bit comparison",
+      "nativeGreen": "pending"
+    },
+    {
+      "id": "fixture-native-temp",
+      "actual": "Older transaction/custody fixtures set TEMP only, retain inherited TMP; actual new compiler uses GetTempPath and refuses earlier parent",
+      "nativeGreen": "pending; retain parent precondition receipt and do not waive prior PS7 CreatePrivateFile failure"
+    }
+  ],
+  "references": [
+    {
+      "url": "https://raw.githubusercontent.com/microsoft/referencesource/main/mscorlib/system/security/accesscontrol/ace.cs",
+      "sha256": "b762e55e7819152fd79370f989e9f43eeb6e4d5ae7a2f9620145e37d6842982b",
+      "observation": "AceFlags underlying type byte in .NET Framework"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/desktop/api/fileapi/nf-fileapi-gettemppatha",
+      "observation": "TMP precedes TEMP in native temporary path lookup"
+    }
+  ]
+}

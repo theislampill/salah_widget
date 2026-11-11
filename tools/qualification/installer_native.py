@@ -118,6 +118,7 @@ def main():
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
     env = dict(os.environ)
+    env.update(POWERSHELL_TELEMETRY_OPTOUT="1", DOTNET_CLI_TELEMETRY_OPTOUT="1", POWERSHELL_UPDATECHECK="Off")
     report = {"schema": "installer-native-v1", "status": "INCOMPLETE",
               "phase": args.phase, "host": {"system": platform.system(),
               "platform": platform.platform(), "python": sys.version,
@@ -225,7 +226,7 @@ def main():
         hosts = [("ps51", str(Path(env["SYSTEMROOT"]) / "System32/WindowsPowerShell/v1.0/powershell.exe")),
                  ("ps7", env["INSTALL_TEST_PS7"])]
         for name, executable in hosts:
-            version = subprocess.check_output([executable, "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"], text=True).strip()
+            version = subprocess.check_output([executable, "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"], env=env, text=True).strip()
             report["host"][name] = {"executable": executable, "version": version}
             if (name == "ps51" and not version.startswith("5.1.")) or (name == "ps7" and version != "7.6.6"):
                 report["gate_error"] = "required PowerShell version unavailable"
