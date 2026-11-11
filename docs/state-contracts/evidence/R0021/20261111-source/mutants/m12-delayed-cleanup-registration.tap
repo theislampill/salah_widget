@@ -1,0 +1,537 @@
+TAP version 13
+# Subtest: ES21-03 healthy construction reaches pending/active with exactly one owned resource set
+ok 1 - ES21-03 healthy construction reaches pending/active with exactly one owned resource set
+  ---
+  duration_ms: 20.1285
+  type: 'test'
+  ...
+# Subtest: ES21-01 failed context leaves no candidate canvas; repeated failures still none; retry yields one
+ok 2 - ES21-01 failed context leaves no candidate canvas; repeated failures still none; retry yields one
+  ---
+  duration_ms: 33.3208
+  type: 'test'
+  ...
+# Subtest: ES21-02 failure at context releases exactly the candidate's resources and touches no unrelated DOM
+ok 3 - ES21-02 failure at context releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 25.903
+  type: 'test'
+  ...
+# Subtest: ES21-02 failure at badge releases exactly the candidate's resources and touches no unrelated DOM
+not ok 4 - ES21-02 failure at badge releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 19.5272
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:145:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    only the unrelated node remains
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          attrs: {},
+          className: 'real-sky-canvas',
+          dataset: {},
+    ...
+        },
+    +   {
+    +     attrs: {
+    +       'aria-hidden': 'true'
+    +     },
+    +     className: 'real-sky-canvas',
+    +     dataset: {},
+    +     getBoundingClientRect: [Function: getBoundingClientRect],
+    +     getContext: [Function (anonymous)],
+    +     height: 530,
+    +     parent: {
+    +       append: [Function: append],
+    +       classList: {
+    +         add: [Function: add],
+    +         contains: [Function: contains],
+    +         remove: [Function: remove]
+    +       },
+    +       className: 'c',
+    +       prepend: [Function: prepend],
+    +       style: {
+    +         removeProperty: [Function: removeProperty],
+    +         setProperty: [Function: setProperty]
+    +       }
+    +     },
+    +     remove: [Function: remove],
+    +     setAttribute: [Function: setAttribute],
+    +     style: {},
+    +     tag: 'canvas',
+    +     toDataURL: [Function (anonymous)],
+    +     width: 325
+    +   }
+      ]
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-02 failure at foreground releases exactly the candidate's resources and touches no unrelated DOM
+not ok 5 - ES21-02 failure at foreground releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 20.9678
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:145:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    only the unrelated node remains
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          attrs: {},
+          className: 'real-sky-canvas',
+          dataset: {},
+    ...
+        },
+    +   {
+    +     attrs: {
+    +       'aria-hidden': 'true'
+    +     },
+    +     className: 'real-sky-canvas',
+    +     dataset: {},
+    +     getBoundingClientRect: [Function: getBoundingClientRect],
+    +     getContext: [Function (anonymous)],
+    +     height: 530,
+    +     parent: {
+    +       append: [Function: append],
+    +       classList: {
+    +         add: [Function: add],
+    +         contains: [Function: contains],
+    +         remove: [Function: remove]
+    +       },
+    +       className: 'c',
+    +       prepend: [Function: prepend],
+    +       style: {
+    +         removeProperty: [Function: removeProperty],
+    +         setProperty: [Function: setProperty]
+    +       }
+    +     },
+    +     remove: [Function: remove],
+    +     setAttribute: [Function: setAttribute],
+    +     style: {},
+    +     tag: 'canvas',
+    +     toDataURL: [Function (anonymous)],
+    +     width: 325
+    +   }
+      ]
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-02 failure at worker releases exactly the candidate's resources and touches no unrelated DOM
+not ok 6 - ES21-02 failure at worker releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 31.6385
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:145:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    only the unrelated node remains
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          attrs: {},
+          className: 'real-sky-canvas',
+          dataset: {},
+    ...
+        },
+    +   {
+    +     attrs: {
+    +       'aria-hidden': 'true'
+    +     },
+    +     className: 'real-sky-canvas',
+    +     dataset: {
+    +       status: 'pending'
+    +     },
+    +     getBoundingClientRect: [Function: getBoundingClientRect],
+    +     getContext: [Function (anonymous)],
+    +     height: 530,
+    +     parent: {
+    +       append: [Function: append],
+    +       classList: {
+    +         add: [Function: add],
+    +         contains: [Function: contains],
+    +         remove: [Function: remove]
+    +       },
+    +       className: 'c',
+    +       prepend: [Function: prepend],
+    +       style: {
+    +         removeProperty: [Function: removeProperty],
+    +         setProperty: [Function: setProperty]
+    +       }
+    +     },
+    +     remove: [Function: remove],
+    +     setAttribute: [Function: setAttribute],
+    +     style: {
+    +       visibility: 'hidden'
+    +     },
+    +     tag: 'canvas',
+    +     toDataURL: [Function (anonymous)],
+    +     width: 325
+    +   }
+      ]
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-02 failure at interval releases exactly the candidate's resources and touches no unrelated DOM
+not ok 7 - ES21-02 failure at interval releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 20.4533
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:145:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    only the unrelated node remains
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          attrs: {},
+          className: 'real-sky-canvas',
+          dataset: {},
+    ...
+        },
+    +   {
+    +     attrs: {
+    +       'aria-hidden': 'true'
+    +     },
+    +     className: 'real-sky-canvas',
+    +     dataset: {},
+    +     getBoundingClientRect: [Function: getBoundingClientRect],
+    +     getContext: [Function (anonymous)],
+    +     height: 530,
+    +     parent: {
+    +       append: [Function: append],
+    +       classList: {
+    +         add: [Function: add],
+    +         contains: [Function: contains],
+    +         remove: [Function: remove]
+    +       },
+    +       className: 'c',
+    +       prepend: [Function: prepend],
+    +       style: {
+    +         removeProperty: [Function: removeProperty],
+    +         setProperty: [Function: setProperty]
+    +       }
+    +     },
+    +     remove: [Function: remove],
+    +     setAttribute: [Function: setAttribute],
+    +     style: {},
+    +     tag: 'canvas',
+    +     toDataURL: [Function (anonymous)],
+    +     width: 325
+    +   }
+      ]
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-02 failure at raf releases exactly the candidate's resources and touches no unrelated DOM
+not ok 8 - ES21-02 failure at raf releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 19.817
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:145:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    only the unrelated node remains
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          attrs: {},
+          className: 'real-sky-canvas',
+          dataset: {},
+    ...
+        },
+    +   {
+    +     attrs: {
+    +       'aria-hidden': 'true'
+    +     },
+    +     className: 'real-sky-canvas',
+    +     dataset: {},
+    +     getBoundingClientRect: [Function: getBoundingClientRect],
+    +     getContext: [Function (anonymous)],
+    +     height: 530,
+    +     parent: {
+    +       append: [Function: append],
+    +       classList: {
+    +         add: [Function: add],
+    +         contains: [Function: contains],
+    +         remove: [Function: remove]
+    +       },
+    +       className: 'c',
+    +       prepend: [Function: prepend],
+    +       style: {
+    +         removeProperty: [Function: removeProperty],
+    +         setProperty: [Function: setProperty]
+    +       }
+    +     },
+    +     remove: [Function: remove],
+    +     setAttribute: [Function: setAttribute],
+    +     style: {},
+    +     tag: 'canvas',
+    +     toDataURL: [Function (anonymous)],
+    +     width: 325
+    +   }
+      ]
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-02 failure at listener releases exactly the candidate's resources and touches no unrelated DOM
+not ok 9 - ES21-02 failure at listener releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 21.7613
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:145:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    only the unrelated node remains
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          attrs: {},
+          className: 'real-sky-canvas',
+          dataset: {},
+    ...
+        },
+    +   {
+    +     attrs: {
+    +       'aria-hidden': 'true'
+    +     },
+    +     className: 'real-sky-canvas',
+    +     dataset: {},
+    +     getBoundingClientRect: [Function: getBoundingClientRect],
+    +     getContext: [Function (anonymous)],
+    +     height: 530,
+    +     parent: {
+    +       append: [Function: append],
+    +       classList: {
+    +         add: [Function: add],
+    +         contains: [Function: contains],
+    +         remove: [Function: remove]
+    +       },
+    +       className: 'c',
+    +       prepend: [Function: prepend],
+    +       style: {
+    +         removeProperty: [Function: removeProperty],
+    +         setProperty: [Function: setProperty]
+    +       }
+    +     },
+    +     remove: [Function: remove],
+    +     setAttribute: [Function: setAttribute],
+    +     style: {},
+    +     tag: 'canvas',
+    +     toDataURL: [Function (anonymous)],
+    +     width: 325
+    +   }
+      ]
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-02 failure at registered releases exactly the candidate's resources and touches no unrelated DOM
+not ok 10 - ES21-02 failure at registered releases exactly the candidate's resources and touches no unrelated DOM
+  ---
+  duration_ms: 21.1044
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:145:2'
+  failureType: 'testCodeFailure'
+  error: |-
+    only the unrelated node remains
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        {
+          attrs: {},
+          className: 'real-sky-canvas',
+          dataset: {},
+    ...
+        },
+    +   {
+    +     attrs: {
+    +       'aria-hidden': 'true'
+    +     },
+    +     className: 'real-sky-canvas',
+    +     dataset: {},
+    +     getBoundingClientRect: [Function: getBoundingClientRect],
+    +     getContext: [Function (anonymous)],
+    +     height: 530,
+    +     parent: {
+    +       append: [Function: append],
+    +       classList: {
+    +         add: [Function: add],
+    +         contains: [Function: contains],
+    +         remove: [Function: remove]
+    +       },
+    +       className: 'c',
+    +       prepend: [Function: prepend],
+    +       style: {
+    +         removeProperty: [Function: removeProperty],
+    +         setProperty: [Function: setProperty]
+    +       }
+    +     },
+    +     remove: [Function: remove],
+    +     setAttribute: [Function: setAttribute],
+    +     style: {},
+    +     tag: 'canvas',
+    +     toDataURL: [Function (anonymous)],
+    +     width: 325
+    +   }
+      ]
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-07 dispose is idempotent and late callbacks of a disposed instance cannot republish
+ok 11 - ES21-07 dispose is idempotent and late callbacks of a disposed instance cannot republish
+  ---
+  duration_ms: 20.1094
+  type: 'test'
+  ...
+# Subtest: ES21-07 an exception during retirement still releases every owned resource and settles disposed
+ok 12 - ES21-07 an exception during retirement still releases every owned resource and settles disposed
+  ---
+  duration_ms: 14.3788
+  type: 'test'
+  ...
+# Subtest: ES21-04 retirement is instance-owned: a stale owner cannot affect its successor
+not ok 13 - ES21-04 retirement is instance-owned: a stale owner cannot affect its successor
+  ---
+  duration_ms: 33.8511
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:210:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (<worktree>/tests/real-sky/native-construction-ownership.test.mjs:223:10)
+    async Test.run (node:internal/test_runner/test:1125:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: ES21-08 declared policy: a failed replacement fully cleans the candidate after disposing the predecessor; preview remains
+not ok 14 - ES21-08 declared policy: a failed replacement fully cleans the candidate after disposing the predecessor; preview remains
+  ---
+  duration_ms: 21.3322
+  type: 'test'
+  location: '<worktree>\\tests\\real-sky\\native-construction-ownership.test.mjs:227:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (<worktree>/tests/real-sky/native-construction-ownership.test.mjs:234:10)
+    async Test.run (node:internal/test_runner/test:1125:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+  ...
+# Subtest: asset pagehide retires the refined owner without issuing a preview mask
+ok 15 - asset pagehide retires the refined owner without issuing a preview mask
+  ---
+  duration_ms: 20.979
+  type: 'test'
+  ...
+# Subtest: asset dispose retires the refined owner without issuing a preview mask
+ok 16 - asset dispose retires the refined owner without issuing a preview mask
+  ---
+  duration_ms: 15.0203
+  type: 'test'
+  ...
+# Subtest: pagehide cancels a pending stale preview mask without replacement or late publication
+ok 17 - pagehide cancels a pending stale preview mask without replacement or late publication
+  ---
+  duration_ms: 22.9661
+  type: 'test'
+  ...
+# Subtest: live invalidation still initiates its same-turn preview handoff regardless of diagnostic reason
+ok 18 - live invalidation still initiates its same-turn preview handoff regardless of diagnostic reason
+  ---
+  duration_ms: 20.0754
+  type: 'test'
+  ...
+# Subtest: active asset retry preserves its immediate preview handoff and usable successor
+ok 19 - active asset retry preserves its immediate preview handoff and usable successor
+  ---
+  duration_ms: 19.7961
+  type: 'test'
+  ...
+# Subtest: default direct disposal retains the same-turn handoff before any successor exists
+ok 20 - default direct disposal retains the same-turn handoff before any successor exists
+  ---
+  duration_ms: 21.7041
+  type: 'test'
+  ...
+# Subtest: direct refined replacement preserves the default live handoff
+ok 21 - direct refined replacement preserves the default live handoff
+  ---
+  duration_ms: 20.3732
+  type: 'test'
+  ...
+# Subtest: preview construction failure at preview-context leaves no orphan canvas or partial owner; retry yields one
+ok 22 - preview construction failure at preview-context leaves no orphan canvas or partial owner; retry yields one
+  ---
+  duration_ms: 8.9866
+  type: 'test'
+  ...
+# Subtest: preview construction failure at preview-foreground leaves no orphan canvas or partial owner; retry yields one
+ok 23 - preview construction failure at preview-foreground leaves no orphan canvas or partial owner; retry yields one
+  ---
+  duration_ms: 8.3047
+  type: 'test'
+  ...
+# Subtest: preview construction failure at raf leaves no orphan canvas or partial owner; retry yields one
+ok 24 - preview construction failure at raf leaves no orphan canvas or partial owner; retry yields one
+  ---
+  duration_ms: 13.8721
+  type: 'test'
+  ...
+# Subtest: preview construction failure at preview-update leaves no orphan canvas or partial owner; retry yields one
+ok 25 - preview construction failure at preview-update leaves no orphan canvas or partial owner; retry yields one
+  ---
+  duration_ms: 8.1243
+  type: 'test'
+  ...
+# Subtest: a healthy preview construction is unchanged: one canvas, registered, ready
+ok 26 - a healthy preview construction is unchanged: one canvas, registered, ready
+  ---
+  duration_ms: 8.8562
+  type: 'test'
+  ...
+# Subtest: source-slice anchors used by sibling harnesses remain present and unique
+ok 27 - source-slice anchors used by sibling harnesses remain present and unique
+  ---
+  duration_ms: 0.6102
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 18
+# fail 9
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 625.7413

@@ -180,7 +180,9 @@ test('ES21-07 dispose is idempotent and late callbacks of a disposed instance ca
   assert.doesNotThrow(()=>sky.dispose());
   assert.deepEqual(h.counts,after,'a second dispose releases nothing further');
   // Late callbacks captured before disposal.
+  const scheduled=[h.rafs.size,h.intervals.size];
   animate(1e6);poll();sky.compose();sky.request(true);sky.invalidate('late');await flush();
+  assert.deepEqual([h.rafs.size,h.intervals.size],scheduled,'a late frame cannot reschedule a retired loop');
   for(const worker of h.workers)worker.onmessage?.({data:{kind:'result',id:1,result:{status:'ready'}}});await flush();
   assert.equal(h.styleSets.length,styles,'no CSS mutation');assert.equal([...h.classes].sort().join(),classes,'no class mutation');
   assert.equal(h.refinedDraws,draws);assert.equal(h.issued.length,issued,'no publication');
