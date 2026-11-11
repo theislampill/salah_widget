@@ -19,8 +19,10 @@ REPOSITORY = 'theislampill/salah_widget'
 BRANCH = 'pro/r000b-explicit-weather-withdrawal-20261106'
 # Reconciliation with preceding accepted owners requires an explicit reviewed
 # update to both these pins and the manifest, never automatic moving-main reuse.
-BASELINE_COMMIT = 'eebba178172f96b3ffe5ab3845bc0fffd57c6e1b'
-BASELINE_TREE = '6b94a3933f9d1381b1c2ceaab287c93afb215ecb'
+# 2026-11-10: rebound from engineering base eebba178 (tree 6b94a393) to accepted
+# main dbf3370f (R0017 + R0007) after the reconciliation merge d5ede8b9.
+BASELINE_COMMIT = 'dbf3370f39d569936ae74ad795638525b53ccd98'
+BASELINE_TREE = 'a29866be1f9f05e7c11e6cd51570d888bdcc0e80'
 MANIFEST = 'docs/state-contracts/r000b-generated-manifest.json'
 GENERATED = {'index.html', 'offline.html', 'real-sky/native-sky.js', 'moon/BUILD.json'}
 AUTHORED = {'src/native/index.html', 'real-sky/native-host-hooks.js',
@@ -65,6 +67,11 @@ def allowed_change(rel):
             'tests/real-sky/native-head-handoff.cjs',
             'tests/r0025-context.cjs', 'tests/r0025-continuity.cjs',
             'tests/r0025-lifecycle.cjs',
+            # Reconciliation with accepted main: shared VM harnesses that load
+            # R000B's cloud-withdrawal owners, and the transport control's
+            # explicit source-identity rebind.
+            'tests/r0008-clock-harness.cjs', 'tests/r0011-fixture.cjs',
+            'tests/r0017-transport.cjs',
             'tests/real-sky/native-host-composition.test.mjs',
             'tests/real-sky/native-preview-host.test.mjs',
             'tests/real-sky/native-weather-withdrawal.test.mjs',
