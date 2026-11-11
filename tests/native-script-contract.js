@@ -25,9 +25,11 @@
   // be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7 (R000B),
   // moon-initial 837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14
   // (f71fef6c review). moon-refinement is unchanged.
+  // R0021 second rebind at de68e848: moon-initial 5f1d42df4e3d962a9c0b82d30db77db3291ba0083de4489516dc76050e2aafe5
+  // (dcc8206b) -> 4dc7140f (Moon detail acquired at the registration boundary with unwind).
   const SPLIT_PINS=Object.freeze({
     'first-paint':'a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819',
-    'moon-initial':'5f1d42df4e3d962a9c0b82d30db77db3291ba0083de4489516dc76050e2aafe5',
+    'moon-initial':'4dc7140f763417d0d8928e02f96cb010eec31f5363fb234f656785d7bfaae90b',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });
   // Complete older or authored documents need an independent identity, not

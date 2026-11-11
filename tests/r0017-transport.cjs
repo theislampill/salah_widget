@@ -38,7 +38,11 @@ const legacySource=legacyHostCount===0
 const sourceProfiles={actual:{scriptCount:actualScripts.length,firstPaint:!!firstPaint,legacyHostCount},
   legacyMoon:{input:legacyHostCount===0?"source-derived structural fixture":"actual source",
     sourceSha256:crypto.createHash("sha256").update(legacySource).digest("hex"),runtimeQualified:false,
-    parentCommit:'dcc8206b0e466fefc4827872e7d784b99ff56c63',parentSha256:'c6e0e2e089d53a00626c3014f1db040162af8849a35973d8b453b1c19b00a2ff',
+    // Rebind history (owner decision 10.7, retained and attributed): R000D ba0851ae28520c0b402dcbd876e3135f502500df,
+    // parent e41ba4341cb22741f97719dc08bccfad895f8fe5f11bc67288ad70663913f1f5, structural 7a83847286468bd9f2443e36b2709ba555e89bf79a9523d8e19b28eb6a2b7a9d;
+    // R0021 dcc8206b0e466fefc4827872e7d784b99ff56c63, parent c6e0e2e089d53a00626c3014f1db040162af8849a35973d8b453b1c19b00a2ff, structural 20d1a5b0 (unchanged at de68e848:
+    // the transform removes the Moon initial tag, the only bytes de68e848 changed).
+    parentCommit:'de68e8486959cc58fcc284f4cbe28201349a278f',parentSha256:'70b8ca1f4c340603b5b685ab7515fc77d5fb03083a8107f0391418654515297a',
     transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.'}};
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
