@@ -53,6 +53,11 @@ Cells (acceptance cells decide the run's overall `pass`; diagnostic cells are re
                      its deferred first frame, throws during construction) on a fresh page: registry and detail slots
                      clear, no Moon listener/interval left, the sky and prayer UI still work; then a fresh wrapper
                      install (moon/moon-host.js) succeeds
+ retirement-cover-change  acceptance oracle for a changed-mask retirement (id kept stable for committed evidence; the
+                     name overstates the cover change): precondition = the MEASURED difference between the preview's last
+                     decoded mask and the composed data-URL mask at navigation. In the committed runs that difference
+                     arose before the switched weather was served. Counting/pass rule as retirement-bfcache. It does not
+                     itself enforce --reduced-motion; the report records options.reducedMotion and reducedMotionRequired.
  moon-asset-failure  a REALISTIC Moon failure: in a fresh context the fixture server answers 404 for the Moon worker's
                      terrain/colour assets on a clear night. The runtime stays registered (not half-built: one listener,
                      one poll interval, no live Moon worker), the calendar/fallback Moon stays visible (moon-ready,
@@ -529,6 +534,10 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             # the control's retirement handoff creates a new Image; native-composition.mjs reuses displayed/decoded
             # masks). The in-page weather stub starts broken (code 2, cover 30); after the refined sky composes it switches
             # to overcast (code 3, cover 100); the cell navigates as soon as the difference is observed.
+            # Caveat (2026-11-11 review): the id is kept stable for committed evidence, but in the committed runs the
+            # difference arose before the switched weather was served (wxServed stayed 1); the refined composition
+            # overtook the preview's last decode. The precondition is that MEASURED difference, not the cover change.
+            # The cell does not itself enforce --reduced-motion (the evidence runs pass it; the report records it).
             probe = "()=>({composed:document.querySelector('.c').classList.contains('real-sky-composed'),mask:getComputedStyle(document.querySelector('.c')).getPropertyValue('--native-sun-cloud-mask').trim(),decoded:window.__r0021.decodedMask.preview,wx:window.__r0021.wxServed||0})"
 
             def precheck(pg):
@@ -551,6 +560,9 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             retirement_bfcache('retirement-cover-change', 'cover', scripts=["window.__r0021_wx={code:2,cover:30};"], precheck=precheck, rule='decoded-differs')
             cells['retirement-cover-change']['coverSamples'] = cover_samples[-60:]
             cells['retirement-cover-change']['coverWaitMs'] = cover_wait
+            cells['retirement-cover-change']['preconditionNote'] = "precondition is the MEASURED difference between the preview's last decoded mask and the composed mask; in the committed runs (b16-b18) it arose before the switched weather was served (wxServed stayed 1): the refined composition overtook the preview's last decode, so the cover change is not what produced it"
+            cells['retirement-cover-change']['reducedMotionRequired'] = 'not enforced by the cell; the reduced-motion evidence runs pass --reduced-motion'
+            cells['retirement-cover-change']['reducedMotion'] = reduced_motion
 
         def construction():
             booted = wait(page, BOOTED, 60000)
