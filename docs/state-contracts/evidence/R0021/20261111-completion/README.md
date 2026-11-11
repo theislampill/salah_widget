@@ -31,4 +31,29 @@ Unless noted, every run used `--in-page-prayer --fragment
 | `c1-chromium`, `c2-firefox` | — | `--compare-presentation` candidate b1/b4 vs control b1/b4 | pass (identical / within repeat noise) |
 | `c3-chromium-candidate-repeat`, `c4-firefox-candidate-repeat` | — | candidate b1/b4 vs b6 | pass (repeat-noise baseline) |
 
-Interpretation: `docs/state-contracts/R0021.md`, "Completion ledger 2026-11-11", sections D and E.
+## Review follow-up runs
+
+Driver `9a070e65` was used for the b8 runs. `d6af6493` fixed two driver defects found in b8 and was used for every
+later run:
+
+- **b8-control `moon-asset-failure`:** it failed only because the pre-R0021 runtime has no `disposed` field.
+- **b8-candidate rAF split:** the record read `null` instead of 0.
+
+| Dir | Options | Result |
+|---|---|---|
+| `b8-{candidate,control}-chromium` | all cells, including `moon-asset-failure` and the clear-sky presentation scenes | candidate pass; control fail (its `moon-asset-failure` FAIL is the field defect above) |
+| `b9-{candidate,control}-firefox` | all cells | candidate pass; control fail; `moon-asset-failure` PASS on both trees |
+| `b10a`, `b10b-{candidate,control}-chromium-headed-bfcache` | `--headed --enable-bfcache --cells retirement-bfcache` | real bfcache restore (`persisted:true`); candidate PASS, control FAIL (1 retirement image) |
+| `b11-{candidate,control}-firefox-headed` | `--headed --cells retirement-bfcache` | `persisted:false`; candidate PASS; control precondition-not-met |
+| `b12-{candidate,control}-chromium` | `--cells retirement-bfcache,moon-asset-failure` | rAF split re-run: candidate PASS/PASS; control FAIL (CSP-blocked retirement image) / PASS |
+| `n2-mutant-skip-dispose-census-chromium` | `--root` scratch mutant (asset reset skips predecessor disposal), `--cells first-boot,census` | census FAIL (peak 4 refined canvases and workers): the positive control works |
+| `b13-{candidate,control}-chromium-reduce-realclock` | `--reduced-motion`, no `timeScale` | precondition-not-met on both |
+| `b14-{candidate,control}-chromium-reduce-published` | `--reduced-motion --precondition published` | PASS on both: 0 retiring images, non-discriminating |
+| `b15-{candidate,control}-firefox-reduce-published` | same, Firefox | PASS on both: non-discriminating |
+| `c5-chromium`, `c6-firefox` | `--compare-presentation`, b8 / b9 candidate vs control | pass (6 scenes) |
+
+Redaction: five run logs (b8 and b12 of both trees, plus b13-candidate) contain harmless `ConnectionAbortedError`
+tracebacks from the fixture HTTP server. Two prefixes in those tracebacks were replaced: the local Python installation prefix with `<python>`,
+and the repository checkout path with `<repo>`. Nothing else in any log was changed.
+
+Interpretation: `docs/state-contracts/R0021.md`, "Completion ledger 2026-11-11", sections D, E and F.

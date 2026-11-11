@@ -1,0 +1,24 @@
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 58745)
+Traceback (most recent call last):
+  File "<python>\Lib\socketserver.py", line 691, in process_request_thread
+    self.finish_request(request, client_address)
+  File "<python>\Lib\socketserver.py", line 361, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "<python>\Lib\http\server.py", line 671, in __init__
+    super().__init__(*args, **kwargs)
+  File "<python>\Lib\socketserver.py", line 755, in __init__
+    self.handle()
+  File "<python>\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "<python>\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "<repo>\tools\qa\run_r0021_native.py", line 271, in do_GET
+    self.send_error(404, 'R0021 driver: asset withheld')
+  File "<python>\Lib\http\server.py", line 491, in send_error
+    self.wfile.write(body)
+  File "<python>\Lib\socketserver.py", line 834, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] An established connection was aborted by the software in your host machine
+----------------------------------------
+{"engine": "chromium", "version": "148.0.7778.96", "pass": true, "complete": true, "cells": {"first-boot": true, "live-handoff": true, "retirement-synthetic": false, "construction": true, "census": true, "cycles": true, "moon-replay": true, "recovery-visual": true, "night": true, "retirement-bfcache": true, "navigation": true, "moon-construction": true, "moon-asset-failure": true, "presentation": true}, "diagnostic": {"retirement-synthetic": false, "presentation": true}, "crashes": []}
