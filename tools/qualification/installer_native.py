@@ -75,7 +75,7 @@ def main():
     report = {"schema": "installer-native-v1", "status": "INCOMPLETE",
               "phase": args.phase, "host": {"system": platform.system(),
               "platform": platform.platform(), "python": sys.version,
-              "image_version": env.get("ImageVersion")}, "commands": []}
+              "image_version": env.get("ImageVersion", env.get("IMAGEVERSION"))}, "commands": []}
     report["commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     report["tree"] = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], cwd=root, text=True).strip()
     report["source_hashes"] = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -168,7 +168,7 @@ def main():
         if args.phase == "r0016":
             run("install-preview", [sys.executable, str(root / "tests/install-preview.py"), str(root / "install.sh")])
     else:
-        hosts = [("ps51", str(Path(env["SystemRoot"]) / "System32/WindowsPowerShell/v1.0/powershell.exe")),
+        hosts = [("ps51", str(Path(env["SYSTEMROOT"]) / "System32/WindowsPowerShell/v1.0/powershell.exe")),
                  ("ps7", env["INSTALL_TEST_PS7"])]
         for name, executable in hosts:
             version = subprocess.check_output([executable, "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"], text=True).strip()

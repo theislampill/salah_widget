@@ -30,7 +30,7 @@ jobs:
         include:
           - runner: ubuntu-24.04
             native: Linux
-          - runner: macos-14
+          - runner: macos-15
             native: Darwin
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
@@ -59,12 +59,17 @@ jobs:
             *) exit 2 ;;
           esac
           python3 tools/qualification/installer_native.py --expected-os '${{ matrix.native }}' --phase "$phase" --output "$RUNNER_TEMP/installer-evidence"
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: bash
+        run: |
+          python3 -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
       - name: Retain original native evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: installer-${{ matrix.native }}-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/installer-evidence/
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
           if-no-files-found: error
           retention-days: 30
   windows:
@@ -107,11 +112,17 @@ jobs:
           }
           python tools/qualification/installer_native.py --expected-os Windows --phase $phase --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
           exit $LASTEXITCODE
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: powershell
+        run: |
+          python -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+          exit $LASTEXITCODE
       - name: Retain original native evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/installer-evidence/
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
           if-no-files-found: error
           retention-days: 30
