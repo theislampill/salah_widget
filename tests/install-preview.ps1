@@ -1,9 +1,10 @@
 #requires -Version 5.1
 param(
     [Parameter(Mandatory=$true)][string]$SourceFile,
-    [ValidateSet('Helpers','Wrapper','Mutants','All')][string]$Suite='All',
+    [ValidateSet('Controls','Helpers','Wrapper','Mutants','All')][string]$Suite='All',
     [string]$OutputRoot=$(if($env:RUNNER_TEMP){$env:RUNNER_TEMP}else{[IO.Path]::GetTempPath()}),
-    [string]$FixtureLibrary=(Join-Path $PSScriptRoot 'install-preview-acquire-timed.ps1')
+    [string]$FixtureLibrary=(Join-Path $PSScriptRoot 'install-preview-acquire-timed.ps1'),
+    [string]$WindowLibrary=(Join-Path $PSScriptRoot 'install-preview-window.ps1')
 )
 # Actual helper/wrapper supplement. Fresh native installer -File and normal
 # controls remain separate receipts from the maintained native entry harness.
@@ -28,27 +29,15 @@ foreach($definition in $libraryAst.EndBlock.Statements){
 foreach($name in $allowedFixtureFunctions){if(-not (Get-Command $name -CommandType Function -ErrorAction SilentlyContinue)){throw ('BOOTSTRAP_BLOCKED: missing fixture function '+$name)}}
 $TestHashAtStart=Hash-File $PSCommandPath
 $LibraryHashAtStart=Hash-File $FixtureLibrary
-# This supplement extends, but does not mutate, the frozen acquisition library.
-# DACL/owner/group changes and last-write timestamps belong to filesystem state.
-function Snapshot-Subject([string]$Path){
-    $rows=New-Object 'System.Collections.Generic.List[object]'
-    foreach($item in @(Get-Item -LiteralPath $Path -Force)+@(Get-ChildItem -LiteralPath $Path -Force -Recurse|Sort-Object FullName)){
-        $link=($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0
-        $sddl=$null
-        if($NativeWindows){
-            $security=Get-Acl -LiteralPath $item.FullName
-            $sections=[Security.AccessControl.AccessControlSections]::Owner -bor [Security.AccessControl.AccessControlSections]::Group -bor [Security.AccessControl.AccessControlSections]::Access
-            $sddl=$security.GetSecurityDescriptorSddlForm($sections)
-        }
-        $rows.Add([pscustomobject]@{
-            path=$item.FullName.Substring($Path.Length).Replace('\','/');attributes=[string]$item.Attributes
-            hash=if(-not $item.PSIsContainer -and -not $link){Hash-File $item.FullName}else{$null}
-            lastWriteUtc=$item.LastWriteTimeUtc.Ticks;sddl=$sddl
-            linkTarget=if($link){[string]$item.Target}else{$null}
-        })
-    }
-    return $rows.ToArray()
-}
+# Keep the frozen acquisition invoker for its original guard controls. The new
+# versioned support measures a complete guarded invocation in the same live PID.
+. $WindowLibrary
+$WindowLibraryHashAtStart=(Get-PreviewFileFact $WindowLibrary).sha256
+$FrozenWindowLibrary=Join-Path $FixtureRoot 'preview-window-support.ps1'
+[IO.File]::WriteAllBytes($FrozenWindowLibrary,[IO.File]::ReadAllBytes($WindowLibrary))
+$BaselineInvocation=Join-Path $FixtureRoot 'source-free-nested-invocation.ps1'
+Write-FixtureText $BaselineInvocation 'param([object]$Value) $null = $Value'
+$BaselineInvocationHash=Hash-File $BaselineInvocation
 $SourceFile=[IO.Path]::GetFullPath($SourceFile)
 $SourceBytes=[IO.File]::ReadAllBytes($SourceFile)
 $SourceHash=Hash-File $SourceFile
@@ -79,6 +68,7 @@ $DriverText=@'
 $ErrorActionPreference='Stop'
 [Console]::OutputEncoding=New-Object Text.UTF8Encoding $false
 $spec=[IO.File]::ReadAllText($env:R0016_PREVIEW_SPEC)|ConvertFrom-Json
+. $spec.windowSupport
 $global:R0016EventFile=$spec.events
 $global:R0016Effects=New-Object 'System.Collections.Generic.List[object]'
 $global:R0016Breakpoints=New-Object 'System.Collections.Generic.List[object]'
@@ -157,6 +147,7 @@ function Add-SourceBreakpoints([string]$File,[string[]]$GuardedHelpers){
 $guardEstablished=$false;$preparationError=$null;$returned=New-Object 'System.Collections.Generic.List[object]'
 $reason=$null;$reasonStack=$null;$entryExit=0;$nullReturnCount=0;$beforeContext=$null;$afterContext=$null;$typeBefore=$false;$typeAfter=$false
 $beforeCompilerContext=$null;$afterCompilerContext=$null;$compilerTypeBefore=$false;$compilerTypeAfter=$false;$compilerReferenceUnchanged=$false
+$sourceCompletion='not-invoked';$sourceExitCode=$null;$sourceException=$null
 try {
     # Denial is proved in a separate child before product cases. Debugger Stop
     # ends the whole pipeline; it cannot resume an inline preparation probe.
@@ -172,10 +163,6 @@ try {
     }
     [IO.File]::WriteAllText($spec.readiness,$spec.nonce)
     $guardEstablished=$true
-    if($spec.mode -eq 'baseline'){
-        [IO.File]::WriteAllText($spec.result,'{"baseline":true,"installerExecuted":false}')
-        exit 0
-    }
     if($spec.mode -eq 'control'){
         & $spec.controlMethod
         [IO.File]::WriteAllText($spec.result,'{"controlReturned":true}')
@@ -227,18 +214,39 @@ try {
     $typeBefore=$null -ne ('SalahInstaller.StageNative' -as [type])
     $beforeCompilerContext=$script:CompilerScratch|ConvertTo-Json -Depth 9 -Compress
     $compilerTypeBefore=$null -ne ('SalahInstaller.CompilerNative' -as [type])
-    if($spec.mode -eq 'helper'){
-        try { & ([scriptblock]::Create($spec.call)) | ForEach-Object {if($null -ne $_){[void]$returned.Add($_)}else{$nullReturnCount++}} }
-        catch { $reason=$_.Exception.Message;$reasonStack=$_.ScriptStackTrace }
-    } else {
-        $env:ProgramFiles=$env:R0016_FIXTURE_PF
-        [Environment]::SetEnvironmentVariable('ProgramFiles(x86)',$env:R0016_FIXTURE_PF86,'Process')
-        $parameters=@{DryRun=$true;PresetUrl=$spec.presetUrl;WidgetHash=$WidgetHash}
-        if(-not $spec.omitInstallSource){$parameters.InstallSource=$spec.route}
-        if($spec.noOpen){$parameters.NoOpen=$true}
-        $global:LASTEXITCODE=0
-        try{& $spec.source @parameters | ForEach-Object {if($null -ne $_){[void]$returned.Add($_)}else{$nullReturnCount++}};$entryExit=$LASTEXITCODE}
-        catch{$entryExit=1;$reason=$_.Exception.Message;$reasonStack=$_.ScriptStackTrace}
+    # Parse fixture invocation syntax and bind fixture environment before the
+    # parent holds the exact pre-source boundary. No helper has run yet.
+    $preparedCall=[scriptblock]::Create($spec.call)
+    $env:ProgramFiles=$env:R0016_FIXTURE_PF
+    [Environment]::SetEnvironmentVariable('ProgramFiles(x86)',$env:R0016_FIXTURE_PF86,'Process')
+    $parameters=@{DryRun=$true;PresetUrl=$spec.presetUrl;WidgetHash=$WidgetHash}
+    if(-not $spec.omitInstallSource){$parameters.InstallSource=$spec.route}
+    if($spec.noOpen){$parameters.NoOpen=$true}
+    $global:LASTEXITCODE=$null
+    Wait-PreviewInvocationGate $spec 'before'
+    try {
+        if($spec.mode -eq 'baseline'){
+            # Exercise an actual nested script-file invocation; no installer is evaluated.
+            & $spec.baselineInvocation
+        } elseif($spec.mode -eq 'helper'){
+            try { & $preparedCall | ForEach-Object {if($null -ne $_){[void]$returned.Add($_)}else{$nullReturnCount++}};$sourceCompletion='helper-return' }
+            catch { $reason=$_.Exception.Message;$reasonStack=$_.ScriptStackTrace;$sourceException=$reason;$sourceCompletion='helper-throw' }
+        } else {
+            try{
+                & $spec.source @parameters | ForEach-Object {if($null -ne $_){[void]$returned.Add($_)}else{$nullReturnCount++}}
+                if($null -eq $LASTEXITCODE){$entryExit=0;$sourceCompletion='fallthrough'}
+                else{$entryExit=[int]$LASTEXITCODE;$sourceExitCode=$entryExit;$sourceCompletion='exit-code-observed'}
+            }
+            catch{$entryExit=1;$reason=$_.Exception.Message;$reasonStack=$_.ScriptStackTrace;$sourceException=$reason;$sourceCompletion='terminating-exception'}
+        }
+    } finally {
+        # Complete source finally/cleanup execution precedes this held snapshot.
+        # Denial remains installed until the parent acknowledges the snapshot.
+        Wait-PreviewInvocationGate $spec 'after'
+    }
+    if($spec.mode -eq 'baseline'){
+        Write-PreviewJson $spec.result ([pscustomobject]@{baseline=$true;installerExecuted=$false;invocation=(Get-PreviewFileFact $spec.baselineInvocation)})
+        exit 0
     }
     $typeAfter=$null -ne ('SalahInstaller.StageNative' -as [type])
     $afterContext=$script:StagingAttempt|ConvertTo-Json -Depth 9 -Compress
@@ -246,7 +254,9 @@ try {
     $afterCompilerContext=$script:CompilerScratch|ConvertTo-Json -Depth 9 -Compress
     $compilerReferenceUnchanged=[object]::ReferenceEquals($CompilerContext,$script:CompilerScratch)
 } catch {
-    if(-not $guardEstablished){$preparationError=$_.Exception.Message}else{$reason=$_.Exception.Message;$entryExit=1}
+    # Source exceptions are handled inside the measured invocation above.
+    # Errors reaching this catch belong to preparation or boundary observation.
+    $preparationError=$_.Exception.Message;$entryExit=1
 } finally {
     foreach($bp in $global:R0016Breakpoints){Remove-PSBreakpoint -Breakpoint $bp}
     [Management.Automation.Runspaces.Runspace]::DefaultRunspace.Debugger.remove_DebuggerStop($stopHandler)
@@ -254,6 +264,7 @@ try {
 $events=@(if([IO.File]::Exists($spec.events)){[IO.File]::ReadAllLines($spec.events)|Where-Object{$_}|ForEach-Object{$_|ConvertFrom-Json}})
 $result=[pscustomobject]@{
     guardEstablished=$guardEstablished;preparationError=$preparationError
+    sourceCompletion=$sourceCompletion;sourceExitCode=$sourceExitCode;sourceException=$sourceException
     sourceSha256=$spec.sourceSha256;source=$spec.source;scope=$spec.mode
     methodInventory=$inventory;events=$events;returned=$returned.ToArray();returnCount=$returned.Count
     reason=$reason;reasonStack=$reasonStack;entryExit=$entryExit;nullReturnCount=$nullReturnCount;messages=$global:R0016Messages.ToArray()
@@ -301,11 +312,14 @@ function New-PreviewCase([string]$Name,[string]$Mode,[string]$Population='known'
         }
     }
     $spec=[ordered]@{
-        caseName=$Name;mode=$Mode;source=$FrozenSource;sourceSha256=$SourceHash;functions=$SourceFunctions;effectHelpers=$EffectHelpers
+        caseName=$Name;mode=$Mode;subject=$context.subject;source=$FrozenSource;sourceSha256=$SourceHash;functions=$SourceFunctions;effectHelpers=$EffectHelpers
+        windowSchema='r0016-held-invocation-window.v1';windowSupport=$FrozenWindowLibrary;baselineInvocation=$BaselineInvocation
         events=(Join-Path $context.hostControl 'source-events.jsonl')
         bootstrapEvents=(Join-Path $context.hostControl 'bootstrap-events.jsonl')
         controlMethod=(Join-Path $context.hostControl 'method-control.ps1')
         readiness=(Join-Path $context.hostControl 'preview-ready');nonce=[guid]::NewGuid().ToString('N')
+        beforeSignal=(Join-Path $context.hostControl 'before-signal');beforeAck=(Join-Path $context.hostControl 'before-ack')
+        afterSignal=(Join-Path $context.hostControl 'after-signal');afterAck=(Join-Path $context.hostControl 'after-ack')
         result=(Join-Path $context.hostControl 'child-result.json')
         work=$work;retained=$retained;download=$download;presets=$presets;unpacked=$unpacked;cached=$cached;preset=$preset;profile=$fixtureProfile;compiler=$compiler
         call='';route='github';presetUrl='https://fixture.invalid/preset';omitInstallSource=$false;noOpen=$false;expectedSource=''
@@ -318,27 +332,36 @@ function Run-PreviewCase($Case,[string]$Contract,[bool]$ExpectedFailure=$false){
     # Same host/preparation against the same subject, without evaluating product
     # source, makes independent startup changes visible before the product run.
     $mode=$Case.spec.mode
-    $Case.spec.mode='baseline'
-    Write-FixtureText $Case.context.values.R0016_PREVIEW_SPEC ($Case.spec|ConvertTo-Json -Depth 10)
-    $baseline=Invoke-AcquisitionChild $Case.context $Driver 'host-baseline'
-    $Case.spec.mode=$mode
-    $evidencePaths=[pscustomobject]@{readiness=$Case.spec.readiness;result=$Case.spec.result;events=$Case.spec.events}
+    $baselineSpec=[ordered]@{};foreach($key in $Case.spec.Keys){$baselineSpec[$key]=$Case.spec[$key]}
+    $baselineRoot=Join-Path $Case.context.hostControl 'host-baseline'
+    [void][IO.Directory]::CreateDirectory($baselineRoot)
+    $baselineSpec.mode='baseline';$baselineSpec.nonce=[guid]::NewGuid().ToString('N')
+    foreach($field in @('readiness','result','events','beforeSignal','beforeAck','afterSignal','afterAck')){$baselineSpec[$field]=Join-Path $baselineRoot $field}
+    $actualSpecPath=$Case.context.values.R0016_PREVIEW_SPEC
+    $Case.context.values.R0016_PREVIEW_SPEC=Join-Path $baselineRoot 'case.json'
+    Write-FixtureText $Case.context.values.R0016_PREVIEW_SPEC ($baselineSpec|ConvertTo-Json -Depth 10)
+    try{$baseline=Invoke-PreviewWindowChild $Case.context $Driver 'host-baseline' $baselineSpec}
+    finally{$Case.context.values.R0016_PREVIEW_SPEC=$actualSpecPath}
+    $evidencePaths=[pscustomobject]@{spec=$actualSpecPath;readiness=$Case.spec.readiness;result=$Case.spec.result;events=$Case.spec.events;baselineSpec=(Join-Path $baselineRoot 'case.json')}
     try {
-        $baselineReady=[IO.File]::Exists($Case.spec.readiness) -and [IO.File]::ReadAllText($Case.spec.readiness) -ceq $Case.spec.nonce
+        $baselineReady=[IO.File]::Exists($baselineSpec.readiness) -and [IO.File]::ReadAllText($baselineSpec.readiness) -ceq $baselineSpec.nonce
         if($baseline.preparation -cne 'COMPLETED' -or $baseline.timedOut -or $baseline.killGraceExpired -or
            -not $baseline.stdoutDrainCompleted -or -not $baseline.stderrDrainCompleted -or
-           $null -eq $baseline.exit -or $baseline.exit -ne 0 -or -not $baselineReady -or -not [IO.File]::Exists($Case.spec.result)){
+           $null -eq $baseline.exit -or $baseline.exit -ne 0 -or -not $baselineReady -or -not [IO.File]::Exists($baselineSpec.result) -or
+           -not $baseline.invocationWindow.completed -or -not $baseline.invocationUnchanged){
             throw 'Independent host baseline did not complete'
         }
-        $baselineResult=[IO.File]::ReadAllText($Case.spec.result)|ConvertFrom-Json
+        $baselineResult=[IO.File]::ReadAllText($baselineSpec.result)|ConvertFrom-Json
         if($baselineResult.baseline -isnot [bool] -or -not $baselineResult.baseline -or
-           $baselineResult.installerExecuted -isnot [bool] -or $baselineResult.installerExecuted){throw 'Baseline evidence does not prove an unevaluated installer'}
+           $baselineResult.installerExecuted -isnot [bool] -or $baselineResult.installerExecuted -or
+           $baselineResult.invocation.path -cne $baselineSpec.baselineInvocation -or
+           $baselineResult.invocation.sha256 -cne (Hash-File $baselineSpec.baselineInvocation)){throw 'Baseline evidence does not prove the separate source-free invocation'}
     } catch {
         return [pscustomobject]@{case=$Case.spec.caseName;pass=$false;classification='BOOTSTRAP_BLOCKED';error=('Independent baseline evidence: '+$_.Exception.Message);scope=$mode;baseline=$baseline;evidencePaths=$evidencePaths}
     }
-    foreach($controlPath in @($Case.spec.readiness,$Case.spec.result,$Case.spec.events)){if([IO.File]::Exists($controlPath)){[IO.File]::Delete($controlPath)}}
+    # Baseline records have distinct paths and nonce; preserve them unchanged.
     Write-FixtureText $Case.context.values.R0016_PREVIEW_SPEC ($Case.spec|ConvertTo-Json -Depth 10)
-    $run=Invoke-AcquisitionChild $Case.context $Driver 'preview'
+    $run=Invoke-PreviewWindowChild $Case.context $Driver 'preview' $Case.spec
     $classification='PASS';$caseError=$null;$value=$null;$attempts=@()
     try {
         # Raw sidecars remain retained by path even when capture is incomplete.
@@ -353,12 +376,13 @@ function Run-PreviewCase($Case,[string]$Contract,[bool]$ExpectedFailure=$false){
             $attempts=@(if([IO.File]::Exists($Case.spec.events)){[IO.File]::ReadAllLines($Case.spec.events)|Where-Object{$_}|ForEach-Object{$_|ConvertFrom-Json}})
             foreach($attempt in $attempts){if($attempt.kind -isnot [string] -or $attempt.detail -isnot [string]){throw 'malformed source-event shape'}}
         } catch {throw ('BOOTSTRAP: unreadable or malformed source evidence: '+$_.Exception.Message)}
+        if(-not $run.invocationWindow.started){throw 'BOOTSTRAP: held pre-invocation boundary was not acquired'}
         if(@($attempts).Count){throw ('Installer reached effect/attempt boundary: '+(($attempts|ForEach-Object{$_.kind+' '+$_.detail}) -join '; '))}
         if($run.exit -ne 0){throw 'BOOTSTRAP: preview driver exited abnormally without a recorded source effect'}
         if(-not [IO.File]::Exists($Case.spec.result)){throw 'BOOTSTRAP: child did not produce a terminal result'}
         try {
             $value=[IO.File]::ReadAllText($Case.spec.result)|ConvertFrom-Json
-            $required=@('guardEstablished','preparationError','events','nativeTypeBefore','nativeTypeAfter','stagingContextUnchanged','leaseDisposeCalls','returnCount','nullReturnCount','returned','reason','entryExit')
+            $required=@('guardEstablished','preparationError','events','nativeTypeBefore','nativeTypeAfter','stagingContextUnchanged','leaseDisposeCalls','returnCount','nullReturnCount','returned','reason','entryExit','sourceCompletion','sourceExitCode','sourceException')
             $required+=@('compilerContextBefore','compilerContextAfter','compilerContextUnchanged','compilerContextReferenceUnchanged','compilerLeaseDisposeCalls','compilerNativeTypeBefore','compilerNativeTypeAfter')
             if($value -isnot [pscustomobject] -or @($required|Where-Object{$_ -cnotin @($value.PSObject.Properties.Name)}).Count){throw 'terminal evidence has an unsupported or incomplete shape'}
             foreach($field in @('guardEstablished','nativeTypeBefore','nativeTypeAfter','stagingContextUnchanged')){
@@ -383,7 +407,8 @@ function Run-PreviewCase($Case,[string]$Contract,[bool]$ExpectedFailure=$false){
                $value.compilerLeaseDisposeCalls -lt 0){throw 'compiler terminal evidence has an unsupported shape'}
         } catch {throw ('BOOTSTRAP: unreadable or malformed terminal evidence: '+$_.Exception.Message)}
         if(-not $value.guardEstablished -or $value.preparationError){throw ('BOOTSTRAP: '+$value.preparationError)}
-        if(-not $run.subjectUnchanged){throw 'Installer changed subject USERPROFILE/TEMP names, attributes or bytes'}
+        if(-not $run.invocationWindow.completed){throw 'BOOTSTRAP: held terminal boundary was not acquired'}
+        if(-not $run.invocationUnchanged){throw 'Installer changed subject USERPROFILE/TEMP paths, timestamps, ACLs, attributes or bytes during invocation'}
         if(@($value.events).Count){throw ('Installer reached effect/attempt boundary: '+(($value.events|ForEach-Object{$_.kind+' '+$_.detail}) -join '; '))}
         if($value.nativeTypeAfter -and -not $value.nativeTypeBefore){throw 'Preview loaded the native staging API type'}
         if($value.compilerNativeTypeAfter -and -not $value.compilerNativeTypeBefore){throw 'Preview loaded the native compiler custody API type'}
@@ -529,6 +554,41 @@ foreach($kind in @('outside-subject-method-write','direct-loopback-transport')){
 }
 foreach($row in $guardResults){$Results.Add($row)}
 $guardProven=@($guardResults|Where-Object{-not $_.pass}).Count -eq 0 -and $guardResults.Count -eq 4
+# Qualify the actual nested-file completion carrier before any installer case.
+$carrierControls=@()
+if($guardProven){
+    foreach($probe in @(
+        @('fallthrough','$null = 1','fallthrough',0),
+        @('exit-zero','exit 0','exit-code-observed',0),
+        @('exit-nonzero','exit 17','exit-code-observed',17),
+        @('throw','throw "source-free carrier refusal"','terminating-exception',1),
+        @('finally-exit','try { exit 17 } finally { Write-Host "source-free finally completed" }','exit-code-observed',17),
+        @('parameter-failure','Write-Host "source-free forbidden body"','terminating-exception',1)
+    )){
+        $control=New-PreviewCase ('carrier-control-'+$probe[0]) 'wrapper' 'none'
+        $controlSource=Join-Path $control.context.hostControl 'source-free-invocation.ps1'
+        $controlHeader='param([switch]$DryRun,[string]$PresetUrl,[string]$WidgetHash,[string]$InstallSource,[switch]$NoOpen)'
+        if($probe[0] -eq 'parameter-failure'){$controlHeader=$controlHeader.Replace('[string]$InstallSource','[ValidateSet(''source-free-only'')][string]$InstallSource')}
+        Write-FixtureText $controlSource ($controlHeader+[Environment]::NewLine+$probe[1])
+        $control.spec.source=$controlSource;$control.spec.sourceSha256=Hash-File $controlSource
+        Write-FixtureText $control.context.values.R0016_PREVIEW_SPEC ($control.spec|ConvertTo-Json -Depth 10)
+        $process=Invoke-PreviewWindowChild $control.context $Driver 'carrier-control' $control.spec
+        $value=$null;$problem=$null
+        try{
+            if($process.preparation -cne 'COMPLETED' -or $process.exit -ne 0 -or -not $process.invocationWindow.completed -or -not $process.invocationUnchanged){throw 'Source-free nested invocation did not acquire a clean complete window'}
+            $value=[IO.File]::ReadAllText($control.spec.result)|ConvertFrom-Json
+            if(-not $value.guardEstablished -or $value.preparationError -or @($value.events).Count -or $value.sourceCompletion -cne $probe[2] -or $value.entryExit -ne $probe[3]){throw 'Source-free completion semantics differ'}
+            if($probe[2] -eq 'exit-code-observed' -and $value.sourceExitCode -ne $probe[3]){throw 'Explicit source exit code was not retained'}
+            if($probe[0] -eq 'throw' -and $value.sourceException -cne 'source-free carrier refusal'){throw 'Source exception was not retained'}
+            if($probe[0] -eq 'finally-exit' -and @($value.messages|Where-Object{$_ -ceq 'source-free finally completed'}).Count -ne 1){throw 'Source finally did not complete before its terminal gate'}
+            if($probe[0] -eq 'parameter-failure' -and ($value.sourceException -notmatch 'InstallSource' -or @($value.messages|Where-Object{$_ -ceq 'source-free forbidden body'}).Count)){throw 'Source parameter rejection did not precede its body'}
+        }catch{$problem=$_.Exception.Message}
+        $carrierControls+=@([pscustomobject]@{case=('carrier-control-'+$probe[0]);pass=($null -eq $problem);classification=if($problem){'BOOTSTRAP_BLOCKED'}else{'PASS'};error=$problem;scope='source-free actual nested script invocation; no installer evaluated';source=$controlSource;sourceSha256=$control.spec.sourceSha256;fixture=$control.context.root;spec=$control.context.values.R0016_PREVIEW_SPEC;result=$control.spec.result;process=$process;observation=$value})
+    }
+}
+foreach($control in $carrierControls){$Results.Add($control)}
+$guardProven=$guardProven -and $carrierControls.Count -eq 6 -and @($carrierControls|Where-Object{-not $_.pass}).Count -eq 0
+
 if($guardProven -and $Suite -in @('Helpers','All')){
     $helperCases=@(
         @('compiler-native-api-load','Initialize-CompilerNative','throw'),
@@ -648,16 +708,21 @@ $unchanged=(Hash-File $SourceFile) -ceq $SourceHash
 if(-not $unchanged){$Results.Add([pscustomobject]@{case='input source remained stable';pass=$false;classification='BOOTSTRAP_BLOCKED';error='Input source changed during the run'})}
 $testUnchanged=(Hash-File $PSCommandPath) -ceq $TestHashAtStart
 $libraryUnchanged=(Hash-File $FixtureLibrary) -ceq $LibraryHashAtStart
-if(-not $testUnchanged -or -not $libraryUnchanged){$Results.Add([pscustomobject]@{case='fixture code remained stable';pass=$false;classification='BOOTSTRAP_BLOCKED';error='Fixture source or imported library changed during the run'})}
+$windowLibraryUnchanged=(Hash-File $WindowLibrary) -ceq $WindowLibraryHashAtStart -and (Hash-File $FrozenWindowLibrary) -ceq $WindowLibraryHashAtStart -and (Hash-File $BaselineInvocation) -ceq $BaselineInvocationHash
+if(-not $testUnchanged -or -not $libraryUnchanged -or -not $windowLibraryUnchanged){$Results.Add([pscustomobject]@{case='fixture code remained stable';pass=$false;classification='BOOTSTRAP_BLOCKED';error='Fixture source or imported library changed during the run'})}
 $report=[pscustomobject][ordered]@{
-    schema='r0016-preview-powershell-core.v1';pass=(@($Results|Where-Object{-not $_.pass}).Count -eq 0)
+    schema='r0016-preview-powershell-core.v2';suite=$Suite;pass=(@($Results|Where-Object{-not $_.pass}).Count -eq 0)
     source=$SourceFile;sourceSha256=$SourceHash;sourceUnchanged=$unchanged;frozenSource=$FrozenSource
     testSha256=$TestHashAtStart;testUnchanged=$testUnchanged;fixtureLibrarySha256=$LibraryHashAtStart;fixtureLibraryUnchanged=$libraryUnchanged
+    windowLibrary=$FrozenWindowLibrary;windowLibrarySha256=$WindowLibraryHashAtStart;windowLibraryUnchanged=$windowLibraryUnchanged
+    baselineInvocation=$BaselineInvocation;baselineInvocationSha256=$BaselineInvocationHash
     host=$PSVersionTable.PSVersion.ToString();nativeWindows=$NativeWindows;fixture=$FixtureRoot
     helperInventory=$EffectHelpers;results=$Results.ToArray();mutants=$Variants.ToArray()
     independentHardContainment='NOT_ACQUIRED'
     scopeLimits=@(
         'Actual helpers and whole-source wrapper entry; not fresh installer -File.',
+        'Versioned PID/nonce held snapshots measure the complete guarded invocation; full prelaunch/postexit subjectUnchanged remains separately recorded and may be false.',
+        'No startup path or timestamp is exempted; source-free baseline evidence does not attribute every same-named write in an installer run.',
         'Method/cmdlet source-call denial is proved in separate positive/negative control children before product execution; it is not an OS sandbox.',
         'Debugger Stop terminates its child pipeline; a post-readiness recorded source attempt remains a product assertion failure even without a final child result.',
         'Source static method/cmdlet inventory is explicit; arbitrary hostile dynamic code is not claimed contained.',
