@@ -69,7 +69,7 @@ iframe{box-shadow:0 18px 50px #0008}
   <form class="card form" onsubmit="return false">
     <div class="loc-head">
       <label for="label" id="loclabel">Location name</label>
-      <span class="geotip" id="geotip">Detecting your area…</span>
+      <span class="geotip" id="geotip" role="status" aria-live="polite">Detecting your area…</span>
     </div>
     <div class="locrow">
       <input id="label" placeholder="city, postcode, or place name" value="Madinah">
@@ -79,8 +79,8 @@ iframe{box-shadow:0 18px 50px #0008}
     </div>
 
     <div class="row">
-      <div><label for="lat">Latitude</label><input id="lat" inputmode="decimal" value="24.4672"></div>
-      <div><label for="lon" style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142" style="text-align:center"></div>
+      <div><label for="lat">Latitude</label><input id="lat" inputmode="decimal" value="24.4672" aria-describedby="draftnote"></div>
+      <div><label for="lon" style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142" style="text-align:center" aria-describedby="draftnote"></div>
       <div>
         <label for="time" style="text-align:right">Time format</label>
         <select id="time" style="text-align:right">
@@ -89,6 +89,7 @@ iframe{box-shadow:0 18px 50px #0008}
         </select>
       </div>
     </div>
+    <p class="note" id="draftnote" role="status" aria-live="polite" hidden></p>
 
     <div class="row">
       <div>
@@ -211,17 +212,61 @@ function formConfig(){
 function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local",explicitPrefs:["method","units","appearance"]}:{explicitPrefs:["appearance"]}) : ""; }
 let rev=0;
 function url(){ return base+"#"+hash(); }
-// the widget reads only location.hash, so a changing ?r= query is ignored by it but
-// forces the iframe to actually reload (a hash-only change wouldn't re-run the script).
-function previewUrl(){ return base+"?r="+(rev++)+"#"+hash(); }
 function snippet(){
   const allow = embedMode==="local" ? '\n  allow="geolocation"' : '';
   return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"${allow}\n  src="${url()}"\n  style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
 }
+// Preview publication (R000F). Three separate facts: the draft (form fields + embedMode, owned by the handlers
+// above/below), the canonical output (hash()/snippet() through the one shared serializer), and `issued` = the last
+// preview navigation actually assigned to the iframe. `issued` is an issue receipt only: nothing observes the
+// cross-origin frame loading or rendering, so it never means "loaded".
+let issued=null;                                  // {identity,src,allow,hash,rev} | null
+// Owner decision D2 (2026-11-11): identity = permission policy + destination + canonical serialized output.
+// The ?r= cachebuster and provenance (builderLocation; never serialized) are deliberately excluded.
+function previewIdentity(allow,h){ return allow+" "+base+"#"+h; }
+// Owner decision D1 (2026-11-11): a portable draft whose normalized latitude or longitude is missing or
+// non-numeric is invalid (out-of-range values keep their R001E clamping; local mode carries no coordinates).
+function draftInvalid(){
+  if(embedMode==="local" || !window.SalahConfig) return [];
+  const c=SalahConfig.normalize(formConfig());
+  return ["lat","lon"].filter(id=>c[id]==null);
+}
+// The note names what the retained preview/export actually is: a portable issue keeps its location; a retained
+// self-configuring (local) issue has no location at all.
+const INVALID_NOTE="Enter a valid latitude and longitude (numbers) — the preview and embed code keep the last valid location.";
+const INVALID_NOTE_LOCAL="Enter a valid latitude and longitude (numbers) — the preview and embed code still show the previous self-configuring embed.";
+const REFUSED="Enter a valid latitude and longitude first.";
+function showValidity(bad){
+  ["lat","lon"].forEach(id=>$(id).setAttribute("aria-invalid",bad.includes(id)?"true":"false"));
+  const note=$("draftnote"); note.textContent=!bad.length?"":issued&&issued.allow==="geolocation"?INVALID_NOTE_LOCAL:INVALID_NOTE; note.hidden=!bad.length;
+  if(!bad.length) [["copied",""],["installtip","copies terminal script for installation wizard"]].forEach(([id,text])=>{
+    if($(id).textContent===REFUSED){ $(id).textContent=text; $(id).style.color=""; } });
+}
+function refuseInvalid(tipId){                    // D1: Copy / Install / Open never hand out a coordinate-less export
+  if(!draftInvalid().length) return false;
+  // Same reset as copyArtifact: an earlier copy on this tip (its pending result, success-clear timer, recovery box
+  // holding the old payload) is abandoned, so it cannot erase or overwrite the refusal.
+  const buttonId=tipId==="copied"?"copy":"install", state=copyActions[buttonId];
+  clearTimeout(state.timer); state.seq++; $(buttonId).disabled=false;
+  $((buttonId==="copy"?"embed":"install")+"-recovery-wrap").hidden=true;
+  $(tipId).textContent=REFUSED; $(tipId).style.color="#ffb38a"; return true;
+}
+// The widget reads only location.hash, so a changing ?r= query is ignored by it but forces the iframe to actually
+// reload (a hash-only change wouldn't re-run the script). The receipt and revision are recorded only after the
+// src setter returned, so a throwing assignment cannot suppress the next legitimate attempt.
+function issuePreview(identity,allow,h){
+  const src=base+"?r="+rev+"#"+h;
+  $("pv").allow=allow;                            // permission policy in force before the navigation
+  $("pv").src=src;
+  issued={identity,src,allow,hash:h,rev}; rev++;
+}
 function update(){
-  $("code").value=snippet();
-  $("pv").allow = embedMode==="local" ? "geolocation" : "";
-  $("pv").src=previewUrl();
+  const bad=draftInvalid(); showValidity(bad);
+  if(bad.length) return;                          // D1: keep the last issued preview and export
+  const h=hash(), allow=embedMode==="local"?"geolocation":"", identity=previewIdentity(allow,h);
+  $("code").value=snippet();                      // export always reflects the current valid draft
+  if(issued && issued.identity===identity) return; // equivalent output: no navigation, no revision
+  issuePreview(identity,allow,h);
 }
 function setMode(m){
   const buttons=[$("mode-portable"),$("mode-local")], requested=m==="local"?"mode-local":"mode-portable";
@@ -275,38 +320,49 @@ function setGeoPin(state){
           : "Configured site — click to request browser location";
   b.setAttribute("aria-label", b.title);
 }
-function setTip(text){ $("geotip").textContent=text; }
-function startDots(){ $("geotip").textContent="Searching…"; }
+// One-line tip: the visible text leads with the outcome so an ellipsis cannot change its meaning; title (hover)
+// carries the full text plus any longer guidance. The element is a polite status region for assistive technology.
+function setTip(text,detail){ const t=$("geotip"); t.textContent=text; t.title=detail?text+" "+detail:text; }
+function startDots(){ setTip("Searching…"); }
 function stopDots(){}
 // All location operations share this form's edit owner; separate fetch counters
 // would still let an old GPS/coarse/reverse result overwrite a newer search.
 function searchReset(){ clearTimeout(srchDebounce); clearTimeout(tipRevert); clearTimeout(geoTimer); locationEdit++; srchSeq++; multiCands=[]; multiOwner=null; setTip(TIP_DEFAULT); }
 function captureLookup(){ return {edit:locationEdit,seq:++srchSeq}; }
 function ownsLookup(owner){ return owner.edit===locationEdit && owner.seq===srchSeq; }
-function searchFailed(owner){ setTip("Couldn’t find that — try the pin (browser location) or enter coordinates."); tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
+// A valid no-match and an unavailable search (transport/HTTP/parse/timeout/admission failure) say different things.
+function searchFailed(owner,status){
+  if(status==="no-match") setTip("No matching place found — try the pin or coordinates.","Every search source answered with no match. Use the pin (browser location) or enter coordinates.");
+  else setTip("Search unavailable — a provider failed. Try again.","No match can be concluded because a search source failed. Try again, use the pin (browser location), or enter coordinates.");
+  tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
+const PARTIAL="Partial results, a provider failed";   // matches exist but a search source failed (leads the tip so an ellipsis keeps it)
 function applyCand(c){                                // push a candidate's coords (+ method) into the form & preview
   builderLocation=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null;
   $("lat").value=(+c.lat).toFixed(5); $("lon").value=(+c.lon).toFixed(5);
   if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";
   update();
 }
-function foundSingle(c){ applyCand(c); setGeoPin("off"); setTip("Found: "+c.norm); }
+function foundSingle(c,partial){ applyCand(c); setGeoPin("off"); setTip((partial?PARTIAL:"Found")+": "+c.norm); }
 function showMulti(){                                 // several distinct matches (Inverness Scotland vs Florida) — Enter cycles
   const c=multiCands[multiIdx]; applyCand(c); setGeoPin("off");
-  setTip("Match "+(multiIdx+1)+"/"+multiCands.length+": "+c.norm+" — Enter to cycle");
+  setTip((multiOwner&&multiOwner.partial?PARTIAL+" — ":"Match ")+(multiIdx+1)+"/"+multiCands.length+": "+c.norm+" — Enter to cycle");
 }
-// Place/postcode search now lives in the shared module (SalahConfig.geocodeSearch) so the widget's
+// Place/postcode search lives in the shared module (SalahConfig.geocodeSearchDetailed) so the widget's
 // in-card settings panel and this builder use the SAME geocoder (Nominatim + Zippopotam, deduped).
+// Resolves to the detailed status, or "superseded" when a newer edit/lookup owns the form (no UI effect).
 async function doSearch(q){
   clearTimeout(tipRevert);
   const owner=captureLookup(), bias=homeCC;
-  let cands=[];
-  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC:bias}) : []; }catch(e){}
-  if(!ownsLookup(owner)) return;
+  let r=null;
+  try{ if(window.SalahConfig) r=await SalahConfig.geocodeSearchDetailed(q,{homeCC:bias}); }catch(e){}
+  if(!ownsLookup(owner)) return "superseded";
   stopDots();
-  if(!cands.length) searchFailed(owner);
-  else if(cands.length===1) foundSingle(cands[0]);
-  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value}; showMulti(); }
+  const status=r&&r.status||"unavailable", cands=status==="matches"?r.candidates:[], partial=!!r&&r.coverage==="partial";
+  if(status==="not-requested") setTip(TIP_DEFAULT);
+  else if(!cands.length) searchFailed(owner,status);
+  else if(cands.length===1) foundSingle(cands[0],partial);
+  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value,partial}; showMulti(); }
+  return status;
 }
 $("label").addEventListener("input",()=>{
   labelAuto=false;                                  // a display-name edit does not change the target's acquisition
@@ -364,9 +420,11 @@ $("datefmt").addEventListener("change",()=>{
 $("dfcode").addEventListener("input",()=>{ syncDateFromBox(); update(); });
 syncDateFromBox();
 
-$("reload").onclick=()=>{ $("pv").src=previewUrl(); };
-$("open").onclick=()=>window.open(url(),"_blank","noreferrer");
-$("copy").onclick=()=>copyArtifact("copy",$("code").value,false);
+// Owner decision D3 (2026-11-11): Refresh is a forced, deliberate re-issue of the last issued (valid) preview with a
+// new ?r=, even when nothing changed; it never issues an invalid draft.
+$("reload").onclick=()=>{ if(issued) issuePreview(issued.identity,issued.allow,issued.hash); else update(); };
+$("open").onclick=()=>{ if(refuseInvalid("copied")) return; window.open(url(),"_blank","noreferrer"); };
+$("copy").onclick=()=>{ if(refuseInvalid("copied")) return; return copyArtifact("copy",$("code").value,false); };
 // ---- "Install widget" → copy the one-line terminal command that runs the GitHub install wizard ----
 // The command pipes install.ps1 (Windows) or install.sh (mac/Linux) from published main, not a local candidate.
 // Normal execution is interactive; reviewed local-file and offline-preview instructions are in README.md.
@@ -432,6 +490,7 @@ async function copyArtifact(buttonId,payload,carry){
   }
 }
 $("install").onclick=()=>{
+  if(refuseInvalid("installtip")) return;
   const {cmd,carry}=installCmd(); return copyArtifact("install",cmd,carry);
 };
 function locate(auto){                                 // pin click → precise GPS (browser permission)
@@ -440,10 +499,13 @@ function locate(auto){                                 // pin click → precise 
   const owner=captureLookup(); setTip("Requesting browser location…");
   navigator.geolocation.getCurrentPosition(
     pos=>{ if(!ownsLookup(owner)) return;
-           builderLocation=window.SalahConfig?SalahConfig.browserLocationEvidence(pos):null;
-           $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
+           // The shared external-coordinate admission runs before anything is published (no clamping).
+           const a=window.SalahConfig?SalahConfig.admitCoordinates(pos&&pos.coords&&pos.coords.latitude,pos&&pos.coords&&pos.coords.longitude):{ok:false};
+           if(!a.ok){ if(!auto) setTip("Browser location invalid — not used. Type a place.","The browser reported out-of-range or non-numeric coordinates; the selected location is kept."); return; }
+           builderLocation=SalahConfig.browserLocationEvidence(pos);
+           $("lat").value=a.lat.toFixed(5); $("lon").value=a.lon.toFixed(5);
            setGeoPin("glow"); setTip("Using browser position · accuracy "+(builderLocation && builderLocation.accuracyM!=null?builderLocation.accuracyM+" m":"unknown")+"."); update(); fillNameFromCoords(owner.edit); },
-    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable ("+err.message+"). Type a place, or keep the selected location."); },
+    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable — type a place.","("+err.message+") The selected location is kept."); },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
 }
@@ -461,7 +523,7 @@ async function detectArea(){
     if(labelAuto && d.cfg.label) $("label").value=d.cfg.label;
     if(methodAuto && d.cfg.method) $("method").value=d.cfg.method;
     setGeoPin("lit"); setTip("Detected: "+(d.cfg.label||"your area")+" (approx.)"); update();
-  } else { setGeoPin("off"); setTip("Couldn’t detect — type a place, or click the pin for browser location."); }
+  } else { setGeoPin("off"); setTip("Couldn’t detect your area — type a place or use the pin.","Area detection failed. Type a place, or click the pin for browser location."); }
 }
 
 // on load: coarse IP auto-detect (no prompt) fills the form and lits the pin; precise GPS is opt-in via

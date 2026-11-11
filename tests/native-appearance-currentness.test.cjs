@@ -10,7 +10,7 @@ function fixture(failSave=false){
   _publishPersistence:(...a)=>calls.push(['persistence',...a]),
   beginRuntimeGeneration(){calls.push(['generation']);s._runtimeGeneration++;},
   resetForNewLocation(){calls.push(['reset']);s.weather=s.sky=s.today=null;},
-  simulationReady:()=>true,startWeather:()=>calls.push(['weather']),loadPrayerData:async()=>calls.push(['prayer']),startRenderLoop:()=>calls.push(['loop']),render:()=>calls.push(['render'])};
+  simulationReady:()=>true,setLocLabel(){},startWeather:()=>calls.push(['weather']),loadPrayerData:async()=>calls.push(['prayer']),startRenderLoop:()=>calls.push(['loop']),render:()=>calls.push(['render'])};
  s.window=s;vm.createContext(s);vm.runInContext(fs.readFileSync(path.join(root,'config.js'),'utf8'),s);
  s.CONFIG=s.SalahConfig.normalize({lat:28.5383,lon:-81.3792,tz:'America/New_York',label:'CENTRAL FL',source:'manual',appearance:'glass',seed:1});
  vm.runInContext(bind+'\n'+body,s);
@@ -36,7 +36,16 @@ test('appearance-only changes preserve the provider-adopted timezone instead of 
   assert.equal(h.s._runtimeGeneration,7);assert.equal(h.s.today,h.timings);
  }
 });
-for(const patch of [{lat:29},{lon:-82},{tz:'UTC'},{units:'c'},{method:'4'},{school:'1'},{seed:2},{lp:.5},{time:'12'},{datefmt:'DD MMM YYYY'},{label:'changed'}, {locationEvidence:{source:'manual',area:'new evidence'}}])test('appearance change cannot bypass other config changes: '+JSON.stringify(patch),async()=>{
+for(const patch of [{lat:29},{lon:-82},{tz:'UTC'},{units:'c'},{method:'4'},{school:'1'},{seed:2},{lp:.5}, {locationEvidence:{source:'manual',area:'new evidence'}}])test('appearance change cannot bypass other config changes: '+JSON.stringify(patch),async()=>{
  const h=fixture();await h.apply({...patch,appearance:'contrast'});
  assert.equal(h.s._runtimeGeneration,8);assert(h.calls.some(c=>c[0]==='reset'));assert(h.calls.some(c=>c[0]==='weather'));assert(h.calls.some(c=>c[0]==='prayer'));
+});
+// R0003 (ES03-01..03): time/date format and label are display preferences, classified with appearance as a
+// presentation edit. They no longer bypass into the broad chain; the data/scene owners stay as accepted.
+for(const patch of [{time:'12'},{datefmt:'DD MMM YYYY'},{label:'changed'}])test('appearance with display-only change keeps owners: '+JSON.stringify(patch),async()=>{
+ const h=fixture();await h.apply({...patch,appearance:'contrast'});
+ assert.equal(h.s._runtimeGeneration,7);assert(!h.calls.some(c=>['reset','weather','prayer','generation'].includes(c[0])));
+ assert.equal(h.s.weather,h.weather);assert.equal(h.s.sky,h.sky);assert.equal(h.s.today,h.timings);
+ assert.equal(h.card.dataset.appearance,'contrast');assert.equal(h.s._renderDirty,true);
+ for(const [k,v] of Object.entries(patch))assert.equal(h.s.CONFIG[k],v);
 });

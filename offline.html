@@ -768,6 +768,36 @@ html.webfonts body{
     return normalizeLocationEvidence({ source:"place", provider:c && c.provider, area:c && c.norm, bounds:c && c.bounds }, {});
   }
 
+  // ---- external location admission (R0026) ----------------------------------
+  // EXTERNAL evidence (coarse IP providers, place search, browser geolocation) must earn
+  // validity BEFORE normalize(): a finite JSON number, or a complete decimal string
+  // (sign, fraction, surrounding whitespace allowed; no hex/exponent/Infinity/prefix),
+  // inside [-90,90]/[-180,180]. ±0 and boundaries pass unchanged; nothing is clamped.
+  // Manual/hash/saved input keeps R001E normalize() clamping and is NOT routed here.
+  var DECIMAL = /^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/;
+  function admitNumber(x) {
+    if (typeof x === "string") { x = x.trim(); if (!DECIMAL.test(x)) return null; x = parseFloat(x); }
+    return finiteNumber(x);
+  }
+  function admitCoordinates(lat, lon) {
+    var a = admitNumber(lat), o = admitNumber(lon);
+    if (a === null || a < -90 || a > 90) return { ok: false, reason: "latitude" };
+    if (o === null || o < -180 || o > 180) return { ok: false, reason: "longitude" };
+    return { ok: true, lat: a, lon: o };
+  }
+  // Provider accuracy in metres: unknown (null) unless a finite non-negative value.
+  function admitAccuracy(x) { var n = admitNumber(x); return n !== null && n >= 0 ? n : null; }
+  // One bounded provider-attempt record: name, terminal state, short code (never a body or query).
+  // state ∈ ok | no-match | transport | http | parse | timeout | admission.
+  function attemptError(state, reason) { var e = new Error(state); e.attempt = { state: state, reason: reason }; return e; }
+  function attemptOf(provider, e) {
+    var a = e && e.attempt || { state: "parse", reason: "unexpected" };
+    return { provider: provider, state: a.state, reason: a.reason };
+  }
+  function httpStage(r) { if (!r.ok) throw attemptError("http", "status " + (+r.status | 0)); return r; }
+  function jsonStage(r) { return r.json().then(null, function () { throw attemptError("parse", "json"); }); }
+  function transportFailure() { throw attemptError("transport", "network"); }
+
   // ---- parse: URL hash → partial config (present keys only) + mode flags -----
   function parseHash(hashStr) {
     var s = hashStr == null ? "" : String(hashStr);
@@ -916,40 +946,44 @@ html.webfonts body{
     var timeoutMs = opts.timeoutMs || 6000, tzIntl = detectTz();
     var providers = [
       { name: "GeoJS", url: "https://get.geojs.io/v1/ip/geo.json", parse: function (j) {
-          return { lat: parseFloat(j.latitude), lon: parseFloat(j.longitude),
+          return { lat: j.latitude, lon: j.longitude,          // raw values: admitted below, before normalize()
             label: j.city || j.region || j.country || "",   // concise: the small header shows just the locality
             area: [j.city, j.region, j.country].filter(Boolean).join(", "),
-            tz: j.timezone || "", cc: j.country_code, accuracy: j.accuracy != null ? +j.accuracy : null }; } },
+            tz: j.timezone || "", cc: j.country_code, accuracy: admitAccuracy(j.accuracy) }; } },
       { name: "ipinfo", url: "https://ipinfo.io/json", parse: function (j) {
-          var loc = String(j.loc || "").split(",");
-          return { lat: parseFloat(loc[0]), lon: parseFloat(loc[1]),
+          var loc = typeof j.loc === "string" ? j.loc.split(",") : [];   // exactly "lat,lon"
+          if (loc.length !== 2) loc = [];
+          return { lat: loc[0], lon: loc[1],
             label: j.city || j.region || j.country || "",
             area: [j.city, j.region, j.country].filter(Boolean).join(", "),
             tz: j.timezone || "", cc: j.country, accuracy: null }; } }
     ];
+    var attempts = [];   // additive, bounded: one {provider,state,reason} per attempt
     return (function next(i) {
-      if (i >= providers.length) return Promise.resolve({ ok: false, source: "coarse-ip", status: "failed" });
+      if (i >= providers.length) return Promise.resolve({ ok: false, source: "coarse-ip", status: "failed", attempts: attempts });
       var p = providers[i], ac = new AbortController(), to;
       // Headers are not completion: the deadline owns the whole body/parse wait.
       // Reject as well as abort so an abort-ignorant body cannot hold fallback.
       var deadline = new Promise(function (_, reject) {
-        to = setTimeout(function () { reject(new Error("coarse location timeout")); ac.abort(); }, timeoutMs);
+        to = setTimeout(function () { reject(attemptError("timeout", "deadline")); ac.abort(); }, timeoutMs);
       });
       var work = Promise.resolve().then(function () {
         return fetch(p.url, { signal: ac.signal, mode: "cors", referrerPolicy: "no-referrer", cache: "no-store" });
-      }).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      }).then(null, transportFailure).then(httpStage).then(jsonStage)
         .then(function (j) {
-          var d = p.parse(j);
-          if (d.lat == null || d.lon == null || isNaN(d.lat) || isNaN(d.lon)) throw new Error("no coords");
-          var cfg = normalize({ lat: d.lat, lon: d.lon, label: d.label || "",
+          if (!j || typeof j !== "object" || Array.isArray(j)) throw attemptError("parse", "envelope");
+          var d = p.parse(j), a = admitCoordinates(d.lat, d.lon);
+          // Admission precedes normalize(): an impossible coordinate is a failed attempt, never a clamp.
+          if (!a.ok) throw attemptError("admission", a.reason);
+          var cfg = normalize({ lat: a.lat, lon: a.lon, label: d.label || "",
             tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip",
             detectProvider:p.name, area:d.area || d.label || "" });
           cfg.source = "coarse-ip"; cfg.detectProvider = p.name; cfg.accuracy = d.accuracy; cfg.area = d.area || cfg.label;
-          return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok" };
+          return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok", attempts: attempts };
         });
       // The race handles late work without another fallback or adoption effect.
-      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); return result; },
-        function () { clearTimeout(to); return next(i + 1); });
+      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); attempts.push({ provider: p.name, state: "ok", reason: null }); return result; },
+        function (e) { clearTimeout(to); attempts.push(attemptOf(p.name, e)); return next(i + 1); });
     })(0);
   }
 
@@ -959,8 +993,9 @@ html.webfonts body{
     return new Promise(function (resolve) {
       if (!root.navigator || !root.navigator.geolocation) { resolve({ ok: false, error: "unsupported" }); return; }
       root.navigator.geolocation.getCurrentPosition(
-        function (pos) { var evidence = browserLocationEvidence(pos);
-          resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,
+        function (pos) { var evidence = browserLocationEvidence(pos), a = admitCoordinates(pos && pos.coords && pos.coords.latitude, pos && pos.coords && pos.coords.longitude);
+          if (!a.ok) { resolve({ ok: false, error: "invalid coordinates", code: null }); return; }
+          resolve({ ok: true, lat: a.lat, lon: a.lon,
             accuracy:evidence.accuracyM, acquiredAt:evidence.acquiredAt, locationEvidence:evidence, source:"browser-geolocation" }); },
         function (err) { resolve({ ok: false, error: (err && err.message) || "denied", code: err && err.code }); },
         { enableHighAccuracy: false, timeout: opts.timeoutMs || 10000, maximumAge: 600000 }
@@ -1013,55 +1048,102 @@ html.webfonts body{
   // ---- forward geocoding (type a place / postcode → coordinates) ------------
   // Shared by builder.html AND the in-widget settings panel so the search behaviour
   // (Nominatim places/postcodes + Zippopotam Canadian FSA fallback, deduped) is identical
-  // and never forks. Returns a Promise of candidates: {lat, lon, name, norm, cc}.
+  // and never forks. ONE engine: geocodeSearchDetailed. Candidates: {lat, lon, name, norm, cc, provider, bounds}.
+  // Nominatim items are admitted first; the place/boundary preference then applies to admitted items.
   function _nomCands(arr) {
-    if (!Array.isArray(arr)) return [];
-    var places = arr.filter(function (r) { return r.class === "place" || r.class === "boundary"; });
-    return (places.length ? places : arr).map(function (res) {
-      var a = res.address || {};
+    var rejected = 0, admitted = arr.filter(function (res) {
+      if (res && typeof res === "object" && admitCoordinates(res.lat, res.lon).ok) return true;
+      rejected++; return false;
+    });
+    var places = admitted.filter(function (r) { return r.class === "place" || r.class === "boundary"; });
+    return { rejected: rejected, cands: (places.length ? places : admitted).map(function (res) {
+      var a = res.address || {}, c = admitCoordinates(res.lat, res.lon);
       var place = a.city || a.town || a.village || a.hamlet || a.municipality || a.suburb || a.county || res.name || "";
-      return { lat: parseFloat(res.lat), lon: parseFloat(res.lon), name: place,
+      return { lat: c.lat, lon: c.lon, name: place,
         norm: [place, a.state || a.region || a.province || "", a.country || ""].filter(Boolean).join(", "),
         cc: (a.country_code || "").toLowerCase(), provider:"Nominatim",
         bounds:Array.isArray(res.boundingbox) && res.boundingbox.length === 4 ? locationBounds({south:boundsNumber(res.boundingbox[0]),north:boundsNumber(res.boundingbox[1]),west:boundsNumber(res.boundingbox[2]),east:boundsNumber(res.boundingbox[3])}) : null };
-    });
+    }) };
   }
   function _zipCand(j) {
-    if (!j || !j.places || !j.places.length) return null;
-    var p = j.places[0], place = (p["place name"] || "").split(" (")[0].trim();
-    return { lat: +p.latitude, lon: +p.longitude, name: place,
+    var p = j.places[0], c = p && typeof p === "object" ? admitCoordinates(p.latitude, p.longitude) : { ok: false };
+    if (!c.ok) return null;   // a missing/null latitude is rejected, never coerced to 0
+    var place = (p["place name"] || "").split(" (")[0].trim();
+    return { lat: c.lat, lon: c.lon, name: place,
       norm: [place, p.state || "", j.country || ""].filter(Boolean).join(", "),
       cc: (j["country abbreviation"] || "").toLowerCase(), provider:"Zippopotam", bounds:null };
   }
   function _dedupeCands(cs) {
     var out = [];
     cs.forEach(function (c) {
-      if (c.lat == null || isNaN(c.lat) || c.lon == null || isNaN(c.lon)) return;
+      if (!admitCoordinates(c.lat, c.lon).ok) return;
       if (!out.some(function (o) { return o.norm === c.norm || (Math.abs(o.lat - c.lat) < 0.2 && Math.abs(o.lon - c.lon) < 0.2); })) out.push(c);
     });
     return out;
   }
-  function geocodeSearch(query, opts) {
+  var ZIP_NOT_FOUND = {};
+  function providerResult(provider, state, reason, cands) { return { provider: provider, state: state, reason: reason, cands: cands }; }
+  // Detailed outcome (R0026): {status, coverage, candidates, attempts}.
+  //   status:   not-requested (trimmed query < 2, no request) | matches | no-match | unavailable
+  //   coverage: null (not requested) | complete | partial (some provider failed) | none (every provider failed)
+  //   attempts: [{provider, state, reason}], state ok | no-match | transport | http | parse | timeout | admission
+  // Valid no-match = every attempted provider completed a supported empty result (Nominatim 200 []; Zippopotam
+  // 200 without places, or HTTP 404, the provider's documented unknown-postcode reply). Any failure prevents a
+  // no-match conclusion. cancelled/superseded is not an engine state: consumers derive it from their own
+  // edit/session ownership guards. Nothing here is persisted; no body text or query enters the record.
+  function geocodeSearchDetailed(query, opts) {
     opts = opts || {};
     var q = String(query == null ? "" : query).trim();
-    if (q.length < 2) return Promise.resolve([]);
+    if (q.length < 2) return Promise.resolve({ status: "not-requested", coverage: null, candidates: [], attempts: [] });
     var homeCC = opts.homeCC || "";
-    var ac = new AbortController(), to = setTimeout(function () { ac.abort(); }, opts.timeoutMs || 8000);
+    // One shared deadline (the existing 8 s budget) rejects as well as aborts, so an abort-ignorant
+    // body settles the outcome once; a late body cannot reopen it.
+    var ac = new AbortController(), to, deadline = new Promise(function (_, reject) {
+      to = setTimeout(function () { reject(attemptError("timeout", "deadline")); ac.abort(); }, opts.timeoutMs || 8000);
+    });
+    function request(url) { try { return fetch(url, { signal: ac.signal }); } catch (e) { return Promise.reject(e); } }
+    function settle(provider, job) {
+      return Promise.race([job, deadline]).then(null, function (e) { var a = attemptOf(provider, e); return providerResult(provider, a.state, a.reason, []); });
+    }
     var bias = (/\d/.test(q) && homeCC) ? ("&countrycodes=" + homeCC) : "";      // a digit ⇒ likely a postcode ⇒ keep it in the viewer's country
     var bare = q.replace(/\s/g, ""), caFSA = /^[A-Za-z]\d[A-Za-z]/.test(bare) ? bare.slice(0, 3).toUpperCase() : null;
-    var jobs = [ fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5" + bias + "&q=" + encodeURIComponent(q), { signal: ac.signal })
-      .then(function (r) { return r.json(); }).then(_nomCands).catch(function () { return []; }) ];
-    if (caFSA) jobs.push( fetch("https://api.zippopotam.us/ca/" + caFSA, { signal: ac.signal })
-      .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { var c = _zipCand(j); return c ? [c] : []; }).catch(function () { return []; }) );
-    return Promise.all(jobs).then(function (res) {
+    var jobs = [ settle("Nominatim", request("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5" + bias + "&q=" + encodeURIComponent(q))
+      .then(null, transportFailure).then(httpStage).then(jsonStage).then(function (arr) {
+        if (!Array.isArray(arr)) throw attemptError("parse", "envelope");     // a provider error object is not a search result
+        if (!arr.length) return providerResult("Nominatim", "no-match", null, []);
+        var n = _nomCands(arr);
+        if (!n.cands.length) throw attemptError("admission", "coordinates");
+        return providerResult("Nominatim", "ok", n.rejected ? "rejected " + n.rejected : null, n.cands);
+      })) ];
+    if (caFSA) jobs.push( settle("Zippopotam", request("https://api.zippopotam.us/ca/" + caFSA)
+      .then(null, transportFailure).then(function (r) { return r.status === 404 ? ZIP_NOT_FOUND : jsonStage(httpStage(r)); })
+      .then(function (j) {
+        if (j === ZIP_NOT_FOUND) return providerResult("Zippopotam", "no-match", "status 404", []);
+        if (!j || typeof j !== "object" || !Array.isArray(j.places)) throw attemptError("parse", "envelope");
+        if (!j.places.length) return providerResult("Zippopotam", "no-match", null, []);
+        var c = _zipCand(j);
+        if (!c) throw attemptError("admission", "coordinates");
+        return providerResult("Zippopotam", "ok", null, [c]);
+      })) );
+    return Promise.all(jobs).then(function (rs) {
       clearTimeout(to);
-      return _dedupeCands(res.reduce(function (a, b) { return a.concat(b); }, []));
-    }).catch(function () { clearTimeout(to); return []; });
+      var cands = _dedupeCands(rs.reduce(function (a, r) { return a.concat(r.cands); }, []));
+      var failed = rs.filter(function (r) { return r.state !== "ok" && r.state !== "no-match"; }).length;
+      return { status: cands.length ? "matches" : failed ? "unavailable" : "no-match",
+        coverage: !failed ? "complete" : failed < rs.length ? "partial" : "none", candidates: cands,
+        attempts: rs.map(function (r) { return { provider: r.provider, state: r.state, reason: r.reason }; }) };
+    });
+  }
+  // Documented, intentionally LOSSY compatibility projection of the same engine (candidates only): it cannot
+  // distinguish no-match from unavailable or partial coverage, so current UI consumers use the detailed result.
+  function geocodeSearch(query, opts) {
+    return geocodeSearchDetailed(query, opts).then(function (r) { return r.candidates; }, function () { return []; });
   }
 
   root.SalahConfig = {
     KEY: KEY, DEFAULTS: DEFAULTS, DATEFMT_PRESETS: DATEFMT_PRESETS,
-    geocodeSearch: geocodeSearch, browserLocationEvidence:browserLocationEvidence, placeLocationEvidence:placeLocationEvidence,
+    geocodeSearch: geocodeSearch, geocodeSearchDetailed: geocodeSearchDetailed, admitCoordinates: admitCoordinates,
+    browserLocationEvidence:browserLocationEvidence, placeLocationEvidence:placeLocationEvidence,
     parseHash: parseHash, normalize: normalize, validate: validate, serialize: serialize,
     storageAvailable: storageAvailable, loadLocal: loadLocal, saveLocal: saveLocal, clearLocal: clearLocal,
     coarseDetect: coarseDetect, geolocate: geolocate, permissionState: permissionState,
@@ -4617,6 +4699,57 @@ function bindConfig(c){            // copy a resolved WidgetConfig into the live
   datefmtStr=c.datefmt; LPOLL=c.lp||0;
   const card=document.querySelector(".c"); if(card) card.dataset.appearance=c.appearance==="contrast"?"contrast":"glass";
 }
+// ---- R0003 configuration-effect contract (docs/state-contracts/R0003.md) ----
+// One row per key any real producer puts on a WidgetConfig. applyConfig classifies a proposal against the
+// accepted CONFIG exactly once and is the only effect dispatcher: "none" adopts persistence metadata only,
+// "presentation" rebinds display preferences without generation/reset/provider/sky work, "broad" is the
+// existing invalidating chain. An unknown key, any target/calculation/time-intent/evidence/provenance
+// difference, or an explicit Reset is broad. Pure: reads only its arguments and these frozen constants.
+const CONFIG_EFFECTS=Object.freeze({
+  v:{kind:"schema",path:"none"}, savedAt:{kind:"persistence-metadata",path:"none"},
+  label:{kind:"label",path:"presentation"}, time:{kind:"time-format",path:"presentation"},
+  datefmt:{kind:"date-format",path:"presentation"}, appearance:{kind:"appearance",path:"presentation"},
+  source:{kind:"provenance",path:"broad",compare:"origin"}, origin:{kind:"provenance",path:"broad",compare:"origin"},
+  locationEvidence:{kind:"location-evidence",path:"broad",compare:"evidence"},
+  detectProvider:{kind:"acquisition-input",path:"broad",compare:"if-proposed"},
+  area:{kind:"acquisition-input",path:"broad",compare:"if-proposed"}, accuracy:{kind:"acquisition-input",path:"broad",compare:"if-proposed"},
+  lat:{kind:"location-target",path:"broad"}, lon:{kind:"location-target",path:"broad"},
+  method:{kind:"calculation",path:"broad"}, school:{kind:"calculation",path:"broad"}, tz:{kind:"time-intent",path:"broad"},
+  units:{kind:"units",path:"broad"}, lp:{kind:"light-pollution",path:"broad"}, seed:{kind:"seed",path:"broad"}
+});
+const CONFIG_EVIDENCE_FIELDS=Object.freeze(["intent","source","accuracyM","acquiredAt","provider","area","bounds"]);
+function sameConfigEvidence(a,b){
+  if(a==null||b==null) return a==null&&b==null;
+  for(const k of new Set([...Object.keys(a),...Object.keys(b)])){
+    if(!CONFIG_EVIDENCE_FIELDS.includes(k)) return false;          // unclassified evidence fails closed
+    const x=a[k],y=b[k];
+    if(k==="bounds"){ if(x==null||y==null){ if(!(x==null&&y==null)) return false; }
+      else if(!["south","north","west","east"].every(e=>x[e]===y[e])||Object.keys(x).length!==4||Object.keys(y).length!==4) return false; }
+    else if(x!==y) return false;
+  }
+  return true;
+}
+function classifyConfigChange(accepted,proposed,intent){
+  if(intent&&intent.reset) return Object.freeze({path:"broad",changed:Object.freeze([]),reason:"explicit-reset"});
+  if(!accepted||!proposed) return Object.freeze({path:"broad",changed:Object.freeze([]),reason:"no-accepted-config"});
+  const has=(o,k)=>Object.prototype.hasOwnProperty.call(o,k), changed=[];
+  let path="none", reason="equal";
+  for(const key of new Set([...Object.keys(accepted),...Object.keys(proposed)])){
+    const row=Object.prototype.hasOwnProperty.call(CONFIG_EFFECTS,key)?CONFIG_EFFECTS[key]:null;
+    let differs;
+    if(!row) differs=true;
+    else if(row.compare==="origin") differs=(accepted.origin||accepted.source)!==(proposed.origin||proposed.source);
+    else if(row.compare==="evidence") differs=!sameConfigEvidence(accepted[key],proposed[key]);
+    else if(row.compare==="if-proposed") differs=has(proposed,key)&&proposed[key]!==accepted[key];
+    else differs=row.path!=="none"&&accepted[key]!==proposed[key];
+    if(!differs) continue;
+    changed.push(key);
+    if(!row){ path="broad"; reason="unclassified-field"; }
+    else if(row.path==="broad"){ path="broad"; if(reason!=="unclassified-field") reason=row.kind; }
+    else if(path==="none"){ path="presentation"; reason="display-only"; }
+  }
+  return Object.freeze({path,changed:Object.freeze(changed),reason});
+}
 if(window.SalahConfig){
   const _r=SalahConfig.resolve(location.hash);
   _cfgMode=_r.mode; _needsDetect=_r.needsDetect; _hashCfg=_r.hashCfg||{}; _cfgFlags=_r.flags||_cfgFlags;
@@ -7511,22 +7644,22 @@ function resetForNewLocation(){
 async function applyConfig(cfg, opts){
   opts=opts||{};
   cfg=window.SalahConfig?SalahConfig.normalize(cfg):cfg;
-  // A timetable material choice cannot revoke weather, prayer or celestial
-  // ownership. Compare every scene/data preference before persistence changes
-  // source/savedAt; acquisition evidence must also remain exactly the same.
-  const appearanceOnly=!!(CONFIG&&cfg.appearance!==CONFIG.appearance&&
-    ["lat","lon","tz","label","method","school","time","units","datefmt","lp","seed"].every(k=>cfg[k]===CONFIG[k])&&
-    JSON.stringify(cfg.locationEvidence)===JSON.stringify(CONFIG.locationEvidence));
+  // Classify against the live accepted configuration BEFORE persistence changes
+  // source/savedAt (R0003). Reset is an explicit intent, never inferred from equality.
+  const change=classifyConfigChange(CONFIG,cfg,{reset:!!opts.reset});
   if(opts.save && window.SalahConfig){
     const r=SalahConfig.saveLocal(cfg);
     _publishPersistence("save",r);                 // publish before any awaited provider work
     if(r.ok){ cfg.origin=cfg.origin||cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // acquisition evidence and original origin survive the storage marker
   }
-  if(appearanceOnly){
-    // Provider-adopted live tz can differ from CONFIG.tz. A row material change
-    // publishes only this preference; rebinding the hint would retarget the sky.
-    CONFIG=cfg;
+  if(change.path==="none"){ CONFIG=cfg; return; }  // no semantic change: the persistence outcome above is the only effect
+  if(change.path==="presentation"){
+    // Display preferences only. Never bindConfig here: the provider-adopted live tz,
+    // the frozen _cacheTz, generation, request owners, throttles and sky stay as accepted.
+    CONFIG=cfg; label=cfg.label||""; fmt24=(cfg.time!=="12"); datefmtStr=cfg.datefmt;
     const card=document.querySelector(".c");if(card)card.dataset.appearance=cfg.appearance==="contrast"?"contrast":"glass";
+    setLocLabel();                                  // directly owned header text
+    _renderDirty=true;                              // time/date strings on the next eligible (visible) frame
     return;
   }
   beginRuntimeGeneration();
@@ -7751,16 +7884,23 @@ function _setPin(src){
   b.title = t; b.setAttribute("aria-label", t);   // state-bearing accessible name (not color-only)
 }
 
-// forward-geocode search on the location field (same shared SalahConfig.geocodeSearch as the builder):
-// type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter.
+// forward-geocode search on the location field (same shared SalahConfig.geocodeSearchDetailed as the builder):
+// type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter. A valid no-match,
+// an unavailable search and partial provider coverage get distinct feedback. Resolves to the detailed status,
+// or "superseded" when a newer session/edit/lookup owns the form (then nothing is touched).
 async function _runSetSearch(q){
   const owner=_captureSetLookup(), bias=_setHomeCC;
   _setStatus("Searching…");
-  let cands=[];
-  try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:bias}); }catch(e){}
-  if(!_ownsSetLookup(owner)) return;
-  if(!cands.length){ _setCands=[]; _setStatus("Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for browser location.",true); return; }
-  _setCands=cands; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value}; _showSetCand();
+  let r=null;
+  try{ if(window.SalahConfig) r=await SalahConfig.geocodeSearchDetailed(q,{homeCC:bias}); }catch(e){}
+  if(!_ownsSetLookup(owner)) return "superseded";
+  const status=r&&r.status||"unavailable";
+  if(status!=="matches"){ _setCands=[];
+    _setStatus(status==="no-match" ? "Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for browser location."
+      : "Search unavailable for “"+q+"” — a provider failed. Try again, set coordinates below, or tap the pin for browser location.",true);
+    return status; }
+  _setCands=r.candidates; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value,partial:r.coverage==="partial"}; _showSetCand();
+  return status;
 }
 function _showSetCand(){
   if(!_setCandOwner || !_ownsSetLookup(_setCandOwner)) return;
@@ -7771,9 +7911,10 @@ function _showSetCand(){
   _setLocationEvidence=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null; _setLocationOrigin="place"; _setLocationSaved=false;
   _setCandOwner.label=_byId("set-label").value;              // cycling owns its programmatic display-name update
   _setPin("manual"); _setDirty=true;                          // a searched place is a user choice, not live sensing → grey pin
+  const partial=_setCandOwner.partial?"Partial results, a provider failed":"";   // matches exist but a search source failed (leads the line)
   _setStatus(_setCands.length>1
-    ? ("Match "+(_setCandIdx+1)+" of "+_setCands.length+": "+c.norm+"\npress Enter to cycle")
-    : ("Found: "+c.norm));
+    ? ((partial?partial+" — match ":"Match ")+(_setCandIdx+1)+" of "+_setCands.length+": "+c.norm+"\npress Enter to cycle")
+    : ((partial||"Found")+": "+c.norm));
 }
 // date format: keep the preset dropdown in sync with the editable code box (mirrors builder.html)
 const _DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
@@ -7907,7 +8048,7 @@ async function _resetLocal(){
     // Reset still owns the detected location, while preferences edited since
     // dispatch (or during apply's await) own their fields and their close-save.
     Object.assign(c,_newerSetPrefs(prefOwner));
-    await applyConfig(c,{save:false});
+    await applyConfig(c,{save:false,reset:true});     // an explicit Reset resets even when values are equal (R0003 D1)
     if(!_ownsSetLookup(owner)) return;
     const prefs=_newerSetPrefs(prefOwner);
     _populateSettingsForm();
