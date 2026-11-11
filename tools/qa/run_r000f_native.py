@@ -5,9 +5,14 @@ builder with real keyboard/mouse input. Every non-local request is intercepted a
 ABORTED (nothing reaches a real provider; the report lists each one with its disposition), so coarse detection and
 reverse lookups fail closed. navigator.geolocation and the geolocation permission query are init-script doubles in
 every frame (always "denied"; no real position is requested). Preview navigations are counted from the browser's own
-frame events (`framenavigated` on the #pv child frame for a `?r=` URL, plus child-frame document requests), never from
-the builder's revision counter. A navigation observed here is an ISSUED/committed frame navigation; it says nothing
-about the widget inside having loaded or rendered.
+observations, never from the builder's revision counter: ISSUED = each value the #pv `src` attribute takes (a DOM
+MutationObserver installed before the builder script runs); REQUESTED = child-frame document requests; COMMITTED =
+`framenavigated` on the #pv child frame. Cells judge ISSUED; `ledger` reports the fate of every revision. Each step
+settles until the issued count is quiet AND the latest issued preview has committed. (Attempt 1 counted commits only:
+Firefox 153 took longer than the 1.2 s quiet window to commit some preview documents, so the next step superseded them
+and two genuinely issued navigations were never counted. Firefox also starts only one document request for two src
+assignments in the same task, so requests alone would hide the base's duplicate assignments.) None of these says
+anything about the widget inside having loaded or rendered.
 
 Cells: load (one navigation) / equivalentEdit (typed equivalent spelling + commit → none) / changedSelect (one select
 change → exactly one, frame fragment = embed snippet) / rapidTyping (navigations only for distinct outputs; final
@@ -28,6 +33,14 @@ GEO_INIT = r"""(()=>{const deny=(ok,bad)=>setTimeout(()=>bad&&bad({code:1,messag
  try{Object.defineProperty(Navigator.prototype,'geolocation',{get(){return geo;},configurable:true});}catch(e){}
  if(navigator.permissions){const q=navigator.permissions.query.bind(navigator.permissions);
   navigator.permissions.query=d=>d&&d.name==='geolocation'?Promise.resolve({state:'denied',onchange:null}):q(d);}})();"""
+# Top-level builder page only: a MutationObserver records every value the #pv src ATTRIBUTE takes (a DOM fact seen by
+# the browser, independent of the builder's revision counter). Document requests carry no fragment, so this log
+# supplies the fragment of each issued request (matched by its ?r= value).
+SRC_INIT = r"""(()=>{if(window.top!==window)return;const log=window.__r000fSrcLog=[];
+ // Records are delivered later in a batch; the value written by record i is record i+1's oldValue (or the current one).
+ new MutationObserver(ms=>{const pv=ms.filter(m=>m.target.id==='pv');
+  pv.forEach((m,i)=>log.push(i+1<pv.length?pv[i+1].oldValue:m.target.getAttribute('src')));})
+  .observe(document,{subtree:true,attributes:true,attributeOldValue:true,attributeFilter:['src']});})();"""
 STATE = """()=>{const pv=document.getElementById('pv'),code=document.getElementById('code').value,m=code.match(/src="([^"]+)"/);
  const note=document.getElementById('draftnote');
  return {pvSrc:pv.getAttribute('src')||pv.src,pvAllow:pv.getAttribute('allow')||'',codeSrc:m?m[1]:null,codeAllow:/allow="geolocation"/.test(code),
@@ -57,6 +70,26 @@ def fragment(url):
 
 def hash_params(url):
     return {k: v[0] for k, v in parse_qs(fragment(url) or '', keep_blank_values=True).items()}
+
+
+def rparam(url):
+    try:
+        return parse_qs(urlparse(url).query).get('r', [None])[0]
+    except ValueError:
+        return None
+
+
+def absolute(src_log, base):
+    """The #pv src attribute values as absolute URLs (relative only if the attribute was written relative)."""
+    return [v if '://' in v else base + v.lstrip('/') for v in src_log if v]
+
+
+def ledger_summary(assigned, requests, commits):
+    """Per-revision fate of each issued assignment: requested by the browser? committed in the frame?"""
+    req, com = {rparam(u) for u in requests}, {rparam(u) for u in commits}
+    return {'assignments': len(assigned), 'documentRequests': len(requests), 'commits': len(commits),
+            'assignedNotRequested': [rparam(u) for u in assigned if rparam(u) not in req],
+            'requestedNotCommitted': [rparam(u) for u in requests if rparam(u) not in com]}
 
 
 def nav_delta(log, start):
@@ -106,20 +139,26 @@ def run(engine, root, out, headed, tag, compare=None):
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
             pass
-    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=str(root)))
+    class Server(http.server.ThreadingHTTPServer):
+        def handle_error(self, request, client_address):   # client resets on frame replacement/close: counted, never printed
+            report['serverResets'] = report.get('serverResets', 0) + 1
+    server = Server(('127.0.0.1', 0), functools.partial(Quiet, directory=str(root)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     base = f'http://127.0.0.1:{server.server_address[1]}/'
     report = {'argv': sys.argv, 'engine': engine, 'headed': headed, 'tag': tag,
               'playwright': metadata.version('playwright'), 'root': 'repository' if root.resolve() == REPO else root.name,
               'tree': tree_identity(root), 'served': {f: sha(root / f) for f in SERVED},
               'external': [], 'console': [], 'cells': {}, 'framesLog': [], 'documentRequests': [], 'popups': 0,
-              'limits': 'frame navigations observed = issued/committed navigations; no widget load/render claim'}
-    navs, docs = report['framesLog'], report['documentRequests']
+              'limits': 'cells count ISSUED navigations = #pv src attribute assignments seen by a DOM MutationObserver; '
+                        'browser document requests and child-frame commits are logged per revision; no widget '
+                        'load/render claim'}
+    # navs = ISSUED (#pv src assignments, absolute URLs); reqs = REQUESTED; commits = COMMITTED (see module docstring).
+    navs, reqs, commits = report.setdefault('issued', []), report['documentRequests'], report['framesLog']
     with sync_playwright() as p:
         browser = getattr(p, engine).launch(headless=not headed)
         report['browserVersion'] = browser.version
         ctx = browser.new_context(viewport={'width': 1280, 'height': 1000})
-        ctx.add_init_script(GEO_INIT)
+        ctx.add_init_script(GEO_INIT); ctx.add_init_script(SRC_INIT)
 
         def external(route):
             u = urlparse(route.request.url)
@@ -131,33 +170,51 @@ def run(engine, root, out, headed, tag, compare=None):
         page.on('pageerror', lambda e: report['console'].append(['pageerror', str(e)]))
         page.on('popup', lambda pop: (report.__setitem__('popups', report['popups'] + 1), pop.close()))
 
+        t0 = time.monotonic(); trace = report['childFrameTrace'] = []
         def framenav(frame):
+            if frame.parent_frame is not None:
+                trace.append(['framenavigated', round((time.monotonic() - t0) * 1000), frame.name, frame.url])
             if frame.parent_frame is not None and frame.name in ('', 'pv') and is_preview_nav(frame.url):
-                navs.append(frame.url)
+                commits.append(frame.url)
         page.on('framenavigated', framenav)
-        page.on('request', lambda r: docs.append(r.url) if r.resource_type == 'document' and r.frame.parent_frame is not None and is_preview_nav(r.url) else None)
+        def request(r):
+            if r.resource_type == 'document' and r.frame.parent_frame is not None and is_preview_nav(r.url):
+                trace.append(['request', round((time.monotonic() - t0) * 1000), r.frame.name, r.url]); reqs.append(r.url)
+        page.on('request', request)
 
-        def settle(quiet=1200, limit=15000):          # navigation count unchanged for `quiet` ms (covers the 700 ms reverse timer)
-            end, n, t = time.monotonic() + limit / 1000, len(navs), time.monotonic()
+        def settle(quiet=1200, limit=20000):
+            # Assignment count unchanged for `quiet` ms (covers the 700 ms reverse timer) AND the latest assigned preview
+            # has committed in the frame, so the next step cannot supersede an uncommitted navigation.
+            def refresh():
+                navs[:] = absolute(page.evaluate('()=>window.__r000fSrcLog||[]'), base)
+            end, t = time.monotonic() + limit / 1000, time.monotonic(); refresh(); n = len(navs)
             while time.monotonic() < end:
-                page.wait_for_timeout(100)
+                page.wait_for_timeout(100); refresh()
                 if len(navs) != n:
                     n, t = len(navs), time.monotonic()
-                elif (time.monotonic() - t) * 1000 >= quiet:
+                elif (time.monotonic() - t) * 1000 >= quiet and (not navs or (commits and rparam(commits[-1]) == rparam(navs[-1]))):
                     return True
+            report.setdefault('settleTimeouts', 0); report['settleTimeouts'] += 1
             return False
         state = lambda: page.evaluate(STATE)
-        shot = lambda name: page.screenshot(path=str(out / f'{tag}-{name}.png'), full_page=True)
+        # Viewport screenshots only: in Firefox 153 a full_page screenshot left the NEXT preview navigation requested but
+        # uncommitted until a later navigation superseded it (attempt-1/2 traces); the 1280x1000 viewport holds the form
+        # and the 325x530 preview.
+        shot = lambda name: page.screenshot(path=str(out / f'{tag}-{name}.png'))
         cells = report['cells']
 
         def coherent(s):
-            return bool(navs) and fragment(navs[-1]) == fragment(s['codeSrc']) and s['pvSrc'] == navs[-1] \
+            # Product contract = the ISSUED assignment (and the browser's request for it). Whether the engine then
+            # commits the child document is recorded in `ledger`/`committedLatest`, not judged here (see docstring).
+            cells.setdefault('_committedLatest', []).append(bool(commits) and bool(navs) and rparam(commits[-1]) == rparam(navs[-1]))
+            return bool(navs) and rparam(navs[-1]) in {rparam(u) for u in reqs} and fragment(navs[-1]) == fragment(s['codeSrc']) and s['pvSrc'] == navs[-1] \
                 and s['pvAllow'] == ('geolocation' if s['mode'] == 'local' else '') and s['codeAllow'] == (s['mode'] == 'local')
 
         page.goto(base + 'builder.html'); settle(2000)
         s = state(); boxes = page.evaluate(BOXES)
         cells['load'] = {'pass': len(navs) == 1 and coherent(s), 'navs': len(navs), 'state': s}
-        cells['layout'] = {'pass': boxes['#pv'] is not None and boxes['#pv']['w'] == 325 and boxes['#pv']['h'] == 530, 'boxes': boxes}
+        cells['layout'] = {'pass': boxes['#pv'] is not None and boxes['#pv']['w'] == 325 and boxes['#pv']['h'] == 530, 'boxes': boxes,
+                           'scrollYAtLoad': page.evaluate('scrollY')}
         shot('1-load')
 
         # Equivalent spelling typed for real, then committed (Tab → change): no navigation.
@@ -220,11 +277,13 @@ def run(engine, root, out, headed, tag, compare=None):
         cells['localEdits'] = {'pass': quiet and len(d) == 1 and hash_params(d[0]).get('lat') == '30.04' and coherent(state()), 'urls': d}
         shot('4-final')
         boxes2 = page.evaluate(BOXES)
-        cells['layout']['afterRun'] = boxes2
+        # After the run the page may be scrolled (focus moves), so only SIZES are judged here; positions are compared
+        # between runs only at load (same scroll state) via --compare.
+        cells['layout']['afterRun'] = boxes2; cells['layout']['scrollYAfterRun'] = page.evaluate('scrollY')
         cells['layout']['pass'] = cells['layout']['pass'] and boxes2['#pv']['w'] == 325 and boxes2['#pv']['h'] == 530
         browser.close()
     server.shutdown()
-    report['docRequestsMatchFrameNavs'] = len(docs) == len(navs)
+    report['ledger'] = ledger_summary(navs, reqs, commits); report['committedLatestAtChecks'] = cells.pop('_committedLatest', [])
     if compare:
         other = json.loads(Path(compare).read_text(encoding='utf-8'))
         report['layoutDiffVsCompare'] = compare_boxes(report['cells']['layout']['boxes'], other['cells']['layout']['boxes'])

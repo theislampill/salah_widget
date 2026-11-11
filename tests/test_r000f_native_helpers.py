@@ -28,6 +28,15 @@ class Helpers(unittest.TestCase):
         self.assertEqual(D.distinct_outputs(['2', '21', '21', '21.5']), ['2', '21', '21.5'])
         self.assertEqual(D.distinct_outputs(['a', 'b', 'a']), ['a', 'b', 'a'])   # A→B→A is two real changes
 
+    def test_absolute_and_ledger(self):
+        self.assertEqual(D.rparam(B + '?r=7#x'), '7')
+        self.assertIsNone(D.rparam('about:blank'))
+        assigned = D.absolute([B + '?r=0#a', '?r=1#b', None, B + '?r=2#c'], B)
+        self.assertEqual(assigned, [B + '?r=0#a', B + '?r=1#b', B + '?r=2#c'])
+        led = D.ledger_summary(assigned, [B + '?r=0', B + '?r=2'], [B + '?r=0#a'])
+        self.assertEqual(led['assignedNotRequested'], ['1'])   # same-task duplicate the engine never requested
+        self.assertEqual(led['requestedNotCommitted'], ['2'])  # superseded before commit
+
     def test_compare_boxes(self):
         a = {'#pv': {'x': 0, 'y': 0, 'w': 325, 'h': 530}, '#copy': {'x': 1, 'y': 1, 'w': 10, 'h': 10}}
         b = {'#pv': {'x': 0.3, 'y': 0, 'w': 325, 'h': 530}, '#copy': {'x': 1, 'y': 9, 'w': 10, 'h': 10}, '#new': None}
