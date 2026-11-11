@@ -1,0 +1,103 @@
+{
+  "schema": "r0015-compiler-independent-review.oracle-addendum.v1",
+  "reviewer": "/root/r0013_review",
+  "recordedUtc": "2026-11-11T12:42:49.938701+00:00",
+  "previousReport": {
+    "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/review-v1.json",
+    "sha256": "7972c2fe2beea4e266b376d386222e9df67c433d6abbe242b6b0aefd367cd17c",
+    "bytes": 14480
+  },
+  "previousReportPreserved": true,
+  "scope": "Only accepted R15-COMPILER-TEST-01 oracle correction. Read-only diff and receipt review; no PowerShell/native execution or shared edits.",
+  "bindings": {
+    "source": {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+      "sha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+      "bytes": 109775
+    },
+    "tests": [
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-custody-622d37.ps1",
+        "sha256": "622d37e1a19f68482d07c3e5d30a6262140a5c0f6ef4646802225de040ebbbc7",
+        "bytes": 21307
+      },
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-first-call-9ad302.ps1",
+        "sha256": "9ad302faa53b089d5a1a579a457ed9f8b34659a40e10c8a6e8fae701cf7b951f",
+        "bytes": 36908
+      }
+    ],
+    "managedErrorProbe": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-error-identity/probe.ps1",
+      "sha256": "03259c4229470a0e73cebaae60dccbebee458c091259f73700724200499f5db2",
+      "bytes": 695
+    },
+    "managedErrorObservation": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-error-identity/pure-controls.stdout.json",
+      "sha256": "4a3520af575c4d52b67023da0a1647365147532ad84972d40562e79a4a647483",
+      "bytes": 528
+    },
+    "managedErrorAcquisition": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-error-identity/pure-controls-acquisition.json",
+      "sha256": "b98f5e1f1598d3eff35597ce66d6061b0764b002a07f0580a98685b69dd3f36b",
+      "bytes": 3013
+    },
+    "probeRunner": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-error-identity/run.py",
+      "sha256": "c9f8c243adb2207aa8aaf99446f05698dbbf3a29bb0def7408fe97b83f5fd1e1",
+      "bytes": 3012
+    }
+  },
+  "finding": {
+    "id": "R15-COMPILER-TEST-01",
+    "priorSeverity": "Important",
+    "disposition": "RESOLVED_IN_INSPECTED_TEST_SOURCE_NATIVE_REPLAY_PENDING",
+    "resolution": "Both named failure classifiers now require evidence from the actual compiler boundary. The demonstrated precompiler/helper exception counterexample cannot satisfy the corrected predicates.",
+    "ps51": "Custody requires non-null nonzero terminal CompilerExitCode, two retained raw stream files with positive combined length, and native.cs text equal to the actual injected source; raw source/stream hashes are recorded. The observer independently requires the nonzero terminal code, exact expected UTF-8-BOM native.cs hash, both raw stream snapshot entries and positive combined length. Source ab2d847 assigns CompilerExitCode only after actual process termination.",
+    "ps7": "Both wrappers module-qualify and delegate actual Add-Type, preserving the original error with rethrow. Failure credit requires exactly one managed compilation call, no return, exact SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand, and exact supplied source hash.",
+    "counterexamplesNowRejected": [
+      "Exception before source creation: null CompilerExitCode/no native.cs or diagnostics.",
+      "Process.Start failure: null CompilerExitCode.",
+      "Postcompiler DLL/admission failure after exit zero: zero CompilerExitCode.",
+      "PS7 helper/setup error before Add-Type: zero recorded managed compiler calls.",
+      "PS7 unrelated command/cmdlet failure: wrong error identity or missing supplied-source binding."
+    ],
+    "limits": "No native run has yet established the corrected assertions against actual invalid-source and useful healthy cases. Actual PS5.1 diagnostics must still be inspected for the expected invalid-source cause; these static changes do not convert any old acquisition failure into qualified evidence."
+  },
+  "preservedInvariants": [
+    "Actual Invoke-StagingCompiler scriptblock is still delegated with the same Context reference.",
+    "Only the named compile-failure appends invalid C# input.",
+    "Healthy invocation, native root/ancestor custody, environment restoration, refusal and cleanup assertions remain.",
+    "Observer PID/nonce/source/cold-type readiness, before/after barriers and event scope remain unchanged.",
+    "OBSERVATIONS_ACQUIRED and installerQualified=false remain distinct from product qualification."
+  ],
+  "probeReceiving": {
+    "receiptHashesVerified": true,
+    "host": "7.6.6",
+    "platform": "Unix",
+    "errorId": "SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand",
+    "diagnostic": "(1,55): error CS1002: ; expected\npublic class R0015InvalidProbe { deliberately invalid compiler input ! }\n                                                      ^\n",
+    "scope": "A separate small invalid managed C# definition was compiled by real PS7.6.6 Add-Type in a verified disconnected namespace with a read-only host tree and one disposable writable root. It establishes the actual error identity on that host only, not execution of installer NativeSource, Windows behavior or native qualification.",
+    "nativeWindowsCredit": false,
+    "installerCredit": false
+  },
+  "staticChecks": {
+    "candidateSourceUnchanged": true,
+    "testInputHashesVerified": true,
+    "utf8BomHashConstructionEquivalentForReviewedAsciiSource": true,
+    "previousReviewSha256Unchanged": true
+  },
+  "remainingGates": [
+    "Distinct final security-control test integration review at its frozen hash.",
+    "Exact-source native Windows PS5.1 and PS7 compiler failure and healthy companion receipts, including raw diagnostics, type state, output custody and cleanup.",
+    "Existing native output lease/byte-load/default-owner cleanup/adverse security gates in review-v1 remain open.",
+    "The whole original/amended denominator, immutable publication binding, delivery, predecessor-order and owner approval remain open."
+  ],
+  "execution": {
+    "powerShellLaunched": false,
+    "nativeLaunched": false,
+    "sharedWrites": false,
+    "sourceWrites": false,
+    "remoteWrites": false
+  }
+}

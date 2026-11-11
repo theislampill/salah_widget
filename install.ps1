@@ -80,18 +80,16 @@ function Initialize-CompilerNative {
     return $builder.CreateType()
 }
 
-function Open-CompilerDirectoryLease([string]$Path, [string]$Sid, [string]$TrustedInstallerSid) {
-    if ($DryRun) { throw 'Offline preview does not inspect compiler custody paths.' }
+function Read-CompilerPathFacts($Handle, [string]$Path, [string]$Sid, [string]$TrustedInstallerSid) {
+    if ($DryRun) { throw 'Offline preview does not inspect compiler custody objects.' }
     $native = Initialize-CompilerNative
-    # Match StageNative.OpenDirectory: data access participates in delete sharing.
-    $handle = $native::CreateFileW($Path,0x20081,3,[IntPtr]::Zero,3,0x02200000,[IntPtr]::Zero)
-    if ($handle.IsInvalid) { $handle.Dispose(); throw [ComponentModel.Win32Exception]::new([Runtime.InteropServices.Marshal]::GetLastWin32Error(),'Open compiler custody directory') }
+    if (-not $Handle -or $Handle.IsClosed -or $Handle.IsInvalid) { throw 'Compiler custody handle is not live.' }
     $information = [Runtime.InteropServices.Marshal]::AllocHGlobal(52)
     $descriptor = [IntPtr]::Zero
     try {
         if (-not $native::GetFileInformationByHandle($handle,$information)) { throw 'Cannot read compiler directory identity.' }
         $attributes = [Runtime.InteropServices.Marshal]::ReadInt32($information,0)
-        if (($attributes -band 0x400) -ne 0 -or ($attributes -band 0x10) -eq 0 -or $native::GetFileType($handle) -ne 1) { throw 'Reparse or non-directory compiler path refused.' }
+        if (($attributes -band 0x400) -ne 0 -or $native::GetFileType($Handle) -ne 1) { throw 'Reparse or non-disk compiler path refused.' }
         $physical = [Text.StringBuilder]::new(32768)
         $count = $native::GetFinalPathNameByHandleW($handle,$physical,[uint32]$physical.Capacity,0)
         if ($count -eq 0 -or $count -ge $physical.Capacity) { throw 'Cannot read physical compiler path.' }
@@ -105,32 +103,69 @@ function Open-CompilerDirectoryLease([string]$Path, [string]$Sid, [string]$Trust
         $security = [Security.AccessControl.RawSecurityDescriptor]::new($bytes,0)
         $actualOwner = if ($security.Owner) { $security.Owner.Value } else { '' }
         $trustedOwners = @($Sid,'S-1-5-18','S-1-5-32-544'); if ($TrustedInstallerSid) { $trustedOwners += $TrustedInstallerSid }
-        $parentSafe = $actualOwner -ceq $Sid -and $null -ne $security.DiscretionaryAcl
+        $writeRestricted = $null -ne $security.DiscretionaryAcl
+        $parentSafe = $actualOwner -ceq $Sid -and $writeRestricted
         $ancestorSafe = $actualOwner -cin $trustedOwners -and $null -ne $security.DiscretionaryAcl
         $private = $parentSafe -and ($security.ControlFlags -band [Security.AccessControl.ControlFlags]::DiscretionaryAclProtected) -ne 0 -and $security.DiscretionaryAcl.Count -eq 1
         foreach ($ace in $security.DiscretionaryAcl) {
-            if ($ace -isnot [Security.AccessControl.CommonAce] -or $ace.IsCallback) { $parentSafe=$false; $ancestorSafe=$false; $private=$false; continue }
+            if ($ace -isnot [Security.AccessControl.CommonAce] -or $ace.IsCallback) { $parentSafe=$false; $ancestorSafe=$false; $private=$false; $writeRestricted=$false; continue }
             $allowed = $ace.AceQualifier -eq [Security.AccessControl.AceQualifier]::AccessAllowed
             $inheritOnly = ([int]$ace.AceFlags -band [int][Security.AccessControl.AceFlags]::InheritOnly) -ne 0
             $principal = $ace.SecurityIdentifier.Value
             $mask = [uint64][BitConverter]::ToUInt32([BitConverter]::GetBytes([int]$ace.AccessMask),0)
             # Keep these masks and trusted-owner rules identical to StageNative.Read.
-            if ($allowed -and -not $inheritOnly -and ($mask -band 0x500d0156) -ne 0 -and $principal -cnotin @($Sid,'S-1-5-18','S-1-5-32-544')) { $parentSafe=$false }
+            if ($allowed -and -not $inheritOnly -and ($mask -band 0x500d0156) -ne 0 -and $principal -cnotin @($Sid,'S-1-5-18','S-1-5-32-544')) { $parentSafe=$false; $writeRestricted=$false }
             if ($allowed -and -not $inheritOnly -and ($mask -band 0x500d0150) -ne 0 -and $principal -cnotin $trustedOwners) { $ancestorSafe=$false }
             if (-not $allowed -or $inheritOnly -or $principal -cne $Sid -or ($mask -band 0x1f01ff) -ne 0x1f01ff) { $private=$false }
         }
         $identity = '{0:x8}:{1:x8}{2:x8}' -f [Runtime.InteropServices.Marshal]::ReadInt32($information,28),[Runtime.InteropServices.Marshal]::ReadInt32($information,44),[Runtime.InteropServices.Marshal]::ReadInt32($information,48)
-        return [pscustomobject]@{Handle=$handle;Facts=[pscustomobject]@{Path=$finalPath;Identity=$identity;Owner=$actualOwner;Directory=$true;Private=$private;TrustedParent=$parentSafe;TrustedAncestor=$ancestorSafe}}
+        $high = [BitConverter]::ToUInt32([BitConverter]::GetBytes([Runtime.InteropServices.Marshal]::ReadInt32($information,32)),0)
+        $low = [BitConverter]::ToUInt32([BitConverter]::GetBytes([Runtime.InteropServices.Marshal]::ReadInt32($information,36)),0)
+        $links = [BitConverter]::ToUInt32([BitConverter]::GetBytes([Runtime.InteropServices.Marshal]::ReadInt32($information,40)),0)
+        return [pscustomobject]@{Path=$finalPath;Identity=$identity;Owner=$actualOwner;Directory=($attributes -band 0x10) -ne 0;Private=$private;TrustedParent=$parentSafe;TrustedAncestor=$ancestorSafe;WriteRestricted=$writeRestricted;Length=([uint64]$high*4294967296+[uint64]$low);Links=$links}
+    } finally { if ($descriptor -ne [IntPtr]::Zero) { [void]$native::LocalFree($descriptor) }; [Runtime.InteropServices.Marshal]::FreeHGlobal($information) }
+}
+
+function Open-CompilerDirectoryLease([string]$Path, [string]$Sid, [string]$TrustedInstallerSid) {
+    if ($DryRun) { throw 'Offline preview does not inspect compiler custody paths.' }
+    $native = Initialize-CompilerNative
+    # Match StageNative.OpenDirectory: data access participates in delete sharing.
+    $handle = $native::CreateFileW($Path,0x20081,3,[IntPtr]::Zero,3,0x02200000,[IntPtr]::Zero)
+    if ($handle.IsInvalid) { $handle.Dispose(); throw [ComponentModel.Win32Exception]::new([Runtime.InteropServices.Marshal]::GetLastWin32Error(),'Open compiler custody directory') }
+    try {
+        $facts = Read-CompilerPathFacts $handle $Path $Sid $TrustedInstallerSid
+        if (-not $facts.Directory) { throw 'Non-directory compiler path refused.' }
+        return [pscustomobject]@{Handle=$handle;Facts=$facts}
     } catch { $handle.Dispose(); throw }
-    finally { if ($descriptor -ne [IntPtr]::Zero) { [void]$native::LocalFree($descriptor) }; [Runtime.InteropServices.Marshal]::FreeHGlobal($information) }
+}
+
+function Open-CompilerOutputLease([string]$Path, $Context) {
+    if ($DryRun) { throw 'Offline preview does not admit compiler output.' }
+    if (-not $Context -or -not [object]::ReferenceEquals($Context,$script:CompilerScratch) -or -not $Context.RootLease -or $Context.RootLease.Handle.IsClosed) { throw 'Compiler output has no live owned context.' }
+    $full = [IO.Path]::GetFullPath($Path)
+    if (-not [string]::Equals([IO.Path]::GetDirectoryName($full),$Context.Path,[StringComparison]::OrdinalIgnoreCase)) { throw 'Compiler output is outside its owned root.' }
+    $native = Initialize-CompilerNative
+    # Read data, hold identity, and deny concurrent writes/deletion while loading.
+    $handle = $native::CreateFileW($full,0x20081,1,[IntPtr]::Zero,3,0x02200000,[IntPtr]::Zero)
+    if ($handle.IsInvalid) { $handle.Dispose(); throw [ComponentModel.Win32Exception]::new([Runtime.InteropServices.Marshal]::GetLastWin32Error(),'Open compiler output') }
+    try {
+        $facts = Read-CompilerPathFacts $handle $full $Context.Sid ''
+        if ($facts.Directory -or $facts.Links -ne 1 -or -not $facts.WriteRestricted -or $facts.Owner -cnotin @($Context.Sid,$Context.DefaultOwnerSid)) { throw 'Compiler output custody could not be proved.' }
+        return [pscustomobject]@{Handle=$handle;Facts=$facts}
+    } catch { $handle.Dispose(); throw }
 }
 
 function New-StagingCompilerContext {
     if ($DryRun) { throw 'Offline preview does not allocate compiler scratch.' }
     $native = Initialize-CompilerNative
-    $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+    $identity = [Security.Principal.WindowsIdentity]::GetCurrent()
+    try {
+        $sid = $identity.User.Value; $defaultOwnerSid = $identity.Owner.Value
+        if (-not $sid -or -not $defaultOwnerSid) { throw 'Compiler token ownership could not be read.' }
+        if ($defaultOwnerSid -cnotin @($sid,'S-1-5-32-544')) { throw 'Unsupported compiler default owner.' }
+    } finally { $identity.Dispose() }
     $trustedInstaller = ''; try { $trustedInstaller = ([Security.Principal.NTAccount]::new('NT SERVICE','TrustedInstaller').Translate([Security.Principal.SecurityIdentifier])).Value } catch {}
-    $context = [pscustomobject]@{Id=[guid]::NewGuid().ToString('N');Status='parent-admission';Path=$null;Identity=$null;Sid=$sid;Created=$false;RootLease=$null;Leases=[Collections.Generic.List[object]]::new();CleanupError=$null}
+    $context = [pscustomobject]@{Id=[guid]::NewGuid().ToString('N');Status='parent-admission';Path=$null;Identity=$null;Sid=$sid;DefaultOwnerSid=$defaultOwnerSid;InvocationStarted=$false;CompilerExitCode=$null;Created=$false;RootLease=$null;Leases=[Collections.Generic.List[object]]::new();CleanupError=$null}
     $script:CompilerScratch = $context
     try {
         $path = [IO.Path]::GetTempPath()
@@ -194,7 +229,9 @@ function Clear-StagingCompilerContext($Context, [bool]$Compiled) {
         while ($pending.Count) {
             foreach ($path in [IO.Directory]::EnumerateFileSystemEntries($pending.Pop())) {
                 $facts=[SalahInstaller.StageNative]::Inspect($path,$Context.Sid)
-                if ($facts.Owner -cne $Context.Sid -or -not $facts.TrustedParent -or (-not $facts.Directory -and $facts.Links -ne 1)) { throw 'Compiler output custody could not be proved.' }
+                # Compiler-created objects use the captured token owner, which
+                # can differ from User. Keep the full foreign-write predicate.
+                if ($facts.Owner -cnotin @($Context.Sid,$Context.DefaultOwnerSid) -or -not $facts.WriteRestricted -or (-not $facts.Directory -and $facts.Links -ne 1)) { throw 'Compiler output custody could not be proved.' }
                 [void]$observed.Add($facts)
                 if ($facts.Directory) { $lease=[SalahInstaller.StageNative]::OpenDirectory($path,$Context.Sid); [void]$descendantLeases.Add($lease); $pending.Push($path) }
             }
@@ -210,6 +247,82 @@ function Clear-StagingCompilerContext($Context, [bool]$Compiled) {
         foreach ($lease in $descendantLeases) { $lease.Dispose() }
         if ($Context.RootLease) { $Context.RootLease.Handle.Dispose() }
         foreach ($lease in $Context.Leases) { $lease.Handle.Dispose() }
+    }
+}
+
+function Invoke-StagingCompiler([string]$NativeSource, $Context) {
+    if ($DryRun) { throw 'Offline preview does not invoke a compiler or load generated code.' }
+    if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) { throw 'Native staging compilation requires Windows.' }
+    if (-not $Context -or -not [object]::ReferenceEquals($Context,$script:CompilerScratch) -or $Context.Status -cne 'compiling' -or $Context.InvocationStarted -or -not $Context.RootLease -or $Context.RootLease.Handle.IsClosed) { throw 'Compiler invocation has no fresh owned context.' }
+    $facts = Read-CompilerPathFacts $Context.RootLease.Handle $Context.Path $Context.Sid ''
+    if (-not $facts.Directory -or -not $facts.Private -or $facts.Identity -cne $Context.Identity) { throw 'Compiler root custody changed before invocation.' }
+    foreach ($lease in $Context.Leases) { if ($lease.Handle.IsClosed) { throw 'Compiler ancestor lease is no longer live.' } }
+    foreach ($variable in @('TEMP','TMP')) {
+        if (-not [string]::Equals([Environment]::GetEnvironmentVariable($variable,'Process'),$Context.Path,[StringComparison]::OrdinalIgnoreCase)) { throw 'Compiler environment is outside its owned root.' }
+    }
+    $entries = [IO.Directory]::EnumerateFileSystemEntries($Context.Path).GetEnumerator()
+    try { if ($entries.MoveNext()) { throw 'Compiler invocation refuses preexisting output.' } } finally { $entries.Dispose() }
+    $Context.InvocationStarted = $true
+    if ($PSVersionTable.PSVersion.Major -ne 5) { Add-Type -TypeDefinition $NativeSource | Out-Null; return }
+
+    # Avoid Framework CodeDOM's ANSI environment transport. Scope the direct
+    # child environment, working directory and explicit outputs to this root.
+    $sourcePath = Join-Path $Context.Path 'native.cs'
+    $assemblyPath = Join-Path $Context.Path 'native.dll'
+    $sourceLease=$null; $sourceStream=$null; $assemblyLease=$null; $assemblyStream=$null
+    $compilerProcess=$null; $stdoutStream=$null; $stderrStream=$null; $started=$false
+    try {
+        $encoding = [Text.UTF8Encoding]::new($true)
+        $sourceBytes = [byte[]]($encoding.GetPreamble() + $encoding.GetBytes($NativeSource))
+        $writer = [IO.FileStream]::new($sourcePath,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+        try { $writer.Write($sourceBytes,0,$sourceBytes.Length); $writer.Flush() } finally { $writer.Dispose() }
+        $sourceLease = Open-CompilerOutputLease $sourcePath $Context
+        $sourceStream = [IO.FileStream]::new($sourceLease.Handle,[IO.FileAccess]::Read)
+        $hasher = [Security.Cryptography.SHA256]::Create()
+        try {
+            $expectedHash = [BitConverter]::ToString($hasher.ComputeHash($sourceBytes))
+            $actualHash = [BitConverter]::ToString($hasher.ComputeHash($sourceStream))
+            if ($actualHash -cne $expectedHash -or $sourceLease.Facts.Length -ne $sourceBytes.Length) { throw 'Compiler source bytes changed before invocation.' }
+        } finally { $hasher.Dispose() }
+        $stdoutStream = [IO.FileStream]::new((Join-Path $Context.Path 'compiler.stdout.bin'),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+        $stderrStream = [IO.FileStream]::new((Join-Path $Context.Path 'compiler.stderr.bin'),[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+        $runtime = [Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory()
+        $start = [Diagnostics.ProcessStartInfo]::new()
+        $start.FileName = [IO.Path]::Combine($runtime,'csc.exe')
+        $start.UseShellExecute=$false; $start.CreateNoWindow=$true
+        $start.RedirectStandardOutput=$true; $start.RedirectStandardError=$true
+        $start.WorkingDirectory=$Context.Path
+        $start.EnvironmentVariables['TEMP']=$Context.Path; $start.EnvironmentVariables['TMP']=$Context.Path
+        $start.Arguments='/nologo /noconfig /target:library /utf8output /reference:"'+[IO.Path]::Combine($runtime,'System.dll')+'" /out:"'+$assemblyPath+'" "'+$sourcePath+'"'
+        $compilerProcess=[Diagnostics.Process]::new(); $compilerProcess.StartInfo=$start
+        if (-not $compilerProcess.Start()) { throw 'The Framework compiler did not start.' }
+        $started=$true
+        $stdoutCopy=$compilerProcess.StandardOutput.BaseStream.CopyToAsync($stdoutStream)
+        $stderrCopy=$compilerProcess.StandardError.BaseStream.CopyToAsync($stderrStream)
+        if (-not $compilerProcess.WaitForExit(60000)) { throw 'The Framework compiler timed out; its output is retained.' }
+        $Context.CompilerExitCode=$compilerProcess.ExitCode
+        if (-not $stdoutCopy.Wait(5000) -or -not $stderrCopy.Wait(5000)) { throw 'Compiler diagnostics did not finish; output is retained.' }
+        $stdoutStream.Flush(); $stderrStream.Flush()
+        if ($Context.CompilerExitCode -ne 0) { throw ('The Framework compiler exited '+$Context.CompilerExitCode+'; diagnostics are retained in '+$Context.Path) }
+
+        $assemblyLease=Open-CompilerOutputLease $assemblyPath $Context
+        if ($assemblyLease.Facts.Length -le 0 -or $assemblyLease.Facts.Length -gt 16777216) { throw 'Compiler output has an unsupported size.' }
+        $assemblyStream=[IO.FileStream]::new($assemblyLease.Handle,[IO.FileAccess]::Read)
+        $assemblyBuffer=[IO.MemoryStream]::new()
+        try { $assemblyStream.CopyTo($assemblyBuffer); $assemblyBytes=$assemblyBuffer.ToArray() } finally { $assemblyBuffer.Dispose() }
+        $after=Read-CompilerPathFacts $assemblyLease.Handle $assemblyPath $Context.Sid ''
+        if ($after.Identity -cne $assemblyLease.Facts.Identity -or $after.Length -ne $assemblyBytes.Length -or -not $after.WriteRestricted -or $after.Owner -cnotin @($Context.Sid,$Context.DefaultOwnerSid) -or $after.Directory -or $after.Links -ne 1) { throw 'Compiler output changed before byte loading.' }
+        $assembly=[Reflection.Assembly]::Load($assemblyBytes)
+        if (-not $assembly.GetType('SalahInstaller.StageNative',$false)) { throw 'Compiled bytes do not contain the required staging type.' }
+    } finally {
+        if ($compilerProcess) {
+            try { if ($started -and -not $compilerProcess.HasExited) { $compilerProcess.Kill(); [void]$compilerProcess.WaitForExit(5000) } }
+            catch { Write-Warn ('Compiler termination could not be confirmed; scratch is retained at '+$Context.Path) }
+            finally { $compilerProcess.Dispose() }
+        }
+        if ($stdoutStream) { $stdoutStream.Dispose() }; if ($stderrStream) { $stderrStream.Dispose() }
+        if ($sourceStream) { $sourceStream.Dispose() }; if ($sourceLease) { $sourceLease.Handle.Dispose() }
+        if ($assemblyStream) { $assemblyStream.Dispose() }; if ($assemblyLease) { $assemblyLease.Handle.Dispose() }
     }
 }
 
@@ -237,7 +350,7 @@ using Microsoft.Win32.SafeHandles;
 namespace SalahInstaller {
   public sealed class PathFacts {
     public string Path, Identity, Owner;
-    public bool Directory, Private, TrustedParent, TrustedAncestor;
+    public bool Directory, Private, TrustedParent, TrustedAncestor, WriteRestricted;
     public long Length;
     public uint Links;
   }
@@ -384,24 +497,25 @@ namespace SalahInstaller {
         byte[] bytes = new byte[GetSecurityDescriptorLength(descriptor)]; Marshal.Copy(descriptor, bytes, 0, bytes.Length);
         RawSecurityDescriptor security = new RawSecurityDescriptor(bytes, 0);
         string actualOwner = security.Owner == null ? "" : security.Owner.Value;
-        bool parentSafe = actualOwner == sid && security.DiscretionaryAcl != null;
+        bool writeRestricted = security.DiscretionaryAcl != null;
+        bool parentSafe = actualOwner == sid && writeRestricted;
         bool ancestorSafe = TrustedOwner(actualOwner,sid) && security.DiscretionaryAcl != null;
         bool privateAcl = parentSafe && (security.ControlFlags & ControlFlags.DiscretionaryAclProtected) != 0 && security.DiscretionaryAcl.Count == 1;
         if (security.DiscretionaryAcl != null) foreach (GenericAce generic in security.DiscretionaryAcl) {
           CommonAce ace = generic as CommonAce;
-          if (ace == null || ace.IsCallback) { parentSafe = false; ancestorSafe = false; privateAcl = false; continue; }
+          if (ace == null || ace.IsCallback) { parentSafe = false; ancestorSafe = false; privateAcl = false; writeRestricted = false; continue; }
           bool allowed = ace.AceQualifier == AceQualifier.AccessAllowed;
           bool inheritOnly = (ace.AceFlags & AceFlags.InheritOnly) != 0;
           string principal = ace.SecurityIdentifier.Value;
           uint mask = unchecked((uint)ace.AccessMask);
-          if (allowed && !inheritOnly && (mask & 0x500d0156u) != 0 && principal != sid && principal != "S-1-5-18" && principal != "S-1-5-32-544") parentSafe = false;
+          if (allowed && !inheritOnly && (mask & 0x500d0156u) != 0 && principal != sid && principal != "S-1-5-18" && principal != "S-1-5-32-544") { parentSafe = false; writeRestricted = false; }
           // Earlier ancestors may grant create-file/create-directory (2/4)
           // without granting replacement, attribute or ACL/owner authority.
           if (allowed && !inheritOnly && (mask & 0x500d0150u) != 0 && principal != sid && principal != "S-1-5-18" && principal != "S-1-5-32-544" && !TrustedOwner(principal,sid)) ancestorSafe = false;
           if (!allowed || inheritOnly || principal != sid || (mask & 0x1f01ffu) != 0x1f01ffu) privateAcl = false;
         }
         return new PathFacts { Path=finalPath, Identity=info.Volume.ToString("x8") + ":" + info.IndexHigh.ToString("x8") + info.IndexLow.ToString("x8"), Owner=actualOwner,
-          Directory=(info.Attributes & 0x10) != 0, Private=privateAcl, TrustedParent=parentSafe, TrustedAncestor=ancestorSafe, Length=((long)info.SizeHigh << 32) | info.SizeLow, Links=info.Links };
+          Directory=(info.Attributes & 0x10) != 0, Private=privateAcl, TrustedParent=parentSafe, TrustedAncestor=ancestorSafe, WriteRestricted=writeRestricted, Length=((long)info.SizeHigh << 32) | info.SizeLow, Links=info.Links };
       } finally { if (descriptor != IntPtr.Zero) LocalFree(descriptor); }
     }
     public static PathFacts Inspect(string path, string sid) {
@@ -420,13 +534,7 @@ namespace SalahInstaller {
   }
 }
 '@
-            if ($PSVersionTable.PSVersion.Major -eq 5) {
-                $parameters=[CodeDom.Compiler.CompilerParameters]::new()
-                $parameters.GenerateInMemory=$true
-                $parameters.TempFiles=[CodeDom.Compiler.TempFileCollection]::new($compiler.Path,$true)
-                [void]$parameters.ReferencedAssemblies.Add('System.dll')
-                Add-Type -TypeDefinition $nativeSource -CompilerParameters $parameters | Out-Null
-            } else { Add-Type -TypeDefinition $nativeSource | Out-Null }
+            Invoke-StagingCompiler $nativeSource $compiler
             $compiled=$null -ne ('SalahInstaller.StageNative' -as [type])
             if (-not $compiled) { throw 'Native staging compilation did not produce the required type.' }
             $compiler.Status='compiled'

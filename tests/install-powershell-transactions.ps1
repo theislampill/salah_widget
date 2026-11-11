@@ -669,6 +669,156 @@ try {
         Assert-Case ($premature.Count -eq 0) 'An ancestor or retained lease was released before the scratch deletion boundary.'
     }
 
+    # This ancillary native refusal control runs only when explicitly selected.
+    # Ordinary transaction and mutation prerequisites retain their original scope.
+    if ($Case -and 'native long-path refusal preserves handed-off predecessor' -in $Case) {
+    # One Windows-only refusal observation; not a mutation recipe or a long-path
+    # support requirement. Keep the existing privateFileFailures recorder intact.
+    $longPathCaseName='native long-path refusal preserves handed-off predecessor'
+    $longPathResultCount=$script:results.Count
+    $script:longPathDisposition='ACQUISITION_BLOCKED_HEALTHY_BASELINE'
+    Invoke-Case $longPathCaseName {
+        if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT -or $UsePosixNativeAdapter) {
+            $script:longPathDisposition='BLOCKED_NATIVE_HOST'
+            throw 'Native Windows without a POSIX boundary adapter is required.'
+        }
+        $asset=New-Case 'lp' $goodBytes
+        $null=Install-TablissNG $script:targetFixture
+        $healthyCopies=@($script:caseEvents|Where-Object{$_.effect -eq 'copy'})
+        Assert-Case ($healthyCopies.Count -eq 1) 'Healthy short actual caller did not hand off one admitted bundle.'
+        $oldBundle=[string]$healthyCopies[0].value
+        $oldBundleRecord=Get-AdmittedArtifact $oldBundle 'unpacked'
+        $oldAsset=@($script:StagingAttempt.Artifacts|Where-Object{$_.Kind -eq 'asset'})[0]
+        $null=Get-AdmittedArtifact $oldAsset.Path 'asset'
+        Assert-Case ([IO.File]::Exists((Join-Path $oldBundle ('assets/space '+[char]0x0635+'.txt')))) 'Healthy Unicode/spaced predecessor member is missing.'
+        $oldFiles=@()
+        foreach($path in @($oldAsset.Path)+@($oldBundleRecord.Files|ForEach-Object{$_.Path})) {
+            $proof=Get-StagedFileDigest $path
+            $oldFiles += [pscustomobject]@{path=$path;identity=$proof.Identity;hash=$proof.Hash;length=$proof.Length}
+        }
+        $bundleBefore=Get-StagingPathInfo $oldBundle
+        $retained=$script:StagingAttempt.Retained.Path
+        $retainedBefore=Get-StagingPathInfo $retained
+        $scratch=$script:StagingAttempt.Scratch.Path
+        $script:caseNotes.longPathHealthy=[pscustomobject]@{bundle=$oldBundle;archive=$oldAsset.Path;files=$oldFiles;events=@($script:caseEvents);source='Actual Install-TablissNG, admission, extraction and handoff; existing controlled transport/clipboard/browser adapters.'}
+
+        # This sentinel is fixture-owned but outside both current-attempt roots.
+        # It is not a cross-UID claim or an invitation to change ancestor ACLs.
+        $foreign=Join-Path $script:caseRoot ('outside-attempt-'+[guid]::NewGuid().ToString('N')+'.txt')
+        Assert-FixturePath $foreign
+        [SalahInstaller.StageNative]::CreatePrivateFile($foreign,$script:StagingAttempt.Sid)
+        [IO.File]::WriteAllText($foreign,'outside-current-attempt sentinel',$script:utf8)
+        $foreignBefore=[SalahInstaller.StageNative]::Inspect($foreign,$script:StagingAttempt.Sid)
+        $foreignHash=(Get-FileHash -LiteralPath $foreign -Algorithm SHA256).Hash
+        $foreignSddl=(Get-Acl -LiteralPath $foreign).Sddl
+        $savedDownloadRoot=$script:DownloadRoot
+        $script:longPathDisposition='ACQUISITION_BOUNDARY_FIXTURE_LAYOUT'
+        try {
+            $null=Assert-OwnedStagingPath $savedDownloadRoot
+            $suffix=' space '+[char]0x0635
+            $padding=227-$savedDownloadRoot.Length-1-$suffix.Length
+            Assert-Case ($padding -gt 0 -and ($padding+$suffix.Length) -le 255) 'Fixture cannot form the bounded owned destination directory.'
+            $deep=$savedDownloadRoot+'\'+('p'*$padding)+$suffix
+            Assert-Case ($deep.Length -eq 227) 'Controlled destination directory length drifted.'
+            Assert-FixturePath $deep
+            $null=New-PrivateStagingDirectory $deep
+            $deepBefore=Assert-OwnedStagingPath $deep
+            Assert-Case ($deepBefore.Directory -and $deepBefore.Private) 'Actual native destination readback is not private.'
+            # Only the fixture's routing input changes. This remains a validated
+            # descendant of the same retained root; production guards are real.
+            $script:DownloadRoot=$deep
+            $other=New-TestAsset 990 $secondBytes 'long-path-control'
+            $script:releaseFixture=[pscustomobject]@{id=201;tag_name='v-fixture';assets=@($other)}
+            $script:LatestRelease=$script:releaseFixture
+            Set-DownloadPlan @((New-DownloadStep $secondBytes),(New-DownloadStep $secondBytes))
+            $recordStart=$script:StagingAttempt.Artifacts.Count
+            $failureStart=if($script:caseNotes.Contains('privateFileFailures')){@($script:caseNotes.privateFileFailures).Count}else{0}
+            $script:caseEvents=@()
+            $script:caseNotes.longPathSetup=[pscustomobject]@{ordinaryDownloadRoot=$savedDownloadRoot;controlledDownloadRoot=$deep;directoryLength=$deep.Length;directoryFacts=$deepBefore;expectedPrivateLeafLength=40;expectedPrivatePathLength=268;expectedLengthIsNotAnObservedCall=$true;assetName=$other.name;assetSha256=(Get-BytesHash $secondBytes);adapter='Route DownloadRoot to a freshly created actual private descendant; no source function or failure result replaced.'}
+
+            $script:longPathDisposition='ASSESSING_LONG_RESULT'
+            $first=Invoke-Captured {Download-Asset $other}
+            $script:caseNotes.longPathFirst=$first
+            $firstRecords=@($script:StagingAttempt.Artifacts.ToArray()|Select-Object -Skip $recordStart)
+            $accepted=(-not $first.error -and $first.items.Count -eq 1 -and $first.items[0] -is [string] -and -not [string]::IsNullOrWhiteSpace($first.items[0]))
+            if($accepted) {
+                $acceptedPath=[string]$first.items[0]
+                $acceptedRecord=Get-AdmittedArtifact $acceptedPath 'asset'
+                Assert-Case ($acceptedPath.Length -ge 260 -and $acceptedPath.StartsWith($deep+'\',[StringComparison]::OrdinalIgnoreCase) -and $acceptedRecord.Hash -ceq (Get-BytesHash $secondBytes)) 'A short, stale or wrong-byte result cannot establish long-path capability.'
+                $script:longPathDisposition='ACQUISITION_BOUNDARY_LONG_PATH_ACCEPTED'
+                $null=Install-TablissNG $script:targetFixture
+                $script:caseNotes.longPathCapability=[pscustomobject]@{admittedAsset=[string]$first.items[0];events=@($script:caseEvents);refusalCredit=$false;mutationCredit=$false;reason='This host admitted the selected long destination. The requested refusal premise was not established.'}
+            } else {
+                $observedFailures=@($script:caseNotes.privateFileFailures|Select-Object -Skip $failureStart)
+                $boundFailures=@($observedFailures|Where-Object{
+                    $_.pathLength -eq 268 -and $_.requestedPath.Length -eq 268 -and $_.parent -ceq $deep -and
+                    $_.parentFacts -and $_.parentFacts.Private -and $_.parentFacts.TrustedParent -and $_.parentFacts.Identity -ceq $deepBefore.Identity -and
+                    @($_.exceptionChain|Where-Object{$_.nativeErrorCode -in @(3,206)}).Count -gt 0
+                })
+                $script:caseNotes.longPathActualFailures=$observedFailures
+                if(-not $first.error -or $boundFailures.Count -eq 0) {
+                    $script:longPathDisposition='ACQUISITION_BOUNDARY_FAILURE_NOT_BOUND_TO_LONG_NATIVE_PATH'
+                    throw 'No actual recorded long private-file refusal matched this controlled destination; preserve the original failure without refusal credit.'
+                }
+                $script:longPathDisposition='REFUSAL_OBSERVED'
+                Assert-NoReadyPath $first 'Actual long-path download refusal'
+                Assert-Case ($firstRecords.Count -eq 1 -and $firstRecords[0].Kind -ceq 'asset' -and $firstRecords[0].State -ceq 'publication-failed' -and -not $firstRecords[0].Path -and $firstRecords[0].Hash -ceq (Get-BytesHash $secondBytes)) 'Refused candidate acquired readiness or failed at an unrelated transaction stage.'
+                $null=Install-TablissNG $script:targetFixture
+                $attempted=@($script:StagingAttempt.Artifacts.ToArray()|Select-Object -Skip $recordStart)
+                Assert-Case ($attempted.Count -eq 2 -and @($attempted|Where-Object{$_.Kind -cne 'asset' -or $_.State -cne 'publication-failed' -or $_.Path}).Count -eq 0) 'Retry adopted a failed/partial candidate or created a ready replacement.'
+                Assert-Case ($script:downloadIndex -eq 2 -and $attempted[0].Candidate -cne $attempted[1].Candidate) 'Actual caller reused the failed candidate instead of acquiring a fresh candidate.'
+                Assert-Case ($attempted[0].Source -ceq $attempted[1].Source -and $attempted[1].Hash -ceq (Get-BytesHash $secondBytes)) 'Retry did not validate the same supported artifact bytes/source.'
+                Assert-Case (-not @($script:caseEvents|Where-Object{$_.effect -eq 'copy'}).Count) 'Long-path refusal reached a clipboard handoff.'
+                Assert-Case (@($script:caseEvents|Where-Object{$_.effect -eq 'open' -and $_.value -eq $script:targetFixture.Config.StoreUrl}).Count -eq 1) 'Actual refusal caller did not provide the truthful store fallback.'
+                $allFailures=@($script:caseNotes.privateFileFailures|Select-Object -Skip $failureStart)
+                Assert-Case ($allFailures.Count -eq 2 -and @($allFailures|Where-Object{$_.pathLength -ne 268 -or $_.parent -cne $deep -or -not $_.parentFacts.Private -or $_.parentFacts.Identity -cne $deepBefore.Identity -or @($_.exceptionChain|Where-Object{$_.nativeErrorCode -in @(3,206)}).Count -eq 0}).Count -eq 0) 'Retry did not reach the same proven native refusal boundary.'
+                foreach($path in @($attempted|ForEach-Object{$_.Candidate})+@($allFailures|ForEach-Object{$_.requestedPath})) {
+                    $unadmitted=Invoke-Captured {Get-AdmittedArtifact $path 'asset'}
+                    Assert-Case ($unadmitted.error -and $unadmitted.items.Count -eq 0) 'A failed scratch or retained candidate was adopted as admitted.'
+                }
+                $script:caseNotes.longPathRefusal=[pscustomobject]@{records=@($attempted|ForEach-Object{[pscustomobject]@{state=$_.State;path=$_.Path;candidate=$_.Candidate;publicationCandidate=$_.PublicationCandidate;failure=$_.Failure}});actualFailures=$allFailures;events=@($script:caseEvents);refusalCredit=$false;mutationCredit=$false;publicationReached='Not required; a recorded private-file failure may precede PublicationCandidate assignment.'}
+            }
+            $null=Get-AdmittedArtifact $oldAsset.Path 'asset'
+            $null=Get-AdmittedArtifact $oldBundle 'unpacked'
+            $deepAfter=Assert-OwnedStagingPath $deep
+            Assert-Case ($deepAfter.Identity -ceq $deepBefore.Identity -and $deepAfter.Private) 'Long destination identity or custody changed.'
+            $script:caseNotes.longPathDestinationAfter=$deepAfter
+        } finally {
+            $script:DownloadRoot=$savedDownloadRoot
+        }
+        $script:caseNotes.longPathEvents=@($script:caseEvents)
+        $null=Clear-OwnedScratch
+        Assert-Case (-not [IO.Directory]::Exists($scratch)) 'Verified current scratch was not cleaned after the control.'
+        $retainedAfter=[SalahInstaller.StageNative]::Inspect($retained,$script:StagingAttempt.Sid)
+        $bundleAfter=[SalahInstaller.StageNative]::Inspect($oldBundle,$script:StagingAttempt.Sid)
+        $deepAfterCleanup=[SalahInstaller.StageNative]::Inspect($deep,$script:StagingAttempt.Sid)
+        Assert-Case ($retainedAfter.Identity -ceq $retainedBefore.Identity -and $retainedAfter.Private -and $bundleAfter.Identity -ceq $bundleBefore.Identity -and $bundleAfter.Private) 'Cleanup changed the retained root or predecessor bundle.'
+        Assert-Case ($deepAfterCleanup.Identity -ceq $deepBefore.Identity -and $deepAfterCleanup.Private) 'Cleanup removed or changed the retained candidate directory.'
+        foreach($old in $oldFiles) {
+            $facts=[SalahInstaller.StageNative]::Inspect($old.path,$script:StagingAttempt.Sid)
+            Assert-Case ($facts.Identity -ceq $old.identity -and $facts.Private -and $facts.Links -eq 1 -and $facts.Length -eq $old.length -and (Get-FileHash -LiteralPath $old.path -Algorithm SHA256).Hash.ToLowerInvariant() -ceq $old.hash) 'Predecessor archive/manifest/Unicode payload changed or became unusable.'
+        }
+        $foreignAfter=[SalahInstaller.StageNative]::Inspect($foreign,$script:StagingAttempt.Sid)
+        Assert-Case ($foreignAfter.Identity -ceq $foreignBefore.Identity -and $foreignAfter.Owner -ceq $foreignBefore.Owner -and (Get-FileHash -LiteralPath $foreign -Algorithm SHA256).Hash -ceq $foreignHash -and (Get-Acl -LiteralPath $foreign).Sddl -ceq $foreignSddl) 'The outside-current-attempt sentinel changed.'
+        $script:caseNotes.longPathSafety=[pscustomobject]@{scratchAbsent=$true;retained=$retainedAfter;retainedCandidateDirectory=$deepAfterCleanup;predecessor=$bundleAfter;outsideAttemptSentinel=$foreignAfter;outsideAttemptHash=$foreignHash;crossUidClaim=$false}
+    }
+    if($script:results.Count -gt $longPathResultCount) {
+        $longPathRow=$script:results[-1]
+        $boundary=($script:longPathDisposition -like 'ACQUISITION_*' -or $script:longPathDisposition -eq 'BLOCKED_NATIVE_HOST')
+        # A supported long path is not refusal credit. A later safety assertion
+        # failure still remains FAIL instead of being hidden by that boundary.
+        if($script:longPathDisposition -eq 'ACQUISITION_BOUNDARY_LONG_PATH_ACCEPTED' -and -not $longPathRow.pass_) {$boundary=$false}
+        if($boundary) {
+            $longPathRow.pass=$false;$longPathRow.pass_=$false;$longPathRow.status=$script:longPathDisposition
+            if(-not $longPathRow.error){$longPathRow.error='Capability/acquisition boundary: no long-path refusal credit.'}
+        }
+        $longPathRow.observations.longPathDisposition=$script:longPathDisposition
+        $longPathRow.observations.longPathMutationCredit=$false
+        if($longPathRow.pass_ -and $script:longPathDisposition -eq 'REFUSAL_OBSERVED') {$longPathRow.observations.longPathRefusal.refusalCredit=$true}
+    }
+
+    }
+
     Invoke-Case 'dry helpers refuse warm cache and all artifact effects' {
         $asset = New-Case 'dry-helper-boundary' $goodBytes
         $path = Assert-OnePath @(Download-Asset $asset) 'Seeded archive'

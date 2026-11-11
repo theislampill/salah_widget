@@ -118,8 +118,15 @@ try{
     $originalCompiler=$definitions['New-StagingCompilerContext'].Extent.Text
     $compiler=$originalCompiler
     if(-not $nativeWindows){
+        # The actual context reads User and token Owner, then disposes the
+        # identity wrapper. Replace only that unsupported native read here.
+        function New-FixtureIdentity {
+            $value=[pscustomobject]@{User=[pscustomobject]@{Value='S-1-5-21-0'};Owner=[pscustomobject]@{Value='S-1-5-21-0'}}
+            $value|Add-Member -MemberType ScriptMethod -Name Dispose -Value {}
+            return $value
+        }
         foreach($replacement in @(
-            @('[Security.Principal.WindowsIdentity]::GetCurrent().User.Value','''S-1-5-21-0'''),
+            @('[Security.Principal.WindowsIdentity]::GetCurrent()','(New-FixtureIdentity)'),
             @('[IO.Path]::GetTempPath()','''C:\fixture'''),
             @('[IO.Path]::GetFullPath($path).TrimEnd([IO.Path]::DirectorySeparatorChar)','$path'),
             @('[IO.Path]::GetPathRoot($full)','''C:\'''),

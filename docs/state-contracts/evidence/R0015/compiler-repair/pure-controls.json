@@ -1,0 +1,242 @@
+{
+  "schema": "r0015-compiler-repair.pure-controls.v1",
+  "sourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+  "baselineSha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+  "testSha256": "cd50d029218b5d6f452c5821fb9da1f4da10e9975f7450ea542c6b7b6f7012bf",
+  "host": "7.6.6",
+  "nativeWindows": false,
+  "installerExecuted": false,
+  "nativeApisExecuted": false,
+  "compilerExecuted": false,
+  "productQualification": false,
+  "nativeQualification": false,
+  "scope": "Source AST parse, three actual early DryRun guards, and actual scalar predicate expressions only. No main entry, native handles, ACL creation, compilation, or assembly loading.",
+  "pass": true,
+  "results": [
+    {
+      "case": "Read-CompilerPathFacts guards before native/effect access",
+      "pass": true,
+      "observation": {
+        "reason": "Offline preview does not inspect compiler custody objects."
+      }
+    },
+    {
+      "case": "Open-CompilerOutputLease guards before native/effect access",
+      "pass": true,
+      "observation": {
+        "reason": "Offline preview does not admit compiler output."
+      }
+    },
+    {
+      "case": "Invoke-StagingCompiler guards before native/effect access",
+      "pass": true,
+      "observation": {
+        "reason": "Offline preview does not invoke a compiler or load generated code."
+      }
+    },
+    {
+      "case": "actual cleanup predicate: subject-owned regular output",
+      "pass": true,
+      "observation": {
+        "baselineRefused": false,
+        "refused": false,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual file-admission predicate: subject-owned regular output",
+      "pass": true,
+      "observation": {
+        "refused": false,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual cleanup predicate: captured Administrators owner regular output",
+      "pass": true,
+      "observation": {
+        "baselineRefused": true,
+        "refused": false,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual file-admission predicate: captured Administrators owner regular output",
+      "pass": true,
+      "observation": {
+        "refused": false,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual cleanup predicate: foreign owner is refused",
+      "pass": true,
+      "observation": {
+        "baselineRefused": true,
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual file-admission predicate: foreign owner is refused",
+      "pass": true,
+      "observation": {
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual cleanup predicate: foreign writable default-owner file is refused",
+      "pass": true,
+      "observation": {
+        "baselineRefused": true,
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual file-admission predicate: foreign writable default-owner file is refused",
+      "pass": true,
+      "observation": {
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual cleanup predicate: foreign writable subject file is refused",
+      "pass": true,
+      "observation": {
+        "baselineRefused": true,
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual file-admission predicate: foreign writable subject file is refused",
+      "pass": true,
+      "observation": {
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual cleanup predicate: hardlinked output is refused",
+      "pass": true,
+      "observation": {
+        "baselineRefused": true,
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual file-admission predicate: hardlinked output is refused",
+      "pass": true,
+      "observation": {
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual cleanup predicate: captured owner directory may be cleaned",
+      "pass": true,
+      "observation": {
+        "baselineRefused": true,
+        "refused": false,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual file-admission predicate: captured owner directory may be cleaned",
+      "pass": true,
+      "observation": {
+        "refused": true,
+        "nativeExecuted": false
+      }
+    },
+    {
+      "case": "actual full write mask rejects foreign bit 2",
+      "pass": true,
+      "observation": {
+        "mask": 2,
+        "refused": true
+      }
+    },
+    {
+      "case": "actual full write mask rejects foreign bit 4",
+      "pass": true,
+      "observation": {
+        "mask": 4,
+        "refused": true
+      }
+    },
+    {
+      "case": "actual full write mask rejects foreign bit 256",
+      "pass": true,
+      "observation": {
+        "mask": 256,
+        "refused": true
+      }
+    },
+    {
+      "case": "actual full write mask rejects foreign bit 65536",
+      "pass": true,
+      "observation": {
+        "mask": 65536,
+        "refused": true
+      }
+    },
+    {
+      "case": "actual full write mask rejects foreign bit 262144",
+      "pass": true,
+      "observation": {
+        "mask": 262144,
+        "refused": true
+      }
+    },
+    {
+      "case": "actual full write mask rejects foreign bit 524288",
+      "pass": true,
+      "observation": {
+        "mask": 524288,
+        "refused": true
+      }
+    },
+    {
+      "case": "actual full write mask permits harmless foreign read",
+      "pass": true,
+      "observation": {
+        "mask": 1,
+        "refused": false
+      }
+    },
+    {
+      "case": "actual full write mask preserves subject full access",
+      "pass": true,
+      "observation": {
+        "mask": 2032127,
+        "refused": false
+      }
+    },
+    {
+      "case": "actual default-owner admission S-1-5-21-1-2-3-1000",
+      "pass": true,
+      "observation": {
+        "refused": false
+      }
+    },
+    {
+      "case": "actual default-owner admission S-1-5-32-544",
+      "pass": true,
+      "observation": {
+        "refused": false
+      }
+    },
+    {
+      "case": "actual default-owner admission S-1-5-21-1-2-3-2000",
+      "pass": true,
+      "observation": {
+        "refused": true
+      }
+    }
+  ]
+}

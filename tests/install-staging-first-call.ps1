@@ -51,7 +51,7 @@ function Get-ProbeSnapshot([string]$Root) {
             $attributes=[IO.File]::GetAttributes($path)
             $directory=($attributes -band [IO.FileAttributes]::Directory) -ne 0
             $reparse=($attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0
-            $rows.Add([pscustomobject][ordered]@{path=$path.Substring($Root.Length);attributes=[string]$attributes;hash=$(if(-not $directory -and -not $reparse){Get-ProbeHash $path}else{$null})})
+            $rows.Add([pscustomobject][ordered]@{path=$path.Substring($Root.Length);attributes=[string]$attributes;hash=$(if(-not $directory -and -not $reparse){Get-ProbeHash $path}else{$null});length=$(if(-not $directory -and -not $reparse){[IO.FileInfo]::new($path).Length}else{$null})})
             if($directory -and -not $reparse){$pending.Enqueue($path)}
         }
     }
@@ -70,7 +70,7 @@ function Get-ProbeCompilerContext {
     if(-not $context){return $null}
     $parents=@($context.Leases|ForEach-Object{[pscustomobject]@{path=$_.Facts.Path;identity=$_.Facts.Identity;owner=$_.Facts.Owner;trustedAncestor=$_.Facts.TrustedAncestor;trustedParent=$_.Facts.TrustedParent;closed=$_.Handle.IsClosed}})
     $root=if($context.RootLease){[ordered]@{path=$context.RootLease.Facts.Path;identity=$context.RootLease.Facts.Identity;owner=$context.RootLease.Facts.Owner;private=$context.RootLease.Facts.Private;closed=$context.RootLease.Handle.IsClosed}}else{$null}
-    return [ordered]@{id=$context.Id;status=$context.Status;path=$context.Path;identity=$context.Identity;sid=$context.Sid;created=$context.Created;cleanupError=$context.CleanupError;rootLease=$root;parentLeases=$parents;exists=$(if($context.Path){[IO.Directory]::Exists($context.Path)}else{$false})}
+    return [ordered]@{id=$context.Id;status=$context.Status;path=$context.Path;identity=$context.Identity;sid=$context.Sid;defaultOwnerSid=$context.DefaultOwnerSid;invocationStarted=$context.InvocationStarted;compilerExitCode=$context.CompilerExitCode;created=$context.Created;cleanupError=$context.CleanupError;rootLease=$root;parentLeases=$parents;exists=$(if($context.Path){[IO.Directory]::Exists($context.Path)}else{$false})}
 }
 function Get-ProbeCompilerReadback {
     $context=$script:CompilerScratch
@@ -131,6 +131,7 @@ if($ChildContext) {
         $script:StagingAttempt=$null
         $script:CompilerScratch=$null
         $script:ProbeCompilerCalls=@()
+        $script:ProbeManagedCompilerCalls=@()
         $script:ProbeObserverErrors=@()
         $script:WorkRoot=$null
         $script:DownloadRoot=$null
@@ -161,35 +162,35 @@ if($ChildContext) {
                 return $value
             } catch {Add-ProbePhase 'later-artifact-parent-check-threw' $_.Exception.Message;throw}
         }
-        # Forward the actual source's parameters, including PS5.1's exact
-        # CompilerParameters object. Only the named compile-failure control
-        # appends invalid input; its original and supplied C# hashes are retained.
+        # Delegate the actual compiler helper with the exact same context object.
+        # Only the named compile-failure control appends invalid input; original
+        # and supplied C# hashes are retained at the real invocation boundary.
         function Add-Type {
-            [CmdletBinding(DefaultParameterSetName='Type')]
-            param(
-                [Parameter(Mandatory=$true,ParameterSetName='Type')][string]$TypeDefinition,
-                [Parameter(Mandatory=$true,ParameterSetName='Assembly')][string[]]$AssemblyName,
-                [Parameter(ParameterSetName='Type')][object]$CompilerParameters
-            )
-            Add-ProbePhase 'native-add-type-enter' $PSCmdlet.ParameterSetName
-            if($PSCmdlet.ParameterSetName -ceq 'Assembly') {
-                try {Microsoft.PowerShell.Utility\Add-Type @PSBoundParameters;Add-ProbePhase 'native-add-type-returned' 'Assembly'}
-                catch {Add-ProbePhase 'native-add-type-threw' $_.Exception.Message;throw}
-                return
-            }
-            $forward=@{};foreach($name in $PSBoundParameters.Keys){$forward[$name]=$PSBoundParameters[$name]}
+            [CmdletBinding()]
+            param([string]$TypeDefinition,[string[]]$AssemblyName)
+            if($AssemblyName){Microsoft.PowerShell.Utility\Add-Type -AssemblyName $AssemblyName;return}
+            $call=[pscustomobject]@{sourceSha256=(Get-ProbeStringHash $TypeDefinition);returned=$false;errorId=$null;errorMessage=$null}
+            $script:ProbeManagedCompilerCalls += $call
+            try{Microsoft.PowerShell.Utility\Add-Type -TypeDefinition $TypeDefinition -ErrorAction Stop;$call.returned=$true}
+            catch{$call.errorId=$_.FullyQualifiedErrorId;$call.errorMessage=$_.Exception.Message;throw}
+        }
+        $script:OriginalProbeInvokeCompiler=(Get-Command Invoke-StagingCompiler -CommandType Function).ScriptBlock
+        function Invoke-StagingCompiler([string]$NativeSource,$Context) {
+            Add-ProbePhase 'native-compiler-enter' 'Invoke-StagingCompiler'
+            $sameContext=[object]::ReferenceEquals($Context,$script:CompilerScratch)
+            if(-not $sameContext){throw 'OBSERVER: actual compiler context object differs.'}
             $injected=$script:ProbeContext.case -ceq 'compile-failure'
-            if($injected){$forward.TypeDefinition=$TypeDefinition+"`n deliberately invalid compiler input !"}
-            $call=[ordered]@{context=(Get-ProbeCompilerContext);temp=$env:TEMP;tmp=$env:TMP;nativeTemp=[IO.Path]::GetTempPath();originalTypeSha256=(Get-ProbeStringHash $TypeDefinition);suppliedTypeSha256=(Get-ProbeStringHash $forward.TypeDefinition);failureInjected=$injected;compilerParametersSupplied=$PSBoundParameters.ContainsKey('CompilerParameters');compilerParameterIdentity=$(if($CompilerParameters){[Runtime.CompilerServices.RuntimeHelpers]::GetHashCode($CompilerParameters)}else{$null});compilerTempDir=$(if($CompilerParameters){$CompilerParameters.TempFiles.TempDir}else{$null});keepFiles=$(if($CompilerParameters){$CompilerParameters.TempFiles.KeepFiles}else{$null})}
+            $suppliedSource=if($injected){$NativeSource+"`n deliberately invalid compiler input !"}else{$NativeSource}
+            $call=[ordered]@{context=(Get-ProbeCompilerContext);temp=$env:TEMP;tmp=$env:TMP;nativeTemp=[IO.Path]::GetTempPath();originalTypeSha256=(Get-ProbeStringHash $NativeSource);suppliedTypeSha256=(Get-ProbeStringHash $suppliedSource);suppliedFileSha256=(Get-ProbeStringHash (([string][char]0xfeff)+$suppliedSource));failureInjected=$injected;sameContext=$sameContext;actualHelperSha256=(Get-ProbeStringHash $script:OriginalProbeInvokeCompiler.ToString());tokenDefaultOwner=[Security.Principal.WindowsIdentity]::GetCurrent().Owner.Value}
             $script:ProbeCompilerCalls += $call
             try {Wait-ProbeCompilerBoundary 'before' $call}
             catch {$script:ProbeObserverErrors += $_.Exception.Message;throw}
             $nativeError=$null
             try {
-                Microsoft.PowerShell.Utility\Add-Type @forward
-                Add-ProbePhase 'native-add-type-returned' 'Type'
-            } catch {$nativeError=$_;Add-ProbePhase 'native-add-type-threw' $_.Exception.Message}
-            $after=[ordered]@{context=(Get-ProbeCompilerContext);readback=(Get-ProbeCompilerReadback);outcome=$(if($nativeError){'threw'}else{'returned'});nativeError=$(if($nativeError){$nativeError.Exception.Message}else{$null});nativeTypePresent=[bool]('SalahInstaller.StageNative' -as [type]);temp=$env:TEMP;tmp=$env:TMP;nativeTemp=[IO.Path]::GetTempPath()}
+                & $script:OriginalProbeInvokeCompiler $suppliedSource $Context
+                Add-ProbePhase 'native-compiler-returned' 'Invoke-StagingCompiler'
+            } catch {$nativeError=$_;Add-ProbePhase 'native-compiler-threw' $_.Exception.Message}
+            $after=[ordered]@{context=(Get-ProbeCompilerContext);readback=(Get-ProbeCompilerReadback);outcome=$(if($nativeError){'threw'}else{'returned'});nativeError=$(if($nativeError){$nativeError.Exception.Message}else{$null});managedCompilerCalls=@($script:ProbeManagedCompilerCalls);nativeTypePresent=[bool]('SalahInstaller.StageNative' -as [type]);temp=$env:TEMP;tmp=$env:TMP;nativeTemp=[IO.Path]::GetTempPath()}
             try {Wait-ProbeCompilerBoundary 'after' $after}
             catch {$script:ProbeObserverErrors += $_.Exception.Message;throw}
             if($nativeError){throw $nativeError}
@@ -369,18 +370,30 @@ foreach($caseName in @('foreign-create-parent','owned-parent','compile-failure')
     if($hasCompilerCall -and $compilerBefore){
         $facts=$compilerBefore.facts;$owned=$facts.context;$lease=$owned.rootLease
         $custodyObserved=$owned.created -and $owned.status -ceq 'compiling' -and $owned.identity -and $lease.identity -ceq $owned.identity -and $lease.owner -ceq $owned.sid -and $owned.sid -ceq $script:ProbeSid.Value -and $lease.private -and -not $lease.closed -and @($owned.parentLeases).Count -gt 0 -and @($owned.parentLeases|Where-Object{$_.closed -or -not $_.trustedAncestor -or -not $_.identity}).Count -eq 0 -and $owned.parentLeases[-1].trustedParent -and $owned.parentLeases[-1].path.TrimEnd('\') -ceq $temp.TrimEnd('\') -and $owned.path -ceq ($temp+'\SalahWidgetCompiler-'+$owned.id) -and $facts.temp -ceq $owned.path -and $facts.tmp -ceq $owned.path -and $facts.nativeTemp.TrimEnd('\') -ceq $owned.path.TrimEnd('\')
-        if($PSVersionTable.PSVersion.Major -eq 5){$custodyObserved=$custodyObserved -and $facts.compilerParametersSupplied -and $facts.keepFiles -and $facts.compilerTempDir -ceq $owned.path}
+        $custodyObserved=$custodyObserved -and $facts.sameContext -and $facts.actualHelperSha256 -and $owned.defaultOwnerSid -ceq $facts.tokenDefaultOwner
     }
     $readbackObserved=$compilerAfter -and -not $compilerAfter.facts.readback.error -and $compilerAfter.facts.readback.facts.Private -and $compilerAfter.facts.readback.facts.Identity -ceq $receipt.compilerContext.identity -and $compilerAfter.facts.readback.facts.Owner -ceq $script:ProbeSid.Value
     $healthyObserved=$acquired -and $custodyObserved -and $readbackObserved -and $environmentRestored -and $receipt.initialized -and $receipt.parentCheckCalls -eq 2 -and $receipt.afterCleanupStatus -ceq 'closed' -and -not $receipt.cleanupError -and $receipt.compilerContext.status -ceq 'closed' -and -not $receipt.compilerContext.exists -and $compilerAfter.facts.outcome -ceq 'returned' -and $compilerAfter.facts.nativeTypePresent -and -not $compilerBefore.facts.failureInjected -and $compilerBefore.facts.originalTypeSha256 -ceq $compilerBefore.facts.suppliedTypeSha256
-    $failureObserved=$acquired -and $custodyObserved -and $readbackObserved -and $environmentRestored -and -not $receipt.initialized -and $receipt.parentCheckCalls -eq 0 -and -not $receipt.typePresentAfter -and $receipt.initializationError -and $receipt.compilerContext.status -ceq 'retained-compilation-failed' -and $receipt.compilerContext.exists -and $compilerAfter.facts.outcome -ceq 'threw' -and $compilerBefore.facts.failureInjected
+    if($PSVersionTable.PSVersion.Major -eq 5){$healthyObserved=$healthyObserved -and $compilerAfter.facts.context.invocationStarted -and $compilerAfter.facts.context.compilerExitCode -eq 0}
+    $actualCompilerFailure=$false
+    if($compilerAfter -and $compilerBefore){
+        if($PSVersionTable.PSVersion.Major -eq 5){
+            $sourceRows=@($compilerAfter.facts.readback.snapshot|Where-Object{$_.path -ceq '\native.cs'})
+            $diagnosticRows=@($compilerAfter.facts.readback.snapshot|Where-Object{$_.path -cin @('\compiler.stdout.bin','\compiler.stderr.bin')})
+            $actualCompilerFailure=$null -ne $compilerAfter.facts.context.compilerExitCode -and $compilerAfter.facts.context.compilerExitCode -ne 0 -and $sourceRows.Count -eq 1 -and $sourceRows[0].hash -ceq $compilerBefore.facts.suppliedFileSha256 -and $diagnosticRows.Count -eq 2 -and ($diagnosticRows|Measure-Object -Property length -Sum).Sum -gt 0
+        }else{
+            $managed=@($compilerAfter.facts.managedCompilerCalls)
+            $actualCompilerFailure=$managed.Count -eq 1 -and -not $managed[0].returned -and $managed[0].errorId -ceq 'SOURCE_CODE_ERROR,Microsoft.PowerShell.Commands.AddTypeCommand' -and $managed[0].sourceSha256 -ceq $compilerBefore.facts.suppliedTypeSha256
+        }
+    }
+    $failureObserved=$acquired -and $custodyObserved -and $readbackObserved -and $environmentRestored -and $actualCompilerFailure -and -not $receipt.initialized -and $receipt.parentCheckCalls -eq 0 -and -not $receipt.typePresentAfter -and $receipt.initializationError -and $receipt.compilerContext.status -ceq 'retained-compilation-failed' -and $receipt.compilerContext.exists -and $compilerAfter.facts.outcome -ceq 'threw' -and $compilerBefore.facts.failureInjected
     $status=if(-not $acquired){'BOOTSTRAP_OR_OBSERVER_BLOCKED'}elseif($foreign -and -not $guardObserved){'UNEXPECTED_PARENT_BEHAVIOR'}elseif($foreign -and $productEvents.Count){'OBSERVED_UNSAFE_PARENT_TEMP_EFFECTS'}elseif($foreign){'UNSAFE_PARENT_REFUSED_WITH_NO_OBSERVED_TEMP_EFFECTS'}elseif($outsideCompilerRoot.Count){'OBSERVED_COMPILER_EFFECTS_OUTSIDE_OWNED_ROOT'}elseif($caseName -ceq 'compile-failure' -and $failureObserved){'COMPILER_FAILURE_RETAINED_PRIVATE_OUTPUT'}elseif($caseName -ceq 'compile-failure'){'UNEXPECTED_COMPILER_FAILURE_BEHAVIOR'}elseif($healthyObserved){'HEALTHY_PRIVATE_COMPILER_AND_STAGING_OBSERVED'}else{'HEALTHY_CONTROL_FAILED'}
     $row=[pscustomobject][ordered]@{case=$caseName;status=$status;acquired=[bool]$acquired;installerQualified=$false;guardObserved=[bool]$guardObserved;compilerCustodyObserved=[bool]$custodyObserved;healthyObserved=[bool]$healthyObserved;compileFailureObserved=[bool]$failureObserved;environmentRestored=[bool]$environmentRestored;fixture=$caseRoot;control=$control;pid=$(if($started){$child.Id}else{$null});exit=$(if($started -and $child.HasExited){$child.ExitCode}else{$null});timedOut=$timedOut;observerError=$observerError;snapshotError=$snapshotError;stdoutDrained=$stdoutDrained;stderrDrained=$stderrDrained;sourceSha256=$SourceHash;probeSha256=$ProbeHash;acl=$aclFacts;readiness=$ready;compilerBeforeReleased=$beforeReleased;compilerAfterReleased=$afterReleased;compilerBefore=$compilerBefore;compilerAfter=$compilerAfter;childReceipt=$receipt;events=$allEvents;compilerPeriodEvents=$compilerEvents;compilerOutsideOwnedRootEvents=$outsideCompilerRoot;before=$before;after=$after;stdout=$stdout;stderr=$stderr}
     Write-ProbeJson (Join-Path $control 'observation.json') $row
     $results.Add($row)
     $child.Dispose()
 }
-$summary=[ordered]@{schema='r0015-independent-native-compiler-custody-observation-v2';sourceFile=$SourceFile;sourceSha256=$SourceHash;probeSha256=$ProbeHash;originalProbeSha256='1cc468a93f9990015797b5d2ab60edf8e99e70fd56d169cc58f0bbddb1ba7073';fixture=$script:ProbeFixtureRoot;hostExecutable=$HostExecutable;hostVersion=$PSVersionTable.PSVersion.ToString();subjectSid=$script:ProbeSid.Value;actualWindows=$true;installerQualified=$false;complete=(@($results.ToArray() | Where-Object {-not $_.acquired}).Count -eq 0);scope='Actual cold Initialize-Staging and compiler custody. Add-Type parameters are forwarded, including the same PS5.1 CompilerParameters object. Only the named compile-failure row appends declared invalid C# input; both hashes are recorded. Compiler calls pause before and after for event drain while custody leases remain held. Later artifact-parent checks are separately observed. Whole verified TEMP/TMP is watched; this is not a global process trace. Acquired observations, including adverse findings, require independent adjudication and do not imply installer qualification.';results=@($results.ToArray())}
+$summary=[ordered]@{schema='r0015-independent-native-compiler-custody-observation-v3';sourceFile=$SourceFile;sourceSha256=$SourceHash;probeSha256=$ProbeHash;originalProbeSha256='1cc468a93f9990015797b5d2ab60edf8e99e70fd56d169cc58f0bbddb1ba7073';fixture=$script:ProbeFixtureRoot;hostExecutable=$HostExecutable;hostVersion=$PSVersionTable.PSVersion.ToString();subjectSid=$script:ProbeSid.Value;actualWindows=$true;installerQualified=$false;complete=(@($results.ToArray() | Where-Object {-not $_.acquired}).Count -eq 0);scope='Actual cold Initialize-Staging and compiler custody. The actual Invoke-StagingCompiler helper is delegated with the same context reference; source/helper hashes and token default owner are recorded. PS5.1 healthy admission also requires observed direct compiler invocation and exit0. Only the named compile-failure row appends declared invalid C# input; both hashes are recorded. Failure credit requires an actual nonzero Framework compiler result with retained input/diagnostics, or the actual delegated PS7 Add-Type syntax diagnostic. Compiler calls pause before and after for event drain while custody leases remain held. Later artifact-parent checks are separately observed. Whole verified TEMP/TMP is watched; this is not a global process trace. Acquired observations, including adverse findings, require independent adjudication and do not imply installer qualification.';results=@($results.ToArray())}
 Write-ProbeJson (Join-Path $script:ProbeFixtureRoot 'summary.json') $summary
 [Console]::Out.WriteLine((ConvertTo-Json -InputObject $summary -Depth 22))
 if(-not $summary.complete){exit 2}

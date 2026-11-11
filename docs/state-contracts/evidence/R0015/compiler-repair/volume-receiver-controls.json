@@ -1,0 +1,213 @@
+{
+  "schema": "r0015-volume-receipt-fix.report.v1",
+  "continuity": "refs/implementaudit/continuity-receipts/installer-20261111/G0012@80323ab6617fc27602ba30bdd0574046b0c451c8",
+  "scope": "Scratch-only actual Python driver acquisition correction; no shared/source/remote edits and no PowerShell/native process execution.",
+  "status": "CONTROLLED_PYTHON_GREEN_PENDING_INDEPENDENT_REVIEW_AND_NATIVE_RECEIVING",
+  "nativeQualification": false,
+  "productQualification": false,
+  "originalNativeFinding": {
+    "evidence": {
+      "maintainedDriver": {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-volume-mutations.py",
+        "bytes": 5779,
+        "sha256": "8f3d6c3023a2589e8cf21837fc004346650c02c264b61cab152c95f6768650ec"
+      },
+      "maintainedSource": {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+        "bytes": 100271,
+        "sha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140"
+      },
+      "maintainedFixture": {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-volume-policy.ps1",
+        "bytes": 14552,
+        "sha256": "dc671aa0365d6fb318fbf838472a8c8512931ddf371e2c3527433bcb22f41e7d"
+      },
+      "originalNativeStderr": {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run4/Windows/ps51-volume-mutations.stderr.txt",
+        "bytes": 1082,
+        "sha256": "4998d30d9069b02efd89b5820e419aa62f50c14e93b3cf5e8bbc7d6be3931e8f"
+      },
+      "originalNativeStdout": {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run4/Windows/ps51-volume-mutations.stdout.txt",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "fact": "PS5.1 driver traceback stops at whole-stdout json.loads before final driver JSON; collector has no owned fixture path. The failed child raw stdout/stderr were not retained.",
+    "notInferred": "The actual failed child warning bytes are unavailable and are not reconstructed. Synthetic warning controls demonstrate the parser mechanism only."
+  },
+  "changes": [
+    {
+      "lines": "22-34",
+      "detail": "Use the existing collector terminal-object framing, retaining arbitrary diagnostic prefixes and rejecting non-whitespace trailing content."
+    },
+    {
+      "lines": "37-89",
+      "detail": "Require exact source/test identity and stable Boolean flags, thirteen distinct expected cases, Boolean observations/verdicts, nonnegative integer call counts, consistent declared expectations, and same-source native NTFS positive identities when nativeWindows is true."
+    },
+    {
+      "lines": "116-196",
+      "detail": "Retain exact raw byte streams before parsing; save admitted typed JSON separately. Per-variant launch, timeout, malformed/decode/schema failures produce acquisition-failure rows without mutation credit."
+    },
+    {
+      "lines": "197-222",
+      "detail": "Check exact source/fixture/driver stability and emit a terminal report with the exclusively created output root as fixture, including failure reports."
+    }
+  ],
+  "preservedAssertions": {
+    "mutationPredicateUnchangedExceptTerminalExitVariable": true,
+    "mutantDefinitionsUnchanged": true
+  },
+  "controls": {
+    "testSha256": "68b2c276acca4fd0f25f966b5a40a4dc61b4190cc39092b2ecf4b37c8a29f071",
+    "oldDriverSha256": "8f3d6c3023a2589e8cf21837fc004346650c02c264b61cab152c95f6768650ec",
+    "newDriverSha256": "aee7d4b1cadcc25acd816f825a4a419945760b6f47b7023e4403f3b6ff94685b",
+    "redReceipt": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-receipt-fix/red/controls.json",
+      "sha256": "5770b861c6a0db23e77fe74db0377f6e0d90205ab4bad906e9469e0074475935",
+      "passingCases": 4,
+      "totalCases": 18
+    },
+    "greenReceipt": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-receipt-fix/green/controls.json",
+      "sha256": "2a3b1b37d79f935856ddba44560157e3ba27a8ef073023ff0bb90fe181b06d05",
+      "passingCases": 18,
+      "totalCases": 18,
+      "assertions": 224
+    },
+    "realProcesses": 0,
+    "mechanism": "Import and invoke actual driver.main; intercept only subprocess.run, and independently forbid subprocess.Popen. Driver constructs both actual guard-deletion source variants and writes actual fixture files. Fake child outcomes are explicitly synthetic.",
+    "cases": [
+      {
+        "case": "plain-valid",
+        "pass": true,
+        "driverExit": 0,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "warning-valid",
+        "pass": true,
+        "driverExit": 0,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "native-shaped-valid",
+        "pass": true,
+        "driverExit": 0,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "malformed",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "trailing-junk",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "invalid-utf8",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "timeout",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "launch-error",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "wrong-source-hash",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "wrong-test-hash",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "native-flag-zero",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "row-pass-null",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "row-expected-null",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "volume-calls-boolean",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "duplicate-policy-case",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "native-control-source-mismatch",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "guard-survived",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      },
+      {
+        "case": "healthy-control-failed",
+        "pass": true,
+        "driverExit": 1,
+        "interceptedLaunches": 2
+      }
+    ]
+  },
+  "integration": {
+    "candidate": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-receipt-fix/install-volume-mutations.py",
+    "patch": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-receipt-fix/volume-receipt.patch",
+    "target": "tests/install-volume-mutations.py",
+    "cliChanged": false,
+    "driverTimeoutSeconds": 180,
+    "topLevelFixture": "Owned output directory, retained on both success and acquisition failure.",
+    "streams": "Each row stdout/stderr names raw .bin files with SHA256; receipt/receiptSha256 names only an admitted typed .receipt.json.",
+    "statuses": [
+      "MUTANT_DETECTED",
+      "ASSERTION_FAILED",
+      "ACQUISITION_FAILED"
+    ],
+    "collectorChangesRequired": false
+  },
+  "limits": [
+    "Native Windows/PowerShell and actual collector archival receiving remain unexecuted in this package.",
+    "Malformed/truncated output, launch exceptions and timeouts after owned output creation are covered. Input/argument failures before root ownership, an unwritable output filesystem, external termination and process descendants are not newly guaranteed.",
+    "The terminal parser intentionally matches the existing collector framing; this is not an untrusted general-purpose JSON protocol.",
+    "Synthetic native-shaped healthy controls test receiver logic only, not native facts. Existing native failure and product gates remain open."
+  ],
+  "authorization": "Report is evidence input only, with no integration, publication, acceptance or closure authority."
+}

@@ -248,9 +248,9 @@ def main():
                     command.extend(["-OutputRoot", tempfile.gettempdir()])
                 if test == "install-compiler-custody.ps1":
                     command.extend(["-FixtureParent", tempfile.gettempdir()])
-                # Nine cold native compiler children each have a bounded90s
+                # Fourteen cold native compiler children each have a bounded90s
                 # acquisition budget. Preserve every terminal/raw observation.
-                timeout = {"install-compiler-custody.ps1": 900, "install-host-bootstrap.ps1": 360,
+                timeout = {"install-compiler-custody.ps1": 1500, "install-host-bootstrap.ps1": 360,
                            "install-volume-policy.ps1": 180}.get(test, 240)
                 run(name + "-" + test[:-4], command, timeout=timeout,
                     diagnostic=test == "install-host-bootstrap.ps1")
@@ -260,11 +260,19 @@ def main():
                 run(name + "-volume-mutations", [sys.executable, str(root / "tests/install-volume-mutations.py"),
                     "--source", str(root / "install.ps1"), "--fixture", str(root / "tests/install-volume-policy.ps1"),
                     "--pwsh", executable, "--output-root", volume_root, "--timeout-seconds", "180"], timeout=390)
-                mutation_root = str(Path(tempfile.gettempdir()) / ("r0015-mutations-" + name + "-" + uuid.uuid4().hex))
+                mutation_root = str(Path(tempfile.gettempdir()) / ("r15m-" + uuid.uuid4().hex))
                 run(name + "-transaction-mutations", [sys.executable, str(root / "tests/install-powershell-mutations.py"),
                     "--source", str(root / "install.ps1"), "--test", str(root / "tests/install-powershell-transactions.ps1"),
                     "--preset", str(root / "presets/salah-widget.tablissng.json"), "--native-test", str(root / "tests/install-staging-windows.ps1"),
                     "--pwsh", executable, "--out", mutation_root], timeout=600)
+                if name == "ps7":
+                    # Native diagnostic3 measured this host's refusal boundary.
+                    # The explicit case is excluded from ordinary/mutant suites;
+                    # any capability or acquisition boundary retains its label.
+                    run(name + "-long-path-refusal", [executable, "-NoProfile", "-NonInteractive", "-File",
+                        str(root / "tests/install-powershell-transactions.ps1"),
+                        "-SourceFile", str(root / "install.ps1"), "-PresetFile", str(root / "presets/salah-widget.tablissng.json"),
+                        "-Case", "native long-path refusal preserves handed-off predecessor"], timeout=240)
                 run(name + "-first-call-observation", [executable, "-NoProfile", "-NonInteractive", "-File", str(root / "tests/install-staging-first-call.ps1"),
                     "-SourceFile", str(root / "install.ps1"), "-OutputRoot", tempfile.gettempdir()], timeout=360, diagnostic=True)
         entry_command = [sys.executable, str(root / "tests/install-entry-native.py"), str(root / "install.ps1")]
