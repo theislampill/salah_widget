@@ -49,7 +49,9 @@ const sourceProfiles={actual:{scriptCount:actualScripts.length,firstPaint:!!firs
     // R0003 64258c865846aa27b70681ae33038dae017f864c, parent 9f2fb30b19aa103c2511418970291bba84dbe3bf3acaca536f4410a8669498d5, structural 5269f97a.
     // R0021 stacked on R000F 2aa3bd11 by merge 65f7c75a (both sides' entries kept; structural 4af7e86f).
     // R0027 on main 645b53cc: 77014952203f373d3646cef7ea291a2196833aa6, parent df1c6e9daf008247d9c6377275a6a905039ff58e2d4c21694d8824590022b37f, structural 902f326d (retained).
-    parentCommit:'65f7c75a89bbc9f737dc72d8cbf79a213fc76a73',parentSha256:'0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb',
+    // R0021 65f7c75a89bbc9f737dc72d8cbf79a213fc76a73, parent 0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb, structural 4af7e86f (retained).
+    // R0027 stacked on R0021 68891b4f by merge 5dd7c558 (spectral transform only; both sides' entries kept; structural 1a5c5031).
+    parentCommit:'5dd7c558207d76aa022f0bda73354918cc3bfc46',parentSha256:'e3a3dedbfaaf5e5d604add26fa071852da109d72773a077b444fdd376f771185',
     transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.'}};
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
@@ -218,7 +220,7 @@ async function main(){
   });
   await check("legacy Moon structural branch admits its exact positive source before parser stop",async()=>{
     assert.equal(legacySource.split('src="moon/moon-host.js"').length-1,1,"legacy host is absent or ambiguous");
-    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'4af7e86f00694948bec61dae4d0d9b36218a125d40828bebcc06f5abe49c91f7','retained structural input must be explicitly rebound on source change');
+    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'1a5c50314e0d4c86dd2a7222211843a154e899addc44bffc944fa74777125fc8','retained structural input must be explicitly rebound on source change');
     const h=await setup('healthy',{source:legacySource});assert.match(h.report.error,/Controlled parser stop/);
     assert.equal(h.report.storageIsolated,true);assert.equal(h.realStorageCalls,0);
     assert.equal(h.report.sourceSha256,sourceProfiles.legacyMoon.sourceSha256);
