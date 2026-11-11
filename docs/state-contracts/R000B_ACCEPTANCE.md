@@ -252,3 +252,88 @@ These gates include packaging as well as terminal effects. “Authorized” desc
 The repaired R checkpoint, canonical outputs, paired F01 failure/repair evidence and independent source disposition are now recorded. Instrument preparation reconciled at HR-v4: corrected instrument and M2 bindings are recorded. Root still obtains actual native/pixel evidence, completes the final source-stage envelope review and supplies durable/public locators. Preserve CP/contrary/failed-setup artifacts and immutable earlier reports. After predecessor integration, repeat the affected-dependency binding decision against the actual combined candidate; do not automatically replay untouched historical work. Terminal cells change only after their actual effects and readbacks.
 
 **Predecessor packaging snapshot retained; successor qualification and acceptance remain open.** Section S and the appended successor dispositions govern the current frontier. This ledger is a factual index and completion checklist, not an acceptance certificate or authorization beyond the actual owner commission. Root receives and adjudicates the recorded bounded review/build/cohort results, verifies exact copied successor evidence and applies the draft after identity checks. Final candidate/native/carrier and terminal results remain unexecuted in this snapshot.
+
+## Combined-candidate reconciliation — 2026-11-11
+
+This successor section is appended and changes no existing row text, order or historical disposition.
+
+**Identity supersession.** The standalone candidate `68e51aa6d56060e7431ee1f0d62101b67763abfa` (index `e8da0b76…`, runtime tree `04ab5ba6…`) is superseded for acceptance purposes by the combined candidate `f540f076d56d5b69b03af01910d1f349a7e1f074`, tree `c49783458dd14c4f5969aa1786cf288ab4d8afc3` (index `dc2af380…`, runtime tree `f5d49b90…`). The combined candidate is R000B reconciled with accepted main. Its native and assembly baseline is accepted main `dbf3370f39d569936ae74ad795638525b53ccd98` (tree `a29866be1f9f05e7c11e6cd51570d888bdcc0e80`), replacing `eebba178`. The identity rows earlier in this ledger refer to the standalone bytes. Evidence:
+- [`evidence/R000B/20261110-main-reconciliation/`](evidence/R000B/20261110-main-reconciliation/): the rebind script, receipt and runtime inventories;
+- [`evidence/R000B/20261111-combined-candidate/`](evidence/R000B/20261111-combined-candidate/): the independent native receipt for hosted run 42963236609 and the independent exact-candidate review of `f540f076` (PASS_WITH_FINDINGS);
+- the dated reconciliation section of [R000B.md](R000B.md).
+
+The local node run is `node --test tests/*.test.cjs tests/*.test.mjs` at the combined candidate: 713 tests, 709 pass, 0 fail, 4 todo, including R000B focused 93/93 and the 8-file generated cohort of 318 pass and 4 todo. **Generated reproduction** means that `python tools/build_native.py` leaves the tree clean, `verify_v1` passes, the non-publishing assemble reports `VERIFIED_BUILD_NOT_PUBLISHED` with `changed=[]`, and hosted assemble reported `published=false`, `changed=[]`.
+
+The six cells of hosted run 42963236609 are listed below as artifact id and SHA-256:
+
+| Cell | Artifact id | SHA-256 |
+|---|---|---|
+| assembly | 13830411352 | `d3fff4288146cfdbdb213658d7f942b1f7e23f38bc3b00779f2c8d518be1d992` |
+| baseline/default/visible | 13830645212 | `015dab6c805196c746b49245c85bd0a57e961f6886620696ad1d99f3c4475af6` |
+| candidate/default/visible | 13830990090 | `3ecc37b3e4d5fd7cabb44d604c18ec0a766993ffe927c0c7ebc5dd54bfa3dad5` |
+| candidate/reduced/visible | 13831070305 | `c1312dbe0729c57b65e05e98b16e8cfe9a5477bbb9004124b44ea72e0fed0aa9` |
+| candidate/full/visible | 13829564515 | `bd5117191c8a27d7e14c194da0cf0decd9a21f84182f03717224c7c5d94214b7` |
+| candidate/default/controlled-hidden | 13830886860 | `62fc238b8af9b33f68c72999755f88f72f863cb720b8864ada59a32b026a3747` |
+
+| ID | Evidence for the combined candidate | Status at the combined candidate | Limit |
+|---|---|---|---|
+| B01 | 713-test node run, 0 fail; transfers unchanged from standalone evidence because the N08 admission/cache metadata owners are untouched (review §6) | transfers at recorded scope | Original source/input/environment scope only; no new provider experiment |
+| B02 | 713-test node run, 0 fail; transfers unchanged because the N10 radar frame/index/receipt owners are untouched | transfers at recorded scope | No new radar watch; synthetic radar response natively |
+| B03 | 713-test node run, 0 fail; transfers unchanged because the timezone inverse is untouched | transfers at recorded scope | No broader temporal qualification |
+| B04 | Generated cohort incl. `r000b-remaining` (57/57 inside 713); transfers unchanged because the N10 hostile-epoch validation is untouched | transfers at recorded scope | Scoped VM invalid-number evidence only |
+| B05 | 713-test node run incl. R000B focused 93/93 (899999/900000/900001/-1 ms); hosted cells show withdrawal at source age 901 s | source-tested only | The exact 900000 ms inclusive boundary is NOT naturally reached natively; native expiry coincides with midnight |
+| B06 | 713-test node run, 0 fail; transfers unchanged because radar age/retention owners are untouched | transfers at recorded scope | No cache purge or quantitative radar grant |
+| B07 | Hosted run 42963236609, all four candidate cells (coverage [0,0,0], alphaSum 0, receipt `withdrawn-unavailable`); baseline cell shows the defect on main; node run; independent review | re-observed on combined candidate | Chromium-only synthetic fixture; pixel review PENDING |
+| B08 | Hosted candidate cells (header "Weather unavailable", fx unavailable, precipitation/lightning off); node run | re-observed on combined candidate | Fresh-weather-without-prayers header reads "Rain 24°" with no clouds drawn; truncated date footers; pixel review PENDING |
+| B09 | Node run; hosted cells show raw weather and cache bytes surviving withdrawal; transfers unchanged because the cache custody owner is untouched | transfers at recorded scope | No new persistence mechanism |
+| B10 | Node run; hosted request ledger identical to the standalone run (16 entries candidate, 9 baseline; no request storm); acquisition owners untouched | transfers at recorded scope | Synthetic providers; R000D retry owner unchanged |
+| B11 | Node run; transfers unchanged because the lane/permission owners are untouched | transfers at recorded scope | Only the live current-model lane was observed natively; SIM/forecast/ADVANCING are source-tested only |
+| B12 | Node run (A→B→A, target/generation, active-receipt fencing); target owners untouched | transfers at recorded scope | A→B→A is not exercised natively |
+| B13 | Hosted candidate cells (ordinary prayer recovery at 130 s republishes, rev 8); node run incl. 57 remaining controls | re-observed on combined candidate | Hostile-input integration is source-tested only |
+| B14 | Node run (seven E faults and F01/F02 mutants in focused suites); independent review mutation probes (63/44/3 failures) | source-tested only | No native mutant execution |
+| B15 | Hosted cells at native elapsed 1× (expiry, controlled prayer 503 ×9 outage, retry recovery) | re-observed on combined candidate | Synthetic providers; Chromium only; pixel review PENDING |
+| B16 | Hosted candidate default/reduced/full/hidden cells (labels, cloud withdrawal and recovery, stars/Moon, phase progress); node run incl. R0025 controls | re-observed on combined candidate | Pixel review PENDING; reduced cell shows a row of thin ticks near the top after recovery (noted by the receiver); mask/resume PNGs not independently inspected |
+| B17 | R000B.md and this section updated; the reviewer's two documentation findings are addressed in this commit (not re-reviewed) | open until merge-delivery-closure | Delivered documentation and public locators remain |
+| B18 | Independent review PASS_WITH_FINDINGS (source scope) | open until merge-delivery-closure | No approval, merge, certificate or closure |
+| ES0B-01 | Hosted run, all candidate cells: same-target midnight/no-model withdrawal; baseline main retains clouds | re-observed on combined candidate | Chromium-only synthetic fixture; pixel review PENDING |
+| ES0B-02 | Hosted candidate cells (painter/foreground checks true); node foreground/hand-off suites | re-observed on combined candidate | The receiver did not inspect the native-cloud/foreground mask PNGs |
+| ES0B-03 | Node run (F01/F02 healthy-refresh ordering in the handoff suite); the hosted recovery continuity checks pass | source-tested only | The healthy A→B refresh handoff is not named among the native observations by the receiver |
+| ES0B-04 | Hosted candidate cells: stars and Moon remain after withdrawal | re-observed on combined candidate | Cold Moon omissions and inherited limits remain |
+| ES0B-05 | Hosted candidate cells: unavailable header, raw/cache survive, effects off; node run | re-observed on combined candidate | "Rain 24°" header in the fresh-without-prayers state; pixel review PENDING |
+| ES0B-06 | Hosted candidate cells: fresh weather without prayers cannot revive the old deck (coverage 0); node run | re-observed on combined candidate | Warm exact-record retention is source-tested only |
+| ES0B-07 | Hosted candidate cells: genuine recovery republishes (`eligible-published` rev 8, coverage restored, rain on) | re-observed on combined candidate | Synthetic providers |
+| ES0B-08 | Hosted controlled-hidden cell: expiry while hidden, one visible resume frame, no stale join, no replayed hidden motion | re-observed on combined candidate | Controlled document visibility, not OS sleep/wake; resume-opportunity PNGs not independently inspected |
+| ES0B-09 | Node run (A→B→A, obsolete completion, active-receipt fencing) | source-tested only | Not exercised natively |
+| ES0B-10 | Hosted candidate cells: repeat read identical (idempotent), request ledger unchanged; node run | re-observed on combined candidate | Retained-history growth is source-tested only |
+| ES0B-11 | Node run (inclusive source/receipt boundaries, zero future allowance) | source-tested only | `inclusiveBoundaryObservation = NOT_NATURALLY_REACHED` natively |
+| ES0B-12 | Node run (lane/permission preservation) | source-tested only | Only the live lane was observed natively |
+| ES0B-13 | Hosted candidate cells distinguish an eligible candidate from the withdrawn consumed publication; node run | re-observed on combined candidate | Diagnostics read through the fixture bridge |
+| ES0B-14 | Hosted default/full/hidden cells: phase progress and pixels changed; reduced holds at 0; continuity steps ok | re-observed on combined candidate | Pixel review PENDING; visible-column rain-origin mask not independently inspected |
+| ES0B-15 | Generated reproduction; `verify_v1` PASS; protected paths unchanged; independent exact-candidate review PASS_WITH_FINDINGS | re-observed on combined candidate | Four inherited R000C TODOs; reviewer identity is a self-report |
+| D01 | Same isolated branch; PR branch head equals `f540f076` | open until merge-delivery-closure | — |
+| D02 | Engineering and reconciliation complete at source scope | open until merge-delivery-closure | — |
+| D03 | Generated reproduction at the combined candidate | open until merge-delivery-closure | Final served-byte binding remains |
+| D04 | This section and R000B.md | open until merge-delivery-closure | Delivered docs remain |
+| D05 | Independent exact-candidate review PASS_WITH_FINDINGS; independent native receipt | open until merge-delivery-closure | Self-reported reviewer identity; owner adjudication remains |
+| D06 | `f540f076` pushed to the PR branch; hosted assemble published nothing further | open until merge-delivery-closure | Readiness and owner decision remain |
+| D07 | — | open until merge-delivery-closure | Exact head/tree approval not requested or granted here |
+| D08 | — | open until merge-delivery-closure | Not performed |
+| D09 | — | open until merge-delivery-closure | Not performed |
+| D10 | — | open until merge-delivery-closure | Not performed |
+| D11 | — | open until merge-delivery-closure | Not performed |
+| D12 | — | open until merge-delivery-closure | Not performed |
+| D13 | — | open until merge-delivery-closure | Lifecycle remains root-owned and active |
+
+### Limits and preserved findings
+
+- **Browser and fixture scope.** The native cells are Chromium only (headless, Linux), on a synthetic fixture. No Firefox or WebKit cell was run.
+- **Expiry boundary.** Source-age expiry coincides with the midnight rollover in the native cells. The exact 900000 ms inclusive boundary is NOT naturally reached natively and rests on source tests.
+- **"Before midnight" screenshots.** The "last-eligible-before-midnight" screenshots were captured after the read and show the withdrawn state. Only the healthy-before-midnight PNG and the video show true pre-expiry pixels.
+- **Header without clouds.** In the fresh-weather-without-prayers state the header still reads "Rain 24°" while no clouds or precipitation are drawn. The driver expects this; the receiver noted it as a visible inconsistency.
+- **Truncated footers.** The date footers are truncated in the expired state.
+- **Pixel review and uninspected PNGs.** Every cell's own pixel review status is PENDING in its receipt. The independent receiver did not inspect the native-cloud/foreground mask PNGs or the resume-opportunity PNGs.
+- **Python oracle suite.** It fails 66/78 under the Windows cp1252 locale and passes 78/78 with UTF-8.
+- **Earlier records.** All original failed runs and repairs recorded earlier in this ledger remain as recorded.
+- **R0021 not integrated.** The separately owned R0021 retirement/disposal remedy (issue #33 comment 6768062051; PR #72 comment 6768077192) is NOT integrated, and this candidate has no native product-repair result for it.
+- **Stale R0017 pin.** `tools/qualification/r0017-request-accounting.cjs` (R0017-owned) pins a `real-sky/native-sky.js` hash that this candidate changes. The same tool is already stale on main for other pins, and no test fails.
+- **Self-reported identities.** The reviewer and receiver model identities are self-reports.
