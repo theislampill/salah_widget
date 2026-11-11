@@ -1,0 +1,37 @@
+[
+  {
+    "input": "{\"addons\":[]}",
+    "accepted": true,
+    "xml": "<root type=\"object\"><addons type=\"array\"></addons></root>"
+  },
+  {
+    "input": "{\"addons\":[],}",
+    "accepted": true,
+    "xml": "<root type=\"object\"><addons type=\"array\"></addons></root>"
+  },
+  {
+    "input": "{/* comment */ \"addons\":[]}",
+    "accepted": false,
+    "error": "Exception calling \"Load\" with \"1\" argument(s): \"The token '\"' was expected but found '/'.\""
+  },
+  {
+    "input": "{'addons':[]}",
+    "accepted": false,
+    "error": "Exception calling \"Load\" with \"1\" argument(s): \"The token '\"' was expected but found '''.\""
+  },
+  {
+    "input": "{addons:[]}",
+    "accepted": false,
+    "error": "Exception calling \"Load\" with \"1\" argument(s): \"The token '\"' was expected but found 'a'.\""
+  },
+  {
+    "input": "{\"addons\":[{\"name\":\"Tabliss\"}],\"addons\":[]}",
+    "accepted": true,
+    "xml": "<root type=\"object\"><addons type=\"array\"><item type=\"object\"><name type=\"string\">Tabliss</name></item></addons><addons type=\"array\"></addons></root>"
+  },
+  {
+    "input": "[{\"addons\":[]}]",
+    "accepted": true,
+    "xml": "<root type=\"array\"><item type=\"object\"><addons type=\"array\"></addons></item></root>"
+  }
+]

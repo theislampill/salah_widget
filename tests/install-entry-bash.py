@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 """Actual piped Bash entry, controlled terminal input and contained effect boundaries."""
-import errno, hashlib, json, os, pathlib, pty, select, signal, stat, subprocess, sys, tempfile, time, zipfile
+import errno, hashlib, json, os, pathlib, pty, secrets, select, signal, stat, subprocess, sys, tempfile, time, zipfile
 
 SOURCE=pathlib.Path(sys.argv[1] if len(sys.argv)>1 else pathlib.Path(__file__).resolve().parents[1]/'install.sh').resolve()
-ROOT=pathlib.Path(tempfile.mkdtemp(prefix='salah-entry-bash-'))
+BASH=os.environ.get('SALAH_TEST_BASH','/bin/bash')
+ROOT=pathlib.Path(tempfile.mkdtemp(prefix='salah-entry-bash-')).resolve()
 os.chmod(ROOT,0o700)
 RESULTS=[]
+
+def browser_root(home, browser):
+    if sys.platform=='darwin':
+        return home/'Library/Application Support'/dict(chrome='Google/Chrome',edge='Microsoft Edge',brave='BraveSoftware/Brave-Browser',firefox='Firefox/Profiles')[browser]
+    return home/dict(chrome='.config/google-chrome',edge='.config/microsoft-edge',brave='.config/BraveSoftware/Brave-Browser',firefox='.mozilla/firefox')[browser]
 
 def require(ok,message):
     if not ok: raise AssertionError(message)
@@ -14,22 +20,39 @@ def snapshot(root):
     rows=[]
     for p in sorted(root.rglob('*')):
         info=p.lstat(); digest=hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() and not p.is_symlink() else ''
-        rows.append((str(p.relative_to(root)),stat.S_IMODE(info.st_mode),digest,os.readlink(p) if p.is_symlink() else ''))
+        rows.append((str(p.relative_to(root)),stat.S_IMODE(info.st_mode),digest,os.readlink(p) if p.is_symlink() else '',info.st_uid,info.st_gid,info.st_dev,info.st_ino))
     return rows
+
+def identity(path):
+    info=path.lstat()
+    return dict(path=str(path),physical=str(path.resolve()),uid=info.st_uid,gid=info.st_gid,
+                device=info.st_dev,inode=info.st_ino,mode=oct(stat.S_IMODE(info.st_mode)),symlink=path.is_symlink())
+
+def require_ready(root,env,pipe=False):
+    path=root/'bootstrap-ready'
+    rows=[line.split('\t') for line in path.read_text().splitlines()] if path.is_file() else []
+    valid=bool(rows) and all(len(row)==2 and row[0].isdigit() and row[1]==env['INSTALL_ENTRY_NONCE'] for row in rows)
+    processes=sorted({row[0] for row in rows if len(row)==2})
+    require(valid and len(processes)>=(2 if pipe else 1),'BOOTSTRAP_BLOCKED: missing/wrong pre-entry BASH_ENV readiness nonce')
+    return dict(nonce=env['INSTALL_ENTRY_NONCE'],processes=processes,loadedBeforeEntry=True,
+                evidence='BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes',
+                acquisition=json.loads((root/'acquisition.json').read_text()))
 
 def fixture(name, profiles='both',source='github',dry=True):
     root=ROOT/name; root.mkdir(mode=0o700)
     subject=root/'subject'; subject.mkdir(mode=0o700)
     home=subject/'home'; home.mkdir(mode=0o700)
     tmp=subject/'tmp'; tmp.mkdir(mode=0o700)
-    chrome=home/'.config/google-chrome/Default'
+    chrome=browser_root(home,'chrome')/'Default'
     if profiles!='none': chrome.mkdir(parents=True)
     if profiles in ('legacy','mixed'): (chrome/'Extensions/hipekcciheckooncpjeljhnekcoolahp').mkdir(parents=True)
     if profiles=='installed': (chrome/'Extensions/dlaogejjiafeobgofajdlkkhjlignalk').mkdir(parents=True)
-    if profiles in ('both','mixed'): (home/'.mozilla/firefox/fixture profile').mkdir(parents=True)
+    if profiles in ('both','mixed'):
+        firefox=browser_root(home,'firefox')/'fixture profile'; firefox.mkdir(parents=True)
+        (firefox/'extensions.json').write_text('{"addons":[]}\n')
     if profiles=='three':
-        (home/'.config/microsoft-edge/Default').mkdir(parents=True)
-        (home/'.config/BraveSoftware/Brave-Browser/Default/Extensions/hipekcciheckooncpjeljhnekcoolahp').mkdir(parents=True)
+        (browser_root(home,'edge')/'Default').mkdir(parents=True)
+        (browser_root(home,'brave')/'Default/Extensions/hipekcciheckooncpjeljhnekcoolahp').mkdir(parents=True)
     preset=root/'preset.json'; preset.write_text('{"input":"#local=1"}\n')
     asset=root/'asset.zip'
     with zipfile.ZipFile(asset,'w') as archive: archive.writestr('Nested Folder/manifest.json','{"manifest_version":3}')
@@ -44,8 +67,13 @@ def fixture(name, profiles='both',source='github',dry=True):
 record(){ printf '%s\n' "$*" >> "$EFFECT_LOG"; }
 check_path(){ case "$1" in "$FIXTURE_ROOT"/*) ;; *) record "ESCAPE $1"; return 99 ;; esac; }
 command(){
+  if [ "$1" = -v ] && [ "${2:-}" = python3 ] && [ "${INSTALL_DISCOVERY_NO_PYTHON:-0}" = 1 ]; then return 1; fi
   if [ "$1" = -v ]; then case "${2:-}" in google-chrome|google-chrome-stable|chrome|microsoft-edge|microsoft-edge-stable|brave-browser|brave|chromium|chromium-browser|firefox|librewolf) return 1 ;; esac; fi
   builtin command "$@"
+}
+[(){
+  if builtin [ "$#" = 3 ] && builtin [ "$1" = -x ]; then case "$2" in /Applications/*) return 1 ;; esac; fi
+  builtin [ "$@"
 }
 mkdir(){ for item in "$@"; do case "$item" in -*) ;; *) check_path "$item" || return ;; esac; done; record "mkdir $*"; builtin command mkdir "$@"; }
 mktemp(){ for item in "$@"; do case "$item" in -*) ;; *) check_path "$item" || return ;; esac; done; record "mktemp $*"; builtin command mktemp "$@"; }
@@ -69,22 +97,26 @@ python3(){
     record "metadata $3"; cat >/dev/null
     [ "${FAIL_METADATA:-0}" != 1 ] || { record 'DENIED metadata fixture'; return 99; }
     case "$3" in chromium) printf 'v-fixture\ttabliss-chromium.zip\tfile://%s\n' "$ASSET_FIXTURE" ;; firefox) printf 'v-fixture\ttabliss-firefox-signed.xpi\tfile://%s\n' "$ASSET_FIXTURE" ;; *) return 99 ;; esac
-  else builtin command python3 "$@"; fi
+  else "$INSTALL_TEST_PYTHON" "$@"; fi
 }
 xclip(){ local text; text="$(cat)"; record "clipboard $text"; }
+pbcopy(){ local text; text="$(cat)"; record "clipboard $text"; }
 xdg-open(){ record "open $*"; }
+open(){ record "open $*"; }
 unzip(){ record "extract $*"; return 99; }
+printf '%s\t%s\n' "$$" "$INSTALL_ENTRY_NONCE" >> "$INSTALL_READY_FILE"
 ''')
-    env=dict(os.environ,HOME=str(home),TMPDIR=str(tmp),PATH='/usr/bin:/bin',BASH_ENV=str(envfile),EFFECT_LOG=str(root/'effects.log'),FIXTURE_ROOT=str(root),ASSET_FIXTURE=str(asset),INSTALL_SOURCE=str(SOURCE),TABLISSNG_REPO='fixture/repo',SALAH_WIDGET_PRESET_URL=preset.as_uri(),SALAH_WIDGET_HASH='lat=24.47&lon=39.61&method=4',SALAH_INSTALL_SOURCE=source,DRY_RUN='1' if dry else '0',NO_OPEN='0')
+    env=dict(os.environ,HOME=str(home),TMPDIR=str(tmp),PATH='/usr/bin:/bin',BASH_ENV=str(envfile),EFFECT_LOG=str(root/'effects.log'),FIXTURE_ROOT=str(root),ASSET_FIXTURE=str(asset),INSTALL_SOURCE=str(SOURCE),INSTALL_TEST_BASH=BASH,INSTALL_TEST_PYTHON=sys.executable,INSTALL_ENTRY_NONCE=secrets.token_hex(16),INSTALL_READY_FILE=str(root/'bootstrap-ready'),TABLISSNG_REPO='fixture/repo',SALAH_WIDGET_PRESET_URL=preset.as_uri(),SALAH_WIDGET_HASH='lat=24.47&lon=39.61&method=4',SALAH_INSTALL_SOURCE=source,DRY_RUN='1' if dry else '0',NO_OPEN='0')
+    (root/'acquisition.json').write_text(json.dumps(dict(home=identity(home),temporary=identity(tmp),fixture=identity(root),uid=os.getuid(),gid=os.getgid(),groups=os.getgroups(),bash=BASH,python=sys.executable),indent=2)+'\n')
     return root,subject,env
 
 def run_plain(env):
-    return subprocess.run(['bash','--noprofile','--norc',str(SOURCE)],env=env,text=True,capture_output=True,start_new_session=True,timeout=20)
+    return subprocess.run([BASH,'--noprofile','--norc',str(SOURCE)],env=env,text=True,capture_output=True,start_new_session=True,timeout=20)
 
 def run_pty(env,answer='all',eof=False):
     pid,fd=pty.fork()
     if pid==0:
-        os.execvpe('bash',['bash','--noprofile','--norc','-c','cat "$INSTALL_SOURCE" | bash'],env)
+        os.execvpe(BASH,[BASH,'--noprofile','--norc','-c','cat "$INSTALL_SOURCE" | "$INSTALL_TEST_BASH"'],env)
     output=b''; menu=False; prompts=0; choices=0; status=None; deadline=time.monotonic()+20
     try:
         while time.monotonic()<deadline:
@@ -128,6 +160,7 @@ def preview(name,profiles='both',source='github',failure=False,invalid=False):
     if name=='missing-preset': env['SALAH_WIDGET_PRESET_URL']=''  # explicitly empty override must remain empty
     if invalid: env['SALAH_INSTALL_SOURCE']='invalid'
     before=snapshot(subject); r=run_plain(env); after=snapshot(subject); effects=effect_lines(root)
+    readiness=require_ready(root,env)
     require(not effects and before==after,repr(dict(effects=effects,stdout=r.stdout,stderr=r.stderr)))
     require((r.returncode!=0)==failure,repr(dict(exit=r.returncode,stdout=r.stdout,stderr=r.stderr)))
     if not failure:
@@ -135,7 +168,7 @@ def preview(name,profiles='both',source='github',failure=False,invalid=False):
         if source=='ask': require('Install source unresolved' in r.stdout,'Source choice fabricated')
         if profiles!='installed' and source=='github': require('release/version/path unresolved' in r.stdout,'Release/path fabricated')
         if name=='missing-preset': require('No preset URL configured' in r.stdout+r.stderr,'Empty preset override silently replaced')
-    return dict(exit=r.returncode,effects=len(effects),snapshotUnchanged=before==after,fixture=str(root))
+    return dict(exit=r.returncode,effects=len(effects),snapshotUnchanged=before==after,fixture=str(root),readiness=readiness)
 
 def terminal(name,answer='all',profiles='both',source='github',failure=False,eof=False,no_terminal=False,no_open=False,failed_release=False):
     root,subject,env=fixture(name,profiles,source,dry=False)
@@ -146,6 +179,7 @@ def terminal(name,answer='all',profiles='both',source='github',failure=False,eof
         r=run_plain(env); status=r.returncode; output=r.stdout+r.stderr; inputs={}
     else: status,output,inputs=run_pty(env,answer,eof)
     effects=effect_lines(root)
+    readiness=require_ready(root,env,pipe=not no_terminal)
     if failure:
         require(status!=0 and not effects and before==snapshot(subject),repr(dict(exit=status,effects=effects,output=output)))
         require('Validated manual-install files retained' not in output,'False staged completion')
@@ -173,29 +207,48 @@ def terminal(name,answer='all',profiles='both',source='github',failure=False,eof
             require(not list(bundles[0].glob('*.xpi')) and not list(bundles[0].glob('*unpacked*')),'Fallback invented manual extension assets')
         if failed_release: require('GitHub release download failed; falling back to store page.' in output,'Actual metadata failure branch not reached')
     (root/'entry-output.txt').write_text(output)
-    return dict(exit=status,effects=len(effects),inputs=inputs,fixture=str(root))
+    return dict(exit=status,effects=len(effects),inputs=inputs,fixture=str(root),readiness=readiness)
+
+def bootstrap_negative():
+    root,subject,env=fixture('bootstrap-negative')
+    instrument=pathlib.Path(env['BASH_ENV'])
+    marker='printf \'%s\\t%s\\n\' "$$" "$INSTALL_ENTRY_NONCE" >> "$INSTALL_READY_FILE"\n'
+    text=instrument.read_text(); require(text.count(marker)==1,'Bootstrap marker drift')
+    instrument.write_text(text.replace(marker,'',1))
+    before=snapshot(subject); actual=run_plain(env)
+    require(actual.returncode==0 and 'Preview only; no changes made' in actual.stdout,'Healthy preview must execute for missing-nonce discriminator')
+    require(before==snapshot(subject) and not effect_lines(root),'Readiness discriminator reached installer effects')
+    try: require_ready(root,env)
+    except AssertionError as error:
+        require('BOOTSTRAP_BLOCKED' in str(error),'Wrong negative-control classification')
+        return dict(entryExit=actual.returncode,qualification='BOOTSTRAP_BLOCKED',detectedMissingNonce=True)
+    raise AssertionError('Missing bootstrap nonce was accepted as qualified preview')
 
 def check(name,body):
+    requested=json.loads(os.environ.get('SALAH_INSTALL_CASES','[]'))
+    if requested and name not in requested: return
     try: RESULTS.append(dict(case=name,pass_=True,observation=body()))
     except Exception as error: RESULTS.append(dict(case=name,pass_=False,error=str(error)))
 
-for name in ('github','cached','store','ask','installed','mixed','missing-preset'):
-    check('offline '+name,lambda name=name:preview(name,profiles=name if name in ('installed','mixed') else 'both',source=name if name in ('store','ask') else 'github'))
-check('offline legacy-only',lambda:preview('legacy',profiles='legacy',failure=True))
-check('offline zero targets',lambda:preview('none',profiles='none',failure=True))
-check('offline malformed option',lambda:preview('invalid',invalid=True,failure=True))
-check('pipe actual PTY all and later confirmations',lambda:terminal('normal'))
-check('pipe empty answer defaults all',lambda:terminal('empty',answer=''))
-check('pipe explicit indices',lambda:terminal('indices',answer='1,2'))
-check('pipe deduplicate and refuse legacy',lambda:terminal('dedup',answer='1,1,3',profiles='three'))
-check('pipe source ask and confirmations',lambda:terminal('source-ask',source='ask'))
-check('pipe store confirmation input',lambda:terminal('normal-store',source='store'))
-check('pipe metadata-failure fallback input',lambda:terminal('metadata-fallback',failed_release=True))
-check('NO_OPEN retains normal effects',lambda:terminal('no-open',no_open=True))
-check('no controlling terminal before effects',lambda:terminal('no-terminal',failure=True,no_terminal=True))
-check('PTY EOF before effects',lambda:terminal('eof',failure=True,eof=True))
-check('PTY invalid token before effects',lambda:terminal('bad-token',answer='1,bad',failure=True))
-check('PTY unknown index before effects',lambda:terminal('unknown',answer='999',failure=True))
-check('PTY legacy-only before effects',lambda:terminal('legacy-terminal',profiles='legacy',failure=True))
-print(json.dumps(dict(host=subprocess.check_output(['bash','--version'],text=True).splitlines()[0],uid=os.getuid(),source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),results=RESULTS),ensure_ascii=False,indent=2))
-sys.exit(1 if any(not r['pass_'] for r in RESULTS) else 0)
+if __name__ == '__main__':
+    for name in ('github','cached','store','ask','installed','mixed','missing-preset'):
+        check('offline '+name,lambda name=name:preview(name,profiles=name if name in ('installed','mixed') else 'both',source=name if name in ('store','ask') else 'github'))
+    check('offline legacy-only',lambda:preview('legacy',profiles='legacy',failure=True))
+    check('offline zero targets',lambda:preview('none',profiles='none',failure=True))
+    check('offline malformed option',lambda:preview('invalid',invalid=True,failure=True))
+    check('pipe actual PTY all and later confirmations',lambda:terminal('normal'))
+    check('pipe empty answer defaults all',lambda:terminal('empty',answer=''))
+    check('pipe explicit indices',lambda:terminal('indices',answer='1,2'))
+    check('pipe deduplicate and refuse legacy',lambda:terminal('dedup',answer='1,1,3',profiles='three'))
+    check('pipe source ask and confirmations',lambda:terminal('source-ask',source='ask'))
+    check('pipe store confirmation input',lambda:terminal('normal-store',source='store'))
+    check('pipe metadata-failure fallback input',lambda:terminal('metadata-fallback',failed_release=True))
+    check('NO_OPEN retains normal effects',lambda:terminal('no-open',no_open=True))
+    check('no controlling terminal before effects',lambda:terminal('no-terminal',failure=True,no_terminal=True))
+    check('PTY EOF before effects',lambda:terminal('eof',failure=True,eof=True))
+    check('PTY invalid token before effects',lambda:terminal('bad-token',answer='1,bad',failure=True))
+    check('PTY unknown index before effects',lambda:terminal('unknown',answer='999',failure=True))
+    check('PTY legacy-only before effects',lambda:terminal('legacy-terminal',profiles='legacy',failure=True))
+    check('missing bootstrap nonce cannot establish qualified entry',bootstrap_negative)
+    print(json.dumps(dict(host=subprocess.check_output([BASH,'--version'],text=True).splitlines()[0],uid=os.getuid(),source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),results=RESULTS),ensure_ascii=False,indent=2))
+    sys.exit(1 if any(not r['pass_'] for r in RESULTS) else 0)

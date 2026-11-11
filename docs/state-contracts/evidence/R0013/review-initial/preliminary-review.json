@@ -1,0 +1,151 @@
+{
+  "schema": "r0013-independent-engineering-review/1",
+  "reviewer": "/root/r0013_review",
+  "stage": "PRELIMINARY; source repair and native instrumentation in progress",
+  "authority": "Ordinary attributed engineering review only; no governor/audit-assess acceptance or readiness/closure authority",
+  "baseline_commit": "dbf3370f39d569936ae74ad795638525b53ccd98",
+  "baseline_tree": "a29866be1f9f05e7c11e6cd51570d888bdcc0e80",
+  "initial_frozen_installers": {
+    "install.sh": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+    "install.ps1": "23633abe44c766281cc43f59a40529cef88144d64a9e79081347fffe422589f1"
+  },
+  "candidate_commit_tree": "not supplied yet; root reconciling base to da12688033c9481a3fea12e6aeed68b23a385694",
+  "critical_findings": [],
+  "findings": [
+    {
+      "id": "R13-REV-01",
+      "severity": "Important",
+      "title": "PowerShell accepts malformed JSON as verified absence",
+      "status": "NEEDS_REVISION; writer repairing",
+      "source": "install.ps1:Get-FirefoxExtensionStatus; Get-DiscoveryEligibility; main selection/dispatch",
+      "inspected_sha256": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "requirement_ids": [
+        "ES13-01",
+        "ES13-03",
+        "ES13-06",
+        "ES13-08"
+      ],
+      "evidence": [
+        "parser-edge-result.json",
+        "additional-probes.json",
+        "probe-effects/ps-malformed-unquoted/stdout.txt"
+      ],
+      "observation": "Actual PS7.6.6/Linux parser marks trailing-comma, comments, single-quoted names and unquoted names known-neither/supported-metadata; actual malformed {addons:[]} main path exits0 and invokes stage, asset, clipboard, about:addons, preset and about:newtab spies. Empty positive follows same intended useful route; legacy control refuses before these effects.",
+      "impact": "Malformed metadata reaches eligible installation/import guidance, contrary to unknown-held; raw root-shape check alone does not make ConvertFrom-Json strict.",
+      "required_countermeasure": "Reject malformed grammar before admitting supported inventory, retain PS5.1 and PS7 compatibility, preserve actual parser/caller negative and healthy controls, and qualify both native Windows hosts."
+    },
+    {
+      "id": "R13-REV-02",
+      "severity": "Important",
+      "title": "Duplicate inventory properties can hide legacy evidence in both parsers",
+      "status": "NEEDS_REVISION; writer repairing",
+      "source": "install.sh:firefox_status; install.ps1:Get-FirefoxExtensionStatus; target builders and main guards",
+      "inspected_sha256": {
+        "install.sh": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+        "install.ps1": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36"
+      },
+      "requirement_ids": [
+        "ES13-02",
+        "ES13-03",
+        "ES13-06",
+        "ES13-08"
+      ],
+      "evidence": [
+        "bash-duplicate-main-red.json",
+        "bash-duplicate-inventory-entry.txt",
+        "additional-probes.json"
+      ],
+      "observation": "{\"addons\":[{\"name\":\"Tabliss\"}],\"addons\":[]} is known-neither/eligible. Actual Bash PTY exits0 with19 contained effects; empty positive also exits0 with19 effects; legacy positive refuses exit1/effects0. Actual PS main likewise reaches all staging/handoff spies. Browser profile bytes remain unchanged.",
+      "impact": "Ambiguous inventory is admitted as complete negative evidence and loses the conservative legacy refusal.",
+      "required_countermeasure": "Reject duplicate semantic property names during parsing before conversion collapses them; cover escaped duplicate names and relevant nested identities with actual builder/caller controls."
+    },
+    {
+      "id": "R13-REV-03",
+      "severity": "Important",
+      "title": "Native collector lacks original required acquisition and bootstrap evidence",
+      "status": "OPEN qualification-instrument gap; root repairing",
+      "source": "tools/qualification/installer_native.py; tests/install-entry-bash.py",
+      "inspected_sha256": {
+        "collector": "5c5d8a43df56619c879f3fbea8b2dc525130db9822da45f1caab1dce180ad4a0",
+        "entry": "b4449a9ea1486076fbee125073db895c7120bd9bf2818a3692a8223deb314a4b"
+      },
+      "requirement_ids": [
+        "19-05",
+        "R0013-A01",
+        "R0013-A03",
+        "ES13-10",
+        "ES13-13"
+      ],
+      "requirement_locator": "recovery/r0013_issue19comments_6074574717.md: D.1-D.2, F A03, G PLATFORM/FIXTURE",
+      "observation": "Collector records platform and Bash version but not sw_vers, UID/tool/native-mount/parent-identity acquisition facts. Existing Bash entry harness records no separate pre-top-level bootstrap-ready nonce or per-entry assertion.",
+      "impact": "A future all-green command aggregate would still not substantiate all original native fixture predicates. This does not prove product failure or permit a native PASS.",
+      "required_countermeasure": "Record required native facts and verified pre-entry readiness with containment controls; preserve failed bootstraps as evaluator failures."
+    },
+    {
+      "id": "R13-REV-04",
+      "severity": "Important",
+      "title": "Original mutation runner can treat unrelated baseline failure as a detected mutant",
+      "status": "OPEN qualification-instrument gap; root repairing",
+      "source": "tests/install-mutations.py: Bash loop result predicate",
+      "inspected_sha256": "5e06a8f7d4006ce970680c996306c80e95602c9a981c8b317b9228d3c26fc19d",
+      "requirement_ids": [
+        "19-10",
+        "ES13-10"
+      ],
+      "observation": "detected is fixtureExit!=0 and any failed row, with no healthy baseline prerequisite or named required failure. Preserved helper receipt already fails wrong-owner-home independently of mutant.",
+      "impact": "Running this harness now could falsely report cached-stdout/mapfile mutants detected solely due the known invalid foreign-owner premise. New discovery mutation runner is stronger and does not share this flaw.",
+      "required_countermeasure": "Use named intended failures and healthy paired controls for affected original stdin/cache/mapfile claims, or explicitly justify immutable historical reuse where relevant owners and fixture premises are unchanged. Native collector currently does not invoke original mutant runner."
+    }
+  ],
+  "minor_findings": [],
+  "source_review_positive_observations": [
+    "All five Bash target reads consume the appended17-field record; action dispatch, pre-staging counting and preview derive eligibility from knowledge with legacy precedence.",
+    "PowerShell builder projects status/reason/evidence/source and main rechecks one eligibility guard before effects; no-profile is unknown.",
+    "No-Python fallback retains conservative independent legacy/new hints but always emits unknown, warning on stderr. Normal staging still has its existing Python prerequisite.",
+    "Bash producers use NUL-framed find output to exclude newline/carriage-return paths before line protocol; add_target rejects pipes/newlines and match fields percent-escape controls/delimiters.",
+    "Original FD3 reads, diagnostic/path stdout split, private per-attempt staging, download/extract/preset functions and PowerShell asset selector/caller bodies were not changed in the initially reviewed installer diff.",
+    "README source additions cover terminal/EOF, pinned reviewed Bash file, unknown-held policy, profile-path limits and retained per-attempt bundle/cache facts; Windows pinned instructions remain. Rendered/public proof remains open."
+  ],
+  "reviewed_receipts": {
+    "recovery/r0013-bash-final.json": "52/52 at initial Bash hash; incomplete coverage exposed REV-02",
+    "recovery/r0013-powershell-final.json": "40/40 supplemental LinuxPS7 at initial PS hash; not nativeWindows and superseded by parser repairs",
+    "recovery/r0013-bash-discovery-mutants-final.json": "paired healthy source plus10 named mutants",
+    "recovery/r0013-powershell-discovery-mutants-final.json": "paired healthy source plus7 named mutants, supplementalLinuxPS7",
+    "recovery/r0013-preserved-bash-entry.json": "23/23 at initialBash hash",
+    "recovery/r0013-preserved-bash-helper.json": "25/26; invalid wrong-owner-home premise retained as failure",
+    "recovery/r0013-preserved-powershell-components.txt": "18/18 supplementalLinuxPS7",
+    "recovery/r0013-detectors-candidate.json": "10 grouped Linux rows; Apple empty-array cases explicitly not executed",
+    "recovery/r0013-builder-preservation.json": "4/4 current source controls; retained earlier printf-stub RED correctly distinguished"
+  },
+  "probe_limitations": [
+    "Initial independent Bash full-entry probe under report directory failed the healthy control because /workspace is mode0777. It is retained in additional-probes.json and NOT credited as a product rejection or effect-free test; the corrected trusted /tmp run is bash-duplicate-main-red.json.",
+    "All independent effect tests used owned fixtures and intercepted network/clipboard/open. PowerShell actual main bytes were executed with external-boundary spies and fixture config; Bash used complete actual piped file in PTY.",
+    "No actual Apple or nativeWindows candidate execution, remote/publication effect, real profile/home/browser/clipboard modification, or source/index/branch/governor mutation was performed."
+  ],
+  "declined_to_judge": [
+    "Formal IMPLEMENTAUDIT/currentness/lifecycle: no governor route envelope, no authority; parent explicitly retains ownership.",
+    "Native AppleBash3.2/Windows5.1/7 behavior and filesystem semantics: no such candidate receipt yet; LinuxPS7 is supplemental.",
+    "Post-repair engineering acceptance: revised source/tests/immutable candidate tree not received; findings remain open until bounded rereview.",
+    "Published/served bytes, rendered README/copied command behavior, merge/closure: not executed or supplied in this review.",
+    "Dedicated native foreign-UID custody proof: known fixture premise failure is preserved; R0015 interface owner must qualify it."
+  ],
+  "remaining_contract_gates": [
+    "Resolve REV-01/02 with exact parser/target/action negative+positive/mutant evidence; rebind all affected acceptance and review to the final source/test hashes.",
+    "Resolve or explicitly reconcile REV-03/04; validate native acquisition, bootstrap readiness, and intended mutation oracles before crediting native runs.",
+    "Complete actual AppleBash3.2 both-family detector/cardinality/Unicode/backslash/final-line/array-reset/nounset and parse-valid native mutants, plus actual pipedPTY all/default/explicit/duplicate/source/store/fallback/NO_OPEN/refusal/return-path/retention joins.",
+    "Complete exact-file nativeWindowsPS5.1 and supported7.6.6 discovery/target/selection/preview/normal-entry evidence and preserve ASCII/selector/object/path/caller/encoding-comma adverse constraints at their actual scope.",
+    "Reconcile all12 original parent rows,7 hierarchical residual children,14 ES rows in one current ledger; preserve earned evidence, unknown cells and genuinely separate R0015/R0016 interfaces.",
+    "Review final rendered installer guidance and builder command agreement; preserve encoded SALAH_WIDGET_HASH, local-coordinate omission, manual/dashboard and geometry/permission boundaries.",
+    "Bind final candidate commit/tree/base and file/test/evidence manifest; reconcile newmain disjointness and independently re-review affected changes.",
+    "Publish/read back coherent ownbranch and nonclosing Implements#19 PR only under existing authority; no readiness claim while mandatory qualification remains.",
+    "Verify campaign predecessor/approved disjoint ordering receipt and exact owner merge approval before integration.",
+    "After approved merge, verify actualmain/PR state, integration/raw/Pages/public rendered+copied command bytes and native scope binding; then publish/read back whole-owner certificate and deliberate completed issue closure.",
+    "Formal audit lifecycle remains a distinct parent-owned gate; no engineering subset or honest blocker equals whole-owner COMPLETE."
+  ],
+  "disposition": "NEEDS_REVISION for current concrete engineering findings; whole-owner remains incomplete; not merge-ready or closure recommendation",
+  "evidence_hashes": {
+    "bash-duplicate-main-red.json": "318aa7b75876ffe37eb8e4bea73dc0c11177d72f61ea5354981a96008265d62b",
+    "parser-edge-result.json": "df6d17c4c00f4055f1e5408c02878963cb50626a3d592a04c0922b5c649b45d0",
+    "additional-probes.json": "50d4ab4930878162c420a86ad11bc6c591ef8b46e94318fb7bc7d2cba6bdbb31"
+  }
+}

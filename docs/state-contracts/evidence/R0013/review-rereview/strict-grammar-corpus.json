@@ -1,0 +1,407 @@
+[
+  {
+    "name": "grammar-0",
+    "text": "null",
+    "expected": true
+  },
+  {
+    "name": "grammar-1",
+    "text": "true",
+    "expected": true
+  },
+  {
+    "name": "grammar-2",
+    "text": "false",
+    "expected": true
+  },
+  {
+    "name": "grammar-3",
+    "text": "0",
+    "expected": true
+  },
+  {
+    "name": "grammar-4",
+    "text": "-1",
+    "expected": true
+  },
+  {
+    "name": "grammar-5",
+    "text": "1.25",
+    "expected": true
+  },
+  {
+    "name": "grammar-6",
+    "text": "\"\"",
+    "expected": true
+  },
+  {
+    "name": "grammar-7",
+    "text": "\"quote\\\" backslash\\\\ slash/ newline\\n Arabic \\u0645\"",
+    "expected": true
+  },
+  {
+    "name": "grammar-8",
+    "text": "[]",
+    "expected": true
+  },
+  {
+    "name": "grammar-9",
+    "text": "{}",
+    "expected": true
+  },
+  {
+    "name": "grammar-10",
+    "text": "[{},[],[1,2],{\"a\":true}]",
+    "expected": true
+  },
+  {
+    "name": "grammar-11",
+    "text": "{\"a\":{\"a\":1},\"b\":{\"a\":2}}",
+    "expected": true
+  },
+  {
+    "name": "grammar-12",
+    "text": "{\"addons\":[]}",
+    "expected": true
+  },
+  {
+    "name": "grammar-13",
+    "text": "{\"addons\":[{\"id\":\"other\",\"name\":\"Ordinary\",\"defaultLocale\":{\"name\":\"Localized\"}}]}",
+    "expected": true
+  },
+  {
+    "name": "grammar-14",
+    "text": " \t\n[]\r ",
+    "expected": true
+  },
+  {
+    "name": "grammar-15",
+    "text": " \t\n{}\r ",
+    "expected": true
+  },
+  {
+    "name": "grammar-16",
+    "text": " \t\n[{},[],[1,2],{\"a\":true}]\r ",
+    "expected": true
+  },
+  {
+    "name": "grammar-17",
+    "text": " \t\n{\"a\":{\"a\":1},\"b\":{\"a\":2}}\r ",
+    "expected": true
+  },
+  {
+    "name": "grammar-18",
+    "text": " \t\n{\"addons\":[]}\r ",
+    "expected": true
+  },
+  {
+    "name": "grammar-19",
+    "text": " \t\n{\"addons\":[{\"id\":\"other\",\"name\":\"Ordinary\",\"defaultLocale\":{\"name\":\"Localized\"}}]}\r ",
+    "expected": true
+  },
+  {
+    "name": "grammar-20",
+    "text": "{\"same\":1,\"nested\":{\"same\":2}}",
+    "expected": true
+  },
+  {
+    "name": "grammar-21",
+    "text": "{\"a\\u0062\":1,\"cd\":2}",
+    "expected": true
+  },
+  {
+    "name": "grammar-22",
+    "text": "{\"x\":[0,-0,10,-10,0.1,1E2,1e+2,1e-2,true,false,null]}",
+    "expected": true
+  },
+  {
+    "name": "grammar-23",
+    "text": "{\"\\\"\":1,\"\\\\\":2,\"\\/\":3,\"\\b\":4,\"\\f\":5,\"\\n\":6,\"\\r\":7,\"\\t\":8}",
+    "expected": true
+  },
+  {
+    "name": "grammar-24",
+    "text": "{\"addons\":[],\"other\":[[[[{}]]]]}",
+    "expected": true
+  },
+  {
+    "name": "grammar-25",
+    "text": "",
+    "expected": false
+  },
+  {
+    "name": "grammar-26",
+    "text": " ",
+    "expected": false
+  },
+  {
+    "name": "grammar-27",
+    "text": "{",
+    "expected": false
+  },
+  {
+    "name": "grammar-28",
+    "text": "[",
+    "expected": false
+  },
+  {
+    "name": "grammar-29",
+    "text": "}",
+    "expected": false
+  },
+  {
+    "name": "grammar-30",
+    "text": "]",
+    "expected": false
+  },
+  {
+    "name": "grammar-31",
+    "text": ":",
+    "expected": false
+  },
+  {
+    "name": "grammar-32",
+    "text": ",",
+    "expected": false
+  },
+  {
+    "name": "grammar-33",
+    "text": "tru",
+    "expected": false
+  },
+  {
+    "name": "grammar-34",
+    "text": "TRUE",
+    "expected": false
+  },
+  {
+    "name": "grammar-35",
+    "text": "nul",
+    "expected": false
+  },
+  {
+    "name": "grammar-36",
+    "text": "nullnull",
+    "expected": false
+  },
+  {
+    "name": "grammar-37",
+    "text": "0 0",
+    "expected": false
+  },
+  {
+    "name": "grammar-38",
+    "text": "{}[]",
+    "expected": false
+  },
+  {
+    "name": "grammar-39",
+    "text": "[1,]",
+    "expected": false
+  },
+  {
+    "name": "grammar-40",
+    "text": "[1,,2]",
+    "expected": false
+  },
+  {
+    "name": "grammar-41",
+    "text": "[,1]",
+    "expected": false
+  },
+  {
+    "name": "grammar-42",
+    "text": "[1 2]",
+    "expected": false
+  },
+  {
+    "name": "grammar-43",
+    "text": "[1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-44",
+    "text": "{\"a\":1,}",
+    "expected": false
+  },
+  {
+    "name": "grammar-45",
+    "text": "{,\"a\":1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-46",
+    "text": "{\"a\":}",
+    "expected": false
+  },
+  {
+    "name": "grammar-47",
+    "text": "{\"a\" 1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-48",
+    "text": "{\"a\":1 \"b\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-49",
+    "text": "{\"a\":1,,\"b\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-50",
+    "text": "{\"a\":1]",
+    "expected": false
+  },
+  {
+    "name": "grammar-51",
+    "text": "{\"a\":{}}}",
+    "expected": false
+  },
+  {
+    "name": "grammar-52",
+    "text": "{\"a\":[]]",
+    "expected": false
+  },
+  {
+    "name": "grammar-53",
+    "text": "{\"a\":1}/*x*/",
+    "expected": false
+  },
+  {
+    "name": "grammar-54",
+    "text": "{/*x*/\"a\":1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-55",
+    "text": "{'a':1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-56",
+    "text": "{a:1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-57",
+    "text": "{\"a\":+1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-58",
+    "text": "{\"a\":01}",
+    "expected": false
+  },
+  {
+    "name": "grammar-59",
+    "text": "{\"a\":-01}",
+    "expected": false
+  },
+  {
+    "name": "grammar-60",
+    "text": "{\"a\":.1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-61",
+    "text": "{\"a\":1.}",
+    "expected": false
+  },
+  {
+    "name": "grammar-62",
+    "text": "{\"a\":1e}",
+    "expected": false
+  },
+  {
+    "name": "grammar-63",
+    "text": "{\"a\":1e+}",
+    "expected": false
+  },
+  {
+    "name": "grammar-64",
+    "text": "{\"a\":--1}",
+    "expected": false
+  },
+  {
+    "name": "grammar-65",
+    "text": "{\"a\":NaN}",
+    "expected": false
+  },
+  {
+    "name": "grammar-66",
+    "text": "{\"a\":Infinity}",
+    "expected": false
+  },
+  {
+    "name": "grammar-67",
+    "text": "{\"a\":\"\\v\"}",
+    "expected": false
+  },
+  {
+    "name": "grammar-68",
+    "text": "{\"a\":\"\\x01\"}",
+    "expected": false
+  },
+  {
+    "name": "grammar-69",
+    "text": "{\"a\":\"\\u01\"}",
+    "expected": false
+  },
+  {
+    "name": "grammar-70",
+    "text": "{\"a\":\"\\uZZZZ\"}",
+    "expected": false
+  },
+  {
+    "name": "grammar-71",
+    "text": "{\"a\":\"line\nbreak\"}",
+    "expected": false
+  },
+  {
+    "name": "grammar-72",
+    "text": "\ufeff{}",
+    "expected": false
+  },
+  {
+    "name": "grammar-73",
+    "text": "\u000b{}",
+    "expected": false
+  },
+  {
+    "name": "grammar-74",
+    "text": "{\"a\":1,\"a\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-75",
+    "text": "{\"na\\u006de\":1,\"name\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-76",
+    "text": "{\"a\":1,\"A\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-77",
+    "text": "{\"a\\nb\":1,\"a\\u000ab\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-78",
+    "text": "{\"a\\\\b\":1,\"a\\u005cb\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-79",
+    "text": "{\"a\\/b\":1,\"a/b\":2}",
+    "expected": false
+  },
+  {
+    "name": "grammar-80",
+    "text": "{\"a\":{\"x\":1,\"x\":2}}",
+    "expected": false
+  }
+]

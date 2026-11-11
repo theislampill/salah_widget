@@ -17,7 +17,9 @@ if($Scenario -ne 'none') {
     if($Scenario -eq 'legacy') { [void][IO.Directory]::CreateDirectory((Join-Path $chrome 'Extensions\hipekcciheckooncpjeljhnekcoolahp')) }
     if($Scenario -eq 'installed') { [void][IO.Directory]::CreateDirectory((Join-Path $chrome 'Extensions\dlaogejjiafeobgofajdlkkhjlignalk')) }
     if($Scenario -ne 'legacy' -and $Scenario -ne 'installed') {
-        [void][IO.Directory]::CreateDirectory((Join-Path $env:APPDATA 'Mozilla\Firefox\Profiles\fixture profile'))
+        $firefox=Join-Path $env:APPDATA 'Mozilla\Firefox\Profiles\fixture profile'
+        [void][IO.Directory]::CreateDirectory($firefox)
+        [IO.File]::WriteAllText((Join-Path $firefox 'extensions.json'),'{"addons":[]}')
     }
     if($Scenario -eq 'mixed') {
         [void][IO.Directory]::CreateDirectory((Join-Path $env:LOCALAPPDATA 'Microsoft\Edge\User Data\Default\Extensions\lklaendlmlfkaabeleddanafeinnenih'))

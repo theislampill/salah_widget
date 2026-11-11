@@ -1,0 +1,94 @@
+{
+  "reviewer": "/root/r0013_review",
+  "scope": "bounded actual full Bash PTY entry under safe owned /tmp; /workspace ancestry failure is retained separately",
+  "results": [
+    {
+      "case": "healthy-empty",
+      "input": "{\"addons\":[]}",
+      "source_before": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "source_after": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "exit": 0,
+      "effects": [
+        "mktemp -d /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.XXXXXXXX",
+        "mktemp -d /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.XXXXXXXX",
+        "mkdir /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w/downloads /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/presets",
+        "metadata firefox",
+        "mkdir /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w/downloads/v-fixture",
+        "mktemp /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w/downloads/v-fixture/.asset.XXXXXXXX",
+        "download -fL file:///tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/asset.zip -o /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w/downloads/v-fixture/.asset.zXMgNC5C",
+        "move -- /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w/downloads/v-fixture/.asset.zXMgNC5C /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w/downloads/v-fixture/tabliss-firefox-signed.xpi",
+        "mktemp /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/.asset.XXXXXXXX",
+        "copy -- /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w/downloads/v-fixture/tabliss-firefox-signed.xpi /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/.asset.LRjY4CRE",
+        "move -- /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/.asset.LRjY4CRE /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/tabliss-firefox-signed.xpi",
+        "clipboard /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/tabliss-firefox-signed.xpi",
+        "open about:addons",
+        "mktemp /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/presets/.preset.XXXXXXXX",
+        "download -fL file:///tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/preset.json -o /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/presets/.preset.BlCeAlrc",
+        "move -- /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/presets/.preset.BlCeAlrc /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/presets/salah-widget.tablissng.json",
+        "clipboard /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/home/salah-widget-install.jPUKDi9L/presets/salah-widget.tablissng.json",
+        "open about:newtab",
+        "remove -rf -- /tmp/salah-entry-bash-n7ipohh4/review-healthy-empty/subject/tmp/salah-widget-download.7pughN2w"
+      ],
+      "inputs": {
+        "menu": true,
+        "confirmations": 1,
+        "sourceChoices": 0
+      },
+      "fixture": "/tmp/salah-entry-bash-n7ipohh4/review-healthy-empty",
+      "profile_unchanged": true,
+      "output": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/bash-healthy-empty-entry.txt"
+    },
+    {
+      "case": "legacy-control",
+      "input": "{\"addons\":[{\"name\":\"Tabliss\"}]}",
+      "source_before": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "source_after": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "exit": 1,
+      "effects": [],
+      "inputs": {
+        "menu": true,
+        "confirmations": 0,
+        "sourceChoices": 0
+      },
+      "fixture": "/tmp/salah-entry-bash-n7ipohh4/review-legacy-control",
+      "profile_unchanged": true,
+      "output": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/bash-legacy-control-entry.txt"
+    },
+    {
+      "case": "duplicate-inventory",
+      "input": "{\"addons\":[{\"name\":\"Tabliss\"}],\"addons\":[]}",
+      "source_before": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "source_after": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "exit": 0,
+      "effects": [
+        "mktemp -d /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.XXXXXXXX",
+        "mktemp -d /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.XXXXXXXX",
+        "mkdir /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5/downloads /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/presets",
+        "metadata firefox",
+        "mkdir /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5/downloads/v-fixture",
+        "mktemp /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5/downloads/v-fixture/.asset.XXXXXXXX",
+        "download -fL file:///tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/asset.zip -o /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5/downloads/v-fixture/.asset.ipO2F1Hs",
+        "move -- /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5/downloads/v-fixture/.asset.ipO2F1Hs /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5/downloads/v-fixture/tabliss-firefox-signed.xpi",
+        "mktemp /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/.asset.XXXXXXXX",
+        "copy -- /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5/downloads/v-fixture/tabliss-firefox-signed.xpi /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/.asset.VVcuZvs8",
+        "move -- /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/.asset.VVcuZvs8 /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/tabliss-firefox-signed.xpi",
+        "clipboard /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/tabliss-firefox-signed.xpi",
+        "open about:addons",
+        "mktemp /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/presets/.preset.XXXXXXXX",
+        "download -fL file:///tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/preset.json -o /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/presets/.preset.LFhqGbSw",
+        "move -- /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/presets/.preset.LFhqGbSw /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/presets/salah-widget.tablissng.json",
+        "clipboard /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/home/salah-widget-install.JA5weREB/presets/salah-widget.tablissng.json",
+        "open about:newtab",
+        "remove -rf -- /tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory/subject/tmp/salah-widget-download.TnH43vi5"
+      ],
+      "inputs": {
+        "menu": true,
+        "confirmations": 1,
+        "sourceChoices": 0
+      },
+      "fixture": "/tmp/salah-entry-bash-n7ipohh4/review-duplicate-inventory",
+      "profile_unchanged": true,
+      "output": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/bash-duplicate-inventory-entry.txt"
+    }
+  ]
+}

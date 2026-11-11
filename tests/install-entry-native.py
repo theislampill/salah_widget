@@ -3,9 +3,10 @@
 import collections, hashlib, json, os, pathlib, subprocess, sys, tempfile, zipfile
 
 SOURCE = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[1]/'install.ps1').resolve()
+PS7 = os.environ.get('INSTALL_TEST_PS7', r'C:\Program Files\PowerShell\7\pwsh.exe')
 HOSTS = [('ps51', r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe', r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\Modules'),
-         ('ps7', r'C:\Program Files\PowerShell\7\pwsh.exe', r'C:\Program Files\PowerShell\7\Modules')]
-ROOT = pathlib.Path(tempfile.mkdtemp(prefix='salah native entry-'))
+         ('ps7', PS7, str(pathlib.Path(PS7).parent/'Modules'))]
+ROOT = pathlib.Path(tempfile.mkdtemp(prefix='salah native entry-')).resolve()
 RESULTS = []
 MODULE = r'''
 Import-Module $env:INSTALL_NATIVE_UTILITY -Scope Local
@@ -77,7 +78,9 @@ def case(host_name, host, native_modules, scenario):
         chrome = subject/'local/Google/Chrome/User Data/Default'; chrome.mkdir(parents=True)
         if scenario == 'legacy': (chrome/'Extensions/hipekcciheckooncpjeljhnekcoolahp').mkdir(parents=True)
         elif scenario == 'installed': (chrome/'Extensions/dlaogejjiafeobgofajdlkkhjlignalk').mkdir(parents=True)
-        else: (subject/'roam/Mozilla/Firefox/Profiles/fixture profile').mkdir(parents=True)
+        else:
+            firefox = subject/'roam/Mozilla/Firefox/Profiles/fixture profile'; firefox.mkdir(parents=True)
+            (firefox/'extensions.json').write_text('{"addons":[]}\n',encoding='utf-8')
         if scenario == 'mixed': (subject/'local/Microsoft/Edge/User Data/Default/Extensions/lklaendlmlfkaabeleddanafeinnenih').mkdir(parents=True)
     asset = root/'fixture.zip'
     with zipfile.ZipFile(asset,'w') as archive: archive.writestr('manifest.json','{"manifest_version":3,"name":"Fixture","version":"1.0"}')

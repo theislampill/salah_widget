@@ -1,0 +1,600 @@
+{
+  "schema": "r0013-independent-engineering-rereview/1",
+  "reviewer": "/root/r0013_review",
+  "capturedAt": "2026-11-11T06:34:16.543256+00:00",
+  "authority": "Ordinary independent engineering review; no audit-assess/lifecycle, readiness, merge or closure authority",
+  "disposition": "No unresolved Critical/Important/Minor engineering finding identified in inspected changed source and local evidence. Four prior Important findings resolved at the stated source/local scope. Candidate may advance to parent-owned native qualification; whole contract NOT complete.",
+  "sourceHashes": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4",
+    "tests/install-discovery.py": "23d3949516d29ffa33fde63c765019196f2d9253273bdbc7fa5a0165f3b822dc",
+    "tests/install-discovery.ps1": "49e35f13f681dd22fe8c3253a56fe441dd05953220011ffdf788aee0cb6b5fa0",
+    "tests/install-discovery-mutations.py": "a991b5d5f35a062c0d91c6cee221b8baf12fa3507554ba2839bb686b0690616d",
+    "tests/install-bash.py": "01115e6145b4001b7fd3fae56f2612894676f79116973017e72943e98bd6a145",
+    "tests/install-entry-bash.py": "70214d6eff06925bc5c22eca39c57cd339477684ad211dbc6799f3c619142376",
+    "tests/install-entry-native.py": "226349b766b1bc9eaef5863e96212f679b18409710fdfdcdfdd9ae1c8a99cae8",
+    "tests/install-entry.ps1": "bf488439bba1cf0db034477d91c325a2077af38598de717b6f2b48641686e6b3",
+    "tests/install-mutations.py": "7638ee1a79edaa472d7f78345436d01fab54358c7540e85f810c260a5558a43b",
+    "tests/install-detectors.py": "ed47a8c7f14db4883da1126ff6d4c7d2aadc63394e5c392dddcad91eb4438848",
+    "tests/install-builder.cjs": "4889acc96ac6036368c34cad1a539e5d445f6b3dd1356c6a0ace157cd3f383c1",
+    "tests/install-native-receipts.py": "e56367e4295605c63bab6bb9a3ed50e2af96d06d018bfcadda39f0ef678d9103",
+    "tools/qualification/installer_native.py": "a81df0a2f6a4abd5251fe71963bfd63e9ad3d32f18ad55d7f686eef539c12259",
+    ".github/workflows/installer-native.yml": "29e6ac6ffd0885377b9a2d5cbc95242d3cc6be0a76ad1610d9e5db2d8f887342",
+    "docs/state-contracts/R0013.md": "435724ad354312ff8dda33278c7b17d05ea070db8fa7dc820d2732137fc430c5",
+    "docs/state-contracts/installer-coordination/PLAN.md": "6fc7adc76787a39dd6084b5fc652650bb571ff4a318a6d2fd05b0e6c228e8d6f",
+    "README.md": "35ba1c40aa0b93f4a88009897dd8139f09835d94678c4b099abd0607512e46ef"
+  },
+  "freezeNote": "Freeze2 installers unchanged; subsequent parent-owned discovery readiness and effective-temp-volume instrument deltas separately hashed here. Final candidate tree not yet supplied.",
+  "baselineCommit": "dbf3370f39d569936ae74ad795638525b53ccd98",
+  "baselineTree": "a29866be1f9f05e7c11e6cd51570d888bdcc0e80",
+  "reconciledParent": "da12688033c9481a3fea12e6aeed68b23a385694",
+  "findings": [
+    {
+      "id": "R13-REV-01",
+      "severity": "Important",
+      "original": "PowerShell permissive malformed JSON admits known absence and reaches staging/manual handoff",
+      "disposition": "RESOLVED in inspected source and supplemental local engineering evidence; native Windows qualification pending",
+      "source": "install.ps1 Test-StrictJson and Get-FirefoxExtensionStatus",
+      "evidence": [
+        "independent-rereview.json",
+        "parser-edge-repaired.json",
+        "strict-grammar-result.json",
+        "../r0013-powershell-final3.json",
+        "../r0013-powershell-discovery-mutants-final3.json"
+      ],
+      "reason": "Contiguous strict token grammar validates before ConvertFrom-Json; malformed commas/comments/quotes/bare keys and incomplete structures become unknown/metadata-malformed. Independent actual main now exits1 with prompt only; healthy main still reaches stage/asset/preset/handoff. Actual strict helper agrees with 81 independent grammar expectations."
+    },
+    {
+      "id": "R13-REV-02",
+      "severity": "Important",
+      "original": "Duplicate inventory/property keys collapse legacy evidence in Bash and PowerShell",
+      "disposition": "RESOLVED in inspected source and supplemental local engineering evidence; applicable native qualification pending",
+      "source": "install.sh firefox_status unique_object/parse_constant; install.ps1 Test-StrictJson decoded HashSet keys",
+      "evidence": [
+        "independent-rereview.json",
+        "parser-edge-repaired.json",
+        "../r0013-bash-discovery-mutants-final3.json",
+        "../r0013-powershell-discovery-mutants-final3.json"
+      ],
+      "reason": "Bash rejects repeated decoded dictionary keys and non-JSON constants before conversion; PS decodes string escapes and rejects OrdinalIgnoreCase key duplicates per object before conversion. Same original duplicate payload now stops actual Bash full file exit1/effects0/unchanged subject and PS actual main exit1/prompt only. Empty healthy controls remain useful; scoped repeated keys in different objects remain valid."
+    },
+    {
+      "id": "R13-REV-03",
+      "severity": "Important",
+      "original": "Native acquisition and per-entry pre-top-level readiness evidence missing",
+      "disposition": "RESOLVED as a source/instrument defect; actual native receipt qualification remains OPEN",
+      "source": "tests/install-entry-bash.py require_ready/fixture/bootstrap_negative; tests/install-discovery.py whole_entry; tools/qualification/installer_native.py acquisition",
+      "evidence": [
+        "../r0013-instrument-entry.json",
+        "../r0013-discovery-root-final.json",
+        "../r0013-instrument-source.json"
+      ],
+      "reason": "Nonce is emitted only after all BASH_ENV interception definitions and checked by PID/nonce on every preview/terminal/discovery complete entry. Missing-nonce discriminator rejects qualification despite healthy preview. Snapshot/fixture records contain uid/gid/dev/inode/mode. Collector records actual host/tool/parent facts and separately describes output and effective tempfile parent mounts/volumes; acquisition failure is a gate error. Later bounded followup repaired initially omitted discovery entry checks and fixture-volume characterization."
+    },
+    {
+      "id": "R13-REV-04",
+      "severity": "Important",
+      "original": "Original Bash mutation driver can credit an unrelated failing row",
+      "disposition": "RESOLVED in inspected Bash mutation instrument and local discriminator evidence",
+      "source": "tests/install-mutations.py Bash expected/control map and exact name-set checks; tests/install-bash.py filter",
+      "evidence": [
+        "../r0013-instrument-mutants.json",
+        "../r0013-mutation-oracle-regression.json"
+      ],
+      "reason": "For each mutation the exact healthy source must pass the adverse and paired control; mutant must fail exactly the named adverse row and preserve its healthy peer. Eight current mutant files and underlying receipts independently hash-match. Unchanged-source discriminator shows old false green on wrong-owner-home and repaired driver refuses credit with healthy baseline. The full wrong-owner fixture failure remains visible, not removed."
+    }
+  ],
+  "newCriticalFindings": [],
+  "newImportantFindings": [],
+  "newMinorFindings": [],
+  "evidenceHashes": {
+    "r0013-source-freeze-2.json": "17b6d0b196a710213834906ec5081763a82fcab6cd986c3f47f2cc18d277f32f",
+    "r0013-bash-final3.json": "255dd448a9f41b469ed535fe9f42188378945c9eadd1ab28b9036d196b23419c",
+    "r0013-powershell-final3.json": "d24c2181666ee4fe3541100f70edb9f681fde8faf4f3c00caeb5f32b943ba95c",
+    "r0013-bash-discovery-mutants-final3.json": "94f60c47799d8dccf5516daf783ca0e12e128039742f8be2d60ad8766882de6f",
+    "r0013-powershell-discovery-mutants-final3.json": "886a72d442b4570be17b6a165030a6a9df830adcc9e193db9c57c8c5b204547e",
+    "r0013-discovery-root-final.json": "2703ebfff6e43550dd24284d6fc302fa20ae489c499f69ae8e34ec83177b7064",
+    "r0013-instrument-entry.json": "f0bcfe8d6a2e8ca7b7178d35624567c547a24e4418bb3c6d5b653845333c9a18",
+    "r0013-instrument-mutants.json": "c013b7e1f040641590b500b5a0b840d19605d02b74d8d9a34b7a534969069137",
+    "r0013-mutation-oracle-regression.json": "d0dc5ab4ed59235a5f9d325d4f2f7834d626556c861da137dc3bd12c73aafd53",
+    "r0013-instrument-source.json": "1fc3d4f2eabc269e96698b8868487e3c0f588da9b1a2a6b03f26dec181d271e9",
+    "r0013-reconciliation/receipt.json": "a63ce6aa6e82086a3cf05e9b0b2ca3f61d1b62179e86ecbac48520088d77cfa4",
+    "r0013-review/preliminary-review.json": "6e1cddd12f659687a9351031f5e2f09417ba8d5429ebb38af1acfce1dc4b650a",
+    "r0013-review/independent-rereview.json": "7b1b074066d02c029ecc7e1f46be5d8322ed3f13e517bdcfb6efb656e479d1a1",
+    "r0013-review/strict-grammar-corpus.json": "bbc26561fa7079c66c2f07ef98a99ac972149a7abfb9c879fc5053d962f4e30a",
+    "r0013-review/strict-grammar-result.json": "65b42603453f5c508e40402fee018c0219c6e874e0c0afe08aac0d616e1b9f9b",
+    "r0013-review/parser-edge-repaired.json": "d9d964f0795bed129f4d39cfbb94f502022177c96df80abcba7bb6a49f3027da",
+    "r0013-review/delta-review-probes.py": "5b9e482191386abc53612707cf800bdf845a4004c939679db9668d77048c6a6b",
+    "r0013-review/strict-grammar-probe.ps1": "76409b6f620bfd7083516d8d0693523990b219b8f721f39920615c2b37c1e375"
+  },
+  "independentChecks": {
+    "reviewer": "/root/r0013_review",
+    "scope": "bounded independent repair discrimination; Linux hosts only, not native Apple or Windows qualification",
+    "sourcesBefore": {
+      "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+      "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4"
+    },
+    "sourcesAfter": {
+      "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+      "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4"
+    },
+    "results": [
+      {
+        "case": "actual strict helper vs independent grammar corpus",
+        "pass": true,
+        "count": 81,
+        "valid": 25,
+        "invalid": 56,
+        "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/strict-grammar-result.json"
+      },
+      {
+        "case": "original PS actual-parser adverse cases repaired",
+        "pass": true,
+        "count": 9,
+        "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/parser-edge-repaired.json"
+      },
+      {
+        "case": "PS actual main healthy-empty",
+        "pass": true,
+        "exit": 0,
+        "effects": [
+          "prompt",
+          "stage",
+          "asset",
+          "clipboard",
+          "open:about:addons",
+          "prompt",
+          "preset",
+          "clipboard",
+          "open:about:newtab"
+        ],
+        "profileUnchanged": true,
+        "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-healthy-empty"
+      },
+      {
+        "case": "PS actual main legacy-control",
+        "pass": true,
+        "exit": 1,
+        "effects": [
+          "prompt"
+        ],
+        "profileUnchanged": true,
+        "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-legacy-control"
+      },
+      {
+        "case": "PS actual main malformed-unquoted",
+        "pass": true,
+        "exit": 1,
+        "effects": [
+          "prompt"
+        ],
+        "profileUnchanged": true,
+        "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-malformed-unquoted"
+      },
+      {
+        "case": "PS actual main duplicate-inventory",
+        "pass": true,
+        "exit": 1,
+        "effects": [
+          "prompt"
+        ],
+        "profileUnchanged": true,
+        "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-duplicate-inventory"
+      },
+      {
+        "case": "Bash actual full-file healthy-empty",
+        "pass": true,
+        "exit": 0,
+        "effects": [
+          "mktemp -d /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.XXXXXXXX",
+          "mktemp -d /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.XXXXXXXX",
+          "mkdir /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets",
+          "metadata firefox",
+          "mkdir /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture",
+          "mktemp /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/.asset.XXXXXXXX",
+          "download -fL file:///tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/asset.zip -o /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/.asset.1q2LtIAO",
+          "move -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/.asset.1q2LtIAO /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/tabliss-firefox-signed.xpi",
+          "mktemp /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/.asset.XXXXXXXX",
+          "copy -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/tabliss-firefox-signed.xpi /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/.asset.xeNQVwvx",
+          "move -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/.asset.xeNQVwvx /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/tabliss-firefox-signed.xpi",
+          "clipboard /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/tabliss-firefox-signed.xpi",
+          "open about:addons",
+          "mktemp /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/.preset.XXXXXXXX",
+          "download -fL file:///tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/preset.json -o /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/.preset.R60Du8eM",
+          "move -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/.preset.R60Du8eM /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/salah-widget.tablissng.json",
+          "clipboard /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/salah-widget.tablissng.json",
+          "open about:newtab",
+          "remove -rf -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5"
+        ],
+        "profileUnchanged": true,
+        "snapshotUnchanged": false,
+        "readiness": {
+          "nonce": "49c24781e9f6fe25af6065edd65aac8a",
+          "processes": [
+            "135",
+            "137"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127277,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127278,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127275,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "fixture": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty"
+      },
+      {
+        "case": "Bash actual full-file legacy-control",
+        "pass": true,
+        "exit": 1,
+        "effects": [],
+        "profileUnchanged": true,
+        "snapshotUnchanged": true,
+        "readiness": {
+          "nonce": "3b964e530e3e914105e048ead29b28ac",
+          "processes": [
+            "353",
+            "355"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/home",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127300,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127301,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127298,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "fixture": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control"
+      },
+      {
+        "case": "Bash actual full-file duplicate-inventory",
+        "pass": true,
+        "exit": 1,
+        "effects": [],
+        "profileUnchanged": true,
+        "snapshotUnchanged": true,
+        "readiness": {
+          "nonce": "436b869dc65145a16bcfe9320f6cf63c",
+          "processes": [
+            "378",
+            "380"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/home",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127314,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127315,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory",
+              "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 127312,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "fixture": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory"
+      }
+    ]
+  },
+  "reviewedReceiptSummary": {
+    "BashDiscovery": "final3 76/76; later root final76/76 adds per-entry readiness observations",
+    "PowerShellDiscovery": "final3 68/68; Linux7.6.6 only",
+    "BashDiscoveryMutants": "12 named mutants plus exact-source paired controls; actual mutant file hashes and receipt source hashes match",
+    "PowerShellDiscoveryMutants": "11 named mutants plus exact-source paired controls; actual mutant file hashes and receipt source hashes match",
+    "BashOriginalEntry": "24/24 including missing-readiness negative control",
+    "BashOriginalMutants": "8/8; actual files/underlying receipt identities, exact adverse rows and healthy controls checked",
+    "UnchangedSourceOracle": "old falsely credits unrelated wrong-owner failure; repaired returns detected=false with healthy source pass"
+  },
+  "declinedToJudge": [
+    "Actual Apple or Windows runtime/filesystem behavior until candidate native receipts arrive.",
+    "Final candidate commit/tree/currentness until supplied and independently rebound.",
+    "Public rendering/copied commands/raw delivery, own PR state, merge, completed issue closure: not executed by reviewer and not supplied in final form.",
+    "Formal governor/lifecycle acceptance: absent formal routed envelope and explicitly outside delegated authority.",
+    "Dedicated native foreign-UID custody result, and whole R0015/R0016 owner readiness: separate interface-owner evidence still required."
+  ],
+  "remainingContractGates": [
+    "Bind this source-hash review to the final immutable candidate commit/tree, accepted parent da12688033c9481a3fea12e6aeed68b23a385694 and complete source/test/evidence manifest. Working review checkout remains dbf3370f39d569936ae74ad795638525b53ccd98 with frozen modifications; this report is not a Git-tree verdict.",
+    "Run and inspect actual native Apple /bin/bash3.2 complete detector matrix, acquisition/readiness receipts, pipe/PTY normal/default/indices/dedup/source/store/fallback/NO_OPEN/refusal and path/retention joins. Disabled mapfile or Linux Bash5.2 is not Apple execution.",
+    "Run and inspect native Windows PowerShell5.1 and supported7.6.6 on exact candidate bytes: strict parser/discovery/builders/selection/preview/normal entry plus applicable ASCII, ParseFile/UTF8ParseInput, selector object/path/caller and adverse encoding/comma controls. Linux PowerShell7.6.6 evidence is supplemental.",
+    "Reconcile required original native parse-valid stdin/mapfile/cache and detector subshell/read-r/empty-array mutants with healthy controls, expected failed named rows, genuine native host/tool/file identities, and preserved RED evidence.",
+    "Integrate all12 original parent rows,7 hierarchical residual child rows and14 ES13 rows into the current whole-contract ledger. Reuse unchanged earned proof at explicit scope; do not replace original residuals with the November discovery slice.",
+    "Complete the planned docs-only update pinning both Bash reviewed-file and Windows examples to the newly qualified exact R13 source commit. Preserve R14 host/byte/policy instructions, terminal/EOF/path limits, manual import/dashboard semantics, configured preset/cache guidance, and builder agreement. Review final rendered/copied commands and public bytes.",
+    "Preserve actual R0015 artifact-admission/custody and R0016 preview interfaces; do not conflate interface proof with entire issue completion. The local wrong-owner-home fixture has an invalid /tmp foreign-owner premise and remains25/26; actual foreign-UID proof is still a separate native interface gate.",
+    "Complete own-branch publication/readback and nonclosing Implements#19 PR, exact-source native receipts and current independent binding. Follow parent governance; this review grants no merge authority.",
+    "Verify all required campaign predecessor ordering or approved disjointness and the exact owner approval before merge. Then verify actual main/PR/integration state and final raw/Pages/rendered/copy delivery bytes and scope binding.",
+    "Publish/read back the whole-owner certificate only after all required rows are earned; deliberate completed issue closure and formal lifecycle/currentness gates remain parent-owned."
+  ],
+  "fullDenominatorCoverage": [
+    {
+      "id": "19-01",
+      "parent": null,
+      "requirement": "All five human inputs share a checked readable controlling-terminal FD3; prompts are stderr; structured record reads retain their data streams; close FD3 without interfering with staging cleanup.",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "19-02",
+      "parent": null,
+      "requirement": "No terminal or EOF fails nonzero before installation effects; a successful empty terminal line may default to all/source1 and cannot count as installation proof.",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "19-03",
+      "parent": null,
+      "requirement": "Normalize/validate selection before downloads; accept all or existing comma indices only; reject malformed/out-of-range tokens; deduplicate; refuse legacy; zero/legacy-only cannot claim staging.",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "19-04",
+      "parent": null,
+      "requirement": "Replace both mapfile calls with current-shell read loops; reset arrays per config, guard zero-array nounset, and preserve zero-profile executable/data-directory fallback.",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "19-05",
+      "parent": null,
+      "requirement": "Complete native Apple Bash 3.2 and modern-Bash detector matrix: both families, zero/one/multiple, spaces/Unicode/backslashes, unterminated final line, empty-array nounset; disclose newline-bearing path limitation.",
+      "reviewScope": "Native host/evidence gate OPEN; revised source and local instruments reviewed"
+    },
+    {
+      "id": "19-06",
+      "parent": null,
+      "requirement": "Successful fresh and valid same-attempt cache downloads emit one newline-terminated absolute existing regular path; diagnostics stay stderr; failure emits no usable path; extraction/copy/open consume quoted unchanged bytes.",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "19-07",
+      "parent": null,
+      "requirement": "Private-cache interface amendment: one verified download root per attempt, legitimate within-attempt reuse, new root next invocation, no old shared cache/retained-bundle admission.",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "19-08",
+      "parent": null,
+      "requirement": "Builder encoded malicious label/config roundtrip, SALAH_WIDGET_HASH at the Bash process, local mode omits coordinates, and geolocation/manual/embed contracts survive.",
+      "reviewScope": "Preserved source and narrow builder controls reviewed; final exact delivery rebinding OPEN"
+    },
+    {
+      "id": "19-09",
+      "parent": null,
+      "requirement": "README and builder explain normal terminal requirement and accurate reviewed-file route; preserve manual import, dashboard replacement and configured preset; disclose retired cross-run reuse.",
+      "reviewScope": "Source/document engineering reviewed; final pins/rendered/public delivery OPEN"
+    },
+    {
+      "id": "19-10",
+      "parent": null,
+      "requirement": "Restore one stdin read, mapfile, and cache status stdout as separate discriminating parse-valid mutants; preserve RED evidence and do not credit malformed controls.",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "19-11",
+      "parent": null,
+      "requirement": "Geometry/permission invariant and production wrapper amendment apply without broad runtime or staging redesign.",
+      "reviewScope": "Preserved source and narrow builder controls reviewed; final exact delivery rebinding OPEN"
+    },
+    {
+      "id": "19-12",
+      "parent": null,
+      "requirement": "Bind the delivered public script/document and generated-command source bytes to the exact reviewed target.",
+      "reviewScope": "Source/document engineering reviewed; final pins/rendered/public delivery OPEN"
+    },
+    {
+      "id": "R0013-A01",
+      "parent": "19-05",
+      "requirement": "Actual Apple detector: both families zero/fallback/one/multiple, spaces/Arabic/backslash, reset, unterminated final line, nounset",
+      "reviewScope": "Native host/evidence gate OPEN; revised source and local instruments reviewed"
+    },
+    {
+      "id": "R0013-A02",
+      "parent": "19-05",
+      "requirement": "Complete modern Bash detector ledger with exact bytes/cardinality",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "R0013-A03",
+      "parent": "19-05",
+      "requirement": "Actual Apple full pipe/PTY normal/source/refusal/NO_OPEN and downstream paths",
+      "reviewScope": "Native host/evidence gate OPEN; revised source and local instruments reviewed"
+    },
+    {
+      "id": "R0013-A04",
+      "parent": "19-05",
+      "requirement": "Parse-valid mapfile/subshell/read-r/empty-array mutants; healthy native controls",
+      "reviewScope": "Native host/evidence gate OPEN; revised source and local instruments reviewed"
+    },
+    {
+      "id": "R0013-A05",
+      "parent": "19-05",
+      "requirement": "Newline-delimited profile path limitation in public rendered guidance",
+      "reviewScope": "Source/document engineering reviewed; final pins/rendered/public delivery OPEN"
+    },
+    {
+      "id": "R0013-A06",
+      "parent": "19-09",
+      "requirement": "Terminal/EOF/pinned Bash reviewed route/manual/config/cache guidance and builder agreement",
+      "reviewScope": "Source/document engineering reviewed; final pins/rendered/public delivery OPEN"
+    },
+    {
+      "id": "R0013-A07",
+      "parent": "19-09",
+      "requirement": "Final changed public README/raw installer/generated command exact reviewed delivery",
+      "reviewScope": "Source/document engineering reviewed; final pins/rendered/public delivery OPEN"
+    },
+    {
+      "id": "ES13-01",
+      "parent": null,
+      "requirement": "Malformed and valid-empty JSON return different explicit knowledge",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-02",
+      "parent": null,
+      "requirement": "Legacy/new/both controls retain matches and refusal",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-03",
+      "parent": null,
+      "requirement": "Missing/unreadable/wrong-shape metadata has named unknown reason",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-04",
+      "parent": null,
+      "requirement": "No-Python heuristic cannot certify known-neither; conservative warning remains",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-05",
+      "parent": null,
+      "requirement": "Actual builders preserve status/source identity",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-06",
+      "parent": null,
+      "requirement": "Default-all/explicit cannot dispatch unknown-held into effects",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-07",
+      "parent": null,
+      "requirement": "Mixed population keeps safe peers useful and reports held/refused",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-08",
+      "parent": null,
+      "requirement": "No eligible target cannot yield staged/installed success",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-09",
+      "parent": null,
+      "requirement": "Record migration reaches every consumer",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-10",
+      "parent": null,
+      "requirement": "Original supported host/input/path contracts retained at approved scope",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-11",
+      "parent": null,
+      "requirement": "Dry-run zero filesystem/network/clipboard/open/cleanup effects",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-12",
+      "parent": null,
+      "requirement": "Acknowledgement not installation evidence; no profile mutation",
+      "reviewScope": "Local/static candidate evidence reviewed without new unresolved defect; applicable native/delivery rebinding OPEN"
+    },
+    {
+      "id": "ES13-13",
+      "parent": null,
+      "requirement": "Actual claimed native Windows/Bash proof separately acquired",
+      "reviewScope": "Native host/evidence gate OPEN; revised source and local instruments reviewed"
+    },
+    {
+      "id": "ES13-14",
+      "parent": null,
+      "requirement": "Original residuals visible; no slice-only closure",
+      "reviewScope": "Full denominator retained; integrated final ledger/certificate/closure OPEN"
+    }
+  ],
+  "mutationPolicy": "No product/source/index/branch/governor/remote writes. Probe artifacts are attributed under recovery/r0013-review; disposable complete-entry fixtures under owned /tmp roots. Existing RED reports retained unchanged."
+}

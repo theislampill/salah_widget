@@ -1,0 +1,117 @@
+name: Installer native qualification
+
+on:
+  push:
+    branches:
+      - pro/r0013-explicit-discovery-knowledge-20261106
+      - pro/r0015-explicit-artifact-transactions-20261106
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - install.sh
+      - install.ps1
+      - tests/install*
+      - src/native/builder.html
+      - src/native/config.js
+      - tools/qualification/installer_native.py
+      - .github/workflows/installer-native.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-native-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  posix:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            native: Linux
+          - runner: macos-14
+            native: Darwin
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /src/native/builder.html
+            /src/native/config.js
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Execute native disposable installer fixtures
+        shell: bash
+        run: |
+          case "$GITHUB_REF_NAME" in
+            pro/r0013-*) phase=r0013 ;;
+            pro/r0015-*) phase=r0015 ;;
+            pro/r0016-*) phase=r0016 ;;
+            *) exit 2 ;;
+          esac
+          python3 tools/qualification/installer_native.py --expected-os '${{ matrix.native }}' --phase "$phase" --output "$RUNNER_TEMP/installer-evidence"
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-${{ matrix.native }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence/
+          if-no-files-found: error
+          retention-days: 30
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Execute both native PowerShell hosts
+        shell: powershell
+        run: |
+          $phase = switch -Wildcard ($env:GITHUB_REF_NAME) {
+            'pro/r0013-*' { 'r0013' }
+            'pro/r0015-*' { 'r0015' }
+            'pro/r0016-*' { 'r0016' }
+            default { throw 'Unexpected installer branch' }
+          }
+          python tools/qualification/installer_native.py --expected-os Windows --phase $phase --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+          exit $LASTEXITCODE
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence/
+          if-no-files-found: error
+          retention-days: 30

@@ -1,0 +1,31 @@
+{
+  "host": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)",
+  "platform": "linux",
+  "uid": 1000,
+  "source": "f1d26f2928566a58c44bbb9b5bf7fb44b746e6a53fcd678c5bfe3079cc9eea03",
+  "fixture": "/tmp/salah-discovery-__3hac_y",
+  "results": [
+    {
+      "case": "actual parser empty",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-__3hac_y/parser-empty/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "newline profile cannot alias a safe target chromium",
+      "pass_": false,
+      "error": "Newline-containing identity became synthetic/duplicate targets: [['1', 'b', 'Browser', 'chromium', '', '', '', '0', '0', '', 'store', 'manager', 'newtab', 'unknown', 'profile-unavailable', 'chromium-extension-directories', '/Extensions'], ['2', 'b', 'Browser', 'chromium', 'Profile safe', '/tmp/salah-discovery-__3hac_y/newline-chromium/Profile safe', '', '0', '0', '', 'store', 'manager', 'newtab', 'known-neither', 'directory-detector', 'chromium-extension-directories', '/tmp/salah-discovery-__3hac_y/newline-chromium/Profile safe/Extensions'], ['3', 'b', 'Browser', 'chromium', 'Profile safe', '/tmp/salah-discovery-__3hac_y/newline-chromium/Profile safe', '', '0', '0', '', 'store', 'manager', 'newtab', 'known-neither', 'directory-detector', 'chromium-extension-directories', '/tmp/salah-discovery-__3hac_y/newline-chromium/Profile safe/Extensions']]"
+    },
+    {
+      "case": "newline profile cannot alias a safe target firefox",
+      "pass_": false,
+      "error": "Newline-containing identity became synthetic/duplicate targets: [['1', 'b', 'Browser', 'firefox', '', '', '', '0', '0', '', 'store', 'manager', 'newtab', 'unknown', 'metadata-absent', 'firefox-extensions-json', '/extensions.json'], ['2', 'b', 'Browser', 'firefox', 'safe', '/tmp/salah-discovery-__3hac_y/newline-firefox/safe', '', '0', '0', '', 'store', 'manager', 'newtab', 'known-neither', 'supported-metadata', 'firefox-extensions-json', '/tmp/salah-discovery-__3hac_y/newline-firefox/safe/extensions.json'], ['3', 'b', 'Browser', 'firefox', 'safe', '/tmp/salah-discovery-__3hac_y/newline-firefox/safe', '', '0', '0', '', 'store', 'manager', 'newtab', 'known-neither', 'supported-metadata', 'firefox-extensions-json', '/tmp/salah-discovery-__3hac_y/newline-firefox/safe/extensions.json']]"
+    }
+  ]
+}

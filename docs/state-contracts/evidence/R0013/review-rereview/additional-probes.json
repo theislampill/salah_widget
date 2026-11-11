@@ -1,0 +1,137 @@
+{
+  "reviewer": "/root/r0013_review",
+  "scope": "actual-source parser, eligibility, and contained main consumers; PowerShell7/Linux is supplemental",
+  "results": [
+    {
+      "platform": "PowerShell7/Linux",
+      "case": "healthy-empty",
+      "input": "{\"addons\":[]}",
+      "source_before": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "source_after": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "exit": 0,
+      "effects": [
+        "prompt",
+        "stage",
+        "asset",
+        "clipboard",
+        "open:about:addons",
+        "prompt",
+        "preset",
+        "clipboard",
+        "open:about:newtab"
+      ],
+      "stdout": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-healthy-empty/stdout.txt",
+      "stderr": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-healthy-empty/stderr.txt",
+      "profile_unchanged": true
+    },
+    {
+      "platform": "PowerShell7/Linux",
+      "case": "legacy-control",
+      "input": "{\"addons\":[{\"name\":\"Tabliss\"}]}",
+      "source_before": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "source_after": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "exit": 1,
+      "effects": [
+        "prompt"
+      ],
+      "stdout": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-legacy-control/stdout.txt",
+      "stderr": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-legacy-control/stderr.txt",
+      "profile_unchanged": true
+    },
+    {
+      "platform": "PowerShell7/Linux",
+      "case": "malformed-unquoted",
+      "input": "{addons:[]}",
+      "source_before": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "source_after": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "exit": 0,
+      "effects": [
+        "prompt",
+        "stage",
+        "asset",
+        "clipboard",
+        "open:about:addons",
+        "prompt",
+        "preset",
+        "clipboard",
+        "open:about:newtab"
+      ],
+      "stdout": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-malformed-unquoted/stdout.txt",
+      "stderr": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-malformed-unquoted/stderr.txt",
+      "profile_unchanged": true
+    },
+    {
+      "platform": "PowerShell7/Linux",
+      "case": "duplicate-inventory",
+      "input": "{\"addons\":[{\"name\":\"Tabliss\"}],\"addons\":[]}",
+      "source_before": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "source_after": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+      "exit": 0,
+      "effects": [
+        "prompt",
+        "stage",
+        "asset",
+        "clipboard",
+        "open:about:addons",
+        "prompt",
+        "preset",
+        "clipboard",
+        "open:about:newtab"
+      ],
+      "stdout": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-duplicate-inventory/stdout.txt",
+      "stderr": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-duplicate-inventory/stderr.txt",
+      "profile_unchanged": true
+    },
+    {
+      "platform": "Bash/Linux",
+      "case": "healthy-empty",
+      "input": "{\"addons\":[]}",
+      "source_before": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "source_after": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "exit": 1,
+      "effects": [],
+      "output": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/salah-entry-bash-6kirtwxn/bash-healthy-empty/stdout.txt",
+      "inputs": {
+        "menu": true,
+        "confirmations": 0,
+        "sourceChoices": 0
+      },
+      "profile_unchanged": true
+    },
+    {
+      "platform": "Bash/Linux",
+      "case": "legacy-control",
+      "input": "{\"addons\":[{\"name\":\"Tabliss\"}]}",
+      "source_before": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "source_after": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "exit": 1,
+      "effects": [],
+      "output": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/salah-entry-bash-6kirtwxn/bash-legacy-control/stdout.txt",
+      "inputs": {
+        "menu": true,
+        "confirmations": 0,
+        "sourceChoices": 0
+      },
+      "profile_unchanged": true
+    },
+    {
+      "platform": "Bash/Linux",
+      "case": "duplicate-inventory",
+      "input": "{\"addons\":[{\"name\":\"Tabliss\"}],\"addons\":[]}",
+      "source_before": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "source_after": "1b337c8c92f59ec5aff18c6ec760819c46d04f95082bd03510b73f63c6a0f670",
+      "exit": 1,
+      "effects": [],
+      "output": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/salah-entry-bash-6kirtwxn/bash-duplicate-inventory/stdout.txt",
+      "inputs": {
+        "menu": true,
+        "confirmations": 0,
+        "sourceChoices": 0
+      },
+      "profile_unchanged": true
+    }
+  ],
+  "ps_parser_source_before": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+  "ps_parser_source_after": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+  "ps_parser_exit": 0
+}
