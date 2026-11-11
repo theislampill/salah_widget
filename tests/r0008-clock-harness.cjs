@@ -34,7 +34,13 @@ const skySources = source.includes('function beginSkyScene(') ? {
   moonSurface: slice('let _mAlb=null', '(function loadMoonMaps()'),
   moonGeometry: slice('let moonSky=', '// Raw backing-canvas'),
   cloudMotion: slice('let _cloudFieldSeed=0', '// puff template'),
-  scene: slice('function skySceneIdentity()', '// build the animated weather overlay once')
+  scene: slice('function skySceneIdentity()', '// build the animated weather overlay once'),
+  // The R000B cloud publication owners above read the actual weather target
+  // and withdraw lunar optics through their actual sink.
+  ...(source.includes('function withdrawCloudState(') ? {
+    weatherTarget: slice('function wxNumber(', '\nfunction wxValue(') + slice('function captureWeatherTarget(', '\nfunction loadWx('),
+    lunarOptic: slice('function paintLunarOptic(', 'function paintCelestialWithoutTimetable(')
+  } : {})
 } : null;
 
 function realm({query = '', zone = 'UTC', wall = Date.parse('2026-09-07T12:00:00Z'), mono = 0,
@@ -83,7 +89,7 @@ function nodes() {
   const createElement = () => {
       let html = '', text = '';
       const classes=new Set(), attributes=new Map(), events=new Map(), children=[];
-      const element = {style: {setProperty(name,value){this[name]=String(value);},removeProperty(name){delete this[name];}}, dataset: {}, children, events,
+      const element = {style: {setProperty(name,value){this[name]=String(value);},removeProperty(name){delete this[name];},getPropertyValue(name){return Object.hasOwn(this,name)&&typeof this[name]==='string'?this[name]:'';}}, dataset: {}, children, events,
         classList: {add(...names) {names.forEach(name=>classes.add(name));}, remove(...names) {names.forEach(name=>classes.delete(name));},
           toggle(name,on) {if(on===undefined)on=!classes.has(name);if(on)classes.add(name);else classes.delete(name);return !!on;}, contains(name) {return classes.has(name);}},
         set className(value) {classes.clear();String(value).split(/\s+/).filter(Boolean).forEach(name=>classes.add(name));},
@@ -172,7 +178,9 @@ function loadRender(r, block = renderSource) {
     // CP8 catalogue/canvas producers are outside this CLOCK-only source fixture.
     projectStars() {}, setLocLabel() {}, syncWeather() {}, renderMoon() {},
     // Weather admission/paint has independent complete-runtime coverage.
-    weatherDecision: () => ({record:null}), weatherHeader: () => ({}), paintWeatherHeader() {},
+    // Unavailable weather double, bound to the actual current target (as in r0003-harness).
+    weatherDecision: () => ({record:null, conditionState:'unavailable', target:r.run('currentWeatherTarget()'), lane:null}),
+    weatherHeader: () => ({}), paintWeatherHeader() {},
     fitCn() {}, drawArc: () => '<svg>fixture arc dependency</svg>', applyTheme() {}, paintCelestialWithoutTimetable() {},
     moonNow: () => ({phase: 0.5}), phaseEmoji: () => '◐', console});
   if(!skySources)Object.assign(r.context,{moonSky:{},_starsProjected:true,projectStars(){}});
