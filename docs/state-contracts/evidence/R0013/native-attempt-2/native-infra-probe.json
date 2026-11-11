@@ -1,0 +1,59 @@
+{
+  "reviewer": "/root/r0013_review",
+  "scope": "Independent local infrastructure expression/transport control only; no native host or product qualification",
+  "sourcesBefore": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4",
+    ".github/workflows/installer-native.yml": "812739272e7119072939362f108e9ddd15972c50510e8f97ebb21265c60241e6",
+    "tools/qualification/installer_native.py": "1cca4b4692e5836c405f19569826029a2156bad6cf0fcd229f5ba52596ebcfd9"
+  },
+  "sourcesAfter": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4",
+    ".github/workflows/installer-native.yml": "812739272e7119072939362f108e9ddd15972c50510e8f97ebb21265c60241e6",
+    "tools/qualification/installer_native.py": "1cca4b4692e5836c405f19569826029a2156bad6cf0fcd229f5ba52596ebcfd9"
+  },
+  "results": [
+    {
+      "case": "same exact packaging body on POSIX and Windows workflow",
+      "pass": true
+    },
+    {
+      "case": "adversarial LF CR pipe Unicode path and symlink roundtrip",
+      "pass": true,
+      "archive": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/infra-repair-5_fz5bdm/positive/installer-evidence.tar.gz",
+      "archiveSha256": "d8099f1f96034c3a28fc020c429a4fd14f26312637c38ef555a63c26b4a1c22c",
+      "memberNames": [
+        "installer-evidence",
+        "installer-evidence/linked",
+        "installer-evidence/profile \u0645|with\nnewline\r",
+        "installer-evidence/profile \u0645|with\nnewline\r/extensions.json"
+      ],
+      "symlinkTarget": "profile \u0645|with\nnewline\r",
+      "contentSha256": "36e7474f7b586d7618c714f0a77266ec7495d3672268ac55fc8e8762e80506de",
+      "symlinkNotFollowed": true
+    },
+    {
+      "case": "missing evidence does not create success archive",
+      "pass": true,
+      "exit": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError: No native evidence directory\n"
+    },
+    {
+      "case": "actual collector expressions accept uppercase Windows env keys",
+      "pass": true,
+      "hosts": [
+        [
+          "ps51",
+          "C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe"
+        ],
+        [
+          "ps7",
+          "C:/fixture/pwsh.exe"
+        ]
+      ],
+      "imageVersion": "test-image"
+    }
+  ],
+  "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/infra-repair-5_fz5bdm"
+}

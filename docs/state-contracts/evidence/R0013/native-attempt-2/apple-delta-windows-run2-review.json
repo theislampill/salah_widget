@@ -1,0 +1,601 @@
+{
+  "schema": "r0013-independent-apple-delta-and-windows-diagnosis/1",
+  "reviewer": "/root/r0013_review",
+  "capturedAt": "2026-11-11T07:08:40.218665+00:00",
+  "nativeRun": 42975927615,
+  "nativeCommit": "eda44916bd107a64c687efd82de4e5c141be4fd1",
+  "nativeTree": "5fb3ea5ab0c08521868a9bad7d7a0c3b992f4302",
+  "nativeWindowsHost": {
+    "system": "Windows",
+    "platform": "Windows-2022Server-10.0.20348-SP0",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "image_version": "20261101.353.1",
+    "ps51": {
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "version": "5.1.20348.5773"
+    },
+    "ps7": {
+      "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+      "version": "7.6.6"
+    }
+  },
+  "nativeArtifact": {
+    "sha256": "ea80f81ded388f23280975ed76df78bfd46f8a70cfbc7275c89524fa44b61340",
+    "matchesReceivingDigest": true,
+    "zipSha256": "c959ab0b65b5160062b5fce03defb8757eda1a4660917ac27dc27e6ca5608e3b"
+  },
+  "unchangedInstallerHashes": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4"
+  },
+  "appleFixtureRereview": {
+    "hashes": {
+      "tests/install-entry-bash.py": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+      "tests/install-discovery.py": "344d24a0904ba8dffac74f7070772893a64efbf72c142a252c82286cbb3e2a42",
+      "tests/install-detectors.py": "aafd6b6ea1840a2c8cbebd86f3683d6bf4a89a49264043c60574a5059f9762ab"
+    },
+    "sourceDisposition": "Three-file correction matches the diagnosed boundaries; no product change or new blocker found. Actual Apple rerun still required.",
+    "details": [
+      "Absolute application names are excluded at command-v and existing executable-test boundary. Normal utility lookup and pre-entry readiness remain checked.",
+      "Explicit original/discovery choices now assert fixture profile identity, and explicit unknown also asserts metadata-malformed reason; exact held/refused/effect checks retained.",
+      "Empty-array detection requires the named profiles[@] error, missing count/rows, nonexact output, parsed mutant and exact stderr-empty healthy control; observed exit retained."
+    ],
+    "localReceipts": {
+      "r0013-mac-fixture-repair-local-entry.json": {
+        "sha256": "19194bb4f6f71d1766e36a302450702d5c95fc18920ec25d2eb8da314a695f7c",
+        "passed": 25,
+        "total": 25,
+        "host": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)",
+        "source": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22"
+      },
+      "r0013-mac-fixture-repair-local-discovery.json": {
+        "sha256": "8e16647db5859808fbe008706d1d5199a54d0199bd25883fe711291ee7adbb33",
+        "passed": 76,
+        "total": 76,
+        "host": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)",
+        "source": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22"
+      },
+      "r0013-mac-fixture-repair-local-detectors.json": {
+        "sha256": "6922f18b897d13158cad3c8704ffbf1cb6b16012819a3e4b93fdc0488113a751",
+        "passed": 10,
+        "total": 10,
+        "host": {
+          "system": "Linux",
+          "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+          "bash": "/bin/bash",
+          "version": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"
+        },
+        "source": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22"
+      }
+    },
+    "independentOracleControl": {
+      "file": "apple-oracle-delta-control.json",
+      "sha256": "70b2b0e368eee843187620639290d87499d025063978294bee64ece06b4ddf89",
+      "result": "Actual revised oracle recognizes both retained native mutants and refuses credit for both unchanged-source healthy observations. This is receipt replay, not a new Apple execution."
+    }
+  },
+  "nativeWindowsCommands": {
+    "ps51-install-powershell": {
+      "exit": 0,
+      "passed": true
+    },
+    "ps51-install-powershell-guards": {
+      "exit": 0,
+      "passed": true
+    },
+    "ps51-install-discovery": {
+      "exit": 0,
+      "passed": true
+    },
+    "ps51-discovery-mutations": {
+      "exit": 1,
+      "passed": false
+    },
+    "ps7-install-powershell": {
+      "exit": 0,
+      "passed": true
+    },
+    "ps7-install-powershell-guards": {
+      "exit": 0,
+      "passed": true
+    },
+    "ps7-install-discovery": {
+      "exit": 0,
+      "passed": true
+    },
+    "ps7-discovery-mutations": {
+      "exit": 0,
+      "passed": true
+    },
+    "install-entry-native": {
+      "exit": 1,
+      "passed": false
+    }
+  },
+  "nativeMutantDetails": [
+    {
+      "host": "ps51",
+      "hostVersion": "5.1.20348.5773",
+      "case": "singleton-root-array-admitted",
+      "mutantSha256": "00ddad0880e6395b0227140ea484daa7add1cf5c3a76e56ed4dad35d73f2714d",
+      "namedMutationVerified": true,
+      "parseExit": 0,
+      "receiptSha256": "ebdb1873d5fc3fb3fb22c258f21f61b55234208705f61e41fa8470e22b515fb2",
+      "aggregate": {
+        "case": "singleton-root-array-admitted",
+        "syntaxExit": 0,
+        "fixtureExit": 0,
+        "detected": false,
+        "failedCases": [],
+        "pairedControlsPass": true,
+        "mutant": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-xrl68en3\\singleton-root-array-admitted.ps1",
+        "sha256": "00ddad0880e6395b0227140ea484daa7add1cf5c3a76e56ed4dad35d73f2714d",
+        "receipt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-xrl68en3\\singleton-root-array-admitted.result.json"
+      },
+      "assertions": [
+        {
+          "case": "actual parser empty",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-123902a07e0e450a95f527554b7b060a\\parser-empty\\extensions.json"
+          }
+        },
+        {
+          "case": "actual parser new",
+          "pass": true,
+          "observation": {
+            "status": "known-new",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-123902a07e0e450a95f527554b7b060a\\parser-new\\extensions.json"
+          }
+        },
+        {
+          "case": "unsupported shape root-singleton-empty",
+          "pass": true,
+          "observation": {
+            "status": "unknown",
+            "reason": "metadata-unsupported",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-123902a07e0e450a95f527554b7b060a\\parser-root-singleton-empty\\extensions.json"
+          }
+        },
+        {
+          "case": "unsupported shape root-singleton-new",
+          "pass": true,
+          "observation": {
+            "status": "unknown",
+            "reason": "metadata-unsupported",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-123902a07e0e450a95f527554b7b060a\\parser-root-singleton-new\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON complex valid control",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-123902a07e0e450a95f527554b7b060a\\parser-complex-valid\\extensions.json"
+          }
+        },
+        {
+          "case": "actual singleton root array held with known peer",
+          "pass": true,
+          "observation": {
+            "exit": 0,
+            "effects": 7,
+            "eligible": 1,
+            "held": 1,
+            "refused": 0,
+            "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-123902a07e0e450a95f527554b7b060a\\entry-singleton-root-peer"
+          }
+        }
+      ]
+    },
+    {
+      "host": "ps51",
+      "hostVersion": "5.1.20348.5773",
+      "case": "strict-json-guard-bypassed",
+      "mutantSha256": "108689f2a0d042652121386a1a3aa7d1ffce7f11304e3d10b4427f17c6e8c02d",
+      "namedMutationVerified": true,
+      "parseExit": 0,
+      "receiptSha256": "8875d1bd7bdb67128f8a8483a166ed6c745976c5e8dfede112e4b9d7d0b74d5a",
+      "aggregate": {
+        "case": "strict-json-guard-bypassed",
+        "syntaxExit": 0,
+        "fixtureExit": 1,
+        "detected": false,
+        "failedCases": [
+          "strict JSON single-quotes",
+          "strict JSON bare-key",
+          "actual duplicate keys cannot hide legacy from selection"
+        ],
+        "pairedControlsPass": true,
+        "mutant": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-xrl68en3\\strict-json-guard-bypassed.ps1",
+        "sha256": "108689f2a0d042652121386a1a3aa7d1ffce7f11304e3d10b4427f17c6e8c02d",
+        "receipt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-xrl68en3\\strict-json-guard-bypassed.result.json"
+      },
+      "assertions": [
+        {
+          "case": "actual parser empty",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-095ebc1ae05e491ba9e309030a474bf5\\parser-empty\\extensions.json"
+          }
+        },
+        {
+          "case": "actual parser new",
+          "pass": true,
+          "observation": {
+            "status": "known-new",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-095ebc1ae05e491ba9e309030a474bf5\\parser-new\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON trailing-comma",
+          "pass": true,
+          "observation": {
+            "status": "unknown",
+            "reason": "metadata-malformed",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-095ebc1ae05e491ba9e309030a474bf5\\parser-trailing-comma\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON trailing-comment",
+          "pass": true,
+          "observation": {
+            "status": "unknown",
+            "reason": "metadata-malformed",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-095ebc1ae05e491ba9e309030a474bf5\\parser-trailing-comment\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON single-quotes",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-095ebc1ae05e491ba9e309030a474bf5\\\\parser-single-quotes\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON bare-key",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-095ebc1ae05e491ba9e309030a474bf5\\\\parser-bare-key\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON complex valid control",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-095ebc1ae05e491ba9e309030a474bf5\\parser-complex-valid\\extensions.json"
+          }
+        },
+        {
+          "case": "actual duplicate keys cannot hide legacy from selection",
+          "pass": false,
+          "error": "Wrong target reached actual handoff"
+        }
+      ]
+    },
+    {
+      "host": "ps51",
+      "hostVersion": "5.1.20348.5773",
+      "case": "trailing-separators-admitted",
+      "mutantSha256": "08ea0050124e38a5095d80b2be4f3a53ee12d2a2b71fc9334e1f2b5d91c453f4",
+      "namedMutationVerified": true,
+      "parseExit": 0,
+      "receiptSha256": "516fdf4db09b5a56b1b5b9cc52ec253f54980e2930e79b7874ccfbc7e5ec65e7",
+      "aggregate": {
+        "case": "trailing-separators-admitted",
+        "syntaxExit": 0,
+        "fixtureExit": 0,
+        "detected": false,
+        "failedCases": [],
+        "pairedControlsPass": true,
+        "mutant": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-xrl68en3\\trailing-separators-admitted.ps1",
+        "sha256": "08ea0050124e38a5095d80b2be4f3a53ee12d2a2b71fc9334e1f2b5d91c453f4",
+        "receipt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-xrl68en3\\trailing-separators-admitted.result.json"
+      },
+      "assertions": [
+        {
+          "case": "actual parser empty",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1fa2461a465d463ea27af5482f64fb23\\parser-empty\\extensions.json"
+          }
+        },
+        {
+          "case": "actual parser new",
+          "pass": true,
+          "observation": {
+            "status": "known-new",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1fa2461a465d463ea27af5482f64fb23\\parser-new\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON trailing-comma",
+          "pass": true,
+          "observation": {
+            "status": "unknown",
+            "reason": "metadata-malformed",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1fa2461a465d463ea27af5482f64fb23\\parser-trailing-comma\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON array-trailing-comma",
+          "pass": true,
+          "observation": {
+            "status": "unknown",
+            "reason": "metadata-malformed",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1fa2461a465d463ea27af5482f64fb23\\parser-array-trailing-comma\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON complex valid control",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1fa2461a465d463ea27af5482f64fb23\\parser-complex-valid\\extensions.json"
+          }
+        }
+      ]
+    },
+    {
+      "host": "ps7",
+      "hostVersion": "7.6.6",
+      "case": "singleton-root-array-admitted",
+      "mutantSha256": "00ddad0880e6395b0227140ea484daa7add1cf5c3a76e56ed4dad35d73f2714d",
+      "namedMutationVerified": true,
+      "parseExit": 0,
+      "receiptSha256": "26078bf74a398b88658deb4260c93633468fe0b4d7111be3adaf4a387485f137",
+      "aggregate": {
+        "case": "singleton-root-array-admitted",
+        "syntaxExit": 0,
+        "fixtureExit": 1,
+        "detected": true,
+        "failedCases": [
+          "unsupported shape root-singleton-empty",
+          "unsupported shape root-singleton-new",
+          "actual singleton root array held with known peer"
+        ],
+        "pairedControlsPass": true,
+        "mutant": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-d_n9v9vm\\singleton-root-array-admitted.ps1",
+        "sha256": "00ddad0880e6395b0227140ea484daa7add1cf5c3a76e56ed4dad35d73f2714d",
+        "receipt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-d_n9v9vm\\singleton-root-array-admitted.result.json"
+      },
+      "assertions": [
+        {
+          "case": "actual parser empty",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-788f3c4af89c444ea1756f09fadae044\\parser-empty\\extensions.json"
+          }
+        },
+        {
+          "case": "actual parser new",
+          "pass": true,
+          "observation": {
+            "status": "known-new",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-788f3c4af89c444ea1756f09fadae044\\parser-new\\extensions.json"
+          }
+        },
+        {
+          "case": "unsupported shape root-singleton-empty",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-788f3c4af89c444ea1756f09fadae044\\\\parser-root-singleton-empty\\\\extensions.json\"}"
+        },
+        {
+          "case": "unsupported shape root-singleton-new",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":true,\"HasOld\":false,\"NewMatches\":[\"TablissNG\"],\"OldMatches\":[],\"Status\":\"known-new\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-788f3c4af89c444ea1756f09fadae044\\\\parser-root-singleton-new\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON complex valid control",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-788f3c4af89c444ea1756f09fadae044\\parser-complex-valid\\extensions.json"
+          }
+        },
+        {
+          "case": "actual singleton root array held with known peer",
+          "pass": false,
+          "error": "Wrong target reached actual handoff"
+        }
+      ]
+    },
+    {
+      "host": "ps7",
+      "hostVersion": "7.6.6",
+      "case": "strict-json-guard-bypassed",
+      "mutantSha256": "108689f2a0d042652121386a1a3aa7d1ffce7f11304e3d10b4427f17c6e8c02d",
+      "namedMutationVerified": true,
+      "parseExit": 0,
+      "receiptSha256": "893489afe2986a6b9f908620018e9d156930cd3ecd5276018cf7263b047060e6",
+      "aggregate": {
+        "case": "strict-json-guard-bypassed",
+        "syntaxExit": 0,
+        "fixtureExit": 1,
+        "detected": true,
+        "failedCases": [
+          "strict JSON trailing-comma",
+          "strict JSON trailing-comment",
+          "strict JSON single-quotes",
+          "strict JSON bare-key",
+          "actual duplicate keys cannot hide legacy from selection"
+        ],
+        "pairedControlsPass": true,
+        "mutant": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-d_n9v9vm\\strict-json-guard-bypassed.ps1",
+        "sha256": "108689f2a0d042652121386a1a3aa7d1ffce7f11304e3d10b4427f17c6e8c02d",
+        "receipt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-d_n9v9vm\\strict-json-guard-bypassed.result.json"
+      },
+      "assertions": [
+        {
+          "case": "actual parser empty",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-ac19faf6dd5e4167a3e4453eaa89ed7b\\parser-empty\\extensions.json"
+          }
+        },
+        {
+          "case": "actual parser new",
+          "pass": true,
+          "observation": {
+            "status": "known-new",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-ac19faf6dd5e4167a3e4453eaa89ed7b\\parser-new\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON trailing-comma",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-ac19faf6dd5e4167a3e4453eaa89ed7b\\\\parser-trailing-comma\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON trailing-comment",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-ac19faf6dd5e4167a3e4453eaa89ed7b\\\\parser-trailing-comment\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON single-quotes",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-ac19faf6dd5e4167a3e4453eaa89ed7b\\\\parser-single-quotes\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON bare-key",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-ac19faf6dd5e4167a3e4453eaa89ed7b\\\\parser-bare-key\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON complex valid control",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-ac19faf6dd5e4167a3e4453eaa89ed7b\\parser-complex-valid\\extensions.json"
+          }
+        },
+        {
+          "case": "actual duplicate keys cannot hide legacy from selection",
+          "pass": false,
+          "error": "Wrong target reached actual handoff"
+        }
+      ]
+    },
+    {
+      "host": "ps7",
+      "hostVersion": "7.6.6",
+      "case": "trailing-separators-admitted",
+      "mutantSha256": "08ea0050124e38a5095d80b2be4f3a53ee12d2a2b71fc9334e1f2b5d91c453f4",
+      "namedMutationVerified": true,
+      "parseExit": 0,
+      "receiptSha256": "b54ab818af882db6fc6f1caee13388742d7d036d21423b678ce6aadefa808999",
+      "aggregate": {
+        "case": "trailing-separators-admitted",
+        "syntaxExit": 0,
+        "fixtureExit": 1,
+        "detected": true,
+        "failedCases": [
+          "strict JSON trailing-comma",
+          "strict JSON array-trailing-comma"
+        ],
+        "pairedControlsPass": true,
+        "mutant": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-d_n9v9vm\\trailing-separators-admitted.ps1",
+        "sha256": "08ea0050124e38a5095d80b2be4f3a53ee12d2a2b71fc9334e1f2b5d91c453f4",
+        "receipt": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-d_n9v9vm\\trailing-separators-admitted.result.json"
+      },
+      "assertions": [
+        {
+          "case": "actual parser empty",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1648ba4d2c9e4aa58d66cb69a4f3d9ee\\parser-empty\\extensions.json"
+          }
+        },
+        {
+          "case": "actual parser new",
+          "pass": true,
+          "observation": {
+            "status": "known-new",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1648ba4d2c9e4aa58d66cb69a4f3d9ee\\parser-new\\extensions.json"
+          }
+        },
+        {
+          "case": "strict JSON trailing-comma",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-1648ba4d2c9e4aa58d66cb69a4f3d9ee\\\\parser-trailing-comma\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON array-trailing-comma",
+          "pass": false,
+          "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"C:\\\\Users\\\\runneradmin\\\\AppData\\\\Local\\\\Temp\\\\salah-discovery-1648ba4d2c9e4aa58d66cb69a4f3d9ee\\\\parser-array-trailing-comma\\\\extensions.json\"}"
+        },
+        {
+          "case": "strict JSON complex valid control",
+          "pass": true,
+          "observation": {
+            "status": "known-neither",
+            "reason": "supported-metadata",
+            "source": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-1648ba4d2c9e4aa58d66cb69a4f3d9ee\\parser-complex-valid\\extensions.json"
+          }
+        }
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "R13-WIN-01",
+      "severity": "Important",
+      "classification": "Mutation applicability/oracle expectation mismatch; no healthy-source defect shown",
+      "observed": "Identical parse-valid mutant bytes behave differently on native5.1 and7.6.6. Root-guard-only and trailing-separator mutants survive all end-to-end assertions on5.1; strict-guard bypass fails3 of5 designated assertions. All candidate68 discovery assertions pass on both hosts.",
+      "resolutionDesign": [
+        "Keep every original supported-parser and caller assertion on both hosts, including root-singletons, object/array trailing commas and mixed handoff.",
+        "For strict-call bypass retain all five observed rows; on exact5.1 require single-quotes,bare-key,duplicate-peer failures and explicitly record comma/comment as protected by downstream parser. On7.6.6 retain all five required failures. Maintain paired valid controls and reject unchanged source as a mutant.",
+        "Add direct assertions invoking actual AST-extracted Test-StrictJson against object and array trailing commas, plus valid controls. Its frame-transition mutant must fail these direct-helper assertions on both hosts. Keep pipeline assertions too and distinguish component versus end-to-end detection credit.",
+        "Keep root-guard-only5.1 execution as not-detected/non-discriminating, with native conversion-shape evidence and passing original unsupported-root cases. Do not mark it killed or omit it from the account. Retain genuine7.6.6 parser/caller failure evidence."
+      ],
+      "limit": "This review does not rewrite the run2 FAIL result or grant prospective credit. A fresh source/test-bound native receipt must show the revised claims."
+    },
+    {
+      "id": "R13-WIN-02",
+      "severity": "Important",
+      "classification": "Complete-entry timeout evidence loss; product-versus-startup cause unresolved",
+      "sourceBoundary": "tests/install-entry-native.py subprocess.run timeout25 occurs before output writes and the per-case try/except; collector receives a traceback with no terminal structured fixture receipt",
+      "observed": "First ps51 github/DryRun full-file command times out25seconds. Driver emits no completed case row. Collector records parse_error, cannot identify/copy fixture tree, and archive has no native-entry fixture subtree. No readiness/effect/snapshot observation is available for that attempt.",
+      "minimalCorrection": "Catch subprocess.TimeoutExpired at the invocation boundary; preserve partial stdout/stderr bytes, command/elapsed/timeout classification, ready/phase markers, effects and before/after snapshots, and always emit a failed structured case with fixture root so the collector archives it. Add a bounded instrument-startup discriminator using the same native startup environment. Only then diagnose whether startup interception, fixture setup or actual installer code stalled.",
+      "limit": "Do not credit a zero-effect preview, infer product failure, replace direct -File qualification with AST/body-only proof, or simply extend the deadline without acquiring the missing evidence."
+    }
+  ],
+  "criticalFindings": [],
+  "minorFindings": [],
+  "entryEvidence": {
+    "stderrSha256": "f94aa5471a4c74d431e9359486d0e8f556a48fa3ac770e619af0b3d44014e33b",
+    "receipt": {
+      "parse_error": "no terminal structured receipt"
+    },
+    "fixtureSubtreeReceived": false,
+    "completedFullEntryCases": 0
+  },
+  "disposition": "Apple fixture source corrections accepted at bounded local/read scope. Windows healthy component/guard/discovery evidence preserved at exact native scope; mutation applicability and full-entry receipt/qualification gates remain unresolved. No installer patch justified by this evidence.",
+  "remainingGates": [
+    "Fresh actual Apple affected-suite qualification on repaired fixture hashes.",
+    "Native Windows host-specific/direct-validator evidence with honest surviving-mutant accounting; retain all original behavioral assertions.",
+    "Diagnose and qualify exact full-file Windows entry with complete received fixture evidence on both native hosts.",
+    "Immutable final test/instrument/source binding, final README pins and rendered/public copied-command delivery, full original12/residual7/ES14 ledger, campaign predecessors, exact owner approval, integration and closure remain parent-owned."
+  ],
+  "mutationStatement": "No source/test/index/branch/governor/remote changes. Only attributed review reports/probes under recovery/r0013-review written. Archive reads were selected regular members, without extraction or symlink traversal."
+}

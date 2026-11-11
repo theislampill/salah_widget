@@ -1,0 +1,401 @@
+{
+  "schema": "r0013-independent-native-diagnosis/1",
+  "reviewer": "/root/r0013_review",
+  "capturedAt": "2026-11-11T07:02:45.281275+00:00",
+  "run": 42975927615,
+  "commit": "eda44916bd107a64c687efd82de4e5c141be4fd1",
+  "tree": "5fb3ea5ab0c08521868a9bad7d7a0c3b992f4302",
+  "sourceHashes": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "tests/install-entry-bash.py": "70214d6eff06925bc5c22eca39c57cd339477684ad211dbc6799f3c619142376",
+    "tests/install-discovery.py": "23d3949516d29ffa33fde63c765019196f2d9253273bdbc7fa5a0165f3b822dc",
+    "tests/install-discovery-mutations.py": "a991b5d5f35a062c0d91c6cee221b8baf12fa3507554ba2839bb686b0690616d",
+    "tests/install-detectors.py": "ed47a8c7f14db4883da1126ff6d4c7d2aadc63394e5c392dddcad91eb4438848",
+    "tools/qualification/installer_native.py": "1cca4b4692e5836c405f19569826029a2156bad6cf0fcd229f5ba52596ebcfd9"
+  },
+  "artifact": {
+    "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-native-run2/Darwin.tar.gz",
+    "sha256": "2cc25081d17018de3a681b859acdfe80692061e485f89d903b27ccf285794c9d",
+    "zipSha256": "988a3d802682e4256dbb0fdf140ec0180604f210904a7b447390a2db84125eac",
+    "matchesReceivingDigest": true
+  },
+  "nativeHost": {
+    "system": "Darwin",
+    "platform": "macOS-15.8.2-arm64-arm-64bit-Mach-O",
+    "bash": "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin24)",
+    "uid": 501,
+    "gid": 20,
+    "image_version": "20261104.0514.1",
+    "fixture_parent": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T"
+  },
+  "allAcquisitionCommandsExit0": true,
+  "suiteSummary": {
+    "install-bash": {
+      "reportedRows": 26,
+      "reportedPass": 26,
+      "failedCases": []
+    },
+    "install-entry-bash": {
+      "reportedRows": 24,
+      "reportedPass": 23,
+      "failedCases": [
+        "pipe explicit indices"
+      ]
+    },
+    "install-discovery": {
+      "reportedRows": 76,
+      "reportedPass": 63,
+      "failedCases": [
+        "actual all mixed selection keeps useful known peer",
+        "actual explicit known target stays useful",
+        "actual unknown only refuses before staging",
+        "actual known both refuses before staging",
+        "actual missing metadata is held",
+        "actual no profile is held",
+        "actual wrong shape preserves independent peer",
+        "preview mixed keeps knowledge without effects",
+        "preview unknown only has no success or effects",
+        "no Python mixed preview keeps independent Chromium peer",
+        "actual existing new target remains useful with unknown peer",
+        "actual insufficient identity held with known peer",
+        "actual duplicate keys cannot hide legacy from selection"
+      ]
+    },
+    "install-detectors": {
+      "reportedRows": 12,
+      "reportedPass": 10,
+      "failedCases": [
+        "chromium native Bash3.2 empty-array nounset mutant",
+        "firefox native Bash3.2 empty-array nounset mutant"
+      ]
+    },
+    "install-discovery-mutations": {
+      "reportedRows": 1,
+      "reportedPass": 0,
+      "failedCases": [
+        "exact-source paired controls and assertions"
+      ]
+    },
+    "install-original-mutations": {
+      "reportedRows": 8,
+      "reportedPass": 8,
+      "failedCases": []
+    },
+    "install-builder": {
+      "reportedRows": 4,
+      "reportedPass": 4,
+      "failedCases": []
+    }
+  },
+  "findings": [
+    {
+      "id": "R13-NATIVE-01",
+      "severity": "Important",
+      "classification": "Fixture executable-discovery isolation defect; no installer defect demonstrated",
+      "sourceBoundary": "tests/install-entry-bash.py command() bare-browser exclusion and [ -x /Applications ] exclusion; actual install.sh find_exe checks command -v first",
+      "cause": "Absolute /Applications browser candidates pass through command() to builtin command -v. Native host Chrome/Edge resolve there before the separate [ -x ] interception can exclude them. Actual detector consequently adds legitimate no-profile unknown-held targets, shifting fixed fixture indices/counts.",
+      "effect": "One original entry case and13 discovery cases report FAIL. The discovery mutant runner correctly aborts at a failing healthy candidate baseline; its12 mutants were not executed. Explicit-unknown reported PASS is not evidence for its intended malformed Firefox target because selection2 resolves to ambient Edge no-profile under the observed native inventory.",
+      "minimalCorrection": "In the fixture external executable lookup only, exclude /Applications/* for command -v as well as the existing bare browser names, retaining the [ -x ] guard. Keep actual whole-file installer, producer/detector functions and exact held/refused/effect assertions. Add boundary controls for absolute application lookup exclusion and unchanged ordinary tool resolution, and assert selected profile identity/reason for explicit-known/unknown cases.",
+      "avoid": "Do not alter installer browser discovery, skip native cases, broaden expected counts to fit host inventory, or credit a held row with the wrong profile/reason."
+    },
+    {
+      "id": "R13-NATIVE-02",
+      "severity": "Important",
+      "classification": "Native mutation-oracle false negative; no unmutated detector failure demonstrated",
+      "sourceBoundary": "tests/install-detectors.py empty_array_mutant line185",
+      "cause": "Oracle requires broken.exit!=0. Actual native Bash3.2 receipts show both parse-valid guard-removal mutants emit profiles[@]: unbound variable and never emit COUNT or rows, while process exit is0. Healthy paired scripts return COUNT1, one exact fallback row and empty stderr.",
+      "effect": "Both native empty-array mutation rows are marked failed/survived even though the intended detector result was lost. Archived healthy/mutant scripts differ only by deletion of the chosen family guard and their hashes match receipts.",
+      "minimalCorrection": "Keep actual-native Bash3.2 applicability, parse-valid mutation and exact healthy peer. Require specific profiles[@] unbound-variable diagnostic together with missing result/sentinel and failure of exact expected detector output; retain the observed exit as data instead of making nonzero exit the only evidence of interruption. Check an unchanged-source control cannot earn mutation credit.",
+      "avoid": "Do not rewrite the observed exit to nonzero, accept any generic stderr/unrelated failure, change the product EXIT trap based only on an intentionally broken mutant, or use Linux behavior as Apple proof."
+    }
+  ],
+  "criticalFindings": [],
+  "minorFindings": [],
+  "discoveryFailedSummaries": [
+    {
+      "case": "actual all mixed selection keeps useful known peer",
+      "actualSummary": [
+        "Selected targets: 1 eligible, 3 held, 1 refused."
+      ]
+    },
+    {
+      "case": "actual explicit known target stays useful",
+      "actualSummary": [
+        "Selected targets: 0 eligible, 1 held, 0 refused."
+      ]
+    },
+    {
+      "case": "actual unknown only refuses before staging",
+      "actualSummary": [
+        "Selected targets: 0 eligible, 3 held, 0 refused."
+      ]
+    },
+    {
+      "case": "actual known both refuses before staging",
+      "actualSummary": [
+        "Selected targets: 0 eligible, 2 held, 1 refused."
+      ]
+    },
+    {
+      "case": "actual missing metadata is held",
+      "actualSummary": [
+        "Selected targets: 0 eligible, 3 held, 0 refused."
+      ]
+    },
+    {
+      "case": "actual no profile is held",
+      "actualSummary": [
+        "Selected targets: 0 eligible, 3 held, 0 refused."
+      ]
+    },
+    {
+      "case": "actual wrong shape preserves independent peer",
+      "actualSummary": [
+        "Selected targets: 1 eligible, 3 held, 0 refused."
+      ]
+    },
+    {
+      "case": "preview mixed keeps knowledge without effects",
+      "actualSummary": [
+        "Preview targets: 1 eligible, 3 held, 1 refused."
+      ]
+    },
+    {
+      "case": "preview unknown only has no success or effects",
+      "actualSummary": [
+        "Preview targets: 0 eligible, 3 held, 0 refused."
+      ]
+    },
+    {
+      "case": "no Python mixed preview keeps independent Chromium peer",
+      "actualSummary": [
+        "Preview targets: 1 eligible, 3 held, 1 refused."
+      ]
+    },
+    {
+      "case": "actual existing new target remains useful with unknown peer",
+      "actualSummary": [
+        "Selected targets: 1 eligible, 3 held, 0 refused."
+      ]
+    },
+    {
+      "case": "actual insufficient identity held with known peer",
+      "actualSummary": [
+        "Selected targets: 1 eligible, 3 held, 0 refused."
+      ]
+    },
+    {
+      "case": "actual duplicate keys cannot hide legacy from selection",
+      "actualSummary": [
+        "Selected targets: 1 eligible, 3 held, 0 refused."
+      ]
+    }
+  ],
+  "selectedArchiveMembers": {
+    "installer-evidence/install-entry-bash-fixture/indices/env.sh": {
+      "sha256": "ff8ba2aa9a0543f4982b8c1dccac3b07625cf150b7aad92fd9d122634bdbc6d1",
+      "bytes": 2523,
+      "boundaryExcerpt": "\nrecord(){ printf '%s\\n' \"$*\" >> \"$EFFECT_LOG\"; }\ncheck_path(){ case \"$1\" in \"$FIXTURE_ROOT\"/*) ;; *) record \"ESCAPE $1\"; return 99 ;; esac; }\ncommand(){\n  if [ \"$1\" = -v ] && [ \"${2:-}\" = python3 ] && [ \"${INSTALL_DISCOVERY_NO_PYTHON:-0}\" = 1 ]; then return 1; fi\n  if [ \"$1\" = -v ]; then case \"${2:-}\" in google-chrome|google-chrome-stable|chrome|microsoft-edge|microsoft-edge-stable|brave-browser|brave|chromium|chromium-browser|firefox|librewolf) return 1 ;; esac; fi\n  builtin command \"$@\"\n}\n[(){\n  if builtin [ \"$#\" = 3 ] && builtin [ \"$1\" = -x ]; then case \"$2\" in /Applications/*) return 1 ;; esac; fi\n  builtin [ \"$@\"\n}\nmkdir(){ for item in \"$@\"; do case \"$item\" in -*) ;; *) check_path \"$item\" || return ;; esac; done; record \"mkdir $*\"; builtin command mkdir \"$@\"; }"
+    },
+    "installer-evidence/install-entry-bash-fixture/indices/effects.log": {
+      "sha256": "7a5f994823f56101b90dea57897f6ae935652b4c1b2be2a82628a5c9237fcf5d",
+      "bytes": 3118,
+      "effects": [
+        "mktemp -d /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.XXXXXXXX",
+        "mktemp -d /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.XXXXXXXX",
+        "mkdir /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.2pVoNysF/downloads /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/presets",
+        "metadata chromium",
+        "mkdir /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.2pVoNysF/downloads/v-fixture",
+        "mktemp /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.2pVoNysF/downloads/v-fixture/.asset.XXXXXXXX",
+        "download -fL file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/asset.zip -o /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.2pVoNysF/downloads/v-fixture/.asset.9Oi7D8NE",
+        "move -- /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.2pVoNysF/downloads/v-fixture/.asset.9Oi7D8NE /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.2pVoNysF/downloads/v-fixture/tabliss-chromium.zip",
+        "mktemp -d /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/tabliss-chromium-unpacked.XXXXXXXX",
+        "clipboard /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/tabliss-chromium-unpacked.jf6Lbwxv/Nested Folder",
+        "open chrome://extensions/",
+        "mktemp /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/presets/.preset.XXXXXXXX",
+        "download -fL file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/preset.json -o /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/presets/.preset.7lByJtxq",
+        "move -- /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/presets/.preset.7lByJtxq /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/presets/salah-widget.tablissng.json",
+        "clipboard /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/home/salah-widget-install.6aBRKW1m/presets/salah-widget.tablissng.json",
+        "open chrome://newtab/",
+        "remove -rf -- /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-b5tgpfdr/indices/subject/tmp/salah-widget-download.2pVoNysF"
+      ]
+    },
+    "installer-evidence/install-entry-bash-fixture/normal/entry-output.txt": {
+      "sha256": "cb6989c2c0bf12838352e8f0e03ff937815dcb706237dab34884134f7b439568",
+      "bytes": 5445,
+      "menuExcerpt": [
+        "[1] Google Chrome / Default \u2014 neither extension identified by chromium-extension-directories",
+        "[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)",
+        "[3] Firefox / fixture profile \u2014 neither extension identified by firefox-extensions-json",
+        "Select target numbers separated by commas, or 'all' (default all): all",
+        "Selected targets: 2 eligible, 1 held, 0 refused."
+      ]
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-chromium-healthy.sh": {
+      "sha256": "436bd00dd74802ebff285e89f04fec03f134c38d3ce649387eb0aee4efe0aa14",
+      "bytes": 34435
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-chromium-healthy.json": {
+      "sha256": "c21cf060a23caf7bec5aaf5db7a6dbf37998008136ee3d3d868383612c66282e",
+      "bytes": 857
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-chromium-mutant.sh": {
+      "sha256": "5e08edea8eb17132e66631c13e280dc4216109c2592008cebd55070c7a119715",
+      "bytes": 34390
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-chromium-mutant.json": {
+      "sha256": "6e7d01a17639e7b772359bb52ca8bd375659a55b7d21261e8acd1387f3869432",
+      "bytes": 237
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-firefox-healthy.sh": {
+      "sha256": "e96d9a73c4a9ef5ad029a80263d2d9abd27b201d1372f37149ca791edec9cce5",
+      "bytes": 34433
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-firefox-healthy.json": {
+      "sha256": "0f2fdd63c9380e5fd259e953bb352d17f0180d13ff1a17d2e9f985bcf17d67b6",
+      "bytes": 853
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-firefox-mutant.sh": {
+      "sha256": "9f21cfad88d75b48cf5ec6373147b2473450e68bbf42327379077d8f29055767",
+      "bytes": 34388
+    },
+    "installer-evidence/install-detectors-fixture/empty-array-firefox-mutant.json": {
+      "sha256": "d81c716b011aa7fe34872ece94288d8e4107c058b28f323e898b4cc6a9f0598f",
+      "bytes": 237
+    },
+    "installer-evidence/install-discovery-mutations-fixture/install.result.json": {
+      "sha256": "ec13f65902544a4831ea860f4a79b9c30fccc15092b005fbdf1a01195ded7723",
+      "bytes": 24921,
+      "failedCases": [
+        "actual all mixed selection keeps useful known peer",
+        "actual unknown only refuses before staging",
+        "actual known both refuses before staging",
+        "actual missing metadata is held",
+        "no Python mixed preview keeps independent Chromium peer",
+        "actual insufficient identity held with known peer",
+        "actual duplicate keys cannot hide legacy from selection"
+      ],
+      "reportedPass": 14,
+      "reportedRows": 21
+    }
+  },
+  "nativeEmptyArrayPairs": [
+    {
+      "family": "chromium",
+      "healthy": {
+        "scriptSha256": "436bd00dd74802ebff285e89f04fec03f134c38d3ce649387eb0aee4efe0aa14",
+        "observation": {
+          "exit": 0,
+          "stdout": "COUNT=1\n1|fixture|fixture|chromium|(no profile detected)|||0|0||fixture:store|fixture:manager|fixture:newtab|unknown|no-profile|browser-profile-discovery|/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-detectors-wkbc5m1i/empty-array-chromium\n",
+          "stderr": "",
+          "count": 1,
+          "rows": [
+            [
+              "1",
+              "fixture",
+              "fixture",
+              "chromium",
+              "(no profile detected)",
+              "",
+              "",
+              "0",
+              "0",
+              "",
+              "fixture:store",
+              "fixture:manager",
+              "fixture:newtab",
+              "unknown",
+              "no-profile",
+              "browser-profile-discovery",
+              "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-detectors-wkbc5m1i/empty-array-chromium"
+            ]
+          ],
+          "script_sha256": "436bd00dd74802ebff285e89f04fec03f134c38d3ce649387eb0aee4efe0aa14",
+          "parse_exit": 0
+        }
+      },
+      "mutant": {
+        "scriptSha256": "5e08edea8eb17132e66631c13e280dc4216109c2592008cebd55070c7a119715",
+        "observation": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": "/bin/bash: line 434: profiles[@]: unbound variable\n",
+          "count": null,
+          "rows": [],
+          "script_sha256": "5e08edea8eb17132e66631c13e280dc4216109c2592008cebd55070c7a119715",
+          "parse_exit": 0
+        }
+      },
+      "onlyGuardRemovedDiff": "--- chromium-healthy\n+++ chromium-mutant\n@@ -442,7 +442,6 @@\n       if [ \"$profile_count\" -eq 0 ] && { [ -n \"$exe\" ] || [ -d \"$user_data\" ]; }; then\n         add_target \"$key\" \"$label\" \"$family\" \"(no profile detected)\" \"\" \"$exe\" \"0\" \"0\" \"\" \"$store\" \"$manager\" \"$newtab\" \"unknown\" \"no-profile\" \"browser-profile-discovery\" \"$user_data\"\n       fi\n-      [ \"$profile_count\" -gt 0 ] || continue\n       for p in \"${profiles[@]}\"; do\n         pname=\"$(basename \"$p\")\"\n         has_new=0; has_old=0; matches=\"\"\n"
+    },
+    {
+      "family": "firefox",
+      "healthy": {
+        "scriptSha256": "e96d9a73c4a9ef5ad029a80263d2d9abd27b201d1372f37149ca791edec9cce5",
+        "observation": {
+          "exit": 0,
+          "stdout": "COUNT=1\n1|fixture|fixture|firefox|(no profile detected)|||0|0||fixture:store|fixture:manager|fixture:newtab|unknown|no-profile|browser-profile-discovery|/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-detectors-wkbc5m1i/empty-array-firefox\n",
+          "stderr": "",
+          "count": 1,
+          "rows": [
+            [
+              "1",
+              "fixture",
+              "fixture",
+              "firefox",
+              "(no profile detected)",
+              "",
+              "",
+              "0",
+              "0",
+              "",
+              "fixture:store",
+              "fixture:manager",
+              "fixture:newtab",
+              "unknown",
+              "no-profile",
+              "browser-profile-discovery",
+              "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-detectors-wkbc5m1i/empty-array-firefox"
+            ]
+          ],
+          "script_sha256": "e96d9a73c4a9ef5ad029a80263d2d9abd27b201d1372f37149ca791edec9cce5",
+          "parse_exit": 0
+        }
+      },
+      "mutant": {
+        "scriptSha256": "9f21cfad88d75b48cf5ec6373147b2473450e68bbf42327379077d8f29055767",
+        "observation": {
+          "exit": 0,
+          "stdout": "",
+          "stderr": "/bin/bash: line 434: profiles[@]: unbound variable\n",
+          "count": null,
+          "rows": [],
+          "script_sha256": "9f21cfad88d75b48cf5ec6373147b2473450e68bbf42327379077d8f29055767",
+          "parse_exit": 0
+        }
+      },
+      "onlyGuardRemovedDiff": "--- firefox-healthy\n+++ firefox-mutant\n@@ -461,7 +461,6 @@\n       if [ \"$profile_count\" -eq 0 ] && { [ -n \"$exe\" ] || [ -d \"$user_data\" ]; }; then\n         add_target \"$key\" \"$label\" \"$family\" \"(no profile detected)\" \"\" \"$exe\" \"0\" \"0\" \"\" \"$store\" \"$manager\" \"$newtab\" \"unknown\" \"no-profile\" \"browser-profile-discovery\" \"$user_data\"\n       fi\n-      [ \"$profile_count\" -gt 0 ] || continue\n       for p in \"${profiles[@]}\"; do\n         pname=\"$(basename \"$p\")\"\n         if ! status=\"$(firefox_status \"$p\")\"; then\n"
+    }
+  ],
+  "discoveryMutationBaseline": {
+    "total": 21,
+    "failedCases": [
+      "actual all mixed selection keeps useful known peer",
+      "actual unknown only refuses before staging",
+      "actual known both refuses before staging",
+      "actual missing metadata is held",
+      "no Python mixed preview keeps independent Chromium peer",
+      "actual insufficient identity held with known peer",
+      "actual duplicate keys cannot hide legacy from selection"
+    ],
+    "mutantsExecuted": 0
+  },
+  "evidenceLimits": [
+    "Apple qualification remains FAIL pending fixture corrections and actual Apple rerun. Reported PASS is preserved at observed scope, not promoted to whole qualification.",
+    "Explicit-unknown target substitution is a causal inference from exact fixture selection/configuration and observed native menus; its successful per-case full transcript is not included in the received discovery fixture subtree.",
+    "No Windows diagnosis is made; parent owns it. No Linux result substitutes for Apple.",
+    "No installer defect is demonstrated by the two native failures analyzed. The process exit0 cause for the intentionally broken Bash3.2 mutant is not independently generalized to healthy product behavior."
+  ],
+  "recommendedNextStep": "Parent-owned fixture-only corrections and explicit countercontrols, then actual native rerun of affected original entry/discovery/detector/discovery-mutation suites with immutable test/source binding. Preserve run2 original raw failures and earned unaffected observations.",
+  "mutationStatement": "Read-only native evidence and immutable source inspection; only this attributed report/script under recovery/r0013-review written. Tar members were read through extractfile after isfile checks; no archive was bulk-extracted and no symlink followed. No source/test patch, branch, governor or remote write."
+}

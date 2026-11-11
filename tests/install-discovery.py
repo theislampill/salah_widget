@@ -130,7 +130,7 @@ def newline_path(family):
     require('unsupported' in r.stderr.lower(),'Unsupported profile path was silently discarded')
     return dict(family=family,targets=len(rows),safePath=rows[0][5])
 
-def whole_entry(name,bodies,selection='all',dry=False,eligible=0,held=0,refused=0,no_profile=False,no_python=False,chrome=False):
+def whole_entry(name,bodies,selection='all',dry=False,eligible=0,held=0,refused=0,no_profile=False,no_python=False,chrome=False,selected_profile=None,selected_reason=None):
     root,subject,env=entry.fixture('r0013-'+name,profiles='none',dry=dry)
     if no_python: env['INSTALL_DISCOVERY_NO_PYTHON']='1'
     if chrome: (entry.browser_root(subject/'home','chrome')/'Default').mkdir(parents=True)
@@ -147,6 +147,12 @@ def whole_entry(name,bodies,selection='all',dry=False,eligible=0,held=0,refused=
     readiness=entry.require_ready(root,env,pipe=not dry)
     effects=entry.effect_lines(root)
     (root/'entry-output.txt').write_text(output)
+    selected_identity=None
+    if selected_profile is not None:
+        selected_identity=next((line for line in output.splitlines() if line.startswith('['+selection+'] ')),None)
+        require(selected_identity is not None and 'Firefox / profile-'+str(selected_profile)+' ' in selected_identity,'Explicit selection did not identify the intended fixture profile: '+repr(selected_identity))
+        if selected_reason is not None:
+            require('('+selected_reason+')' in selected_identity,'Explicit selection did not carry its intended metadata reason: '+repr(selected_identity))
     require((status==0)==(eligible>0),repr(dict(exit=status,effects=effects,output=output)))
     if dry or not eligible:
         require(not effects and before==entry.snapshot(subject),'Held/preview entry performed effects: '+repr(effects))
@@ -157,7 +163,7 @@ def whole_entry(name,bodies,selection='all',dry=False,eligible=0,held=0,refused=
     require(str(held)+' held' in output and str(refused)+' refused' in output and str(eligible)+' eligible' in output,'Held/refused summary missing or false: '+output)
     if not eligible: require('Validated manual-install files retained' not in output,'No-eligible entry claimed staging')
     require('installation remains manual' in output or 'manual' in output.lower(),'Manual boundary missing')
-    return dict(exit=status,effects=len(effects),eligible=eligible,held=held,refused=refused,snapshotUnchanged=before==entry.snapshot(subject),fixture=str(root),inputs=inputs,readiness=readiness)
+    return dict(exit=status,effects=len(effects),eligible=eligible,held=held,refused=refused,snapshotUnchanged=before==entry.snapshot(subject),fixture=str(root),inputs=inputs,readiness=readiness,selectedIdentity=selected_identity)
 
 EMPTY='{"addons":[]}'
 OLD='{"addons":[{"name":"Tabliss"}]}'
@@ -210,8 +216,8 @@ for family in ('chromium','firefox'): check('complete native detector matrix '+f
 check('delimiter-corrupt profile cannot be selected',invalid_path)
 for family in ('chromium','firefox'): check('newline profile cannot alias a safe target '+family,lambda f=family:newline_path(f))
 check('actual all mixed selection keeps useful known peer',lambda:whole_entry('mixed-all',[EMPTY,'{"addons":[',OLD],eligible=1,held=1,refused=1))
-check('actual explicit known target stays useful',lambda:whole_entry('explicit-known',[EMPTY,'{"addons":[',OLD],selection='1',eligible=1))
-check('actual explicit unknown refuses before staging',lambda:whole_entry('explicit-unknown',[EMPTY,'{"addons":[',OLD],selection='2',held=1))
+check('actual explicit known target stays useful',lambda:whole_entry('explicit-known',[EMPTY,'{"addons":[',OLD],selection='1',eligible=1,selected_profile=0))
+check('actual explicit unknown refuses before staging',lambda:whole_entry('explicit-unknown',[EMPTY,'{"addons":[',OLD],selection='2',held=1,selected_profile=1,selected_reason='metadata-malformed'))
 check('actual unknown only refuses before staging',lambda:whole_entry('unknown-only',['{"addons":['],held=1))
 check('actual known both refuses before staging',lambda:whole_entry('known-both',[BOTH],refused=1))
 check('actual missing metadata is held',lambda:whole_entry('metadata-absent',[None],held=1))

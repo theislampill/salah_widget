@@ -68,7 +68,7 @@ record(){ printf '%s\n' "$*" >> "$EFFECT_LOG"; }
 check_path(){ case "$1" in "$FIXTURE_ROOT"/*) ;; *) record "ESCAPE $1"; return 99 ;; esac; }
 command(){
   if [ "$1" = -v ] && [ "${2:-}" = python3 ] && [ "${INSTALL_DISCOVERY_NO_PYTHON:-0}" = 1 ]; then return 1; fi
-  if [ "$1" = -v ]; then case "${2:-}" in google-chrome|google-chrome-stable|chrome|microsoft-edge|microsoft-edge-stable|brave-browser|brave|chromium|chromium-browser|firefox|librewolf) return 1 ;; esac; fi
+  if [ "$1" = -v ]; then case "${2:-}" in /Applications/*|google-chrome|google-chrome-stable|chrome|microsoft-edge|microsoft-edge-stable|brave-browser|brave|chromium|chromium-browser|firefox|librewolf) return 1 ;; esac; fi
   builtin command "$@"
 }
 [(){
@@ -180,6 +180,8 @@ def terminal(name,answer='all',profiles='both',source='github',failure=False,eof
     else: status,output,inputs=run_pty(env,answer,eof)
     effects=effect_lines(root)
     readiness=require_ready(root,env,pipe=not no_terminal)
+    if name=='indices':
+        require('[1] Google Chrome / Default ' in output and '[2] Firefox / fixture profile ' in output,'Explicit indices did not identify the intended fixture profiles: '+output)
     if failure:
         require(status!=0 and not effects and before==snapshot(subject),repr(dict(exit=status,effects=effects,output=output)))
         require('Validated manual-install files retained' not in output,'False staged completion')
@@ -208,6 +210,27 @@ def terminal(name,answer='all',profiles='both',source='github',failure=False,eof
         if failed_release: require('GitHub release download failed; falling back to store page.' in output,'Actual metadata failure branch not reached')
     (root/'entry-output.txt').write_text(output)
     return dict(exit=status,effects=len(effects),inputs=inputs,fixture=str(root),readiness=readiness)
+
+def browser_lookup_boundary():
+    root,subject,env=fixture('browser-lookup-boundary',profiles='none')
+    before=snapshot(subject)
+    script=r'''
+printf 'TOOL\t%s\n' "$(command -v cat)"
+for target in '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge'; do
+  ambient="$(builtin command -v "$target" 2>/dev/null || :)"
+  if command -v "$target" >/dev/null 2>&1; then printf 'LEAK\t%s\n' "$target"; exit 9; fi
+  printf 'ABSOLUTE\t%s\t%s\n' "$target" "${ambient:-absent}"
+done
+'''
+    result=subprocess.run([BASH,'--noprofile','--norc','-c',script],env=env,text=True,capture_output=True,timeout=20)
+    readiness=require_ready(root,env)
+    require(result.returncode==0 and 'LEAK' not in result.stdout,'Ambient application lookup escaped the external boundary: '+repr(result))
+    lines=result.stdout.splitlines()
+    require(any(line.startswith('TOOL\t/') for line in lines),'Normal tool lookup was disabled')
+    rows=[line.split('\t') for line in lines if line.startswith('ABSOLUTE\t')]
+    require(len(rows)==2 and all(len(row)==3 for row in rows),'Absolute lookup controls incomplete')
+    require(before==snapshot(subject) and not effect_lines(root),'Lookup boundary control changed subject state')
+    return dict(ambientApplications=rows,normalTool=lines[0],readiness=readiness,scope='External executable discovery only; actual installer functions are unchanged')
 
 def bootstrap_negative():
     root,subject,env=fixture('bootstrap-negative')
@@ -249,6 +272,7 @@ if __name__ == '__main__':
     check('PTY invalid token before effects',lambda:terminal('bad-token',answer='1,bad',failure=True))
     check('PTY unknown index before effects',lambda:terminal('unknown',answer='999',failure=True))
     check('PTY legacy-only before effects',lambda:terminal('legacy-terminal',profiles='legacy',failure=True))
+    check('absolute application discovery boundary preserves normal tools',browser_lookup_boundary)
     check('missing bootstrap nonce cannot establish qualified entry',bootstrap_negative)
     print(json.dumps(dict(host=subprocess.check_output([BASH,'--version'],text=True).splitlines()[0],uid=os.getuid(),source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),results=RESULTS),ensure_ascii=False,indent=2))
     sys.exit(1 if any(not r['pass_'] for r in RESULTS) else 0)

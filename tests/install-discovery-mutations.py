@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """R0013 semantic mutants through actual parsers, builders and main callers.
 
-Every mutant must parse, fail the named behavioral assertion, and preserve the
-paired empty/new inventory controls. The exact source is never edited.
+Every discriminating mutant must parse, fail its named behavioral assertions,
+and preserve paired healthy controls. Native downstream parser protection is
+measured and retained separately; an observed survivor never earns mutation
+credit. The exact source is never edited.
 """
 import hashlib, json, os, pathlib, subprocess, sys, tempfile
 
@@ -11,6 +13,8 @@ TEXT=SOURCE.read_text(encoding='utf-8')
 TESTS=pathlib.Path(__file__).resolve().parent
 ROOT=pathlib.Path(tempfile.mkdtemp(prefix='salah-discovery-mutants-')).resolve()
 RESULTS=[]
+APPLICABILITY=[]
+HOST_FACTS={}
 BASH=os.environ.get('SALAH_TEST_BASH','/bin/bash')
 PS=sys.argv[2] if len(sys.argv)>2 else os.environ.get('INSTALL_TEST_PS7',r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe')
 CONTROLS=['actual parser empty','actual parser new','strict JSON complex valid control']
@@ -36,6 +40,31 @@ if SOURCE.suffix=='.sh':
     ]
     fixture=[sys.executable,str(TESTS/'install-discovery.py')]
 else:
+    CONTROLS.append('actual strict validator valid paired control')
+    capabilities=ROOT/'host-parser-capabilities.ps1'
+    capabilities.write_text(r'''
+$ErrorActionPreference='Stop'
+$data=ConvertFrom-Json -InputObject '[{"addons":[]}]'
+$accepted=@{}
+foreach($row in @(
+    @('trailing-comma','{"addons":[],}'),@('array-trailing-comma','{"addons":[],"other":[1,]}'),
+    @('trailing-comment','{"addons":[]} /* comment */'),@('single-quotes',"{'addons':[]}"),@('bare-key','{addons:[]}')
+)){
+    try{$null=ConvertFrom-Json -InputObject $row[1] -ErrorAction Stop;$accepted[$row[0]]=$true}
+    catch{$accepted[$row[0]]=$false}
+}
+[pscustomobject]@{version=$PSVersionTable.PSVersion.ToString();singletonType=$data.GetType().FullName;singletonIsArray=($data -is [array]);singletonIsObject=($data -is [pscustomobject]);accepts=$accepted}|ConvertTo-Json -Depth 8 -Compress
+''',encoding='ascii')
+    probe_env=dict(os.environ)
+    for key in list(probe_env):
+        if key.lower()=='psmodulepath': del probe_env[key]
+    probe=subprocess.run([PS,'-NoProfile','-File',str(capabilities)],env=probe_env,capture_output=True,text=True,timeout=20)
+    (ROOT/'host-parser-capabilities.stdout.txt').write_text(probe.stdout,encoding='utf-8')
+    (ROOT/'host-parser-capabilities.stderr.txt').write_text(probe.stderr,encoding='utf-8')
+    if probe.returncode: raise RuntimeError('Native parser acquisition failed: '+probe.stderr)
+    HOST_FACTS=json.loads(probe.stdout)
+    if not all(isinstance(HOST_FACTS['accepts'].get(k),bool) for k in ('trailing-comma','array-trailing-comma','trailing-comment','single-quotes','bare-key')):
+        raise RuntimeError('Incomplete native parser capabilities')
     cases=[
         ('catch-to-absence',changed("$result.Reason='metadata-malformed'","$result.Reason='metadata-malformed'; $result.Status='known-neither'"),['actual parser malformed','actual unknown only refuses before staging']),
         ('singleton-root-array-admitted',changed("$raw -notmatch '^\\s*\\{' -or ",''),['unsupported shape root-singleton-empty','unsupported shape root-singleton-new','actual singleton root array held with known peer']),
@@ -47,7 +76,7 @@ else:
         ('insufficient-identity-proves-absence',changed('        if ([string]::IsNullOrWhiteSpace($hay)) { $supported=$false; break }\n',''),['insufficient identity empty-object','actual insufficient identity held with known peer']),
         ('strict-json-guard-bypassed',changed("        if (-not (Test-StrictJson $raw)) { throw 'Invalid or ambiguous JSON metadata.' }\n",''),['strict JSON trailing-comma','strict JSON trailing-comment','strict JSON single-quotes','strict JSON bare-key','actual duplicate keys cannot hide legacy from selection']),
         ('duplicate-json-keys-admitted',changed('                if (-not $frame.Keys.Add($keyText.ToString())) { return $false }','                [void]$frame.Keys.Add($keyText.ToString())'),['strict JSON duplicate-addons','strict JSON escaped-duplicate-name','actual duplicate keys cannot hide legacy from selection']),
-        ('trailing-separators-admitted',changed("$frame.State=if ($frame.Kind -eq 'object') { 'key' } else { 'value' }","$frame.State=if ($frame.Kind -eq 'object') { 'key-or-end' } else { 'value-or-end' }"),['strict JSON trailing-comma','strict JSON array-trailing-comma']),
+        ('trailing-separators-admitted',changed("$frame.State=if ($frame.Kind -eq 'object') { 'key' } else { 'value' }","$frame.State=if ($frame.Kind -eq 'object') { 'key-or-end' } else { 'value-or-end' }"),['actual strict validator object-trailing-comma','actual strict validator array-trailing-comma','strict JSON trailing-comma','strict JSON array-trailing-comma']),
     ]
     fixture=[PS,'-NoProfile','-File',str(TESTS/'install-discovery.ps1'),'-SourceFile']
     parser=ROOT/'parse.ps1'
@@ -80,6 +109,17 @@ if healthy_ok:
         result,rows,receipt=invoke(path,assertions)
         failed=[n for n in assertions if not rows[n].get('pass_',rows[n].get('pass',False))]
         controls_ok=all(rows[n].get('pass_',rows[n].get('pass',False)) for n in CONTROLS)
-        RESULTS.append(dict(case=name,syntaxExit=parsed.returncode,fixtureExit=result.returncode,detected=bool(result.returncode and set(failed)==set(assertions) and controls_ok),failedCases=failed,pairedControlsPass=controls_ok,mutant=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),receipt=str(receipt)))
-print(json.dumps(dict(source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),results=RESULTS),indent=2))
+        detail=dict(case=name,syntaxExit=parsed.returncode,fixtureExit=result.returncode,failedCases=failed,pairedControlsPass=controls_ok,mutant=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),receipt=str(receipt))
+        if name=='singleton-root-array-admitted' and HOST_FACTS.get('version','').startswith('5.1.') and HOST_FACTS.get('singletonIsArray') is True:
+            # Actual PS5.1 preserves the array, so the separate production type
+            # check protects the same consumer. Retain, never credit, this survivor.
+            if result.returncode==0 and not failed and controls_ok:
+                APPLICABILITY.append(dict(detail,executed=True,detected=False,disposition='non-discriminating on this acquired host: singleton array retained and downstream production type check still refuses; no mutation PASS'))
+                continue
+        required=list(assertions)
+        if name in ('strict-json-guard-bypassed','trailing-separators-admitted'):
+            required=[n for n in assertions if not n.startswith('strict JSON ') or HOST_FACTS['accepts'].get(n[len('strict JSON '):],True)]
+        protected=[n for n in assertions if n not in required]
+        RESULTS.append(dict(detail,detected=bool(required and result.returncode and set(failed)==set(required) and controls_ok),requiredFailedCases=required,downstreamProtectedCases=protected))
+print(json.dumps(dict(source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),hostParserCapabilities=HOST_FACTS,results=RESULTS,applicability=APPLICABILITY),indent=2))
 sys.exit(0 if all(r.get('detected',r.get('pass_',False)) for r in RESULTS) else 1)

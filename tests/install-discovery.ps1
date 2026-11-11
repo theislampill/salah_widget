@@ -111,6 +111,17 @@ foreach($row in @(
     Check ('strict JSON '+$r[0]) {Parser-Case $r[0] $r[1] 'unknown' 'metadata-malformed' $false $false}
 }
 Check 'strict JSON complex valid control' {Parser-Case 'complex-valid' '{"addons":[],"other":{"same":1,"array":[0,-1,1.5,1e+2,true,false,null,{},[]],"text":"quote\" slash\/ backslash\\ line\n unicode\u0645"},"another":{"same":2}}' 'known-neither' 'supported-metadata' $false $false}
+Check 'actual strict validator valid paired control' {
+    $values=@(Test-StrictJson '{"addons":[],"other":[{},[],true,false,null,1.25]}')
+    Assert ($values.Count -eq 1 -and $values[0] -is [bool] -and $values[0]) 'Actual strict validator rejected valid paired input'
+}
+foreach($row in @(@('object-trailing-comma','{"addons":[],}'),@('array-trailing-comma','{"addons":[],"other":[1,]}'))){
+    $r=$row
+    Check ('actual strict validator '+$r[0]) {
+        $values=@(Test-StrictJson $r[1])
+        Assert ($values.Count -eq 1 -and $values[0] -is [bool] -and -not $values[0]) 'Actual strict validator admitted a trailing separator before downstream host conversion'
+    }
+}
 Check 'actual target builder keeps states source and safe peers' {
     $script:Data=Join-Path $FixtureRoot 'builder';$null=New-Item -ItemType Directory -Path $script:Data
     $i=0

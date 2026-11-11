@@ -181,8 +181,10 @@ def empty_array_mutant(family):
     expected = [('fixture', '')]
     healthy = run('empty-array-' + family + '-healthy', LIBRARY, configs)
     broken = run('empty-array-' + family + '-mutant', changed, configs)
-    require(exact(healthy, expected), 'Healthy native empty-array guard failed: ' + repr(healthy))
-    require(broken['exit'] != 0 and 'unbound variable' in broken['stderr'], 'Native Bash3.2 nounset mutant survived: ' + repr(broken))
+    require(exact(healthy, expected) and not healthy['stderr'], 'Healthy native empty-array guard failed: ' + repr(healthy))
+    require(broken['parse_exit'] == 0 and 'profiles[@]: unbound variable' in broken['stderr']
+            and broken['count'] is None and not broken['rows'] and not exact(broken, expected),
+            'Native Bash3.2 nounset mutant did not lose the named detector result: ' + repr(broken))
     return dict(actual_bash=VERSION, healthy_exit=healthy['exit'], mutant_exit=broken['exit'], stderr=broken['stderr'])
 
 
