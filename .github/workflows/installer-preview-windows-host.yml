@@ -1,0 +1,70 @@
+name: R0016 source-free Windows host observation
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - .github/workflows/installer-preview-windows-host.yml
+      - tools/qualification/installer_preview_host_probe.py
+      - tools/qualification/installer_preview_host_probe.ps1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-windows-host-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ps51, ps766]
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qualification/installer_preview_host_probe.py
+            /tools/qualification/installer_preview_host_probe.ps1
+      - name: Acquire exact PowerShell 7 runtime before observation
+        if: matrix.host == 'ps766'
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'r0016-host-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Prepare owned observer environment in Python before selected PowerShell starts
+        shell: cmd
+        run: |
+          if "${{ matrix.host }}"=="ps51" (set "R0016_PROBE_PS=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe") else (set "R0016_PROBE_PS=%INSTALL_TEST_PS7%")
+          python tools/qualification/installer_preview_host_probe.py --host ${{ matrix.host }} --powershell "%R0016_PROBE_PS%" --output-parent "%RUNNER_TEMP%"
+          exit /b %ERRORLEVEL%
+      - name: Preserve original host observations and owned fixture
+        if: always()
+        shell: cmd
+        run: |
+          python -c "import os,pathlib,tarfile; parent=pathlib.Path(os.environ['RUNNER_TEMP']); roots=list(parent.glob('r0016-host-probe-*')); assert len(roots)==1 and roots[0].is_dir(), 'Exactly one owned diagnostic fixture required'; archive=tarfile.open(parent/'installer-host-evidence.tar.gz','w:gz',dereference=False); archive.add(roots[0],arcname='installer-evidence'); archive.close()"
+          exit /b %ERRORLEVEL%
+      - name: Retain original source-free evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-host-Windows-${{ matrix.host }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-host-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
