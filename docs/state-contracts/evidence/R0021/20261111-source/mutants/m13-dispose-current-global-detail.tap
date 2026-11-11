@@ -2,25 +2,25 @@ TAP version 13
 # Subtest: ES21-06 first boot installs one runtime with its own detail and starts one worker
 ok 1 - ES21-06 first boot installs one runtime with its own detail and starts one worker
   ---
-  duration_ms: 20.5419
+  duration_ms: 22.0382
   type: 'test'
   ...
 # Subtest: ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
 ok 2 - ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
   ---
-  duration_ms: 1.1975
+  duration_ms: 1.2853
   type: 'test'
   ...
 # Subtest: ES21-05 full-wrapper replay over a live runtime is refused before any mutation
 ok 3 - ES21-05 full-wrapper replay over a live runtime is refused before any mutation
   ---
-  duration_ms: 2.039
+  duration_ms: 2.2015
   type: 'test'
   ...
 # Subtest: ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
 not ok 4 - ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
   ---
-  duration_ms: 1.0863
+  duration_ms: 1.1708
   type: 'test'
   location: '<worktree>\\moon\\tests\\native-instance-retirement.test.cjs:67:1'
   failureType: 'testCodeFailure'
@@ -30,7 +30,7 @@ not ok 4 - ES21-04 retirement uses captured resources: an old runtime never disp
 # Subtest: ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
 not ok 5 - ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
   ---
-  duration_ms: 0.9591
+  duration_ms: 0.8613
   type: 'test'
   location: '<worktree>\\moon\\tests\\native-instance-retirement.test.cjs:84:1'
   failureType: 'testCodeFailure'
@@ -43,7 +43,7 @@ not ok 5 - ES21-04 conditional registry cleanup: retiring never clears a slot an
   error: 'unowned detail disposed'
   stack: |-
     Object.dispose (<worktree>\moon\tests\native-instance-retirement.test.cjs:85:63)
-    Object.dispose (evalmachine.<anonymous>:290:276)
+    Object.dispose (evalmachine.<anonymous>:291:276)
     <worktree>\moon\tests\native-instance-retirement.test.cjs:87:28
     getActual (node:assert:611:5)
     strict.doesNotThrow (node:assert:779:32)
@@ -65,43 +65,43 @@ not ok 5 - ES21-04 conditional registry cleanup: retiring never clears a slot an
 # Subtest: ES21-07 detail disposal is idempotent and adoption after disposal is refused
 ok 6 - ES21-07 detail disposal is idempotent and adoption after disposal is refused
   ---
-  duration_ms: 0.7761
+  duration_ms: 0.7717
   type: 'test'
   ...
 # Subtest: ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
 ok 7 - ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
   ---
-  duration_ms: 0.7755
+  duration_ms: 0.8763
   type: 'test'
   ...
 # Subtest: ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
 ok 8 - ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
   ---
-  duration_ms: 655.4353
+  duration_ms: 750.404
   type: 'test'
   ...
 # Subtest: ES21-05 replay is refused for a live runtime even when the detail slot is empty
 ok 9 - ES21-05 replay is refused for a live runtime even when the detail slot is empty
   ---
-  duration_ms: 1.1872
+  duration_ms: 1.5048
   type: 'test'
   ...
 # Subtest: ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
 ok 10 - ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
   ---
-  duration_ms: 1.0687
+  duration_ms: 1.1698
   type: 'test'
   ...
 # Subtest: ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
 ok 11 - ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
   ---
-  duration_ms: 0.9148
+  duration_ms: 1.0004
   type: 'test'
   ...
 # Subtest: ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
 ok 12 - ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
   ---
-  duration_ms: 0.9239
+  duration_ms: 1.0128
   type: 'test'
   ...
 1..12
@@ -112,4 +112,4 @@ ok 12 - ES21-02 Moon wrapper failure at frame releases its detail, slot, listene
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 746.5806
+# duration_ms 854.3105

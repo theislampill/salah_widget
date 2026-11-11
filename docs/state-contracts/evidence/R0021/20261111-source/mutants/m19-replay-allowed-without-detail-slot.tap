@@ -2,55 +2,55 @@ TAP version 13
 # Subtest: ES21-06 first boot installs one runtime with its own detail and starts one worker
 ok 1 - ES21-06 first boot installs one runtime with its own detail and starts one worker
   ---
-  duration_ms: 19.6809
+  duration_ms: 21.9716
   type: 'test'
   ...
 # Subtest: ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
 ok 2 - ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
   ---
-  duration_ms: 1.3376
+  duration_ms: 1.4721
   type: 'test'
   ...
 # Subtest: ES21-05 full-wrapper replay over a live runtime is refused before any mutation
 ok 3 - ES21-05 full-wrapper replay over a live runtime is refused before any mutation
   ---
-  duration_ms: 1.6656
+  duration_ms: 2.2021
   type: 'test'
   ...
 # Subtest: ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
 ok 4 - ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
   ---
-  duration_ms: 1.2014
+  duration_ms: 1.3487
   type: 'test'
   ...
 # Subtest: ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
 ok 5 - ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
   ---
-  duration_ms: 0.7831
+  duration_ms: 0.8725
   type: 'test'
   ...
 # Subtest: ES21-07 detail disposal is idempotent and adoption after disposal is refused
 ok 6 - ES21-07 detail disposal is idempotent and adoption after disposal is refused
   ---
-  duration_ms: 0.7787
+  duration_ms: 0.8424
   type: 'test'
   ...
 # Subtest: ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
 ok 7 - ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
   ---
-  duration_ms: 0.8007
+  duration_ms: 0.8362
   type: 'test'
   ...
 # Subtest: ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
 ok 8 - ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
   ---
-  duration_ms: 672.0852
+  duration_ms: 708.8775
   type: 'test'
   ...
 # Subtest: ES21-05 replay is refused for a live runtime even when the detail slot is empty
 not ok 9 - ES21-05 replay is refused for a live runtime even when the detail slot is empty
   ---
-  duration_ms: 1.5225
+  duration_ms: 1.4622
   type: 'test'
   location: '<worktree>\\moon\\tests\\native-instance-retirement.test.cjs:119:1'
   failureType: 'testCodeFailure'
@@ -71,19 +71,19 @@ not ok 9 - ES21-05 replay is refused for a live runtime even when the detail slo
 # Subtest: ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
 ok 10 - ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
   ---
-  duration_ms: 1.0632
+  duration_ms: 1.1758
   type: 'test'
   ...
 # Subtest: ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
 ok 11 - ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
   ---
-  duration_ms: 0.8899
+  duration_ms: 0.8995
   type: 'test'
   ...
 # Subtest: ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
 ok 12 - ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
   ---
-  duration_ms: 0.8538
+  duration_ms: 0.8455
   type: 'test'
   ...
 1..12
@@ -94,4 +94,4 @@ ok 12 - ES21-02 Moon wrapper failure at frame releases its detail, slot, listene
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 762.3908
+# duration_ms 806.4392
