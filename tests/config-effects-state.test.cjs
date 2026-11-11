@@ -86,6 +86,6 @@ test("ES03-14 D7 production consumes the table: applyConfig is the sole dispatch
     assert.match(F.classifierBlock(raw),/CONFIG_EFFECTS\[key\]/);
     const reset=raw.slice(raw.indexOf("async function _resetLocal("),raw.indexOf("function _openSettings("));
     assert.match(reset,/await applyConfig\(c,\{save:false,reset:true\}\);/);
-    assert.equal(raw.split("applyConfig(").length-1,4,"definition, settings close, Reset and nothing else");
+    assert.equal(raw.split("applyConfig(").length-1,3,"definition, settings close-save and Reset: no other caller");
   }
 });

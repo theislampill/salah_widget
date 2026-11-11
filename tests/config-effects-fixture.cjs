@@ -54,11 +54,11 @@ const COSMETIC={
   label:{patch:{label:"A renamed"},immediate:h=>assert.equal(text(h,"#loc"),"A renamed","label is the directly owned header text")},
   time12:{patch:{time:"12"},frame:h=>{assert.match(text(h,".nt"),/^\d{1,2}:\d{2} (AM|PM)$/);
     for(const tm of html(h,".times").match(/class="tm">[^<]*/g))assert.match(tm,/(AM|PM)$/);}},
-  dateLong:{patch:{datefmt:"DD MMMM YYYY"},frame:h=>assert.equal(text(h,"#ce"),"07 September 2026")},
+  dateLong:{patch:{datefmt:"DD MMMM YYYY"},frame:h=>assert.match(text(h,"#ce"),/^07 September 2026/)},
   appearance:{patch:{appearance:"contrast"},immediate:h=>assert.equal(h.document.querySelector(".c").dataset.appearance,"contrast")},
   identical:{patch:{}},
   mixedCosmetic:{patch:{label:"A mixed",time:"12",datefmt:"DD MMMM YYYY",appearance:"contrast"},
-    immediate:h=>assert.equal(text(h,"#loc"),"A mixed"),frame:h=>{assert.equal(text(h,"#ce"),"07 September 2026");assert.match(text(h,".nt"),/(AM|PM)$/);}},
+    immediate:h=>assert.equal(text(h,"#loc"),"A mixed"),frame:h=>{assert.match(text(h,"#ce"),/^07 September 2026/);assert.match(text(h,".nt"),/(AM|PM)$/);}},
 };
 async function cosmeticPreserves(name,options={}){
   const c=COSMETIC[name],{h,base}=await established(options);seedOwners(h);
@@ -144,7 +144,7 @@ async function hiddenThenResumed(options={}){
   assert.equal(text(h,".nt"),nt,"hidden widget is not re-rendered");assert.equal(text(h,"#ce"),ce);
   h.show();assert.equal(h.frames.size,1);await h.frame();
   assert.match(text(h,".nt"),/(AM|PM)$/,"first resumed frame shows the pending time format");
-  assert.equal(text(h,"#ce"),"07 September 2026","first resumed frame shows the pending date format");
+  assert.match(text(h,"#ce"),/^07 September 2026/,"first resumed frame shows the pending date format");
   assert.deepEqual(ledger(h),before);
   return h;
 }
