@@ -84,7 +84,7 @@ test('ES27-06/14 actual callers (createSkyModel, first-paint preview, refined re
   const expected=run(orac,utc);
   const s0=probe.stats(inner).sets,cold=run(cand,utc),f0=probe.stats(inner).sets-s0;
   const s1=probe.stats(inner).sets,hit=run(cand,utc),f1=probe.stats(inner).sets-s1;
-  for(const bv of series(4,CAPACITY,SCENES.indexOf(utc)*CAPACITY))cand.spectral.selectSpectrum({bv,spectralType:'r0027-flood'});
+  for(const bv of series(4,CAPACITY))cand.spectral.selectSpectrum({bv:bv+SCENES.indexOf(utc)*1e-7,spectralType:'r0027-flood'});// distinct per scene, inside the fit domain
   const s2=probe.stats(inner).sets,again=run(cand,utc),f2=probe.stats(inner).sets-s2;
   assert.equal(f1,0,utc+': second run is all hits');assert.equal(f2,f0,utc+': flooded run refits exactly what the cold run fitted');
   if(f0>0){kinds.cold++;kinds.recomputed++;}kinds.hit++;

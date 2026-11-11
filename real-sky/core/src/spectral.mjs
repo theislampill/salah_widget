@@ -6,7 +6,9 @@ import {finite,clamp} from './astronomy.mjs';
 import {magnitudeFlux,airmass,opticalDepth,xyzToLinearRgb,luminance} from './photometry.mjs';
 import {SPECTRAL_TABLES} from './spectral-tables.mjs';
 export const SPECTRAL_GRID=SPECTRAL_TABLES.wavelengthNm;
-const sfWeights=SPECTRAL_TABLES.weightsNm,sfXYZ=SPECTRAL_TABLES.cieXYZ,sfCache=new Map(),sfFitCache=new Map();
+const sfWeights=SPECTRAL_TABLES.weightsNm,sfXYZ=SPECTRAL_TABLES.cieXYZ,sfCache=new Map(),sfFitCache=new Map(),sfFitCacheLimit=12000;
+// R0027 retention (authored in tools/native_core_spectral_cache.py): at most sfFitCacheLimit exact-B-V fits per
+// module realm; FIFO eviction of the oldest key before a new insertion at capacity. Values are unchanged.
 function sfValidate(samples){if(!Array.isArray(samples)||samples.length!==95||!samples.every(x=>Number.isFinite(x)&&x>=0)||!samples.some(x=>x>0))throw new TypeError('Spectrum must have 95 non-negative finite samples with positive energy');return samples;}
 export function passbandIntegral(samples,band='V'){
  sfValidate(samples);const b=SPECTRAL_TABLES.passbands[band];if(!b)throw new RangeError('Unknown passband');
@@ -20,7 +22,7 @@ export function syntheticBV(samples){const b=passbandIntegral(samples,'B'),v=pas
 export function blackbodyShape(temperatureK){finite(temperatureK,'temperature proxy K',1500,200000);return sfNormalise(SPECTRAL_GRID.map(w=>1/(w**5*Math.expm1(1.438776877e7/(w*temperatureK)))));}
 function sfFitColour(bv){if(sfFitCache.has(bv))return sfFitCache.get(bv);let lo=1500,hi=200000;if(bv>syntheticBV(blackbodyShape(lo))||bv<syntheticBV(blackbodyShape(hi)))return null;
  for(let i=0;i<48;i++){const mid=Math.sqrt(lo*hi);if(syntheticBV(blackbodyShape(mid))>bv)lo=mid;else hi=mid;}
- const T=Math.sqrt(lo*hi),fit={samples:blackbodyShape(T),temperatureProxyK:T};sfFitCache.set(bv,fit);return fit;
+ const T=Math.sqrt(lo*hi),fit={samples:blackbodyShape(T),temperatureProxyK:T};if(sfFitCache.size>=sfFitCacheLimit)sfFitCache.delete(sfFitCache.keys().next().value);sfFitCache.set(bv,fit);return fit;
 }
 /** Hierarchy: caller spectrum with provenance -> same-identity standard -> strictly matched,
  * colour-compatible standard template -> B-V constrained continuum -> explicitly unknown.

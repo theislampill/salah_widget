@@ -93,10 +93,10 @@ def check_identifiers(t):
         added |= free_identifiers(after) - free_identifiers(before)
     t.assertEqual(added, set(t.mod.INTRODUCED_IDENTIFIERS), 'declared new identifiers')
     for name in added:
-        t.assertTrue(name.startswith('sf'), 'module-local sf prefix')
         for path, text in concat_inputs().items():
             t.assertIsNone(re.search(r'(?<![\w$])' + re.escape(name) + r'(?![\w$])', text),
                            f'{name} collides with {path}')
+        t.assertTrue(name.startswith('sf'), 'module-local sf prefix')
 
 
 def run_builder(tree, builder_text=None, transform_text=None):
@@ -214,8 +214,10 @@ class SpectralCacheTransformMutationControls(unittest.TestCase):
                     self.mod = load_transform(mutated)
                 else:
                     self.builder = mutated
-                with self.assertRaises(AssertionError):
+                with self.assertRaises(AssertionError) as killed:
                     check(self)
+                print(f'MUTANT {name}: killed by {check.__name__ if hasattr(check, "__name__") else "check"}: '
+                      + str(killed.exception).splitlines()[0][:200], file=sys.stderr)
 
 
 if __name__ == '__main__':

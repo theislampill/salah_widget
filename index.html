@@ -667,7 +667,7 @@ html.webfonts body{
 </div>
 
 <script src="config.js"></script>
-<script id="native-first-paint-code" data-sha256="be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7">(function(){"use strict";
+<script id="native-first-paint-code" data-sha256="8817c6599ff3958574b8d34f0cf9355368522ce03a6bc4e70fa5adfcedddcd8b">(function(){"use strict";
 // real-sky/core/src/time-scales.mjs
 /** Time policy: USNO TAI-UTC table, IERS Bulletin C72 (2026-07-06), NASA historical DeltaT.
  * See docs/CHECKPOINT_4.md. Numeric POSIX milliseconds cannot represent a leap-second label.
@@ -951,7 +951,9 @@ const SPECTRAL_TABLES={"schema":"salah-spectral-tables/1","wavelengthNm":[360,36
 
 
 const SPECTRAL_GRID=SPECTRAL_TABLES.wavelengthNm;
-const sfWeights=SPECTRAL_TABLES.weightsNm,sfXYZ=SPECTRAL_TABLES.cieXYZ,sfCache=new Map(),sfFitCache=new Map();
+const sfWeights=SPECTRAL_TABLES.weightsNm,sfXYZ=SPECTRAL_TABLES.cieXYZ,sfCache=new Map(),sfFitCache=new Map(),sfFitCacheLimit=12000;
+// R0027 retention (authored in tools/native_core_spectral_cache.py): at most sfFitCacheLimit exact-B-V fits per
+// module realm; FIFO eviction of the oldest key before a new insertion at capacity. Values are unchanged.
 function sfValidate(samples){if(!Array.isArray(samples)||samples.length!==95||!samples.every(x=>Number.isFinite(x)&&x>=0)||!samples.some(x=>x>0))throw new TypeError('Spectrum must have 95 non-negative finite samples with positive energy');return samples;}
 function passbandIntegral(samples,band='V'){
  sfValidate(samples);const b=SPECTRAL_TABLES.passbands[band];if(!b)throw new RangeError('Unknown passband');
@@ -965,7 +967,7 @@ function syntheticBV(samples){const b=passbandIntegral(samples,'B'),v=passbandIn
 function blackbodyShape(temperatureK){finite(temperatureK,'temperature proxy K',1500,200000);return sfNormalise(SPECTRAL_GRID.map(w=>1/(w**5*Math.expm1(1.438776877e7/(w*temperatureK)))));}
 function sfFitColour(bv){if(sfFitCache.has(bv))return sfFitCache.get(bv);let lo=1500,hi=200000;if(bv>syntheticBV(blackbodyShape(lo))||bv<syntheticBV(blackbodyShape(hi)))return null;
  for(let i=0;i<48;i++){const mid=Math.sqrt(lo*hi);if(syntheticBV(blackbodyShape(mid))>bv)lo=mid;else hi=mid;}
- const T=Math.sqrt(lo*hi),fit={samples:blackbodyShape(T),temperatureProxyK:T};sfFitCache.set(bv,fit);return fit;
+ const T=Math.sqrt(lo*hi),fit={samples:blackbodyShape(T),temperatureProxyK:T};if(sfFitCache.size>=sfFitCacheLimit)sfFitCache.delete(sfFitCache.keys().next().value);sfFitCache.set(bv,fit);return fit;
 }
 /** Hierarchy: caller spectrum with provenance -> same-identity standard -> strictly matched,
  * colour-compatible standard template -> B-V constrained continuum -> explicitly unknown.

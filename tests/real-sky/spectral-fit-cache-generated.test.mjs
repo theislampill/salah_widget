@@ -17,7 +17,7 @@ const text=rel=>read(rel).toString('utf8');
 const segment=()=>concatStrip(text(SPECTRAL_REL));
 const count=(hay,needle)=>hay.split(needle).length-1;
 function previewScript(html){const m=html.match(/<script id="native-first-paint-code" data-sha256="([0-9a-f]{64})">([\s\S]*?)<\/script>/);assert.ok(m,'first-paint script');return {pin:m[1],code:m[2]};}
-function embeddedWorker(sky){const at=sky.indexOf('startNativeSky(pack,');assert.ok(at>0);const s=sky.slice(at+'startNativeSky(pack,'.length);let i=1;for(;i<s.length;i++){if(s[i]==='\\'){i++;continue;}if(s[i]==='"')break;}return JSON.parse(s.slice(0,i+1));}
+function embeddedWorker(sky){const at=sky.indexOf('startNativeSky(pack,"');assert.ok(at>0);const s=sky.slice(at+'startNativeSky(pack,'.length);let i=1;for(;i<s.length;i++){if(s[i]==='\\'){i++;continue;}if(s[i]==='"')break;}return JSON.parse(s.slice(0,i+1));}
 
 test('ES27-11 every generated bundle carries exactly the generated spectral module text and compiles',()=>{
  const seg=segment(),worker=text('real-sky/native-worker.js'),sky=text('real-sky/native-sky.js'),{pin,code}=previewScript(text('index.html'));
@@ -30,7 +30,7 @@ test('ES27-11 every generated bundle carries exactly the generated spectral modu
  for(const [name,src] of [['worker',worker],['native-sky',sky],['first-paint',code]])assert.doesNotThrow(()=>new vm.Script(src,{filename:name}),name+' compiles (no identifier collision)');
  const offline=text('offline.html');
  assert.equal(count(offline,seg),2,'offline.html inlines the UI and first-paint realms');
- assert.ok(offline.includes(JSON.stringify(worker).slice(1,4000)),'offline.html inlines the same worker source');
+ assert.ok(offline.includes(sky.split('</'+'script').join('<'+String.fromCharCode(92)+'/script')),'offline.html inlines the exact native-sky.js (with its embedded worker)');
 });
 
 test('ES27-01/06 the real generated worker bundle is bounded when executed',async t=>{
@@ -68,8 +68,9 @@ test('ES27-14 old vs new generated worker bundle: first-paint preview and refine
   const expected={preview:await oldB.preview(snap),refined:await oldB.refined(snap,id)};
   const cold={preview:await newB.preview(snap),refined:await newB.refined(snap,id)};
   const hit={preview:await newB.preview(snap),refined:await newB.refined(snap,id)};
-  const f0=await newB.realm.eval('__r0027.inner[0].size');
+  const sceneKeys=await newB.realm.eval('[...__r0027.inner[0].keys()].slice(-8)');
   await newB.flood((i+1)*CAPACITY,true);
+  assert.deepEqual(await newB.realm.eval(`${JSON.stringify(sceneKeys)}.filter(k=>__r0027.inner[0].has(k))`),[],utc+': the scene fits were evicted before the recomputed run');
   const again={preview:await newB.preview(snap),refined:await newB.refined(snap,id)};
   for(const [name,v] of [['cold',cold],['hit',hit],['recomputed',again]])bytes+=sameOutput(assert,v,expected,utc+' '+name).n;
   scenes++;
