@@ -1,0 +1,155 @@
+# R0003 reconciliation onto main 7f2e8d16: source requalification (Node v24.14.0, Windows 11)
+# candidate = branch tree after merge 64258c86 + rebinds; main = git archive of 7f2e8d16 (history-reading suites run with the repository object store)
+
+$ node --test tests/*.test.cjs tests/*.test.mjs
+  candidate: ℹ tests 910  ℹ pass 906  ℹ fail 0  ℹ cancelled 0  ℹ skipped 0  ℹ todo 4
+  main:      ℹ tests 854  ℹ pass 850  ℹ fail 0  ℹ cancelled 0  ℹ skipped 0  ℹ todo 4
+$ node --test tests/real-sky/*.test.mjs
+  candidate: ℹ tests 292  ℹ pass 292  ℹ fail 0  ℹ cancelled 0  ℹ skipped 0  ℹ todo 0
+  main:      ℹ tests 292  ℹ pass 292  ℹ fail 0  ℹ cancelled 0  ℹ skipped 0  ℹ todo 0
+$ node --test moon/tests/*.test.cjs
+  candidate: ℹ tests 121  ℹ pass 121  ℹ fail 0  ℹ cancelled 0  ℹ skipped 0  ℹ todo 0
+  main:      ℹ tests 121  ℹ pass 121  ℹ fail 0  ℹ cancelled 0  ℹ skipped 0  ℹ todo 0
+
+# R0003 files run alone: node --test tests/config-effects-state.test.cjs tests/config-effects-mutations.test.cjs
+✔ mutant m1_label_broad is killed
+✔ mutant m2_time_broad is killed
+✔ mutant m3_datefmt_broad is killed
+✔ mutant m4_identical_is_change is killed
+✔ mutant m5_coordinates_cosmetic is killed
+✔ mutant m6_method_school_cosmetic is killed
+✔ mutant m7_evidence_ignored_compare_coordinates_only is killed
+✔ mutant m8a_reset_swallowed_by_equality is killed
+✔ mutant m8b_reset_control_drops_intent is killed
+✔ mutant m9_save_retry_restarts is killed
+✔ mutant m10_cosmetic_bumps_generation is killed
+✔ mutant m11_cosmetic_clears_throttles_and_retry is killed
+✔ mutant m12_unknown_field_cosmetic is killed
+✔ mutant m13_cosmetic_skips_render_dirty is killed
+✔ mutant m14_table_row_missing is killed
+✔ mutant m15_stale_timezone_via_bindConfig is killed
+✔ mutant m16_renew_acquiredAt_on_save is killed
+✔ mutant m17_revive_oldA_by_equality is killed
+✔ mutant m18_suppress_storage_warning is killed
+✔ mutant m19_evidence_field_unclassified is killed
+✔ healthy control: every mutated scenario passes on the actual product source
+✔ ES03-0x cosmetic label: no generation/request/zone/scene/throttle/retry effect; presentation updates
+✔ ES03-0x cosmetic time12: no generation/request/zone/scene/throttle/retry effect; presentation updates
+✔ ES03-0x cosmetic dateLong: no generation/request/zone/scene/throttle/retry effect; presentation updates
+✔ ES03-0x cosmetic appearance: no generation/request/zone/scene/throttle/retry effect; presentation updates
+✔ ES03-0x cosmetic identical: no generation/request/zone/scene/throttle/retry effect; presentation updates
+✔ ES03-0x cosmetic mixedCosmetic: no generation/request/zone/scene/throttle/retry effect; presentation updates
+✔ ES03-08/09/13 genuine lat: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine lon: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine method: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine school: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine tzHint: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine units: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine lp: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine seed: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine evidencePlace: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine evidenceDevice: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine provenance: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine mixed: broad path invalidates obsolete owners and reacquires
+✔ ES03-08/09/13 genuine unknownField: broad path invalidates obsolete owners and reacquires
+✔ D1 explicit Reset with values equal to the current configuration is a real broad reset (applyConfig intent)
+✔ D1 actual settings Reset control passes the explicit reset intent (equal detected values still reset)
+✔ ES03-10/11 cosmetic edit during A->B: B commits, late A ok rejected, edit shows
+✔ ES03-10/11 cosmetic edit during A->B: B commits, late A fail rejected, edit shows
+✔ ES03-10 A->B->A with a cosmetic edit during the second A: first A and B stay obsolete
+✔ D8 hidden/paused widget: no background render; the first resumed frame shows the pending formats
+✔ ES03-07 acquisition source/time/accuracy survive an unrelated saved edit; savedAt separate
+✔ ES03-05/12 D1 failed-save retry: persistence executed and reported, warning kept, nothing restarted
+✔ ES03-01/02/05 actual settings close-save (label) takes the no-restart path
+✔ ES03-01/02/05 actual settings close-save (time) takes the no-restart path
+✔ ES03-01/02/05 actual settings close-save (none) takes the no-restart path
+✔ D7 classifier is pure: runs in an empty realm, deterministic, does not mutate its inputs
+✔ ES03-01..05/09/13 classifier decisions per field class
+✔ ES03-14 table covers every field of every real configuration producer, and nothing else
+✔ ES03-07/09 D2 evidence seam consumes R0026's delivered admission and evidence contract
+✔ ES03-14 D7 production consumes the table: applyConfig is the sole dispatcher, Reset passes explicit intent
+ℹ tests 56
+ℹ suites 0
+ℹ pass 56
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+
+# Directly-run tests/*.cjs (exit code, PASS/FAIL token counts); candidate vs main
+r0001-date-sinks.cjs  candidate exit=1 P=12 F=1  |  main exit=1 P=12 F=1
+r0007-countdown.cjs  candidate exit=0 P=23 F=0  |  main exit=0 P=23 F=0
+r0008-timezone.cjs  candidate exit=0 P=37 F=0  |  main exit=0 P=37 F=0
+r0009-date-mutations.cjs  candidate exit=1 P=0 F=2  |  main exit=1 P=0 F=2
+r0009-date-selection.cjs  candidate exit=1 P=21 F=1  |  main exit=1 P=21 F=1
+r000f-intent.cjs  candidate exit=0 P=21 F=0  |  main exit=0 P=21 F=0
+r000f-mutations.cjs  candidate exit=0 P=7 F=0  |  main exit=0 P=7 F=0
+r000f-reset-mutations.cjs  candidate exit=0 P=3 F=0  |  main exit=0 P=3 F=0
+r000f-reset.cjs  candidate exit=0 P=9 F=0  |  main exit=0 P=9 F=0
+r0010-mutations.cjs  candidate exit=0 P=2 F=0  |  main exit=0 P=2 F=0
+r0010-preferences.cjs  candidate exit=0 P=9 F=0  |  main exit=0 P=9 F=0
+r0011-mutations.cjs  candidate exit=0 P=7 F=0  |  main exit=0 P=7 F=0
+r0011-storage.cjs  candidate exit=0 P=18 F=0  |  main exit=0 P=18 F=0
+r0012-clipboard.cjs  candidate exit=0 P=11 F=0  |  main exit=0 P=11 F=0
+r0012-effects-mutations.cjs  candidate exit=0 P=1 F=0  |  main exit=0 P=1 F=0
+r0012-effects.cjs  candidate exit=0 P=3 F=0  |  main exit=0 P=3 F=0
+r0012-mutations.cjs  candidate exit=0 P=3 F=0  |  main exit=0 P=3 F=0
+r0017-cloud-visibility.cjs  candidate exit=0 P=39 F=0  |  main exit=0 P=39 F=0
+r0017-contract.cjs  candidate exit=0 P=36 F=3  |  main exit=0 P=36 F=3
+r0017-transport.cjs  candidate exit=0 P=32 F=0  |  main exit=0 P=32 F=0
+r0017-weather.cjs  candidate exit=0 P=6 F=0  |  main exit=0 P=6 F=0
+r0018-appearance-mutations.cjs  candidate exit=1 P=8 F=2  |  main exit=1 P=8 F=2
+r0018-appearance.cjs  candidate exit=0 P=17 F=0  |  main exit=0 P=17 F=0
+r0018-timetable-contrast.cjs  candidate exit=0 P=11 F=0  |  main exit=0 P=11 F=0 [rerun with object store; archive-only run cannot read history]
+r0019-date-disclosure.cjs  candidate exit=1 P=15 F=1  |  main exit=1 P=15 F=1
+r001a-mutations.cjs  candidate exit=0 P=2 F=0  |  main exit=0 P=2 F=0
+r001a-radio.cjs  candidate exit=0 P=8 F=0  |  main exit=0 P=8 F=0
+r001d-diagnostics.cjs  candidate exit=1 P=17 F=4  |  main exit=1 P=17 F=4
+r001d-lifecycle.cjs  candidate exit=0 P=11 F=0  |  main exit=0 P=11 F=0
+r001d-mutations.cjs  candidate exit=1 P=0 F=0  |  main exit=1 P=0 F=0
+r001f-deadline.cjs  candidate exit=0 P=13 F=0  |  main exit=0 P=13 F=0
+r001f-mutations.cjs  candidate exit=0 P=2 F=0  |  main exit=0 P=2 F=0
+r0020-clock.cjs  candidate exit=0 P=44 F=0  |  main exit=0 P=44 F=0
+r0021-reveal.cjs  candidate exit=1 P=17 F=1  |  main exit=1 P=17 F=1
+r0022-baseline-balance.cjs  candidate exit=1 P=30 F=7  |  main exit=1 (same 7 FAIL names) [rerun with object store; archive-only run cannot read history]
+r0022-lunar-consumers.cjs  candidate exit=1 P=24 F=2  |  main exit=1 P=24 F=2
+r0022-native-navigation.cjs  candidate exit=0 P=2 F=0  |  main exit=0 P=2 F=0
+r0023-metadata.cjs  candidate exit=0 P=31 F=0  |  main exit=0 P=31 F=0 [rerun with object store; archive-only run cannot read history]
+r0023-mutations.cjs  candidate exit=0 P=5 F=0  |  main exit=0 P=5 F=0
+r0025-context.cjs  candidate exit=0 P=0 F=0  |  main exit=0 P=0 F=0
+r0025-continuity.cjs  candidate exit=0 P=9 F=0  |  main exit=0 P=9 F=0
+r0025-lifecycle.cjs  candidate exit=0 P=16 F=0  |  main exit=0 P=16 F=0
+r0025-mutations.cjs  candidate exit=1 P=0 F=0  |  main exit=1 P=0 F=0
+rlgwo-docs-contract.cjs  candidate exit=1 P=50 F=14  |  main exit=1 P=50 F=14
+v1_storage.cjs  candidate exit=0 P=10 F=0  |  main exit=0 P=10 F=0
+
+$ PYTHONUTF8=1 python tools/cp9/run_native_regressions.py --output <scratch>
+  native-runner-contract 0 PASS {'tests': 42}   [main identical]
+  native-test-glob 0 INCOMPLETE {'tests': 891, 'pass': 887, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 4}   [main: native-test-glob 0 INCOMPLETE {'tests': 835, 'pass': 831, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 4}]
+  r0001-date-sinks 1 FAIL {'passCases': 12, 'failCases': 1}   [main identical]
+  r0007-countdown 0 PASS {'tests': 23, 'pass': 23, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}   [main identical]
+  r0008-timezone 0 PASS {'tests': 37, 'pass': 37, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}   [main identical]
+  r0009-date-selection 1 FAIL {'passCases': 21, 'failCases': 1}   [main identical]
+  r000f-intent 0 PASS {'passLines': 21, 'failLines': 0}   [main identical]
+  r000f-reset 0 PASS {'passLines': 9, 'failLines': 0}   [main identical]
+  r0010-preferences 0 PASS {'passLines': 9, 'failLines': 0}   [main identical]
+  r0011-storage 0 PASS {'passLines': 18, 'failLines': 0}   [main identical]
+  r0012-clipboard 0 PASS {'passLines': 11, 'failLines': 0}   [main identical]
+  r0012-effects 0 PASS {'passLines': 3, 'failLines': 0}   [main identical]
+  r0017-cloud-visibility 0 PASS {'passCases': 39, 'failCases': 0}   [main identical]
+  r0017-contract 0 PASS {'passCases': 35, 'failCases': 0}   [main identical]
+  r0017-transport 0 PASS {'passCases': 32, 'failCases': 0}   [main identical]
+  r0017-weather 0 PASS {'passCases': 6, 'failCases': 0}   [main identical]
+  r0018-appearance 0 PASS {'passCases': 17, 'failCases': 0}   [main identical]
+  r0018-timetable-contrast 0 PASS {'passCases': 11, 'failCases': 0}   [main identical]
+  r0019-date-disclosure 1 FAIL {'passCases': 15, 'failCases': 1}   [main identical]
+  r001a-radio 0 PASS {'passLines': 8, 'failLines': 0}   [main identical]
+  r001d-lifecycle 0 PASS {'passLines': 11, 'failLines': 0}   [main identical]
+  r001f-deadline 0 PASS {'passLines': 13, 'failLines': 0}   [main identical]
+  r0020-clock 0 PASS {'tests': 44, 'pass': 44, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}   [main identical]
+  r0021-reveal 1 FAIL {'passLines': 14, 'failLines': 1}   [main identical]
+  r0022-baseline-balance 1 FAIL {'passLines': 30, 'failLines': 7, 'unparsedOutput': True}   [main identical]
+  r0022-lunar-consumers 0 INCOMPLETE {'passLines': 24, 'failLines': 0}   [main identical]
+  r0023-metadata 0 PASS {'passLines': 31, 'failLines': 0}   [main identical]
+  r0025-continuity 0 PASS {'passLines': 9, 'failLines': 0}   [main identical]
+  r0025-lifecycle 0 PASS {'passLines': 16, 'failLines': 0}   [main identical]

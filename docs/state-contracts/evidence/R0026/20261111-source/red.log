@@ -1,0 +1,938 @@
+# RED: node --test tests/location-admission-outcomes.test.cjs against generated files of main 645b53cc (worktree HEAD e6ab9f10, product files unchanged)
+# node v24.14.0; sha256 config.js=91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81 builder.html=66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e index.html=e41ba4341cb22741f97719dc08bccfad895f8fe5f11bc67288ad70663913f1f5
+# main: git show 645b53cc:config.js sha256=91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+✖ ES26-01/05 coarse GeoJS "999"/"999" is rejected before normalization and the one fallback runs (17.581ms)
+✖ ES26-01/05 coarse GeoJS "24.47"/"999" is rejected before normalization and the one fallback runs (2.4932ms)
+✖ ES26-01/05 coarse GeoJS "-90.5"/"10" is rejected before normalization and the one fallback runs (1.1019ms)
+✖ ES26-01/05 coarse GeoJS "Infinity"/"10" is rejected before normalization and the one fallback runs (0.8459ms)
+✖ ES26-01/05 coarse GeoJS Infinity/10 is rejected before normalization and the one fallback runs (1.5143ms)
+✖ ES26-01/05 coarse GeoJS ["1"]/"10" is rejected before normalization and the one fallback runs (0.9562ms)
+✖ ES26-01/05 coarse GeoJS "12abc"/"10" is rejected before normalization and the one fallback runs (1.2493ms)
+✖ ES26-01/05 coarse GeoJS ""/"10" is rejected before normalization and the one fallback runs (1.4307ms)
+✖ ES26-01/05 coarse GeoJS "   "/"10" is rejected before normalization and the one fallback runs (0.9822ms)
+✖ ES26-01/05 coarse GeoJS null/"10" is rejected before normalization and the one fallback runs (1.4215ms)
+✖ ES26-01/05 coarse GeoJS true/"10" is rejected before normalization and the one fallback runs (0.9316ms)
+✖ ES26-01/05 coarse GeoJS "0x10"/"10" is rejected before normalization and the one fallback runs (0.819ms)
+✖ ES26-01/05 coarse GeoJS "1e2"/"10" is rejected before normalization and the one fallback runs (0.7807ms)
+✖ ES26-01/05 coarse GeoJS "24.47 junk"/"10" is rejected before normalization and the one fallback runs (0.9545ms)
+✖ ES26-01/05 coarse GeoJS {}/"10" is rejected before normalization and the one fallback runs (0.9487ms)
+✖ ES26-01/05 coarse GeoJS NaN/"10" is rejected before normalization and the one fallback runs (1.1063ms)
+✔ ES26-04/05 coarse GeoJS "24.47"/"39.61" is admitted unchanged (0.9754ms)
+✔ ES26-04/05 coarse GeoJS " 24.47 "/"+39.61" is admitted unchanged (0.7086ms)
+✔ ES26-04/05 coarse GeoJS "-33.5"/"151.25" is admitted unchanged (0.849ms)
+✔ ES26-04/05 coarse GeoJS "0"/"30" is admitted unchanged (0.7775ms)
+✔ ES26-04/05 coarse GeoJS "30"/"0" is admitted unchanged (0.954ms)
+✔ ES26-04/05 coarse GeoJS "0"/"0" is admitted unchanged (0.765ms)
+✔ ES26-04/05 coarse GeoJS "-0"/"-0" is admitted unchanged (1.0623ms)
+✖ ES26-04/05 coarse GeoJS -0/0 is admitted unchanged (0.708ms)
+✔ ES26-04/05 coarse GeoJS "90"/"180" is admitted unchanged (0.6106ms)
+✔ ES26-04/05 coarse GeoJS "-90"/"-180" is admitted unchanged (0.5769ms)
+✔ ES26-04/05 coarse GeoJS 45.5/-73.25 is admitted unchanged (1.1302ms)
+✔ ES26-04/05 coarse GeoJS ".5"/"-.5" is admitted unchanged (0.8706ms)
+✔ ES26-04/05 coarse ipinfo loc "51.5,-0.12" (0.6451ms)
+✔ ES26-04/05 coarse ipinfo loc "0,-0" (0.4972ms)
+✖ ES26-04/05 coarse ipinfo loc "999,999" (0.6293ms)
+✔ ES26-04/05 coarse ipinfo loc "51.5" (0.4798ms)
+✖ ES26-04/05 coarse ipinfo loc "51.5,-0.12,7" (0.5449ms)
+✖ ES26-04/05 coarse ipinfo loc "51.5junk,-0.12" (0.58ms)
+✔ ES26-04/05 coarse ipinfo loc "" (0.6909ms)
+✖ ES26-02 both coarse providers invalid: explicit failure, bounded attempts, no coordinates (3.8703ms)
+✔ ES26-14/A11 coarse accuracy "5" → 5 (0.7536ms)
+✔ ES26-14/A11 coarse accuracy 5000 → 5000 (0.6982ms)
+✔ ES26-14/A11 coarse accuracy 0 → 0 (0.717ms)
+✖ ES26-14/A11 coarse accuracy "abc" → null (0.6646ms)
+✖ ES26-14/A11 coarse accuracy NaN → null (0.5557ms)
+✖ ES26-14/A11 coarse accuracy -5 → null (0.5056ms)
+✖ ES26-14/A11 coarse accuracy "" → null (0.5027ms)
+✔ ES26-14/A11 coarse accuracy null → null (0.6309ms)
+✔ ES26-14/A11 coarse accuracy undefined → null (0.5426ms)
+✖ ES26-14/A11 coarse accuracy "Infinity" → null (0.493ms)
+✖ ES26-14/A11 coarse accuracy true → null (0.5007ms)
+✖ A4 coarse attempts are additive, bounded and contain no provider body (0.7196ms)
+✖ ES26-06 Nominatim HTTP 503 with a healthy-looking body is unavailable, not a match (0.5879ms)
+✖ ES26-08 Nominatim 429/network/malformed/non-array/null/timeout are unavailable with their category (0.4156ms)
+✖ ES26-07 Nominatim valid empty array is a distinguishable no-match (0.3796ms)
+✖ ES26-03/05 Nominatim out-of-range, nonfinite, prefix, hex, exponent and non-numeric coordinates are never candidates (0.4014ms)
+✖ ES26-04 forward zero, signed-zero, boundary, trimmed and JSON-number coordinates admitted exactly (0.4196ms)
+✖ A1 Zippopotam 404 is a valid no-match; 5xx/429/network/malformed are failures (0.4932ms)
+✖ ES26-03/05 Zippopotam null/empty/missing latitude is rejected, never coerced to 0 (0.4854ms)
+✖ ES26-09 one provider matches and the other fails: matches with partial coverage and usable candidates (0.3982ms)
+✖ ES26-08 both providers fail: unavailable (0.5519ms)
+✖ ES26-10 one no-match plus one failure is not a comprehensive no-match (0.4186ms)
+✖ A10 dedup keeps order, proximity policy and the surviving provenance; nonfinite never kept (0.4421ms)
+✖ ES26-11 short input is not-requested with zero requests (0.3723ms)
+✖ ES26-12 abort-ignorant body settles once at the existing deadline; late body/rejection changes nothing (0.6767ms)
+✔ ES26-15/A3 legacy geocodeSearch remains an array projection for every outcome (11.2066ms)
+✖ A5 SalahConfig.geolocate admits browser coordinates before publication; accuracy unknown stays null (0.7005ms)
+✖ A5 builder one-shot geolocation applies the canonical admission before publishing (3.4304ms)
+✖ A5 settings precise location rejects invalid browser coordinates (10.5095ms)
+✖ ES26-01/02 builder coarse detection: invalid GeoJS uses the fallback; both invalid fail visibly (2.5005ms)
+✔ ES26-07/08/16 builder: valid no-match keeps the not-found message (2.2672ms)
+✖ ES26-08/16 builder: unavailable search is distinct from not-found and publishes nothing (1.9193ms)
+✖ ES26-09/A9 builder: partial coverage keeps usable candidates with a concise note (2.4528ms)
+✖ ES26-13/A6 builder: stale lookup success cannot update the current form and reports superseded (1.6581ms)
+✖ ES26-13/A6 builder: stale lookup error cannot update the current form and reports superseded (2.2505ms)
+✔ ES26-07/08/16 settings: valid no-match keeps the not-found message (8.7148ms)
+✖ ES26-08/16 settings: unavailable search is distinct from not-found and publishes nothing (8.7346ms)
+✖ ES26-09/A9 settings: partial coverage keeps usable candidates with a concise note (9.4727ms)
+✖ ES26-13/A6 settings: stale lookup success cannot update the current form and reports superseded (8.2197ms)
+✖ ES26-13/A6 settings: stale lookup error cannot update the current form and reports superseded (9.571ms)
+✔ ES26-15/A8 manual, hash and saved normalization still clamp (distinct from external admission) (10.7475ms)
+✔ ES26-14 admitted browser fix keeps its acquisition time and accuracy through save/load (8.893ms)
+ℹ tests 78
+ℹ suites 0
+ℹ pass 25
+ℹ fail 53
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 246.7109
+
+✖ failing tests:
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "999"/"999" is rejected before normalization and the one fallback runs (17.581ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "24.47"/"999" is rejected before normalization and the one fallback runs (2.4932ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "-90.5"/"10" is rejected before normalization and the one fallback runs (1.1019ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "Infinity"/"10" is rejected before normalization and the one fallback runs (0.8459ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS Infinity/10 is rejected before normalization and the one fallback runs (1.5143ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS ["1"]/"10" is rejected before normalization and the one fallback runs (0.9562ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "12abc"/"10" is rejected before normalization and the one fallback runs (1.2493ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS ""/"10" is rejected before normalization and the one fallback runs (1.4307ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at plain (<worktree>\tests\location-admission-fixture.cjs:12:25)
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:50:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "   "/"10" is rejected before normalization and the one fallback runs (0.9822ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at plain (<worktree>\tests\location-admission-fixture.cjs:12:25)
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:50:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS null/"10" is rejected before normalization and the one fallback runs (1.4215ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at plain (<worktree>\tests\location-admission-fixture.cjs:12:25)
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:50:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS true/"10" is rejected before normalization and the one fallback runs (0.9316ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at plain (<worktree>\tests\location-admission-fixture.cjs:12:25)
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:50:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "0x10"/"10" is rejected before normalization and the one fallback runs (0.819ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "1e2"/"10" is rejected before normalization and the one fallback runs (0.7807ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS "24.47 junk"/"10" is rejected before normalization and the one fallback runs (0.9545ms)
+  AssertionError [ERR_ASSERTION]: invalid GeoJS evidence must reach the one fallback
+  
+  'GeoJS' !== 'ipinfo'
+  
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:48:36)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'GeoJS',
+    expected: 'ipinfo',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS {}/"10" is rejected before normalization and the one fallback runs (0.9487ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at plain (<worktree>\tests\location-admission-fixture.cjs:12:25)
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:50:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:11:3
+✖ ES26-01/05 coarse GeoJS NaN/"10" is rejected before normalization and the one fallback runs (1.1063ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at plain (<worktree>\tests\location-admission-fixture.cjs:12:25)
+      at Object.coarseRejectsPrimary (<worktree>\tests\location-admission-fixture.cjs:50:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:15:3
+✖ ES26-04/05 coarse GeoJS -0/0 is admitted unchanged (0.708ms)
+  AssertionError [ERR_ASSERTION]: admitted unchanged: 0,0
+      at Object.coarseAdmits (<worktree>\tests\location-admission-fixture.cjs:55:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:17:3
+✖ ES26-04/05 coarse ipinfo loc "999,999" (0.6293ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at Object.coarseIpinfo (<worktree>\tests\location-admission-fixture.cjs:59:35)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:17:3
+✖ ES26-04/05 coarse ipinfo loc "51.5,-0.12,7" (0.5449ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at Object.coarseIpinfo (<worktree>\tests\location-admission-fixture.cjs:59:35)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:17:3
+✖ ES26-04/05 coarse ipinfo loc "51.5junk,-0.12" (0.58ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at Object.coarseIpinfo (<worktree>\tests\location-admission-fixture.cjs:59:35)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:18:1
+✖ ES26-02 both coarse providers invalid: explicit failure, bounded attempts, no coordinates (3.8703ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   cfg: {
+  +     accuracy: null,
+  +     appearance: 'glass',
+  +     area: 'Fixture',
+  +     datefmt: 'YYYY-MM-DD',
+  +     detectProvider: 'GeoJS',
+  +     label: 'Fixture',
+  +     lat: 90,
+  +     locationEvidence: {
+  +       accuracyM: null,
+  +       acquiredAt: null,
+  +       area: 'Fixture',
+  +       bounds: null,
+  +       intent: 'coarse-area',
+  -   attempts: [
+  -     {
+          provider: 'GeoJS',
+  +       source: 'coarse-ip'
+  -       reason: 'latitude',
+  -       state: 'admission'
+        },
+  +     lon: 180,
+  +     lp: 0,
+  +     method: '4',
+  +     savedAt: null,
+  +     school: '0',
+  +     seed: null,
+  +     source: 'coarse-ip',
+  +     time: '24',
+  +     tz: 'America/New_York',
+  +     units: 'c',
+  +     v: 1
+  +   },
+  +   ok: true,
+  +   provider: 'GeoJS',
+  -     {
+  -       provider: 'ipinfo',
+  -       reason: 'latitude',
+  -       state: 'admission'
+  -     }
+  -   ],
+  -   ok: false,
+      source: 'coarse-ip',
+  +   status: 'ok'
+  -   status: 'failed'
+    }
+  
+      at Object.coarseBothInvalid (<worktree>\tests\location-admission-fixture.cjs:65:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { ok: true, cfg: { v: 1, lat: 90, lon: 180, tz: 'America/New_York', label: 'Fixture', method: '4', school: '0', time: '24', datefmt: 'YYYY-MM-DD', units: 'c', appearance: 'glass', lp: 0, seed: null, source: 'coarse-ip', savedAt: null, locationEvidence: [Object], detectProvider: 'GeoJS', area: 'Fixture', accuracy: null }, source: 'coarse-ip', provider: 'GeoJS', status: 'ok' },
+    expected: { ok: false, source: 'coarse-ip', status: 'failed', attempts: [ [Object], [Object] ] },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:20:3
+✖ ES26-14/A11 coarse accuracy "abc" → null (0.6646ms)
+  AssertionError [ERR_ASSERTION]: accuracy abc → NaN
+      at Object.coarseAccuracy (<worktree>\tests\location-admission-fixture.cjs:71:45)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:20:3
+✖ ES26-14/A11 coarse accuracy NaN → null (0.5557ms)
+  AssertionError [ERR_ASSERTION]: accuracy NaN → NaN
+      at Object.coarseAccuracy (<worktree>\tests\location-admission-fixture.cjs:71:45)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:20:3
+✖ ES26-14/A11 coarse accuracy -5 → null (0.5056ms)
+  AssertionError [ERR_ASSERTION]: accuracy -5 → -5
+      at Object.coarseAccuracy (<worktree>\tests\location-admission-fixture.cjs:71:45)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:20:3
+✖ ES26-14/A11 coarse accuracy "" → null (0.5027ms)
+  AssertionError [ERR_ASSERTION]: accuracy  → 0
+      at Object.coarseAccuracy (<worktree>\tests\location-admission-fixture.cjs:71:45)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:20:3
+✖ ES26-14/A11 coarse accuracy "Infinity" → null (0.493ms)
+  AssertionError [ERR_ASSERTION]: accuracy Infinity → Infinity
+      at Object.coarseAccuracy (<worktree>\tests\location-admission-fixture.cjs:71:45)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:20:3
+✖ ES26-14/A11 coarse accuracy true → null (0.5007ms)
+  AssertionError [ERR_ASSERTION]: accuracy true → 1
+      at Object.coarseAccuracy (<worktree>\tests\location-admission-fixture.cjs:71:45)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:21:1
+✖ A4 coarse attempts are additive, bounded and contain no provider body (0.7196ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at plain (<worktree>\tests\location-admission-fixture.cjs:12:25)
+      at Object.coarseAttemptsBounded (<worktree>\tests\location-admission-fixture.cjs:77:20)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:23:1
+✖ ES26-06 Nominatim HTTP 503 with a healthy-looking body is unavailable, not a match (0.5879ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.nominatim503 (<worktree>\tests\location-admission-fixture.cjs:116:9)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:23:100)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:24:1
+✖ ES26-08 Nominatim 429/network/malformed/non-array/null/timeout are unavailable with their category (0.4156ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.nominatimFailures (<worktree>\tests\location-admission-fixture.cjs:120:11)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:24:116)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:25:1
+✖ ES26-07 Nominatim valid empty array is a distinguishable no-match (0.3796ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.nominatimNoMatch (<worktree>\tests\location-admission-fixture.cjs:122:44)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:25:83)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:26:1
+✖ ES26-03/05 Nominatim out-of-range, nonfinite, prefix, hex, exponent and non-numeric coordinates are never candidates (0.4014ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.nominatimInvalid (<worktree>\tests\location-admission-fixture.cjs:125:11)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:26:134)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:27:1
+✖ ES26-04 forward zero, signed-zero, boundary, trimmed and JSON-number coordinates admitted exactly (0.4196ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at Object.forwardBoundaries (<worktree>\tests\location-admission-fixture.cjs:131:74)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:27:115)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:28:1
+✖ A1 Zippopotam 404 is a valid no-match; 5xx/429/network/malformed are failures (0.4932ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.zippopotam (<worktree>\tests\location-admission-fixture.cjs:136:9)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:28:95)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:29:1
+✖ ES26-03/05 Zippopotam null/empty/missing latitude is rejected, never coerced to 0 (0.4854ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.zippopotamMissingLatitude (<worktree>\tests\location-admission-fixture.cjs:142:11)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:29:99)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:30:1
+✖ ES26-09 one provider matches and the other fails: matches with partial coverage and usable candidates (0.3982ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.partialMatches (<worktree>\tests\location-admission-fixture.cjs:145:21)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:30:119)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:31:1
+✖ ES26-08 both providers fail: unavailable (0.5519ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.bothFail (<worktree>\tests\location-admission-fixture.cjs:152:9)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:31:58)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:32:1
+✖ ES26-10 one no-match plus one failure is not a comprehensive no-match (0.4186ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.emptyPlusFailure (<worktree>\tests\location-admission-fixture.cjs:155:9)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:32:87)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:33:1
+✖ A10 dedup keeps order, proximity policy and the surviving provenance; nonfinite never kept (0.4421ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at detailed (<worktree>\tests\location-admission-fixture.cjs:88:42)
+      at forward (<worktree>\tests\location-admission-fixture.cjs:99:34)
+      at Object.dedupe (<worktree>\tests\location-admission-fixture.cjs:159:23)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:33:108)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:34:1
+✖ ES26-11 short input is not-requested with zero requests (0.3723ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at Object.notRequested (<worktree>\tests\location-admission-fixture.cjs:164:52)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:34:73)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:35:1
+✖ ES26-12 abort-ignorant body settles once at the existing deadline; late body/rejection changes nothing (0.6767ms)
+  TypeError: e.api.geocodeSearchDetailed is not a function
+      at Object.lateBody (<worktree>\tests\location-admission-fixture.cjs:172:82)
+      at TestContext.<anonymous> (<worktree>\tests\location-admission-outcomes.test.cjs:35:120)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\location-admission-outcomes.test.cjs:38:1
+✖ A5 SalahConfig.geolocate admits browser coordinates before publication; accuracy unknown stays null (0.7005ms)
+  AssertionError [ERR_ASSERTION]: 999,10 must not be published
+  
+  true !== false
+  
+      at Object.geolocateAdmission (<worktree>\tests\location-admission-fixture.cjs:194:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:39:1
+✖ A5 builder one-shot geolocation applies the canonical admission before publishing (3.4304ms)
+  AssertionError [ERR_ASSERTION]: 999,10 must not be published
+  + actual - expected
+  
+    [
+  +   '999.00000',
+  +   '10.00000'
+  -   '24.4672',
+  -   '39.6142'
+    ]
+  
+      at Object.builderGeolocation (<worktree>\tests\location-admission-fixture.cjs:253:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ '999.00000', '10.00000' ],
+    expected: [ '24.4672', '39.6142' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:40:1
+✖ A5 settings precise location rejects invalid browser coordinates (10.5095ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   '999.00000',
+  +   '10.00000'
+  -   '24.4672',
+  -   '39.6142'
+    ]
+  
+      at Object.settingsGeolocation (<worktree>\tests\location-admission-fixture.cjs:264:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '999.00000', '10.00000' ],
+    expected: [ '24.4672', '39.6142' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:41:1
+✖ ES26-01/02 builder coarse detection: invalid GeoJS uses the fallback; both invalid fail visibly (2.5005ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   '90.00000',
+  +   '180.00000'
+  -   '51.50000',
+  -   '-0.12000'
+    ]
+  
+      at Object.builderCoarse (<worktree>\tests\location-admission-fixture.cjs:245:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ '90.00000', '180.00000' ],
+    expected: [ '51.50000', '-0.12000' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:45:3
+✖ ES26-08/16 builder: unavailable search is distinct from not-found and publishes nothing (1.9193ms)
+  AssertionError [ERR_ASSERTION]: {"status":503,"body":[{"class":"place","lat":"51.5","lon":"-0.12","name":"London","address":{"city":"London","country":"Fixture","country_code":"fx"}}]}: Found: London, Fixture
+      at Object.uiUnavailable (<worktree>\tests\location-admission-fixture.cjs:229:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Found: London, Fixture',
+    expected: /^Search unavailable/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:46:3
+✖ ES26-09/A9 builder: partial coverage keeps usable candidates with a concise note (2.4528ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^Found \(partial search\): Toronto/. Input:
+  
+  'Found: Toronto, Fixture'
+  
+      at Object.uiPartial (<worktree>\tests\location-admission-fixture.cjs:236:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Found: Toronto, Fixture',
+    expected: /^Found \(partial search\): Toronto/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:48:5
+✖ ES26-13/A6 builder: stale lookup success cannot update the current form and reports superseded (1.6581ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'matches'
+  
+      at Object.staleLookup (<worktree>\tests\location-admission-fixture.cjs:277:56)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'matches',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:48:5
+✖ ES26-13/A6 builder: stale lookup error cannot update the current form and reports superseded (2.2505ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'matches'
+  
+      at Object.staleLookup (<worktree>\tests\location-admission-fixture.cjs:277:56)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'matches',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:45:3
+✖ ES26-08/16 settings: unavailable search is distinct from not-found and publishes nothing (8.7346ms)
+  AssertionError [ERR_ASSERTION]: {"status":503,"body":[{"class":"place","lat":"51.5","lon":"-0.12","name":"London","address":{"city":"London","country":"Fixture","country_code":"fx"}}]}: Found: London, Fixture
+      at Object.uiUnavailable (<worktree>\tests\location-admission-fixture.cjs:229:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'Found: London, Fixture',
+    expected: /^Search unavailable/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:46:3
+✖ ES26-09/A9 settings: partial coverage keeps usable candidates with a concise note (9.4727ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^Found \(partial search\): Toronto/. Input:
+  
+  'Found: Toronto, Fixture'
+  
+      at Object.uiPartial (<worktree>\tests\location-admission-fixture.cjs:236:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'Found: Toronto, Fixture',
+    expected: /^Found \(partial search\): Toronto/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:48:5
+✖ ES26-13/A6 settings: stale lookup success cannot update the current form and reports superseded (8.2197ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'matches'
+  
+      at Object.staleLookup (<worktree>\tests\location-admission-fixture.cjs:277:56)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'matches',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\location-admission-outcomes.test.cjs:48:5
+✖ ES26-13/A6 settings: stale lookup error cannot update the current form and reports superseded (9.571ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'matches'
+  
+      at Object.staleLookup (<worktree>\tests\location-admission-fixture.cjs:277:56)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'matches',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+# exit=1

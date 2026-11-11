@@ -18,21 +18,84 @@
   // Moon bodies retain the review at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
   // A new delivery requires explicit source review/rebinding, never an automatic
   // update from the same untrusted body whose admission is being checked.
-  // R0027 first-paint rebind: the only change to the generated first-paint body is
+  // R0021 rebind (branch claude/r0021-instance-lifecycle-20261111 over 645b53cc):
+  // first-paint carries the preview-host construction custody; moon-initial
+  // carries moon-install-guard.mjs and the instance-captured detail in
+  // moon-native.mjs. Previous pins, retained for attribution: first-paint
+  // be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7 (R000B),
+  // moon-initial 837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14
+  // (f71fef6c review). moon-refinement is unchanged.
+  // R0021 second rebind at de68e848: moon-initial 5f1d42df4e3d962a9c0b82d30db77db3291ba0083de4489516dc76050e2aafe5
+  // (dcc8206b) -> 4dc7140f (Moon detail acquired at the registration boundary with unwind).
+  // R0021 third rebind at 145b7ba9: moon-initial 4dc7140f763417d0d8928e02f96cb010eec31f5363fb234f656785d7bfaae90b
+  // (de68e848) -> d5e648ac (a half-built runtime reports disposed and leaves the registry slot).
+  // R0027 first-paint rebind: the only R0027 change to the generated first-paint body is
   // the reviewed retention-only spectral transform (tools/native_core_spectral_cache.py,
   // generated real-sky/core/src/spectral.mjs SHA256
-  // 4fcda07d1fc5a210d7d748a4c33518ed3068dbbf25eacf7415fa10abaad14489) on accepted main
-  // 645b53cc5d04d35444f6da0e27bf5a5b6b11ce67. Previous (R000B) pin, kept as history:
-  // be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7.
+  // 4fcda07d1fc5a210d7d748a4c33518ed3068dbbf25eacf7415fa10abaad14489). History: R0027 on accepted main
+  // 645b53cc5d04d35444f6da0e27bf5a5b6b11ce67 rebound be62ab92 (R000B) -> 8817c6599ff3958574b8d34f0cf9355368522ce03a6bc4e70fa5adfcedddcd8b;
+  // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06): R0021 a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819
+  // -> 1ba361b6 (R0021 body plus the same spectral transform).
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'8817c6599ff3958574b8d34f0cf9355368522ce03a6bc4e70fa5adfcedddcd8b',
-    'moon-initial':'837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14',
+    'first-paint':'1ba361b60f46ac631f70315b2542018c151013cb83c6b4e0f458da63ed55769e',
+    'moon-initial':'d5e648ac08b80a8291140eddbd73dc7305aa7d40f38ebcbea71e239d5be54f16',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0021 stacked on the R000F candidate 2aa3bd11 (R0003 54e29e6a, main 7f2e8d16) by merge 65f7c75a: legacy-Moon
+    // structural control of index 0f765e33. The authored source is the admitted b09f51ed (64258c86) unchanged;
+    // every entry below, including R0021's 20d1a5b0 (dcc8206b), remains admitted unchanged.
+    '4af7e86f00694948bec61dae4d0d9b36218a125d40828bebcc06f5abe49c91f7':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'65f7c75a89bbc9f737dc72d8cbf79a213fc76a73',path:'index.html',
+      parentSha256:'0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0003 reconciled onto accepted main 7f2e8d16 (R0026) by merge 64258c86;
+    // explicitly rebound like the a06957c6 and ff7b042d inputs below, which remain admitted unchanged.
+    'b09f51ed5d48f8b3978b5644e3661fee3935886744e4b320853a1c5bb815ffd8':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'64258c865846aa27b70681ae33038dae017f864c',path:'src/native/index.html',layout:'config,native'}),
+    '5269f97a5370cf26469f30a47b53d3d17c23e3286f91347f1c1f7995409f286d':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'64258c865846aa27b70681ae33038dae017f864c',path:'index.html',
+      parentSha256:'9f2fb30b19aa103c2511418970291bba84dbe3bf3acaca536f4410a8669498d5',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0003 configuration-effect classifier at a06957c6 on accepted main 645b53cc;
+    // explicitly rebound like the ba0851ae inputs below, which remain admitted unchanged.
+    'e7538e8767d3dc95c11031becc9a2a26d05833617baf1bcf73aa430ad32eb6e7':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'a06957c6ef3f838e3b02c664492b4423342d60ab',path:'src/native/index.html',layout:'config,native'}),
+    'ee53ffdce473d0381cc1ec532bbd6b763b1978ed8dddca68dadbd2d9207c0d5f':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'a06957c6ef3f838e3b02c664492b4423342d60ab',path:'index.html',
+      parentSha256:'598287a419f43ce52eb71d4c68e0f3d51013446bbf89666086ce1f40150fed21',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0026 review follow-up (settings partial/unavailable wording) at ff7b042d;
+    // explicitly rebound like the ba2a8679 inputs below, which remain admitted unchanged.
+    'b68ed74b5c3b110d231c3672628b98925dae09bd1836b04bb61602469be97b34':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ff7b042d8a65b9376e40da26e5ffcf10d6ca0233',path:'src/native/index.html',layout:'config,native'}),
+    'aec0d2243be01598cebb89ba87ad31bc2c992ffd5b4eb55a3e600f7754415f74':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ff7b042d8a65b9376e40da26e5ffcf10d6ca0233',path:'index.html',
+      parentSha256:'987125da46481042b6c8a5eacceec638b99a090cd61afbca6918d9115b281f82',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0026 settings search consumer (detailed outcomes) at ba2a8679 on accepted main 645b53cc;
+    // explicitly rebound like the ba0851ae inputs below, which remain admitted unchanged.
+    'bcd68708a37f2fab9546c113b8c4b141e6b79fb4bcb511d73655058f1dd7f867':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ba2a867939a60ab3814a82f89fa18757022ce2ff',path:'src/native/index.html',layout:'config,native'}),
+    '4604961a23877063a80a84822ce2dc0532903fb92b8146e21117c514b06519cf':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ba2a867939a60ab3814a82f89fa18757022ce2ff',path:'index.html',
+      parentSha256:'01b720c58e4885978af06c2b3893256cfeae425139418b4fab7279a5b1f8ad5c',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0021 instance lifecycle at dcc8206b0e466fefc4827872e7d784b99ff56c63 over accepted main 645b53cc: legacy-Moon
+    // structural control of index c6e0e2e0; earlier entries below remain admitted unchanged.
+    '20d1a5b0564d0bc8bb5d4f56a3b65ed33b4738d7b49494293dcca2c26b2f7f0c':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'dcc8206b0e466fefc4827872e7d784b99ff56c63',path:'index.html',
+      parentSha256:'c6e0e2e089d53a00626c3014f1db040162af8849a35973d8b453b1c19b00a2ff',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0027 generated spectral retention on accepted main 645b53cc: only the generated
     // root index.html changed (authored src/native/index.html unchanged, so its
     // R000D identity below stays current); the R000D inputs below remain admitted unchanged.

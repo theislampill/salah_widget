@@ -1,0 +1,106 @@
+# R0021 re-qualification on the reconciled tree (head 911d7883, merge 65f7c75a over R000F 2aa3bd11)
+# node v24.14.0; base = git archive 2aa3bd11, history-reading suites run with GIT_DIR=<repository object store>
+# no browser was launched for any row below
+
+## node --test tests/*.test.cjs tests/*.test.mjs
+candidate: tests 957 pass 953 fail 0 todo 4 | base: tests 957 pass 953 fail 0 todo 4
+## node --test tests/real-sky/*.test.mjs
+candidate: 324/324 | base: 292/292 (+32 = tests/real-sky/native-construction-ownership.test.mjs, 32 tests)
+## node --test moon/tests/*.test.cjs
+candidate: 133/133 | base: 121/121 (+12 = moon/tests/native-instance-retirement.test.cjs, 12 tests)
+## R000B focused: node --test tests/r000b-sky-withdrawal.test.mjs tests/r000b-remaining.test.cjs tests/real-sky/native-weather-withdrawal.test.mjs
+candidate: 83/83
+## python tests/weather-no-timetable-assembly.test.py; PYTHONUTF8=1 python tests/weather-no-timetable-native-oracles.test.py
+exit 0, 0
+## pytest moon/tests/test_build.py, tests/real-sky/moon_build_guard_test.py, tests/real-sky/moon_runtime_identity_test.py
+2 passed; 8 passed (7 subtests); 1 passed
+## node tests/real-sky/native-head-handoff.cjs
+exit 0
+## node tests/rlgwo-docs-contract.cjs
+candidate: exit 1, 50/64 pass, 14 FAIL | base: exit 1, the same 14 failing names
+## python tools/qa/run_r0021_mutants.py --out docs/state-contracts/evidence/R0021/20261111-reconciled-2aa3bd11/mutants
+23/23 KILLED, healthy control passing in each (mutants/mutants.json)
+
+## 45 directly-run tests/*.cjs (excluding fixtures, harnesses, server, diagnostics); candidate rows; base identical in every row
+tests/native-inline-runtime.cjs exit=0 pass=0 fail=0
+tests/r0001-date-sinks.cjs exit=1 pass=12 fail=1
+tests/r0007-countdown.cjs exit=0 pass=0 fail=0
+tests/r0008-timezone.cjs exit=0 pass=0 fail=0
+tests/r0009-date-mutations.cjs exit=1 pass=0 fail=2
+tests/r0009-date-selection.cjs exit=1 pass=21 fail=1
+tests/r000f-intent.cjs exit=0 pass=21 fail=0
+tests/r000f-mutations.cjs exit=0 pass=7 fail=0
+tests/r000f-reset-mutations.cjs exit=0 pass=3 fail=0
+tests/r000f-reset.cjs exit=0 pass=9 fail=0
+tests/r0010-mutations.cjs exit=0 pass=2 fail=0
+tests/r0010-preferences.cjs exit=0 pass=9 fail=0
+tests/r0011-mutations.cjs exit=0 pass=7 fail=0
+tests/r0011-storage.cjs exit=0 pass=18 fail=0
+tests/r0012-clipboard.cjs exit=0 pass=11 fail=0
+tests/r0012-effects-mutations.cjs exit=0 pass=1 fail=0
+tests/r0012-effects.cjs exit=0 pass=3 fail=0
+tests/r0012-mutations.cjs exit=0 pass=3 fail=0
+tests/r0017-cloud-visibility.cjs exit=0 pass=39 fail=0
+tests/r0017-contract.cjs exit=0 pass=35 fail=1
+tests/r0017-transport.cjs exit=0 pass=32 fail=0
+tests/r0017-weather.cjs exit=0 pass=6 fail=0
+tests/r0018-appearance-mutations.cjs exit=1 pass=4 fail=2
+tests/r0018-appearance.cjs exit=0 pass=17 fail=0
+tests/r0018-timetable-contrast.cjs exit=0 pass=11 fail=0
+tests/r0019-date-disclosure.cjs exit=1 pass=15 fail=1
+tests/r001a-mutations.cjs exit=0 pass=2 fail=0
+tests/r001a-radio.cjs exit=0 pass=8 fail=0
+tests/r001d-lifecycle.cjs exit=0 pass=11 fail=0
+tests/r001d-mutations.cjs exit=1 pass=0 fail=0
+tests/r001f-deadline.cjs exit=0 pass=13 fail=0
+tests/r001f-mutations.cjs exit=0 pass=2 fail=0
+tests/r0020-clock.cjs exit=0 pass=0 fail=0
+tests/r0021-reveal.cjs exit=1 pass=17 fail=1
+tests/r0022-baseline-balance.cjs exit=1 pass=30 fail=7
+tests/r0022-lunar-consumers.cjs exit=1 pass=24 fail=2
+tests/r0022-native-navigation.cjs exit=0 pass=2 fail=0
+tests/r0023-metadata.cjs exit=0 pass=31 fail=0
+tests/r0023-mutations.cjs exit=0 pass=5 fail=0
+tests/r0025-context.cjs exit=0 pass=0 fail=0
+tests/r0025-continuity.cjs exit=0 pass=9 fail=0
+tests/r0025-lifecycle.cjs exit=0 pass=16 fail=0
+tests/r0025-mutations.cjs exit=1 pass=0 fail=0
+tests/rlgwo-docs-contract.cjs exit=1 pass=50 fail=14
+tests/v1_storage.cjs exit=0 pass=10 fail=0
+
+## PYTHONUTF8=1 python tools/cp9/run_native_regressions.py --output <scratch>; candidate rows; base (--root <archive>) identical in every row
+native-runner-contract 0 PASS {'tests': 42}
+native-test-glob 0 INCOMPLETE {'tests': 938, 'pass': 934, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 4}
+r0001-date-sinks 1 FAIL {'passCases': 12, 'failCases': 1}
+r0007-countdown 0 PASS {'tests': 23, 'pass': 23, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0008-timezone 0 PASS {'tests': 37, 'pass': 37, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0009-date-selection 1 FAIL {'passCases': 21, 'failCases': 1}
+r000f-intent 0 PASS {'passLines': 21, 'failLines': 0}
+r000f-reset 0 PASS {'passLines': 9, 'failLines': 0}
+r0010-preferences 0 PASS {'passLines': 9, 'failLines': 0}
+r0011-storage 0 PASS {'passLines': 18, 'failLines': 0}
+r0012-clipboard 0 PASS {'passLines': 11, 'failLines': 0}
+r0012-effects 0 PASS {'passLines': 3, 'failLines': 0}
+r0017-cloud-visibility 0 PASS {'passCases': 39, 'failCases': 0}
+r0017-contract 0 PASS {'passCases': 35, 'failCases': 0}
+r0017-transport 0 PASS {'passCases': 32, 'failCases': 0}
+r0017-weather 0 PASS {'passCases': 6, 'failCases': 0}
+r0018-appearance 0 PASS {'passCases': 17, 'failCases': 0}
+r0018-timetable-contrast 0 PASS {'passCases': 11, 'failCases': 0}
+r0019-date-disclosure 1 FAIL {'passCases': 15, 'failCases': 1}
+r001a-radio 0 PASS {'passLines': 8, 'failLines': 0}
+r001d-lifecycle 0 PASS {'passLines': 11, 'failLines': 0}
+r001f-deadline 0 PASS {'passLines': 13, 'failLines': 0}
+r0020-clock 0 PASS {'tests': 44, 'pass': 44, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0021-reveal 1 FAIL {'passLines': 14, 'failLines': 1}
+r0022-baseline-balance 1 FAIL {'passLines': 30, 'failLines': 7, 'unparsedOutput': True}
+r0022-lunar-consumers 0 INCOMPLETE {'passLines': 24, 'failLines': 0}
+r0023-metadata 0 PASS {'passLines': 31, 'failLines': 0}
+r0025-continuity 0 PASS {'passLines': 9, 'failLines': 0}
+r0025-lifecycle 0 PASS {'passLines': 16, 'failLines': 0}
+
+## first failures of the known-failing rows (candidate; same on base and as recorded at R0003/R000F)
+r0001-date-sinks, r0009-date-selection, r0019-date-disclosure: el.style.getPropertyValue is not a function
+r0021-reveal: moon PBR shader and embedded payloads retain exact accepted bytes
+r0022-baseline-balance: protected phase-gain guard rejects a changed .08 crescent curve
+r0022-lunar-consumers: INCOMPLETE

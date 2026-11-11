@@ -1,0 +1,597 @@
+# R0003 RED, 2026-11-11T09:45:38Z, node v24.14.0, worktree HEAD d8ce93ac2b95058e8dd6180b859c26ad9638d3b3 (= main 645b53cc + r0011 harness repair d8ce93ac; product source unchanged)
+# sha256 index.html e41ba4341cb22741f97719dc08bccfad895f8fe5f11bc67288ad70663913f1f5  src/native/index.html 2444e2a9017a4ce3e54c5a3f186668798f29b883fe0fe869f036dcf80f44c81c  config.js 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+# command: node --test tests/config-effects-state.test.cjs
+✖ ES03-0x cosmetic label: no generation/request/zone/scene/throttle/retry effect; presentation updates (52.3103ms)
+✖ ES03-0x cosmetic time12: no generation/request/zone/scene/throttle/retry effect; presentation updates (31.4009ms)
+✖ ES03-0x cosmetic dateLong: no generation/request/zone/scene/throttle/retry effect; presentation updates (35.9209ms)
+✔ ES03-0x cosmetic appearance: no generation/request/zone/scene/throttle/retry effect; presentation updates (32.4771ms)
+✖ ES03-0x cosmetic identical: no generation/request/zone/scene/throttle/retry effect; presentation updates (31.413ms)
+✖ ES03-0x cosmetic mixedCosmetic: no generation/request/zone/scene/throttle/retry effect; presentation updates (30.8477ms)
+✔ ES03-08/09/13 genuine lat: broad path invalidates obsolete owners and reacquires (31.1889ms)
+✔ ES03-08/09/13 genuine lon: broad path invalidates obsolete owners and reacquires (32.71ms)
+✔ ES03-08/09/13 genuine method: broad path invalidates obsolete owners and reacquires (33.6819ms)
+✔ ES03-08/09/13 genuine school: broad path invalidates obsolete owners and reacquires (34.7275ms)
+✔ ES03-08/09/13 genuine tzHint: broad path invalidates obsolete owners and reacquires (30.8593ms)
+✔ ES03-08/09/13 genuine units: broad path invalidates obsolete owners and reacquires (32.9971ms)
+✔ ES03-08/09/13 genuine lp: broad path invalidates obsolete owners and reacquires (32.4175ms)
+✔ ES03-08/09/13 genuine seed: broad path invalidates obsolete owners and reacquires (30.5838ms)
+✔ ES03-08/09/13 genuine evidencePlace: broad path invalidates obsolete owners and reacquires (44.2727ms)
+✔ ES03-08/09/13 genuine evidenceDevice: broad path invalidates obsolete owners and reacquires (42.7211ms)
+✔ ES03-08/09/13 genuine provenance: broad path invalidates obsolete owners and reacquires (39.525ms)
+✔ ES03-08/09/13 genuine mixed: broad path invalidates obsolete owners and reacquires (34.2857ms)
+✔ ES03-08/09/13 genuine unknownField: broad path invalidates obsolete owners and reacquires (32.8218ms)
+✔ D1 explicit Reset with values equal to the current configuration is a real broad reset (applyConfig intent) (40.3726ms)
+✔ D1 actual settings Reset control passes the explicit reset intent (equal detected values still reset) (19.3787ms)
+✖ ES03-10/11 cosmetic edit during A->B: B commits, late A ok rejected, edit shows (10.6751ms)
+✖ ES03-10/11 cosmetic edit during A->B: B commits, late A fail rejected, edit shows (10.053ms)
+✖ ES03-10 A->B->A with a cosmetic edit during the second A: first A and B stay obsolete (11.1017ms)
+✖ D8 hidden/paused widget: no background render; the first resumed frame shows the pending formats (39.7738ms)
+✖ ES03-07 acquisition source/time/accuracy survive an unrelated saved edit; savedAt separate (16.2754ms)
+✖ ES03-05/12 D1 failed-save retry: persistence executed and reported, warning kept, nothing restarted (13.0638ms)
+✖ ES03-01/02/05 actual settings close-save (label) takes the no-restart path (12.892ms)
+✖ ES03-01/02/05 actual settings close-save (time) takes the no-restart path (13.3864ms)
+✖ ES03-01/02/05 actual settings close-save (none) takes the no-restart path (13.8971ms)
+✖ D7 classifier is pure: runs in an empty realm, deterministic, does not mutate its inputs (2.9745ms)
+✖ ES03-01..05/09/13 classifier decisions per field class (2.8605ms)
+✖ ES03-14 table covers every field of every real configuration producer, and nothing else (3.3046ms)
+✖ ES03-14 D7 production consumes the table: applyConfig is the sole dispatcher, Reset passes explicit intent (2.9191ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 16
+ℹ fail 18
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 969.2136
+
+✖ failing tests:
+
+test at tests\config-effects-state.test.cjs:12:43
+✖ ES03-0x cosmetic label: no generation/request/zone/scene/throttle/retry effect; presentation updates (52.3103ms)
+  AssertionError [ERR_ASSERTION]: label: no generation, request, zone/cache-key rollback, sky restart, throttle or retry-record reset
+  + actual - expected
+  
+    {
+      cacheKey: 'salah:10|10|UTC|2|0',
+      cacheTz: 'UTC',
+  +   generation: 2,
+  -   generation: 1,
+      lastDate: '07-09-2026',
+  +   lastRadarAt: 0,
+  +   lastWxTry: 0,
+  -   lastRadarAt: 222,
+  -   lastWxTry: 111,
+      loop: true,
+      pending: true,
+  +   radarOwned: false,
+  +   requests: 3,
+  -   radarOwned: true,
+  -   requests: 2,
+      retry: {
+  +     radar: null,
+  +     weather: null
+  -     radar: {
+  -       clock: 'monotonic',
+  -       startedAt: 7
+  -     },
+  -     weather: {
+  -       clock: 'monotonic',
+  -       startedAt: 5
+  -     }
+      },
+      sceneKey: null,
+  +   todaySame: false,
+  -   todaySame: true,
+      tz: 'Asia/Riyadh',
+      writes: 1,
+  +   wxOwned: false
+  -   wxOwned: true
+    }
+  
+      at Object.cosmeticPreserves (<repo>\tests\config-effects-fixture.cjs:68:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 2, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: false, lastWxTry: 0, lastRadarAt: 0, retry: { weather: null, radar: null }, wxOwned: false, radarOwned: false, lastDate: '07-09-2026', loop: true, requests: 3, writes: 1 },
+    expected: { generation: 1, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: true, lastWxTry: 111, lastRadarAt: 222, retry: { weather: [Object], radar: [Object] }, wxOwned: true, radarOwned: true, lastDate: '07-09-2026', loop: true, requests: 2, writes: 1 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:12:43
+✖ ES03-0x cosmetic time12: no generation/request/zone/scene/throttle/retry effect; presentation updates (31.4009ms)
+  AssertionError [ERR_ASSERTION]: time12: no generation, request, zone/cache-key rollback, sky restart, throttle or retry-record reset
+  + actual - expected
+  
+    {
+      cacheKey: 'salah:10|10|UTC|2|0',
+      cacheTz: 'UTC',
+  +   generation: 2,
+  -   generation: 1,
+      lastDate: '07-09-2026',
+  +   lastRadarAt: 0,
+  +   lastWxTry: 0,
+  -   lastRadarAt: 222,
+  -   lastWxTry: 111,
+      loop: true,
+      pending: true,
+  +   radarOwned: false,
+  +   requests: 3,
+  -   radarOwned: true,
+  -   requests: 2,
+      retry: {
+  +     radar: null,
+  +     weather: null
+  -     radar: {
+  -       clock: 'monotonic',
+  -       startedAt: 7
+  -     },
+  -     weather: {
+  -       clock: 'monotonic',
+  -       startedAt: 5
+  -     }
+      },
+      sceneKey: null,
+  +   todaySame: false,
+  -   todaySame: true,
+      tz: 'Asia/Riyadh',
+      writes: 1,
+  +   wxOwned: false
+  -   wxOwned: true
+    }
+  
+      at Object.cosmeticPreserves (<repo>\tests\config-effects-fixture.cjs:68:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 2, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: false, lastWxTry: 0, lastRadarAt: 0, retry: { weather: null, radar: null }, wxOwned: false, radarOwned: false, lastDate: '07-09-2026', loop: true, requests: 3, writes: 1 },
+    expected: { generation: 1, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: true, lastWxTry: 111, lastRadarAt: 222, retry: { weather: [Object], radar: [Object] }, wxOwned: true, radarOwned: true, lastDate: '07-09-2026', loop: true, requests: 2, writes: 1 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:12:43
+✖ ES03-0x cosmetic dateLong: no generation/request/zone/scene/throttle/retry effect; presentation updates (35.9209ms)
+  AssertionError [ERR_ASSERTION]: dateLong: no generation, request, zone/cache-key rollback, sky restart, throttle or retry-record reset
+  + actual - expected
+  
+    {
+      cacheKey: 'salah:10|10|UTC|2|0',
+      cacheTz: 'UTC',
+  +   generation: 2,
+  -   generation: 1,
+      lastDate: '07-09-2026',
+  +   lastRadarAt: 0,
+  +   lastWxTry: 0,
+  -   lastRadarAt: 222,
+  -   lastWxTry: 111,
+      loop: true,
+      pending: true,
+  +   radarOwned: false,
+  +   requests: 3,
+  -   radarOwned: true,
+  -   requests: 2,
+      retry: {
+  +     radar: null,
+  +     weather: null
+  -     radar: {
+  -       clock: 'monotonic',
+  -       startedAt: 7
+  -     },
+  -     weather: {
+  -       clock: 'monotonic',
+  -       startedAt: 5
+  -     }
+      },
+      sceneKey: null,
+  +   todaySame: false,
+  -   todaySame: true,
+      tz: 'Asia/Riyadh',
+      writes: 1,
+  +   wxOwned: false
+  -   wxOwned: true
+    }
+  
+      at Object.cosmeticPreserves (<repo>\tests\config-effects-fixture.cjs:68:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 2, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: false, lastWxTry: 0, lastRadarAt: 0, retry: { weather: null, radar: null }, wxOwned: false, radarOwned: false, lastDate: '07-09-2026', loop: true, requests: 3, writes: 1 },
+    expected: { generation: 1, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: true, lastWxTry: 111, lastRadarAt: 222, retry: { weather: [Object], radar: [Object] }, wxOwned: true, radarOwned: true, lastDate: '07-09-2026', loop: true, requests: 2, writes: 1 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:12:43
+✖ ES03-0x cosmetic identical: no generation/request/zone/scene/throttle/retry effect; presentation updates (31.413ms)
+  AssertionError [ERR_ASSERTION]: identical: no generation, request, zone/cache-key rollback, sky restart, throttle or retry-record reset
+  + actual - expected
+  
+    {
+      cacheKey: 'salah:10|10|UTC|2|0',
+      cacheTz: 'UTC',
+  +   generation: 2,
+  -   generation: 1,
+      lastDate: '07-09-2026',
+  +   lastRadarAt: 0,
+  +   lastWxTry: 0,
+  -   lastRadarAt: 222,
+  -   lastWxTry: 111,
+      loop: true,
+      pending: true,
+  +   radarOwned: false,
+  +   requests: 3,
+  -   radarOwned: true,
+  -   requests: 2,
+      retry: {
+  +     radar: null,
+  +     weather: null
+  -     radar: {
+  -       clock: 'monotonic',
+  -       startedAt: 7
+  -     },
+  -     weather: {
+  -       clock: 'monotonic',
+  -       startedAt: 5
+  -     }
+      },
+      sceneKey: null,
+  +   todaySame: false,
+  -   todaySame: true,
+      tz: 'Asia/Riyadh',
+      writes: 1,
+  +   wxOwned: false
+  -   wxOwned: true
+    }
+  
+      at Object.cosmeticPreserves (<repo>\tests\config-effects-fixture.cjs:68:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 2, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: false, lastWxTry: 0, lastRadarAt: 0, retry: { weather: null, radar: null }, wxOwned: false, radarOwned: false, lastDate: '07-09-2026', loop: true, requests: 3, writes: 1 },
+    expected: { generation: 1, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: true, lastWxTry: 111, lastRadarAt: 222, retry: { weather: [Object], radar: [Object] }, wxOwned: true, radarOwned: true, lastDate: '07-09-2026', loop: true, requests: 2, writes: 1 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:12:43
+✖ ES03-0x cosmetic mixedCosmetic: no generation/request/zone/scene/throttle/retry effect; presentation updates (30.8477ms)
+  AssertionError [ERR_ASSERTION]: mixedCosmetic: no generation, request, zone/cache-key rollback, sky restart, throttle or retry-record reset
+  + actual - expected
+  
+    {
+      cacheKey: 'salah:10|10|UTC|2|0',
+      cacheTz: 'UTC',
+  +   generation: 2,
+  -   generation: 1,
+      lastDate: '07-09-2026',
+  +   lastRadarAt: 0,
+  +   lastWxTry: 0,
+  -   lastRadarAt: 222,
+  -   lastWxTry: 111,
+      loop: true,
+      pending: true,
+  +   radarOwned: false,
+  +   requests: 3,
+  -   radarOwned: true,
+  -   requests: 2,
+      retry: {
+  +     radar: null,
+  +     weather: null
+  -     radar: {
+  -       clock: 'monotonic',
+  -       startedAt: 7
+  -     },
+  -     weather: {
+  -       clock: 'monotonic',
+  -       startedAt: 5
+  -     }
+      },
+      sceneKey: null,
+  +   todaySame: false,
+  -   todaySame: true,
+      tz: 'Asia/Riyadh',
+      writes: 1,
+  +   wxOwned: false
+  -   wxOwned: true
+    }
+  
+      at Object.cosmeticPreserves (<repo>\tests\config-effects-fixture.cjs:68:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 2, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: false, lastWxTry: 0, lastRadarAt: 0, retry: { weather: null, radar: null }, wxOwned: false, radarOwned: false, lastDate: '07-09-2026', loop: true, requests: 3, writes: 1 },
+    expected: { generation: 1, tz: 'Asia/Riyadh', cacheTz: 'UTC', cacheKey: 'salah:10|10|UTC|2|0', sceneKey: null, pending: true, todaySame: true, lastWxTry: 111, lastRadarAt: 222, retry: { weather: [Object], radar: [Object] }, wxOwned: true, radarOwned: true, lastDate: '07-09-2026', loop: true, requests: 2, writes: 1 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:18:33
+✖ ES03-10/11 cosmetic edit during A->B: B commits, late A ok rejected, edit shows (10.6751ms)
+  AssertionError [ERR_ASSERTION]: cosmetic edit keeps B's generation
+  
+  3 !== 2
+  
+      at Object.cosmeticDuringB (<repo>\tests\config-effects-fixture.cjs:114:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:18:33
+✖ ES03-10/11 cosmetic edit during A->B: B commits, late A fail rejected, edit shows (10.053ms)
+  AssertionError [ERR_ASSERTION]: cosmetic edit keeps B's generation
+  
+  3 !== 2
+  
+      at Object.cosmeticDuringB (<repo>\tests\config-effects-fixture.cjs:114:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:19:1
+✖ ES03-10 A->B->A with a cosmetic edit during the second A: first A and B stay obsolete (11.1017ms)
+  AssertionError [ERR_ASSERTION]: the current A2 response commits
+  + actual - expected
+  
+  + undefined
+  - 'A2-current'
+  
+      at Object.abaWithCosmetic (<repo>\tests\config-effects-fixture.cjs:135:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'A2-current',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:21:1
+✖ D8 hidden/paused widget: no background render; the first resumed frame shows the pending formats (39.7738ms)
+  AssertionError [ERR_ASSERTION]: hidden widget is not re-rendered
+  
+  '—' !== '15:30'
+  
+      at Object.hiddenThenResumed (<repo>\tests\config-effects-fixture.cjs:144:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '—',
+    expected: '15:30',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:23:1
+✖ ES03-07 acquisition source/time/accuracy survive an unrelated saved edit; savedAt separate (16.2754ms)
+  AssertionError [ERR_ASSERTION]: label save restarts nothing
+  + actual - expected
+  
+    {
+  +   generation: 1,
+  -   generation: 0,
+      loop: 0,
+  +   prayer: 1,
+  +   weather: 1
+  -   prayer: 0,
+  -   weather: 0
+    }
+  
+      at Object.evidenceSurvivesSave (<repo>\tests\config-effects-fixture.cjs:196:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 1, prayer: 1, weather: 1, loop: 0 },
+    expected: { generation: 0, prayer: 0, weather: 0, loop: 0 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:25:1
+✖ ES03-05/12 D1 failed-save retry: persistence executed and reported, warning kept, nothing restarted (13.0638ms)
+  AssertionError [ERR_ASSERTION]: failed retry restarts nothing
+  + actual - expected
+  
+    {
+  +   generation: 2,
+  -   generation: 1,
+      loop: 0,
+  +   prayer: 2,
+  +   weather: 2
+  -   prayer: 1,
+  -   weather: 1
+    }
+  
+      at Object.failedSaveRetry (<repo>\tests\config-effects-fixture.cjs:172:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 2, prayer: 2, weather: 2, loop: 0 },
+    expected: { generation: 1, prayer: 1, weather: 1, loop: 0 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:26:43
+✖ ES03-01/02/05 actual settings close-save (label) takes the no-restart path (12.892ms)
+  AssertionError [ERR_ASSERTION]: label: settings close-save restarts nothing
+  + actual - expected
+  
+    {
+  +   generation: 1,
+  -   generation: 0,
+      loop: 0,
+  +   prayer: 1,
+  +   weather: 1
+  -   prayer: 0,
+  -   weather: 0
+    }
+  
+      at Object.settingsCloseCosmetic (<repo>\tests\config-effects-fixture.cjs:219:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 1, prayer: 1, weather: 1, loop: 0 },
+    expected: { generation: 0, prayer: 0, weather: 0, loop: 0 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:26:43
+✖ ES03-01/02/05 actual settings close-save (time) takes the no-restart path (13.3864ms)
+  AssertionError [ERR_ASSERTION]: time: settings close-save restarts nothing
+  + actual - expected
+  
+    {
+  +   generation: 1,
+  -   generation: 0,
+      loop: 0,
+  +   prayer: 1,
+  +   weather: 1
+  -   prayer: 0,
+  -   weather: 0
+    }
+  
+      at Object.settingsCloseCosmetic (<repo>\tests\config-effects-fixture.cjs:219:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 1, prayer: 1, weather: 1, loop: 0 },
+    expected: { generation: 0, prayer: 0, weather: 0, loop: 0 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:26:43
+✖ ES03-01/02/05 actual settings close-save (none) takes the no-restart path (13.8971ms)
+  AssertionError [ERR_ASSERTION]: none: settings close-save restarts nothing
+  + actual - expected
+  
+    {
+  +   generation: 1,
+  -   generation: 0,
+      loop: 0,
+  +   prayer: 1,
+  +   weather: 1
+  -   prayer: 0,
+  -   weather: 0
+    }
+  
+      at Object.settingsCloseCosmetic (<repo>\tests\config-effects-fixture.cjs:219:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { generation: 1, prayer: 1, weather: 1, loop: 0 },
+    expected: { generation: 0, prayer: 0, weather: 0, loop: 0 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:29:1
+✖ D7 classifier is pure: runs in an empty realm, deterministic, does not mutate its inputs (2.9745ms)
+  AssertionError [ERR_ASSERTION]: R0003 classifier block missing from product source
+      at new AssertionError (node:internal/assert/assertion_error:380:5)
+      at classifierBlock (<repo>\tests\config-effects-fixture.cjs:16:21)
+      at Object.isolatedClassifier (<repo>\tests\config-effects-fixture.cjs:22:37)
+      at TestContext.<anonymous> (<repo>\tests\config-effects-state.test.cjs:30:43)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: undefined,
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:37:1
+✖ ES03-01..05/09/13 classifier decisions per field class (2.8605ms)
+  AssertionError [ERR_ASSERTION]: R0003 classifier block missing from product source
+      at new AssertionError (node:internal/assert/assertion_error:380:5)
+      at classifierBlock (<repo>\tests\config-effects-fixture.cjs:16:21)
+      at Object.isolatedClassifier (<repo>\tests\config-effects-fixture.cjs:22:37)
+      at TestContext.<anonymous> (<repo>\tests\config-effects-state.test.cjs:38:43)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: undefined,
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:63:1
+✖ ES03-14 table covers every field of every real configuration producer, and nothing else (3.3046ms)
+  AssertionError [ERR_ASSERTION]: R0003 classifier block missing from product source
+      at new AssertionError (node:internal/assert/assertion_error:380:5)
+      at classifierBlock (<repo>\tests\config-effects-fixture.cjs:16:21)
+      at Object.isolatedClassifier (<repo>\tests\config-effects-fixture.cjs:22:37)
+      at TestContext.<anonymous> (<repo>\tests\config-effects-state.test.cjs:64:28)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: undefined,
+    diff: 'simple'
+  }
+
+test at tests\config-effects-state.test.cjs:79:1
+✖ ES03-14 D7 production consumes the table: applyConfig is the sole dispatcher, Reset passes explicit intent (2.9191ms)
+  AssertionError [ERR_ASSERTION]: one definition and one call
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (<repo>\tests\config-effects-state.test.cjs:82:12)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+# exit 1

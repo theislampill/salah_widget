@@ -1,0 +1,98 @@
+# exit codes: before (645b53cc + 869f9027) | after (candidate)
+glob rc=0 rc=0
+realsky rc=0 rc=0
+moon rc=0 rc=0
+direct_r0021-reveal.cjs rc=1 rc=1
+direct_r0022-baseline-balance.cjs rc=1 rc=1
+direct_r0022-lunar-consumers.cjs rc=1 rc=1
+direct_r0022-native-navigation.cjs rc=0 rc=0
+direct_r0025-context.cjs rc=0 rc=0
+direct_r0025-continuity.cjs rc=0 rc=0
+direct_r0025-lifecycle.cjs rc=0 rc=0
+direct_r0025-mutations.cjs rc=1 rc=1
+direct_native-head-handoff.cjs rc=0 rc=0
+direct_r0017-cloud-visibility.cjs rc=0 rc=0
+direct_r0017-contract.cjs rc=0 rc=0
+direct_r0017-transport.cjs rc=0 rc=0
+direct_r0017-weather.cjs rc=0 rc=0
+r000b_focus rc=0 rc=0
+py_assembly rc=0 rc=0
+py_oracles rc=0 rc=0
+docs_contract rc=1 rc=1
+
+# canonical tools/cp9/run_native_regressions.py before
+native-runner-contract 0 PASS {'tests': 42}
+native-test-glob 0 INCOMPLETE {'tests': 729, 'pass': 725, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 4}
+r0001-date-sinks 1 FAIL {'passCases': 12, 'failCases': 1}
+r0007-countdown 0 PASS {'tests': 23, 'pass': 23, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0008-timezone 0 PASS {'tests': 37, 'pass': 37, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0009-date-selection 1 FAIL {'passCases': 21, 'failCases': 1}
+r000f-intent 0 PASS {'passLines': 21, 'failLines': 0}
+r000f-reset 0 PASS {'passLines': 9, 'failLines': 0}
+r0010-preferences 0 PASS {'passLines': 9, 'failLines': 0}
+r0011-storage 0 PASS {'passLines': 18, 'failLines': 0}
+r0012-clipboard 0 PASS {'passLines': 11, 'failLines': 0}
+r0012-effects 0 PASS {'passLines': 3, 'failLines': 0}
+r0017-cloud-visibility 0 PASS {'passCases': 39, 'failCases': 0}
+r0017-contract 0 PASS {'passCases': 35, 'failCases': 0}
+r0017-transport 0 PASS {'passCases': 32, 'failCases': 0}
+r0017-weather 0 PASS {'passCases': 6, 'failCases': 0}
+r0018-appearance 0 PASS {'passCases': 17, 'failCases': 0}
+r0018-timetable-contrast 0 PASS {'passCases': 11, 'failCases': 0}
+r0019-date-disclosure 1 FAIL {'passCases': 15, 'failCases': 1}
+r001a-radio 0 PASS {'passLines': 8, 'failLines': 0}
+r001d-lifecycle 0 PASS {'passLines': 11, 'failLines': 0}
+r001f-deadline 0 PASS {'passLines': 13, 'failLines': 0}
+r0020-clock 0 PASS {'tests': 44, 'pass': 44, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0021-reveal 1 FAIL {'passLines': 14, 'failLines': 1}
+r0022-baseline-balance 1 FAIL {'passLines': 30, 'failLines': 7, 'unparsedOutput': True}
+r0022-lunar-consumers 0 INCOMPLETE {'passLines': 24, 'failLines': 0}
+r0023-metadata 0 PASS {'passLines': 31, 'failLines': 0}
+r0025-continuity 0 PASS {'passLines': 9, 'failLines': 0}
+r0025-lifecycle 0 PASS {'passLines': 16, 'failLines': 0}
+# after
+native-runner-contract 0 PASS {'tests': 42}
+native-test-glob 0 INCOMPLETE {'tests': 729, 'pass': 725, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 4}
+r0001-date-sinks 1 FAIL {'passCases': 12, 'failCases': 1}
+r0007-countdown 0 PASS {'tests': 23, 'pass': 23, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0008-timezone 0 PASS {'tests': 37, 'pass': 37, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0009-date-selection 1 FAIL {'passCases': 21, 'failCases': 1}
+r000f-intent 0 PASS {'passLines': 21, 'failLines': 0}
+r000f-reset 0 PASS {'passLines': 9, 'failLines': 0}
+r0010-preferences 0 PASS {'passLines': 9, 'failLines': 0}
+r0011-storage 0 PASS {'passLines': 18, 'failLines': 0}
+r0012-clipboard 0 PASS {'passLines': 11, 'failLines': 0}
+r0012-effects 0 PASS {'passLines': 3, 'failLines': 0}
+r0017-cloud-visibility 0 PASS {'passCases': 39, 'failCases': 0}
+r0017-contract 0 PASS {'passCases': 35, 'failCases': 0}
+r0017-transport 0 PASS {'passCases': 32, 'failCases': 0}
+r0017-weather 0 PASS {'passCases': 6, 'failCases': 0}
+r0018-appearance 0 PASS {'passCases': 17, 'failCases': 0}
+r0018-timetable-contrast 0 PASS {'passCases': 11, 'failCases': 0}
+r0019-date-disclosure 1 FAIL {'passCases': 15, 'failCases': 1}
+r001a-radio 0 PASS {'passLines': 8, 'failLines': 0}
+r001d-lifecycle 0 PASS {'passLines': 11, 'failLines': 0}
+r001f-deadline 0 PASS {'passLines': 13, 'failLines': 0}
+r0020-clock 0 PASS {'tests': 44, 'pass': 44, 'fail': 0, 'cancelled': 0, 'skipped': 0, 'todo': 0}
+r0021-reveal 1 FAIL {'passLines': 14, 'failLines': 1}
+r0022-baseline-balance 1 FAIL {'passLines': 30, 'failLines': 7, 'unparsedOutput': True}
+r0022-lunar-consumers 0 INCOMPLETE {'passLines': 24, 'failLines': 0}
+r0023-metadata 0 PASS {'passLines': 31, 'failLines': 0}
+r0025-continuity 0 PASS {'passLines': 9, 'failLines': 0}
+r0025-lifecycle 0 PASS {'passLines': 16, 'failLines': 0}
+
+# rlgwo-docs-contract FAIL set (identical before/after)
+"name":"docs composed: actual smoke terminal contract and held qualification","owner":"OTHER","status":"FAIL"
+"name":"docs composed: admitted synthetic lane and immediate withdrawal stay separate","owner":"OTHER","status":"FAIL"
+"name":"docs composed: cloud monotonic intervals, old wind, identity and suspension","owner":"OTHER","status":"FAIL"
+"name":"docs composed: current and forecast quantity windows retain unavailable metadata","owner":"OTHER","status":"FAIL"
+"name":"docs composed: default glass and opt-in contrast keep distinct gates","owner":"OTHER","status":"FAIL"
+"name":"docs composed: neutral initial reveal and separate texture failure","owner":"OTHER","status":"FAIL"
+"name":"docs composed: one selected provider calendar decision and complete-value access","owner":"OTHER","status":"FAIL"
+"name":"docs composed: opaque calendar Earthshine versus atmospheric lunar eligibility","owner":"OTHER","status":"FAIL"
+"name":"docs composed: ordinary wall and explicit anchored one-times authorities","owner":"OTHER","status":"FAIL"
+"name":"docs composed: useful model estimate without local observation or arrival","owner":"OTHER","status":"FAIL"
+"name":"docs: ARCHITECTURE.md no positive query-only diagnostic recipe","owner":"OTHER","status":"FAIL"
+"name":"docs: HANDOFF.md no positive query-only diagnostic recipe","owner":"OTHER","status":"FAIL"
+"name":"source: actual model-live negative and admitted synthetic wet, expiry and outage","owner":"OTHER","status":"FAIL"
+"name":"source: six real force branches and unsupported-string mutant","owner":"R001C","status":"FAIL"
