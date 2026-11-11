@@ -268,6 +268,43 @@ async function tableCoverage(raw=source(),options={}){
   for(const [k,row] of Object.entries(CONFIG_EFFECTS))assert(["none","presentation","broad"].includes(row.path),k);
 }
 
-module.exports={classifierDecisions,tableCoverage,harness,record,cfg,req,settle,copy,source,sourcePath,authoredPath,classifierBlock,isolatedClassifier,established,seedOwners,
+// Reconciliation onto R0026 (7f2e8d16): the evidence seam consumes the admission/evidence contract R0026
+// actually delivered. Evidence is produced by the real config.js from an admitted geocodeSearchDetailed
+// candidate (placeLocationEvidence) and an admitted geolocate() result; the classifier compares the
+// post-normalize configuration. Every delivered evidence key must be classified (an unknown key would make
+// an identical copy broad), and same admitted coordinates with different provider/accuracy are broad (D2).
+async function admittedEvidenceSeam(raw=source()){
+  const {classifyConfigChange:classify}=isolatedClassifier(raw);
+  const realm=vm.createContext({URLSearchParams,Intl,AbortController,setTimeout,clearTimeout,console});realm.window=realm;
+  vm.runInContext(fs.readFileSync(path.join(repo,"config.js"),"utf8"),realm);
+  const S=realm.SalahConfig,LAT="21.4225",LON="39.8262",json=(status,body)=>({ok:status>=200&&status<300,status,json:async()=>body});
+  assert.equal(typeof S.admitCoordinates,"function","R0026 admission helper delivered");
+  assert.equal(typeof S.geocodeSearchDetailed,"function","R0026 detailed engine delivered");
+  const nom=[{lat:LAT,lon:LON,class:"place",address:{city:"Makkah",state:"Makkah",country:"SA",country_code:"sa"},boundingbox:["21.3","21.5","39.7","39.9"]}];
+  const zip={country:"Fixture","country abbreviation":"CA",places:[{latitude:LAT,longitude:LON,"place name":"Fixture",state:"F"}]};
+  realm.fetch=async url=>String(url).includes("nominatim")?json(200,String(url).includes("q=A1A")?[]:nom):json(200,zip);
+  const N=await S.geocodeSearchDetailed("Makkah",{}),Z=await S.geocodeSearchDetailed("A1A",{});
+  assert.equal(N.status,"matches");assert.equal(Z.status,"matches");
+  const cN=N.candidates[0],cZ=Z.candidates[0];
+  assert.equal(cN.provider,"Nominatim");assert.equal(cZ.provider,"Zippopotam");
+  assert.equal(cN.lat,cZ.lat);assert.equal(cN.lon,cZ.lon);
+  const admitted=S.admitCoordinates(LAT,LON);assert.equal(admitted.ok,true);assert.equal(admitted.lat,cN.lat);
+  const pos=(accuracy)=>({coords:{latitude:cN.lat,longitude:cN.lon,accuracy},timestamp:Date.now()-1000});
+  let next=pos(12);realm.navigator={geolocation:{getCurrentPosition:(ok)=>ok(next)}};
+  const G1=await S.geolocate({});next=pos(40);const G2=await S.geolocate({});
+  assert.equal(G1.ok,true);assert.equal(G1.lat,cN.lat);
+  const at=(source,evidence)=>S.normalize({...copy(SAVED),lat:cN.lat,lon:cN.lon,source,locationEvidence:evidence});
+  const P1=at("place",S.placeLocationEvidence(cN)),P2=at("place",S.placeLocationEvidence(cZ)),D1=at("browser-geolocation",G1.locationEvidence),D2=at("browser-geolocation",G2.locationEvidence);
+  for(const [name,c] of [["place/Nominatim",P1],["place/Zippopotam",P2],["device",D1]]){
+    assert(c.locationEvidence,"delivered evidence survives normalize: "+name);
+    assert.equal(classify(c,copy(c),{reset:false}).path,"none","every delivered evidence key is classified: "+name);
+    assert.equal(classify(c,{...copy(c),label:"n"},{reset:false}).path,"presentation","display edit on delivered evidence: "+name);
+  }
+  assert.equal(classify(P1,P2,{reset:false}).path,"broad","same admitted coordinates, other provider (D2)");
+  assert.equal(classify(D1,D2,{reset:false}).path,"broad","same admitted coordinates, other accuracy (D2)");
+  assert.equal(classify(P1,D1,{reset:false}).path,"broad","same admitted coordinates, other provenance/intent (D2)");
+}
+
+module.exports={classifierDecisions,tableCoverage,admittedEvidenceSeam,harness,record,cfg,req,settle,copy,source,sourcePath,authoredPath,classifierBlock,isolatedClassifier,established,seedOwners,
   ledger,apply,text,COSMETIC,GENUINE,cosmeticPreserves,genuineBroad,explicitResetEqual,cosmeticDuringB,abaWithCosmetic,hiddenThenResumed,
   evidenceSurvivesSave,settingsWidget,failedSaveRetry,settingsResetEqual,settingsCloseCosmetic,SAVED,BLOCK_START};

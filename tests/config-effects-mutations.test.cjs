@@ -55,6 +55,10 @@ const MUTANTS={
     raw=>F.abaWithCosmetic({source:raw}),/obsolete first A and B cannot commit by value equality/],
   m18_suppress_storage_warning:[r=>edit(r,'    _publishPersistence("save",r);                 // publish before any awaited provider work','    if(r.ok)_publishPersistence("save",r);'),
     raw=>F.failedSaveRetry({source:raw}),/session-only|Cannot read properties of null/],
+  // Reconciliation onto R0026 (7f2e8d16): the evidence seam must classify every field R0026's delivered
+  // place evidence carries. Dropping `provider` fails closed (an identical copy turns broad).
+  m19_evidence_field_unclassified:[r=>edit(r,'["intent","source","accuracyM","acquiredAt","provider","area","bounds"]','["intent","source","accuracyM","acquiredAt","area","bounds"]'),
+    raw=>F.admittedEvidenceSeam(raw),/every delivered evidence key is classified: place\/Nominatim/],
 };
 for(const [name,[mutate,scenario,reason]] of Object.entries(MUTANTS))test("mutant "+name+" is killed",T,async()=>{
   const raw=mutate(F.source());

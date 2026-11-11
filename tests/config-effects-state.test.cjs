@@ -36,6 +36,7 @@ test("D7 classifier is pure: runs in an empty realm, deterministic, does not mut
 });
 test("ES03-01..05/09/13 classifier decisions per field class",T,()=>F.classifierDecisions());
 test("ES03-14 table covers every field of every real configuration producer, and nothing else",T,()=>F.tableCoverage());
+test("ES03-07/09 D2 evidence seam consumes R0026's delivered admission and evidence contract",T,()=>F.admittedEvidenceSeam());
 test("ES03-14 D7 production consumes the table: applyConfig is the sole dispatcher, Reset passes explicit intent",T,()=>{
   for(const raw of [fs.readFileSync(F.authoredPath,"utf8"),F.source()]){
     const apply=raw.slice(raw.indexOf("async function applyConfig("),raw.indexOf("// Diagnostic control of the EXISTING native clock"));
