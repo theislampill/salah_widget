@@ -29,6 +29,17 @@ test('A1 Zippopotam 404 is a valid no-match; 500/502/503/400/403/429/network/mal
 test('A4/A9 partial means provider coverage: rejected items inside a completed provider stay complete, no partial note', () => L.partialIsPerProvider(S));
 test('A2 decimal point forms: ".5" admitted, "5." rejected', () => L.decimalPointForms(S));
 test('A9 builder tip title carries the full message for no-match, unavailable, partial, invalid position; cleared with the tip', () => L.builderTipTitle(S));
+test('A9 builder tip keeps polite status semantics in authored and generated markup', () => {
+  // Real builder bytes, not a fixture copy: the feedback element must stay an accessible status region.
+  const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
+  for (const file of ['src/native/builder.html', 'builder.html']) {
+    const html = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+    const tags = html.match(/<[a-z]+\b[^>]*\bid="geotip"[^>]*>/g) || [];
+    assert.equal(tags.length, 1, file + ': exactly one #geotip element');
+    assert.match(tags[0], /\brole="status"/, file + ': #geotip role="status"');
+    assert.match(tags[0], /\baria-live="polite"/, file + ': #geotip aria-live="polite"');
+  }
+});
 test('ES26-03/05 Zippopotam null/empty/missing latitude is rejected, never coerced to 0', () => L.zippopotamMissingLatitude(S));
 test('ES26-09 one provider matches and the other fails: matches with partial coverage and usable candidates', () => L.partialMatches(S));
 test('ES26-08 both providers fail: unavailable', () => L.bothFail(S));
