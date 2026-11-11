@@ -98,11 +98,11 @@ MUTANTS = [
      "adopt(s){if(retired)return false;return inner.adopt(s);}", "adopt(s){return inner.adopt(s);}",
      'ES21-07 detail disposal is idempotent', MOON_HEALTHY),
     ('m13-dispose-current-global-detail', 'moon', 'moon-native.mjs',
-     "if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();",
-     "window.SalahMoonDetail?.dispose();",
+     "closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status='disposed';",
+     "closeWorker();window.SalahMoonDetail?.dispose();status.status='disposed';",
      'ES21-04 conditional registry cleanup', MOON_HEALTHY),
     ('m14-clear-shared-detail-slot-unconditionally', 'moon', 'moon-native.mjs',
-     "if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;", "window.SalahMoonDetail=null;",
+     "closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status=", "closeWorker();window.SalahMoonDetail=null;detail.dispose();status.status=",
      'ES21-04 conditional registry cleanup', MOON_HEALTHY),
 ]
 

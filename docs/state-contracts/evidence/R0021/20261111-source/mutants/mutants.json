@@ -210,6 +210,102 @@
    "exitCode": 1
   },
   {
+   "id": "m15-unwind-in-acquisition-order",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 a release that throws during unwind",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m16-rethrow-cleanup-instead-of-primary",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 a release that throws during unwind",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m17-handoff-suppressed-while-hidden",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "handoff is not suppressed for a live instance",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m18-unconditional-registry-release",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-04 retirement never clears a registry slot",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m19-replay-allowed-without-detail-slot",
+   "file": "moon/src/moon-install-guard.mjs",
+   "killerTest": "ES21-05 replay is refused for a live runtime even when the detail slot is empty",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m20-moon-failed-construction-keeps-detail",
+   "file": "moon/src/moon-native.mjs",
+   "killerTest": "ES21-02 Moon wrapper failure at interval",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  },
+  {
    "id": "m9-moon-replay-proceeds-over-live-runtime",
    "file": "moon/src/moon-install-guard.mjs",
    "killerTest": "ES21-05 full-wrapper replay over a live runtime",

@@ -1,6 +1,6 @@
 """R0021 bounded native observation: construction, retirement and replay ownership under an enforced CSP.
 
-PREPARED, NOT YET RUN. The root schedules native runs one at a time; do not run this concurrently with other
+The root schedules native runs one at a time; do not run this concurrently with other
 browser work. Serves the GENERATED page unchanged from --root and enforces the R0017 widget-fixture policy
 (tests/widget-fixture.html) as a real Content-Security-Policy response header on index.html. Prayer and weather
 providers are controlled (no provider claim); every other non-local host is aborted.
@@ -27,6 +27,15 @@ Cells:
  recovery-visual   screenshot + 3 s frame difference after the cycles (sky animating); night crop of the
                    Moon for human opacity review (screenshots override metrics)
 
+Crash safety: the report is rewritten after every cell; a cell that throws is recorded as `crashed` (error text,
+pass=false) and, after a browser/page crash, later cells as `not-run`. Firefox finding (2026-11-11, recorded in
+docs/state-contracts/R0021.md): a synthetic pagehide dispatched immediately (<=~100 ms) after the resumed sky
+reports READY crashes Firefox 153's content process on BOTH 645b53cc and the candidate, with or without this
+driver's instrumentation; a >=200 ms settle, rapid active retry and raw worker create/terminate do not. The cycles
+cell therefore settles --cycles-settle-ms (default 500) after each resume; --cycles-settle-ms 0 reproduces it.
+Retirement cell: passes only when its precondition held (refined-composed card AND a changing data-URL cloud
+mask at pagehide); otherwise it reports precondition-not-met rather than a vacuous PASS.
+
 Main control: run with --root <checkout of 645b53cc>. Expected FAIL there: retirement (a preview mask Image.src
 during pagehide when the cloud mask changed; cloud-dependent), construction (orphan canvases), moon-replay (no
 refusal; the new detail is disposed by the old runtime). Expected PASS on both: first-boot, live-handoff,
@@ -46,7 +55,7 @@ SERVED = ['index.html', 'real-sky/native-sky.js', 'real-sky/native-worker.js', '
 HASH = '#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1'
 NIGHT = '#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=23:30&simMoon=0.5&simWax=1&simMoonAlt=40&simMoonH=180'
 INIT = r"""(()=>{
- const R=window.__r0021={phase:'load',images:[],violations:[],workers:{made:0,ended:0},urls:{made:0,revoked:0},vis:0,errors:[]};
+ const R=window.__r0021={phase:'load',images:[],violations:[],workers:{made:0,ended:0},urls:{made:0,revoked:0},vis:0,visLog:[],errors:[]};
  const mark=o=>Object.assign(o,{phase:R.phase,t:performance.now()});
  const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
  Object.defineProperty(HTMLImageElement.prototype,'src',{configurable:true,get(){return d.get.call(this);},set(v){
@@ -55,8 +64,8 @@ INIT = r"""(()=>{
  const W=window.Worker;window.Worker=class extends W{constructor(...a){super(...a);R.workers.made++;}terminate(){R.workers.ended++;return super.terminate();}};
  const cu=URL.createObjectURL,ru=URL.revokeObjectURL;URL.createObjectURL=o=>{R.urls.made++;return cu.call(URL,o);};URL.revokeObjectURL=u=>{R.urls.revoked++;return ru.call(URL,u);};
  const add=EventTarget.prototype.addEventListener,rem=EventTarget.prototype.removeEventListener,live=new WeakSet();
- EventTarget.prototype.addEventListener=function(n,f,o){if(this===document&&n==='visibilitychange'&&f&&!live.has(f)){live.add(f);R.vis++;}return add.call(this,n,f,o);};
- EventTarget.prototype.removeEventListener=function(n,f,o){if(this===document&&n==='visibilitychange'&&f&&live.has(f)){live.delete(f);R.vis--;}return rem.call(this,n,f,o);};
+ EventTarget.prototype.addEventListener=function(n,f,o){if(this===document&&n==='visibilitychange'&&f&&!live.has(f)){live.add(f);R.vis++;R.visLog.push(mark({op:'add',stack:String(new Error().stack).split('\n').slice(1,5).join(' | ')}));}return add.call(this,n,f,o);};
+ EventTarget.prototype.removeEventListener=function(n,f,o){if(this===document&&n==='visibilitychange'&&f&&live.has(f)){live.delete(f);R.vis--;R.visLog.push(mark({op:'remove',stack:String(new Error().stack).split('\n').slice(1,5).join(' | ')}));}return rem.call(this,n,f,o);};
  window.addEventListener('error',e=>R.errors.push(mark({message:String(e.message)})));
  // One-shot construction-failure injection used only by the construction cell.
  const gc=HTMLCanvasElement.prototype.getContext;R.failContext=0;R.failInterval=0;
@@ -78,6 +87,9 @@ COUNTS = """()=>{const R=window.__r0021;return {sky:document.querySelectorAll('.
  assets:window.SalahRealSkyAssets?.state.status??null,skyStatus:window.SalahRealSky?.state.status??null,previewStatus:window.SalahSkyPreview?.state.status??null,
  previewDraws:window.SalahSkyPreview?.state.draws??null,moonRuntime:!!window.SalahMoonRuntime,moonDisposed:window.SalahMoonRuntime?.disposed??null,moonDetail:!!window.SalahMoonDetail}}"""
 READY = "()=>window.SalahRealSkyAssets?.state.status==='ready'&&window.SalahSkyPreview?.state.status==='ready'&&!!window.SalahRealSky"
+# The native boot's render loop installs its own one-time document visibilitychange listener. In Firefox it
+# can start after the sky is READY, so resource baselines wait for it (a boot listener is not a leak).
+BOOTED = "()=>typeof _loopStarted!=='undefined'&&_loopStarted===true"
 
 
 def sha(path):
@@ -108,7 +120,10 @@ def events_in(page, name):
     return page.evaluate("n=>{const R=window.__r0021;return {images:R.images.filter(x=>x.phase===n),violations:R.violations.filter(x=>x.phase===n),errors:R.errors.filter(x=>x.phase===n)}}", name)
 
 
-def run(engine, root, out, headed, argv):
+CELLS = ['first-boot', 'live-handoff', 'retirement', 'construction', 'cycles', 'moon-replay', 'recovery-visual', 'night', 'navigation']
+
+
+def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500):
     policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', (REPO / 'tests/widget-fixture.html').read_text(encoding='utf-8')).group(1)
     index = (root / 'index.html').read_bytes()
 
@@ -119,19 +134,42 @@ def run(engine, root, out, headed, argv):
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f'http://127.0.0.1:{server.server_address[1]}'
     record = json.loads((REPO / 'tests/r0002-ordinary.json').read_text(encoding='utf-8'))
-    report = {'schema': 'r0021-native/1', 'engine': engine, 'headed': headed, 'argv': argv,
+    report = {'schema': 'r0021-native/2', 'engine': engine, 'headed': headed, 'out': out.name, 'complete': False,
+              'evidenceLevel': 'request-level (CDP) and page-level' if engine == 'chromium' else 'page-level only (no CDP request log in this engine)',
               'root': 'repository' if root.resolve() == REPO else root.name, 'policy': policy, 'policyDelivery': 'response header on index.html',
-              'served': {n: sha(root / n) for n in SERVED if (root / n).is_file()}, 'cells': {}, 'console': [], 'cdp': []}
+              'served': {n: sha(root / n) for n in SERVED if (root / n).is_file()},
+              'options': {'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh, 'composedWaitMs': composed_wait},
+              'cells': {}, 'console': [], 'cdp': [], 'crashes': []}
     cells = report['cells']
+
+    def save():
+        # Written after every cell, so a browser crash never loses completed cells.
+        report['pass'] = report['complete'] and all(v['pass'] for v in cells.values())
+        text = json.dumps(report, indent=2, ensure_ascii=False)
+        for form in sorted({str(REPO), str(REPO).replace('\\', '\\\\'), REPO.as_posix(), str(root.resolve()), str(root.resolve()).replace('\\', '\\\\'), root.resolve().as_posix()}, key=len, reverse=True):
+            text = text.replace(form, '<root>')
+        (out / f'{engine}-report.json').write_text(text + '\n', encoding='utf-8')
+
     with sync_playwright() as p:
         browser = getattr(p, engine).launch(headless=not headed)
         report['browserVersion'] = browser.version
         ctx = browser.new_context(viewport={'width': 325, 'height': 530})
         ctx.add_init_script(INIT)
-        page = ctx.new_page()
-        page.on('console', lambda m: report['console'].append([m.type, m.text[:300]]) if m.type in ('error', 'warning') else None)
-        page.on('pageerror', lambda e: report['console'].append(['pageerror', str(e)[:300]]))
         cdp_phase = {'value': 'load'}
+
+        def open_page(fragment, label):
+            pg = ctx.new_page()
+            pg.on('console', lambda m: report['console'].append([label, m.type, m.text[:300]]) if m.type in ('error', 'warning') else None)
+            pg.on('pageerror', lambda e: report['console'].append([label, 'pageerror', str(e)[:300]]))
+            pg.on('crash', lambda _p: report['crashes'].append({'page': label, 'phase': cdp_phase['value']}))
+            pg.route(lambda u: not u.startswith(origin), lambda r: r.abort())
+            pg.route('https://api.aladhan.com/**', lambda r: prayer(r, record))
+            pg.route(origin + '/index.html', lambda r: r.fulfill(status=200, content_type='text/html; charset=utf-8',
+                                                                  headers={'Content-Security-Policy': policy}, body=index))
+            pg.goto(origin + '/index.html' + fragment)
+            return pg
+
+        page = open_page(HASH, 'main')
         if engine == 'chromium':
             cdp = ctx.new_cdp_session(page); cdp.send('Network.enable')
             ids = {}
@@ -148,117 +186,162 @@ def run(engine, root, out, headed, argv):
                     report['cdp'][ids[e['requestId']]].update(failed=True, blockedReason=e.get('blockedReason'), canceled=e.get('canceled'))
             cdp.on('Network.requestWillBeSent', sent); cdp.on('Network.loadingFailed', failed)
 
-        def mark(name):
-            cdp_phase['value'] = name; phase(page, name)
+        def mark(name, pg=None):
+            cdp_phase['value'] = name; phase(pg or page, name)
 
-        page.route(lambda u: not u.startswith(origin), lambda r: r.abort())
-        page.route('https://api.aladhan.com/**', lambda r: prayer(r, record))
-        page.route(origin + '/index.html', lambda r: r.fulfill(status=200, content_type='text/html; charset=utf-8',
-                                                                headers={'Content-Security-Policy': policy}, body=index))
-        page.goto(origin + '/index.html' + HASH)
-        counts = lambda: page.evaluate(COUNTS)
+        counts = lambda pg=None: (pg or page).evaluate(COUNTS)
         shot = lambda name, clip=None: page.screenshot(path=str(out / f'{engine}-{name}.png'), clip=clip)
+        state = {'crashed': None}
 
-        ok = wait(page, READY, 60000); c = counts()
-        cells['first-boot'] = {'pass': ok and c['sky'] == 1 and c['preview'] == 1 and c['moonRuntime'] and c['moonDisposed'] is False and c['moonDetail'], **c}
-        shot('1-first-boot')
-        page.wait_for_timeout(1500)
+        def cell(name, fn):
+            if name not in selected:
+                return
+            if state['crashed']:
+                cells[name] = {'pass': False, 'status': 'not-run', 'reason': 'page crashed in cell ' + state['crashed']}; save(); return
+            try:
+                fn()
+            except Exception as error:   # record, never lose earlier cells
+                text = f'{type(error).__name__}: {str(error)[:600]}'
+                partial = {k: v for k, v in cells.get(name, {}).items() if k not in ('pass', 'status', 'error')}
+                cells[name] = {'pass': False, 'status': 'crashed', 'error': text, 'phase': cdp_phase['value'], **partial}
+                if re.search(r'crash|closed', text, re.I):
+                    state['crashed'] = name
+            save()
 
-        mark('live-invalidation'); d0 = counts()['previewDraws']
-        page.evaluate("()=>window.SalahRealSky.invalidate('driver live withdrawal')")
-        inv = wait(page, f"()=>window.SalahSkyPreview.state.draws>{d0}", 10000)
-        mark('active-retry'); d1 = counts()['previewDraws']
-        page.evaluate('()=>window.SalahRealSkyAssets.retry()')
-        ret = wait(page, f"()=>window.SalahSkyPreview.state.draws>{d1}", 10000) and wait(page, READY, 30000)
-        cells['live-handoff'] = {'pass': inv and ret and counts()['sky'] == 1, 'invalidationHandoff': inv, 'retryHandoff': ret, 'after': counts()}
+        def first_boot():
+            ok = wait(page, READY, 60000); c = counts()
+            # moonDisposed is null where the runtime does not expose the field (645b53cc); the claim is "not disposed".
+            cells['first-boot'] = {'pass': bool(ok and c['sky'] == 1 and c['preview'] == 1 and c['moonRuntime'] and c['moonDisposed'] is not True and c['moonDetail']),
+                                   'moonDisposedField': 'exposed' if c['moonDisposed'] is not None else 'absent', **c}
+            shot('1-first-boot'); page.wait_for_timeout(1500)
 
-        page.wait_for_timeout(1500)   # let clouds move so the next mask differs (main-control reproduction)
-        before = counts(); mark('retiring')
-        page.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))")
-        page.wait_for_timeout(1000)
-        ev = events_in(page, 'retiring'); after = counts()
-        dataImages = [x for x in ev['images'] if x['scheme'] in ('data', 'blob')]
-        cdpRetiring = [x for x in report['cdp'] if x['phase'] == 'retiring']
-        mark('resume'); page.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))")
-        resumed = wait(page, READY, 30000); r = counts()
-        cells['retirement'] = {'pass': not dataImages and not ev['violations'] and not cdpRetiring and after['sky'] == 0 and after['assets'] == 'suspended' and resumed and r['sky'] == 1,
-                               'retiringImages': ev['images'], 'retiringViolations': ev['violations'], 'retiringCdp': cdpRetiring,
-                               'before': before, 'afterPagehide': after, 'resumed': r, 'requestLevel': engine == 'chromium'}
-        shot('2-resumed')
+        def live_handoff():
+            mark('live-invalidation'); d0 = counts()['previewDraws']
+            page.evaluate("()=>window.SalahRealSky.invalidate('driver live withdrawal')")
+            inv = wait(page, f"()=>window.SalahSkyPreview.state.draws>{d0}", 10000)
+            mark('active-retry'); d1 = counts()['previewDraws']
+            page.evaluate('()=>window.SalahRealSkyAssets.retry()')
+            ret = wait(page, f"()=>window.SalahSkyPreview.state.draws>{d1}", 10000) and wait(page, READY, 30000)
+            cells['live-handoff'] = {'pass': bool(inv and ret and counts()['sky'] == 1), 'invalidationHandoff': inv, 'retryHandoff': ret, 'after': counts()}
 
-        mark('construction'); base = counts()
-        page.evaluate('()=>{window.__r0021.failContext=1;}'); page.evaluate('()=>window.SalahRealSkyAssets.retry()'); page.wait_for_timeout(500); f1 = counts()
-        page.evaluate('()=>{window.__r0021.failContext=1;}'); page.evaluate('()=>window.SalahRealSkyAssets.retry()'); page.wait_for_timeout(500); f2 = counts()
-        page.evaluate('()=>{window.__r0021.failInterval=1;}'); page.evaluate('()=>window.SalahRealSkyAssets.retry()'); page.wait_for_timeout(500); f3 = counts()
-        page.evaluate('()=>window.SalahRealSkyAssets.retry()'); healed = wait(page, READY, 30000); f4 = counts()
-        bal = lambda x: x['workersLive'] <= base['workersLive'] - 1 and x['vis'] <= base['vis'] - 1   # the retired refined owner's worker/listener are gone
-        cells['construction'] = {'pass': all(x['sky'] == 0 and x['assets'] == 'unavailable' and x['previewStatus'] == 'ready' and bal(x) for x in (f1, f2, f3))
-                                 and healed and f4['sky'] == 1 and f4['workersLive'] == base['workersLive'] and f4['vis'] == base['vis'],
-                                 'baseline': base, 'contextRefusal1': f1, 'contextRefusal2': f2, 'intervalFailure': f3, 'recovered': f4}
+        def retirement():
+            # The finding needs a refined-composed card (the preview then holds an older mask) and moving clouds,
+            # so the preview's pagehide handoff would publish a CHANGED mask. Record whether that precondition held.
+            composed = wait(page, "()=>document.querySelector('.c').classList.contains('real-sky-composed')", composed_wait)
+            mask = "()=>getComputedStyle(document.querySelector('.c')).getPropertyValue('--native-sun-cloud-mask').trim()"
+            m1 = page.evaluate(mask); page.wait_for_timeout(1500); m2 = page.evaluate(mask)
+            # Without a changing data-URL cloud mask the pagehide handoff has nothing new to publish and the cell
+            # would pass vacuously; such a run is reported as precondition-not-met, never as a PASS.
+            precondition = bool(composed and m2.startswith('url(') and m1 != m2)
+            before = counts(); mark('retiring')
+            page.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))")
+            page.wait_for_timeout(1000)
+            ev = events_in(page, 'retiring'); after = counts()
+            data_images = [x for x in ev['images'] if x['scheme'] in ('data', 'blob')]
+            cdp_retiring = [x for x in report['cdp'] if x['phase'] == 'retiring']
+            mark('resume'); page.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))")
+            resumed = wait(page, READY, 30000); r = counts()
+            clean = bool(not data_images and not ev['violations'] and not cdp_retiring and after['sky'] == 0 and after['assets'] == 'suspended' and resumed and r['sky'] == 1)
+            cells['retirement'] = {'pass': clean and precondition, **({} if precondition else {'status': 'precondition-not-met'}), 'cleanRetirement': clean,
+                                   'maskChangingAtPagehide': precondition, 'maskPrefixes': [m1[:40], m2[:40]], 'refinedComposedBeforePagehide': composed, 'retiringImages': ev['images'], 'retiringViolations': ev['violations'], 'retiringCdp': cdp_retiring,
+                                   'before': before, 'afterPagehide': after, 'resumed': r, 'requestLevel': engine == 'chromium'}
+            shot('2-resumed')
 
-        mark('cycles'); start = counts(); seen = []
-        for i in range(5):
-            page.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))"); page.wait_for_timeout(200)
-            page.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))"); wait(page, READY, 30000)
-            seen.append(counts())
-        keys = ('sky', 'preview', 'detail', 'workersLive', 'urlsLive', 'vis')
-        cells['cycles'] = {'pass': all(all(s[k] == start[k] for k in keys) for s in seen), 'start': start, 'cycles': seen}
+        def construction():
+            booted = wait(page, BOOTED, 60000)
+            mark('construction'); base = counts(); cells['construction'] = {'baseline': base, 'nativeLoopStarted': booted}
+            seq = {}
+            for label, arm in (('contextRefusal1', 'failContext'), ('contextRefusal2', 'failContext'), ('intervalFailure', 'failInterval')):
+                page.evaluate('a=>{window.__r0021[a]=1;}', arm); page.evaluate('()=>window.SalahRealSkyAssets.retry()'); page.wait_for_timeout(500)
+                seq[label] = counts(); cells['construction'][label] = seq[label]
+            page.evaluate('()=>window.SalahRealSkyAssets.retry()'); healed = wait(page, READY, 30000); f4 = counts()
+            bal = lambda x: x['workersLive'] <= base['workersLive'] - 1 and x['vis'] <= base['vis'] - 1   # the retired refined owner's worker/listener are gone
+            cells['construction'] = {'pass': bool(all(x['sky'] == 0 and x['assets'] == 'unavailable' and x['previewStatus'] == 'ready' and bal(x) for x in seq.values())
+                                     and healed and f4['sky'] == 1 and f4['workersLive'] == base['workersLive'] and f4['vis'] == base['vis']),
+                                     'baseline': base, 'nativeLoopStarted': booted, **seq, 'recovered': f4}
 
-        mark('moon-replay')
-        page.evaluate("()=>{window.__r0021.refs={runtime:window.SalahMoonRuntime,detail:window.SalahMoonDetail,initial:window.SalahMoonInitial};}")
-        m0 = counts()
-        outcome = page.evaluate("""async()=>{const text=await (await fetch('moon/moon-host.js')).text();const R=window.__r0021,n=R.errors.length;
-          const s=document.createElement('script');s.textContent=text;document.head.append(s);s.remove();
-          return {errors:R.errors.slice(n).map(e=>e.message),same:window.SalahMoonRuntime===R.refs.runtime&&window.SalahMoonDetail===R.refs.detail&&window.SalahMoonInitial===R.refs.initial,
-            disposed:window.SalahMoonRuntime?.disposed??null};}""")
-        page.wait_for_timeout(500); m1 = counts()
-        cells['moon-replay'] = {'pass': outcome['same'] and outcome['disposed'] is False and any('replay refused' in e for e in outcome['errors'])
-                                and all(m1[k] == m0[k] for k in ('detail', 'workersLive', 'urlsLive', 'vis')), 'outcome': outcome, 'before': m0, 'after': m1}
+        def cycles():
+            pg = open_page(HASH, 'cycles') if cycles_fresh else page
+            if cycles_fresh:
+                wait(pg, READY, 60000)
+            booted = wait(pg, BOOTED, 60000)
+            mark('cycles', pg); start = counts(pg); seen = []
+            cells['cycles'] = {'start': start, 'cycles': seen, 'freshPage': cycles_fresh, 'waitMs': cycles_wait}
+            for i in range(5):
+                cdp_phase['value'] = f'cycles-{i}-pagehide'
+                pg.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))"); pg.wait_for_timeout(cycles_wait)
+                cdp_phase['value'] = f'cycles-{i}-pageshow'
+                pg.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))"); wait(pg, READY, 30000)
+                pg.wait_for_timeout(cycles_settle)   # see header: a zero settle crashes Firefox's content process on main and candidate
+                seen.append(counts(pg))
+            keys = ('sky', 'preview', 'detail', 'workersLive', 'urlsLive', 'vis')
+            vis_log = pg.evaluate("()=>window.__r0021.visLog.filter(x=>x.phase.startsWith('cycles')||x.phase==='load')")
+            cells['cycles'] = {'nativeLoopStarted': booted, 'visibilityListenerLog': vis_log, 'pass': all(all(s[k] == start[k] for k in keys) for s in seen), 'start': start, 'cycles': seen, 'freshPage': cycles_fresh, 'waitMs': cycles_wait, 'settleMs': cycles_settle}
+            if cycles_fresh:
+                pg.close()
 
-        mark('recovery-visual'); page.wait_for_timeout(1000)
-        a = page.screenshot(); page.wait_for_timeout(3000); b = page.screenshot()
-        (out / f'{engine}-3a-motion.png').write_bytes(a); (out / f'{engine}-3b-motion.png').write_bytes(b)
-        # Frame difference is computed in a separate policy-free about:blank page so its decode of the two
-        # screenshots is never product traffic or a CSP event of the widget document.
-        helper = ctx.new_page()
-        diff = helper.evaluate("""async([a,b])=>{const load=s=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src='data:image/png;base64,'+s;});
-          const [x,y]=await Promise.all([load(a),load(b)]);const c=document.createElement('canvas');c.width=x.width;c.height=x.height;const g=c.getContext('2d');
-          g.drawImage(x,0,0);const p=g.getImageData(0,0,c.width,c.height).data;g.drawImage(y,0,0);const q=g.getImageData(0,0,c.width,c.height).data;
-          let n=0;for(let i=0;i<p.length;i+=4)if(Math.abs(p[i]-q[i])+Math.abs(p[i+1]-q[i+1])+Math.abs(p[i+2]-q[i+2])>6)n++;return n/(p.length/4);}""",
-                               [base64.b64encode(a).decode(), base64.b64encode(b).decode()])
-        helper.close()
-        cells['recovery-visual'] = {'pass': diff > 0, 'changedPixelFraction3s': diff, 'humanReview': [f'{engine}-3a-motion.png', f'{engine}-3b-motion.png']}
+        def moon_replay():
+            mark('moon-replay')
+            page.evaluate("()=>{window.__r0021.refs={runtime:window.SalahMoonRuntime,detail:window.SalahMoonDetail,initial:window.SalahMoonInitial};}")
+            m0 = counts()
+            outcome = page.evaluate("""async()=>{const text=await (await fetch('moon/moon-host.js')).text();const R=window.__r0021,n=R.errors.length;
+              const s=document.createElement('script');s.textContent=text;document.head.append(s);s.remove();
+              return {errors:R.errors.slice(n).map(e=>e.message),same:window.SalahMoonRuntime===R.refs.runtime&&window.SalahMoonDetail===R.refs.detail&&window.SalahMoonInitial===R.refs.initial,
+                disposed:window.SalahMoonRuntime?.disposed??null};}""")
+            page.wait_for_timeout(500); m1 = counts()
+            cells['moon-replay'] = {'pass': bool(outcome['same'] and outcome['disposed'] is False and any('replay refused' in e for e in outcome['errors'])
+                                    and all(m1[k] == m0[k] for k in ('detail', 'workersLive', 'urlsLive', 'vis'))), 'outcome': outcome, 'before': m0, 'after': m1}
 
-        # Real navigation: the outgoing document retires for real (Chromium request log only).
-        if engine == 'chromium':
+        def recovery_visual():
+            mark('recovery-visual'); page.wait_for_timeout(1000)
+            a = page.screenshot(); page.wait_for_timeout(3000); b = page.screenshot()
+            (out / f'{engine}-3a-motion.png').write_bytes(a); (out / f'{engine}-3b-motion.png').write_bytes(b)
+            # Frame difference is computed in a separate policy-free about:blank page so its decode of the two
+            # screenshots is never product traffic or a CSP event of the widget document.
+            helper = ctx.new_page()
+            diff = helper.evaluate("""async([a,b])=>{const load=s=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src='data:image/png;base64,'+s;});
+              const [x,y]=await Promise.all([load(a),load(b)]);const c=document.createElement('canvas');c.width=x.width;c.height=x.height;const g=c.getContext('2d');
+              g.drawImage(x,0,0);const p=g.getImageData(0,0,c.width,c.height).data;g.drawImage(y,0,0);const q=g.getImageData(0,0,c.width,c.height).data;
+              let n=0;for(let i=0;i<p.length;i+=4)if(Math.abs(p[i]-q[i])+Math.abs(p[i+1]-q[i+1])+Math.abs(p[i+2]-q[i+2])>6)n++;return n/(p.length/4);}""",
+                                   [base64.b64encode(a).decode(), base64.b64encode(b).decode()])
+            helper.close()
+            cells['recovery-visual'] = {'pass': diff > 0, 'changedPixelFraction3s': diff, 'humanReview': [f'{engine}-3a-motion.png', f'{engine}-3b-motion.png']}
+
+        def night_cell():
+            night = open_page(NIGHT, 'night'); wait(night, READY, 60000)
+            for _ in range(3):
+                night.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))"); night.wait_for_timeout(200)
+                night.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))"); wait(night, READY, 30000)
+            night.wait_for_timeout(1500)
+            box = night.evaluate("()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r&&r.width>0?{x:Math.max(0,r.left-20),y:Math.max(0,r.top-20),width:r.width+40,height:r.height+40}:null}")
+            night.screenshot(path=str(out / f'{engine}-4-night-card.png'))
+            if box:
+                night.screenshot(path=str(out / f'{engine}-4-night-moon-crop.png'), clip=box)
+            truth = night.evaluate("()=>{try{return qaState().moonTruth??null}catch(e){return String(e)}}")
+            cells['night'] = {'pass': bool(box), 'status': 'human-review', 'nightMoonCrop': bool(box), 'moonTruth': truth, 'nightCounts': night.evaluate(COUNTS)}
+            night.close()
+
+        def navigation():
+            # Real navigation: the outgoing document retires for real (Chromium request log only).
+            if engine != 'chromium':
+                cells['navigation'] = {'pass': True, 'status': 'not-applicable', 'reason': 'no request-level instrument in this engine'}; return
             page.wait_for_timeout(1500); mark('navigation')
             page.goto('about:blank'); page.wait_for_timeout(1000)
             nav = [x for x in report['cdp'] if x['phase'] == 'navigation']
             cells['navigation'] = {'pass': not nav, 'navigationCdp': nav}
 
-        night = ctx.new_page()
-        night.route(lambda u: not u.startswith(origin), lambda r: r.abort())
-        night.route('https://api.aladhan.com/**', lambda r: prayer(r, record))
-        night.route(origin + '/index.html', lambda r: r.fulfill(status=200, content_type='text/html; charset=utf-8', headers={'Content-Security-Policy': policy}, body=index))
-        night.goto(origin + '/index.html' + NIGHT); wait(night, READY, 60000)
-        for _ in range(3):
-            night.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))"); night.wait_for_timeout(200)
-            night.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))"); wait(night, READY, 30000)
-        night.wait_for_timeout(1500)
-        box = night.evaluate("()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r&&r.width>0?{x:Math.max(0,r.left-20),y:Math.max(0,r.top-20),width:r.width+40,height:r.height+40}:null}")
-        night.screenshot(path=str(out / f'{engine}-4-night-card.png'))
-        if box:
-            night.screenshot(path=str(out / f'{engine}-4-night-moon-crop.png'), clip=box)
-        truth = night.evaluate("()=>{try{return qaState().moonTruth??null}catch(e){return String(e)}}")
-        cells['recovery-visual'].update(nightMoonCrop=bool(box), moonTruth=truth, nightCounts=night.evaluate(COUNTS))
-        browser.close()
+        for name, fn in (('first-boot', first_boot), ('live-handoff', live_handoff), ('retirement', retirement), ('construction', construction),
+                         ('cycles', cycles), ('moon-replay', moon_replay), ('recovery-visual', recovery_visual), ('night', night_cell), ('navigation', navigation)):
+            cell(name, fn)
+        report['complete'] = state['crashed'] is None
+        try:
+            browser.close()
+        except Exception as error:
+            report['closeError'] = str(error)[:300]
     server.shutdown()
-    report['pass'] = all(v['pass'] for v in cells.values())
-    text = json.dumps(report, indent=2, ensure_ascii=False)
-    for form in {str(REPO), str(REPO).replace('\\', '\\\\'), REPO.as_posix(), str(root), root.as_posix()}:
-        text = text.replace(form, '<root>')
-    (out / f'{engine}-report.json').write_text(text + '\n', encoding='utf-8')
-    print(json.dumps({'engine': engine, 'version': report['browserVersion'], 'pass': report['pass'], 'cells': {k: v['pass'] for k, v in cells.items()}}))
+    save()
+    print(json.dumps({'engine': engine, 'version': report['browserVersion'], 'pass': report['pass'], 'complete': report['complete'],
+                      'cells': {k: (True if v['pass'] else v.get('status', False)) for k, v in cells.items()}, 'crashes': report['crashes']}))
     return report['pass']
 
 
@@ -268,5 +351,10 @@ if __name__ == '__main__':
     a.add_argument('--root', default=str(REPO))
     a.add_argument('--out', required=True)
     a.add_argument('--headed', action='store_true')
+    a.add_argument('--cells', default=','.join(CELLS), help='comma-separated subset (bisection); execution order is fixed')
+    a.add_argument('--cycles-wait-ms', type=int, default=200)
+    a.add_argument('--cycles-fresh-page', action='store_true', help='run the cycles cell on a newly loaded page')
+    a.add_argument('--composed-wait-ms', type=int, default=60000, help='retirement: wait up to this long for a refined-composed card')
+    a.add_argument('--cycles-settle-ms', type=int, default=500, help='cycles: settle after each resumed READY (0 reproduces the Firefox crash)')
     o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=False)
-    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, sys.argv[1:]) else 1)
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms) else 1)
