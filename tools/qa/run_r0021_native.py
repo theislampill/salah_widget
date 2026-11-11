@@ -122,7 +122,10 @@ INIT = r"""(()=>{
  const peak=()=>{if(!R.peak)return;try{const c=live();for(const k in c)if(!(R.peak[k]>=c[k]))R.peak[k]=c[k];}catch(e){}};
  R.live=live;R.resetPeak=()=>{R.peak=live();};
  // Trusted lifecycle events, registered first so they run before the product's own listeners.
- const life=e=>{if(e.type==='pagehide'&&e.isTrusted){R.pagehideAt=performance.now();R.rafAfterPagehide=0;}if(e.type==='pageshow'&&e.isTrusted)R.pagehideAt=null;
+ const life=e=>{if(e.type==='pagehide'&&e.isTrusted){R.pagehideAt=performance.now();R.rafAfterPagehide=0;
+   // Written at the pagehide itself, so a document in which no callback runs afterwards still reports 0 (never null).
+   if(R.persist){try{sessionStorage.setItem('r0021-rafpost|'+R.doc,JSON.stringify({afterPagehide:0,pagehideAt:R.pagehideAt,times:R.rafTimes.slice(-60)}));}catch(x){R.storeErrors++;}}}
+  if(e.type==='pageshow'&&e.isTrusted)R.pagehideAt=null;
   const o=mark({type:e.type,persisted:e.persisted??null,vis:document.visibilityState,trusted:e.isTrusted});R.lifecycle.push(o);store({kind:'lifecycle',...o});};
  R.pagehideAt=null;R.rafAfterPagehide=0;R.rafTimes=[];
  window.addEventListener('pagehide',life,true);
@@ -575,7 +578,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                 fresh = pg.evaluate(replay); pg.wait_for_timeout(1500)
                 after = pg.evaluate("()=>{const R=window.__r0021;return {moonVisListeners:R.moonVis,moonIntervalsLive:R.moonIntervals.size,state:window.SalahMoonRuntime?.state?.status??null}}")
                 shot(f'6-{kind}-reinstalled', pg=pg)
-                reinstalled = bool(fresh['runtime'] and fresh['disposed'] is False and fresh['detail'] and not any('replay refused' in e for e in fresh['errors'])
+                reinstalled = bool(fresh['runtime'] and fresh['disposed'] is not True and fresh['detail'] and not any('replay refused' in e for e in fresh['errors'])
                                    and after['moonVisListeners'] == 1 and after['moonIntervalsLive'] == 1)
                 result[kind] = {'pass': unwound and functional and reinstalled, 'unwound': unwound, 'cardFunctional': functional, 'reinstalled': reinstalled,
                                 'nativeLoopStarted': booted, 'afterFailure': failed, 'reinstall': fresh, 'afterReinstall': after}
@@ -615,7 +618,8 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                 shot('7-moon-asset-recovered', pg=pg)
                 beyond = pg.evaluate('()=>window.SalahMoonRuntime.retry()')   # bound: refused while a worker is live or retryCount>=3
                 withheld = [x for x in served_log if x['blocked']]
-                healthy_fallback = bool(failed['registered'] and failed['disposed'] is False and failed['moonVisListeners'] == 1
+                # disposed is null where the runtime lacks the field (pre-R0021); the claim is "not disposed" (as first-boot).
+                healthy_fallback = bool(failed['registered'] and failed['disposed'] is not True and failed['moonVisListeners'] == 1
                                         and failed['moonIntervalsLive'] == 1 and failed['detailCanvases'] <= 1 and failed['nonSkyWorkersLive'] == 0)
                 visible = bool(failed['moonReady'] and failed['moonVisibility'] == 'visible')
                 functional = bool(ready and failed['counts']['sky'] == 1 and failed['prayerUi']['fajr'] and failed['prayerUi']['time'] and not failed['prayerUi']['unavailable'])
