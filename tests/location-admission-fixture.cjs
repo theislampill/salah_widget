@@ -198,7 +198,7 @@ async function geolocateAdmission(S) {
     assert.equal(r.ok, true); assert.ok(Object.is(r.lat, lat) && Object.is(r.lon, lon)); assert.equal(r.accuracy, 20);
   }
   for (const accuracy of [NaN, -1, Infinity, '25', undefined]) {
-    const r = await engine(S, {}, pos(52.52, 13.41, accuracy)).api.geolocate({});
+    const r = await engine(S, {}, { coords: { latitude: 52.52, longitude: 13.41, accuracy }, timestamp: Date.now() - 1000 }).api.geolocate({});
     assert.equal(r.ok, true); assert.equal(r.accuracy, null); assert.equal(r.locationEvidence.accuracyM, null);
   }
 }
