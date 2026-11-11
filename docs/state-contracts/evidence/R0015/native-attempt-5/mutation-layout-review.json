@@ -1,0 +1,68 @@
+{
+  "schema": "r0015-mutation-layout-independent-review.v1",
+  "reviewer": "/root/r0013_review",
+  "recordedUtc": "2026-11-11T13:19:49.745107+00:00",
+  "scope": "Bounded root-authored Python acquisition/layout delta only. No PowerShell/native execution and no source/shared mutation.",
+  "bindings": {
+    "newDriver": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run5-review/reviewed-driver-732acd.py",
+      "sha256": "732acd9fb371926c28e2d410de2741703b1397f0eb38129384b1cd6e08ac23bc",
+      "bytes": 32340
+    },
+    "oldDriver": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-mutation-layout/driver-before.py",
+      "sha256": "08a1b3263f6eef4560581b0bf104ee4ef27fe0356cb9721d845740378caa567d",
+      "bytes": 30450
+    },
+    "source": {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+      "sha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+      "bytes": 109775
+    },
+    "nativeRed": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run5/Windows-top/ps7-transaction-mutations.json",
+      "sha256": "080a4974a4103eeb1cb784388338c61ab2689271bc92f37b9e5211b86f32d02e",
+      "bytes": 61812
+    },
+    "controls": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-mutation-layout/controls.json",
+      "sha256": "f47dc49e8e8cacf58b7cdf3e90bcbff8b54d22e27b84aa3678c03ea3ff9b7fd9",
+      "bytes": 2617
+    },
+    "routeControl": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-mutation-layout/route-red-green.json",
+      "sha256": "034fc2dafb1432130108f211aa0bf210572ba3d4bc945c9cf839a3e1eb5814e2",
+      "bytes": 257
+    },
+    "retainedShapeRed": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-mutation-layout/receipt-shape-red.json",
+      "sha256": "1808df995e70862a51a881635b03b5efec508faa541e120d273e304bfa214ec3",
+      "bytes": 419
+    }
+  },
+  "disposition": "NO_STATIC_BLOCKER_FOR_BOUNDED_NATIVE_REPLAY",
+  "nativeQualified": false,
+  "findings": [],
+  "checks": [
+    "Only the declared fixture parent moves up one level, beside the fresh driver root. The actual PowerShell fixture still creates its full-UUID/Unicode child and uses unchanged cases/source/assertions.",
+    "Every baseline/native-baseline/mutant actual child result is admitted before observation credit. Missing/non-object receipt, missing/non-string root, nonabsolute/missing/file/link/reparse/nested/outside-parent root loses the credited receipt and gets INVALID_FIXTURE_RECEIPT.",
+    "Raw bytes and parsed JSON remain written by unchanged invoke_pwsh; unqualifiedReceipt retains parsed data in memory. Existing timeout/UTF8/JSON acquisition statuses are not converted to product observations.",
+    "Accepted actual child directories must resolve to direct children of the declared disposable parent and are deduplicated in auxiliaryFixtures. Existing collector independent bounded-parent validation/copying remains responsible for final archival acceptance.",
+    "AST comparison confirms all original top-level assigned constants, mutation recipes and EXTRA_CASES remain identical. Seven named invocation/parser/oracle/mutation functions are unchanged.",
+    "Received 18/18 local acquisition/retention controls, including raw null/array correction, outside/link/nested refusal, unchanged timeout, deduplication and actual collector retention of one driver plus eleven child roots.",
+    "Only two recorded 261-character native requests have demonstrated code3/parent facts. Removing the exact 38-character redundant parent projects them to223; no success claim or inference about uncaptured Inspect failures follows."
+  ],
+  "nativeRun5Disposition": "Preserved FAIL. PS7 has3/13 unmutated prerequisites passing,10failed,zero mutation executions. This patch earns no retrospective mutation credit.",
+  "remainingGates": [
+    "Native Windows replay must establish all same-source prerequisites and9mutants with healthy companions.",
+    "Receive all declared primary/auxiliary roots and verify retained raw receipts against exact candidate hashes.",
+    "No installer path-support expansion or Unicode/case/assertion weakening is authorized by this layout correction.",
+    "Full51 mapping and all unrelated native/delivery/order/approval gates remain open."
+  ],
+  "execution": {
+    "testsRun": false,
+    "powerShellRun": false,
+    "nativeRun": false,
+    "staticPythonASTOnly": true
+  }
+}

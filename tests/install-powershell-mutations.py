@@ -292,8 +292,10 @@ def invoke_pwsh(pwsh: Path, code: str, prefix: Path, timeout: int = 180) -> dict
 
 def fixture_code(test: Path, source: Path, preset: Path, cases: list[str], posix: bool, native: bool = False) -> str:
     code = "& " + psq(test) + " -SourceFile " + psq(source)
-    # Retain every actual child fixture under the reported driver root.
-    code += " -FixtureParent " + psq(test.parent)
+    # The child already creates its own full-UUID/Unicode fixture. Keep it next
+    # to the driver root, avoiding an extra path component in native Win32 calls.
+    # Each returned child root is explicitly retained through auxiliaryFixtures.
+    code += " -FixtureParent " + psq(test.parent.parent)
     if not native:
         code += " -PresetFile " + psq(preset)
         if posix:
@@ -312,6 +314,35 @@ def passed(row: dict | None) -> bool:
 
 def copy_count(row: dict | None) -> int:
     return sum(event.get("effect") == "copy" for event in (row or {}).get("events", []))
+
+
+def retain_child_fixture(run: dict, roots: list[str], parent: Path) -> dict:
+    """Admit only an actual, direct child of the declared disposable parent."""
+    if run.get("status") != "OBSERVED":
+        return run
+    try:
+        receipt = run.get("receipt")
+        if not isinstance(receipt, dict):
+            raise ValueError("Child fixture receipt is not an object")
+        candidate = receipt.get("fixtureRoot")
+        if not isinstance(candidate, str) or not candidate:
+            raise ValueError("Missing actual child fixture root")
+        path = Path(candidate)
+        facts = path.lstat()
+        if (not path.is_absolute() or path.is_symlink()
+                or getattr(facts, "st_file_attributes", 0) & 0x400
+                or not path.is_dir() or path.resolve().parent != parent.resolve()):
+            raise ValueError("Child fixture is not a regular direct disposable child")
+    except (OSError, ValueError) as error:
+        run["status"] = "INVALID_FIXTURE_RECEIPT"
+        run["fixtureError"] = str(error)
+        # Raw bytes and the parsed JSON remain on disk. Exclude unadmitted
+        # observations from baseline/mutation credit, retaining them separately.
+        run["unqualifiedReceipt"] = run.pop("receipt", None)
+        return run
+    if candidate not in roots:
+        roots.append(candidate)
+    return run
 
 
 def main() -> int:
@@ -352,6 +383,8 @@ def main() -> int:
     report = {
         "schema": "r0015-actual-powershell-mutations-v1",
         "fixture": str(args.out.resolve()),
+        "auxiliaryFixtures": [],
+        "childFixtureParent": str(args.out.parent.resolve()),
         "sourcePath": str(args.source.resolve()),
         "sourceSha256": source_sha,
         "driverSha256": sha(Path(__file__).read_bytes()),
@@ -374,6 +407,7 @@ def main() -> int:
             core_cases += [spec["target"], spec["positive"]]
     core_cases = list(dict.fromkeys(core_cases))
     control_run = invoke_pwsh(args.pwsh, fixture_code(derived_test, baseline_source, preset, core_cases, args.posix_native_adapter), args.out / "baseline-controls")
+    retain_child_fixture(control_run, report["auxiliaryFixtures"], args.out.parent)
     controls = rows_by_case(control_run)
     controls_good = control_run.get("status") == "OBSERVED" and control_run.get("exit") == 0 and set(core_cases).issubset(controls) and all(passed(controls[case]) for case in core_cases)
     report["failureControls"] = [{"case": case, "pass_": passed(controls.get(case)), "result": controls.get(case)} for case in core_cases]
@@ -398,6 +432,7 @@ def main() -> int:
             continue
         if spec.get("native") and native_baseline is None:
             native_baseline = invoke_pwsh(args.pwsh, fixture_code(native_test, baseline_source, preset, [spec["target"], spec["positive"]], False, True), args.out / "native-baseline")
+            retain_child_fixture(native_baseline, report["auxiliaryFixtures"], args.out.parent)
         if spec.get("native"):
             native_rows = rows_by_case(native_baseline)
             if native_baseline.get("exit") != 0 or not passed(native_rows.get(spec["target"])) or not passed(native_rows.get(spec["positive"])):
@@ -426,6 +461,7 @@ def main() -> int:
         native = bool(spec.get("native"))
         cases = [spec["target"], spec["positive"]] if native else [PARSER, spec["target"], spec["positive"]]
         observed = invoke_pwsh(args.pwsh, fixture_code(native_test if native else derived_test, mutant, preset, cases, args.posix_native_adapter and not native, native), args.out / f"run-{index:02}")
+        retain_child_fixture(observed, report["auxiliaryFixtures"], args.out.parent)
         actual_rows = rows_by_case(observed)
         target = actual_rows.get(spec["target"])
         positive = actual_rows.get(spec["positive"])
