@@ -174,7 +174,8 @@ function fixture(options = {}) {
         if('zone' in values)tz=values.zone;if('weather' in values)weather=values.weather;if('lastWxAt' in values)lastWxAt=values.lastWxAt;
         if('weatherTrack' in values)weatherTrack=values.weatherTrack;if('wxBusy' in values)wxBusy=values.wxBusy;
         if('radarBusy' in values)radarBusy=values.radarBusy;if('lastWxTry' in values)lastWxTry=values.lastWxTry;
-        if('lastRadarAt' in values)lastRadarAt=values.lastRadarAt;},
+        if('lastRadarAt' in values)lastRadarAt=values.lastRadarAt;
+        if('retry' in values){_wxRetry.weather=values.retry.weather;_wxRetry.radar=values.retry.radar;}},
       view:()=>{const a=atmosphere(model());paint(a);return {a,qa:window.qaState()};}
     };
   `, context, { filename: sourcePath });

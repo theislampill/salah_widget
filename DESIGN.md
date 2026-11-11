@@ -410,6 +410,11 @@ result with `fetch timeout`, `body timeout` or `image timeout` identifies the
 bounded stage. `received` describes wrapper completion, not freshness or provider
 health. Slot release, retry eligibility and a healthy replacement consumer are
 separate facts; the README's Weather retry description gives their timing limits.
+`qaState().wxTruth.retry` reports the retry clock (`monotonic` or the disclosed
+`wall-fallback`) and, per source, the derived gate `state`, `intervalMs`, the
+elapsed `lastAttemptElapsedMs` (`null` = never attempted in this document) and
+`nextEligibleInMs`. These are process-relative elapsed values, never source or
+receipt times, and are not persisted.
 The diagnostic is the latest attempt record, not a history or a provider health
 check. Compare `generation`, `operationId` and `attemptId` when following a
 replacement: a released old attempt must not clear the active successor or
