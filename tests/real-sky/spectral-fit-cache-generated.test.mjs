@@ -49,7 +49,8 @@ test('ES27-01/06 the real generated worker bundle is bounded when executed',asyn
 
 const pack=(()=>{const box={window:{}};vm.runInNewContext(text('real-sky/native-data.js'),box);return JSON.parse(JSON.stringify(box.window.__SALAH_REAL_SKY_PACK__));})();
 async function boot(source){
- const realm=bundleRealm(source),ready=await realm.message({kind:'boot',pack});assert.equal(ready?.kind,'ready',JSON.stringify(ready));
+ const realm=bundleRealm(source);
+ try{const ready=await realm.message({kind:'boot',pack});assert.equal(ready?.kind,'ready',JSON.stringify(ready));}catch(error){await realm.close();throw error;}
  const d=(bvAt(5,1)-bvAt(5,0))/16;
  return {realm,
   preview:snap=>realm.eval(`renderNativeBackgroundPreview(${JSON.stringify(snap)})`),
@@ -60,7 +61,10 @@ async function boot(source){
 test('ES27-14 old vs new generated worker bundle: first-paint preview and refined worker outputs are byte-identical (cold / hit / recomputed)',async t=>{
  const newer=text('real-sky/native-worker.js'),older=vendorBundle(newer);
  assert.ok(older.includes(concatStrip(vendorSpectral.toString('utf8'))));
- const oldB=await boot(older),newB=await boot(newer);
+ // try/finally: a failing assertion must still close both worker realms, or node --test hangs on live threads.
+ const oldB=await boot(older);let newB=null;
+ try{
+ newB=await boot(newer);
  await newB.flood(0,false);// saturate the new realm's outer cache so caller keys must use the inner cache
  let bytes=0,scenes=0;
  for(const [i,utc] of SCENES.entries()){
@@ -76,9 +80,9 @@ test('ES27-14 old vs new generated worker bundle: first-paint preview and refine
   scenes++;
  }
  const retained=await newB.realm.eval('__r0027.inner[0].size'),oldRetained=await oldB.realm.eval('__r0027.inner[0].size');
- await oldB.realm.close();await newB.realm.close();
  t.diagnostic(`scenes=${scenes} bytesCompared=${bytes} newInnerRetained=${retained} oldInnerRetained=${oldRetained} oldBundleSha256=${sha256(Buffer.from(older))} newBundleSha256=${sha256(Buffer.from(newer))}`);
  assert.ok(retained<=CAPACITY,'new realm bounded');
+ }finally{await oldB.realm.close();if(newB)await newB.realm.close();}
 });
 
 test('ES27-09/10/11/12 Python generator contract and its mutation controls pass (executed from the integration route)',()=>{
