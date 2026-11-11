@@ -2,6 +2,14 @@
 
 This index binds exact findings documents and original native artifacts. It is a remaining-obligations publication, not an acceptance certificate. All40 mandatory requirements remain in acceptance-ledger.md. Reports retain their individual author/context/scope/limits; root receiving does not turn reviewers into action authorities.
 
+## Post-request02 frontier — 2026-11-11
+
+**Diagnostic receiving complete; native acquisition FAILURE; controlled pair UNREALIZED; 24 recorded readability intervals remain OPEN.** The latest acquired diagnostic source is `1e3610d97b0e33c0bfaa45f528befc998b5209d5` / tree `8ae07f9737f6ec44c8abccbe2f353cb5d76ba829`. Request02 run `42925667946` failed both original action-3 releases after their unchanged 10-second body deadlines. Neither arm reached CSS/font intervention or normal assertions. Later correct retry values and finite readable windows do not realize that pair. [N02S,N02P]
+
+The sleep-observation objective is complete: **8.141 / 5.812 seconds** lie inside the existing 250 ms sleep wrappers, with zero recorded adjacent gaps. Component causation remains unproved. All **1,052 encoded frames / 274 exact RGB states / 46 contact sheets** are received, with no new selective glyph loss in these finite recordings. The historical 24 intervals remain open. [N02S,N02P,N02A]
+
+The original **FAILED helper-close** receipts and successful six-call native resource cleanup remain distinct. A cleanup-only source proposal is separate and pending at this cut; no correction, control result, review or publication is credited here. It cannot repair latency or justify another native acquisition. Further native work requires a concrete changed mechanism/discriminator and preservation review; no request03 is supplied. Earlier dated status snapshots below are historical, while the original evidence, requirements and all acceptance obligations remain binding.
+
 ## Byte-exact findings
 
 The receipt copies below preserve original bytes, including historical local custody links. Those sandbox/local links are not claimed to resolve from GitHub. Original native Actions artifacts and the owner's durable checkpoint preserve the underlying evidence; public delivery and immutable external accessibility remain explicit A09 gates. Context-recovered/literal files are labeled recoveries, not counterfeit unavailable original final reports.
@@ -39,6 +47,12 @@ The receipt copies below preserve original bytes, including historical local cus
 | FINGS_JSON | [font_ingress_source_receiving.json](successor-receipts/font_ingress_source_receiving.json) | `419ca73934d61dfe6c1ef24144d801cec5eebe4d605270ed11c752b7f7021b86` |
 | FINGP | [font_ingress_presentation.md](successor-receipts/font_ingress_presentation.md) | `bbabb65f26b0120401b88f12f37fc7e7af9a163639dc33e3da2e3de0226b4616` |
 | FINGP_JSON | [font_ingress_presentation.json](successor-receipts/font_ingress_presentation.json) | `dc2833147c66d26705b1941de5a5ec5656a545a2f2c40c52a5573eb3e1effd66` |
+| N02S | [native02_source_receiving.md](successor-receipts/native02_source_receiving.md) | `351b8468bbcfbb859f671de5d32bb7d90ce5c57fb43ea71455f63a2cfac63c70` |
+| N02S_JSON | [native02_source_receiving.json](successor-receipts/native02_source_receiving.json) | `04cc3b91276cf3f0cda0360c7c4b448102242eb47e6366542ceed98cdce2cb6f` |
+| N02P | [native02_presentation.md](successor-receipts/native02_presentation.md) | `30ef64461e3797c5b586508f830c6641a5e15b174a4bd48863783f2418b4494d` |
+| N02P_JSON | [native02_presentation.json](successor-receipts/native02_presentation.json) | `ce91053ce6b2b409d0cc8d6e90721155cb85bad42f8a0c5a3692d96799949772` |
+| N02A | [native02_andon.md](successor-receipts/native02_andon.md) | `4db885ab0821ad3425341f4808734a6f9d026e93c3a5f00aa756ce82bfc4c7cc` |
+| N02A_JSON | [native02_andon.json](successor-receipts/native02_andon.json) | `5a7beeb0c23a021b38f17ae61f1c802a81489cb641b023506430c755c4c35ee9` |
 
 ## Original native acquisitions
 
@@ -55,6 +69,7 @@ Workflow status alone grants no application acceptance. Every original failure/s
 | [42893839473](https://github.com/theislampill/salah_widget/actions/runs/42893839473) | F6: 2 healthy+4 intended negatives with freshcompanions;4 retained partial intervals/11frames | `a2310e03b0f4f75260ae2a17c7cf01ca323821735d73fc17565a4733272f730d` |
 | [42898554321](https://github.com/theislampill/salah_widget/actions/runs/42898554321) | FUSE: 2-case diagnostic:source succeeds, neither video recurs; INCONCLUSIVE | `59ab89acf24f5f8c8b16da6a7af914ec9a0ccc8781a83d407050734f936945db` |
 | [42920631317](https://github.com/theislampill/salah_widget/actions/runs/42920631317) | Controlled ingress, attempt 1/job 130194259457/artifact 13811167788: FAILURE; baseline source/custody received and one text-loss interval; fallback fails before intervention; pair UNREALIZED | `50e90fb8196e73d9a9af5ac5bc68ba9f95df032c524980e73a4fdb0aa028e5e5` |
+| [42925667946](https://github.com/theislampill/salah_widget/actions/runs/42925667946) | Request02, attempt 1/job 130211384092/artifact 13814161433: FAILURE; both releases fail before intervention; sleep observation complete, later finite retry pixels readable; pair UNREALIZED | `213c715555a8daa818a4204cdc48231a3470ef39a403cce6d6c5fb626e162ee2` |
 
 ## Current preservation and limits
 
@@ -71,6 +86,8 @@ Open technical obligation: **24 recorded readability intervals**, comprising the
 
 ## Controlled font-ingress receiving — 2026-11-10
 
+Historical first-run status snapshot. Its “latest,” prepared-successor and checkpoint-save descriptions belong to that cut; the current request02 frontier and version-13 receipt below supersede status only.
+
 The latest **acquired diagnostic source** is commit `4bac6a4781fce62f08ab550a20fe5234d3ebb746`, tree `a5e51a591200296e3e73b9ecedbd8c0539e07ee5`, parent `c373cbdc706cf3b27ab8c45dbde02a998bd1fbd4`. Run `42920631317`, attempt `1`, job `130194259457`, artifact `13811167788` returned **FAILURE**. Its original `r0007-windows-native-42920631317-1.zip` is **3,111,326 bytes**, SHA256 `50e90fb8196e73d9a9af5ac5bc68ba9f95df032c524980e73a4fdb0aa028e5e5`; the [owner's preserved original archive](https://chatgpt.com/library?file_id=libfile_de51825a0eec8191967643938548ff3f&account_id=personal) is separate from public-delivery acceptance.
 
 FINGS/FINGS_JSON preserve the complete final source receipt: all 40 archive members and 150 source bindings match; baseline original actions, assertions and native CSS/font custody complete. Fallback fails at original action 3 after its 10-second body deadline fires, before CSS application, font intervention or populated prayer output. Both native cleanup receipts are established. The unresolved 7.640-second host region does not establish a sleep, scheduler or Gecko cause. No paired CSS equality or populated fallback comparison exists.
@@ -86,6 +103,8 @@ Root G16 records main `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`, preceding PR71
 
 ## Sleep-observation countermeasure receiving — 2026-11-10T23:34Z
 
+Historical pre-acquisition status snapshot. The source-control result remains scoped; the actual subsequent request02 acquisition and receiving are recorded below. Preserved prerequisites remain binding.
+
 After the 23:24 receiving cut above, the independent bounded source review received the three-file sleep-observation packet as PASS. Its manifest SHA256 is `09d151f36eeaef26c5dc1806288ced740657fe09b1e4766e5fc47860050adbc1`. The selected diagnostic wraps the existing 250 ms host sleep with the existing timing helper; it changes no scheduling primitive, page call, seven-action recipe, product deadline, font service or no-mode behavior. Six timing/dispatch and 52 existing ingress controls passed independently; the original driver produced two expected assertion failures with zero setup errors. A separate probe exercised both complete seven-action recipes and exact absent-mode parity. These are pure source controls, not native timing or application acceptance.
 
 Request `r0007-font-ingress-20261110-02` selects one finite continuation of the same two serial headed, video-only Firefox cases. Its purpose is to observe the previously missing sleep span and, if the original prerequisites succeed, complete the existing font comparison. A successful later release would not explain the original host delay. The exact combined publication, fresh native evidence, source/CSS/custody receiving and complete pixel review remain separate effects; this pre-acquisition receipt claims none of their future outcomes.
@@ -96,3 +115,22 @@ Request `r0007-font-ingress-20261110-02` selects one finite continuation of the 
 | [ingress_release_andon.json](successor-receipts/ingress_release_andon.json) | `9bc5ecde719bfc5907e96fca38b105037b32fc37c86b5b8af9b0ed2e949cea2e` |
 | [sleep_observation_exact_review.md](successor-receipts/sleep_observation_exact_review.md) | `5bfcaea454ec7b4b5f47ab8845a62c46e1b913ce200abb9dbaa944c89fb9b10c` |
 | [sleep_observation_exact_review.json](successor-receipts/sleep_observation_exact_review.json) | `5bfa6e6b916977e80615c8ac94fd7aedb98eb30c4a55b021d196a329f626aa24` |
+
+
+## Request02 evidence receiving — 2026-11-11
+
+Run `42925667946`, attempt `1`, job `130211384092`, artifact `13814161433`, records **FAILURE** at acquired source `1e3610d97b0e33c0bfaa45f528befc998b5209d5`, tree `8ae07f9737f6ec44c8abccbe2f353cb5d76ba829`, sole parent `4bac6a4781fce62f08ab550a20fe5234d3ebb746`. Original `r0007-windows-native-42925667946-1.zip` is **1,974,128 bytes**, SHA256 `213c715555a8daa818a4204cdc48231a3470ef39a403cce6d6c5fb626e162ee2`, with **34 verified file members**. The [separately preserved original archive](https://chatgpt.com/library?file_id=libfile_9dcac32d5f5081918910ae3ac765b5bc&account_id=personal) remains distinct from public delivery.
+
+N02S/N02S_JSON bind all **150 source hashes** to the exact acquired commit and recheck the original run against its own source. Only the driver sleep bracket changed among those 150 files; the separately committed request/timing-control changes are identified in the report. Both original body deadlines fire, both release calls fail, and each arm attempts four of seven actions. The driver never executes normal assertions or actions 4–6. Later raw failure exports independently match Isha current/Fajr next/`05:00`/270 minutes and the retained literal fields after the existing retry. No CSS delivery, font transaction, applied intervention or qualified pair exists.
+
+The new host partition is exactly **0 / 8.141 / 0 seconds** baseline and **0 / 5.812 / 0 seconds** fallback before/inside/after the existing sleep wrapper. Fallback's **6.782-second `capture.after-ordinal`** read precedes that partition. These brackets include wrapper bookkeeping and callback residence, not OS/kernel sleep probes. No component cause or exact page/host/video alignment is established, and the first run's 5.328/7.640-second unbracketed gaps remain historical unknowns.
+
+N02P/N02P_JSON cover all **1,052 encoded frames**, mapping to **274 actually viewed exact RGB states** in **46 contact sheets**. Baseline becomes populated at frame **473 / 18.920 s** and remains readable through **554 / 22.160 s**; fallback becomes populated at **446 / 17.840 s** and remains readable through **496 / 19.840 s**. Their encoded populated slots are `[18.920, 22.200)` and `[17.840, 19.880)` on separate WebM timelines. No new selective glyph-loss interval is observed within those finite recordings. This neither closes the historical **24 intervals** nor creates a “neither recurs after intervention” result. Root received the complete reports, checked the **434-file** derived manifest and viewed the boundary strips; those derived assets and videos are not added by these documentation changes.
+
+N02A/N02A_JSON retain the bounded Andon disposition: the observation objective is complete; acquisition latency and font causation remain unresolved. Both original helper-close receipts stay **FAILED** because an expected terminal from a successfully returned owned abort was latched in `aborted` state while the helper exempts only `aborting`. All six native cleanup calls returned successfully in each arm. A **separate cleanup-only source proposal** remains pending at this cut; its proof is not supplied by these reports and cannot retroactively repair the failed pair. Another native acquisition requires a concrete changed mechanism/discriminator and bounded review preserving the seven actions, 250 ms stimulus, 10-second deadline, literal oracles and comparison requirements. No automatic retry, new request03, selector rewrite, general renderer/provider campaign or numerical waiver follows.
+
+All six report copies preserve complete final bytes, including original local/sandbox custody paths. Such paths are not claimed to resolve from GitHub. Previous report/acquisition rows and original proof remain unchanged; reported review scope does not become execution or acceptance authority.
+
+The actual saved **checkpoint version 13**, cut **2026-11-10T23:48:17Z**, is **431,619,833 bytes**, SHA256 `55ffac1c08fd7a1e8fa2bb59c795cad3cabfedfaedb18b15f5414c0345032d0f`, recorded against [the checkpoint file](https://chatgpt.com/library?file_id=libfile_a1e9c3c85718819197d3298eddfd3cbd&account_id=personal). It contains the new original acquisition, **not these later final source/pixel/Andon reports**. Those reports and this frontier need the next checkpoint save at this cut. Earlier version-9/version-12 descriptions remain dated history.
+
+The last root live readback at **2026-11-10T23:58:42.052Z** records branch/PR73 head `1e3610d97b0e33c0bfaa45f528befc998b5209d5`, main `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`, PR71 OPEN/non-draft/unmerged at `38e67bb96889528c70fd27647604818d50781b7d`, PR73 OPEN/draft/unmerged, issue7 OPEN, active0/queued0 and exact merge approval **NOT_GRANTED**. Accepted R0017 corrective integration, exact whole-contract final review, owner approval, actual merge/main, configured delivery, certificate and verified completed issue closure remain open in **R0017 corrective → R0007 → R000B** order.
