@@ -37,6 +37,12 @@ Retirement cell: passes only when its precondition held (refined-composed card A
 mask at pagehide); otherwise it reports precondition-not-met rather than a vacuous PASS. On 2026-11-11 no tried
 scene (plain, --fragment with simWx=3&simCloud=100, and a low-Moon overcast timeScale=30 night) produced a
 non-clear solar mask at pagehide in Chromium 148, on main or candidate, so this cell did not reproduce the finding.
+Cause (found later): the enforced fixture CSP (connect-src 'self') blocks the cross-origin prayer fetch before the
+Playwright route can answer it, so no prayer data arrives and no cloud is painted. --in-page-prayer (opt-in; default
+runs are unchanged) answers the same controlled record inside the page. With it and
+--fragment '...&simWx=3&simCloud=100&timeScale=4' the precondition holds. Each retiring-phase image event keeps its
+JS stack, which names the initiator (lifecycle dispose versus the live preview render loop); the cell's pass rule
+is not changed by this.
 
 Main control: run with --root <checkout of 645b53cc>. Expected FAIL there: retirement (a preview mask Image.src
 during pagehide when the cloud mask changed; cloud-dependent), construction (orphan canvases), moon-replay (no
@@ -84,6 +90,12 @@ INIT = r"""(()=>{
   if(u.includes('api.rainviewer.com'))return Promise.reject(new TypeError('controlled radar unavailable'));
   return nf(input,init);};
 })();"""
+PRAYER_IN_PAGE = r"""((rec)=>{const f=window.fetch;
+ window.fetch=(input,init)=>{const u=String(input&&input.url||input),m=/^https:\/\/api\.aladhan\.com\/v1\/timings\/(\d\d)-(\d\d)-(\d{4})/.exec(u);
+  if(!m)return f(input,init);const r=JSON.parse(JSON.stringify(rec));
+  Object.assign(r.date.gregorian,{date:m[1]+'-'+m[2]+'-'+m[3],day:m[1],month:{number:+m[2],en:'Fixture'},year:m[3]});
+  return Promise.resolve(new Response(JSON.stringify({code:200,status:'OK',data:r}),{status:200,headers:{'Content-Type':'application/json'}}));};
+})(__RECORD__);"""
 COUNTS = """()=>{const R=window.__r0021;return {sky:document.querySelectorAll('.real-sky-canvas').length,preview:document.querySelectorAll('.real-sky-preview').length,
  detail:document.querySelectorAll('.moon-detail-canvas').length,workersLive:R.workers.made-R.workers.ended,urlsLive:R.urls.made-R.urls.revoked,vis:R.vis,
  assets:window.SalahRealSkyAssets?.state.status??null,skyStatus:window.SalahRealSky?.state.status??null,previewStatus:window.SalahSkyPreview?.state.status??null,
@@ -125,7 +137,8 @@ def events_in(page, name):
 CELLS = ['first-boot', 'live-handoff', 'retirement', 'construction', 'cycles', 'moon-replay', 'recovery-visual', 'night', 'navigation']
 
 
-def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500, fragment=None):
+def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500, fragment=None,
+        in_page_prayer=False):
     fragment = fragment or HASH
     policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', (REPO / 'tests/widget-fixture.html').read_text(encoding='utf-8')).group(1)
     index = (root / 'index.html').read_bytes()
@@ -141,7 +154,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
               'evidenceLevel': 'request-level (CDP) and page-level' if engine == 'chromium' else 'page-level only (no CDP request log in this engine)',
               'root': 'repository' if root.resolve() == REPO else root.name, 'policy': policy, 'policyDelivery': 'response header on index.html',
               'served': {n: sha(root / n) for n in SERVED if (root / n).is_file()},
-              'options': {'fragment': fragment, 'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh, 'composedWaitMs': composed_wait},
+              'options': {'fragment': fragment, 'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh, 'composedWaitMs': composed_wait, 'inPagePrayer': in_page_prayer},
               'cells': {}, 'console': [], 'cdp': [], 'crashes': []}
     cells = report['cells']
 
@@ -158,6 +171,12 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
         report['browserVersion'] = browser.version
         ctx = browser.new_context(viewport={'width': 325, 'height': 530})
         ctx.add_init_script(INIT)
+        if in_page_prayer:
+            # Opt-in (ES21-12 precondition attempt): the enforced fixture CSP (connect-src 'self') blocks the
+            # cross-origin prayer fetch before the Playwright route below can answer it, so the page never gets
+            # prayer data. This answers the same controlled record inside the page, exactly as INIT already does
+            # for the weather provider. Product code, CSP and every cell's pass condition are unchanged.
+            ctx.add_init_script(PRAYER_IN_PAGE.replace('__RECORD__', json.dumps(record)))
         cdp_phase = {'value': 'load'}
 
         def open_page(fragment, label):
@@ -360,6 +379,7 @@ if __name__ == '__main__':
     a.add_argument('--cycles-fresh-page', action='store_true', help='run the cycles cell on a newly loaded page')
     a.add_argument('--composed-wait-ms', type=int, default=60000, help='retirement: wait up to this long for a refined-composed card')
     a.add_argument('--fragment', default=None, help='main page fragment (default: the plain fixture scene)')
+    a.add_argument('--in-page-prayer', action='store_true', help='answer the controlled prayer record inside the page (the enforced CSP blocks the routed provider)')
     a.add_argument('--cycles-settle-ms', type=int, default=500, help='cycles: settle after each resumed READY (0 reproduces the Firefox crash)')
     o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=False)
-    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms, o.fragment) else 1)
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms, o.fragment, o.in_page_prayer) else 1)
