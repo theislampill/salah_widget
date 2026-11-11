@@ -53,6 +53,11 @@ Cells (acceptance cells decide the run's overall `pass`; diagnostic cells are re
                      its deferred first frame, throws during construction) on a fresh page: registry and detail slots
                      clear, no Moon listener/interval left, the sky and prayer UI still work; then a fresh wrapper
                      install (moon/moon-host.js) succeeds
+ moon-asset-failure  a REALISTIC Moon failure: in a fresh context the fixture server answers 404 for the Moon worker's
+                     terrain/colour assets on a clear night. The runtime stays registered (not half-built: one listener,
+                     one poll interval, no live Moon worker), the calendar/fallback Moon stays visible (moon-ready,
+                     screenshot), the card works; two retries while withheld are accepted and fail cleanly; after the
+                     assets return one retry recovers; a further retry is refused (bounded)
  recovery-visual     screenshot + 3 s frame difference after the cycles (sky animating)
  night               night crop of the Moon for human opacity review (screenshots override metrics)
  presentation        DIAGNOSTIC capture for ES21-13: fixed scenes (simTime freezes the scene clock; Date.now is fixed;
@@ -95,7 +100,14 @@ PRESENTATION_SCENES = {
     'day-broken': '#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=12:30&simWx=2&simCloud=50',
     'night-half': NIGHT,
     'night-new': '#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=23:30&simMoon=0.01&simWax=1&simMoonAlt=40&simMoonH=180',
+    # Clear-sky scenes (added after review): the Sun's nucleus and the ashen new-moon disc are not hidden by cloud.
+    'day-clear': '#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=12:30&simWx=0&simCloud=0',
+    'night-half-clear': NIGHT + '&simWx=0&simCloud=0',
+    'night-new-clear': '#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=23:30&simMoon=0.01&simWax=1&simMoonAlt=40&simMoonH=180&simWx=0&simCloud=0',
 }
+NIGHT_CLEAR = NIGHT + '&simWx=0&simCloud=0'
+# Realistic Moon failure: the fixture server answers 404 for the Moon worker's terrain/colour assets.
+MOON_ASSET_PATHS = ('/moon/assets/dem.bin.gz', '/moon/assets/colour.bin.gz')
 AWAY = '__r0021_away.html'   # same-origin page served by a route (never a repository file)
 AWAY_HTML = '<!doctype html><meta charset="utf-8"><title>away</title><p>R0021 navigation target</p>'
 INIT = r"""(()=>{
@@ -110,7 +122,9 @@ INIT = r"""(()=>{
  const peak=()=>{if(!R.peak)return;try{const c=live();for(const k in c)if(!(R.peak[k]>=c[k]))R.peak[k]=c[k];}catch(e){}};
  R.live=live;R.resetPeak=()=>{R.peak=live();};
  // Trusted lifecycle events, registered first so they run before the product's own listeners.
- const life=e=>{const o=mark({type:e.type,persisted:e.persisted??null,vis:document.visibilityState,trusted:e.isTrusted});R.lifecycle.push(o);store({kind:'lifecycle',...o});};
+ const life=e=>{if(e.type==='pagehide'&&e.isTrusted){R.pagehideAt=performance.now();R.rafAfterPagehide=0;}if(e.type==='pageshow'&&e.isTrusted)R.pagehideAt=null;
+  const o=mark({type:e.type,persisted:e.persisted??null,vis:document.visibilityState,trusted:e.isTrusted});R.lifecycle.push(o);store({kind:'lifecycle',...o});};
+ R.pagehideAt=null;R.rafAfterPagehide=0;R.rafTimes=[];
  window.addEventListener('pagehide',life,true);
  window.addEventListener('pageshow',e=>{if(e.isTrusted&&e.persisted&&R.phase==='retiring')R.phase='restored';life(e);},true);
  document.addEventListener('visibilitychange',life,true);document.addEventListener('freeze',life,true);document.addEventListener('resume',life,true);
@@ -128,7 +142,8 @@ INIT = r"""(()=>{
  EventTarget.prototype.removeEventListener=function(n,f,o){if(this===document&&n==='visibilitychange'&&f&&live2.has(f)){live2.delete(f);R.vis--;if(isMoon(f))R.moonVis--;R.visLog.push(mark({op:'remove',stack:String(new Error().stack).split('\n').slice(1,5).join(' | ')}));}return rem.call(this,n,f,o);};
  window.addEventListener('error',e=>R.errors.push(mark({message:String(e.message)})));
  // Canvas insertions and pending decodes update the whole-page peaks (census cell).
- for(const [proto,name] of [[Element.prototype,'prepend'],[Element.prototype,'append'],[Node.prototype,'appendChild'],[Node.prototype,'insertBefore']]){
+ for(const [proto,name] of [[Element.prototype,'prepend'],[Element.prototype,'append'],[Node.prototype,'appendChild'],[Node.prototype,'insertBefore'],
+   [Element.prototype,'before'],[Element.prototype,'after'],[Element.prototype,'replaceWith'],[Node.prototype,'replaceChild']]){
   const f=proto[name];proto[name]=function(...a){const r=f.apply(this,a);if(a.some(n=>n instanceof HTMLCanvasElement))peak();return r;};}
  const dec=HTMLImageElement.prototype.decode;HTMLImageElement.prototype.decode=function(...a){R.decodes.pending++;peak();let p;try{p=dec.apply(this,a);}catch(e){R.decodes.pending--;throw e;}const done=()=>{R.decodes.pending--;};p.then(done,done);return p;};
  // rAF callbacks actually run, per phase (persisted while R.persist so a discarded document still reports them).
@@ -137,7 +152,10 @@ INIT = r"""(()=>{
  window.requestAnimationFrame=function(cb){
   const arm=window.__r0021_arm;
   if(arm&&arm.kind==='moon-frame'&&!arm.used&&typeof cb==='function'&&String(cb).startsWith('()=>{startFrame=requestAnimationFrame(start);}')){arm.used=true;R.injections.push(mark({kind:'moon-frame'}));throw new Error('driver-injected Moon requestAnimationFrame failure');}
-  return raf.call(window,function(t){const p=R.phase;R.rafRuns[p]=(R.rafRuns[p]||0)+1;if(R.persist){try{sessionStorage.setItem('r0021-raf|'+R.doc+'|'+p,String(R.rafRuns[p]));}catch(e){R.storeErrors++;}}return cb.call(this,t);});
+  return raf.call(window,function(t){const p=R.phase;R.rafRuns[p]=(R.rafRuns[p]||0)+1;
+   // Measured split at the trusted pagehide: callbacks that actually run after it, with their times.
+   const after=R.pagehideAt!==null;if(after)R.rafAfterPagehide++;if(R.persist&&R.rafTimes.length<400)R.rafTimes.push(Math.round(performance.now()));
+   if(R.persist){try{sessionStorage.setItem('r0021-raf|'+R.doc+'|'+p,String(R.rafRuns[p]));sessionStorage.setItem('r0021-rafpost|'+R.doc,JSON.stringify({afterPagehide:R.rafAfterPagehide,pagehideAt:R.pagehideAt,times:R.rafTimes.slice(-60)}));}catch(e){R.storeErrors++;}}return cb.call(this,t);});
  };
  // One-shot construction-failure injection used only by the construction cell.
  const gc=HTMLCanvasElement.prototype.getContext;R.failContext=0;R.failInterval=0;
@@ -228,20 +246,31 @@ def events_in(page, name):
 
 
 CELLS = ['first-boot', 'live-handoff', 'retirement-synthetic', 'construction', 'census', 'cycles', 'moon-replay', 'recovery-visual', 'night',
-         'retirement-bfcache', 'navigation', 'moon-construction', 'presentation']
+         'retirement-bfcache', 'navigation', 'moon-construction', 'moon-asset-failure', 'presentation']
 FIREFOX_BFCACHE = ('disabled by the Playwright Firefox build: its playwright.cfg sets fission.bfcacheInParent=false and states that '
                    'BFCache is also disabled in content via a docShell property')
 
 
 def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500, fragment=None,
-        in_page_prayer=False, enable_bfcache=False, reduced_motion=False):
+        in_page_prayer=False, enable_bfcache=False, reduced_motion=False, precondition_rule='changing'):
     fragment = fragment or HASH
     policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', (REPO / 'tests/widget-fixture.html').read_text(encoding='utf-8')).group(1)
     index = (root / 'index.html').read_bytes()
 
+    blocked, served_log = set(), []
+
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
             pass
+
+        def do_GET(self):
+            path = self.path.split('?')[0]
+            if path.startswith('/moon/'):
+                served_log.append({'path': path, 'blocked': path in blocked, 't': round(time.monotonic(), 3)})
+            if path in blocked:
+                self.send_error(404, 'R0021 driver: asset withheld')
+                return
+            return super().do_GET()
     server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=str(root)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f'http://127.0.0.1:{server.server_address[1]}'
@@ -252,7 +281,8 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
               'root': 'repository' if root.resolve() == REPO else root.name, 'policy': policy, 'policyDelivery': 'response header on index.html',
               'served': {n: sha(root / n) for n in SERVED if (root / n).is_file()},
               'options': {'fragment': fragment, 'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh,
-                          'composedWaitMs': composed_wait, 'inPagePrayer': in_page_prayer, 'enableBfcache': enable_bfcache, 'reducedMotion': reduced_motion},
+                          'composedWaitMs': composed_wait, 'inPagePrayer': in_page_prayer, 'enableBfcache': enable_bfcache, 'reducedMotion': reduced_motion,
+                          'preconditionRule': precondition_rule},
               'bfcache': ('launched without --disable-back-forward-cache' if enable_bfcache else 'Playwright default (--disable-back-forward-cache)') if engine == 'chromium' else FIREFOX_BFCACHE,
               'cells': {}, 'console': [], 'cdp': [], 'bfcacheNotUsed': [], 'crashes': []}
     cells = report['cells']
@@ -351,11 +381,16 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                     state['crashed'] = name
             save()
 
-        def precondition_of(pg):
+        def precondition_of(pg, rule='changing'):
             # The finding needs a refined-composed card (the preview then holds an older mask) and moving clouds, so
             # a retirement handoff would publish a CHANGED mask. Without it the cell would pass vacuously.
+            # rule='published' (reduced-motion variant, retirement-bfcache only): a data-URL cloud mask is published on a
+            # composed card. Under reduced motion the mask may hold still; a PASS under this rule is discriminating only
+            # when the same run's control FAILs, which the ledger states for every such pair.
             composed = wait(pg, COMPOSED, composed_wait)
             m1 = pg.evaluate(MASK); pg.wait_for_timeout(1500); m2 = pg.evaluate(MASK)
+            if rule == 'published':
+                return bool(composed and m2.startswith('url(')), composed, [m1[:40], m2[:40], 'changed' if m1 != m2 else 'unchanged']
             return bool(composed and m2.startswith('url(') and m1 != m2), composed, [m1[:40], m2[:40]]
 
         def first_boot():
@@ -406,7 +441,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             # ACCEPTANCE: a supported lifecycle. Real same-origin navigation away, then history back, on a fresh page.
             pg = open_page(fragment, 'bfcache'); attach_cdp(pg, 'bfcache')
             ready = wait(pg, READY, 60000)
-            precondition, composed, prefixes = precondition_of(pg)
+            precondition, composed, prefixes = precondition_of(pg, precondition_rule)
             before = counts(pg)
             cdp_phase['value'] = 'retiring'; doc = pg.evaluate(START_TRACE)   # also sets the page phase to 'retiring'
             pg.goto(origin + '/' + AWAY)
@@ -423,6 +458,8 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             violations = [x for x in outgoing if x['kind'] == 'violation' and x['phase'] == 'retiring']
             lifecycle = [x for x in data['trace'] if x['kind'] == 'lifecycle']
             raf_retiring = data['raf'].get(f'r0021-raf|{doc}|retiring', 0)
+            raf_post = pg.evaluate(f"()=>{{try{{return JSON.parse(sessionStorage.getItem('r0021-rafpost|{doc}')||'null')}}catch(e){{return String(e)}}}}")
+            pagehide_t = next((x['t'] for x in lifecycle if x.get('doc') == doc and x['type'] == 'pagehide'), None)
             memory = pg.evaluate("()=>{const R=window.__r0021;return {images:R.images.filter(x=>x.phase==='retiring'&&(x.scheme==='data'||x.scheme==='blob')),violations:R.violations.filter(x=>x.phase==='retiring'),storeErrors:R.storeErrors}}") if persisted else None
             cdp_retiring = [x for x in report['cdp'] if x['phase'] == 'retiring' and x.get('page') == 'bfcache']
             not_restored = pg.evaluate("()=>{try{const n=performance.getEntriesByType('navigation')[0];return n&&n.notRestoredReasons?JSON.parse(JSON.stringify(n.notRestoredReasons)):null}catch(e){return String(e)}}")
@@ -437,6 +474,9 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                                            'cleanRetirement': clean, 'traceMarker': marker, 'maskChangingAtNavigation': precondition, 'maskPrefixes': prefixes,
                                            'refinedComposedBeforeNavigation': composed, 'retiringImages': images, 'retiringViolations': violations,
                                            'retiringImagesInMemory': memory, 'retiringCdp': cdp_retiring, 'rafCallbacksWhileRetiring': raf_retiring,
+                                           'preconditionRule': precondition_rule, 'trustedPagehideAt': pagehide_t,
+                                           'rafAfterTrustedPagehide': raf_post.get('afterPagehide') if isinstance(raf_post, dict) else raf_post,
+                                           'rafCallbackTimesTail': raf_post.get('times') if isinstance(raf_post, dict) else None,
                                            'lifecycleEvents': lifecycle, 'initiators': {'retirementInitiated': len(retirement_initiated), 'other': len(images) - len(retirement_initiated),
                                                                                         'cdpRetiringRequests': len(cdp_retiring)},
                                            'before': before, 'afterReturn': r, 'readyAfterReturn': resumed, 'requestLevel': engine == 'chromium'}
@@ -542,6 +582,54 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                 pg.close()
             cells['moon-construction'] = {'pass': all(v['pass'] for v in result.values()), **result}
 
+        def moon_asset_failure():
+            # A REALISTIC Moon failure: the fixture answers 404 for the Moon worker's terrain/colour assets, on a clear
+            # night in a fresh context (no browser cache). Observes the registered runtime's own failure path, the
+            # visible calendar/fallback Moon, the card, and bounded retry; then assets return and one retry recovers.
+            mctx = new_context()
+            if not in_page_prayer:
+                mctx.add_init_script(prayer_script)
+            blocked.update(MOON_ASSET_PATHS); served_log.clear()
+            moon_state = """()=>{const m=window.SalahMoonRuntime,R=window.__r0021,s=m?.state;return {registered:!!m,disposed:m?.disposed??null,status:s?.status??null,
+              errors:(s?.errors??[]).slice(-3),retryCount:s?.retryCount??null,workerAlive:s?.workerAlive??null,visibleSource:s?.visibleSource??null,current:s?.current??null,
+              moonReady:document.querySelector('.c').classList.contains('moon-ready'),moonVisibility:getComputedStyle(document.querySelector('.moon')).visibility,
+              moonVisListeners:R.moonVis,moonIntervalsLive:R.moonIntervals.size,detailCanvases:document.querySelectorAll('.moon-detail-canvas').length,
+              nonSkyWorkersLive:(R.workers.made-R.workers.ended)-(R.workers.skyMade-R.workers.skyEnded)}}"""
+            try:
+                pg = open_page(NIGHT_CLEAR, 'moon-asset-failure', context=mctx)
+                ready = wait(pg, READY, 60000); booted = wait(pg, BOOTED, 60000)
+                failed_seen = wait(pg, "()=>{const s=window.SalahMoonRuntime?.state;return !!s&&(s.status==='unavailable'||s.errors.length>0)}", 90000)
+                pg.wait_for_timeout(1500)
+                failed = pg.evaluate(moon_state); failed['prayerUi'] = pg.evaluate(PRAYER_UI); failed['counts'] = counts(pg)
+                shot('7-moon-asset-failure', pg=pg)
+                retries = []
+                for i in range(2):   # bounded retry while the assets are still withheld
+                    accepted = pg.evaluate('()=>window.SalahMoonRuntime.retry()')
+                    wait(pg, "()=>{const s=window.SalahMoonRuntime.state;return !s.workerAlive&&s.status==='unavailable'}", 60000); pg.wait_for_timeout(500)
+                    retries.append({'accepted': accepted, **pg.evaluate(moon_state)})
+                blocked.clear()
+                accepted = pg.evaluate('()=>window.SalahMoonRuntime.retry()')
+                recovered = wait(pg, "()=>{const s=window.SalahMoonRuntime.state;return s.status!=='unavailable'&&s.workerAlive}", 60000)
+                pg.wait_for_timeout(3000)
+                after = pg.evaluate(moon_state); after['acceptedRetry'] = accepted
+                shot('7-moon-asset-recovered', pg=pg)
+                beyond = pg.evaluate('()=>window.SalahMoonRuntime.retry()')   # bound: refused while a worker is live or retryCount>=3
+                withheld = [x for x in served_log if x['blocked']]
+                healthy_fallback = bool(failed['registered'] and failed['disposed'] is False and failed['moonVisListeners'] == 1
+                                        and failed['moonIntervalsLive'] == 1 and failed['detailCanvases'] <= 1 and failed['nonSkyWorkersLive'] == 0)
+                visible = bool(failed['moonReady'] and failed['moonVisibility'] == 'visible')
+                functional = bool(ready and failed['counts']['sky'] == 1 and failed['prayerUi']['fajr'] and failed['prayerUi']['time'] and not failed['prayerUi']['unavailable'])
+                bounded = bool(all(r['accepted'] for r in retries) and all(r['moonVisListeners'] == 1 and r['moonIntervalsLive'] == 1 for r in retries) and beyond is False)
+                cells['moon-asset-failure'] = {'pass': bool(withheld and failed_seen and healthy_fallback and visible and functional and bounded and recovered and after['moonVisListeners'] == 1),
+                                               'injectionReached': bool(withheld), 'withheldRequests': withheld[:10], 'failureObserved': failed_seen,
+                                               'registeredNotHalfBuilt': healthy_fallback, 'fallbackMoonVisible': visible, 'cardFunctional': functional,
+                                               'boundedRetry': bounded, 'recoveredAfterAssetsReturn': recovered, 'retryBeyondRefused': beyond is False,
+                                               'nativeLoopStarted': booted, 'afterFailure': failed, 'retriesWhileWithheld': retries, 'afterRecovery': after,
+                                               'humanReview': [f'{engine}-7-moon-asset-failure.png', f'{engine}-7-moon-asset-recovered.png']}
+                pg.close()
+            finally:
+                blocked.clear(); mctx.close()
+
         def recovery_visual():
             mark('recovery-visual'); page.wait_for_timeout(1000)
             a = page.screenshot(); page.wait_for_timeout(3000); b = page.screenshot()
@@ -608,7 +696,8 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
 
         for name, fn in (('first-boot', first_boot), ('live-handoff', live_handoff), ('retirement-synthetic', retirement_synthetic), ('construction', construction),
                          ('census', census), ('cycles', cycles), ('moon-replay', moon_replay), ('recovery-visual', recovery_visual), ('night', night_cell),
-                         ('retirement-bfcache', retirement_bfcache), ('navigation', navigation), ('moon-construction', moon_construction), ('presentation', presentation)):
+                         ('retirement-bfcache', retirement_bfcache), ('navigation', navigation), ('moon-construction', moon_construction),
+                         ('moon-asset-failure', moon_asset_failure), ('presentation', presentation)):
             cell(name, fn)
         report['complete'] = state['crashed'] is None
         try:
@@ -667,6 +756,8 @@ if __name__ == '__main__':
     a.add_argument('--cycles-settle-ms', type=int, default=500, help='cycles: settle after each resumed READY (0 reproduces the Firefox crash)')
     a.add_argument('--enable-bfcache', action='store_true', help='Chromium: launch without Playwright\'s --disable-back-forward-cache')
     a.add_argument('--reduced-motion', action='store_true', help='emulate prefers-reduced-motion: reduce for the main context')
+    a.add_argument('--precondition', choices=['changing', 'published'], default='changing',
+                   help="retirement-bfcache precondition: 'changing' data-URL mask (default) or 'published' data-URL mask (reduced-motion variant)")
     a.add_argument('--compare-presentation', nargs=2, metavar=('DIR_A', 'DIR_B'), help='compare two runs\' presentation captures instead of running cells')
     o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=False)
     if o.compare_presentation:
@@ -675,4 +766,4 @@ if __name__ == '__main__':
     if unknown:
         a.error('unknown cells: ' + ','.join(unknown) + (' (retirement was renamed retirement-synthetic)' if 'retirement' in unknown else ''))
     sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms, o.fragment,
-                      o.in_page_prayer, o.enable_bfcache, o.reduced_motion) else 1)
+                      o.in_page_prayer, o.enable_bfcache, o.reduced_motion, o.precondition) else 1)
