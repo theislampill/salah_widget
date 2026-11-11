@@ -10,11 +10,21 @@ import {NativeStarPreview,joinNativeStarPreview,nativeStarPreviewRegion} from '.
 export function startNativeSkyPreview(){
  const card=document.querySelector('.c'),host=window.SalahNativeSkyHost;
  if(!card||!host)return;
- const canvas=document.createElement('canvas');canvas.className='real-sky-preview';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');card.prepend(canvas);
- const ctx=canvas.getContext('2d',{alpha:false}),foreground=new NativeForegroundCapture(canvas);
- const solarPublication=new NativeSolarMaskPublication();
+ const canvas=document.createElement('canvas');canvas.className='real-sky-preview';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');
+ // An unavailable 2D context is an unavailable optional preview, like a missing
+ // card/host: nothing is attached and nothing is registered (R0021, 10.3).
+ const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)return;
+ // Construction custody: each acquisition registers its release when acquired;
+ // a constructor throw unwinds only this candidate and rethrows its cause.
+ const owned=[],own=release=>{owned.push(release);};
+ let preview=null;
+ card.prepend(canvas);own(()=>canvas.remove());
+ try{
+ const foreground=new NativeForegroundCapture(canvas);
+ const solarPublication=new NativeSolarMaskPublication();own(()=>solarPublication.dispose());
  const background=document.createElement('canvas'),back=background.getContext('2d');background.width=325;background.height=530;
  let value=null,pendingValue=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=window.SalahStarBootstrap??null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0,catalogueRequest=0;
+ own(()=>{disposed=true;});
  // The retained final-rAF observer measured up to3.3ms after publication.
  // Reserve5ms of wall time inside (never beyond) the30 accepted-second fence.
  // This is admission headroom, not a guarantee under arbitrary OS stalls.
@@ -155,7 +165,7 @@ export function startNativeSkyPreview(){
  }
  function present(now){if(disposed)return;const s=host.capture(false);if(!card.classList.contains('real-sky-composed')&&(catalogueRevision!==paintedCatalogueRevision||Math.abs(s.timeScale??1)>10||!value||!nativeResultCurrent(value.job,s)||now-lastPaint>100))update();}
  function tick(now){if(disposed||nativeDriven)return;present(now);raf=requestAnimationFrame(tick);}
- window.SalahSkyPreview={update,clear,present(now){
+ window.SalahSkyPreview=preview={update,clear,present(now){
   // Native's final paint opportunity follows its UI and cloud updates. Once
   // available it owns ongoing presentation; independent bootstrap rAF must
   // not run before native paint and spend the current sky's remaining age.
@@ -174,5 +184,11 @@ export function startNativeSkyPreview(){
    if(catalogue!==next){catalogue=next;catalogueRevision++;}
   }catch(error){if(!disposed&&revision===catalogueRequest)status.catalogueError=String(error.message??error);}
  },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;solarPublication.dispose();retireFirstPaint();catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
+ own(()=>{if(window.SalahSkyPreview===preview){window.SalahSkyPreview=undefined;card.classList.remove('real-sky-preview-ready');}});
  update();raf=requestAnimationFrame(tick);
+ }catch(error){
+  let cleanup=null;while(owned.length){try{owned.pop()();}catch(e){cleanup??=e;}}
+  if(cleanup&&error&&typeof error==='object')try{error.cleanupError=cleanup;}catch{/* frozen cause */}
+  throw error;
+ }
 }

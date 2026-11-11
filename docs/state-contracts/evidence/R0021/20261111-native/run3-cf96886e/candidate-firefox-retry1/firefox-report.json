@@ -1,0 +1,540 @@
+{
+  "schema": "r0021-native/2",
+  "engine": "firefox",
+  "headed": false,
+  "out": "candidate-firefox-retry1",
+  "complete": true,
+  "evidenceLevel": "page-level only (no CDP request log in this engine)",
+  "root": "repository",
+  "policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'",
+  "policyDelivery": "response header on index.html",
+  "served": {
+    "index.html": "0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb",
+    "real-sky/native-sky.js": "d5780cbf840d35231c6c7202e1abd93796f9a4633a4eed648f237b70c8d172f8",
+    "real-sky/native-worker.js": "30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745",
+    "real-sky/native-data.js": "649d7ecc4fae05d655c934c4b2e69467427b9d215e0f1e6ae95701364e29167f",
+    "moon/moon-host.js": "fee33628b4a0173f973af34a10181f657b74114d2b1e0df7fa373c5833819b20",
+    "moon/moon-worker.js": "62b8753d518d8047e268c86d378de76c70d4b4e33b4467283feab06e3f3bb42e",
+    "config.js": "719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80"
+  },
+  "options": {
+    "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1",
+    "cells": [
+      "first-boot",
+      "live-handoff",
+      "retirement",
+      "construction",
+      "cycles",
+      "moon-replay",
+      "recovery-visual",
+      "night",
+      "navigation"
+    ],
+    "cyclesWaitMs": 200,
+    "cyclesSettleMs": 500,
+    "cyclesFreshPage": false,
+    "composedWaitMs": 60000
+  },
+  "cells": {
+    "first-boot": {
+      "pass": true,
+      "moonDisposedField": "exposed",
+      "sky": 1,
+      "preview": 1,
+      "detail": 1,
+      "workersLive": 2,
+      "urlsLive": 2,
+      "vis": 2,
+      "assets": "ready",
+      "skyStatus": "pending",
+      "previewStatus": "ready",
+      "previewDraws": 3,
+      "moonRuntime": true,
+      "moonDisposed": false,
+      "moonDetail": true
+    },
+    "live-handoff": {
+      "pass": true,
+      "invalidationHandoff": true,
+      "retryHandoff": true,
+      "after": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 2,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 20,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "retirement": {
+      "pass": false,
+      "status": "precondition-not-met",
+      "cleanRetirement": true,
+      "maskChangingAtPagehide": false,
+      "maskPrefixes": [
+        "linear-gradient(#fff,#fff)",
+        "linear-gradient(#fff,#fff)"
+      ],
+      "refinedComposedBeforePagehide": true,
+      "retiringImages": [],
+      "retiringViolations": [],
+      "retiringCdp": [],
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 33,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "afterPagehide": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "suspended",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 43,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "resumed": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 44,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "requestLevel": false
+    },
+    "construction": {
+      "pass": true,
+      "baseline": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 44,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "nativeLoopStarted": true,
+      "contextRefusal1": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 50,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "contextRefusal2": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 55,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "intervalFailure": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "urlsLive": 1,
+        "vis": 2,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 61,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "recovered": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 63,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "cycles": {
+      "nativeLoopStarted": true,
+      "visibilityListenerLog": [
+        {
+          "op": "add",
+          "stack": "@http://127.0.0.1:57691/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1:4131:11 | @http://127.0.0.1:57691/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1:4184:3 | @http://127.0.0.1:57691/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1:4194:3 | ",
+          "phase": "load",
+          "t": 528
+        },
+        {
+          "op": "add",
+          "stack": "startNativeSky@http://127.0.0.1:57691/real-sky/native-sky.js:2581:46 | @http://127.0.0.1:57691/real-sky/native-sky.js:2600:42 | start@http://127.0.0.1:57691/real-sky/native-sky.js:2310:100 | retry@http://127.0.0.1:57691/real-sky/native-sky.js:2264:9",
+          "phase": "load",
+          "t": 887
+        },
+        {
+          "op": "remove",
+          "stack": "startNativeSky/<@http://127.0.0.1:57691/real-sky/native-sky.js:2581:111 | release@http://127.0.0.1:57691/real-sky/native-sky.js:2397:73 | dispose@http://127.0.0.1:57691/real-sky/native-sky.js:2589:509 | reset@http://127.0.0.1:57691/real-sky/native-sky.js:2288:61",
+          "phase": "cycles",
+          "t": 8885
+        },
+        {
+          "op": "add",
+          "stack": "startNativeSky@http://127.0.0.1:57691/real-sky/native-sky.js:2581:46 | @http://127.0.0.1:57691/real-sky/native-sky.js:2600:42 | start@http://127.0.0.1:57691/real-sky/native-sky.js:2310:100 | retry@http://127.0.0.1:57691/real-sky/native-sky.js:2264:9",
+          "phase": "cycles",
+          "t": 9192
+        },
+        {
+          "op": "remove",
+          "stack": "startNativeSky/<@http://127.0.0.1:57691/real-sky/native-sky.js:2581:111 | release@http://127.0.0.1:57691/real-sky/native-sky.js:2397:73 | dispose@http://127.0.0.1:57691/real-sky/native-sky.js:2589:509 | reset@http://127.0.0.1:57691/real-sky/native-sky.js:2288:61",
+          "phase": "cycles",
+          "t": 9756
+        },
+        {
+          "op": "add",
+          "stack": "startNativeSky@http://127.0.0.1:57691/real-sky/native-sky.js:2581:46 | @http://127.0.0.1:57691/real-sky/native-sky.js:2600:42 | start@http://127.0.0.1:57691/real-sky/native-sky.js:2310:100 | retry@http://127.0.0.1:57691/real-sky/native-sky.js:2264:9",
+          "phase": "cycles",
+          "t": 10053
+        },
+        {
+          "op": "remove",
+          "stack": "startNativeSky/<@http://127.0.0.1:57691/real-sky/native-sky.js:2581:111 | release@http://127.0.0.1:57691/real-sky/native-sky.js:2397:73 | dispose@http://127.0.0.1:57691/real-sky/native-sky.js:2589:509 | reset@http://127.0.0.1:57691/real-sky/native-sky.js:2288:61",
+          "phase": "cycles",
+          "t": 10613
+        },
+        {
+          "op": "add",
+          "stack": "startNativeSky@http://127.0.0.1:57691/real-sky/native-sky.js:2581:46 | @http://127.0.0.1:57691/real-sky/native-sky.js:2600:42 | start@http://127.0.0.1:57691/real-sky/native-sky.js:2310:100 | retry@http://127.0.0.1:57691/real-sky/native-sky.js:2264:9",
+          "phase": "cycles",
+          "t": 10919
+        },
+        {
+          "op": "remove",
+          "stack": "startNativeSky/<@http://127.0.0.1:57691/real-sky/native-sky.js:2581:111 | release@http://127.0.0.1:57691/real-sky/native-sky.js:2397:73 | dispose@http://127.0.0.1:57691/real-sky/native-sky.js:2589:509 | reset@http://127.0.0.1:57691/real-sky/native-sky.js:2288:61",
+          "phase": "cycles",
+          "t": 11485
+        },
+        {
+          "op": "add",
+          "stack": "startNativeSky@http://127.0.0.1:57691/real-sky/native-sky.js:2581:46 | @http://127.0.0.1:57691/real-sky/native-sky.js:2600:42 | start@http://127.0.0.1:57691/real-sky/native-sky.js:2310:100 | retry@http://127.0.0.1:57691/real-sky/native-sky.js:2264:9",
+          "phase": "cycles",
+          "t": 11780
+        },
+        {
+          "op": "remove",
+          "stack": "startNativeSky/<@http://127.0.0.1:57691/real-sky/native-sky.js:2581:111 | release@http://127.0.0.1:57691/real-sky/native-sky.js:2397:73 | dispose@http://127.0.0.1:57691/real-sky/native-sky.js:2589:509 | reset@http://127.0.0.1:57691/real-sky/native-sky.js:2288:61",
+          "phase": "cycles",
+          "t": 12347
+        },
+        {
+          "op": "add",
+          "stack": "startNativeSky@http://127.0.0.1:57691/real-sky/native-sky.js:2581:46 | @http://127.0.0.1:57691/real-sky/native-sky.js:2600:42 | start@http://127.0.0.1:57691/real-sky/native-sky.js:2310:100 | retry@http://127.0.0.1:57691/real-sky/native-sky.js:2264:9",
+          "phase": "cycles",
+          "t": 12646
+        }
+      ],
+      "pass": true,
+      "start": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 63,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "cycles": [
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 71,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 79,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 87,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 95,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 103,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        }
+      ],
+      "freshPage": false,
+      "waitMs": 200,
+      "settleMs": 500
+    },
+    "moon-replay": {
+      "pass": true,
+      "outcome": {
+        "errors": [
+          "Error: Moon wrapper replay refused: a live Moon runtime is installed"
+        ],
+        "same": true,
+        "disposed": false
+      },
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 103,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "after": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 109,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "recovery-visual": {
+      "pass": true,
+      "changedPixelFraction3s": 0.0019274310595065313,
+      "humanReview": [
+        "firefox-3a-motion.png",
+        "firefox-3b-motion.png"
+      ]
+    },
+    "night": {
+      "pass": true,
+      "status": "human-review",
+      "nightMoonCrop": true,
+      "moonTruth": {
+        "phaseFraction": 0.5,
+        "waxing": true,
+        "moonAltitudeDeg": 40,
+        "moonSkyFresh": null,
+        "lastConsumed": null,
+        "currentGeometry": null,
+        "lunarLight": null,
+        "surface": {
+          "status": "v5-initial",
+          "quality": "initial-v5",
+          "visibleSource": "initial-v5",
+          "identity": "25755b217ec6da7401740b3d4df06d23c917e4bfc447d5667938b7b960a69331|[[-0.000080737425198916,0.999999996740734,0],{\"schema\":\"lunar-presentation/5\",\"profile_id\":\"calendar-neutral-v5-01\",\"mode\":\"calendar\",\"exposure\":2.9195482731525044,\"lift\":0.003,\"knee\":0.000005388411226362526,\"colour_basis\":\"linear-sRGB\",\"gamut\":\"luminance-preserving-neutral-axis\"}]",
+          "legacyDecoded": false,
+          "legacyVisible": false,
+          "texture": "V5-derived receivers and canonical terrain horizons; full refinement pending"
+        },
+        "physicalMoonVisible": false,
+        "calendarMoonVisible": false,
+        "displayMode": "debug-hidden",
+        "moonSkyOpacity": 0,
+        "moonCalendarOpacity": 0,
+        "moonFeatureOpacity": 0,
+        "moonlightOpacity": 0,
+        "earthshine": "V5 material with initial Lambert Earth integral; full terrain refinement pending",
+        "reason": "near-new / cloud → subordinate calendar presentation"
+      },
+      "nightCounts": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 42,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "navigation": {
+      "pass": true,
+      "status": "not-applicable",
+      "reason": "no request-level instrument in this engine"
+    }
+  },
+  "console": [
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ],
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ],
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ],
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ],
+    [
+      "main",
+      "pageerror",
+      "Moon wrapper replay refused: a live Moon runtime is installed"
+    ],
+    [
+      "night",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ],
+    [
+      "night",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ],
+    [
+      "night",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ],
+    [
+      "night",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ]
+  ],
+  "cdp": [],
+  "crashes": [],
+  "browserVersion": "153.0",
+  "pass": false
+}

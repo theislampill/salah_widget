@@ -1,0 +1,373 @@
+{
+ "schema": "r0021-mutants/1",
+ "records": [
+  {
+   "id": "m1-orphan-canvas-on-throw",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 failure at badge",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m2-interval-not-released-on-failure",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 failure at raf",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m2b-listener-not-released-on-failure",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 failure at registered",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m3-object-url-not-released",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 failure at interval",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m3b-worker-not-released",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 failure at interval",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m4-module-global-retirement-state",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-04 retirement is instance-owned",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m5-late-frame-of-disposed-instance-runs",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-07 dispose is idempotent",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m6-retirement-publishes-preview",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "asset pagehide retires",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m7-live-handoff-suppressed-on-dispose",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "default direct disposal retains",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m7b-active-retry-handoff-suppressed",
+   "file": "real-sky/native-assets.mjs",
+   "killerTest": "active asset retry preserves",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m8-dispose-not-idempotent",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-07 dispose is idempotent",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m11-preview-retry-duplicates-canvas",
+   "file": "real-sky/native-preview-host.mjs",
+   "killerTest": "preview construction failure at preview-foreground",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m12-delayed-cleanup-registration",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 failure at badge",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m15-unwind-in-acquisition-order",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 a release that throws during unwind",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m16-rethrow-cleanup-instead-of-primary",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-02 a release that throws during unwind",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m17-handoff-suppressed-while-hidden",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "handoff is not suppressed for a live instance",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m18-unconditional-registry-release",
+   "file": "real-sky/native-host.mjs",
+   "killerTest": "ES21-04 retirement never clears a registry slot",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/real-sky/native-construction-ownership.test.mjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m19-replay-allowed-without-detail-slot",
+   "file": "moon/src/moon-install-guard.mjs",
+   "killerTest": "ES21-05 replay is refused for a live runtime even when the detail slot is empty",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m20-moon-failed-construction-keeps-detail",
+   "file": "moon/src/moon-native.mjs",
+   "killerTest": "ES21-02 Moon wrapper failure at interval",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m9-moon-replay-proceeds-over-live-runtime",
+   "file": "moon/src/moon-install-guard.mjs",
+   "killerTest": "ES21-05 full-wrapper replay over a live runtime",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m10-adopt-after-dispose-accepted",
+   "file": "moon/src/moon-native.mjs",
+   "killerTest": "ES21-07 detail disposal is idempotent",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m13-dispose-current-global-detail",
+   "file": "moon/src/moon-native.mjs",
+   "killerTest": "ES21-04 conditional registry cleanup",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  },
+  {
+   "id": "m14-clear-shared-detail-slot-unconditionally",
+   "file": "moon/src/moon-native.mjs",
+   "killerTest": "ES21-04 conditional registry cleanup",
+   "killer": "fail",
+   "healthyControl": "pass",
+   "verdict": "KILLED",
+   "command": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "moon/tests/native-instance-retirement.test.cjs"
+   ],
+   "exitCode": 1
+  }
+ ]
+}

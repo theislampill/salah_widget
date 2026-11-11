@@ -1,8 +1,10 @@
-window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
 /* The existing native host alone owns phase, UTC, observer intent and generation.
  * A bounded V5 receiver tier supplies the first scene; full terrain stays in its
  * worker. Initial availability grants no authority to stale or reference views. */
 (function(){'use strict';
+ // A predecessor runtime here has already retired (moon-install-guard.mjs refuses
+ // replay over a live one) and released its own captured detail. This runtime
+ // owns exactly the detail it creates; the global slot is a registry pointer.
  window.SalahMoonRuntime?.dispose();
  const script=document.currentScript;
  // A fully embedded document has no relative assets, including in an opaque iframe.
@@ -44,7 +46,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
  // otherwise identical result through the interval before the next host poll.
  const sameScope=(record,s)=>!!record&&!!s&&!s.paused&&!clockDiscontinuous(s)&&record.epoch===epoch&&record.scope===scope(s);
  const matches=(record,s)=>sameScope(record,s)&&phaseError(record,s)<=PHASE_POSITION_BUDGET;
- function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;window.SalahMoonHost?.fallback();window.SalahMoonDetail?.clear();}
+ function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;window.SalahMoonHost?.fallback();detail.clear();}
  function revokeInitialHead(){initialHeadEligible=false;if(window.SalahFirstPaint?.moon)window.SalahFirstPaint.moon.result=null;}
  function clear(reason,initialDocument=false){
   if(!initialDocument)revokeInitialHead();
@@ -72,7 +74,7 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
  }
  function adopt(m,record){
   const began=performance.now();
-  window.SalahMoonDetail?.adopt({linear:m.surfaceLinear,calendarLinear:m.calendarLinear,coverage:m.surfaceCoverage,size:m.surfaceSize,extent:m.surfaceExtent,identity:m.physicalIdentity});
+  detail.adopt({linear:m.surfaceLinear,calendarLinear:m.calendarLinear,coverage:m.surfaceCoverage,size:m.surfaceSize,extent:m.surfaceExtent,identity:m.physicalIdentity});
   const prefixMs=performance.now()-began;
   canvas.width=m.width;canvas.height=m.height;upperBytes=m.rgba;calendarBytes=m.calendarRgba;textureUp=null;
   accepted={id:record.id,key:record.key,scope:record.scope,epoch:record.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity,initial:m.kind==='initial'};
@@ -235,7 +237,16 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
   return structuredClone(s);
  }
  const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();}};
+ // The handle is idempotent and refuses adoption once retired (ES21-07). It is
+ // a pass-through: moon-detail.mjs stays byte-identical because it is a pinned
+ // initial-receiver source (tools/build_moon.py validate_initial_sources).
+ // It is acquired at the registration boundary; a throw before the runtime is
+ // complete releases exactly this wrapper's detail, slot, listener and timers.
+ const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
+ let registered=null;
+ try{
  document.addEventListener('visibilitychange',visibility);
+ window.SalahMoonDetail=detail;
  window.SalahMoonRuntime={
   installWorkerSource(source){
    if(disposed)return false;
@@ -263,18 +274,28 @@ window.SalahMoonDetail?.dispose();window.SalahMoonDetail=startMoonDetail();
   },
   surface(){const s=capture(!!(accepted||waitingPreview));if(!presentation(s))return null;syncTexture(s);return canvas;},
   get presentationUp(){return profileMode==='reference'?1:Math.max(0,Math.min(1,capture()?.up??1));},
-  get detailEnabled(){return presentation(capture())&&!!window.SalahMoonDetail?.available;},
+  get detailEnabled(){return presentation(capture())&&!!detail.available;},get disposed(){return disposed;},
   invalidate(reason='native invalidation',options){clear(reason,options?.initialDocument===true);},
   finishInitialDocument(){revokeInitialHead();},refresh(){poll(true);},
   setProfile(mode){if(!['calendar','reference'].includes(mode))throw new RangeError('Moon profile');if(mode===profileMode)return;profileMode=mode;clear('profile changed');poll();},
   setReferenceScene(value){referenceScene=value===null?null:admitReference(value);clear('reference view changed');poll();},
   retry(){if(disposed||worker||typeof MOON_WORKER_SOURCE!=='string'||retryCount>=3)return false;retryCount++;start();return true;},
   get state(){const s=capture(),current=presentation(s),target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});},
-  dispose(){if(disposed)return;clear('disposed');disposed=true;clearInterval(timer);clearTimeout(deadline);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;document.removeEventListener('visibilitychange',visibility);closeWorker();window.SalahMoonDetail?.dispose();status.status='disposed';}
+  dispose(){if(disposed)return;clear('disposed');disposed=true;clearInterval(timer);clearTimeout(deadline);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;document.removeEventListener('visibilitychange',visibility);closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status='disposed';}
  };
+ registered=window.SalahMoonRuntime;
  timer=setInterval(()=>poll(),250);
  // Full asset/decode/row preparation must not compete with the synchronous
  // first surface. Give its already-published scene a browser paint opportunity;
  // explicit retry and disposal revoke this deferred start. No readiness gate.
  startFrame=requestAnimationFrame(()=>{startFrame=requestAnimationFrame(start);});
+ }catch(error){
+  // construction-failed -> cleaned: the half-built runtime reports disposed and
+  // its registry slot clears while it still holds this runtime.
+  disposed=true;clearInterval(timer);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;
+  document.removeEventListener('visibilitychange',visibility);closeWorker();
+  if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();
+  status.status='disposed';if(registered&&window.SalahMoonRuntime===registered)window.SalahMoonRuntime=null;
+  throw error;
+ }
 })();

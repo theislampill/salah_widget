@@ -38,7 +38,11 @@ export class NativeAssetLoader {
 export function startNativeSkyAssets(start,scriptUrl) {
  const inline=window.__SALAH_REAL_SKY_PACK__;delete window.__SALAH_REAL_SKY_PACK__;
  let badge=null,loader;
- const reset=()=>{window.SalahRealSky?.dispose();window.SalahRealSky=null;window.realSkyFrame=()=>null;window.SalahSkyPreview?.admitCatalogue(null);};
+ // The loader's own suspended/disposed intent decides the preview handoff:
+ // suspension/final teardown starts no preview publication, while active retry
+ // keeps its same-turn handoff. The registry slot clears only while it still
+ // holds the instance this reset retired.
+ const reset=()=>{const sky=window.SalahRealSky;sky?.dispose({previewHandoff:!loader.suspended&&!loader.disposed});if(window.SalahRealSky===sky){window.SalahRealSky=null;window.realSkyFrame=()=>null;}window.SalahSkyPreview?.admitCatalogue(null);};
  const state=asset=>{
   if(asset.status==='ready'){badge?.remove();badge=null;return;}
   window.realSkyState=()=>({checkpoint:'9',status:loader.state.status,assets:loader.state,errors:loader.state.error?[loader.state.error]:[],last:null});
