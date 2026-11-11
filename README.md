@@ -139,7 +139,11 @@ the location field identifies an estimated area, browser/saved browser position,
 selected site. Its title reports available accuracy in metres and original fix age; tap it
 to request a browser position.
 Type a place name to **search** (Enter cycles multiple matches; **Shift+Enter** keeps a custom
-display name without moving the coordinates). Changes **save automatically** when you close the
+display name without moving the coordinates). Search feedback distinguishes "Couldn’t find" (every
+provider answered with no match) from "Search unavailable" (a provider failed, so no match can be
+concluded); "(partial search)" marks usable matches found while another source failed. Coordinates
+from providers or the browser are used only when they are finite and inside ±90°/±180° — they are
+never clamped into range — while coordinates you type keep the existing clamping. Changes **save automatically** when you close the
 panel. If persistence fails, changes apply for this session and Settings retains a warning. The **↺** icon removes only saved widget configuration and then re-detects if removal succeeds; prayer/weather caches and provider-held data are unaffected.
 
 ### Modes & precedence
