@@ -1,0 +1,86 @@
+# R0027 GREEN at candidate f629fae4f8eb6b5c179f8a612cd643034d8bb442; node v24.14.0; Python 3.11.9
+$ node --test --test-reporter=spec --test-concurrency=1 tests/real-sky/spectral-fit-cache-state.test.mjs tests/real-sky/spectral-fit-cache-oracle.test.mjs tests/real-sky/spectral-fit-cache-generated.test.mjs tests/real-sky/spectral-fit-cache-mutations.test.mjs
+✔ ES27-11 every generated bundle carries exactly the generated spectral module text and compiles (1054.0576ms)
+✔ ES27-01/06 the real generated worker bundle is bounded when executed (1651.4975ms)
+ℹ {"n":1,"size":12000,"same":true,"outer":12000,"first":-0.26988295312500005}
+(node:50408) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added to [Worker]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50408) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added to [Worker]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+✔ ES27-14 old vs new generated worker bundle: first-paint preview and refined worker outputs are byte-identical (cold / hit / recomputed) (51120.3717ms)
+ℹ scenes=6 bytesCompared=1084652340 newInnerRetained=12000 oldInnerRetained=1399 oldBundleSha256=30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745 newBundleSha256=622969260d5f8ef7f3f77d6c8719271e7beef715584d65c6b7cd2d92085c19f7
+✔ ES27-09/10/11/12 Python generator contract and its mutation controls pass (executed from the integration route) (1771.7431ms)
+✔ healthy generated module passes every discriminator (8259.9645ms)
+✔ R0027 mutation discriminator: m1 no eviction (numbers right, entries leak) (2212.2409ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: m2a capacity 11,999 (2116.2083ms)
+ℹ killed by boundary: exactly capacity distinct fits retained at capacity
+✔ R0027 mutation discriminator: m2b capacity 12,001 (2085.389ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: m2c comparison off by one (> for >=) (2103.5706ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: omit capacity guard (evict unconditionally) (2479.4634ms)
+ℹ killed by boundary: capacity-1 distinct fits are all retained
+✔ R0027 mutation discriminator: m3 LRU instead of FIFO (2071.5879ms)
+ℹ killed by fifo: a hit does not refit
+✔ R0027 mutation discriminator: m4 evicts the newest (1976.7921ms)
+ℹ killed by fifo: the oldest inserted key is evicted even though it was just hit
+✔ R0027 mutation discriminator: m5 clears the whole map at capacity (1934.3156ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: m6 bounds the outer map too (2151.2509ms)
+ℹ killed by outerUnchanged: outer map never evicts
+✔ R0027 mutation discriminator: m9a fit iterations 48 -> 47 (counts right, numbers wrong) (1922.6451ms)
+ℹ killed by smallOracle: bv -0.2736: samples differ bit-for-bit
+✔ R0027 mutation discriminator: m9b reordered temperature arithmetic (1954.0585ms)
+ℹ killed by smallOracle: bv -0.2736: samples differ bit-for-bit
+✔ R0027 mutation discriminator: round B-V key (22.9574ms)
+ℹ killed by smallOracle: bv 0.65000001: samples differ bit-for-bit
+✔ R0027 mutation discriminator: m11 mutate shared returned samples on eviction (1949.0769ms)
+ℹ killed by callerRetained: returned value and samples stay frozen
+✔ ES27-03 cold / hit / evicted / recomputed selectSpectrum, passband and XYZ are bit-identical to the vendor oracle across >= 3x capacity keys (32982.9578ms)
+ℹ distinctKeys=40247 comparisons=60941 cold=40113 hit=4113 recomputed=16292 fallback=423 fits=56406 evictions=44406 retained=12000
+✔ ES27-03 catalogue star colours (spectralStarFlux over all records) are bit-identical to the vendor oracle (1795.0727ms)
+ℹ starComparisons=17842 candidateInner=1881 oracleInner=1881
+✔ ES27-06/14 actual callers (createSkyModel, first-paint preview, refined renderPhysicalSky) cold / hit / recomputed are bit-identical to the oracle graph (15033.2736ms)
+ℹ scenes=6 twilightScenesWithFits=6 bytesCompared=591852384 retainedInner=12000
+✔ ES27-01 capacity-1 / capacity / capacity+1 / +2: inner fit retention never exceeds 12,000 (1713.6078ms)
+✔ ES27-01/03 FIFO: hit neither refits nor reorders; oldest evicted first; evicted key refits bit-identically (1699.1283ms)
+✔ ES27-02 outer selection cache keeps its unchanged admission bound, reported separately (2112.1357ms)
+ℹ outer=12000 inner=12000 innerSets=12051 innerDeletes=51
+✔ ES27-04 caller-held returned samples stay frozen and bit-identical after their fit is evicted (1757.6595ms)
+✔ ES27-05 invalid / out-of-fit / fallback inputs at capacity: unchanged results, no insertion, no eviction (1762.7731ms)
+✔ ES27-07 exact keys: 1-ulp neighbours are distinct entries; +0/-0 share the Map key exactly as before (10.5564ms)
+✔ ES27-08 union of retained references: outer may still hold samples whose inner fit was evicted (3486.1255ms)
+ℹ inner=12000 outer=12000 distinctSampleArrays=24000 outerOnly=12000
+✔ ES27-06 actual physical caller: createSkyModel over continuous twilight altitudes is bounded (1859.4178ms)
+ℹ altitudes=12600 distinctTwilightBV=12600 inFitDomain=12486 neutralFallbacks=114 fits=12486 retainedInner=12000 outer=12000 evictions=486
+✔ ES27-06 actual preview caller: renderNativeBackgroundPreview at twilight inserts through the bounded map (2055.8419ms)
+ℹ previews=30 withTwilightDisplay=30 newFits=50 evictions=50 retained=12000
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 155643.5558
+exit=0
+$ python tests/real-sky/native_spectral_cache_build_test.py -v
+test_each_mutant_is_detected_by_an_assertion (__main__.SpectralCacheTransformMutationControls.test_each_mutant_is_detected_by_an_assertion) ... MUTANT m7 transform without digest guard: killed by check_digest_guard: "R0027 spectral source drift" does not match "R0027 spectral output digest mismatch: the whitelisted delta changed" : trailing byte
+MUTANT m8 anchor drift silently accepted: killed by check_anchor_guard: ValueError not raised : absent sfCache=new Map(),sfFitCache=n
+MUTANT m10 constant collides with a bundle identifier: killed by check_identifiers: <re.Match object; span=(537, 546), match='sfWeights'> is not None : sfWeights collides with vendor/real-sky/src/spectral.mjs
+MUTANT m10b constant collides with another module: killed by check_identifiers: <re.Match object; span=(411, 416), match='clamp'> is not None : clamp collides with vendor/real-sky/src/astronomy.mjs
+MUTANT bypass generator invocation: killed by <lambda>: b"/**[640 chars]Map();\nfunction sfValidate(samples){if(!Array[5920 chars];}\n" != b"/**[640 chars]Map(),sfFitCacheLimit=12000;\n// R0027 retenti[6250 chars];}\n" : builder writes transform(vendor)
+ok
+test_anchor_drift_fails_closed (__main__.SpectralCacheTransformTest.test_anchor_drift_fails_closed) ... ok
+test_digest_drift_and_second_application_fail_closed (__main__.SpectralCacheTransformTest.test_digest_drift_and_second_application_fail_closed) ... ok
+test_generated_core_is_transform_of_vendor (__main__.SpectralCacheTransformTest.test_generated_core_is_transform_of_vendor) ... ok
+test_introduced_identifier_cannot_collide_in_bundles (__main__.SpectralCacheTransformTest.test_introduced_identifier_cannot_collide_in_bundles) ... ok
+test_real_builder_fails_closed_on_drift (__main__.SpectralCacheTransformTest.test_real_builder_fails_closed_on_drift) ... ok
+test_real_builder_invokes_transform_and_keeps_horizon (__main__.SpectralCacheTransformTest.test_real_builder_invokes_transform_and_keeps_horizon) ... ok
+test_transform_applies_exactly_once_with_whitelisted_diff (__main__.SpectralCacheTransformTest.test_transform_applies_exactly_once_with_whitelisted_diff) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.806s
+
+OK
+exit=0
