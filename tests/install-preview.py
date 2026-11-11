@@ -408,12 +408,25 @@ def darwin_denial_readback(root, process_id, env):
         for attempt in range(2):
             try:
                 run = subprocess.run(command, env=host_env, capture_output=True, text=True, timeout=8)
+                streams = {}
+                for stream_name, text in (("stdout", run.stdout), ("stderr", run.stderr)):
+                    captured = text.encode("utf-8")
+                    retained = captured[:4 * 1024 * 1024]
+                    path = host_control / ("attempt-%d.%s.txt" % (attempt + 1, stream_name))
+                    path.write_bytes(retained)
+                    streams[stream_name] = {
+                        "path": str(path), "capturedBytes": len(captured),
+                        "capturedSha256": hashlib.sha256(captured).hexdigest(),
+                        "retainedBytes": len(retained),
+                        "retainedSha256": hashlib.sha256(retained).hexdigest(),
+                        "complete": len(retained) == len(captured),
+                        "representation": "subprocess text=True decoded stream, re-encoded as UTF-8; not original pipe bytes"}
                 attempts.append({"exit": run.returncode, "stdoutBytes": len(run.stdout.encode()),
-                                 "stderr": run.stderr[:2000]})
+                                 "stderr": run.stderr[:2000], "streams": streams})
                 if run.returncode:
                     result["reason"] = "Native log readback refused or unavailable"
                     break
-                if len(run.stdout) > 4 * 1024 * 1024:
+                if len(run.stdout) > 4 * 1024 * 1024 or not all(stream["complete"] for stream in streams.values()):
                     result["reason"] = "Bounded native log readback exceeded 4 MiB"
                     break
                 rows = json.loads(run.stdout)
@@ -718,6 +731,12 @@ def preview(name, source=FROZEN, population="known", route="github", expected_fa
             require("unresolved" in text.lower(), "Preview silently resolved release/path")
     else:
         require("Preview only; no changes made" not in text, "Refused preview claimed successful plan")
+        if population == "none":
+            require("No supported browser profiles or installs were detected." in text,
+                    "No-target case failed before its actual discovery refusal")
+        elif population == "legacy":
+            require("Legacy Tabliss: refusing" in text and "No eligible target; preview made no changes." in text,
+                    "Legacy-only case failed before its actual eligibility refusal")
     if missing_preset:
         require("No preset URL configured" in text, "Explicit empty preset silently replaced")
     if population in ("mixed-unknown", "mixed-no-parser"):
@@ -942,15 +961,13 @@ else:
             "helper", ('copy_text "fixture"', "failure"), expected_boundary="clipboard"))
         direct_transport = r"""
 if [ "$DRY_RUN" = 1 ]; then
-  python3 - <<'R0016_DIRECT_TRANSPORT'
-import os, socket, sys
+  python3 - < <(printf '%s\n' 'import os, socket, sys
 print("__R0016_DIRECT_TRANSPORT_PID__" + str(os.getpid()), file=sys.stderr)
 try:
     with socket.socket() as connection:
         connection.connect(("127.0.0.1", 9))
 except OSError:
-    pass
-R0016_DIRECT_TRANSPORT
+    pass')
 fi
 """
         check("mutant swallowed direct transport", "mutation", lambda: mutation(
