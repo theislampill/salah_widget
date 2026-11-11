@@ -27,6 +27,16 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R000B reconciled with accepted main dbf3370f (R0017 + R0007) at merge
+    // d5ede8b9; explicitly rebound like the ec69edf inputs below, which remain
+    // admitted unchanged.
+    '2fb7e8e04175b921b7d4c9057b0c655db89f9064c01b52068124394d0d334dfd':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'d5ede8b9f9a03953dba58eb3525e86c3d1653084',path:'src/native/index.html',layout:'config,native'}),
+    '240178afe7e01d8cbe64ce3aa4de5ccdab41713188ee292e7813f26d4909eb98':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'d5ede8b9f9a03953dba58eb3525e86c3d1653084',path:'index.html',
+      parentSha256:'dc2af3801a4314d062ed904c7c95610a0f6afd37166e1e7ef88cf1d5bd97dc82',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0007 gated web-font activation at ec69edf; explicitly rebound like the
     // 5e946fe inputs below, which remain admitted unchanged.
     'e059305e2602adead696c2639c5332656e240f1b58628dde05924414ea99bc8d':Object.freeze({
