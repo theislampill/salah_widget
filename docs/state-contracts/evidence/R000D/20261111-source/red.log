@@ -1,0 +1,319 @@
+# R000D RED: final source controls against UNMODIFIED accepted main da126880
+# product under test: git show da126880:index.html (SHA256 dc2af3801a4314d062ed904c7c95610a0f6afd37166e1e7ef88cf1d5bd97dc82), config.js unchanged
+# command: SALAH_WEATHER_SOURCE=<main index.html> SALAH_REQUEST_SOURCE=<main index.html> node --test --test-timeout=60000 tests/weather-retry-clock-state.test.cjs   (node v24.14.0, Windows 11)
+# test harness edits present: additive _wxRetry declarations (r0003-harness, r0008-clock-harness) and r000c fixture set({retry}).
+# Defect assertions (request-count) fail in ES0D-01/02/03(+-1h)/07/08(step). TypeError/ReferenceError failures reach the new
+# qaState().wxTruth.retry diagnostic or _wxRetry record, which do not exist on main (ES0D-04/12/13/15, D2, supersession).
+# 5 pass on main: boundaries without a wall step (wall and elapsed move together), ES0D-08 no-step control, ES0D-10, ES0D-11.
+
+WEATHER source <scratch>/main-index.html SHA256 dc2af3801a4314d062ed904c7c95610a0f6afd37166e1e7ef88cf1d5bd97dc82
+WEATHER config source config.js SHA256 91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81
+WEATHER request-owner SHA256 dc2af3801a4314d062ed904c7c95610a0f6afd37166e1e7ef88cf1d5bd97dc82
+✖ ES0D-01/05/14 weather: backward wall step 5 min still allows a replacement after 60 s elapsed (44.2356ms)
+✖ ES0D-02/05/14 radar: backward wall step 5 min still allows a replacement after 600 s elapsed (4.9127ms)
+✖ ES0D-01/05/14 weather: backward wall step 120 min still allows a replacement after 60 s elapsed (26.0476ms)
+✖ ES0D-02/05/14 radar: backward wall step 120 min still allows a replacement after 600 s elapsed (4.9149ms)
+✔ ES0D-03 weather boundary is inclusive on the elapsed clock (wall step 0 min) (3.023ms)
+✖ ES0D-03 weather boundary is inclusive on the elapsed clock (wall step -60 min) (3.4168ms)
+✖ ES0D-03 weather boundary is inclusive on the elapsed clock (wall step 60 min) (3.2982ms)
+✔ ES0D-03 radar boundary is inclusive on the elapsed clock (wall step 0 min) (2.718ms)
+✖ ES0D-03 radar boundary is inclusive on the elapsed clock (wall step -60 min) (2.5343ms)
+✖ ES0D-03 radar boundary is inclusive on the elapsed clock (wall step 60 min) (2.4992ms)
+✖ ES0D-07 forward wall jump: no early retry, no per-frame storm, one request per elapsed interval (55.5964ms)
+✖ ES0D-04 unset sentinel: first-ever acquisition is immediate and elapsed zero is a real attempt (3.6402ms)
+✖ ES0D-13 weather and radar retry records are independent (3.8341ms)
+✖ D2 fallback host: Date.now fallback is identified as degraded wall-clock spacing (3.4983ms)
+✔ ES0D-08 control: active owner, elapsed deadline and stale attempt without a wall step (24.6243ms)
+✖ ES0D-08 active owner, elapsed deadline and stale attempt across a backward wall step (2.7975ms)
+✖ ES0D-08 superseded attempt error/finally cannot release the successor (1.9008ms)
+✖ ES0D-06/09 ordinary cadence and healthy shortcut without clock steps (24.6781ms)
+✖ ES0D-15 diagnostics name the clock domain, elapsed stamps and reason, without inventing source time (2.9004ms)
+✔ ES0D-10 SIM and invalid-target suppression intact; acquisition adds no timer loop (27.0624ms)
+✖ ES0D-12 reload: a new document starts unset; the UTC cache keeps its meaning and stores no elapsed stamp (27.0449ms)
+✔ ES0D-11 hidden/resume creates one ordinary poll opportunity, not a backlog (39.9633ms)
+✖ ES0D-13 current config contract: a units-only or coordinate change retires both records; appearance-only keeps them (9.3682ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 5
+ℹ fail 18
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 400.6855
+
+✖ failing tests:
+
+test at tests\weather-retry-clock-state.test.cjs:9:3
+✖ ES0D-01/05/14 weather: backward wall step 5 min still allows a replacement after 60 s elapsed (44.2356ms)
+  AssertionError [ERR_ASSERTION]: replacement request at 60 000 ms elapsed after a backward wall step
+  
+  1 !== 2
+  
+      at weatherRollback (tests\weather-retry-clock-fixture.cjs:78:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:10:3
+✖ ES0D-02/05/14 radar: backward wall step 5 min still allows a replacement after 600 s elapsed (4.9127ms)
+  AssertionError [ERR_ASSERTION]: radar replacement request at 600 000 ms elapsed after a backward wall step
+  
+  1 !== 2
+  
+      at radarRollback (tests\weather-retry-clock-fixture.cjs:96:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:9:3
+✖ ES0D-01/05/14 weather: backward wall step 120 min still allows a replacement after 60 s elapsed (26.0476ms)
+  AssertionError [ERR_ASSERTION]: replacement request at 60 000 ms elapsed after a backward wall step
+  
+  1 !== 2
+  
+      at weatherRollback (tests\weather-retry-clock-fixture.cjs:78:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:10:3
+✖ ES0D-02/05/14 radar: backward wall step 120 min still allows a replacement after 600 s elapsed (4.9149ms)
+  AssertionError [ERR_ASSERTION]: radar replacement request at 600 000 ms elapsed after a backward wall step
+  
+  1 !== 2
+  
+      at radarRollback (tests\weather-retry-clock-fixture.cjs:96:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:13:3
+✖ ES0D-03 weather boundary is inclusive on the elapsed clock (wall step -60 min) (3.4168ms)
+  AssertionError [ERR_ASSERTION]: weather requested at 60000 ms elapsed, wall step -3600000
+  
+  1 !== 2
+  
+      at boundary (tests\weather-retry-clock-fixture.cjs:110:55)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:13:3
+✖ ES0D-03 weather boundary is inclusive on the elapsed clock (wall step 60 min) (3.2982ms)
+  AssertionError [ERR_ASSERTION]: weather blocked at 59999 ms elapsed, wall step 3600000
+  
+  2 !== 1
+  
+      at boundary (tests\weather-retry-clock-fixture.cjs:109:66)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:13:3
+✖ ES0D-03 radar boundary is inclusive on the elapsed clock (wall step -60 min) (2.5343ms)
+  AssertionError [ERR_ASSERTION]: radar requested at 600000 ms elapsed, wall step -3600000
+  
+  1 !== 2
+  
+      at boundary (tests\weather-retry-clock-fixture.cjs:110:55)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:13:3
+✖ ES0D-03 radar boundary is inclusive on the elapsed clock (wall step 60 min) (2.4992ms)
+  AssertionError [ERR_ASSERTION]: radar blocked at 599999 ms elapsed, wall step 3600000
+  
+  2 !== 1
+  
+      at boundary (tests\weather-retry-clock-fixture.cjs:109:66)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:14:1
+✖ ES0D-07 forward wall jump: no early retry, no per-frame storm, one request per elapsed interval (55.5964ms)
+  AssertionError [ERR_ASSERTION]: forward wall jump must not open the weather spacing early
+  
+  2 !== 1
+  
+      at forwardNoStorm (tests\weather-retry-clock-fixture.cjs:120:25)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:15:1
+✖ ES0D-04 unset sentinel: first-ever acquisition is immediate and elapsed zero is a real attempt (3.6402ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at retry (tests\weather-retry-clock-fixture.cjs:62:25)
+      at zeroIsAttempt (tests\weather-retry-clock-fixture.cjs:131:16)
+      at TestContext.<anonymous> (tests\weather-retry-clock-state.test.cjs:15:110)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\weather-retry-clock-state.test.cjs:16:1
+✖ ES0D-13 weather and radar retry records are independent (3.8341ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at retry (tests\weather-retry-clock-fixture.cjs:62:25)
+      at independent (tests\weather-retry-clock-fixture.cjs:146:16)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\weather-retry-clock-state.test.cjs:17:1
+✖ D2 fallback host: Date.now fallback is identified as degraded wall-clock spacing (3.4983ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at retry (tests\weather-retry-clock-fixture.cjs:62:25)
+      at fallbackHost (tests\weather-retry-clock-fixture.cjs:155:14)
+      at TestContext.<anonymous> (tests\weather-retry-clock-state.test.cjs:17:96)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\weather-retry-clock-state.test.cjs:19:1
+✖ ES0D-08 active owner, elapsed deadline and stale attempt across a backward wall step (2.7975ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 2
+  
+      at ownershipAcrossStep (tests\weather-retry-clock-fixture.cjs:174:70)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\weather-retry-clock-state.test.cjs:20:1
+✖ ES0D-08 superseded attempt error/finally cannot release the successor (1.9008ms)
+  ReferenceError: _wxRetry is not defined
+      at Object.set (<scratch>/main-index.html:1662:31)
+      at supersededFinally (tests\weather-retry-clock-fixture.cjs:185:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\weather-retry-clock-state.test.cjs:21:1
+✖ ES0D-06/09 ordinary cadence and healthy shortcut without clock steps (24.6781ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at retry (tests\weather-retry-clock-fixture.cjs:62:25)
+      at ordinaryCadence (tests\weather-retry-clock-fixture.cjs:198:16)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\weather-retry-clock-state.test.cjs:23:1
+✖ ES0D-15 diagnostics name the clock domain, elapsed stamps and reason, without inventing source time (2.9004ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at retry (tests\weather-retry-clock-fixture.cjs:62:25)
+      at TestContext.<anonymous> (tests\weather-retry-clock-state.test.cjs:25:11)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\weather-retry-clock-state.test.cjs:48:1
+✖ ES0D-12 reload: a new document starts unset; the UTC cache keeps its meaning and stores no elapsed stamp (27.0449ms)
+  SyntaxError: "undefined" is not valid JSON
+      at JSON.parse (<anonymous>)
+      at retry (tests\weather-retry-clock-fixture.cjs:62:25)
+      at TestContext.<anonymous> (tests\weather-retry-clock-state.test.cjs:55:16)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7)
+
+test at tests\weather-retry-clock-state.test.cjs:72:1
+✖ ES0D-13 current config contract: a units-only or coordinate change retires both records; appearance-only keeps them (9.3682ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   r: {
+  +     clock: 'monotonic',
+  +     startedAt: 7
+  +   },
+  +   w: {
+  +     clock: 'monotonic',
+  +     startedAt: 5
+  +   }
+  -   r: null,
+  -   w: null
+    }
+  
+      at TestContext.<anonymous> (tests\weather-retry-clock-state.test.cjs:77:12)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { w: { startedAt: 5, clock: 'monotonic' }, r: { startedAt: 7, clock: 'monotonic' } },
+    expected: { w: null, r: null },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

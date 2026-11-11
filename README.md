@@ -335,7 +335,11 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   20 seconds while JavaScript is runnable; this is not a hard wall-time recovery
   guarantee during blocked/suspended execution or scheduling delays.
   Weather retry is eligible after 60 seconds and radar after 10 minutes from
-  their respective last attempt starts, using the existing client wall clock.
+  their respective last attempt starts, measured on the page's elapsed clock
+  (`performance.now()`), so a wall-clock correction neither delays nor hastens
+  a replacement; source and receipt ages stay UTC. A host without
+  `performance.now()` falls back to `Date.now()`, a degraded wall-clock spacing
+  that `qaState().wxTruth.retry.clock` reports as `wall-fallback`.
   An eligible current record plus a retained hourly track can skip weather
   refetch for less than 15 minutes after the last accepted current receipt.
   Valid coordinates and free request ownership still matter. The ordinary

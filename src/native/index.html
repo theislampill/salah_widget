@@ -1210,6 +1210,29 @@ function maintainPrayerDay(){
 
 // ---- weather (Open-Meteo: free, no key, CORS-enabled) -------------------
 let weather=null, lastWxAt=0, lastWxTry=0, wxBusy=false;
+// RETRY SPACING (R000D) is measured on this document's elapsed clock (_RAFNOW), so a wall-clock correction can
+// neither strand nor hasten a replacement. lastWxTry/lastRadarAt remain UTC wall-clock attempt-start fields for
+// compatibility/diagnostics only; source/receipt freshness stays UTC. null = never attempted in this document,
+// distinct from a real attempt at elapsed 0. Never persisted. Without performance.now, _RAFNOW is Date.now():
+// a disclosed degraded wall-clock guarantee (qaState().wxTruth.retry), not a monotonic claim.
+const _WX_RETRY=60*1000, _wxRetry={weather:null,radar:null};
+function retryClockDomain(){ return typeof performance!=='undefined'&&performance.now?"monotonic":"wall-fallback"; }
+// One derived gate for both acquisitions and the diagnostic, in the existing guard order.
+function retryGate(kind,now=Date.now(),elapsed=_RAFNOW()){
+  if(SIM.wx!=null) return "suppressed-by-mode";
+  if(!usableWeatherCoordinates(lat,lon)) return "target-ineligible";
+  if(kind==="weather"?wxBusy:radarBusy) return "active-owned-attempt";
+  if(kind==="weather"&&selectedWeather(now)&&weatherTrack&&now-lastWxAt<_WX_CURRENT_TTL) return "fresh-data-satisfied";   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
+  const r=_wxRetry[kind]; if(r!==null&&elapsed-r.startedAt<(kind==="weather"?_WX_RETRY:_RADAR_REFRESH)) return "cooldown";
+  return "eligible";
+}
+function retryDiagnostics(){
+  const elapsed=_RAFNOW(), clock=retryClockDomain(), one=(kind,intervalMs)=>{ const r=_wxRetry[kind];
+    return {state:retryGate(kind,Date.now(),elapsed),intervalMs,lastAttemptElapsedMs:r?r.startedAt:null,
+      nextEligibleInMs:r?Math.max(0,r.startedAt+intervalMs-elapsed):0,clock:r?r.clock:null}; };
+  return {clock,guarantee:clock==="monotonic"?"elapsed performance.now spacing; wall corrections do not move it":
+    "degraded: Date.now fallback; a wall correction moves retry spacing",weather:one("weather",_WX_RETRY),radar:one("radar",_RADAR_REFRESH)};
+}
 // HOURLY FORECAST TRACK (Open-Meteo). One fetch pulls `current=` (real-time mood) AND `hourly=` (a 3-day
 // forecast). In sim/fast-forward, `weather` is INTERPOLATED from this track by simTime (wxAt) so a sped-up
 // clock shows a coherent future weather cycle, not frozen current weather under a moving sun.
@@ -1370,16 +1393,13 @@ function wxFetchJson(op,a,url){
   });
 }
 async function fetchWeather(){
-  if(SIM.wx!=null) return;                 // simulated weather: never overwrite
-  if(!usableWeatherCoordinates(lat,lon)||wxBusy) return;
-  const now=Date.now();
-  if(selectedWeather(now) && weatherTrack && now-lastWxAt < _WX_CURRENT_TTL) return;   // need the hourly TRACK too — a fresh current-weather cache must not block timeScale demos
-  if(now-lastWxTry < 60*1000) return;
+  const now=Date.now(), elapsed=_RAFNOW();
+  if(retryGate("weather",now,elapsed)!=="eligible") return;   // simulated weather is never overwritten
   const op=beginRequest("weather"); if(!op) return;
   const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey,
     target:captureWeatherTarget(op.generation,op.lat,op.lon)};
   const a=beginAttempt(op,_WX_BODY_WAIT); if(!a){ finishRequest(op); return; }
-  lastWxTry=now; wxBusy=true;
+  lastWxTry=now; _wxRetry.weather={startedAt:elapsed,clock:retryClockDomain()}; wxBusy=true;
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
   try{
     const result=await wxFetchJson(op,a,u); if(!result.ok||!attemptEligible(op,a)) return;
@@ -1447,12 +1467,12 @@ function wxRadarSample(op,a,url,fx,fy,xt,yt){
   });
 }
 async function fetchRadar(){
-  if(SIM.wx!=null || !usableWeatherCoordinates(lat,lon) || radarBusy) return;       // real mode only
-  const now=Date.now(); if(now-lastRadarAt < _RADAR_REFRESH) return;   // radar updates ~10 min
+  const now=Date.now(), elapsed=_RAFNOW();
+  if(retryGate("radar",now,elapsed)!=="eligible") return;   // real mode only; radar updates ~10 min
   const op=beginRequest("radar"); if(!op) return;
   const captured={lat:op.lat,lon:op.lon,target:captureWeatherTarget(op.generation,op.lat,op.lon)};
   let a=beginAttempt(op,_RADAR_BODY_WAIT); if(!a){ finishRequest(op); return; }
-  lastRadarAt=now; radarBusy=true;
+  lastRadarAt=now; _wxRetry.radar={startedAt:elapsed,clock:retryClockDomain()}; radarBusy=true;
   try{
     const result=await wxFetchJson(op,a,"https://api.rainviewer.com/public/weather-maps.json");
     if(!result.ok||!attemptEligible(op,a)) return;
@@ -3486,7 +3506,7 @@ window.qaState=function(){
         radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / simulation)", radarPrecipMm:0, radarAgeSec:radar.receiptAgeMs==null?null:Math.round(radar.receiptAgeMs/1000),
         radarFrameAgeSec:radar.frameAgeMs==null?null:Math.round(radar.frameAgeMs/1000), radarAvailable:radar.available, radarConfirming:false,
         radarDiagnostic:weatherRadar?weatherRadar.sample:null, radarQuantitativeReason:"unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
-        requests:{weather:_wxRequests.weather,radar:_wxRequests.radar},
+        requests:{weather:_wxRequests.weather,radar:_wxRequests.radar},retry:retryDiagnostics(),
         target:{...decision.target,fixAgeMs:decision.target.acquiredAt==null?null:Date.now()-decision.target.acquiredAt},
         current:decision.current,model:decision.model,present:decision.present,disagreement:decision.disagreement,
         spatial:decision.spatial,horizon:decision.horizon,forecast:decision.forecast,permissions:decision.permissions,visualPermissions:decision.visualPermissions,lane:decision.lane,conditionState:decision.conditionState,observedPresent:decision.observedPresent,
@@ -3646,7 +3666,7 @@ function buildSceneOnce(){
 function resetForNewLocation(){
   today=null; tomorrow=null; lastDate=null; fetchingTomorrow=false;
   weather=null; weatherTrack=null; lastWxAt=0; lastWxTry=0;
-  weatherRadar=null; lastRadarAt=0;
+  weatherRadar=null; lastRadarAt=0; _wxRetry.weather=null; _wxRetry.radar=null;
   _starsProjected=false; _prayerStale=false; lastMoonMin=-1; _renderDirty=true;
   _rolloverBusy=false; _rolloverNextTry=0;
   withdrawPrayerPresentation();paintWeatherHeader(weatherHeader(weatherDecision(),false));
