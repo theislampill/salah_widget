@@ -7,16 +7,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Typography is optional: a slow font service cannot delay accepted sky/UI inputs.
-     The same stylesheet and existing fallback stack apply when it is available. -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap" media="print" onload="this.media='all'">
+     Text keeps the fallback stacks until the used faces have loaded (see "Optional web typography"). -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap" id="webfont-css" media="print" onload="this.media='all'">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;background:transparent}
 body{color:#fff7df;
-  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --font-display:"Fraunces",Georgia,"Times New Roman",serif;
+  --font-body:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-display:Georgia,"Times New Roman",serif;
   font:14px var(--font-body);font-optical-sizing:auto;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+/* Web families join the stacks only after their faces have loaded (main script, "Optional web typography"). */
+html.webfonts body{
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-display:"Fraunces",Georgia,"Times New Roman",serif;}
 .c{
   --g1:#0b1430;--g2:#070a1c;--g3:#0d1024;
   --glow:rgba(70,90,180,0);--horizon:rgba(40,40,90,0);--sunx:50%;--suny:30%;
@@ -436,10 +440,10 @@ body{color:#fff7df;
 .date-trigger:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
 .date-value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .date-unavailable{font-size:.78em;font-weight:600;color:color-mix(in srgb,#ffc27a 76%,var(--text));unicode-bidi:isolate}
-.date-dialog{box-sizing:border-box;width:calc(100vw - 28px);max-width:297px;max-height:calc(100vh - 28px);margin:auto;padding:16px;border:1px solid #ffffff35;border-radius:16px;color:#f0edf8;background:rgba(9,17,28,.97);box-shadow:0 12px 32px #0006;font-family:Inter,system-ui,sans-serif;overflow-y:auto;overflow-x:hidden;text-align:left;direction:ltr}
+.date-dialog{box-sizing:border-box;width:calc(100vw - 28px);max-width:297px;max-height:calc(100vh - 28px);margin:auto;padding:16px;border:1px solid #ffffff35;border-radius:16px;color:#f0edf8;background:rgba(9,17,28,.97);box-shadow:0 12px 32px #0006;font-family:var(--font-body);overflow-y:auto;overflow-x:hidden;text-align:left;direction:ltr}
 .date-dialog::backdrop{background:rgba(3,6,12,.42)}
 .date-dialog header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.date-dialog h2{margin:0;font-family:Fraunces,Georgia,serif;font-size:20px;font-weight:600}
+.date-dialog h2{margin:0;font-family:var(--font-display);font-size:20px;font-weight:600}
 .date-dialog button{border:1px solid #ffffff35;border-radius:8px;padding:6px 9px;background:#ffffff10;color:inherit;font:inherit;font-size:12px;cursor:pointer}
 .date-dialog button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .date-dialog dl{margin:0;display:grid;gap:5px}
@@ -6972,6 +6976,36 @@ function applyTheme(M){
     _lastMoonPaint=Object.freeze({status:"failed",stage,fresh:null,observation});
     throw e;                                                    // preserve render error behavior; qaState remains nonthrowing
   }
+}
+
+// Optional web typography. The head stylesheet applies late (media print -> all on load) so a slow
+// font service can never delay the card. Gecko gives font-display:swap faces a short block period
+// (gfx.downloadable_fonts.fallback_delay_short, ~100 ms) in which text resolving to a still-loading face
+// is painted invisible; landing on already-painted text, that blanked the card's web-font text. So the
+// custom properties keep the fallback stacks until the faces visible UI uses have loaded (Inter
+// 400/500/600 and Fraunces 600; heavier Inter weights match the 600 face), then html.webfonts adds the
+// families and the .cn fit is invalidated as for any font change. A rejected or empty load fails closed:
+// fallback stays for this page life, with no retry. A stylesheet that never loads requests nothing.
+const WEBFONT_FACES=Object.freeze(["400 14px Inter","500 14px Inter","600 14px Inter","600 14px Fraunces"]);
+let _webfontsRequested=false;
+function requestWebfonts(){
+  if(_webfontsRequested) return;
+  _webfontsRequested=true;
+  const fonts=document.fonts;
+  if(typeof fonts?.load!=="function") return;
+  let loads;
+  try{ loads=WEBFONT_FACES.map(face=>fonts.load(face)); }catch(e){ return; }
+  Promise.all(loads).then(sets=>{
+    if(!sets.every(set=>set && set.length>0)) return;
+    document.documentElement.classList.add("webfonts");
+    cnFontChanged();
+  },()=>{});
+}
+{
+  const link=document.getElementById?.("webfont-css");
+  // The attribute handler sets media first; it may already have run before this script.
+  if(link?.media==="all") requestWebfonts();
+  else link?.addEventListener("load",()=>{ if(link.media==="all") requestWebfonts(); });
 }
 
 // Size the present-prayer name to the live arc: keep 1 M of clearance from the curve on each side
