@@ -166,8 +166,11 @@ PRAYER_IN_PAGE = r"""((rec)=>{const f=window.fetch;
   return Promise.resolve(new Response(JSON.stringify({code:200,status:'OK',data:r}),{status:200,headers:{'Content-Type':'application/json'}}));};
 })(__RECORD__);"""
 # JS-stack initiator classes for retiring-phase image events (informational; owner 10.6).
-RETIREMENT_STACK = re.compile(r'NativeSkyLifecycle\.dispose')
-RENDER_LOOP_STACK = re.compile(r'present \(.*\n\s+at loop \(', re.S)   # SalahSkyPreview.present called from the native rAF loop
+# V8 stacks name the class ("at NativeSkyLifecycle.dispose (", "at present (" / "at loop ("); Firefox (SpiderMonkey)
+# stacks are "fn@url:line:col" without the class, so the lifecycle dispose chain is "invalidate@…" directly followed
+# by "dispose@…" (2026-11-11 fix: the first Firefox runs, b4-*, classified every event as `other`).
+RETIREMENT_STACK = re.compile(r'NativeSkyLifecycle\.dispose|^invalidate@[^\n]*\ndispose@', re.M)
+RENDER_LOOP_STACK = re.compile(r'present \(.*\n\s+at loop \(|^present@[^\n]*\n(?:[^\n]*\n)*?loop@', re.S | re.M)   # SalahSkyPreview.present called from the native rAF loop
 COUNTS = """()=>{const R=window.__r0021;return {...R.live(),
  assets:window.SalahRealSkyAssets?.state.status??null,skyStatus:window.SalahRealSky?.state.status??null,previewStatus:window.SalahSkyPreview?.state.status??null,
  previewDraws:window.SalahSkyPreview?.state.draws??null,moonRuntime:!!window.SalahMoonRuntime,moonDisposed:window.SalahMoonRuntime?.disposed??null,moonDetail:!!window.SalahMoonDetail}}"""
