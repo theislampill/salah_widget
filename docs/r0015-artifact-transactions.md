@@ -43,12 +43,28 @@ CodeDOM compilation. `New-StagingCompilerContext` checks the reported filesystem
 physical ancestry, owner and permissions, takes no-delete-sharing directory
 leases, and exclusively creates its protected current-user workspace. Only then
 does `Initialize-StagingNative` set both process `TEMP` and `TMP` to that workspace
-and invoke `Add-Type`. Windows PowerShell 5.1 also receives an explicit
-`CompilerParameters.TempFiles` location. Both environment variables are restored
-in `finally`, including their originally absent state. Cleanup requires fresh
-identity, owner, descendant and non-reparse checks and retains ancestry leases
-through deletion. A failed compiler invocation keeps the owned workspace for
-diagnosis without granting artifact readiness.
+and call the guarded `Invoke-StagingCompiler` helper. Both variables are restored
+in `finally`, including their originally absent state.
+
+On Windows PowerShell 5.1, the helper invokes the host Framework `csc.exe` through
+`Diagnostics.Process`, with its working directory, child `TEMP`/`TMP`, exclusive
+source file and raw diagnostic files confined to that held workspace. It checks
+the exact UTF-8 source bytes through a held read handle. A successful terminal
+compiler exit and complete diagnostic capture precede DLL admission: the output
+must be a regular single-link file with the expected owner and restricted write
+access, at most16 MiB, and its identity is checked again while a handle denies
+concurrent writes and deletion. The admitted bytes are loaded into memory and
+must contain the required staging type. On supported PowerShell 7, the same
+helper retains the actual `Add-Type -TypeDefinition` path in the admitted context.
+
+The compiler context captures the token's default owner, restricted to the user
+or Administrators. Compiler output admission and descendant cleanup may accept
+that captured owner as well as the user, while still requiring the full foreign
+write-access predicate, current identity and non-reparse/single-link checks.
+Ordinary staging-artifact ownership rules are unchanged. Cleanup retains the
+ancestor leases through deletion; any failed custody proof retains the workspace.
+A failed compiler invocation also keeps its owned workspace for diagnosis without
+granting artifact readiness.
 
 Both the compiler boundary and `StageNative.RequireLocalAclVolume` require a
 successful filesystem-name query that reports NTFS. The existing file-identity

@@ -88,11 +88,12 @@ inspect the exact file before allowing normal setup actions.
 These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
-On macOS or Linux, replace `FULL_REVIEWED_COMMIT_SHA` with the full commit you
-intend to review. Keep the downloaded file for both the preview and normal run:
+Both examples below use installer source commit
+`d96f87825f02077da7f6afe742d30aecfd1fc005`. On macOS or Linux, keep the downloaded
+file for both the preview and normal run:
 
 ```bash
-INSTALL_COMMIT='FULL_REVIEWED_COMMIT_SHA'
+INSTALL_COMMIT='d96f87825f02077da7f6afe742d30aecfd1fc005'
 curl -fsSL "https://raw.githubusercontent.com/theislampill/salah_widget/$INSTALL_COMMIT/install.sh" -o install.sh
 less ./install.sh
 DRY_RUN=1 bash ./install.sh
@@ -106,13 +107,12 @@ shown default. An unavailable terminal or end of input is a refusal, not a
 default answer. Use the reviewed local-file route from an interactive terminal
 if a remote command runner cannot provide one.
 
-On Windows, set `FULL_REVIEWED_COMMIT_SHA` to the full reviewed candidate commit.
-`Invoke-WebRequest -OutFile` keeps the downloaded file bytes. Review
+On Windows, `Invoke-WebRequest -OutFile` keeps the downloaded file bytes. Review
 with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-$InstallCommit = 'FULL_REVIEWED_COMMIT_SHA'
+$InstallCommit = 'd96f87825f02077da7f6afe742d30aecfd1fc005'
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/$InstallCommit/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
