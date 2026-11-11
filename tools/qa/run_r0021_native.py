@@ -17,7 +17,8 @@ Cells:
  retirement        synthetic pagehide (outgoing document kept for readback): NO data:/blob: image request,
                    NO CSP violation in the retiring phase; refined owner disposed; then persisted pageshow resumes
  navigation        (Chromium) real navigation away: CDP shows no data:/blob: image request issued by the
-                   outgoing document after the retirement mark
+                   outgoing document after the retirement mark; like retirement, it requires a refined-composed
+                   card and a changing data-URL cloud mask, else precondition-not-met (never a vacuous PASS)
  construction      injected 2D-context refusal (x2) and setInterval failure during retry: no orphan
                    .real-sky-canvas, worker/blob/listener balance restored, preview still ready; a healthy
                    retry yields exactly one canvas
@@ -37,6 +38,12 @@ Retirement cell: passes only when its precondition held (refined-composed card A
 mask at pagehide); otherwise it reports precondition-not-met rather than a vacuous PASS. On 2026-11-11 no tried
 scene (plain, --fragment with simWx=3&simCloud=100, and a low-Moon overcast timeScale=30 night) produced a
 non-clear solar mask at pagehide in Chromium 148, on main or candidate, so this cell did not reproduce the finding.
+Cause (found later): the enforced fixture CSP (connect-src 'self') blocks the cross-origin prayer fetch before the
+Playwright route can answer it, so no prayer data arrives and no cloud is painted. --in-page-prayer (opt-in; default
+runs are unchanged) answers the same controlled record inside the page. With it and
+--fragment '...&simWx=3&simCloud=100&timeScale=4' the precondition holds. Each retiring-phase image event keeps its
+JS stack, which names the initiator (lifecycle dispose versus the live preview render loop); the cell's pass rule
+is not changed by this.
 
 Main control: run with --root <checkout of 645b53cc>. Expected FAIL there: retirement (a preview mask Image.src
 during pagehide when the cloud mask changed; cloud-dependent), construction (orphan canvases), moon-replay (no
@@ -84,6 +91,15 @@ INIT = r"""(()=>{
   if(u.includes('api.rainviewer.com'))return Promise.reject(new TypeError('controlled radar unavailable'));
   return nf(input,init);};
 })();"""
+PRAYER_IN_PAGE = r"""((rec)=>{const f=window.fetch;
+ window.fetch=(input,init)=>{const u=String(input&&input.url||input),m=/^https:\/\/api\.aladhan\.com\/v1\/timings\/(\d\d)-(\d\d)-(\d{4})/.exec(u);
+  if(!m)return f(input,init);const r=JSON.parse(JSON.stringify(rec));
+  Object.assign(r.date.gregorian,{date:m[1]+'-'+m[2]+'-'+m[3],day:m[1],month:{number:+m[2],en:'Fixture'},year:m[3]});
+  return Promise.resolve(new Response(JSON.stringify({code:200,status:'OK',data:r}),{status:200,headers:{'Content-Type':'application/json'}}));};
+})(__RECORD__);"""
+# JS-stack initiator classes for retiring-phase image events (informational; owner 10.6).
+RETIREMENT_STACK = re.compile(r'NativeSkyLifecycle\.dispose')
+RENDER_LOOP_STACK = re.compile(r'present \(.*\n\s+at loop \(', re.S)   # SalahSkyPreview.present called from the native rAF loop
 COUNTS = """()=>{const R=window.__r0021;return {sky:document.querySelectorAll('.real-sky-canvas').length,preview:document.querySelectorAll('.real-sky-preview').length,
  detail:document.querySelectorAll('.moon-detail-canvas').length,workersLive:R.workers.made-R.workers.ended,urlsLive:R.urls.made-R.urls.revoked,vis:R.vis,
  assets:window.SalahRealSkyAssets?.state.status??null,skyStatus:window.SalahRealSky?.state.status??null,previewStatus:window.SalahSkyPreview?.state.status??null,
@@ -125,7 +141,8 @@ def events_in(page, name):
 CELLS = ['first-boot', 'live-handoff', 'retirement', 'construction', 'cycles', 'moon-replay', 'recovery-visual', 'night', 'navigation']
 
 
-def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500, fragment=None):
+def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500, fragment=None,
+        in_page_prayer=False):
     fragment = fragment or HASH
     policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', (REPO / 'tests/widget-fixture.html').read_text(encoding='utf-8')).group(1)
     index = (root / 'index.html').read_bytes()
@@ -141,7 +158,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
               'evidenceLevel': 'request-level (CDP) and page-level' if engine == 'chromium' else 'page-level only (no CDP request log in this engine)',
               'root': 'repository' if root.resolve() == REPO else root.name, 'policy': policy, 'policyDelivery': 'response header on index.html',
               'served': {n: sha(root / n) for n in SERVED if (root / n).is_file()},
-              'options': {'fragment': fragment, 'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh, 'composedWaitMs': composed_wait},
+              'options': {'fragment': fragment, 'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh, 'composedWaitMs': composed_wait, 'inPagePrayer': in_page_prayer},
               'cells': {}, 'console': [], 'cdp': [], 'crashes': []}
     cells = report['cells']
 
@@ -158,6 +175,12 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
         report['browserVersion'] = browser.version
         ctx = browser.new_context(viewport={'width': 325, 'height': 530})
         ctx.add_init_script(INIT)
+        if in_page_prayer:
+            # Opt-in (ES21-12 precondition attempt): the enforced fixture CSP (connect-src 'self') blocks the
+            # cross-origin prayer fetch before the Playwright route below can answer it, so the page never gets
+            # prayer data. This answers the same controlled record inside the page, exactly as INIT already does
+            # for the weather provider. Product code, CSP and every cell's pass condition are unchanged.
+            ctx.add_init_script(PRAYER_IN_PAGE.replace('__RECORD__', json.dumps(record)))
         cdp_phase = {'value': 'load'}
 
         def open_page(fragment, label):
@@ -241,12 +264,17 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             page.wait_for_timeout(1000)
             ev = events_in(page, 'retiring'); after = counts()
             data_images = [x for x in ev['images'] if x['scheme'] in ('data', 'blob')]
+            # Initiator classification (owner 10.6) from each event's JS stack; informational, the pass rule is unchanged.
+            retirement_initiated = [x for x in data_images if RETIREMENT_STACK.search(x.get('stack', ''))]
+            render_loop = [x for x in data_images if x not in retirement_initiated and RENDER_LOOP_STACK.search(x.get('stack', ''))]
             cdp_retiring = [x for x in report['cdp'] if x['phase'] == 'retiring']
             mark('resume'); page.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))")
             resumed = wait(page, READY, 30000); r = counts()
             clean = bool(not data_images and not ev['violations'] and not cdp_retiring and after['sky'] == 0 and after['assets'] == 'suspended' and resumed and r['sky'] == 1)
             cells['retirement'] = {'pass': clean and precondition, **({} if precondition else {'status': 'precondition-not-met'}), 'cleanRetirement': clean,
-                                   'maskChangingAtPagehide': precondition, 'maskPrefixes': [m1[:40], m2[:40]], 'refinedComposedBeforePagehide': composed, 'retiringImages': ev['images'], 'retiringViolations': ev['violations'], 'retiringCdp': cdp_retiring,
+                                   'maskChangingAtPagehide': precondition, 'maskPrefixes': [m1[:40], m2[:40]], 'refinedComposedBeforePagehide': composed, 'retiringImages': ev['images'],
+                                   'initiators': {'retirementInitiated': len(retirement_initiated), 'renderLoop': len(render_loop),
+                                                  'other': len(data_images) - len(retirement_initiated) - len(render_loop), 'cdpRetiringRequests': len(cdp_retiring)}, 'retiringViolations': ev['violations'], 'retiringCdp': cdp_retiring,
                                    'before': before, 'afterPagehide': after, 'resumed': r, 'requestLevel': engine == 'chromium'}
             shot('2-resumed')
 
@@ -329,10 +357,17 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             # Real navigation: the outgoing document retires for real (Chromium request log only).
             if engine != 'chromium':
                 cells['navigation'] = {'pass': True, 'status': 'not-applicable', 'reason': 'no request-level instrument in this engine'}; return
-            page.wait_for_timeout(1500); mark('navigation')
+            # Discriminating only when the outgoing card is refined-composed and its cloud mask is a changing
+            # data URL; with the constant clear gradient there is nothing to publish (precondition-not-met, never PASS).
+            composed = wait(page, "()=>document.querySelector('.c').classList.contains('real-sky-composed')", composed_wait)
+            mask = "()=>getComputedStyle(document.querySelector('.c')).getPropertyValue('--native-sun-cloud-mask').trim()"
+            m1 = page.evaluate(mask); page.wait_for_timeout(1500); m2 = page.evaluate(mask); mark('navigation')
             page.goto('about:blank'); page.wait_for_timeout(1000)
             nav = [x for x in report['cdp'] if x['phase'] == 'navigation']
-            cells['navigation'] = {'pass': not nav, 'navigationCdp': nav}
+            precondition = bool(composed and m2.startswith('url(') and m1 != m2)
+            cells['navigation'] = {'pass': (not nav) and precondition, **({} if precondition else {'status': 'precondition-not-met'}),
+                                   'maskChangingAtNavigation': precondition, 'maskPrefixes': [m1[:40], m2[:40]], 'refinedComposedBeforeNavigation': composed,
+                                   'navigationDataBlobRequests': len(nav), 'navigationCdp': nav}
 
         for name, fn in (('first-boot', first_boot), ('live-handoff', live_handoff), ('retirement', retirement), ('construction', construction),
                          ('cycles', cycles), ('moon-replay', moon_replay), ('recovery-visual', recovery_visual), ('night', night_cell), ('navigation', navigation)):
@@ -360,6 +395,7 @@ if __name__ == '__main__':
     a.add_argument('--cycles-fresh-page', action='store_true', help='run the cycles cell on a newly loaded page')
     a.add_argument('--composed-wait-ms', type=int, default=60000, help='retirement: wait up to this long for a refined-composed card')
     a.add_argument('--fragment', default=None, help='main page fragment (default: the plain fixture scene)')
+    a.add_argument('--in-page-prayer', action='store_true', help='answer the controlled prayer record inside the page (the enforced CSP blocks the routed provider)')
     a.add_argument('--cycles-settle-ms', type=int, default=500, help='cycles: settle after each resumed READY (0 reproduces the Firefox crash)')
     o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=False)
-    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms, o.fragment) else 1)
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms, o.fragment, o.in_page_prayer) else 1)
