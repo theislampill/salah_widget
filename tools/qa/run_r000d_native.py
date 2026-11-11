@@ -6,6 +6,7 @@ responses and the radar tile are controlled (no provider-availability or outage 
 served unchanged from --root. Cells: accepted -> backward wall correction -> future-dated rejection ->
 59 999/60 000 and 599 999/600 000 elapsed boundaries at the real product gate -> owned completion and visible
 header recovery; then a second correction recovered through the ordinary visible loop poll only.
+--step-min sets the backward correction (default 120; 5 is the small-step parameterisation).
 """
 import argparse, functools, http.server, json, struct, sys, threading, time, zlib
 from pathlib import Path
@@ -62,14 +63,15 @@ def wait(page, predicate, timeout=30000):
     return False
 
 
-def run(engine, root, out, headed, cells):
+def run(engine, root, out, headed, cells, step_min=120):
+    step, tag = step_min * 60000, f'{engine}-s{step_min}m'
     class Quiet(http.server.SimpleHTTPRequestHandler):
         def log_message(self, *args):
             pass
     server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=str(root)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     record = json.loads((Path(__file__).resolve().parents[2] / 'tests/r0002-ordinary.json').read_text(encoding='utf-8'))
-    report = {'engine': engine, 'root': 'repository' if root.resolve() == Path(__file__).resolve().parents[2] else root.name, 'start': START, 'cells': {}, 'console': [], 'tiles': 0}
+    report = {'engine': engine, 'root': 'repository' if root.resolve() == Path(__file__).resolve().parents[2] else root.name, 'start': START, 'backwardStepMs': step, 'cells': {}, 'console': [], 'tiles': 0}
     png = tile_png()
     with sync_playwright() as p:
         browser = getattr(p, engine).launch(headless=not headed)
@@ -89,11 +91,14 @@ def run(engine, root, out, headed, cells):
         page.route('https://api.aladhan.com/**', lambda r: prayer(r, record))
         page.goto(f'http://127.0.0.1:{server.server_address[1]}/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1')
         snap = lambda: page.evaluate(SNAP)
-        shot = lambda name: page.screenshot(path=str(out / f'{engine}-{name}.png'))   # the 325x530 viewport is the card; no element-stability wait on animated clouds
+        shot = lambda name: page.screenshot(path=str(out / f'{tag}-{name}.png'))   # the 325x530 viewport is the card; no element-stability wait on animated clouds
         cell = report['cells']
+        def frames(label):   # wait for 10 real animation frames; headed Firefox here can stall its first frames for tens of seconds
+            t0 = time.monotonic(); page.evaluate('()=>new Promise(r=>{let k=0;const f=()=>++k<10?requestAnimationFrame(f):r();requestAnimationFrame(f);})')
+            report.setdefault('frameWaitsMs', {})[label] = round((time.monotonic() - t0) * 1000)
         ok = wait(page, "()=>{try{const q=qaState();return q.cache.currentEligible&&q.wxTruth.radarAvailable&&!wxBusy&&!radarBusy}catch(e){return false}}")
         cell['accepted'] = {'pass': ok, **snap()}; shot('1-accepted')
-        page.evaluate('()=>__r000dClock.stepWall(-7200000)'); page.wait_for_timeout(1500)
+        page.evaluate('s=>__r000dClock.stepWall(-s)', step); page.wait_for_timeout(1500)
         s = snap(); cell['rejected'] = {'pass': not s['currentEligible'] and not s['radarAvailable'] and s['wt'] == '', **s}; shot('2-rejected')
         if 'boundary' in cells:
             for kind, interval in (('weather', 60000), ('radar', 600000)):
@@ -102,18 +107,25 @@ def run(engine, root, out, headed, cells):
                             else "()=>!radarBusy&&qaState().wxTruth.radarAvailable")
                 cell[kind + 'Boundary'] = {'pass': b['n1'] == b['n0'] and b['n2'] == b['n0'] + 1 and b['stateBefore'] == 'cooldown' and done, **b, 'after': snap()}
             shot('3-boundary-recovered')
-            page.evaluate('()=>__r000dClock.stepWall(-7200000)'); page.wait_for_timeout(1500)
-        c0 = snap(); page.evaluate('()=>__r000dClock.advance(630001)')   # elapsed passes; the next visible frame is a poll opportunity
-        done = wait(page, "()=>!wxBusy&&!radarBusy&&qaState().cache.currentEligible&&qaState().wxTruth.radarAvailable&&document.querySelector('#wt').textContent==='20°'", 15000)
+            # The pinned jump to 600 000 ms opened the loop's ~30 s poll; let that visible frame pass (both sources
+            # are then current or cooling down) before the next correction, so the loop cell counts only its own poll.
+            frames('afterBoundary')
+        # Second correction of step + 630 001 ms, then 630 001 ms pass on both clocks: at the next visible poll the
+        # accepted evidence is still future-dated by `step`, so only a real replacement can restore the consumers.
+        frames('beforeLoop')
+        page.evaluate('s=>__r000dClock.stepWall(-s)', step + 630001); page.wait_for_timeout(1500)
+        c0 = snap(); page.evaluate('()=>__r000dClock.advance(630001)')   # the next visible frame is a poll opportunity
+        done = wait(page, "()=>!wxBusy&&!radarBusy&&qaState().cache.currentEligible&&qaState().wxTruth.radarAvailable&&document.querySelector('#wt').textContent==='20°'", 60000)
         page.wait_for_timeout(3000); c1 = snap()
-        cell['loopRecovery'] = {'pass': done and c1['calls']['weather'] == c0['calls']['weather'] + 1 and c1['calls']['radar'] == c0['calls']['radar'] + 1,
-                                'withdrawnBefore': not c0['currentEligible'] and c0['wt'] == '', 'before': c0, 'after': c1}
+        withdrawn = not c0['currentEligible'] and not c0['radarAvailable'] and c0['wt'] == ''
+        cell['loopRecovery'] = {'pass': withdrawn and done and c1['calls']['weather'] == c0['calls']['weather'] + 1 and c1['calls']['radar'] == c0['calls']['radar'] + 1,
+                                'withdrawnBefore': withdrawn, 'before': c0, 'after': c1}
         shot('4-loop-recovered')
         browser.close()
     server.shutdown()
     report['pass'] = all(v['pass'] for v in report['cells'].values())
-    (out / f'{engine}-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    print(json.dumps({'engine': engine, 'version': report['browserVersion'], 'pass': report['pass'],
+    (out / f'{tag}-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    print(json.dumps({'engine': engine, 'backwardStepMin': step_min, 'version': report['browserVersion'], 'pass': report['pass'],
                       'cells': {k: v['pass'] for k, v in report['cells'].items()}, 'consoleErrors': len(report['console'])}))
     return report['pass']
 
@@ -125,5 +137,6 @@ if __name__ == '__main__':
     a.add_argument('--out', required=True)
     a.add_argument('--headed', action='store_true')
     a.add_argument('--cells', default='boundary,loop')
+    a.add_argument('--step-min', type=int, default=120, help='backward wall correction in minutes')
     o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=True)
-    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(',')) else 1)
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.step_min) else 1)
