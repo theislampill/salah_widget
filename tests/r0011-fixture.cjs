@@ -76,6 +76,8 @@ function widget(options={}) {
     load(region("function captureWeatherTarget(","\nfunction loadWx("));
     load(region("// A receipt of what the cloud consumer published","// Pure final-publication fence."));
   }
+  // R000D's per-source elapsed retry record is cleared by resetForNewLocation; load its actual declaration.
+  if(/^const _WX_RETRY=/m.test(source))load(declaration(/^const _WX_RETRY=/m));
   load(helper("resetForNewLocation"));
   const applyStart=source.indexOf("async function applyConfig("), bootStart=source.indexOf("async function boot(){",applyStart), bootEnd=source.indexOf("// SINGLE rAF render clock",bootStart);
   if(applyStart<0 || bootStart<applyStart || bootEnd<bootStart)throw new SetupError("apply/boot source boundary missing");
