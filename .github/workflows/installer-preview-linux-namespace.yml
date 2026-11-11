@@ -1,0 +1,75 @@
+name: R0016 focused Linux namespace discriminator
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - .github/workflows/installer-preview-linux-namespace.yml
+      - tools/qualification/installer_preview_linux_namespace_probe.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-linux-namespace-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  linux-namespace:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tests/install-preview.py
+            /tools/qualification/installer_preview_linux_prerequisites.py
+            /tools/qualification/installer_preview_linux_namespace_probe.py
+      - name: Acquire reviewed signed namespace prerequisite
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_preview_linux_prerequisites.py --output "$RUNNER_TEMP/installer-namespace-preparation"
+      - name: Observe two fixed source-free namespace controls
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_preview_linux_namespace_probe.py --repo "$GITHUB_WORKSPACE" --preparation "$RUNNER_TEMP/installer-namespace-preparation" --output "$RUNNER_TEMP/installer-evidence"
+      - name: Preserve original preparation and discriminator evidence
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, tarfile
+          parent = pathlib.Path(os.environ['RUNNER_TEMP'])
+          root = parent / 'installer-evidence'
+          root.mkdir(exist_ok=True)
+          preparation = parent / 'installer-namespace-preparation'
+          if preparation.is_dir():
+              retained = root / 'runner-preparation'
+              retained.mkdir()
+              inventory = []
+              for path in sorted(preparation.iterdir()):
+                  if path.is_file() and not path.is_symlink():
+                      raw = path.read_bytes()
+                      (retained / path.name).write_bytes(raw)
+                      inventory.append({'name': path.name, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(), 'retained': True})
+                  elif path.is_dir() and not path.is_symlink() and path.name in ('apt-lists', 'apt-cache', 'empty-config-parts'):
+                      inventory.append({'name': path.name, 'retained': False, 'reason': 'Disposable APT index/cache/empty directory; exact preparation configuration and raw streams retained. No diagnostic fixture path is excluded.'})
+                  else:
+                      raise RuntimeError('Unexpected preparation entry type: ' + path.name)
+              (retained / 'archive-inventory.json').write_text(json.dumps(inventory, indent=2) + '\n')
+          with tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False) as archive:
+              archive.add(root, arcname='installer-evidence')
+          PY
+      - name: Retain original Linux namespace evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-linux-namespace-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
