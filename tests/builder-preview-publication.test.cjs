@@ -29,6 +29,7 @@ const cases=[
   ["ES0F-06 D1 refusal text cleared once the draft is valid again","refusalCleared"],
   ["ES0F-06 coordinate inputs described by the invalid-draft note (authored + generated)","describedBy"],
   ["ES0F-06/07 R0026 seam: rejected position never issues or relabels; admitted search/position issues once","admissionSeam"],
+  ["ES0F-06 D1 zero latitude/longitude is a valid portable coordinate","zeroCoordinates"],
 ];
 for(const [name,key]of cases)test("R000F publication: "+name,()=>S[key](mk));
 module.exports={cases};

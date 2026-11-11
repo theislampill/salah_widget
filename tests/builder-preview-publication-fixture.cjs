@@ -382,4 +382,23 @@ S.admissionSeam=async mk=>{
   assert.equal(navs(f),3,"admitted position issues exactly once"); coherent(f);
   assert.equal(param(srcHash(last(f).src),"lat"),"52.52");
 };
+// D1: zero is a coordinate, not a missing value. Portable lat/lon "0" (together, and each alone with the other
+// non-zero) is a VALID draft: no invalid marking, the export carries the zero, one navigation, Copy/Open work.
+S.zeroCoordinates=async mk=>{
+  const f=mk(), note=f.elements.get("draftnote");
+  // One committed field edit per step (from 24.4672,39.6142): lat 0 alone, then both 0, then lon 0 alone.
+  for(const [id,lat,lon]of [["lat","0","39.6142"],["lon","0","0"],["lat","24.4672","0"]]) {
+    const before=navs(f), copies=f.calls.copy.length, opens=f.opens.length;
+    pair(f,id,id==="lat"?lat:lon);
+    assert.equal(note.hidden,true,lat+","+lon+" is not marked invalid");
+    assert.equal(f.elements.get("lat").getAttribute("aria-invalid"),"false"); assert.equal(f.elements.get("lon").getAttribute("aria-invalid"),"false");
+    assert.equal(navs(f),before+1,lat+","+lon+" issues exactly once"); coherent(f);
+    const h=f.hash(); assert.equal(param(h,"lat"),lat); assert.equal(param(h,"lon"),lon);
+    assert.equal(srcHash(last(f).src),h,"issued preview carries the zero coordinates");
+    await Promise.all(f.click("copy").results); await drain();
+    assert.equal(f.calls.copy.length,copies+1,"Copy not refused"); assert.equal(f.calls.copy[copies],f.elements.get("code").value);
+    assert.notEqual(f.elements.get("copied").textContent,f.run("REFUSED"));
+    f.click("open"); assert.equal(f.opens.length,opens+1,"Open not refused"); assert.equal(f.opens[opens][0],f.run("url()"));
+  }
+};
 module.exports={S,loader,pair,navs,ledger};

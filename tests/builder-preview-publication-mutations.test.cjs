@@ -45,6 +45,7 @@ const cases=[
     "const a={ok:true,lat:+pos.coords.latitude,lon:+pos.coords.longitude};","admissionSeam"],
   ["m23 admitted search result never issues",'  if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";\n  update();\n',
     '  if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";\n',"admissionSeam"],
+  ["m24 zero coordinate treated as missing",'return ["lat","lon"].filter(id=>c[id]==null);','return ["lat","lon"].filter(id=>!c[id]);',"zeroCoordinates"],
 ];
 for(const [name,from,to,key]of cases)test("R000F publication mutation: "+name+" -> "+key,async()=>{
   assert.equal(script.split(from).length,2,"one declared mutation location");
