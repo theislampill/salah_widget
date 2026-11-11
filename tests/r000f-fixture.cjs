@@ -130,7 +130,7 @@ function fixture(kind,options={}) {
   if(kind==="builder") {
     const defaults={label:"Madinah",lat:"24.4672",lon:"39.6142",method:"4",school:"0",time:"24",units:"f",appearance:"glass",dfcode:"YYYY-MM-DD",datefmt:"YYYY-MM-DD"};
     for(const [id,value]of Object.entries(defaults))el(id,value);
-    for(const id of ["loclabel","geotip","geo","dfCustomOpt","pv","code","copied","copy","open","reload","install","installtip","modenote","embed-recovery","embed-recovery-wrap","install-recovery","install-recovery-wrap"] )el(id);
+    for(const id of ["loclabel","geotip","geo","dfCustomOpt","pv","code","copied","copy","open","reload","install","installtip","modenote","embed-recovery","embed-recovery-wrap","install-recovery","install-recovery-wrap","draftnote"] )el(id);
     for(const id of ["embed-recovery-wrap","install-recovery-wrap"])env.elements.get(id).hidden=true;
     for(const id of ["mode-portable","mode-local"]) {
       const button=el(id), tag=sources.page.match(new RegExp('<button[^>]*id="'+id+'"[^>]*>'))[0];

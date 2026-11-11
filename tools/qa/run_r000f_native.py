@@ -1,0 +1,343 @@
+"""R000F bounded native observation: builder preview publication (issue #15, ES0F increment).
+
+Serves the GENERATED builder.html / config.js / index.html unchanged from --root on 127.0.0.1 and drives the real
+builder with real keyboard/mouse input. Every non-local request is intercepted at the browser-context level and
+ABORTED (nothing reaches a real provider; the report lists each one with its disposition), so coarse detection and
+reverse lookups fail closed. navigator.geolocation and the geolocation permission query are init-script doubles in
+every frame (always "denied"; no real position is requested). Preview navigations are counted from the browser's own
+observations, never from the builder's revision counter: ISSUED = each value the #pv `src` attribute takes (a DOM
+MutationObserver installed before the builder script runs); REQUESTED = child-frame document requests; COMMITTED =
+`framenavigated` on the #pv child frame. Cells judge ISSUED; `ledger` reports the fate of every revision. Each step
+settles until the issued count is quiet AND the latest issued preview has committed. (Attempt 1 counted commits only:
+Firefox 153 took longer than the 1.2 s quiet window to commit some preview documents, so the next step superseded them
+and two genuinely issued navigations were never counted. Firefox also starts only one document request for two src
+assignments in the same task, so requests alone would hide the base's duplicate assignments.) None of these says
+anything about the widget inside having loaded or rendered.
+
+Cells: load (one navigation) / equivalentEdit (typed equivalent spelling + commit → none) / changedSelect (one select
+change → exactly one, frame fragment = embed snippet) / rapidTyping (navigations only for distinct outputs; final
+frame = final draft) / invalidDraft (preview + export kept, aria-invalid + note, Copy/Install/Open refuse with readable
+feedback, no popup) / refresh (forced re-issue once, also while invalid, never the invalid draft) / radios (Space,
+Enter, arrow, click: one navigation per real mode change, none for the active mode; allow attribute follows) /
+localEdits (local-mode location edits → none) / localPortableInvalid (a retained LOCAL issue under a portable-invalid
+draft: note names the retained self-configuring embed, Copy refuses with the exact refusal string, Refresh re-issues
+the local issue once with allow=geolocation, export unchanged) / layout (boxes; #pv 325x530). Screenshots per stage.
+Refusal and note texts are compared EXACTLY to the served builder's REFUSED / INVALID_NOTE / INVALID_NOTE_LOCAL
+constants (read from the served file; None on a tree that lacks them, which then fails the cell).
+--root selects the served tree (use a checkout of main for the control run); --out receives all evidence.
+"""
+import argparse, functools, hashlib, http.server, json, re, subprocess, sys, threading, time
+from pathlib import Path
+from urllib.parse import urlparse, parse_qs
+
+REPO = Path(__file__).resolve().parents[2]
+SERVED = ('builder.html', 'config.js', 'index.html')
+GEO_INIT = r"""(()=>{const deny=(ok,bad)=>setTimeout(()=>bad&&bad({code:1,message:'fixture denied'}),10);
+ const geo={getCurrentPosition:deny,watchPosition(ok,bad){deny(ok,bad);return 0;},clearWatch(){}};
+ try{Object.defineProperty(Navigator.prototype,'geolocation',{get(){return geo;},configurable:true});}catch(e){}
+ if(navigator.permissions){const q=navigator.permissions.query.bind(navigator.permissions);
+  navigator.permissions.query=d=>d&&d.name==='geolocation'?Promise.resolve({state:'denied',onchange:null}):q(d);}})();"""
+# Top-level builder page only: a MutationObserver records every value the #pv src ATTRIBUTE takes (a DOM fact seen by
+# the browser, independent of the builder's revision counter). Document requests carry no fragment, so this log
+# supplies the fragment of each issued request (matched by its ?r= value).
+SRC_INIT = r"""(()=>{if(window.top!==window)return;const log=window.__r000fSrcLog=[];
+ // Records are delivered later in a batch; the value written by record i is record i+1's oldValue (or the current one).
+ new MutationObserver(ms=>{const pv=ms.filter(m=>m.target.id==='pv');
+  pv.forEach((m,i)=>log.push(i+1<pv.length?pv[i+1].oldValue:m.target.getAttribute('src')));})
+  .observe(document,{subtree:true,attributes:true,attributeOldValue:true,attributeFilter:['src']});})();"""
+STATE = """()=>{const pv=document.getElementById('pv'),code=document.getElementById('code').value,m=code.match(/src="([^"]+)"/);
+ const note=document.getElementById('draftnote');
+ return {pvSrc:pv.getAttribute('src')||pv.src,pvAllow:pv.getAttribute('allow')||'',codeSrc:m?m[1]:null,codeAllow:/allow="geolocation"/.test(code),
+  latInvalid:document.getElementById('lat').getAttribute('aria-invalid'),lonInvalid:document.getElementById('lon').getAttribute('aria-invalid'),
+  note:note?{hidden:note.hidden,text:note.textContent}:null,copied:document.getElementById('copied').textContent,
+  installtip:document.getElementById('installtip').textContent,
+  embedRecoveryHidden:document.getElementById('embed-recovery-wrap').hidden,active:document.activeElement&&document.activeElement.id,
+  mode:document.getElementById('mode-local').getAttribute('aria-checked')==='true'?'local':'portable'}}"""
+BOXES = """()=>{const r=s=>{const e=document.querySelector(s);if(!e)return null;const b=e.getBoundingClientRect();
+ return {x:Math.round(b.x*10)/10,y:Math.round(b.y*10)/10,w:Math.round(b.width*10)/10,h:Math.round(b.height*10)/10};};
+ return Object.fromEntries(['#pv','.preview','form.card','.out','#code','#copy','#open','#install','#reload','.modebtns','#lat','#lon','#label']
+  .map(s=>[s,r(s)]));}"""
+
+
+# ---- pure helpers (unit-tested without a browser: tests/test_r000f_native_helpers.py) --------------------------
+def is_preview_nav(url):
+    """A preview navigation is a child-frame URL carrying the builder's ?r= cachebuster."""
+    try:
+        return 'r' in parse_qs(urlparse(url).query)
+    except ValueError:
+        return False
+
+
+def fragment(url):
+    return urlparse(url).fragment if url else None
+
+
+def hash_params(url):
+    return {k: v[0] for k, v in parse_qs(fragment(url) or '', keep_blank_values=True).items()}
+
+
+def rparam(url):
+    try:
+        return parse_qs(urlparse(url).query).get('r', [None])[0]
+    except ValueError:
+        return None
+
+
+def absolute(src_log, base):
+    """The #pv src attribute values as absolute URLs (relative only if the attribute was written relative)."""
+    return [v if '://' in v else base + v.lstrip('/') for v in src_log if v]
+
+
+def ledger_summary(assigned, requests, commits):
+    """Per-revision fate of each issued assignment: requested by the browser? committed in the frame?"""
+    req, com = {rparam(u) for u in requests}, {rparam(u) for u in commits}
+    return {'assignments': len(assigned), 'documentRequests': len(requests), 'commits': len(commits),
+            'assignedNotRequested': [rparam(u) for u in assigned if rparam(u) not in req],
+            'requestedNotCommitted': [rparam(u) for u in requests if rparam(u) not in com]}
+
+
+def nav_delta(log, start):
+    """Preview navigations recorded after index `start` (frame-event log of URLs)."""
+    return [u for u in log[start:] if is_preview_nav(u)]
+
+
+def distinct_outputs(values):
+    """Expected issued sequence for a typed value sequence: consecutive duplicates collapse."""
+    out = []
+    for v in values:
+        if not out or out[-1] != v:
+            out.append(v)
+    return out
+
+
+def compare_boxes(a, b, tol=0.5):
+    """Element boxes that differ by more than tol px between two layout readings (None = missing on one side)."""
+    diff = {}
+    for key in sorted(set(a) | set(b)):
+        x, y = a.get(key), b.get(key)
+        if x is None or y is None:
+            if x != y:
+                diff[key] = [x, y]
+            continue
+        if any(abs(x[k] - y[k]) > tol for k in ('x', 'y', 'w', 'h')):
+            diff[key] = [x, y]
+    return diff
+
+
+def builder_constants(text):
+    """The served builder's exact user-facing D1 strings (None when a constant is absent, e.g. on main)."""
+    out = {}
+    for name in ('REFUSED', 'INVALID_NOTE', 'INVALID_NOTE_LOCAL'):
+        m = re.search(r'const ' + name + r'="([^"]*)";', text)
+        out[name] = m.group(1) if m else None
+    return out
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
+
+
+def tree_identity(root):
+    try:
+        return subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=root, capture_output=True, text=True, timeout=10).stdout.strip() or None
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+# ---- native run ----------------------------------------------------------------------------------------------
+def run(engine, root, out, headed, tag, compare=None):
+    from importlib import metadata
+    from playwright.sync_api import sync_playwright
+
+    class Quiet(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+    class Server(http.server.ThreadingHTTPServer):
+        def handle_error(self, request, client_address):   # client resets on frame replacement/close: counted, never printed
+            report['serverResets'] = report.get('serverResets', 0) + 1
+    server = Server(('127.0.0.1', 0), functools.partial(Quiet, directory=str(root)))
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    base = f'http://127.0.0.1:{server.server_address[1]}/'
+    report = {'argv': sys.argv, 'engine': engine, 'headed': headed, 'tag': tag,
+              'playwright': metadata.version('playwright'), 'root': 'repository' if root.resolve() == REPO else root.name,
+              'tree': tree_identity(root), 'served': {f: sha(root / f) for f in SERVED},
+              'external': [], 'console': [], 'cells': {}, 'framesLog': [], 'documentRequests': [], 'popups': 0,
+              'limits': 'cells count ISSUED navigations = #pv src attribute assignments seen by a DOM MutationObserver; '
+                        'browser document requests and child-frame commits are logged per revision; no widget '
+                        'load/render claim'}
+    # navs = ISSUED (#pv src assignments, absolute URLs); reqs = REQUESTED; commits = COMMITTED (see module docstring).
+    navs, reqs, commits = report.setdefault('issued', []), report['documentRequests'], report['framesLog']
+    K = report['builderConstants'] = builder_constants((root / 'builder.html').read_text(encoding='utf-8'))
+    with sync_playwright() as p:
+        browser = getattr(p, engine).launch(headless=not headed)
+        report['browserVersion'] = browser.version
+        ctx = browser.new_context(viewport={'width': 1280, 'height': 1000})
+        ctx.add_init_script(GEO_INIT); ctx.add_init_script(SRC_INIT)
+
+        def external(route):
+            u = urlparse(route.request.url)
+            report['external'].append([u.hostname, u.path, 'aborted'])
+            route.abort()
+        ctx.route(lambda url: not url.startswith(base), external)
+        page = ctx.new_page()
+        page.on('console', lambda m: report['console'].append([m.type, m.text]) if m.type == 'error' else None)
+        page.on('pageerror', lambda e: report['console'].append(['pageerror', str(e)]))
+        page.on('popup', lambda pop: (report.__setitem__('popups', report['popups'] + 1), pop.close()))
+
+        t0 = time.monotonic(); trace = report['childFrameTrace'] = []
+        def framenav(frame):
+            if frame.parent_frame is not None:
+                trace.append(['framenavigated', round((time.monotonic() - t0) * 1000), frame.name, frame.url])
+            if frame.parent_frame is not None and frame.name in ('', 'pv') and is_preview_nav(frame.url):
+                commits.append(frame.url)
+        page.on('framenavigated', framenav)
+        def request(r):
+            if r.resource_type == 'document' and r.frame.parent_frame is not None and is_preview_nav(r.url):
+                trace.append(['request', round((time.monotonic() - t0) * 1000), r.frame.name, r.url]); reqs.append(r.url)
+        page.on('request', request)
+
+        def settle(quiet=1200, limit=20000):
+            # Assignment count unchanged for `quiet` ms (covers the 700 ms reverse timer) AND the latest assigned preview
+            # has committed in the frame, so the next step cannot supersede an uncommitted navigation.
+            def refresh():
+                navs[:] = absolute(page.evaluate('()=>window.__r000fSrcLog||[]'), base)
+            end, t = time.monotonic() + limit / 1000, time.monotonic(); refresh(); n = len(navs)
+            while time.monotonic() < end:
+                page.wait_for_timeout(100); refresh()
+                if len(navs) != n:
+                    n, t = len(navs), time.monotonic()
+                elif (time.monotonic() - t) * 1000 >= quiet and (not navs or (commits and rparam(commits[-1]) == rparam(navs[-1]))):
+                    return True
+            report.setdefault('settleTimeouts', 0); report['settleTimeouts'] += 1
+            return False
+        state = lambda: page.evaluate(STATE)
+        # Viewport screenshots only: in Firefox 153 a full_page screenshot left the NEXT preview navigation requested but
+        # uncommitted until a later navigation superseded it (attempt-1/2 traces); the 1280x1000 viewport holds the form
+        # and the 325x530 preview.
+        shot = lambda name: page.screenshot(path=str(out / f'{tag}-{name}.png'))
+        cells = report['cells']
+
+        def coherent(s):
+            # Product contract = the ISSUED assignment (and the browser's request for it). Whether the engine then
+            # commits the child document is recorded in `ledger`/`committedLatest`, not judged here (see docstring).
+            cells.setdefault('_committedLatest', []).append(bool(commits) and bool(navs) and rparam(commits[-1]) == rparam(navs[-1]))
+            return bool(navs) and rparam(navs[-1]) in {rparam(u) for u in reqs} and fragment(navs[-1]) == fragment(s['codeSrc']) and s['pvSrc'] == navs[-1] \
+                and s['pvAllow'] == ('geolocation' if s['mode'] == 'local' else '') and s['codeAllow'] == (s['mode'] == 'local')
+
+        page.goto(base + 'builder.html'); settle(2000)
+        s = state(); boxes = page.evaluate(BOXES)
+        cells['load'] = {'pass': len(navs) == 1 and coherent(s), 'navs': len(navs), 'state': s}
+        cells['layout'] = {'pass': boxes['#pv'] is not None and boxes['#pv']['w'] == 325 and boxes['#pv']['h'] == 530, 'boxes': boxes,
+                           'scrollYAtLoad': page.evaluate('scrollY')}
+        shot('1-load')
+
+        # Equivalent spelling typed for real, then committed (Tab → change): no navigation.
+        n0 = len(navs); page.click('#lat'); page.keyboard.press('End'); page.keyboard.type('0'); page.keyboard.type(' ')
+        page.keyboard.press('Tab'); settle()
+        cells['equivalentEdit'] = {'pass': len(navs) == n0, 'navs': len(nav_delta(navs, n0)), 'lat': page.input_value('#lat')}
+        page.fill('#lat', '24.4672'); settle()
+
+        # One real select change (Playwright dispatches input + change): exactly one, coherent outputs.
+        n0 = len(navs); page.select_option('#method', '2'); settle(); s = state()
+        d = nav_delta(navs, n0)
+        cells['changedSelect'] = {'pass': len(d) == 1 and hash_params(d[0]).get('method') == '2' and coherent(s), 'navs': len(d), 'urls': d}
+        # Keyboard on the select: one ArrowDown, then commit; navigations must equal real value changes (0 or 1).
+        before = page.input_value('#method'); n0 = len(navs); page.focus('#method'); page.keyboard.press('ArrowDown'); page.keyboard.press('Tab'); settle()
+        after = page.input_value('#method'); d = nav_delta(navs, n0)
+        cells['selectArrowKey'] = {'pass': len(d) == (1 if after != before else 0) and coherent(state()), 'navs': len(d), 'before': before, 'after': after}
+
+        # Rapid typing: select-all then type 21.5 key by key, then commit.
+        n0 = len(navs); page.click('#lat', click_count=3); page.keyboard.type('21.5', delay=40); page.keyboard.press('Tab'); settle(); s = state()
+        d = [hash_params(u).get('lat') for u in nav_delta(navs, n0)]
+        cells['rapidTyping'] = {'pass': d == distinct_outputs(['2', '21', '21', '21.5']) and coherent(s) and hash_params(s['pvSrc']).get('lat') == '21.5',
+                                'issuedLat': d}
+
+        # Invalid draft (D1): cleared latitude.
+        good = state(); n0 = len(navs); page.fill('#lat', ''); settle(); s = state(); shot('2-invalid')
+        page.click('#copy'); page.wait_for_timeout(300); copy = state()
+        page.click('#install'); page.wait_for_timeout(300); install = state()
+        pops = report['popups']; page.click('#open'); page.wait_for_timeout(500)
+        cells['invalidDraft'] = {'pass': bool(len(navs) == n0 and s['pvSrc'] == good['pvSrc'] and s['codeSrc'] == good['codeSrc'] and s['latInvalid'] == 'true'
+                                 and s['note'] and not s['note']['hidden'] and K['INVALID_NOTE'] is not None and s['note']['text'] == K['INVALID_NOTE']
+                                 and K['REFUSED'] is not None and copy['copied'] == K['REFUSED']
+                                 and install['installtip'] == K['REFUSED'] and report['popups'] == pops and copy['embedRecoveryHidden']),
+                                 'navs': len(nav_delta(navs, n0)), 'state': s, 'copyFeedback': copy['copied'], 'installFeedback': install['installtip'],
+                                 'popupsDuringOpen': report['popups'] - pops}
+        # Refresh (D3) while invalid: one forced re-issue of the last valid output, never the invalid draft.
+        n0 = len(navs); page.click('#reload'); settle(); d = nav_delta(navs, n0)
+        refresh_invalid = len(d) == 1 and hash_params(d[0]).get('lat') == '21.5'
+        page.fill('#lat', '21.5'); settle(); back = len(nav_delta(navs, n0)) == 1
+        n0 = len(navs); page.click('#reload'); settle(); d2 = nav_delta(navs, n0)
+        cells['refresh'] = {'pass': refresh_invalid and back and len(d2) == 1 and fragment(d2[0]) == fragment(good['pvSrc']) and coherent(state()),
+                            'invalidReissue': d, 'validReissue': d2, 'returnToIssuedAddedNone': back}
+
+        # Radios: real Space / Enter / arrows / click.
+        r = {}
+        def radio(label, action, expect):
+            n = len(navs); action(); settle(); r[label] = {'navs': len(nav_delta(navs, n)), 'expect': expect, 'mode': state()['mode']}
+        radio('spaceLocal', lambda: (page.focus('#mode-local'), page.keyboard.press('Space')), 1)
+        radio('enterActiveLocal', lambda: page.keyboard.press('Enter'), 0)
+        radio('clickActiveLocal', lambda: page.click('#mode-local'), 0)
+        shot('3-local')
+        radio('enterPortable', lambda: (page.focus('#mode-portable'), page.keyboard.press('Enter')), 1)
+        radio('arrowRight', lambda: (page.focus('#mode-portable'), page.keyboard.press('ArrowRight')), 1)
+        radio('clickPortable', lambda: page.click('#mode-portable'), 1)
+        cells['radios'] = {'pass': all(v['navs'] == v['expect'] for v in r.values()) and coherent(state()), 'steps': r}
+
+        # Local mode omits location fields: their edits issue nothing; switching back publishes once.
+        page.click('#mode-local'); settle(); n0 = len(navs)
+        page.fill('#label', 'Cairo'); page.fill('#lat', '30.04'); page.fill('#lon', '31.24'); settle()
+        quiet = len(navs) == n0
+        page.click('#mode-portable'); settle(); d = nav_delta(navs, n0)
+        cells['localEdits'] = {'pass': quiet and len(d) == 1 and hash_params(d[0]).get('lat') == '30.04' and coherent(state()), 'urls': d}
+        shot('4-final')
+
+        # Local issue retained under a portable-invalid draft (D1 note wording + D3 Refresh of issued.allow/hash).
+        page.click('#mode-local'); settle(); local = state(); n0 = len(navs)
+        page.fill('#lat', ''); settle(); page.click('#mode-portable'); settle(); s = state(); shot('5-local-portable-invalid')
+        quiet = len(navs) == n0
+        page.click('#copy'); page.wait_for_timeout(300); copy = state()
+        page.click('#reload'); settle(); d = nav_delta(navs, n0); after = state(); shot('6-local-portable-invalid-refresh')
+        cells['localPortableInvalid'] = {
+            'pass': bool(quiet and s['mode'] == 'portable' and s['pvSrc'] == local['pvSrc'] and s['pvAllow'] == 'geolocation'
+                         and s['codeSrc'] == local['codeSrc'] and s['codeAllow'] and s['latInvalid'] == 'true'
+                         and s['note'] and not s['note']['hidden'] and K['INVALID_NOTE_LOCAL'] is not None
+                         and s['note']['text'] == K['INVALID_NOTE_LOCAL'] and copy['copied'] == K['REFUSED']
+                         and len(d) == 1 and hash_params(d[0]).get('local') == '1' and fragment(d[0]) == fragment(local['pvSrc'])
+                         and rparam(d[0]) != rparam(local['pvSrc']) and after['pvAllow'] == 'geolocation'
+                         and after['codeSrc'] == local['codeSrc'] and after['note'] and after['note']['text'] == K['INVALID_NOTE_LOCAL']),
+            'quietOnSwitch': quiet, 'state': s, 'copyFeedback': copy['copied'], 'refreshIssued': d, 'afterRefresh': after}
+        page.fill('#lat', '30.04'); settle()
+        boxes2 = page.evaluate(BOXES)
+        # After the run the page may be scrolled (focus moves), so only SIZES are judged here; positions are compared
+        # between runs only at load (same scroll state) via --compare.
+        cells['layout']['afterRun'] = boxes2; cells['layout']['scrollYAfterRun'] = page.evaluate('scrollY')
+        cells['layout']['pass'] = cells['layout']['pass'] and boxes2['#pv']['w'] == 325 and boxes2['#pv']['h'] == 530
+        browser.close()
+    server.shutdown()
+    report['ledger'] = ledger_summary(navs, reqs, commits); report['committedLatestAtChecks'] = cells.pop('_committedLatest', [])
+    if compare:
+        other = json.loads(Path(compare).read_text(encoding='utf-8'))
+        report['layoutDiffVsCompare'] = compare_boxes(report['cells']['layout']['boxes'], other['cells']['layout']['boxes'])
+        report['compare'] = {'tag': other.get('tag'), 'tree': other.get('tree'), 'served': other.get('served')}
+    report['noProviderReached'] = all(e[2] == 'aborted' for e in report['external'])
+    # Console 'error' lines from the deliberately aborted provider requests are recorded, not judged; page errors fail.
+    report['pageErrors'] = [c for c in report['console'] if c[0] == 'pageerror']
+    report['pass'] = all(v['pass'] for v in report['cells'].values()) and report['noProviderReached'] and not report['pageErrors']
+    (out / f'{tag}-report.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    print(json.dumps({'engine': engine, 'tag': tag, 'version': report['browserVersion'], 'pass': report['pass'],
+                      'cells': {k: v['pass'] for k, v in report['cells'].items()}, 'pageErrors': len(report['pageErrors']),
+                      'external': len(report['external'])}))
+    return report['pass']
+
+
+if __name__ == '__main__':
+    a = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    a.add_argument('--engine', choices=['chromium', 'firefox'], required=True)
+    a.add_argument('--root', default=str(REPO), help='served tree (a checkout of main for the control run)')
+    a.add_argument('--out', required=True, help='evidence directory (report JSON + screenshots)')
+    a.add_argument('--tag', default=None, help='file prefix, default <engine>-candidate')
+    a.add_argument('--compare', default=None, help='another report JSON whose layout boxes are diffed against this run')
+    a.add_argument('--headed', action='store_true')
+    o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=True)
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.tag or f'{o.engine}-candidate', o.compare) else 1)

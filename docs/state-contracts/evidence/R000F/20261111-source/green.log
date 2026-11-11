@@ -1,0 +1,46 @@
+# R000F GREEN at candidate source (HEAD 53d1dc32 + uncommitted test additions committed with this log); builder.html sha256 6a07c0e114895fae12c864e5cb855ce889275860d08ac103d56989212a4be4ed
+# command: node --test tests/builder-preview-publication.test.cjs
+✔ R000F publication: ES0F-01 one initial navigation; equal-coordinate coarse result adds none (7.5135ms)
+✔ R000F publication: ES0F-01 equivalent input/change pairs issue no navigation or revision (2.0825ms)
+✔ R000F publication: ES0F-02 each actual change issues exactly one navigation with correct output (1.683ms)
+✔ R000F publication: ES0F-05 canonically equivalent raw spellings do not restart (2.3667ms)
+✔ R000F publication: ES0F-03 mode switches publish once; local-mode location edits and active re-click do not (1.7423ms)
+✔ R000F publication: ES0F-10 radio Enter/Space keydown left to native activation; one click, one publication (1.3788ms)
+✔ R000F publication: rapid typing navigates only for distinct outputs, in order, ending at the draft (2.8026ms)
+✔ R000F publication: ES0F-04/11/14 issued record equals what the iframe received; no cachebuster or readiness (1.805ms)
+✔ R000F publication: ES0F-06 D1 invalid draft keeps preview and export; Copy/Install/Open refuse (3.6693ms)
+✔ R000F publication: ES0F-05 D2 provenance-only change updates draft without navigation (2.2279ms)
+✔ R000F publication: ES0F-13 D3 Refresh re-issues the last issued preview once, never the invalid draft (1.2957ms)
+✔ R000F publication: ES0F-14 throwing src assignment is not recorded; export current; retry navigates (1.5202ms)
+✔ R000F publication: ES0F-07/08 stale and A-B-A lookups cannot publish even when equal-valued (2.489ms)
+✔ R000F publication: ES0F-09 candidate cycling retained; identical-identity candidate adds no navigation (1.5675ms)
+✔ R000F publication: ES0F-12 pending copy recovery keeps captured bytes; later success copies current output (1.5693ms)
+✔ R000F publication: ES0F-15 325x530 wrapper, local-only geolocation, focus preserved (1.5877ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.4014
+# exit 0
+
+# RED recheck of the final scenarios against the base builder (fixture ref 645b53cc: git show 645b53cc:builder.html / config.js)
+FAIL initial AssertionError equal-coordinate coarse result issues no navigation
+FAIL inputChangePair AssertionError equivalent input/change pairs issue no navigation
+FAIL changedOnce AssertionError method change issues exactly one navigation
+FAIL equivalentSpellings AssertionError equivalent raw values issue no navigation
+FAIL localMode AssertionError local-mode location edits issue no navigation
+PASS radioKeys
+FAIL rapid AssertionError one navigation per distinct output
+FAIL issuedIdentity AssertionError an issued-preview record exists
+FAIL invalidDraft AssertionError invalid draft issues no navigation ("")
+FAIL provenance AssertionError provenance-only change issues no navigation
+FAIL refresh AssertionError Refresh issues exactly one navigation
+FAIL assignmentFailure AssertionError an issued-preview record exists
+FAIL staleLookup AssertionError Expected values to be strictly equal:
+FAIL cycling AssertionError identical-identity candidate issues no navigation
+FAIL pendingCopy AssertionError Expected values to be strictly equal:
+PASS invariants
+{"scenarios":16,"failedOnBase":14}

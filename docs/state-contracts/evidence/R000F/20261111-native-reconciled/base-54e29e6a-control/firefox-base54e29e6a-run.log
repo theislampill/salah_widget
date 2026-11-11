@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "<repo>\tools\qa\run_r000f_native.py", line 343, in <module>
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.tag or f'{o.engine}-candidate', o.compare) else 1)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<repo>\tools\qa\run_r000f_native.py", line 250, in run
+    n0 = len(navs); page.click('#lat', click_count=3); page.keyboard.type('21.5', delay=40); page.keyboard.press('Tab'); settle(); s = state()
+                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<venv162>\Lib\site-packages\playwright\sync_api\_generated.py", line 1575, in type
+    self._sync(self._impl_obj.type(text=text, delay=delay))
+  File "<venv162>\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "<venv162>\Lib\site-packages\playwright\_impl\_input.py", line 35, in type
+    await self._channel.send("keyboardType", None, locals_to_params(locals()))
+  File "<venv162>\Lib\site-packages\playwright\_impl\_connection.py", line 76, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<venv162>\Lib\site-packages\playwright\_impl\_connection.py", line 632, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.Error: Keyboard.type: Target crashed 
