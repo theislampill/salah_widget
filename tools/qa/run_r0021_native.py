@@ -34,7 +34,9 @@ reports READY crashes Firefox 153's content process on BOTH 645b53cc and the can
 driver's instrumentation; a >=200 ms settle, rapid active retry and raw worker create/terminate do not. The cycles
 cell therefore settles --cycles-settle-ms (default 500) after each resume; --cycles-settle-ms 0 reproduces it.
 Retirement cell: passes only when its precondition held (refined-composed card AND a changing data-URL cloud
-mask at pagehide); otherwise it reports precondition-not-met rather than a vacuous PASS.
+mask at pagehide); otherwise it reports precondition-not-met rather than a vacuous PASS. On 2026-11-11 no tried
+scene (plain, --fragment with simWx=3&simCloud=100, and a low-Moon overcast timeScale=30 night) produced a
+non-clear solar mask at pagehide in Chromium 148, on main or candidate, so this cell did not reproduce the finding.
 
 Main control: run with --root <checkout of 645b53cc>. Expected FAIL there: retirement (a preview mask Image.src
 during pagehide when the cloud mask changed; cloud-dependent), construction (orphan canvases), moon-replay (no
@@ -123,7 +125,8 @@ def events_in(page, name):
 CELLS = ['first-boot', 'live-handoff', 'retirement', 'construction', 'cycles', 'moon-replay', 'recovery-visual', 'night', 'navigation']
 
 
-def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500):
+def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500, fragment=None):
+    fragment = fragment or HASH
     policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', (REPO / 'tests/widget-fixture.html').read_text(encoding='utf-8')).group(1)
     index = (root / 'index.html').read_bytes()
 
@@ -138,7 +141,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
               'evidenceLevel': 'request-level (CDP) and page-level' if engine == 'chromium' else 'page-level only (no CDP request log in this engine)',
               'root': 'repository' if root.resolve() == REPO else root.name, 'policy': policy, 'policyDelivery': 'response header on index.html',
               'served': {n: sha(root / n) for n in SERVED if (root / n).is_file()},
-              'options': {'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh, 'composedWaitMs': composed_wait},
+              'options': {'fragment': fragment, 'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh, 'composedWaitMs': composed_wait},
               'cells': {}, 'console': [], 'cdp': [], 'crashes': []}
     cells = report['cells']
 
@@ -169,7 +172,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             pg.goto(origin + '/index.html' + fragment)
             return pg
 
-        page = open_page(HASH, 'main')
+        page = open_page(fragment, 'main')
         if engine == 'chromium':
             cdp = ctx.new_cdp_session(page); cdp.send('Network.enable')
             ids = {}
@@ -312,6 +315,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             for _ in range(3):
                 night.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}))"); night.wait_for_timeout(200)
                 night.evaluate("()=>window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}))"); wait(night, READY, 30000)
+                night.wait_for_timeout(cycles_settle)   # same Firefox synthetic-pagehide crash as the cycles cell
             night.wait_for_timeout(1500)
             box = night.evaluate("()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r&&r.width>0?{x:Math.max(0,r.left-20),y:Math.max(0,r.top-20),width:r.width+40,height:r.height+40}:null}")
             night.screenshot(path=str(out / f'{engine}-4-night-card.png'))
@@ -355,6 +359,7 @@ if __name__ == '__main__':
     a.add_argument('--cycles-wait-ms', type=int, default=200)
     a.add_argument('--cycles-fresh-page', action='store_true', help='run the cycles cell on a newly loaded page')
     a.add_argument('--composed-wait-ms', type=int, default=60000, help='retirement: wait up to this long for a refined-composed card')
+    a.add_argument('--fragment', default=None, help='main page fragment (default: the plain fixture scene)')
     a.add_argument('--cycles-settle-ms', type=int, default=500, help='cycles: settle after each resumed READY (0 reproduces the Firefox crash)')
     o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=False)
-    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms) else 1)
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms, o.fragment) else 1)
