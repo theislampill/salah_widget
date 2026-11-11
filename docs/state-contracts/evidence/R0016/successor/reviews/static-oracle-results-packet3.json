@@ -1,0 +1,471 @@
+{
+  "aptSubjectsExecuted": 0,
+  "childProcessesExecuted": 0,
+  "fallbackRevisionChecks": [
+    {
+      "case": "stopped_census_failure",
+      "events": [
+        "poll",
+        [
+          "send_signal",
+          "19"
+        ],
+        "poll",
+        "kill",
+        [
+          "wait",
+          5.0
+        ],
+        "poll",
+        "poll"
+      ],
+      "receipt": {
+        "complete": false,
+        "directChildReturncode": -9,
+        "directParentRescue": {
+          "attempted": true,
+          "terminal": true
+        },
+        "error": {
+          "message": "inert census failure",
+          "type": "TimeoutError"
+        },
+        "known": [
+          {
+            "pgid": 12000,
+            "pid": 12000,
+            "ppid": 7000,
+            "started": "retained-start",
+            "state": "S",
+            "uid": 500
+          }
+        ],
+        "scope": "current verified owned PIDs only",
+        "signals": [
+          {
+            "identity": {
+              "pgid": 12000,
+              "pid": 12000,
+              "ppid": 7000,
+              "started": "retained-start",
+              "state": "S",
+              "uid": 500
+            },
+            "pid": 12000,
+            "signal": "SIGSTOP"
+          },
+          {
+            "identity": "owned unreaped direct Popen child; no descendant signal",
+            "pid": 12000,
+            "signal": "SIGKILL"
+          }
+        ]
+      },
+      "subjectStillStopped": false,
+      "synthetic": true,
+      "unverifiedDescendantSignals": 0
+    },
+    {
+      "case": "initial_census_failure",
+      "events": [
+        "poll",
+        "kill",
+        [
+          "wait",
+          5.0
+        ],
+        "poll",
+        "poll"
+      ],
+      "receipt": {
+        "complete": false,
+        "directChildReturncode": -9,
+        "directParentRescue": {
+          "attempted": true,
+          "terminal": true
+        },
+        "error": {
+          "message": "inert census failure",
+          "type": "TimeoutError"
+        },
+        "known": [],
+        "scope": "current verified owned PIDs only",
+        "signals": [
+          {
+            "identity": "owned unreaped direct Popen child; no descendant signal",
+            "pid": 12000,
+            "signal": "SIGKILL"
+          }
+        ]
+      },
+      "subjectStillStopped": false,
+      "synthetic": true,
+      "unverifiedDescendantSignals": 0
+    },
+    {
+      "case": "kill_failure_continue_and_term",
+      "events": [
+        "poll",
+        [
+          "send_signal",
+          "19"
+        ],
+        "poll",
+        "kill",
+        [
+          "send_signal",
+          "18"
+        ],
+        "terminate",
+        [
+          "wait",
+          5.0
+        ],
+        "poll",
+        "poll"
+      ],
+      "receipt": {
+        "complete": false,
+        "directChildReturncode": -15,
+        "directParentRescue": {
+          "attempted": true,
+          "killError": "inert kill failure",
+          "terminal": true
+        },
+        "error": {
+          "message": "inert census failure",
+          "type": "TimeoutError"
+        },
+        "known": [
+          {
+            "pgid": 12000,
+            "pid": 12000,
+            "ppid": 7000,
+            "started": "retained-start",
+            "state": "S",
+            "uid": 500
+          }
+        ],
+        "scope": "current verified owned PIDs only",
+        "signals": [
+          {
+            "identity": {
+              "pgid": 12000,
+              "pid": 12000,
+              "ppid": 7000,
+              "started": "retained-start",
+              "state": "S",
+              "uid": 500
+            },
+            "pid": 12000,
+            "signal": "SIGSTOP"
+          },
+          {
+            "identity": "owned unreaped direct Popen child",
+            "pid": 12000,
+            "signal": "SIGCONT"
+          },
+          {
+            "identity": "owned unreaped direct Popen child",
+            "pid": 12000,
+            "signal": "SIGTERM"
+          }
+        ]
+      },
+      "subjectStillStopped": false,
+      "synthetic": true,
+      "unverifiedDescendantSignals": 0
+    },
+    {
+      "case": "terminal_status_unproved",
+      "events": [
+        "poll",
+        [
+          "send_signal",
+          "19"
+        ],
+        "poll",
+        "kill",
+        [
+          "wait",
+          5.0
+        ],
+        "poll",
+        "poll"
+      ],
+      "receipt": {
+        "complete": false,
+        "directChildReturncode": null,
+        "directParentRescue": {
+          "attempted": true,
+          "terminal": false,
+          "waitError": "inert wait failure"
+        },
+        "error": {
+          "message": "inert census failure",
+          "type": "TimeoutError"
+        },
+        "known": [
+          {
+            "pgid": 12000,
+            "pid": 12000,
+            "ppid": 7000,
+            "started": "retained-start",
+            "state": "S",
+            "uid": 500
+          }
+        ],
+        "scope": "current verified owned PIDs only",
+        "signals": [
+          {
+            "identity": {
+              "pgid": 12000,
+              "pid": 12000,
+              "ppid": 7000,
+              "started": "retained-start",
+              "state": "S",
+              "uid": 500
+            },
+            "pid": 12000,
+            "signal": "SIGSTOP"
+          },
+          {
+            "identity": "owned unreaped direct Popen child; no descendant signal",
+            "pid": 12000,
+            "signal": "SIGKILL"
+          }
+        ]
+      },
+      "subjectStillStopped": false,
+      "synthetic": true,
+      "unverifiedDescendantSignals": 0
+    }
+  ],
+  "independentlyRestoredOriginalAst": true,
+  "installerSubjectsExecuted": 0,
+  "linuxRevisionChecks": [
+    {
+      "aptCalls": [
+        [
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-success/apt-isolated.conf",
+          "apt-config",
+          "dump"
+        ],
+        [
+          "sudo",
+          "-n",
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-success/apt-isolated.conf",
+          "timeout",
+          "--signal=TERM",
+          "--kill-after=5s",
+          "180s",
+          "apt-get",
+          "update"
+        ],
+        [
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-success/apt-isolated.conf",
+          "apt-cache",
+          "policy",
+          "bubblewrap"
+        ],
+        [
+          "sudo",
+          "-n",
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-success/apt-isolated.conf",
+          "timeout",
+          "--signal=TERM",
+          "--kill-after=5s",
+          "120s",
+          "apt-get",
+          "install",
+          "-y",
+          "--no-install-recommends",
+          "bubblewrap"
+        ]
+      ],
+      "case": "success",
+      "childProcessesExecuted": 0,
+      "earlyConfigSha256": "701b4bc3d43ff8eaa05995dad0c130ca6334e1c56e0b051d7eae63d99f5916cf",
+      "failuresRetained": false,
+      "returncode": 0,
+      "synthetic": true,
+      "syntheticComplete": true
+    },
+    {
+      "aptCalls": [
+        [
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-update-failure/apt-isolated.conf",
+          "apt-config",
+          "dump"
+        ],
+        [
+          "sudo",
+          "-n",
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-update-failure/apt-isolated.conf",
+          "timeout",
+          "--signal=TERM",
+          "--kill-after=5s",
+          "180s",
+          "apt-get",
+          "update"
+        ]
+      ],
+      "case": "update-failure",
+      "childProcessesExecuted": 0,
+      "earlyConfigSha256": "52e3d5658ca7031a25ecfd022a1417cc9ca061ae2aaf5e1343c6078aeb5fe416",
+      "failuresRetained": true,
+      "returncode": 2,
+      "synthetic": true,
+      "syntheticComplete": false
+    },
+    {
+      "aptCalls": [
+        [
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-update-timeout/apt-isolated.conf",
+          "apt-config",
+          "dump"
+        ],
+        [
+          "sudo",
+          "-n",
+          "env",
+          "APT_CONFIG=/tmp/r0016-successor-20261111/recovery/diagnostic-independent-static-evidence/packet3-inert-linux-update-timeout/apt-isolated.conf",
+          "timeout",
+          "--signal=TERM",
+          "--kill-after=5s",
+          "180s",
+          "apt-get",
+          "update"
+        ]
+      ],
+      "case": "update-timeout",
+      "childProcessesExecuted": 0,
+      "earlyConfigSha256": "1d47c629b010eb9f1189570d8234bad91a9c8bbe56630d435ad8ea6dabf60ece",
+      "failuresRetained": true,
+      "returncode": 2,
+      "synthetic": true,
+      "syntheticComplete": false
+    }
+  ],
+  "nativeSubjectsExecuted": 0,
+  "oracleDiscrimination": [
+    {
+      "case": "timeout",
+      "reasons": [
+        "subject did not terminate successfully within original ceiling"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "late_completion",
+      "reasons": [
+        "subject completion before the original deadline is unproven"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "missing_child_receipt",
+      "reasons": [
+        "original child operation evidence incomplete"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "wrong_waited_child",
+      "reasons": [
+        "actual successful waitpid receipt missing"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "unreaped_child",
+      "reasons": [
+        "original child did not exit 0 and reap without failure cleanup"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "cleanup_signal",
+      "reasons": [
+        "original child did not exit 0 and reap without failure cleanup"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "malformed_capture",
+      "reasons": [
+        "capture termination or phase integrity unproven"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "unstable_capture",
+      "reasons": [
+        "capture termination or phase integrity unproven"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "extra_stdout",
+      "reasons": [
+        "complete original terminal JSON missing or invalid"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "stderr_present",
+      "reasons": [
+        "subject stderr is nonempty"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "sentinel_only_prefix",
+      "reasons": [
+        "raw PTY capture does not equal original sentinel after newline normalization"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "extra_pty_data",
+      "reasons": [
+        "raw PTY capture does not equal original sentinel after newline normalization"
+      ],
+      "rejected": true
+    }
+  ],
+  "packetSha256": "af221d6c06393f39acdf5718f3ab84b41e86eaa9cccd5e09094433c6277e4675",
+  "pinnedExtraction": {
+    "harnessSha256": "5a3a39906f0ff40d959cce5f985a368f01eaf92cb4a3cecdd8f39a1941327760",
+    "mutatedHarnessRejected": true,
+    "originalSha256": "8ed996292207a690dd3f1ef153b2cf8650a8594aa7e3c8bffb30b6017407d904",
+    "sentinelHex": "6e6174697665207465726d696e616c20636f6e74726f6c0a",
+    "subjectSeconds": 30
+  },
+  "proposalBindings": [
+    {
+      "matches": true,
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer_preview_pty_drain_probe.py",
+      "sha256": "ef66ff4be4142038f518cae85a978b0287520bc112ab1d0e1a35e329a6f54325"
+    },
+    {
+      "matches": true,
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer_preview_linux_prerequisites.py",
+      "sha256": "4ddf713e6ae1a8112f0c96fd756e9dc143109dbecd3faa32afa3d1e43d4d54c4"
+    },
+    {
+      "matches": true,
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer-preview-recovery.yml",
+      "sha256": "5d00a09e97cbc8d9fcfa57ee93ff90d0db253f11fd2d578fd568ce2cda2dbc4c"
+    }
+  ],
+  "reviewScope": "Packet 3 static AST/oracle and inert lifecycle/configuration only; no native subject",
+  "schema": "independent-diagnostic-static-review.v1"
+}

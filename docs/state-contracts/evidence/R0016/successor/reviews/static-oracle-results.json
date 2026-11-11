@@ -1,0 +1,165 @@
+{
+  "aptSubjectsExecuted": 0,
+  "childProcessesExecuted": 0,
+  "fallbackCensusFailureAfterStop": {
+    "events": [
+      "poll",
+      [
+        "send_signal",
+        "19"
+      ],
+      "poll"
+    ],
+    "receipt": {
+      "complete": false,
+      "directChildReturncode": null,
+      "error": {
+        "message": "inert failure of stopped-parent census",
+        "type": "TimeoutError"
+      },
+      "known": [
+        {
+          "pgid": 12000,
+          "pid": 12000,
+          "ppid": 7000,
+          "started": "retained-start",
+          "state": "S",
+          "uid": 500
+        }
+      ],
+      "scope": "current verified owned PIDs only",
+      "signals": [
+        {
+          "identity": {
+            "pgid": 12000,
+            "pid": 12000,
+            "ppid": 7000,
+            "started": "retained-start",
+            "state": "S",
+            "uid": 500
+          },
+          "pid": 12000,
+          "signal": "SIGSTOP"
+        }
+      ]
+    },
+    "subjectReturncode": null,
+    "subjectStillStopped": true,
+    "terminalActionAttempted": false
+  },
+  "independentlyRestoredOriginalAst": true,
+  "installerSubjectsExecuted": 0,
+  "nativeSubjectsExecuted": 0,
+  "oracleDiscrimination": [
+    {
+      "case": "timeout",
+      "reasons": [
+        "subject did not terminate successfully within original ceiling"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "late_completion",
+      "reasons": [
+        "subject completion before the original deadline is unproven"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "missing_child_receipt",
+      "reasons": [
+        "original child operation evidence incomplete"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "wrong_waited_child",
+      "reasons": [
+        "actual successful waitpid receipt missing"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "unreaped_child",
+      "reasons": [
+        "original child did not exit 0 and reap without failure cleanup"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "cleanup_signal",
+      "reasons": [
+        "original child did not exit 0 and reap without failure cleanup"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "malformed_capture",
+      "reasons": [
+        "capture termination or phase integrity unproven"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "unstable_capture",
+      "reasons": [
+        "capture termination or phase integrity unproven"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "extra_stdout",
+      "reasons": [
+        "complete original terminal JSON missing or invalid"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "stderr_present",
+      "reasons": [
+        "subject stderr is nonempty"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "sentinel_only_prefix",
+      "reasons": [
+        "raw PTY capture does not equal original sentinel after newline normalization"
+      ],
+      "rejected": true
+    },
+    {
+      "case": "extra_pty_data",
+      "reasons": [
+        "raw PTY capture does not equal original sentinel after newline normalization"
+      ],
+      "rejected": true
+    }
+  ],
+  "packetSha256": "0185be1206f1b2274bd30898f2b66c28325e4cc97981f84f4d10bc4771ae13c4",
+  "pinnedExtraction": {
+    "harnessSha256": "5a3a39906f0ff40d959cce5f985a368f01eaf92cb4a3cecdd8f39a1941327760",
+    "mutatedHarnessRejected": true,
+    "originalSha256": "8ed996292207a690dd3f1ef153b2cf8650a8594aa7e3c8bffb30b6017407d904",
+    "sentinelHex": "6e6174697665207465726d696e616c20636f6e74726f6c0a",
+    "subjectSeconds": 30
+  },
+  "proposalBindings": [
+    {
+      "matches": true,
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer_preview_pty_drain_probe.py",
+      "sha256": "7b43268c901434c312ab1d2fb409c9d022225bc9792c2b2311fb6db9878873bf"
+    },
+    {
+      "matches": true,
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer_preview_linux_prerequisites.py",
+      "sha256": "d21875e36073e6c610155da47ff29aec348c9ce540dbdd51d8cede5ab12e0d9a"
+    },
+    {
+      "matches": true,
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer-preview-recovery.yml",
+      "sha256": "5d00a09e97cbc8d9fcfa57ee93ff90d0db253f11fd2d578fd568ce2cda2dbc4c"
+    }
+  ],
+  "schema": "independent-diagnostic-static-review.v1"
+}
