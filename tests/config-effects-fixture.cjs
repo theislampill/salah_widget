@@ -129,9 +129,9 @@ async function abaWithCosmetic(options={}){
   const h=harness(options),a1=h.apply(cfg(10,"A1")),r1=req(h,undefined,10),b=h.apply(cfg(20,"B")),rb=req(h,undefined,20),a2=h.apply(cfg(10,"A2"));
   const r2=h.requests.filter(r=>new URL(r.url).searchParams.get("latitude")==="10")[1];
   await apply(h,{...cfg(10,"A2"),label:"A2 renamed"});
-  r1.ok(record(undefined,"UTC","A1-obsolete"));rb.ok(record(undefined,"UTC","B-obsolete"));await settle();await a1;await b;
-  assert.equal(h.state().today,null);assert.equal(h.run("_requestSlots.current&&_requestSlots.current.lat"),10);
-  r2.ok(record(undefined,"UTC","A2-current"));await settle();await a2;await h.frame();
+  r1.ok(record(undefined,"UTC","A1-obsolete"));rb.ok(record(undefined,"UTC","B-obsolete"));await settle();await Promise.race([Promise.all([a1,b]),settle()]);
+  assert.equal(h.state().today,null,"obsolete first A and B cannot commit by value equality");assert.equal(h.run("_requestSlots.current&&_requestSlots.current.lat"),10);
+  r2.ok(record(undefined,"UTC","A2-current"));await settle();await Promise.race([a2,settle()]);await h.frame();
   assert.equal(h.state().today?.tag,"A2-current","the current A2 response commits");assert.equal(text(h,"#loc"),"A2 renamed");
   return h;
 }
@@ -223,6 +223,51 @@ async function settingsCloseCosmetic(options={},edit="label"){
   return w;
 }
 
-module.exports={harness,record,cfg,req,settle,copy,source,sourcePath,authoredPath,classifierBlock,isolatedClassifier,established,seedOwners,
+// Classifier decisions per field class, over the product source text raw.
+function classifierDecisions(raw=source()){
+  const {classifyConfigChange:classify}=isolatedClassifier(raw),A=copy(SAVED),c=(patch,intent={reset:false},base=A)=>classify(base,{...base,...patch},intent);
+  for(const patch of [{label:"n"},{time:"12"},{datefmt:"DD MMMM YYYY"},{appearance:"contrast"},{label:"n",time:"12",datefmt:"MM/DD/YYYY",appearance:"contrast"}])
+    assert.equal(c(patch).path,"presentation",JSON.stringify(patch));
+  for(const patch of [{},{savedAt:123},{source:"localStorage",origin:"manual"}])assert.equal(c(patch).path,"none",JSON.stringify(patch));
+  for(const patch of [{lat:1},{lon:1},{method:"2"},{school:"1"},{tz:"UTC"},{units:"f"},{lp:0.2},{seed:3},{source:"place"},{label:"n",lat:1},{futureField:true}])
+    assert.equal(c(patch).path,"broad",JSON.stringify(patch));
+  assert.equal(c({},{reset:true}).path,"broad","explicit reset intent is not swallowed by equality");
+  assert.equal(classify(null,A,{reset:false}).path,"broad","no accepted configuration");
+  assert.equal(c({lat:-0},{reset:false},{...A,lat:0}).path,"none","signed zero is the same coordinate");
+  // D2: same coordinates, any evidence difference.
+  const ev={intent:"device-position",source:"browser-geolocation",accuracyM:12,acquiredAt:1000,provider:null,area:null,bounds:null},E={...A,locationEvidence:ev};
+  for(const [k,v] of [["intent","fixed-site"],["source","legacy"],["accuracyM",13],["acquiredAt",2000],["provider","P"],["area","Z"],
+    ["bounds",{south:1,north:2,west:3,east:4}],["extra",1]])
+    assert.equal(c({locationEvidence:{...ev,[k]:v}},{reset:false},E).path,"broad","evidence "+k);
+  assert.equal(c({locationEvidence:null},{reset:false},E).path,"broad");
+  const B={...E,locationEvidence:{...ev,bounds:{south:1,north:2,west:3,east:4}}};
+  assert.equal(c({locationEvidence:{...ev,bounds:{south:1,north:2,west:3,east:5}}},{reset:false},B).path,"broad");
+  assert.equal(c({locationEvidence:{...ev,bounds:{south:1,north:2,west:3,east:4}}},{reset:false},B).path,"none");
+  // Coarse acquisition inputs: omitted by the settings form (carried by locationEvidence) vs truly changed.
+  const C={...A,source:"coarse-ip",detectProvider:"GeoJS",area:"Makkah, SA",accuracy:20};
+  const omitted={...C};delete omitted.detectProvider;delete omitted.area;delete omitted.accuracy;
+  assert.equal(classify(C,omitted,{reset:false}).path,"none");
+  assert.equal(classify(C,{...omitted,label:"n"},{reset:false}).path,"presentation");
+  for(const [k,v] of [["detectProvider","ipinfo"],["area","Elsewhere"],["accuracy",5]])assert.equal(c({[k]:v},{reset:false},C).path,"broad",k);
+}
+// Every key of every real configuration producer has a row, and every row has a producer.
+async function tableCoverage(raw=source(),options={}){
+  const {CONFIG_EFFECTS}=isolatedClassifier(raw),keys=new Set();
+  const realm=vm.createContext({URLSearchParams,Intl,AbortController,setTimeout,clearTimeout,console});realm.window=realm;
+  vm.runInContext(fs.readFileSync(path.join(repo,"config.js"),"utf8"),realm);
+  const S=realm.SalahConfig,add=o=>Object.keys(o).forEach(k=>keys.add(k));
+  add(S.normalize({}));add(S.resolve("#lat=1&lon=2&tz=UTC&label=x&method=4&school=1&time=12&datefmt=long&units=c&appearance=contrast&lp=0.3&seed=4").cfg);
+  const store=new Map(),storage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v),removeItem:k=>store.delete(k)};
+  S.saveLocal({...SAVED,origin:"place"},storage);add(S.loadLocal(storage));
+  realm.fetch=async()=>({ok:true,status:200,json:async()=>({latitude:"21.4",longitude:"39.8",city:"Makkah",region:"Makkah",country:"SA",country_code:"SA",timezone:"Asia/Riyadh",accuracy:20})});
+  const det=await S.coarseDetect({timeoutMs:1000});assert.equal(det.ok,true);add(det.cfg);add(S.applyHashPrefs(det.cfg,{label:"y"}));
+  const w=settingsWidget(options);add(w.json("_settingsFormToConfig()"));
+  const table=new Set(Object.keys(CONFIG_EFFECTS));
+  for(const k of keys)assert(table.has(k),"config field without an effect row: "+k);
+  for(const k of table)assert(keys.has(k),"effect row without a real producer: "+k);
+  for(const [k,row] of Object.entries(CONFIG_EFFECTS))assert(["none","presentation","broad"].includes(row.path),k);
+}
+
+module.exports={classifierDecisions,tableCoverage,harness,record,cfg,req,settle,copy,source,sourcePath,authoredPath,classifierBlock,isolatedClassifier,established,seedOwners,
   ledger,apply,text,COSMETIC,GENUINE,cosmeticPreserves,genuineBroad,explicitResetEqual,cosmeticDuringB,abaWithCosmetic,hiddenThenResumed,
   evidenceSurvivesSave,settingsWidget,failedSaveRetry,settingsResetEqual,settingsCloseCosmetic,SAVED,BLOCK_START};
