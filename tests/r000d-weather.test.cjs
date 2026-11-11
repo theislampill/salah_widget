@@ -48,8 +48,9 @@ for (const kind of ['weather', 'radar']) for (const stage of ['headers', 'body']
     const gate = deferred(); let calls = 0;
     const f = fixture({ fetch: () => ++calls === 1 ? stage === 'headers' ? gate.promise : { ok: true, json: () => gate.promise } : response(data(kind)) });
     const timer = timers(f); f[fn(kind)](); await flush(); timer.advance(10000); await flush();
-    f.clock.now += kind === 'weather' ? 59999 : 599999; await f[fn(kind)](); assert.equal(f.calls.length, 1);
-    f.clock.now += 1; await f[fn(kind)](); assert.equal(f.calls.length, 2); assert.equal(f.read()[busy(kind)], false);
+    // R000D: time passes on both clocks; spacing is read from the elapsed clock (attempt started at elapsed 0).
+    f.clock.now += kind === 'weather' ? 59999 : 599999; timer.advance(kind === 'weather' ? 49999 : 589999); await f[fn(kind)](); assert.equal(f.calls.length, 1);
+    f.clock.now += 1; timer.advance(1); await f[fn(kind)](); assert.equal(f.calls.length, 2); assert.equal(f.read()[busy(kind)], false);
     assert.equal(timer.pending.size, 0);
     if (kind === 'weather') { assert.equal(f.view().a.wxTemp, 20); assert.equal(f.view().qa.cache.currentEligible, true); }
     else assert.equal(f.view().qa.wxTruth.radarAvailable, true);
@@ -67,7 +68,7 @@ test('R000D timeout reason cannot renew stale current, accepted timestamp or cac
   let calls = 0; const body = deferred();
   const f = fixture({ fetch: () => ++calls === 1 ? response(healthy()) : { ok: true, json: () => body.promise } }), timer = timers(f);
   await f.fetchWeather(); const prior = f.read().weather, cached = f.storage.get('salahwx:24.47|39.61|c');
-  f.clock.now += 900001; const pending = f.fetchWeather(); await flush(); timer.advance(10000); await pending;
+  f.clock.now += 900001; timer.advance(900001); const pending = f.fetchWeather(); await flush(); timer.advance(10000); await pending;
   const view = f.view(); assert.equal(view.qa.wxTruth.requests.weather.reason, 'body timeout');
   assert.equal(f.read().weather, prior); assert.equal(f.read().lastWxAt, NOW); assert.equal(view.a.wxTemp, null);
   assert.equal(f.storage.get('salahwx:24.47|39.61|c'), cached);
@@ -103,7 +104,7 @@ test('R000D image absolute deadline rejects late load even before its timer call
 test('R000D saved old timeout after success cannot clear a new active weather owner', async () => {
   let calls = 0; const body = deferred(), f = fixture({ fetch: () => ++calls === 1 ? response(healthy()) : { ok: true, json: () => body.promise } });
   const timer = timers(f); await f.fetchWeather(); const oldTimeout = timer.callbacks[0];
-  assert.equal(timer.pending.size, 0); f.clock.now += 900001; const b = tracked(f.fetchWeather()); await flush();
+  assert.equal(timer.pending.size, 0); f.clock.now += 900001; timer.advance(900001); const b = tracked(f.fetchWeather()); await flush();
   oldTimeout(); assert.equal(f.read().wxBusy, true); assert.equal(b.settled, false);
   body.resolve(healthy({ time: '2026-09-07T21:15' })); await b.promise;
   assert.equal(f.read().wxBusy, false); assert.equal(timer.pending.size, 0);
@@ -112,7 +113,7 @@ for (const kind of ['weather', 'radar']) test('R0003 ' + kind + ' obsolete error
   const old = deferred(), next = deferred(); let calls = 0;
   const f = fixture({ fetch: () => ++calls === 1 ? old.promise : next.promise }); const timer = timers(f);
   const a = f[fn(kind)](); await flush(); assert.equal(typeof f.beginRuntimeGeneration, 'function');
-  f.set({ lat: 30, lon: 0, lastWxTry: 0, lastRadarAt: 0 }); f.beginRuntimeGeneration();
+  f.set({ lat: 30, lon: 0, lastWxTry: 0, lastRadarAt: 0, retry: { weather: null, radar: null } }); f.beginRuntimeGeneration();
   const b = tracked(f[fn(kind)]()); await flush(); assert.equal(f.calls.length, 2);
   old.resolve({ ok: false, status: 500 }); await a; await flush();
   assert.equal(f.read()[busy(kind)], true); assert.equal(b.settled, false);
@@ -122,7 +123,7 @@ for (const kind of ['weather', 'radar']) test('R0003 ' + kind + ' obsolete error
 test('R0003 old weather success cannot install or persist after target/unit replacement', async () => {
   const old = deferred(), next = deferred(); let calls = 0;
   const f = fixture({ fetch: () => ++calls === 1 ? old.promise : next.promise }); const timer = timers(f);
-  const a = f.fetchWeather(); await flush(); f.set({ lat: 30, lon: 0, units: 'f', lastWxTry: 0 }); f.beginRuntimeGeneration();
+  const a = f.fetchWeather(); await flush(); f.set({ lat: 30, lon: 0, units: 'f', lastWxTry: 0, retry: { weather: null, radar: null } }); f.beginRuntimeGeneration();
   const b = f.fetchWeather(); await flush(); old.resolve(response(healthy())); await a;
   assert.equal(f.read().weather, null); assert.equal(f.read().weatherTrack, null); assert.equal(f.read().siteElev, 0); assert.equal(f.cache(), null);
   assert.equal(f.read().wxBusy, true); next.resolve(response(healthy({ temperature_2m: 68 }))); await b;
@@ -131,7 +132,7 @@ test('R0003 old weather success cannot install or persist after target/unit repl
 });
 test('R0003 old image onload cannot install or clear current target image attempt', async () => {
   const f = fixture({ lat: 0, lon: 30 }), held = images(f), timer = timers(f); const a = f.fetchRadar(); await flush();
-  const oldLoad = held[0].onload; f.set({ lat: 30, lon: 0, lastRadarAt: 0 }); f.beginRuntimeGeneration();
+  const oldLoad = held[0].onload; f.set({ lat: 30, lon: 0, lastRadarAt: 0, retry: { weather: null, radar: null } }); f.beginRuntimeGeneration();
   const b = tracked(f.fetchRadar()); await flush(); oldLoad(); await a;
   assert.equal(f.read().weatherRadar, null); assert.equal(f.read().radarBusy, true); assert.equal(b.settled, false);
   held[1].onload(); await b.promise; assert(f.images[1].includes('/256/6/32/26/'));

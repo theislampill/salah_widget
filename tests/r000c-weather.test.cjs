@@ -528,7 +528,9 @@ test('R001E real config normalizer still admits raw string zero and preserves cl
   const clamped = normalize({ lat: 100, lon: 200 }); assert.equal(clamped.lat, 90); assert.equal(clamped.lon, 180);
 });
 for (const [name, opts, state] of [['busy', {}, { wxBusy: true, radarBusy: true }],
-  ['SIM', { sim: { wx: 95 } }, {}], ['throttle', {}, { lastWxTry: NOW, lastRadarAt: NOW }]]) {
+  ['SIM', { sim: { wx: 95 } }, {}], ['throttle', {}, { lastWxTry: NOW, lastRadarAt: NOW,
+    // R000D: spacing is the elapsed retry record; this fixture's elapsed clock reads 0 at NOW.
+    retry: { weather: { startedAt: 0, clock: 'monotonic' }, radar: { startedAt: 0, clock: 'monotonic' } } }]]) {
   test('control: existing ' + name + ' eligibility still suppresses both requests', async () => {
     const f = fixture(opts); f.set(state); await f.fetchWeather(); await f.fetchRadar(); assert.equal(f.calls.length, 0);
   });
