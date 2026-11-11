@@ -58,13 +58,25 @@ export function sameNativeCloudAlpha(a,b){
 
 /** DOM ownership adapter; native PBR/calendar/weather remain native source code. */
 export function startNativeSky(pack,workerSource,physical){
+ // Declared replacement policy (R0021, owner decision 2026-11-11): dispose-then-
+ // construct. The predecessor retires first; predecessor retention is NOT
+ // supported, so a failed candidate leaves no refined owner and the preview
+ // remains the presented fallback.
  window.SalahRealSky?.dispose();
  const host=window.SalahNativeSkyHost,card=document.querySelector('.c');if(!host||!card)throw new Error('Native host/card missing');
- const canvas=document.createElement('canvas');canvas.className='real-sky-canvas';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');card.prepend(canvas);
+ // Construction custody: every acquisition registers its release when acquired.
+ // A constructor throw unwinds exactly this candidate's resources in reverse
+ // order and rethrows the primary cause; disposal runs the same releases.
+ const owned=[],own=release=>{owned.push(release);};
+ function release(){let failure=null;while(owned.length){try{owned.pop()();}catch(error){failure??=error;}}return failure;}
+ let instance=null;
+ try{
+ const canvas=document.createElement('canvas');canvas.className='real-sky-canvas';canvas.width=325;canvas.height=530;canvas.setAttribute('aria-hidden','true');
  const ctx=canvas.getContext('2d',{alpha:false});if(!ctx)throw new Error('Canvas 2D unavailable');
- const badge=document.createElement('span');badge.className='real-sky-status';badge.setAttribute('role','status');card.append(badge);
+ card.prepend(canvas);own(()=>canvas.remove());
+ const badge=document.createElement('span');badge.className='real-sky-status';own(()=>badge.remove());badge.setAttribute('role','status');card.append(badge);
  const foreground=physical?new NativeForegroundCapture(canvas):null;
- const solarPublication=physical?new NativeSolarMaskPublication():null;
+ const solarPublication=physical?new NativeSolarMaskPublication():null;own(()=>solarPublication?.dispose());
  const status={checkpoint:physical?'9':'8.1',workerFailurePolicy:'retain only a current displayed sky; never synchronous physical rendering on the prayer UI thread',status:'loading',renders:0,presentationDraws:0,presentationSkips:0,presentationRejections:0,presentationUtcMs:null,rejections:0,errors:[],physical,dprPolicy:'325×530 physics raster at DPR 1; browser scales canvas; no high-DPR certification',last:null};
  let client,lifecycle,frame=null,job=null,pendingJob=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousSolarMask=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
  function publish(){const preview=window.SalahSkyPreview?.state.status==='ready';badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.availability?.reason==='rate-throughput'?`${preview?'Sky preview · r':'R'}efinement unavailable at ${status.availability.rate}×`:preview?'Sky preview · refining…':status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent. A current preview is distinct from registered diffuse refinement.';canvas.dataset.status=status.status;}
@@ -81,10 +93,12 @@ export function startNativeSky(pack,workerSource,physical){
   // also hides the independently current SVG Moon until the next native paint.
   if(!previewCurrent)preview?.clear(reason);
   frame=null;job=null;status.last=null;paintedFrame=null;paintedJob=null;status.presentationUtcMs=null;status.displayed=null;previousPresentation=null;previousSolarMask=null;previousMoonBottom=0;ctx.clearRect(0,0,325,530);canvas.style.visibility='hidden';status.status='pending';status.reason=reason;
-  // Request the preview handoff now. An unchanged decoded mask can publish in
-  // this turn; changed masks still await decode under the preview owner's
-  // target, age and publication-headroom checks.
-  if(!previewOwnsDetail)preview?.update?.();
+  // Live withdrawal requests the preview handoff now. An unchanged decoded mask
+  // can publish in this turn; changed masks still await decode under the preview
+  // owner's target, age and publication-headroom checks. An instance retiring
+  // for asset suspension/final teardown initiates no new preview publication;
+  // its resource cleanup is unchanged (R0021 routed retirement finding).
+  if(status.retirement?.previewHandoff!==false&&!previewOwnsDetail)preview?.update?.();
   publish();
  }
  // Identity/age fences do not consume decorative solar geometry. Measure the
@@ -227,17 +241,30 @@ export function startNativeSky(pack,workerSource,physical){
   }else clear('render failure');
   status.status='unavailable';if(status.errors.at(-1)!==message)status.errors.push(message);status.errors=status.errors.slice(-12);publish();
  }
- client=new ReferenceRenderClient(pack,{workerFactory:()=>{workerUrl=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));return new Worker(workerUrl);},fallbackFactory:requireNativeWorker,timeoutMs:15000});
+ client=new ReferenceRenderClient(pack,{workerFactory:()=>{const url=URL.createObjectURL(new Blob([workerSource],{type:'text/javascript'}));workerUrl=url;own(()=>URL.revokeObjectURL(url));return new Worker(url);},fallbackFactory:requireNativeWorker,timeoutMs:15000});own(()=>client.dispose());
  lifecycle=new NativeSkyLifecycle({capture:snapshot,physical,execute:request=>client.run(request),onResult:accept,onInvalidate:clear,onError:failure,onAvailability:value=>{status.availability=value;if(value.status==='unavailable'&&!frame){status.status='unavailable';status.reason=value.reason;publish();}}});
+ // A candidate that never registered was never presented: release its queue
+ // without the presentation withdrawal, which reaches shared Moon/preview owners.
+ own(()=>{lifecycle.hooks.onInvalidate=()=>{};lifecycle.dispose();});
  const request=(force=false)=>lifecycle.request(force);
  // Presentation sampling is not an astronomical clock. It samples native painter
  // output and native SVG transforms; only accepted host UTC drives physics jobs.
- const timer=setInterval(()=>request(),500);
+ const timer=setInterval(()=>request(),500);own(()=>clearInterval(timer));
  function animate(now){if(disposed)return;try{const state=snapshot();if(frame&&(!lifecycle.current(job,state)||(paintedJob&&!lifecycle.current(paintedJob,state))))clear('host or displayed target changed or expired');if(frame&&!state.paused&&now-lastCompose>=(state.reducedMotion?250:50))compose();}catch(e){failure(e);}animationId=requestAnimationFrame(animate);}
- animationId=requestAnimationFrame(animate);
- const visibility=()=>request(true);document.addEventListener('visibilitychange',visibility);
+ animationId=requestAnimationFrame(animate);own(()=>cancelAnimationFrame(animationId));
+ const visibility=()=>request(true);document.addEventListener('visibilitychange',visibility);own(()=>document.removeEventListener('visibilitychange',visibility));
  const readState=()=>({...structuredClone(status),lifecycle:lifecycle.state});
- window.SalahRealSky={request,compose,invalidate:reason=>lifecycle.invalidate(reason),get state(){return readState();},dispose(){if(disposed)return;lifecycle.dispose();disposed=true;solarPublication?.dispose();clearInterval(timer);cancelAnimationFrame(animationId);document.removeEventListener('visibilitychange',visibility);client.dispose();if(workerUrl)URL.revokeObjectURL(workerUrl);card.classList.remove('real-sky-composed');card.style.removeProperty('--native-sun-cloud-mask');frame=null;job=null;previousPresentation=null;previousSolarMask=null;status.last=null;status.status='disposed';canvas.remove();badge.remove();}};
+ // Retirement (constructing -> active/pending -> retiring -> disposed) is owned by
+ // this instance: status.retirement records the asset owner's intent before the
+ // lifecycle withdrawal runs; shared card/registry slots clear only while owned.
+ // Every owned release completes even if withdrawal throws; the cause rethrows.
+ window.SalahRealSky=instance={request,compose,invalidate:reason=>lifecycle.invalidate(reason),get state(){return readState();},dispose({previewHandoff=true}={}){if(disposed||status.retirement)return;const owner=window.SalahRealSky===instance;status.retirement={previewHandoff};status.status='retiring';let failure=null;try{lifecycle.dispose();}catch(error){failure=error;}disposed=true;if(owner){card.classList.remove('real-sky-composed');card.style.removeProperty('--native-sun-cloud-mask');}const cleanup=release();frame=null;job=null;previousPresentation=null;previousSolarMask=null;status.last=null;status.status='disposed';if(failure??cleanup)throw failure??cleanup;}};
+ own(()=>{if(window.SalahRealSky===instance){window.SalahRealSky=null;window.realSkyFrame=()=>null;}});
  window.realSkyState=readState;window.realSkyFrame=()=>frame; // Diagnostics, not render authority.
  publish();request(true);
+ }catch(error){
+  // construction-failed -> cleaned: unwind only this candidate, keep the cause.
+  const cleanup=release();if(cleanup&&error&&typeof error==='object')try{error.cleanupError=cleanup;}catch{/* frozen cause */}
+  throw error;
+ }
 }

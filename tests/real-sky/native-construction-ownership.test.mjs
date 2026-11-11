@@ -341,3 +341,16 @@ test('a healthy preview construction is unchanged: one canvas, registered, ready
   assert.equal(h.of('real-sky-preview').length,1);assert.equal(h.window.SalahSkyPreview.state.status,'ready');assert.equal(h.rafs.size,1);
  }finally{h.close();}
 });
+
+// Tripwire: sibling suites (native-host-composition, native-preview-host,
+// r000b-sky-withdrawal) evaluate text slices of these owners in vm contexts.
+// A moved anchor must fail here by name, not as a ReferenceError elsewhere.
+test('source-slice anchors used by sibling harnesses remain present and unique',()=>{
+ const host=fs.readFileSync(new URL('native-host.mjs',SOURCE_DIR),'utf8'),preview=fs.readFileSync(new URL('native-preview-host.mjs',SOURCE_DIR),'utf8');
+ for(const anchor of [' function clear(',' // Identity/age fences',' function compositionFailed(','\n function accept(',' function failure(','\n client=new ReferenceRenderClient'])assert.equal(host.split(anchor).length,2,anchor);
+ const lines=host.split('\n');
+ assert.equal(lines.filter(line=>line.startsWith(' window.SalahRealSky=')&&line.includes('dispose(')).length,1);
+ assert.equal(lines.filter(line=>line.startsWith(' function animate(')).length,1);
+ assert.equal(lines.filter(line=>line.startsWith(' function release(')).length,1);
+ for(const anchor of [' function clear(',' function prepareForeground'])assert.equal(preview.split(anchor).length,2,anchor);
+});
