@@ -114,3 +114,27 @@ test('ES21-05 generated moon-host.js: first install works and a live replay is r
  assert.deepEqual(r.snapshot(),before);assert.equal(r.w.SalahMoonInitial,initial,'not even the initial receiver global is replaced');
  assert.doesNotThrow(()=>detail.adopt(surface));
 });
+
+// Review follow-ups (independent source review of ef6549c9).
+test('ES21-05 replay is refused for a live runtime even when the detail slot is empty',()=>{
+ const r=boot(),runtime=r.w.SalahMoonRuntime;r.w.SalahMoonDetail=null;const before=r.snapshot();
+ assert.throws(()=>r.run(wrapper()),/replay/i);
+ assert.deepEqual(r.snapshot(),before);assert.equal(r.w.SalahMoonRuntime,runtime);
+});
+
+for(const stage of ['url','interval','frame'])test(`ES21-02 Moon wrapper failure at ${stage} releases its detail, slot, listener and timers`,()=>{
+ const r=realm();r.run(read('moon-detail.mjs')+'\n'+read('moon-precision.mjs'));
+ const restore={URL:r.c.URL,setInterval:r.c.setInterval,requestAnimationFrame:r.c.requestAnimationFrame};
+ if(stage==='url'){r.w.__SALAH_MOON_EMBEDDED__=false;r.c.URL=class extends restore.URL{constructor(){throw Error('controlled url failure');}};Object.assign(r.c.URL,{createObjectURL:restore.URL.createObjectURL,revokeObjectURL:restore.URL.revokeObjectURL});}
+ if(stage==='interval')r.c.setInterval=()=>{throw Error('controlled interval failure');};
+ if(stage==='frame')r.c.requestAnimationFrame=()=>{throw Error('controlled frame failure');};
+ assert.throws(()=>r.run(wrapper()),new RegExp('controlled '+stage+' failure'));
+ Object.assign(r.c,restore);r.w.__SALAH_MOON_EMBEDDED__=true;
+ assert.equal(r.w.SalahMoonDetail??null,null,'no orphan registered detail');
+ assert.equal(r.canvases.filter(c=>c.className==='moon-detail-canvas'&&!c.removedCount).length,0,'detail canvas released or never created');
+ assert.equal(r.listeners.get('visibilitychange')?.size??0,0);assert.equal(r.intervals.size,0);assert.equal(r.frames.size,0);
+ assert.ok(!r.w.SalahMoonRuntime||r.w.SalahMoonRuntime.disposed===true,'any registered runtime reports disposed');
+ // Recovery: a new wrapper installs exactly one live runtime.
+ r.run(wrapper());r.frame();r.frame();
+ assert.equal(r.w.SalahMoonRuntime.disposed,false);assert.ok(r.w.SalahMoonDetail);assert.equal(r.intervals.size,1);assert.equal(r.workers.length,1);
+});

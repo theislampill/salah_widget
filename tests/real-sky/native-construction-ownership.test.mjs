@@ -21,7 +21,7 @@ const flush=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
 
 async function harness({preview=true,assets=true,failPreview=null}={}){
  let serial=0,cloudAlpha=31,previewDraws=0,refinedDraws=0,arm=null;
- const trace=[],nodes=new Set(),classes=new Set(),styleSets=[],images=[],issued=[],workers=[],rafs=new Map(),intervals=new Map(),events=new Map(),docEvents=new Map(),urls=new Set(),counts={revoke:0,terminate:0,removeDoc:0,canvasRemove:0};
+ const order=[],trace=[],nodes=new Set(),classes=new Set(),styleSets=[],images=[],issued=[],workers=[],rafs=new Map(),intervals=new Map(),events=new Map(),docEvents=new Map(),urls=new Set(),counts={revoke:0,terminate:0,removeDoc:0,canvasRemove:0};
  // One-shot failure injection at an exact acquisition stage.
  const fire=stage=>{if(arm===stage){arm=null;throw new Error('controlled '+stage+' failure');}};
  const cloud={width:325,height:530};
@@ -31,7 +31,7 @@ async function harness({preview=true,assets=true,failPreview=null}={}){
   const style={};
   const node={tag,width:325,height:530,style,dataset:{},className:'',attrs:{},
    setAttribute(k,v){if(k==='role'&&node.className==='real-sky-status')fire('badge');node.attrs[k]=v;},
-   remove(){if(tag==='canvas')counts.canvasRemove++;nodes.delete(node);node.parent=null;},
+   remove(){if(tag==='canvas')counts.canvasRemove++;if(nodes.has(node))order.push('remove:'+node.className);nodes.delete(node);node.parent=null;},
    getBoundingClientRect:()=>({left:0,top:0,width:325,height:530})};
   let text='';Object.defineProperty(node,'textContent',{get:()=>text,set:v=>{if(node.className==='real-sky-status')fire('registered');text=v;}});
   let alpha=0,pixels=null;
@@ -56,7 +56,7 @@ async function harness({preview=true,assets=true,failPreview=null}={}){
  class ControlledWorker{
   constructor(url){fire('worker');this.url=url;this.terminated=false;workers.push(this);}
   postMessage(message){if(message.kind==='boot')queueMicrotask(()=>{if(!this.terminated)this.onmessage?.({data:{kind:'ready'}});});}
-  terminate(){if(!this.terminated)counts.terminate++;this.terminated=true;}
+  terminate(){if(arm==='terminate'){arm=null;throw new Error('controlled terminate failure');}if(!this.terminated){counts.terminate++;order.push('terminate');}this.terminated=true;}
  }
  const snapshot={utcMs:1700000000000,lat:24.47,lon:39.61,heightM:0,sceneIdentity:'ownership-control',generation:1,timeScale:1,paused:false,reducedMotion:true,
   camera:{azDeg:180,altDeg:35,fovYDeg:90,rollDeg:0},weather:null,lp:0,units:'c',tz:'UTC'};
@@ -72,7 +72,7 @@ async function harness({preview=true,assets=true,failPreview=null}={}){
  const context={window:w,document,
   ...contract,LatestRenderQueue,ReferenceRenderClient,nativeCloudChannel,validateNativeRGBA,nativeCloudDisplayFrame,
   Uint8ClampedArray,Float64Array,structuredClone,AbortController,Image:ControlledImage,Worker:ControlledWorker,Blob,
-  URL:{createObjectURL:()=>{const url=`blob:controlled-${++serial}`;urls.add(url);return url;},revokeObjectURL(url){if(urls.delete(url))counts.revoke++;}},
+  URL:{createObjectURL:()=>{const url=`blob:controlled-${++serial}`;urls.add(url);return url;},revokeObjectURL(url){if(urls.delete(url)){counts.revoke++;order.push('revoke');}}},
   ImageData:class{constructor(data,width,height){this.data=data;this.width=width;this.height=height;}},
   performance:{now:()=>0},getComputedStyle:()=>({filter:'none',visibility:'visible',opacity:'1'}),setTimeout,clearTimeout,
   setInterval:callback=>{fire('interval');const id=++serial;intervals.set(id,callback);return id;},clearInterval:id=>intervals.delete(id),
@@ -81,7 +81,7 @@ async function harness({preview=true,assets=true,failPreview=null}={}){
   renderNativeBackgroundPreview:s=>({job:contract.nativeJob(s,true),utcMs:s.utcMs,quality:'controlled-background',rgba:backgroundRGBA.slice(),raster:{width:325,height:530,physicalState:{sun:{altDeg:30}}}}),
   encodeNativeFrame(){throw Error('controlled preview supplies its own pixels');},requireNativeWorker(){throw Error('unexpected worker fallback');}};
  vm.createContext(context);vm.runInContext(sources.join('\n'),context);
- const h={trace,window:w,context,classes,styleSets,images,issued,workers,rafs,intervals,events,docEvents,nodes,urls,counts,snapshot,
+ const h={order,trace,window:w,context,classes,styleSets,images,issued,workers,rafs,intervals,events,docEvents,nodes,urls,counts,snapshot,
   arm(stage){arm=stage;},get armed(){return arm;},
   changeMask(){cloudAlpha++;},get draws(){return previewDraws;},get refinedDraws(){return refinedDraws;},
   async finishMasks(){for(const image of images)image.resolve?.();await flush();},
@@ -375,4 +375,54 @@ test('normal-operation presentation trace (compare across source revisions)',asy
   t.diagnostic('r0021-presentation-trace '+digest+' uploads='+h.trace.length+' styles='+h.styleSets.length+' issued='+h.issued.length);
   assert.ok(h.trace.length>0&&h.issued.length>0);
  }finally{h.close();}
+});
+
+// Review follow-ups (independent source review of ef6549c9).
+test('ES21-02 a release that throws during unwind keeps the primary cause and still releases the rest, in reverse order',async()=>{
+ const h=await harness();
+ try{
+  h.window.SalahRealSky.dispose();h.window.SalahRealSky=null;h.order.length=0;
+  // Interval acquisition fails; while unwinding, the render client's release throws.
+  h.arm('interval');let error=null;
+  const original=h.context.setInterval;h.context.setInterval=(...a)=>{const e=new Error('controlled interval failure');h.arm('terminate');throw e;};
+  try{h.startRefined();}catch(e){error=e;}finally{h.context.setInterval=original;}
+  assert.match(String(error?.message),/controlled interval failure/,'the PRIMARY construction cause is rethrown');
+  assert.match(String(error?.cleanupError?.message),/controlled terminate failure/,'the cleanup failure is attached, not substituted');
+  assert.equal(h.of('real-sky-canvas').length,0);assert.equal(h.of('real-sky-status').length,0);assert.equal(h.urls.size,0,'later releases still ran');
+  assert.ok(h.order.indexOf('revoke')<h.order.indexOf('remove:real-sky-status')&&h.order.indexOf('remove:real-sky-status')<h.order.indexOf('remove:real-sky-canvas'),'reverse acquisition order: '+h.order.join(','));
+ }finally{h.close();}
+});
+
+test('ES21-02 reverse order on disposal: render client before its blob URL, canvas last',async()=>{
+ const h=await harness();
+ try{
+  h.order.length=0;h.window.SalahRealSky.dispose();
+  const at=x=>h.order.indexOf(x);
+  assert.ok(at('terminate')>=0&&at('terminate')<at('revoke')&&at('revoke')<at('remove:real-sky-canvas'),h.order.join(','));
+ }finally{h.close();}
+});
+
+test('handoff is not suppressed for a live instance while the document is hidden or after a resumed loader',async()=>{
+ const h=await harness();
+ try{
+  h.context.document.hidden=true;h.changeMask();let issued=h.issued.length;
+  h.window.SalahRealSky.invalidate('live withdrawal while hidden');
+  assert.equal(h.issued.length,issued+1,'document visibility is not retirement intent');
+  h.context.document.hidden=false;await h.finishMasks();
+  h.dispatch('pagehide');h.dispatch('pageshow',{persisted:true});await flush();await h.finishMasks();
+  assert.equal(h.window.SalahRealSkyAssets.state.status,'ready');
+  h.changeMask();issued=h.issued.length;h.window.SalahRealSky.invalidate('live withdrawal after resume');
+  assert.equal(h.issued.length,issued+1,'a resumed (not suspended) loader keeps the live handoff');
+ }finally{h.close();}
+});
+
+test('ES21-04 retirement never clears a registry slot held by another owner',async()=>{
+ const h=await harness();
+ try{
+  const a=h.window.SalahRealSky,foreign={dispose(){},state:{status:'foreign'}},frame=()=>'foreign-frame';
+  h.window.SalahRealSky=foreign;h.window.realSkyFrame=frame;
+  a.dispose();
+  assert.equal(h.window.SalahRealSky,foreign);assert.equal(h.window.realSkyFrame,frame);
+  assert.equal(a.state.status,'disposed');assert.equal(h.of('real-sky-canvas').length,0,'its own resources still released');
+ }finally{h.window.SalahRealSky=null;h.close();}
 });

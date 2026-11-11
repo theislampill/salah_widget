@@ -739,11 +739,6 @@ try{const text=atob("U01IMRwCU/8CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
  // replay over a live one) and released its own captured detail. This runtime
  // owns exactly the detail it creates; the global slot is a registry pointer.
  window.SalahMoonRuntime?.dispose();
- // The handle is idempotent and refuses adoption once retired (ES21-07). It is
- // a pass-through: moon-detail.mjs stays byte-identical because it is a pinned
- // initial-receiver source (tools/build_moon.py validate_initial_sources).
- const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
- window.SalahMoonDetail=detail;
  const script=document.currentScript;
  // A fully embedded document has no relative assets, including in an opaque iframe.
  const base=window.__SALAH_MOON_EMBEDDED__?(document.baseURI||'about:blank'):new URL(window.__SALAH_MOON_INLINE__?'moon/':'.',script?.src||document.baseURI).href;
@@ -975,7 +970,15 @@ try{const text=atob("U01IMRwCU/8CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
   return structuredClone(s);
  }
  const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();}};
+ // The handle is idempotent and refuses adoption once retired (ES21-07). It is
+ // a pass-through: moon-detail.mjs stays byte-identical because it is a pinned
+ // initial-receiver source (tools/build_moon.py validate_initial_sources).
+ // It is acquired at the registration boundary; a throw before the runtime is
+ // complete releases exactly this wrapper's detail, slot, listener and timers.
+ const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
+ try{
  document.addEventListener('visibilitychange',visibility);
+ window.SalahMoonDetail=detail;
  window.SalahMoonRuntime={
   installWorkerSource(source){
    if(disposed)return false;
@@ -1017,6 +1020,13 @@ try{const text=atob("U01IMRwCU/8CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
  // first surface. Give its already-published scene a browser paint opportunity;
  // explicit retry and disposal revoke this deferred start. No readiness gate.
  startFrame=requestAnimationFrame(()=>{startFrame=requestAnimationFrame(start);});
+ }catch(error){
+  // construction-failed -> cleaned; a registered runtime here reports disposed.
+  disposed=true;clearInterval(timer);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;
+  document.removeEventListener('visibilitychange',visibility);closeWorker();
+  if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();
+  throw error;
+ }
 })();
 
 window.SalahMoonHead={
