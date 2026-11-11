@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Direct native -File entry with private startup spies; no owner profile is used."""
-import collections, hashlib, json, os, pathlib, secrets, subprocess, sys, tempfile, zipfile
+import base64, collections, hashlib, json, os, pathlib, secrets, subprocess, sys, tempfile, zipfile
+import xml.etree.ElementTree as ET
 
 SOURCE = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[1]/'install.ps1').resolve()
 PS7 = os.environ.get('INSTALL_TEST_PS7', r'C:\Program Files\PowerShell\7\pwsh.exe')
@@ -45,8 +46,8 @@ function Invoke-RestMethod { param($Uri,$Headers)
 function Invoke-WebRequest { param($Uri,$OutFile,[switch]$UseBasicParsing)
     Record 'download' $Uri; In-Fixture $OutFile
     if($env:INSTALL_FIXTURE_NORMAL -ne '1'){throw 'Denied fixture network'}
-    if($Uri -eq 'https://example.invalid/preset'){[IO.File]::WriteAllText($OutFile,'{"input":"#local=1"}')}
-    else{[IO.File]::Copy($env:INSTALL_ASSET_ZIP,$OutFile)}
+    if($Uri -eq 'https://example.invalid/preset'){[IO.File]::Copy($env:INSTALL_PRESET_FIXTURE,$OutFile,$true)}
+    else{[IO.File]::Copy($env:INSTALL_ASSET_ZIP,$OutFile,$true)}
 }
 function Expand-Archive { param($LiteralPath,$DestinationPath,[switch]$Force)
     In-Fixture $LiteralPath; In-Fixture $DestinationPath; Record 'extract' $LiteralPath
@@ -71,6 +72,30 @@ def ready(root, env):
     value=path.read_text(encoding='utf-8-sig').split('\t') if path.is_file() else []
     return len(value)==2 and value[0].isdigit() and value[1]==env['INSTALL_READY_NONCE']
 
+def protect_parents(root, host, native_modules, paths):
+    """Create the self-owned Windows premise only on newly owned fixture parents."""
+    for path in paths:
+        require(path.is_dir() and path.is_relative_to(root), 'ACL setup escaped the owned fixture')
+    code = r'''
+$ErrorActionPreference='Stop'
+$sid=[Security.Principal.WindowsIdentity]::GetCurrent().User
+foreach($parent in $env:INSTALL_OWNED_PARENTS.Split('|')) {
+    $acl=New-Object Security.AccessControl.DirectorySecurity
+    $acl.SetOwner($sid); $acl.SetAccessRuleProtection($true,$false)
+    $rule=New-Object Security.AccessControl.FileSystemAccessRule($sid,[Security.AccessControl.FileSystemRights]::FullControl,[Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit',[Security.AccessControl.PropagationFlags]::None,[Security.AccessControl.AccessControlType]::Allow)
+    $acl.AddAccessRule($rule)
+    Set-Acl -LiteralPath $parent -AclObject $acl
+}
+'''
+    env=dict(os.environ, INSTALL_OWNED_PARENTS='|'.join(map(str,paths)))
+    for key in list(env):
+        if key.upper() == 'PSMODULEPATH': del env[key]
+    env['PSModulePath']=native_modules
+    result=subprocess.run([host,'-NoProfile','-EncodedCommand',base64.b64encode(code.encode('utf-16le')).decode('ascii')],env=env,capture_output=True,timeout=25)
+    (root/'parent-acl-setup.stdout.txt').write_bytes(result.stdout)
+    (root/'parent-acl-setup.stderr.txt').write_bytes(result.stderr)
+    require(result.returncode==0, 'Owned parent ACL setup failed before installer execution')
+
 def case(host_name, host, native_modules, scenario):
     root = ROOT/(host_name+'-'+scenario); root.mkdir()
     subject = root/'subject'; subject.mkdir()
@@ -84,6 +109,12 @@ def case(host_name, host, native_modules, scenario):
     # a separate owned host boundary, distinct from installer effect targets.
     host_home = root/'host-home'; host_home.mkdir()
     env['HOME'] = env['USERPROFILE'] = str(host_home)
+    if os.name == 'nt':
+        try:
+            protect_parents(root,host,native_modules,[subject/'temp',host_home])
+        except (AssertionError,OSError,subprocess.TimeoutExpired) as error:
+            RESULTS.append(dict(host=host_name,case=scenario,pass_=False,classification='BOOTSTRAP_BLOCKED',error=str(error),observation=dict(fixture=str(root),stage='owned-parent-acl-setup',installerExecuted=False)))
+            return False
     if scenario != 'none':
         chrome = subject/'local/Google/Chrome/User Data/Default'; chrome.mkdir(parents=True)
         if scenario == 'legacy': (chrome/'Extensions/hipekcciheckooncpjeljhnekcoolahp').mkdir(parents=True)
@@ -94,6 +125,8 @@ def case(host_name, host, native_modules, scenario):
         if scenario == 'mixed': (subject/'local/Microsoft/Edge/User Data/Default/Extensions/lklaendlmlfkaabeleddanafeinnenih').mkdir(parents=True)
     asset = root/'fixture.zip'
     with zipfile.ZipFile(asset,'w') as archive: archive.writestr('manifest.json','{"manifest_version":3,"name":"Fixture","version":"1.0"}')
+    preset_fixture=root/'canonical-preset.json'
+    preset_fixture.write_bytes((SOURCE.parent/'presets/salah-widget.tablissng.json').read_bytes())
     if scenario == 'cached':
         cache = subject/'temp/SalahWidgetInstaller/downloads/v-fixture'; cache.mkdir(parents=True)
         for name in ('tabliss-chromium.zip','tabliss-firefox-signed.xpi'): (cache/name).write_bytes(asset.read_bytes())
@@ -110,6 +143,7 @@ def case(host_name, host, native_modules, scenario):
                INSTALL_BOOTSTRAP_LOG=str(root/'bootstrap-phases.txt'),
                INSTALL_READY_NONCE=secrets.token_hex(16),
                INSTALL_FIXTURE_NORMAL='1' if normal else '0', INSTALL_ASSET_ZIP=str(asset),
+               INSTALL_PRESET_FIXTURE=str(preset_fixture),
                INSTALL_FIXTURE_PF=str(subject/'pf'), INSTALL_FIXTURE_PF86=str(subject/'pf86'),
                SALAH_INSTALL_SOURCE='github', SALAH_WIDGET_HASH='lat=24.47&lon=39.61&method=4')
     command = [host,'-NoProfile','-File',str(SOURCE),'-PresetUrl','' if scenario == 'missing-preset' else 'https://example.invalid/preset',
@@ -152,20 +186,28 @@ def case(host_name, host, native_modules, scenario):
             for kind,value in effects: by_kind[kind].append(value)
             require(by_kind['metadata'] == ['https://api.github.com/repos/BookCatKid/TablissNG/releases/latest'],'Wrong release lookup/count')
             require(collections.Counter(by_kind['download']) == collections.Counter(['https://example.invalid/chromium','https://example.invalid/firefox','https://example.invalid/preset']),'Wrong download URLs/counts')
-            stage = subject/'temp/SalahWidgetInstaller'
-            unpacked = stage/'downloads/v-fixture/tabliss-chromium-unpacked'
-            xpi = stage/'downloads/v-fixture/tabliss-firefox-signed.xpi'
-            preset = stage/'presets/salah-widget.tablissng.json'
-            require(by_kind['extract'] == [str(stage/'downloads/v-fixture/tabliss-chromium.zip')],'Wrong extraction path/count')
+            bundles=list(host_home.glob('SalahWidgetBundle-*'))
+            require(len(bundles)==1 and bundles[0].is_dir(),'Exactly one retained manual bundle required')
+            stage=bundles[0]
+            unpacked_rows=list(stage.glob('unpacked-*'))
+            xpi_rows=list((stage/'downloads').glob('*-tabliss-firefox-signed.xpi'))
+            preset_rows=list((stage/'presets').glob('*-salah-widget.tablissng.json'))
+            require(len(unpacked_rows)==len(xpi_rows)==len(preset_rows)==1,'Actual admitted outputs missing or ambiguous')
+            unpacked,xpi,preset=unpacked_rows[0],xpi_rows[0],preset_rows[0]
+            require(not by_kind['extract'],'Native bounded extractor unexpectedly called Expand-Archive')
             require(collections.Counter(by_kind['clipboard']) == collections.Counter([str(unpacked),str(xpi),str(preset),str(preset)]),'Wrong copied paths/counts')
             require((unpacked/'manifest.json').is_file() and xpi.is_file(),'Actual staged local assets missing')
-            require(json.loads(preset.read_text(encoding='utf-8-sig'))['input'] == '#'+env['SALAH_WIDGET_HASH'],'Configured preset not consumed')
+            configured=json.loads(preset.read_text(encoding='utf-8-sig'))
+            frame=ET.fromstring(configured['data/orpul7IDXSSP']['input'])
+            require(frame.tag=='iframe' and frame.attrib.get('src')=='https://theislampill.github.io/salah_widget/#'+env['SALAH_WIDGET_HASH'],'Canonical configured preset not consumed')
+            require(not list((subject/'temp').glob('SalahWidgetAttempt-*')),'Owned scratch remains after successful normal cleanup')
             require(len(by_kind['prompt']) == 3,'Normal selection/manual confirmations not reached')
             expected_opens = ['chrome://extensions/ ','chrome://newtab/ ','about:addons ','about:newtab ']
             require(collections.Counter(by_kind['open']) == collections.Counter([] if scenario == 'no-open' else expected_opens),'Wrong manager/newtab opens or store fallback')
             require('Manual browser installation/import remain pending' in stdout,'False install completion wording')
         else:
             require(unchanged and not effects,'Dry-run changed owned state or reached effects')
+            require(not list(host_home.glob('SalahWidgetBundle-*')),'Dry-run created a retained bundle outside the temp subject')
             failure = scenario in ('legacy','none','bad-option')
             require((run.returncode != 0) == failure,'Wrong direct process exit')
             if not failure:

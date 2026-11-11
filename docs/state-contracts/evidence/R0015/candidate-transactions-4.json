@@ -1,0 +1,958 @@
+{
+  "schema": "r0015-powershell-transactions-v1",
+  "source": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+  "sourceSha256": "6e2af0ebf06a718f5ffa6660314c4becbab1d7590162c5b716d4d303b00ddd69",
+  "testSha256": "165843ea69e72f1d2f71b5a835779b25013fac322539c738736dac781aabbb6d",
+  "presetSha256": "9197c9bcfaf34ff06505963862e4e9280d3ad521e1ed287183f5d71cbce6b95f",
+  "observedUtc": "2026-11-11T07:34:00.2802605Z",
+  "runtime": "7.6.6",
+  "edition": "Core",
+  "platform": "Unix 6.18.57.0",
+  "processArchitecture": null,
+  "scope": "supplemental POSIX native-boundary adapter; no Windows ACL/NTFS/lease qualification",
+  "nativeBoundaryAdapter": true,
+  "fixtureRoot": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص",
+  "retainedFixture": true,
+  "results": [
+    {
+      "case": "exact-file parser and ASCII source",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {},
+      "events": [],
+      "messages": []
+    },
+    {
+      "case": "healthy actual download and manual Chromium caller",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/healthy-caller",
+        "archive": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/healthy-caller/profile/SalahWidgetBundle-05635b2db808446097634b50f3d27abb/downloads/1232c4eccd064308b1d15f1ef565a413-tabliss-chromium.zip",
+        "bundle": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/healthy-caller/profile/SalahWidgetBundle-05635b2db808446097634b50f3d27abb/unpacked-42891347e46b489e8303763bd413a0c1/extension"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/healthy-caller/temp/SalahWidgetAttempt-05635b2db808446097634b50f3d27abb/download-ce30cfa908b3491f80a5c9ad8a4880f5.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "copy",
+          "value": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/healthy-caller/profile/SalahWidgetBundle-05635b2db808446097634b50f3d27abb/unpacked-42891347e46b489e8303763bd413a0c1/extension"
+        },
+        {
+          "effect": "open",
+          "value": "fixture://extensions"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "[OK] Reusing the same admitted asset bytes in this attempt.",
+        "",
+        "Chromium-family install steps:",
+        "  1. Open Extensions.",
+        "  2. Enable Developer mode.",
+        "  3. Click Load unpacked.",
+        "  4. Select this folder:",
+        "     /workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/healthy-caller/profile/SalahWidgetBundle-05635b2db808446097634b50f3d27abb/unpacked-42891347e46b489e8303763bd413a0c1/extension",
+        "[OK] Copied unpacked extension folder path to clipboard.",
+        "[WARN] Keep this unpacked folder while the browser uses it. This wizard never deletes an earlier manual bundle.",
+        "",
+        "Finish the browser's install prompt, then return here."
+      ]
+    },
+    {
+      "case": "partial download is not a ready cache hit and healthy retry recovers",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/partial-download",
+        "first": {
+          "items": [],
+          "error": "Acquisition did not complete; candidate is not ready."
+        },
+        "second": {
+          "items": [],
+          "error": "Acquisition did not complete; candidate is not ready."
+        }
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/partial-download/temp/SalahWidgetAttempt-fe1997b5d3e844c8a28944cfa81fe04d/download-2d60a7247a0f4c95ab8758a45a197393.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/partial-download/temp/SalahWidgetAttempt-fe1997b5d3e844c8a28944cfa81fe04d/download-22c7e8d6dc83447cbc78b22be116a818.partial",
+          "ordinal": 1
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/partial-download/temp/SalahWidgetAttempt-fe1997b5d3e844c8a28944cfa81fe04d/download-022d9ea43f6747e084a702afb28ae73a.partial",
+          "ordinal": 2
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest"
+      ]
+    },
+    {
+      "case": "same filename with changed source identity must reacquire",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/source-identity",
+        "first": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/source-identity/profile/SalahWidgetBundle-aa22abf01d494c839834218cbf6b0286/downloads/ab9c236af6144d6b93ced10aaa2a0126-tabliss-chromium.zip",
+        "other": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/source-identity/profile/SalahWidgetBundle-aa22abf01d494c839834218cbf6b0286/downloads/55e7bebe511f435685764b096069dfa5-tabliss-chromium.zip"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/source-identity/temp/SalahWidgetAttempt-aa22abf01d494c839834218cbf6b0286/download-19afe9c600d34c44a2c9dfbff51fb636.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/b/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/source-identity/temp/SalahWidgetAttempt-aa22abf01d494c839834218cbf6b0286/download-53371c004d254de9af17ba2d7ad7db00.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest"
+      ]
+    },
+    {
+      "case": "altered admitted bytes cannot be reused by filename",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/altered-bytes",
+        "reuse": {
+          "items": [
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/altered-bytes/profile/SalahWidgetBundle-e8956104f1154cf982aada821a159fad/downloads/0c2bdaa736de4c9d8dd3bffde7ee3551-tabliss-chromium.zip"
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/altered-bytes/temp/SalahWidgetAttempt-e8956104f1154cf982aada821a159fad/download-f3d607c82e9047e3885e475f1c604bda.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/altered-bytes/temp/SalahWidgetAttempt-e8956104f1154cf982aada821a159fad/download-b376c5c2bd93440f8e9fa88969a7f770.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest"
+      ]
+    },
+    {
+      "case": "failed replacement preserves already handed-off bundle",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/failed-replacement",
+        "oldBundle": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/failed-replacement/profile/SalahWidgetBundle-89b96244a7954620ac9555c6c1740e23/unpacked-c8076fc6832e463da0a7f32db98a683e/extension",
+        "replacement": {
+          "items": [],
+          "error": "Admitted artifact bytes changed."
+        }
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/failed-replacement/temp/SalahWidgetAttempt-89b96244a7954620ac9555c6c1740e23/download-7db885f7542d414aa70b3a995587f6a8.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest"
+      ]
+    },
+    {
+      "case": "successful restaging preserves already handed-off bundle",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/successful-replacement",
+        "oldBundle": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/successful-replacement/profile/SalahWidgetBundle-72cb014d3f014e6b91eca17678286b70/unpacked-135d08ac768f4a6aace3ac60a60717eb/extension",
+        "nextBundle": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/successful-replacement/profile/SalahWidgetBundle-72cb014d3f014e6b91eca17678286b70/unpacked-af80338a9f42456b98b6ad23071c3655/extension"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/successful-replacement/temp/SalahWidgetAttempt-72cb014d3f014e6b91eca17678286b70/download-216a5dd7cd814d689164571d13af9aa9.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest"
+      ]
+    },
+    {
+      "case": "unsafe late ZIP has no ready path or remaining member files",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/zip-preflight",
+        "result": {
+          "items": [],
+          "error": "Unsupported Windows archive name or alias."
+        },
+        "limit": "Final snapshot does not prove no transient writes or complete member preflight; native effect controls remain required."
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/zip-preflight/temp/SalahWidgetAttempt-fdc590c6bdf44544bdd4dd4d3c8159e7/download-722070ae811b4d54be8cdfab78454f71.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest"
+      ]
+    },
+    {
+      "case": "actual install caller refuses a filename-only malformed manifest",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-shape"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-shape/temp/SalahWidgetAttempt-bb8d7acf8b594f65ac7bb0ff4375abbb/download-647b774f16f74906896a6d71f233981a.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "open",
+          "value": "https://fixture.invalid/store"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "[WARN] JSON is malformed or contains ambiguous object keys.",
+        "[WARN] Falling back to official store page."
+      ]
+    },
+    {
+      "case": "malformed preset has no ready path or actual import handoff",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-malformed",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-malformed/temp/SalahWidgetAttempt-555590aa28d94b1f9f9c695fce06607f/preset-076f9493168e42518cf0b3b26822dbf9.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. JSON is malformed or contains ambiguous object keys.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "valid JSON with missing canonical widget is not import-ready",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-missing-target",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-missing-target/temp/SalahWidgetAttempt-48bae421a38e4e7f92cac2fc14ffe2f8/preset-861291776abc4f2093b090a6d0b4e01d.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Preset lacks the canonical widget identity.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "targeted configured preset preserves unrelated strings and Unicode",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-target-and-encoding",
+        "readyPath": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-target-and-encoding/profile/SalahWidgetBundle-8aff63215f5443bf8088b93ad64bd308/presets/42525e950fb14b4dabdc912db1b401e1-salah-widget.tablissng.json",
+        "src": "https://theislampill.github.io/salah_widget/#lat=24.7&lon=46.7&label=%24%28Get-Process%29%20%D8%B5%20%26%3Ctag%3E"
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-target-and-encoding/temp/SalahWidgetAttempt-8aff63215f5443bf8088b93ad64bd308/preset-0b0ec5f3eb984c398651b8d92e46c404.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "copy",
+          "value": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-target-and-encoding/profile/SalahWidgetBundle-8aff63215f5443bf8088b93ad64bd308/presets/42525e950fb14b4dabdc912db1b401e1-salah-widget.tablissng.json"
+        },
+        {
+          "effect": "open",
+          "value": "fixture://newtab"
+        }
+      ],
+      "messages": [
+        "[OK] Preset validated and staged for manual import.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "Preset file:",
+        "  /workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-target-and-encoding/profile/SalahWidgetBundle-8aff63215f5443bf8088b93ad64bd308/presets/42525e950fb14b4dabdc912db1b401e1-salah-widget.tablissng.json",
+        "[OK] Copied the preset file path to clipboard.",
+        "",
+        "Manual import path:",
+        "  1. Open a new tab controlled by TablissNG.",
+        "  2. Open TablissNG settings.",
+        "  3. Use Import/Restore settings.",
+        "  4. Select the preset JSON file above.",
+        "",
+        "This wizard does not directly write into browser extension storage.",
+        "That avoids corrupting profiles and avoids touching legacy Tabliss.",
+        "[WARN] Importing the preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "unadmitted existing preset path cannot enter import caller",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-unadmitted",
+        "import": {
+          "items": [],
+          "error": null
+        }
+      },
+      "events": [],
+      "messages": [
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] Preset path failed current admission readback; no import path will be copied or offered."
+      ]
+    },
+    {
+      "case": "case-colliding JSON keys are explicitly unsupported and never import-ready",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-case-collision",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-case-collision/temp/SalahWidgetAttempt-621456f0ceef4e01935f68f7795f729f/preset-b294c93c8d454bab9bdb0997acd36a0c.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. JSON is malformed or contains ambiguous object keys.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "large unrelated integer is preserved exactly or refused truthfully",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-large-integer",
+        "preset": {
+          "items": [
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-large-integer/profile/SalahWidgetBundle-cd2fd194c8e14269893cfd7858a657a7/presets/e1785287c5d045b1a959686bd6ce8ffd-salah-widget.tablissng.json"
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-large-integer/temp/SalahWidgetAttempt-cd2fd194c8e14269893cfd7858a657a7/preset-11ac35494417443db466f751caec89b6.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "copy",
+          "value": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-large-integer/profile/SalahWidgetBundle-cd2fd194c8e14269893cfd7858a657a7/presets/e1785287c5d045b1a959686bd6ce8ffd-salah-widget.tablissng.json"
+        },
+        {
+          "effect": "open",
+          "value": "fixture://newtab"
+        }
+      ],
+      "messages": [
+        "[OK] Preset validated and staged for manual import.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "Preset file:",
+        "  /workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-large-integer/profile/SalahWidgetBundle-cd2fd194c8e14269893cfd7858a657a7/presets/e1785287c5d045b1a959686bd6ce8ffd-salah-widget.tablissng.json",
+        "[OK] Copied the preset file path to clipboard.",
+        "",
+        "Manual import path:",
+        "  1. Open a new tab controlled by TablissNG.",
+        "  2. Open TablissNG settings.",
+        "  3. Use Import/Restore settings.",
+        "  4. Select the preset JSON file above.",
+        "",
+        "This wizard does not directly write into browser extension storage.",
+        "That avoids corrupting profiles and avoids touching legacy Tabliss.",
+        "[WARN] Importing the preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "ambiguous canonical iframe payload has no ready import path",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-ambiguous-iframe",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-ambiguous-iframe/temp/SalahWidgetAttempt-01ecafbfb07a4389b8a00700d6a3f7ef/preset-4001addd5cd645d38cb3f5b99e86c877.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Exception calling \"Load\" with \"1\" argument(s): \"There are multiple root elements. Line 8, position 11.\"",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "boolean canonical widget identity is not import-ready",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-boolean-identity",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-boolean-identity/temp/SalahWidgetAttempt-441d2698e36642ddaf4c5b393a2415ac/preset-b8246875231d4cd09ec862841e38e4fc.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Preset lacks the exact canonical widget identity keys and values.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "string manifest version is refused by actual install caller",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-string-version"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-string-version/temp/SalahWidgetAttempt-ba2d04a648cc4fc6aebc76e5358ab3eb/download-e3e32cbc6680400691318b536456f5fd.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "open",
+          "value": "https://fixture.invalid/store"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "[WARN] Unsupported extension manifest shape.",
+        "[WARN] Falling back to official store page."
+      ]
+    },
+    {
+      "case": "manifest required key is case-sensitive: manifest_version",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-key-manifest_version"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-key-manifest_version/temp/SalahWidgetAttempt-abc9cf1e9b27443cbc909fda0917156f/download-2408d85ef6734928b3e85e2df7e492b7.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "open",
+          "value": "https://fixture.invalid/store"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "[WARN] Required extension manifest key is missing or has the wrong case.",
+        "[WARN] Falling back to official store page."
+      ]
+    },
+    {
+      "case": "manifest required key is case-sensitive: name",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-key-name"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-key-name/temp/SalahWidgetAttempt-9f28acd92e844c20a0c4f23b9c8322d5/download-099403a60d494a74aaad8cbb4483e3ef.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "open",
+          "value": "https://fixture.invalid/store"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "[WARN] Required extension manifest key is missing or has the wrong case.",
+        "[WARN] Falling back to official store page."
+      ]
+    },
+    {
+      "case": "manifest required key is case-sensitive: version",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-key-version"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/manifest-key-version/temp/SalahWidgetAttempt-3cb9b7f4c9d347b381e327c0c2536eac/download-2437b51d8527444eb28de6ee4f648158.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "open",
+          "value": "https://fixture.invalid/store"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "[WARN] Required extension manifest key is missing or has the wrong case.",
+        "[WARN] Falling back to official store page."
+      ]
+    },
+    {
+      "case": "preset required key is case-sensitive: widget",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-widget",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-widget/temp/SalahWidgetAttempt-556a36ca3de545878d4775c6667dba2d/preset-96b7fe8aef33478c8029cea78e80e992.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Preset lacks the canonical widget identity.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "preset required key is case-sensitive: data",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-data",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-data/temp/SalahWidgetAttempt-5736177461e74633a7381be42a2f8575/preset-dccf57c2cb994557998ea81658c86c22.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Preset lacks the canonical widget identity.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "preset required key is case-sensitive: id",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-id",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-id/temp/SalahWidgetAttempt-06e35291431c468394ed61d8038f782f/preset-37089880ac8942018793adf147ad8656.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Preset lacks the exact canonical widget identity keys and values.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "preset required key is case-sensitive: key",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-key",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-key/temp/SalahWidgetAttempt-3b9c5cb121314a3daee93bb1c3717ec0/preset-fbb06cda81c94fae984cdbfae7e20380.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Preset lacks the exact canonical widget identity keys and values.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "preset required key is case-sensitive: input",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-input",
+        "preset": {
+          "items": [
+            null
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/preset-key-input/temp/SalahWidgetAttempt-fe3ae9be77e949efb3183ac402bafa84/preset-cfb960fe4bc64cf1aeb0eefcf0521f51.partial",
+          "ordinal": 0
+        }
+      ],
+      "messages": [
+        "[WARN] Preset is unavailable; no import path was admitted. Preset lacks the canonical iframe input.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.",
+        "[WARN] Importing a preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "scratch cleanup retains ancestor leases until deletion",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/cleanup-lease-order",
+        "disposals": [
+          {
+            "Path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/cleanup-lease-order/temp/SalahWidgetAttempt-f0cfd00c359140c1b25d767c2c9115d9",
+            "ScratchExists": true
+          },
+          {
+            "Path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/cleanup-lease-order/temp/SalahWidgetAttempt-f0cfd00c359140c1b25d767c2c9115d9",
+            "ScratchExists": false
+          },
+          {
+            "Path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/cleanup-lease-order/profile/SalahWidgetBundle-f0cfd00c359140c1b25d767c2c9115d9",
+            "ScratchExists": false
+          }
+        ]
+      },
+      "events": [],
+      "messages": []
+    },
+    {
+      "case": "dry helpers refuse warm cache and all artifact effects",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-60361fee8e78482b938896ccdd6af435-ص/dry-helper-boundary",
+        "guards": {
+          "init": {
+            "items": [],
+            "error": "Offline preview does not create staging directories."
+          },
+          "download": {
+            "items": [],
+            "error": "Offline preview does not download or return cached asset paths."
+          },
+          "extract": {
+            "items": [],
+            "error": "Offline preview does not extract assets."
+          },
+          "preset": {
+            "items": [
+              null
+            ],
+            "error": null
+          }
+        }
+      },
+      "events": [],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "[OK] Preset validated and staged for manual import.",
+        "[dry-run] Preset staging suppressed.",
+        "[dry-run] Would guide manual preset import; no artifact resolved.",
+        "[dry-run] Manual installation actions suppressed; release and paths unresolved."
+      ]
+    }
+  ]
+}

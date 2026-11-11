@@ -1,0 +1,265 @@
+{
+  "source": "/workspace/scratch/b8359a7e27bf/source/install.sh",
+  "source_sha256": "9c3fd523bbd77f3080097ddbd142b7e966795befd008daa36fbfb9f8f1ca1cee",
+  "test_sha256": "53f137b41c3726dbc3bbce2f715e1eaa85137376d0126daf0cf3425887839c65",
+  "fixture": "/tmp/salah-staging-native-iu_p90b5",
+  "host": {
+    "system": "Linux",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "uid": 1000,
+    "bash": "/bin/bash",
+    "bash_version": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"
+  },
+  "claims": "native filesystem lifetime and admission only; no browser/installation/reboot claim",
+  "results": [
+    {
+      "case": "actual native same-attempt root/identity reuse",
+      "pass_": true,
+      "detail": {
+        "first": [
+          "/tmp/salah-staging-native-iu_p90b5/same-attempt/scratch/salah-widget-download.h3f1n239",
+          "39:103958:1000:700",
+          "/tmp/salah-staging-native-iu_p90b5/same-attempt/home with space مدينة/salah-widget-install.IRSr40wK",
+          "39:103959:1000:700"
+        ],
+        "second": [
+          "/tmp/salah-staging-native-iu_p90b5/same-attempt/scratch/salah-widget-download.h3f1n239",
+          "39:103958:1000:700",
+          "/tmp/salah-staging-native-iu_p90b5/same-attempt/home with space مدينة/salah-widget-install.IRSr40wK",
+          "39:103959:1000:700"
+        ]
+      }
+    },
+    {
+      "case": "actual native next-attempt scratch and manual roots differ",
+      "pass_": true,
+      "detail": {
+        "first": [
+          "/tmp/salah-staging-native-iu_p90b5/fresh-attempts/scratch/salah-widget-download.iFXAzw15",
+          "39:103968:1000:700",
+          "/tmp/salah-staging-native-iu_p90b5/fresh-attempts/home with space مدينة/salah-widget-install.uAG9OPJp",
+          "39:103969:1000:700"
+        ],
+        "second": [
+          "/tmp/salah-staging-native-iu_p90b5/fresh-attempts/scratch/salah-widget-download.9AnvhuXX",
+          "39:103974:1000:700",
+          "/tmp/salah-staging-native-iu_p90b5/fresh-attempts/home with space مدينة/salah-widget-install.gAuhMQqg",
+          "39:103975:1000:700"
+        ]
+      }
+    },
+    {
+      "case": "actual native retained consumer after exit",
+      "pass_": true,
+      "detail": {
+        "scratch_identity": "39:103984:1000:700",
+        "retained": {
+          "path": "/tmp/salah-staging-native-iu_p90b5/healthy-exit/home with space مدينة/salah-widget-install.GgXfo8mY",
+          "device": 39,
+          "inode": 103985,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o700",
+          "symlink": false
+        },
+        "fresh_consumer": {
+          "exit": 0,
+          "stdout": "retained manual bytes\n"
+        },
+        "source_exit": 0
+      }
+    },
+    {
+      "case": "actual native retained consumer after failure",
+      "pass_": true,
+      "detail": {
+        "scratch_identity": "39:103995:1000:700",
+        "retained": {
+          "path": "/tmp/salah-staging-native-iu_p90b5/healthy-failure/home with space مدينة/salah-widget-install.lyKZIHgK",
+          "device": 39,
+          "inode": 103996,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o700",
+          "symlink": false
+        },
+        "fresh_consumer": {
+          "exit": 0,
+          "stdout": "retained manual bytes\n"
+        },
+        "source_exit": 1
+      }
+    },
+    {
+      "case": "actual native retained consumer after INT",
+      "pass_": true,
+      "detail": {
+        "scratch_identity": "39:104006:1000:700",
+        "retained": {
+          "path": "/tmp/salah-staging-native-iu_p90b5/healthy-INT/home with space مدينة/salah-widget-install.4DKYtegW",
+          "device": 39,
+          "inode": 104007,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o700",
+          "symlink": false
+        },
+        "fresh_consumer": {
+          "exit": 0,
+          "stdout": "retained manual bytes\n"
+        },
+        "source_exit": 130
+      }
+    },
+    {
+      "case": "actual native retained consumer after TERM",
+      "pass_": true,
+      "detail": {
+        "scratch_identity": "39:104017:1000:700",
+        "retained": {
+          "path": "/tmp/salah-staging-native-iu_p90b5/healthy-TERM/home with space مدينة/salah-widget-install.jvmRvF94",
+          "device": 39,
+          "inode": 104018,
+          "uid": 1000,
+          "gid": 1000,
+          "mode": "0o700",
+          "symlink": false
+        },
+        "fresh_consumer": {
+          "exit": 0,
+          "stdout": "retained manual bytes\n"
+        },
+        "source_exit": 143
+      }
+    },
+    {
+      "case": "parse-valid predictable roots complete twice and fail freshness",
+      "pass_": true,
+      "detail": {
+        "mutant_processes": [
+          0,
+          0
+        ],
+        "observed_reused_scratch": "/tmp/salah-staging-native-iu_p90b5/predictable-mutant/scratch/salah-widget-download.fixed",
+        "observed_reused_manual": "/tmp/salah-staging-native-iu_p90b5/predictable-mutant/home with space مدينة/salah-widget-install.fixed",
+        "oracle": "Both fresh-attempt paths must differ"
+      }
+    },
+    {
+      "case": "parse-valid symlink-admission mutant reaches wrong actual guard result",
+      "pass_": true,
+      "detail": {
+        "healthy_exit": 1,
+        "mutant_exit": 0,
+        "oracle": "Actual owned-path helper must reject foreign symlink before callers"
+      }
+    },
+    {
+      "case": "parse-valid retained-delete mutant completes but loses consumer bytes",
+      "pass_": true,
+      "detail": {
+        "mutant_exit": 0,
+        "missing_manual_directory": "/tmp/salah-staging-native-iu_p90b5/retained-delete-mutant/home with space مدينة/salah-widget-install.NImcvMeL",
+        "oracle": "Fresh consumer must still read manual bytes after normal process exit"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "name": "same-attempt",
+      "exit": 0,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/same-attempt/scratch/salah-widget-download.h3f1n239\n39:103958:1000:700\n/tmp/salah-staging-native-iu_p90b5/same-attempt/home with space مدينة/salah-widget-install.IRSr40wK\n39:103959:1000:700\n/tmp/salah-staging-native-iu_p90b5/same-attempt/scratch/salah-widget-download.h3f1n239\n39:103958:1000:700\n/tmp/salah-staging-native-iu_p90b5/same-attempt/home with space مدينة/salah-widget-install.IRSr40wK\n39:103959:1000:700\n",
+      "stderr": "",
+      "script_sha256": "41f422e415d5a28a9b5ce0c8c5fb7de7a366a67790f720ff727698792a905180",
+      "syntax_exit": 0
+    },
+    {
+      "name": "fresh-attempts-first",
+      "exit": 0,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/fresh-attempts/scratch/salah-widget-download.iFXAzw15\n39:103968:1000:700\n/tmp/salah-staging-native-iu_p90b5/fresh-attempts/home with space مدينة/salah-widget-install.uAG9OPJp\n39:103969:1000:700\n",
+      "stderr": "",
+      "script_sha256": "46c906a57606f03c7b2268f19a481d5eaf3282cc042d8f26aad820b0a0aea0e9",
+      "syntax_exit": 0
+    },
+    {
+      "name": "fresh-attempts-second",
+      "exit": 0,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/fresh-attempts/scratch/salah-widget-download.9AnvhuXX\n39:103974:1000:700\n/tmp/salah-staging-native-iu_p90b5/fresh-attempts/home with space مدينة/salah-widget-install.gAuhMQqg\n39:103975:1000:700\n",
+      "stderr": "",
+      "script_sha256": "46c906a57606f03c7b2268f19a481d5eaf3282cc042d8f26aad820b0a0aea0e9",
+      "syntax_exit": 0
+    },
+    {
+      "name": "healthy-exit",
+      "exit": 0,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/healthy-exit/scratch/salah-widget-download.Xk6XhbDi\n39:103984:1000:700\n/tmp/salah-staging-native-iu_p90b5/healthy-exit/home with space مدينة/salah-widget-install.GgXfo8mY\n39:103985:1000:700\n",
+      "stderr": "",
+      "script_sha256": "25e4c6c61198166d5668542369849bfa76084e79972a3424758a210f9c8af68a",
+      "syntax_exit": 0
+    },
+    {
+      "name": "healthy-failure",
+      "exit": 1,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/healthy-failure/scratch/salah-widget-download.1H0p3VBp\n39:103995:1000:700\n/tmp/salah-staging-native-iu_p90b5/healthy-failure/home with space مدينة/salah-widget-install.lyKZIHgK\n39:103996:1000:700\n",
+      "stderr": "[WARN] Partial bundle retained; manual actions remain pending: /tmp/salah-staging-native-iu_p90b5/healthy-failure/home with space مدينة/salah-widget-install.lyKZIHgK\n",
+      "script_sha256": "f039312b30ee030c60c06c6dea8b0097d800b3207c7f45dede45ea4b7489495e",
+      "syntax_exit": 0
+    },
+    {
+      "name": "healthy-INT",
+      "exit": 130,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/healthy-INT/scratch/salah-widget-download.AJ849vYx\n39:104006:1000:700\n/tmp/salah-staging-native-iu_p90b5/healthy-INT/home with space مدينة/salah-widget-install.4DKYtegW\n39:104007:1000:700\n",
+      "stderr": "[WARN] Partial bundle retained; manual actions remain pending: /tmp/salah-staging-native-iu_p90b5/healthy-INT/home with space مدينة/salah-widget-install.4DKYtegW\n",
+      "script_sha256": "4aac2b36772513965082378aa9c5e6b04ecadf04544bcfffffa086d6fa572629",
+      "syntax_exit": 0
+    },
+    {
+      "name": "healthy-TERM",
+      "exit": 143,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/healthy-TERM/scratch/salah-widget-download.yrv5Qhkp\n39:104017:1000:700\n/tmp/salah-staging-native-iu_p90b5/healthy-TERM/home with space مدينة/salah-widget-install.jvmRvF94\n39:104018:1000:700\n",
+      "stderr": "[WARN] Partial bundle retained; manual actions remain pending: /tmp/salah-staging-native-iu_p90b5/healthy-TERM/home with space مدينة/salah-widget-install.jvmRvF94\n",
+      "script_sha256": "87252aa106760fde8e357f374da24f711e93ac858da342bf849f318db797c009",
+      "syntax_exit": 0
+    },
+    {
+      "name": "predictable-mutant-first",
+      "exit": 0,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/predictable-mutant/scratch/salah-widget-download.fixed\n39:104028:1000:700\n/tmp/salah-staging-native-iu_p90b5/predictable-mutant/home with space مدينة/salah-widget-install.fixed\n39:104029:1000:700\n",
+      "stderr": "",
+      "script_sha256": "180cf067d3848d55c6e8dee1f1c8de7df656303b8f53585856d6f0d279ac418c",
+      "syntax_exit": 0
+    },
+    {
+      "name": "predictable-mutant-second",
+      "exit": 0,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/predictable-mutant/scratch/salah-widget-download.fixed\n39:104034:1000:700\n/tmp/salah-staging-native-iu_p90b5/predictable-mutant/home with space مدينة/salah-widget-install.fixed\n39:104029:1000:700\n",
+      "stderr": "",
+      "script_sha256": "180cf067d3848d55c6e8dee1f1c8de7df656303b8f53585856d6f0d279ac418c",
+      "syntax_exit": 0
+    },
+    {
+      "name": "symlink-healthy",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "[ERROR] Symlink in staged path: /tmp/salah-staging-native-iu_p90b5/symlink-healthy/home with space مدينة/salah-widget-install.s76IS3Hv/presets/foreign-link\n[WARN] Partial bundle retained; manual actions remain pending: /tmp/salah-staging-native-iu_p90b5/symlink-healthy/home with space مدينة/salah-widget-install.s76IS3Hv\n",
+      "script_sha256": "38e6642cc69465433ac8fcf9411adaf8d77ee18864c93e0ea447e12fdd82fe58",
+      "syntax_exit": 0
+    },
+    {
+      "name": "symlink-mutant",
+      "exit": 0,
+      "stdout": "",
+      "stderr": "",
+      "script_sha256": "a6b76062b2ffe14735062e9817678709c6e3745806e270b36f543ba26167efb2",
+      "syntax_exit": 0
+    },
+    {
+      "name": "retained-delete-mutant",
+      "exit": 0,
+      "stdout": "/tmp/salah-staging-native-iu_p90b5/retained-delete-mutant/scratch/salah-widget-download.McMbajba\n39:104064:1000:700\n/tmp/salah-staging-native-iu_p90b5/retained-delete-mutant/home with space مدينة/salah-widget-install.NImcvMeL\n39:104065:1000:700\n",
+      "stderr": "",
+      "script_sha256": "435ec47f1e081c168888b685cc0331b6f581ffbd3265ceaae07d364e59c34d4d",
+      "syntax_exit": 0
+    }
+  ]
+}

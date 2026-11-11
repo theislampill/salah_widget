@@ -202,6 +202,7 @@ def main():
             files = ["install-host-bootstrap.ps1", "install-powershell.ps1", "install-powershell-guards.ps1", "install-discovery.ps1"]
             if args.phase in ("r0015", "r0016"):
                 files.append("install-powershell-transactions.ps1")
+                files.append("install-staging-windows.ps1")
             if args.phase == "r0016":
                 files.append("install-preview.ps1")
             for test in files:

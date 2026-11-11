@@ -1,0 +1,135 @@
+--- a/install.ps1
++++ b/install.ps1
+@@ -62,7 +62,7 @@
+ namespace SalahInstaller {
+   public sealed class PathFacts {
+     public string Path, Identity, Owner;
+-    public bool Directory, Private, TrustedParent, TrustedAncestor;
++    public bool Directory, Private, TrustedParent;
+     public long Length;
+     public uint Links;
+   }
+@@ -95,17 +95,6 @@
+     [DllImport("kernel32.dll", CharSet=CharSet.Unicode, SetLastError=true)]
+     static extern bool GetVolumeInformationW(string root, StringBuilder name, uint nameSize, out uint serial, out uint maximumComponent, out uint flags, StringBuilder format, uint formatSize);
+     static Exception Error(string operation) { return new Win32Exception(Marshal.GetLastWin32Error(), operation); }
+-    static string installerSid;
+-    static bool TrustedOwner(string owner, string user) {
+-      if (owner==user || owner=="S-1-5-18" || owner=="S-1-5-32-544") return true;
+-      // Resolve the local OS servicing principal only when needed. Do not
+-      // require self-ownership of the Windows volume/Users ancestors.
+-      if (installerSid==null) {
+-        try { installerSid=((SecurityIdentifier)new NTAccount("NT SERVICE", "TrustedInstaller").Translate(typeof(SecurityIdentifier))).Value; }
+-        catch { installerSid=""; }
+-      }
+-      return installerSid.Length!=0 && owner==installerSid;
+-    }
+     static readonly uint[] CrcTable = MakeCrcTable();
+     static uint[] MakeCrcTable() {
+       uint[] table = new uint[256];
+@@ -209,23 +198,19 @@
+         RawSecurityDescriptor security = new RawSecurityDescriptor(bytes, 0);
+         string actualOwner = security.Owner == null ? "" : security.Owner.Value;
+         bool parentSafe = actualOwner == sid && security.DiscretionaryAcl != null;
+-        bool ancestorSafe = TrustedOwner(actualOwner,sid) && security.DiscretionaryAcl != null;
+         bool privateAcl = parentSafe && (security.ControlFlags & ControlFlags.DiscretionaryAclProtected) != 0 && security.DiscretionaryAcl.Count == 1;
+         if (security.DiscretionaryAcl != null) foreach (GenericAce generic in security.DiscretionaryAcl) {
+           CommonAce ace = generic as CommonAce;
+-          if (ace == null || ace.IsCallback) { parentSafe = false; ancestorSafe = false; privateAcl = false; continue; }
++          if (ace == null || ace.IsCallback) { parentSafe = false; privateAcl = false; continue; }
+           bool allowed = ace.AceQualifier == AceQualifier.AccessAllowed;
+           bool inheritOnly = (ace.AceFlags & AceFlags.InheritOnly) != 0;
+           string principal = ace.SecurityIdentifier.Value;
+           uint mask = unchecked((uint)ace.AccessMask);
+           if (allowed && !inheritOnly && (mask & 0x500d0156u) != 0 && principal != sid && principal != "S-1-5-18" && principal != "S-1-5-32-544") parentSafe = false;
+-          // Earlier ancestors may grant create-file/create-directory (2/4)
+-          // without granting replacement, attribute or ACL/owner authority.
+-          if (allowed && !inheritOnly && (mask & 0x500d0150u) != 0 && principal != sid && principal != "S-1-5-18" && principal != "S-1-5-32-544" && !TrustedOwner(principal,sid)) ancestorSafe = false;
+           if (!allowed || inheritOnly || principal != sid || (mask & 0x1f01ffu) != 0x1f01ffu) privateAcl = false;
+         }
+         return new PathFacts { Path=finalPath, Identity=info.Volume.ToString("x8") + ":" + info.IndexHigh.ToString("x8") + info.IndexLow.ToString("x8"), Owner=actualOwner,
+-          Directory=(info.Attributes & 0x10) != 0, Private=privateAcl, TrustedParent=parentSafe, TrustedAncestor=ancestorSafe, Length=((long)info.SizeHigh << 32) | info.SizeLow, Links=info.Links };
++          Directory=(info.Attributes & 0x10) != 0, Private=privateAcl, TrustedParent=parentSafe, Length=((long)info.SizeHigh << 32) | info.SizeLow, Links=info.Links };
+       } finally { if (descriptor != IntPtr.Zero) LocalFree(descriptor); }
+     }
+     public static PathFacts Inspect(string path, string sid) {
+@@ -287,7 +272,6 @@
+     foreach ($component in $paths) {
+         $lease = Open-StagingDirectoryLease $component
+         [void]$script:StagingAttempt.Leases.Add($lease)
+-        if (-not $lease.Facts.TrustedAncestor) { throw 'Staging ancestor permits foreign replacement or has an untrusted owner.' }
+         $last = $lease.Facts
+     }
+     if (-not $last.TrustedParent) { throw 'Staging parent is not owned by this user with trusted write access.' }
+@@ -421,11 +405,9 @@
+         if ($attempt.Status -ne 'active' -or -not $attempt.Scratch) { throw 'No complete scratch custody; partial paths retained.' }
+         $null = Assert-OwnedStagingPath $attempt.Scratch.Path
+         $null = @(Get-OwnedStagingFiles $attempt.Scratch.Path)
+-        # Release the scratch directory's own delete-denying handle only.
+-        # Keep every ancestor and retained-root lease until deletion completes.
+-        foreach ($lease in $attempt.Leases) {
+-            if ($lease.Facts.Path.Equals($attempt.Scratch.Path,[StringComparison]::OrdinalIgnoreCase)) { $lease.Dispose() }
+-        }
++        # All identities and descendants were checked while directory leases
++        # prevented replacement. Close leases before removing only this scratch.
++        foreach ($lease in $attempt.Leases) { $lease.Dispose() }
+         [IO.Directory]::Delete($attempt.Scratch.Path, $true)
+     } catch { Write-Warn ('Scratch cleanup skipped; partial material retained: ' + $_.Exception.Message) }
+     finally {
+@@ -730,27 +712,18 @@
+         return $result
+     }
+     # ConvertFrom-Json can unwrap a singleton root array into one object.
+-    if ($raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $null -eq $data.PSObject.Properties['addons'] -or $data.PSObject.Properties['addons'].Name -cne 'addons' -or -not ($data.addons -is [array])) {
++    if ($raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $null -eq $data.PSObject.Properties['addons'] -or -not ($data.addons -is [array])) {
+         $result.Reason='metadata-unsupported'
+         return $result
+     }
+     $supported=$true
+     foreach ($addon in $data.addons) {
+         if (-not ($addon -is [pscustomobject])) { $supported=$false; break }
+-        # PowerShell member lookup ignores case; Firefox JSON field names do not.
+-        foreach ($key in 'id','name','defaultLocale') {
+-            $property=$addon.PSObject.Properties[$key]
+-            if ($null -ne $property -and $property.Name -cne $key) { $supported=$false }
+-        }
+         foreach ($key in 'id','name') {
+             if ($null -ne $addon.$key -and -not ($addon.$key -is [string])) { $supported=$false }
+         }
+         $locale=$addon.defaultLocale
+         if ($null -ne $locale -and (-not ($locale -is [pscustomobject]) -or ($null -ne $locale.name -and -not ($locale.name -is [string])))) { $supported=$false }
+-        if ($locale -is [pscustomobject]) {
+-            $localeName=$locale.PSObject.Properties['name']
+-            if ($null -ne $localeName -and $localeName.Name -cne 'name') { $supported=$false }
+-        }
+         if (-not $supported) { break }
+         $parts = @()
+         if ($addon.id) { $parts += $addon.id }
+@@ -920,14 +893,7 @@
+ 
+ function Assert-ExtensionManifest([string]$Raw) {
+     $data=ConvertFrom-SupportedJson $Raw
+-    if ($Raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject])) { throw 'Unsupported extension manifest shape.' }
+-    $required=@{}
+-    foreach ($name in @('manifest_version','name','version')) {
+-        $property=@($data.PSObject.Properties | Where-Object {$_.Name -ceq $name})
+-        if ($property.Count -ne 1) { throw 'Required extension manifest key is missing or has the wrong case.' }
+-        $required[$name]=$property[0].Value
+-    }
+-    if (-not ($required.manifest_version -is [int] -or $required.manifest_version -is [long]) -or $required.manifest_version -notin @(2,3) -or -not ($required.name -is [string]) -or [string]::IsNullOrWhiteSpace($required.name) -or -not ($required.version -is [string]) -or [string]::IsNullOrWhiteSpace($required.version)) { throw 'Unsupported extension manifest shape.' }
++    if ($Raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $data.manifest_version -is [bool] -or $data.manifest_version -notin @(2,3) -or -not ($data.name -is [string]) -or [string]::IsNullOrWhiteSpace($data.name) -or -not ($data.version -is [string]) -or [string]::IsNullOrWhiteSpace($data.version)) { throw 'Unsupported extension manifest shape.' }
+ }
+ 
+ function Test-ExtensionArchive([string]$Path, [string]$ExtractRoot) {
+@@ -1116,10 +1082,7 @@
+     if ($Raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject])) { throw 'Preset must be a supported JSON object.' }
+     $widget=@($data.PSObject.Properties | Where-Object {$_.Name -ceq 'widget/orpul7IDXSSP'})
+     $payload=@($data.PSObject.Properties | Where-Object {$_.Name -ceq 'data/orpul7IDXSSP'})
+-    if ($widget.Count -ne 1 -or $payload.Count -ne 1 -or -not ($widget[0].Value -is [pscustomobject]) -or -not ($payload[0].Value -is [pscustomobject])) { throw 'Preset lacks the canonical widget identity.' }
+-    $id=@($widget[0].Value.PSObject.Properties | Where-Object {$_.Name -ceq 'id'})
+-    $key=@($widget[0].Value.PSObject.Properties | Where-Object {$_.Name -ceq 'key'})
+-    if ($id.Count -ne 1 -or $key.Count -ne 1 -or -not ($id[0].Value -is [string]) -or -not ($key[0].Value -is [string]) -or $id[0].Value -cne 'orpul7IDXSSP' -or $key[0].Value -cne 'widget/html') { throw 'Preset lacks the exact canonical widget identity keys and values.' }
++    if ($widget.Count -ne 1 -or $payload.Count -ne 1 -or -not ($widget[0].Value -is [pscustomobject]) -or $widget[0].Value.id -cne 'orpul7IDXSSP' -or $widget[0].Value.key -cne 'widget/html' -or -not ($payload[0].Value -is [pscustomobject])) { throw 'Preset lacks the canonical widget identity.' }
+     $input=@($payload[0].Value.PSObject.Properties | Where-Object {$_.Name -ceq 'input'})
+     if ($input.Count -ne 1 -or -not ($input[0].Value -is [string])) { throw 'Preset lacks the canonical iframe input.' }
+     $settings=New-Object Xml.XmlReaderSettings

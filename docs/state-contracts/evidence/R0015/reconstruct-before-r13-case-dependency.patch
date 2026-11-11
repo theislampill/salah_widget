@@ -1,0 +1,31 @@
+--- a/install.ps1
++++ b/install.ps1
+@@ -730,27 +730,18 @@
+         return $result
+     }
+     # ConvertFrom-Json can unwrap a singleton root array into one object.
+-    if ($raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $null -eq $data.PSObject.Properties['addons'] -or $data.PSObject.Properties['addons'].Name -cne 'addons' -or -not ($data.addons -is [array])) {
++    if ($raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $null -eq $data.PSObject.Properties['addons'] -or -not ($data.addons -is [array])) {
+         $result.Reason='metadata-unsupported'
+         return $result
+     }
+     $supported=$true
+     foreach ($addon in $data.addons) {
+         if (-not ($addon -is [pscustomobject])) { $supported=$false; break }
+-        # PowerShell member lookup ignores case; Firefox JSON field names do not.
+-        foreach ($key in 'id','name','defaultLocale') {
+-            $property=$addon.PSObject.Properties[$key]
+-            if ($null -ne $property -and $property.Name -cne $key) { $supported=$false }
+-        }
+         foreach ($key in 'id','name') {
+             if ($null -ne $addon.$key -and -not ($addon.$key -is [string])) { $supported=$false }
+         }
+         $locale=$addon.defaultLocale
+         if ($null -ne $locale -and (-not ($locale -is [pscustomobject]) -or ($null -ne $locale.name -and -not ($locale.name -is [string])))) { $supported=$false }
+-        if ($locale -is [pscustomobject]) {
+-            $localeName=$locale.PSObject.Properties['name']
+-            if ($null -ne $localeName -and $localeName.Name -cne 'name') { $supported=$false }
+-        }
+         if (-not $supported) { break }
+         $parts = @()
+         if ($addon.id) { $parts += $addon.id }

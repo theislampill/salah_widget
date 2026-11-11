@@ -61,13 +61,22 @@ $InstallSource='github'; $NoOpen=$false
 $fixturePath=Join-Path ([IO.Path]::GetTempPath()) ('fixture path '+[char]0x0645+' asset.zip')
 function Download-Asset($Asset) { $script:downloadedAssets += ,$Asset; $script:events += ('download:'+$Asset.name); return $fixturePath }
 function Expand-ChromiumAsset([string]$ZipPath) { Assert ($ZipPath -ceq $fixturePath) 'Path altered'; $script:events += 'extract'; return ($fixturePath+' unpacked') }
+# Selector/caller fixture boundary only: these fake paths are deliberately not
+# filesystem admission evidence. The R0015 transaction suite exercises the real
+# guard, bytes and native custody. Preserve the actual caller's guard arguments.
+function Get-AdmittedArtifact([string]$Path,[string]$Kind) {
+    $expected=if($Kind -eq 'asset'){$fixturePath}elseif($Kind -eq 'unpacked'){$fixturePath+' unpacked'}else{throw 'Unexpected admission kind in selector fixture'}
+    Assert ($Path -ceq $expected) 'Caller changed the selected artifact path before admission'
+    $script:admissionCalls+=,[pscustomobject]@{path=$Path;kind=$Kind}
+    return [pscustomobject]@{State='published'}
+}
 function Copy-Text([string]$Text) { $script:events += ('copy:'+$Text); return $true }
 function Open-TargetUrl($Target,[string]$Url) { $script:events += ('open:'+$Url) }
 function Read-Host([string]$Prompt) { $script:events += ('prompt:'+$Prompt); return '' }
 function Write-Warn([string]$Text) { $script:events += ('warning:'+$Text) }
 foreach ($family in 'chromium','firefox') {
     Check ('actual install caller '+$family) {
-        $script:events=@(); $script:downloadedAssets=@(); $script:fixtureRelease=Release @('tabliss-chromium.zip','tabliss-firefox-signed.xpi')
+        $script:events=@(); $script:downloadedAssets=@(); $script:admissionCalls=@(); $script:fixtureRelease=Release @('tabliss-chromium.zip','tabliss-firefox-signed.xpi')
         $target=[pscustomobject]@{Browser='Fixture';Family=$family;Config=[pscustomobject]@{StoreUrl='https://store.invalid'; ManagerUrl='fixture://manager'}}
         $null=Install-TablissNG $target
         $expected=if($family -eq 'chromium'){'tabliss-chromium.zip'}else{'tabliss-firefox-signed.xpi'}
@@ -76,6 +85,8 @@ foreach ($family in 'chromium','firefox') {
         Assert ($script:downloadedAssets[0].browser_download_url -ceq ('https://example.invalid/'+$expected)) 'Download URL altered'
         Assert (-not ($script:events -contains 'open:https://store.invalid')) 'Selector failure hidden by store fallback'
         if($family -eq 'chromium'){ Assert ($script:events -contains 'extract') 'Actual extraction caller not reached' }
+        Assert (@($script:admissionCalls|Where-Object {$_.kind -eq 'asset'}).Count -eq 1) 'Actual caller bypassed asset admission'
+        Assert (@($script:admissionCalls|Where-Object {$_.kind -eq 'unpacked'}).Count -eq $(if($family -eq 'chromium'){1}else{0})) 'Actual caller changed unpacked admission boundary'
         $expectedCopy=if($family -eq 'chromium'){$fixturePath+' unpacked'}else{$fixturePath}
         Assert (@($script:events | Where-Object {$_ -like 'copy:*'}).Count -eq 1 -and $script:events -contains ('copy:'+$expectedCopy)) 'Copied path differs or count wrong'
         Assert (@($script:events | Where-Object {$_ -like 'open:*'}).Count -eq 1 -and $script:events -contains 'open:fixture://manager') 'Wrong manager URL or count'
@@ -89,10 +100,11 @@ foreach($row in @(
 )) {
     $caseName=$row[0]; $releaseInput=$row[1]; $expectedReason=$row[2]
     Check ('actual caller fallback '+$caseName) {
-        $script:fixtureRelease=$releaseInput; $script:events=@(); $script:downloadedAssets=@()
+        $script:fixtureRelease=$releaseInput; $script:events=@(); $script:downloadedAssets=@(); $script:admissionCalls=@()
         $target=[pscustomobject]@{Browser='Fixture';Family='chromium';Config=[pscustomobject]@{StoreUrl='https://store.invalid';ManagerUrl='fixture://manager'}}
         $null=Install-TablissNG $target
         Assert ($script:downloadedAssets.Count -eq 0 -and -not ($script:events -contains 'extract') -and -not ($script:events -match '^copy:')) 'Fallback performed asset effects'
+        Assert ($script:admissionCalls.Count -eq 0) 'Selector failure reached artifact admission'
         Assert (($script:events -join '|') -ceq ('warning:'+$expectedReason+'|warning:Falling back to official store page.|open:https://store.invalid|prompt:Press Enter after TablissNG is installed')) ('Wrong fallback events: '+($script:events -join '|'))
     }
 }
