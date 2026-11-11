@@ -6580,11 +6580,11 @@ function applyTheme(M){
 // font service can never delay the card. Gecko gives font-display:swap faces a short block period
 // (gfx.downloadable_fonts.fallback_delay_short, ~100 ms) in which text resolving to a still-loading face
 // is painted invisible; landing on already-painted text, that blanked the card's web-font text. So the
-// custom properties keep the fallback stacks until the faces visible UI uses have loaded (Inter
-// 400/500/600 and Fraunces 600; heavier Inter weights match the 600 face), then html.webfonts adds the
-// families and the .cn fit is invalidated as for any font change. A rejected or empty load fails closed:
+// custom properties keep the fallback stacks until the faces visible UI uses have loaded (Inter 400/600
+// and Fraunces 600; heavier Inter weights match the 600 face, and the only 500 weight is monospace),
+// then html.webfonts adds the families and the .cn fit is invalidated as for any font change. A rejected or empty load fails closed:
 // fallback stays for this page life, with no retry. A stylesheet that never loads requests nothing.
-const WEBFONT_FACES=Object.freeze(["400 14px Inter","500 14px Inter","600 14px Inter","600 14px Fraunces"]);
+const WEBFONT_FACES=Object.freeze(["400 14px Inter","600 14px Inter","600 14px Fraunces"]);
 let _webfontsRequested=false;
 function requestWebfonts(){
   if(_webfontsRequested) return;
