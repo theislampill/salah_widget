@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'">
 <title>R0017 isolated widget fixture</title>
+<link rel="icon" type="image/svg+xml" href="r0017-smoke-icon.svg">
 </head>
 <body><pre id="fixture-error">Loading verified widget source…</pre>
 <script src="native-script-contract.js"></script>
@@ -159,7 +160,8 @@
     }
     const base=doc.createElement("base");base.href=rootURL.href;
     const csp=doc.createElement("meta");csp.httpEquiv="Content-Security-Policy";csp.content=policy;
-    doc.head.prepend(csp,base);
+    const icon=doc.createElement("link");icon.rel="icon";icon.type="image/svg+xml";icon.href=new URL("tests/r0017-smoke-icon.svg",rootURL).href;
+    doc.head.prepend(csp,base,icon);
     let html="<!doctype html>"+doc.documentElement.outerHTML;
     const unchanged=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
     if(unchanged.length!==scripts.length||unchanged.some((s,i)=>s[2]!==scripts[i].body))throw Error("Widget script body changed during document wrapping");
