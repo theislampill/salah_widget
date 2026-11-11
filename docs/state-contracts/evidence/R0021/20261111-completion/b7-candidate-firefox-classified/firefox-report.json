@@ -1,0 +1,304 @@
+{
+  "schema": "r0021-native/3",
+  "engine": "firefox",
+  "headed": false,
+  "out": "b7-candidate-firefox-classified",
+  "complete": true,
+  "evidenceLevel": "page-level only (no CDP request log in this engine)",
+  "root": "repository",
+  "policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'",
+  "policyDelivery": "response header on index.html",
+  "served": {
+    "index.html": "0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb",
+    "real-sky/native-sky.js": "d5780cbf840d35231c6c7202e1abd93796f9a4633a4eed648f237b70c8d172f8",
+    "real-sky/native-worker.js": "30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745",
+    "real-sky/native-data.js": "649d7ecc4fae05d655c934c4b2e69467427b9d215e0f1e6ae95701364e29167f",
+    "moon/moon-host.js": "fee33628b4a0173f973af34a10181f657b74114d2b1e0df7fa373c5833819b20",
+    "moon/moon-worker.js": "62b8753d518d8047e268c86d378de76c70d4b4e33b4467283feab06e3f3bb42e",
+    "config.js": "719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80"
+  },
+  "options": {
+    "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4",
+    "cells": [
+      "retirement-synthetic",
+      "retirement-bfcache"
+    ],
+    "cyclesWaitMs": 200,
+    "cyclesSettleMs": 500,
+    "cyclesFreshPage": false,
+    "composedWaitMs": 60000,
+    "inPagePrayer": true,
+    "enableBfcache": false,
+    "reducedMotion": false
+  },
+  "bfcache": "disabled by the Playwright Firefox build: its playwright.cfg sets fission.bfcacheInParent=false and states that BFCache is also disabled in content via a docShell property",
+  "cells": {
+    "retirement-synthetic": {
+      "pass": false,
+      "acceptance": false,
+      "role": "diagnostic: synthetic pagehide into a visible, fully active document (unsupported lifecycle); never counted as pass",
+      "cleanRetirement": false,
+      "maskChangingAtPagehide": true,
+      "maskPrefixes": [
+        "url(\"data:image/png;base64,iVBORw0KGgoAA",
+        "url(\"data:image/png;base64,iVBORw0KGgoAA"
+      ],
+      "refinedComposedBeforePagehide": true,
+      "documentVisibilityAfterPagehide": "visible",
+      "rafCallbacksWhileRetiring": 304,
+      "retiringImages": [
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3060:13\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 4416,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 4534,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 4657,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 4768,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 4879,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 4989,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 5098,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 5209,
+          "doc": "h34m4kb4"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:2605:19\npaint@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3016:21\nupdate@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3062:12\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3065:259\npresent@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:3071:73\nloop@http://127.0.0.1:49782/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4:7318:36\nwindow.requestAnimationFrame/<@debugger eval code:41:213\nFrameRequestCallback*window.requestAnimationFrame@debugger eval code:41:14",
+          "phase": "retiring",
+          "t": 5323,
+          "doc": "h34m4kb4"
+        }
+      ],
+      "initiators": {
+        "retirementInitiated": 0,
+        "renderLoop": 9,
+        "other": 0,
+        "cdpRetiringRequests": 0
+      },
+      "retiringViolations": [],
+      "retiringCdp": [],
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 17,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "afterPagehide": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "skyWorkersLive": 0,
+        "urlsLive": 1,
+        "skyUrlsLive": 0,
+        "vis": 2,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "suspended",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 26,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "resumed": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 28,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "requestLevel": false
+    },
+    "retirement-bfcache": {
+      "pass": true,
+      "return": "reload (back/forward cache not used)",
+      "persisted": false,
+      "bfcache": "disabled by the Playwright Firefox build: its playwright.cfg sets fission.bfcacheInParent=false and states that BFCache is also disabled in content via a docShell property",
+      "notRestoredReasons": null,
+      "bfcacheNotUsed": [],
+      "cleanRetirement": true,
+      "traceMarker": true,
+      "maskChangingAtNavigation": true,
+      "maskPrefixes": [
+        "url(\"data:image/png;base64,iVBORw0KGgoAA",
+        "url(\"data:image/png;base64,iVBORw0KGgoAA"
+      ],
+      "refinedComposedBeforeNavigation": true,
+      "retiringImages": [],
+      "retiringViolations": [],
+      "retiringImagesInMemory": null,
+      "retiringCdp": [],
+      "rafCallbacksWhileRetiring": 6,
+      "lifecycleEvents": [
+        {
+          "kind": "lifecycle",
+          "type": "pagehide",
+          "persisted": false,
+          "vis": "visible",
+          "trusted": true,
+          "phase": "retiring",
+          "t": 4225,
+          "doc": "op86vg0m"
+        },
+        {
+          "kind": "lifecycle",
+          "type": "visibilitychange",
+          "persisted": null,
+          "vis": "hidden",
+          "trusted": true,
+          "phase": "retiring",
+          "t": 4225,
+          "doc": "op86vg0m"
+        }
+      ],
+      "initiators": {
+        "retirementInitiated": 0,
+        "other": 0,
+        "cdpRetiringRequests": 0
+      },
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 20,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "afterReturn": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 5,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "readyAfterReturn": true,
+      "requestLevel": false
+    }
+  },
+  "console": [
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ],
+    [
+      "bfcache",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ],
+    [
+      "bfcache",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ]
+  ],
+  "cdp": [],
+  "bfcacheNotUsed": [],
+  "crashes": [],
+  "browserVersion": "153.0",
+  "diagnosticCells": {
+    "retirement-synthetic": false
+  },
+  "pass": true
+}
