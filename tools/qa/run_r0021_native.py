@@ -131,9 +131,12 @@ INIT = r"""(()=>{
  window.addEventListener('pagehide',life,true);
  window.addEventListener('pageshow',e=>{if(e.isTrusted&&e.persisted&&R.phase==='retiring')R.phase='restored';life(e);},true);
  document.addEventListener('visibilitychange',life,true);document.addEventListener('freeze',life,true);document.addEventListener('resume',life,true);
+ const owners=new WeakMap();R.decodedMask={preview:null,refined:null,other:null};R.decodedAt={};
  const d=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,'src');
  Object.defineProperty(HTMLImageElement.prototype,'src',{configurable:true,get(){return d.get.call(this);},set(v){
-  const s=String(v);if(s){const o=mark({prefix:s.slice(0,30),scheme:s.split(':')[0],stack:String(new Error().stack).split('\n').slice(1,9).join('\n')});R.images.push(o);if(o.scheme==='data'||o.scheme==='blob')store({kind:'image',...o});}d.set.call(this,v);}});
+  const s=String(v);if(s){const o=mark({prefix:s.slice(0,30),scheme:s.split(':')[0],stack:String(new Error().stack).split('\n').slice(1,9).join('\n')});R.images.push(o);if(o.scheme==='data'||o.scheme==='blob')store({kind:'image',...o});
+   // Mask owner from the caller: the preview paints (paint -> publish), the refined host composes (compose -> publish).
+   if(o.scheme==='data')owners.set(this,/(^|\n)\s*(at )?(\S+\.)?compose[ @(]/.test(o.stack)?'refined':/(^|\n)\s*(at )?(\S+\.)?paint[ @(]/.test(o.stack)?'preview':'other');}d.set.call(this,v);}});
  document.addEventListener('securitypolicyviolation',e=>{const o=mark({blockedURI:String(e.blockedURI).slice(0,40),directive:e.effectiveDirective,disposition:e.disposition});R.violations.push(o);store({kind:'violation',...o});},true);
  const W=window.Worker;window.Worker=class extends W{constructor(...a){super(...a);const sky=/native-sky\.js/.test(String(new Error().stack));this.__r0021sky=sky;R.workers.made++;if(sky)R.workers.skyMade++;peak();}
   terminate(){R.workers.ended++;if(this.__r0021sky&&!this.__r0021ended){this.__r0021ended=true;R.workers.skyEnded++;}return super.terminate();}};
@@ -148,7 +151,8 @@ INIT = r"""(()=>{
  for(const [proto,name] of [[Element.prototype,'prepend'],[Element.prototype,'append'],[Node.prototype,'appendChild'],[Node.prototype,'insertBefore'],
    [Element.prototype,'before'],[Element.prototype,'after'],[Element.prototype,'replaceWith'],[Node.prototype,'replaceChild']]){
   const f=proto[name];proto[name]=function(...a){const r=f.apply(this,a);if(a.some(n=>n instanceof HTMLCanvasElement))peak();return r;};}
- const dec=HTMLImageElement.prototype.decode;HTMLImageElement.prototype.decode=function(...a){R.decodes.pending++;peak();let p;try{p=dec.apply(this,a);}catch(e){R.decodes.pending--;throw e;}const done=()=>{R.decodes.pending--;};p.then(done,done);return p;};
+ const dec=HTMLImageElement.prototype.decode;HTMLImageElement.prototype.decode=function(...a){R.decodes.pending++;peak();let p;try{p=dec.apply(this,a);}catch(e){R.decodes.pending--;throw e;}const done=()=>{R.decodes.pending--;};const img=this;
+  p.then(()=>{done();const w=owners.get(img);if(w){R.decodedMask[w]='url("'+d.get.call(img)+'")';R.decodedAt[w]=performance.now();}},done);return p;};
  // rAF callbacks actually run, per phase (persisted while R.persist so a discarded document still reports them).
  // One-shot Moon first-frame construction failure (moon-construction cell, armed per page by window.__r0021_arm).
  const raf=window.requestAnimationFrame;
@@ -174,9 +178,10 @@ INIT = r"""(()=>{
  const json=v=>Promise.resolve(new Response(JSON.stringify(v),{status:200,headers:{'Content-Type':'application/json'}}));
  window.fetch=(input,init)=>{const u=String(input&&input.url||input);
   if(u.includes('api.open-meteo.com')){const w=Date.now(),m=Math.floor(w/60000)*60000,h=Math.floor(w/3600000)*3600000;
-   return json({timezone:'UTC',elevation:600,current:{time:iso(m),interval:900,weather_code:3,temperature_2m:20,apparent_temperature:19,
-    relative_humidity_2m:40,dew_point_2m:6,wind_speed_10m:6,wind_direction_10m:180,wind_gusts_10m:9,cloud_cover:70,precipitation:0,is_day:1},
-    hourly:{time:[iso(h),iso(h+3600000)],temperature_2m:[20,19],weather_code:[3,3],precipitation:[0,0]}});}
+   const X=window.__r0021_wx||{code:3,cover:70};R.wxServed=(R.wxServed||0)+1;
+   return json({timezone:'UTC',elevation:600,current:{time:iso(m),interval:900,weather_code:X.code,temperature_2m:20,apparent_temperature:19,
+    relative_humidity_2m:40,dew_point_2m:6,wind_speed_10m:6,wind_direction_10m:180,wind_gusts_10m:9,cloud_cover:X.cover,precipitation:0,is_day:1},
+    hourly:{time:[iso(h),iso(h+3600000)],temperature_2m:[20,19],weather_code:[X.code,X.code],precipitation:[0,0]}});}
   if(u.includes('api.rainviewer.com'))return Promise.reject(new TypeError('controlled radar unavailable'));
   return nf(input,init);};
 })();"""
@@ -220,6 +225,25 @@ DIFF_JS = """async([a,b,diffImage])=>{const load=s=>new Promise((r,j)=>{const i=
  const n=p.length/4;return {pixels:n,strictChanged:strict,strictFraction:strict/n,changedFraction6:thr/n,maxDelta:max,bbox:strict?[x0,y0,x1,y1]:null,png};}"""
 
 
+def local_prefixes(extra=()):
+    """Absolute local prefixes that must never reach a log or report: repository, served root, Python install, home."""
+    out = set()
+    for p, tag in [(REPO, '<repo>'), (Path(sys.prefix), '<python>'), (Path(sys.base_prefix), '<python>'), (Path.home(), '<home>')] + list(extra):
+        p = str(Path(p).resolve())
+        if len(p) < 4:
+            continue
+        for form in {p, p.replace('\\', '/'), p[0].lower() + p[1:], p[0].upper() + p[1:]}:
+            out.add((form, tag)); out.add((form.replace('\\', '\\\\'), tag)); out.add((form.replace('\\', '/'), tag))
+    return sorted(out, key=lambda x: -len(x[0]))
+
+
+def sanitize(text, extra=()):
+    """Replace every local absolute prefix in text (longest first)."""
+    for form, tag in local_prefixes(extra):
+        text = text.replace(form, tag)
+    return text
+
+
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -249,13 +273,13 @@ def events_in(page, name):
 
 
 CELLS = ['first-boot', 'live-handoff', 'retirement-synthetic', 'construction', 'census', 'cycles', 'moon-replay', 'recovery-visual', 'night',
-         'retirement-bfcache', 'navigation', 'moon-construction', 'moon-asset-failure', 'presentation']
+         'retirement-bfcache', 'navigation', 'moon-construction', 'moon-asset-failure', 'retirement-cover-change', 'presentation']
 FIREFOX_BFCACHE = ('disabled by the Playwright Firefox build: its playwright.cfg sets fission.bfcacheInParent=false and states that '
                    'BFCache is also disabled in content via a docShell property')
 
 
 def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh=False, composed_wait=60000, cycles_settle=500, fragment=None,
-        in_page_prayer=False, enable_bfcache=False, reduced_motion=False, precondition_rule='changing'):
+        in_page_prayer=False, enable_bfcache=False, reduced_motion=False, precondition_rule='changing', moon_404_cacheable=False, cover_wait=90000):
     fragment = fragment or HASH
     policy = re.search(r'http-equiv="Content-Security-Policy" content="([^"]+)"', (REPO / 'tests/widget-fixture.html').read_text(encoding='utf-8')).group(1)
     index = (root / 'index.html').read_bytes()
@@ -271,10 +295,22 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             if path.startswith('/moon/'):
                 served_log.append({'path': path, 'blocked': path in blocked, 't': round(time.monotonic(), 3)})
             if path in blocked:
-                self.send_error(404, 'R0021 driver: asset withheld')
+                # Default: a non-cacheable failure (no-store), so a later retry reaches the server. --moon-404-cacheable
+                # omits it: Firefox then serves the heuristically cached 404 to the product's force-cache fetch.
+                self.send_response(404); self.send_header('Content-Type', 'text/plain')
+                if not moon_404_cacheable:
+                    self.send_header('Cache-Control', 'no-store')
+                self.end_headers(); self.wfile.write(b'R0021 driver: asset withheld')
                 return
             return super().do_GET()
-    server = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(Quiet, directory=str(root)))
+
+    class Server(http.server.ThreadingHTTPServer):
+        def handle_error(self, request, client_address):
+            # A browser aborting a connection is expected; never print a traceback with local paths.
+            kind, value = sys.exc_info()[:2]
+            server_errors.append(sanitize(f'{kind.__name__}: {value}', [(root, '<root>')])[:200])
+    server_errors = []
+    server = Server(('127.0.0.1', 0), functools.partial(Quiet, directory=str(root)))
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f'http://127.0.0.1:{server.server_address[1]}'
     record = json.loads((REPO / 'tests/r0002-ordinary.json').read_text(encoding='utf-8'))
@@ -285,9 +321,9 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
               'served': {n: sha(root / n) for n in SERVED if (root / n).is_file()},
               'options': {'fragment': fragment, 'cells': selected, 'cyclesWaitMs': cycles_wait, 'cyclesSettleMs': cycles_settle, 'cyclesFreshPage': cycles_fresh,
                           'composedWaitMs': composed_wait, 'inPagePrayer': in_page_prayer, 'enableBfcache': enable_bfcache, 'reducedMotion': reduced_motion,
-                          'preconditionRule': precondition_rule},
+                          'preconditionRule': precondition_rule, 'moon404Cacheable': moon_404_cacheable, 'coverWaitMs': cover_wait},
               'bfcache': ('launched without --disable-back-forward-cache' if enable_bfcache else 'Playwright default (--disable-back-forward-cache)') if engine == 'chromium' else FIREFOX_BFCACHE,
-              'cells': {}, 'console': [], 'cdp': [], 'bfcacheNotUsed': [], 'crashes': []}
+              'cells': {}, 'console': [], 'cdp': [], 'bfcacheNotUsed': [], 'crashes': [], 'serverErrors': server_errors}
     cells = report['cells']
 
     def save():
@@ -296,9 +332,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
         acceptance = {k: v for k, v in cells.items() if v.get('acceptance', True)}
         report['diagnosticCells'] = {k: v.get('status', v['pass']) if not v['pass'] else True for k, v in cells.items() if not v.get('acceptance', True)}
         report['pass'] = bool(report['complete'] and acceptance and all(v['pass'] for v in acceptance.values()))
-        text = json.dumps(report, indent=2, ensure_ascii=False)
-        for form in sorted({str(REPO), str(REPO).replace('\\', '\\\\'), REPO.as_posix(), str(root.resolve()), str(root.resolve()).replace('\\', '\\\\'), root.resolve().as_posix()}, key=len, reverse=True):
-            text = text.replace(form, '<root>')
+        text = sanitize(json.dumps(report, indent=2, ensure_ascii=False), [(root, '<root>')])
         (out / f'{engine}-report.json').write_text(text + '\n', encoding='utf-8')
 
     with sync_playwright() as p:
@@ -440,11 +474,12 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                                              'before': before, 'afterPagehide': after, 'resumed': r, 'requestLevel': engine == 'chromium'}
             shot('2-resumed')
 
-        def retirement_bfcache():
+        def retirement_bfcache(name='retirement-bfcache', label='bfcache', scripts=(), frag=None, precheck=None, rule=None):
             # ACCEPTANCE: a supported lifecycle. Real same-origin navigation away, then history back, on a fresh page.
-            pg = open_page(fragment, 'bfcache'); attach_cdp(pg, 'bfcache')
+            rule = rule or precondition_rule
+            pg = open_page(frag or fragment, label, scripts=scripts); attach_cdp(pg, label)
             ready = wait(pg, READY, 60000)
-            precondition, composed, prefixes = precondition_of(pg, precondition_rule)
+            precondition, composed, prefixes = (precheck or (lambda q: precondition_of(q, rule)))(pg)
             before = counts(pg)
             cdp_phase['value'] = 'retiring'; doc = pg.evaluate(START_TRACE)   # also sets the page phase to 'retiring'
             pg.goto(origin + '/' + AWAY)
@@ -464,27 +499,58 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             raf_post = pg.evaluate(f"()=>{{try{{return JSON.parse(sessionStorage.getItem('r0021-rafpost|{doc}')||'null')}}catch(e){{return String(e)}}}}")
             pagehide_t = next((x['t'] for x in lifecycle if x.get('doc') == doc and x['type'] == 'pagehide'), None)
             memory = pg.evaluate("()=>{const R=window.__r0021;return {images:R.images.filter(x=>x.phase==='retiring'&&(x.scheme==='data'||x.scheme==='blob')),violations:R.violations.filter(x=>x.phase==='retiring'),storeErrors:R.storeErrors}}") if persisted else None
-            cdp_retiring = [x for x in report['cdp'] if x['phase'] == 'retiring' and x.get('page') == 'bfcache']
+            cdp_retiring = [x for x in report['cdp'] if x['phase'] == 'retiring' and x.get('page') == label]
             not_restored = pg.evaluate("()=>{try{const n=performance.getEntriesByType('navigation')[0];return n&&n.notRestoredReasons?JSON.parse(JSON.stringify(n.notRestoredReasons)):null}catch(e){return String(e)}}")
             resumed = wait(pg, READY, 60000); r = counts(pg)
             retirement_initiated = [x for x in images if RETIREMENT_STACK.search(x.get('stack', ''))]
             clean = bool(marker and not images and not violations and not (memory and (memory['images'] or memory['violations'])) and not cdp_retiring
                          and resumed and r['sky'] == 1)
-            cells['retirement-bfcache'] = {'pass': bool(ready and clean and precondition), **({} if precondition else {'status': 'precondition-not-met'}),
+            cells[name] = {'pass': bool(ready and clean and precondition), **({} if precondition else {'status': 'precondition-not-met'}),
+                                           # A 'published' (static-mask) precondition cannot discriminate: the control publishes nothing either.
+                                           **({'acceptance': False, 'nonDiscriminating': True} if rule == 'published' else {}),
                                            'return': 'bfcache-restore (pageshow.persisted)' if persisted else 'reload (back/forward cache not used)',
                                            'persisted': persisted, 'bfcache': report['bfcache'], 'notRestoredReasons': not_restored,
-                                           'bfcacheNotUsed': [x for x in report['bfcacheNotUsed'] if x['page'] == 'bfcache'],
+                                           'bfcacheNotUsed': [x for x in report['bfcacheNotUsed'] if x['page'] == label],
                                            'cleanRetirement': clean, 'traceMarker': marker, 'maskChangingAtNavigation': precondition, 'maskPrefixes': prefixes,
                                            'refinedComposedBeforeNavigation': composed, 'retiringImages': images, 'retiringViolations': violations,
                                            'retiringImagesInMemory': memory, 'retiringCdp': cdp_retiring, 'rafCallbacksWhileRetiring': raf_retiring,
-                                           'preconditionRule': precondition_rule, 'trustedPagehideAt': pagehide_t,
+                                           'preconditionRule': rule, 'trustedPagehideAt': pagehide_t,
                                            'rafAfterTrustedPagehide': raf_post.get('afterPagehide') if isinstance(raf_post, dict) else raf_post,
                                            'rafCallbackTimesTail': raf_post.get('times') if isinstance(raf_post, dict) else None,
                                            'lifecycleEvents': lifecycle, 'initiators': {'retirementInitiated': len(retirement_initiated), 'other': len(images) - len(retirement_initiated),
                                                                                         'cdpRetiringRequests': len(cdp_retiring)},
                                            'before': before, 'afterReturn': r, 'readyAfterReturn': resumed, 'requestLevel': engine == 'chromium'}
-            shot('2b-bfcache-return', pg=pg)
+            shot('2b-bfcache-return' if name == 'retirement-bfcache' else '2c-' + name + '-return', pg=pg)
             pg.close()
+
+        def retirement_cover_change():
+            # Reduced-motion reproduction attempt (one bounded attempt, 2026-11-11). Precondition, measured: at navigation
+            # the composed mask is a data URL that differs from the preview's last DECODED mask (the only state in which
+            # the control's retirement handoff creates a new Image; native-composition.mjs reuses displayed/decoded
+            # masks). The in-page weather stub starts broken (code 2, cover 30); after the refined sky composes it switches
+            # to overcast (code 3, cover 100); the cell navigates as soon as the difference is observed.
+            probe = "()=>({composed:document.querySelector('.c').classList.contains('real-sky-composed'),mask:getComputedStyle(document.querySelector('.c')).getPropertyValue('--native-sun-cloud-mask').trim(),decoded:window.__r0021.decodedMask.preview,wx:window.__r0021.wxServed||0})"
+
+            def precheck(pg):
+                composed = wait(pg, COMPOSED, composed_wait); samples = []
+                start = pg.evaluate(probe); samples.append({'t': 0, **{k: (v[:48] if isinstance(v, str) else v) for k, v in start.items()}})
+                pg.evaluate("()=>{window.__r0021_wx={code:3,cover:100};}")
+                t0 = time.monotonic(); met = False
+                while time.monotonic() - t0 < cover_wait / 1000:
+                    q = pg.evaluate(probe)
+                    met = bool(q['composed'] and q['mask'].startswith('url(') and q['mask'] != q['decoded'])
+                    if len(samples) < 200:
+                        samples.append({'t': round(time.monotonic() - t0, 2), 'composed': q['composed'], 'mask': q['mask'][-24:], 'decoded': (q['decoded'] or '')[-24:], 'wx': q['wx'], 'differs': met})
+                    if met:
+                        break
+                    pg.wait_for_timeout(250)
+                cover_samples.extend(samples)
+                return met, composed, [start['mask'][:40], 'differs-from-preview-decoded' if met else 'never-differed']
+
+            cover_samples = []
+            retirement_bfcache('retirement-cover-change', 'cover', scripts=["window.__r0021_wx={code:2,cover:30};"], precheck=precheck, rule='decoded-differs')
+            cells['retirement-cover-change']['coverSamples'] = cover_samples[-60:]
+            cells['retirement-cover-change']['coverWaitMs'] = cover_wait
 
         def construction():
             booted = wait(page, BOOTED, 60000)
@@ -605,16 +671,21 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                 pg.wait_for_timeout(1500)
                 failed = pg.evaluate(moon_state); failed['prayerUi'] = pg.evaluate(PRAYER_UI); failed['counts'] = counts(pg)
                 shot('7-moon-asset-failure', pg=pg)
-                retries = []
+                retries = []; hits = [len([x for x in served_log if x['blocked']])]
                 for i in range(2):   # bounded retry while the assets are still withheld
+                    n0 = len(served_log)
                     accepted = pg.evaluate('()=>window.SalahMoonRuntime.retry()')
                     wait(pg, "()=>{const s=window.SalahMoonRuntime.state;return !s.workerAlive&&s.status==='unavailable'}", 60000); pg.wait_for_timeout(500)
-                    retries.append({'accepted': accepted, **pg.evaluate(moon_state)})
-                blocked.clear()
+                    retries.append({'accepted': accepted, 'serverAssetRequests': len([x for x in served_log[n0:] if x['path'] in MOON_ASSET_PATHS]), **pg.evaluate(moon_state)})
+                blocked.clear(); n0 = len(served_log)
                 accepted = pg.evaluate('()=>window.SalahMoonRuntime.retry()')
-                recovered = wait(pg, "()=>{const s=window.SalahMoonRuntime.state;return s.status!=='unavailable'&&s.workerAlive}", 60000)
-                pg.wait_for_timeout(3000)
+                wait(pg, "()=>{const s=window.SalahMoonRuntime.state;return s.status!=='unavailable'&&s.workerAlive}", 60000)
+                # FINAL settled state (not a transient): 10 s after the retry, the runtime must still be out of
+                # 'unavailable' with a live worker, and this retry's asset requests must have reached the server.
+                pg.wait_for_timeout(10000)
                 after = pg.evaluate(moon_state); after['acceptedRetry'] = accepted
+                after['serverAssetRequests'] = len([x for x in served_log[n0:] if x['path'] in MOON_ASSET_PATHS])
+                recovered = bool(after['status'] != 'unavailable' and after['workerAlive'])
                 shot('7-moon-asset-recovered', pg=pg)
                 beyond = pg.evaluate('()=>window.SalahMoonRuntime.retry()')   # bound: refused while a worker is live or retryCount>=3
                 withheld = [x for x in served_log if x['blocked']]
@@ -627,7 +698,8 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
                 cells['moon-asset-failure'] = {'pass': bool(withheld and failed_seen and healthy_fallback and visible and functional and bounded and recovered and after['moonVisListeners'] == 1),
                                                'injectionReached': bool(withheld), 'withheldRequests': withheld[:10], 'failureObserved': failed_seen,
                                                'registeredNotHalfBuilt': healthy_fallback, 'fallbackMoonVisible': visible, 'cardFunctional': functional,
-                                               'boundedRetry': bounded, 'recoveredAfterAssetsReturn': recovered, 'retryBeyondRefused': beyond is False,
+                                               'boundedRetry': bounded, 'recoveredAfterAssetsReturn': recovered, 'recoveryRule': 'final state 10 s after the retry',
+                                               'retryBeyondRefused': beyond is False, 'moon404Cacheable': moon_404_cacheable, 'failureServerAssetRequests': hits[0],
                                                'nativeLoopStarted': booted, 'afterFailure': failed, 'retriesWhileWithheld': retries, 'afterRecovery': after,
                                                'humanReview': [f'{engine}-7-moon-asset-failure.png', f'{engine}-7-moon-asset-recovered.png']}
                 pg.close()
@@ -701,7 +773,7 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
         for name, fn in (('first-boot', first_boot), ('live-handoff', live_handoff), ('retirement-synthetic', retirement_synthetic), ('construction', construction),
                          ('census', census), ('cycles', cycles), ('moon-replay', moon_replay), ('recovery-visual', recovery_visual), ('night', night_cell),
                          ('retirement-bfcache', retirement_bfcache), ('navigation', navigation), ('moon-construction', moon_construction),
-                         ('moon-asset-failure', moon_asset_failure), ('presentation', presentation)):
+                         ('moon-asset-failure', moon_asset_failure), ('retirement-cover-change', retirement_cover_change), ('presentation', presentation)):
             cell(name, fn)
         report['complete'] = state['crashed'] is None
         try:
@@ -762,7 +834,11 @@ if __name__ == '__main__':
     a.add_argument('--reduced-motion', action='store_true', help='emulate prefers-reduced-motion: reduce for the main context')
     a.add_argument('--precondition', choices=['changing', 'published'], default='changing',
                    help="retirement-bfcache precondition: 'changing' data-URL mask (default) or 'published' data-URL mask (reduced-motion variant)")
+    a.add_argument('--moon-404-cacheable', action='store_true', help='moon-asset-failure: send the withheld 404 without Cache-Control: no-store')
+    a.add_argument('--cover-wait-ms', type=int, default=90000, help='retirement-cover-change: wait up to this long for the mask to differ from the preview decode')
     a.add_argument('--compare-presentation', nargs=2, metavar=('DIR_A', 'DIR_B'), help='compare two runs\' presentation captures instead of running cells')
+    # An uncaught driver error must not print local absolute paths into a run log either.
+    sys.excepthook = lambda kind, value, tb: sys.stderr.write(sanitize(''.join(__import__('traceback').format_exception(kind, value, tb))))
     o = a.parse_args(); out = Path(o.out); out.mkdir(parents=True, exist_ok=False)
     if o.compare_presentation:
         sys.exit(0 if compare_presentation(o.engine, Path(o.compare_presentation[0]), Path(o.compare_presentation[1]), out) else 1)
@@ -770,4 +846,4 @@ if __name__ == '__main__':
     if unknown:
         a.error('unknown cells: ' + ','.join(unknown) + (' (retirement was renamed retirement-synthetic)' if 'retirement' in unknown else ''))
     sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.cells.split(','), o.cycles_wait_ms, o.cycles_fresh_page, o.composed_wait_ms, o.cycles_settle_ms, o.fragment,
-                      o.in_page_prayer, o.enable_bfcache, o.reduced_motion, o.precondition) else 1)
+                      o.in_page_prayer, o.enable_bfcache, o.reduced_motion, o.precondition, o.moon_404_cacheable, o.cover_wait_ms) else 1)
