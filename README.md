@@ -88,11 +88,12 @@ inspect the exact file before allowing normal setup actions.
 These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
-On macOS or Linux, replace `FULL_REVIEWED_COMMIT_SHA` with the full commit you
-intend to review. Keep the downloaded file for both the preview and normal run:
+Both examples below use installer source commit
+`f2161ed6a1fe2e0647ee541487ab1ac792d4d3df`. On macOS or Linux, keep the downloaded
+file for both the preview and normal run:
 
 ```bash
-INSTALL_COMMIT='FULL_REVIEWED_COMMIT_SHA'
+INSTALL_COMMIT='f2161ed6a1fe2e0647ee541487ab1ac792d4d3df'
 curl -fsSL "https://raw.githubusercontent.com/theislampill/salah_widget/$INSTALL_COMMIT/install.sh" -o install.sh
 less ./install.sh
 DRY_RUN=1 bash ./install.sh
@@ -111,7 +112,7 @@ with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1" -OutFile ".\install.ps1"
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/f2161ed6a1fe2e0647ee541487ab1ac792d4d3df/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
 powershell.exe -NoProfile -File ".\install.ps1"
