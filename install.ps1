@@ -6,6 +6,9 @@
 #   powershell -ExecutionPolicy Bypass -File .\install.ps1
 #   powershell -ExecutionPolicy Bypass -File .\install.ps1 -PresetUrl "https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json"
 #   powershell -File .\install.ps1 -DryRun  # offline local discovery; no writes, network, clipboard or browser opens
+#   powershell -File .\install.ps1 -NoOpen  # normal setup and clipboard handoff; open browser pages manually
+# Preview creates no artifacts and asks no questions; remote release/path facts and unresolved choices stay unresolved.
+# NoOpen is normal mode: downloads, retained files and manual confirmations still occur.
 #
 # Environment overrides:
 #   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe

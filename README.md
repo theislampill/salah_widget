@@ -123,9 +123,32 @@ For the supported PowerShell 7 host, replace the two `powershell.exe` calls with
 `pwsh.exe -NoProfile -File ".\install.ps1" -DryRun` and
 `pwsh.exe -NoProfile -File ".\install.ps1"`. Run one host's normal command.
 
-With reviewed local files, `DRY_RUN=1` on Bash or `-DryRun` on PowerShell performs offline local discovery and prints
-planned actions. Preview creates no staging or usable artifacts and is neither
-installation nor staged completion.
+#### Offline local preview
+
+With a reviewed local file, `DRY_RUN=1` on Bash or `-DryRun` on PowerShell reads
+local browser/profile metadata and prints an offline preview. The earlier
+download command is a separate preparation step; the preview invocation makes
+no network requests, including release or availability checks. It asks no
+questions and needs no interactive terminal.
+
+Preview creates, overwrites and deletes no files or directories. It changes no
+clipboard, browser profile or extension data, opens no browser pages, and does
+no extraction, preset rewriting or cleanup. Existing caches and retained
+bundles do not become preview outputs. Release versions, artifact paths and
+unanswered install-source choices remain unresolved. No usable artifact path,
+staged result or installed success is promised. Unknown or legacy-refused
+targets stay held or refused. When no target is eligible, the installer exits
+unsuccessfully. Malformed or unsupported mode options are refused with an
+unsuccessful exit.
+
+To perform normal setup while opening browser pages yourself, use
+`NO_OPEN=1 bash ./install.sh` or
+`powershell.exe -NoProfile -File ".\install.ps1" -NoOpen` (use `pwsh.exe` for
+PowerShell 7). This mode still asks for normal confirmations, downloads and
+stages files, and offers clipboard handoffs. Extension installation and preset
+import remain manual. The builder's **Install widget** command starts normal
+mode and uses the published main installer; use the reviewed local-file
+preview above before allowing those normal actions.
 
 #### Discovery and retained files
 

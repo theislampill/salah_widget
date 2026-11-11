@@ -6,7 +6,10 @@
 # Usage:
 #   bash install.sh
 #   DRY_RUN=1 bash install.sh  # offline local discovery; no terminal, network or writes
+#   NO_OPEN=1 bash install.sh  # normal setup and clipboard handoff; open browser pages manually
 #   SALAH_WIDGET_PRESET_URL="https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json" bash install.sh
+# Preview creates no artifacts and asks no questions; remote release/path facts and unresolved choices stay unresolved.
+# NO_OPEN is normal mode: downloads, retained files and manual confirmations still occur.
 #
 # Environment overrides:
 #   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe

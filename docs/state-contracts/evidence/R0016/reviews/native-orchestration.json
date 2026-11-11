@@ -1,0 +1,738 @@
+{
+  "schema": "r0016-independent-integration-review.v1",
+  "reviewedAtUtc": "2026-11-11T10:48:57.559239+00:00",
+  "reviewer": "/root/r0015_contract",
+  "continuity": "refs/implementaudit/continuity-receipts/installer-20261111/G000E@a6641f3b8199b876140f95fea590e94977252dfb",
+  "scope": "Read-only independent review of collector/workflow integration, receipt bindings and complete historical/current46-row matrix. Static code/data inspection only; no collector, test, PowerShell or native process execution.",
+  "disposition": "NO_CONCRETE_PUBLICATION_BLOCKER_FOUND_IN_REVIEWED_INTEGRATION; NATIVE_ACCEPTANCE_AND_WHOLE_COMPLETION_OPEN",
+  "authority": "Evidence only. This does not authorize publication, establish native PASS or confer whole-contract acceptance.",
+  "inputs": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tools/qualification/installer_native.py",
+      "sha256": "00fef4b1fe1f14aedc7b528c0c364e3ad434febd6e2c4a1e1f6aab04725e71c9",
+      "bytes": 20217
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/.github/workflows/installer-native.yml",
+      "sha256": "56a018122625d5dc00da2960971707bcfaeb1ef1c1763395bf67ac99f6db5923",
+      "bytes": 5616
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/docs/state-contracts/R0016.md",
+      "sha256": "e32fd997939d54247b3350c1abfad93de975d2d2128c590c5db452e1fb36dadb",
+      "bytes": 10508
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/docs/state-contracts/evidence/R0016/current-acceptance-matrix.json",
+      "sha256": "1029a08762e43720440b5371206f04993016e5b8023408e2232e6eb863c737a4",
+      "bytes": 100984
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/docs/state-contracts/evidence/R0016/historical-matrix.json",
+      "sha256": "828638072d532c8e2e2167248c89d3ad19e707addac7db65e4742e4112e61dac",
+      "bytes": 60809
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/docs/state-contracts/evidence/R0016/local-receipt-bindings.json",
+      "sha256": "da56546517c234ae31e4430a6a805581bceb3bdf7702d08f0a60d1851bbeceda",
+      "bytes": 2257
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/install.ps1",
+      "sha256": "a4bf84bb5053ffbb0339f71e5c3a2b78580be2998591f42ccb45edf9192b2692",
+      "bytes": 100590
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/install.sh",
+      "sha256": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c",
+      "bytes": 41623
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-preview.ps1",
+      "sha256": "a54ca7affb0b3c3b770403c5acfc965b5716fc376378f56dbf1b8cc43d297eed",
+      "bytes": 47770
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-preview-acquire-timed.ps1",
+      "sha256": "b7938e602fcf3864462f08b4748a139e894b8c4802d8643840d4439894a0ffd1",
+      "bytes": 22009
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-preview-native-controls.py",
+      "sha256": "4bb3d2e046a626758b991eaf6237aff7fab891434fe33d2ed1ce1799264bbda0",
+      "bytes": 35439
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-entry-native.py",
+      "sha256": "223b8ed54b342c23e7d0380bc669072a5fd87f2e42eeadb276b024aa8aa29819",
+      "bytes": 22079
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-entry-native-coverage.py",
+      "sha256": "5f86fd9c3f93381b2f5aa43be26e6a0bb1a4e1d6b2293576a25b831dba2736f1",
+      "bytes": 31993
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-entry-coverage-support.py",
+      "sha256": "52a268b0de8c6055f8265faa7bdef115a78ba29fba2b4f008aba43be6b793c4a",
+      "bytes": 14701
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-powershell-routes.ps1",
+      "sha256": "2f5aea77b909b0a1b735616a25e305f1df65e4f0565e0fea99e09e5a81e9f4fc",
+      "bytes": 16621
+    }
+  ],
+  "findings": [
+    {
+      "id": "R16-INTEGRATION-01",
+      "classification": "PASS_SCOPED_HOST_AND_LAUNCH_BINDING",
+      "finding": "Collector filters explicit distinct Windows host selections, verifies PS5.1 version prefix or exact PS7.6.6, and executes each selected host by its bound executable. Core receives explicit All, timed library and disposable output. Each companion consumes its own host-named core receipt. The complete entry command receives the same selected hosts and no scenario filter.",
+      "sources": [
+        "tools/qualification/installer_native.py:111-135,229-300"
+      ],
+      "limit": "Command planning and version gates are instrument logic; actual native version/source/output observations are still required."
+    },
+    {
+      "id": "R16-INTEGRATION-02",
+      "classification": "PASS_SCOPED_BUDGET_AND_DENOMINATOR_BINDING",
+      "finding": "Core has4200s; companion has3300s and300s per two-scenario carrier. Eight retained recipes plus base produce9 carriers/18 useful entries per host, without a variant filter. Companion computes2955s recommended collector minimum, below3300s. Full coverage has1800s per collector invocation and retains14 scenarios per selected host, giving28 entries across the workflow's two host jobs.",
+      "sources": [
+        "tools/qualification/installer_native.py:263-300",
+        "tests/install-preview-native-controls.py:429-523",
+        "tests/install-entry-native-coverage.py:14,22,400-411"
+      ],
+      "limit": "These are bounded acquisition ceilings, not measured current native completion or guarantees that every child can consume its maximum simultaneously. Timeout/acquisition failures stay failed; complete native receiving must verify actual counts and terminal artifacts."
+    },
+    {
+      "id": "R16-INTEGRATION-03",
+      "classification": "PASS_SCOPED_WORKFLOW_AND_PRESTART_SETTINGS",
+      "finding": "Windows jobs are independently selected by matrix hostps51/ps7, use180-minute job bounds, and retain artifacts whose names include the host. Telemetry opt-outs and updateOff are job environment values before the first PowerShell step; collector repeats them before its version probes and qualification children. Pinned PS7 archive digest and exact7.6.6 runtime binding remain. POSIX jobs retain actual native platform checks and Apple/bin/bash3.2 gate.",
+      "sources": [
+        ".github/workflows/installer-native.yml:73-142",
+        "tools/qualification/installer_native.py:123-124,181-227,233-239"
+      ],
+      "limit": "Flags do not establish independent network containment or identify the previously rejected runtime payload. Linux/Windows/Apple results cannot be substituted for one another."
+    },
+    {
+      "id": "R16-INTEGRATION-04",
+      "classification": "PASS_SCOPED_FIXTURE_AND_ARCHIVAL_INTERFACES",
+      "finding": "Companion uses unchanged original entry223b8ed; full coverage uses new entry5f86fd9 plus adjacent support52a268. Workflow sparse paths include both and the timed library. Canonical preset defaults and explicit companion preset point into the checked-out project. Primary fixture roots remain under the disposable parent; collector retains core, companion and coverage roots under distinct suite names. Fixture-copy failure makes that suite fail.",
+      "sources": [
+        "tools/qualification/installer_native.py:67-109,139-173,268-300",
+        ".github/workflows/installer-native.yml:93-104",
+        "tests/install-preview-native-controls.py:162-256,288-425"
+      ],
+      "limit": "Collector generic row/exit gates do not replace independent schema/count/source/native receiving or the full46-row acceptance review."
+    },
+    {
+      "id": "R16-INTEGRATION-05",
+      "classification": "PASS_SCOPED_PLANNING_RECEIPT_REVIEW",
+      "finding": "Original planning RED retains4 missing-command/budget assertions. Corrected actual-main planning receipts pass for both,ps51 andps7 selection with every qualification subprocess intercepted. The two earlier planning-driver setup/selection assertion failures remain separately preserved. Their causes do not create product or native evidence.",
+      "sources": [
+        "recovery/r0016-collector-controls/results.json",
+        "recovery/r0016-collector-controls.py",
+        "recovery/r0016-collector-controls/bootstrap-failure.json",
+        "recovery/r0016-collector-controls/selection-failure.json"
+      ],
+      "limit": "This reviewer did not rerun those controls. The reported native/installer execution flag remains false."
+    },
+    {
+      "id": "R16-INTEGRATION-06",
+      "classification": "PASS_COMPLETE_DENOMINATOR_AND_SCOPED_CLAIMS",
+      "finding": "All46 unique IDs and historical pointers resolve:14 original requirements,6 residual acceptances,15 branch rows and11 effects. The historical file is byte-identical to the recovery original. Original obligations/assertions remain accessible; current rows preserve explicit remaining gates. Documentation distinguishes overlapping views from46 separate features and does not claim completion.",
+      "sources": [
+        "docs/state-contracts/R0016.md",
+        "docs/state-contracts/evidence/R0016/current-acceptance-matrix.json",
+        "docs/state-contracts/evidence/R0016/historical-matrix.json"
+      ],
+      "limit": "All whole-contract, nativeApple, nativeWindows and finalPublicDelivery booleans are false. Final prerequisite reconciliation, exact approval, delivered bytes and deliberate closure remain open."
+    },
+    {
+      "id": "R16-INTEGRATION-07",
+      "classification": "PASS_RECEIPT_BINDINGS_WITH_SOURCE_BOUNDARIES",
+      "finding": "All11 local receipt path/hash/size bindings match. Current Bash43 binds source9e0fac/test5a3a399. Supplemental PS60 binds source6808fe/corea54 and nativeWindowsfalse. Docs explicitly refuse to relabel that receipt as current a4bf84 execution; the source advance consumes R15f801. Prior42/59 and current43/60 observations remain separately scoped.",
+      "sources": [
+        "docs/state-contracts/evidence/R0016/local-receipt-bindings.json",
+        "docs/state-contracts/R0016.md",
+        "recovery/r0016-offline-acquisition/mitigated.stdout.json",
+        "recovery/r0016-bash-current/stdout.json"
+      ],
+      "limit": "R15 native qualification is not adjudicated or waived by this integration review. No current Windows or Apple R16 qualification is inferred."
+    }
+  ],
+  "planningEvidence": {
+    "receipt": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-collector-controls/results.json",
+      "sha256": "1f76255c74c98e1eaf284d3b9c631114d693ea4b64bbcf0df2f05fa8f1091966",
+      "bytes": 49023
+    },
+    "driver": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-collector-controls.py",
+      "sha256": "5767d56d0bc1519ab3ac496795b17d981987dd897abe5c94057df974f8f595a0",
+      "bytes": 5456
+    },
+    "oldCollectorSha256": "89c39209d6cec8f0fbecb31766697473a2ab228188125abd3e7c748016fdd243",
+    "currentCollectorSha256": "00fef4b1fe1f14aedc7b528c0c364e3ad434febd6e2c4a1e1f6aab04725e71c9",
+    "originalRedFailures": [
+      "Explicit same-host All preview with library/output and bounded 4200s acquisition",
+      "Complete retained eight-variant native companion with sufficient carrier budget",
+      "Separate eight normal caller routes on each selected host",
+      "Complete coverage entry uses exact selected hosts and paired-startup budget"
+    ],
+    "greenSelections": [
+      {
+        "selection": "both",
+        "interceptedCommands": 33,
+        "coreInvocations": 2,
+        "sameHostCompanions": 2,
+        "routeInvocations": 2,
+        "fullEntrySelectedHosts": [
+          "ps51",
+          "ps7"
+        ],
+        "fullEntryUnfiltered": true,
+        "planningPassed": true,
+        "actualNativeOrInstallerExecution": false
+      },
+      {
+        "selection": "ps51",
+        "interceptedCommands": 17,
+        "coreInvocations": 1,
+        "sameHostCompanions": 1,
+        "routeInvocations": 1,
+        "fullEntrySelectedHosts": [
+          "ps51"
+        ],
+        "fullEntryUnfiltered": true,
+        "planningPassed": true,
+        "actualNativeOrInstallerExecution": false
+      },
+      {
+        "selection": "ps7",
+        "interceptedCommands": 17,
+        "coreInvocations": 1,
+        "sameHostCompanions": 1,
+        "routeInvocations": 1,
+        "fullEntrySelectedHosts": [
+          "ps7"
+        ],
+        "fullEntryUnfiltered": true,
+        "planningPassed": true,
+        "actualNativeOrInstallerExecution": false
+      }
+    ],
+    "preservedInstrumentFailures": [
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-collector-controls/bootstrap-failure.json",
+        "sha256": "850c64e64b9effb57136a9c205c33e1a5c072e2118a1fa63dbfd581b49da6883",
+        "bytes": 373
+      },
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-collector-controls/selection-failure.json",
+        "sha256": "4e51adba6dbc55a945795a6ca142e8cc3b55b48ebcacc5e9e2adfd5069f95a66",
+        "bytes": 371
+      }
+    ],
+    "allSubprocessesIntercepted": true,
+    "newExecutionByReviewer": false
+  },
+  "matrix": {
+    "counts": {
+      "requirements": 14,
+      "residual_acceptance": 6,
+      "branch_matrix": 15,
+      "effects": 11
+    },
+    "total": 46,
+    "historicalRecoveryByteIdentity": true,
+    "historyHashMatches": true,
+    "rows": [
+      {
+        "id": "22-01",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/0",
+        "originalObligationPreserved": true,
+        "originalAssertion": "No confirmations or staging; eligible plans only, explicit non-success for no eligible target; ask/version/path stay unresolved.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-02",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/1",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Zero network-boundary calls; release/cache helpers suppress before returning metadata or artifact paths.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-03",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/2",
+        "originalObligationPreserved": true,
+        "originalAssertion": "No helper effects or sentinel changes; no successful Copied claim under preview.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-04",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/3",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Preview prints its own plan; guarded download/preset/extraction/install/import never pass a pretend existing file.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-05",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/4",
+        "originalObligationPreserved": true,
+        "originalAssertion": "All preview branches remain plans; cached sentinels unchanged; no store opening or installed confirmation.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-06",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/5",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Subject names/modes/contents unchanged and zero effect calls, including cached/unpacked/preset state; denied network transport.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-07",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/6",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Opening alone is suppressed under NoOpen; normal operations remain reachable with correct arguments.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-08",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/7",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Each valid mutant fails its specific effect or changed-sentinel oracle; normal positives remain healthy.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-09",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/8",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Actual claimed platforms execute preview/refusal/cache and normal-positive matrices; no emulated-host substitution.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-10",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/9",
+        "originalObligationPreserved": true,
+        "originalAssertion": "One composed source preserves the sibling contracts; individual interfaces are assessed rather than administrative issue states.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-11",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/10",
+        "originalObligationPreserved": true,
+        "originalAssertion": "No swallowed error or empty eligible set becomes installed success; preview describes unresolved facts.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-12",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/11",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Public README states DRY_RUN=1/-DryRun and the same precise policy as actual script headers.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-13",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/12",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Keep the original configuration/manual permission contract and 325x530 card under the 330x534 wrapper amendment.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "22-14",
+        "category": "requirements",
+        "historicalPointer": "historical-matrix.json#/requirements/13",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Pinned raw and Pages acquisitions return HTTP 200 with exact target SHA256 for each named owner; preserve all separately mapped native, behavior, text and rendered obligations.",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "R0016-A01",
+        "category": "residual_acceptance",
+        "historicalPointer": "historical-matrix.json#/residual_acceptance/0",
+        "originalObligationPreserved": true,
+        "originalAssertion": null,
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "R0016-A02",
+        "category": "residual_acceptance",
+        "historicalPointer": "historical-matrix.json#/residual_acceptance/1",
+        "originalObligationPreserved": true,
+        "originalAssertion": null,
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "R0016-A03",
+        "category": "residual_acceptance",
+        "historicalPointer": "historical-matrix.json#/residual_acceptance/2",
+        "originalObligationPreserved": true,
+        "originalAssertion": null,
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "R0016-A04",
+        "category": "residual_acceptance",
+        "historicalPointer": "historical-matrix.json#/residual_acceptance/3",
+        "originalObligationPreserved": true,
+        "originalAssertion": null,
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "R0016-A05",
+        "category": "residual_acceptance",
+        "historicalPointer": "historical-matrix.json#/residual_acceptance/4",
+        "originalObligationPreserved": true,
+        "originalAssertion": null,
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "R0016-A06",
+        "category": "residual_acceptance",
+        "historicalPointer": "historical-matrix.json#/residual_acceptance/5",
+        "originalObligationPreserved": true,
+        "originalAssertion": null,
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P01",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/0",
+        "originalObligationPreserved": true,
+        "originalAssertion": "zero effects; unresolved release/version/path; no artifact/prompt",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P02",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/1",
+        "originalObligationPreserved": true,
+        "originalAssertion": "zero effects; byte/mode/name identity; no cached usable path",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P03",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/2",
+        "originalObligationPreserved": true,
+        "originalAssertion": "would-open text only; no browser/prompt/download",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P04",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/3",
+        "originalObligationPreserved": true,
+        "originalAssertion": "both routes unresolved; no choice prompt/default-to-github",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P05",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/4",
+        "originalObligationPreserved": true,
+        "originalAssertion": "no preset/rewrite/copy/open; manual replacement warning",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P06",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/5",
+        "originalObligationPreserved": true,
+        "originalAssertion": "explicit no-preset warning; no usable artifact",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P07",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/6",
+        "originalObligationPreserved": true,
+        "originalAssertion": "legacy refused; eligible planned; zero effects",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P08",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/7",
+        "originalObligationPreserved": true,
+        "originalAssertion": "nonzero explicit refusal; no staged/install completion",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P09",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/8",
+        "originalObligationPreserved": true,
+        "originalAssertion": "nonzero explicit refusal; zero effects",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P10",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/9",
+        "originalObligationPreserved": true,
+        "originalAssertion": "nonzero before effects; no bootstrap-error credit",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P11",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/10",
+        "originalObligationPreserved": true,
+        "originalAssertion": "unknown held; peers planned; unknown-only nonzero; no false absence",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "P12",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/11",
+        "originalObligationPreserved": true,
+        "originalAssertion": "zero cleanup/network/open/fallback; no path laundering",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "N01",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/12",
+        "originalObligationPreserved": true,
+        "originalAssertion": "actual selected object/path/extraction/config/copy/manager/prompt retained",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "N02",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/13",
+        "originalObligationPreserved": true,
+        "originalAssertion": "all required normal consumers except open remain capable",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "N03",
+        "category": "branch_matrix",
+        "historicalPointer": "historical-matrix.json#/branch_matrix/14",
+        "originalObligationPreserved": true,
+        "originalAssertion": "truthful manual route; no fabricated extension artifact; normal effects remain",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "initialize",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/0",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "cleanup-and-exit",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/1",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "clipboard",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/2",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "browser-open",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/3",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "metadata-selector",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/4",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "download-cache",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/5",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "validate-retain",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/6",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "extract",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/7",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "preset-write",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/8",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "manual-install-fallback",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/9",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      },
+      {
+        "id": "manual-import",
+        "category": "effects",
+        "historicalPointer": "historical-matrix.json#/effects/10",
+        "originalObligationPreserved": true,
+        "originalAssertion": "Dry preview causes zero effect; usable path absent; suppressed copy false; diagnostic does not contaminate success result",
+        "remainingGatesExplicit": true,
+        "currentStatus": "ENGINEERING_AND_SCOPED_LOCAL_EVIDENCE; CURRENT_NATIVE_AND_FINAL_DELIVERY_OPEN"
+      }
+    ],
+    "wholeContractSatisfied": false,
+    "nativeAppleSatisfied": false,
+    "nativeWindowsSatisfied": false,
+    "finalPublicDeliverySatisfied": false
+  },
+  "receiptBindingsVerified": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-bash-additional/review/stdout.json",
+      "sha256": "23298be06331790f9afae21beaee0e0c91f4525f7eba66cdd779dfd88b814ef6",
+      "bytes": 54882
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-bash-additional/review/review.json",
+      "sha256": "68c29c7af307ff458260fca5547a91c0d14ca7f3fcbfef0c6d90afcdd0fb501e",
+      "bytes": 20278
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/bash.stdout.json",
+      "sha256": "d4df6e75b9d55ca460e8648e9482720444b100103f2e07a5cadf9b6b2e8fc0d6",
+      "bytes": 25738
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-offline-acquisition/mitigated.stdout.json",
+      "sha256": "4d077bec72fc63088998b16b7994bcfab19653e4d01c70ba0e169e8403416c1f",
+      "bytes": 4622747
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-offline-acquisition/mitigated-launch.json",
+      "sha256": "6218ba43888d62f538b930efe4983dbce0de08e16278573ac27648a431c4f92d",
+      "bytes": 3034
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-offline-acquisition/mitigated-exit.json",
+      "sha256": "2fd02d5972638b0cbe55b9374862ab9a1e67f12f9cd5438347c1943e931e6d06",
+      "bytes": 3122
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-offline-acquisition/review.json",
+      "sha256": "776d7bf4085b84731dd23630c97177d80e3dd8d1cd2ade5e33027606d2598d8d",
+      "bytes": 10162
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-collector-controls/results.json",
+      "sha256": "1f76255c74c98e1eaf284d3b9c631114d693ea4b64bbcf0df2f05fa8f1091966",
+      "bytes": 49023
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-entry-coverage/freeze-v1.json",
+      "sha256": "90592deded23b6824f2782403fdb51ced007164739ca0e8e68b9d06e67cab8b1",
+      "bytes": 4341
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-entry-coverage/metadata-correction-v1.json",
+      "sha256": "067d6bca8da9409dfbd10fde743f7304caa340e2d2efc4e657841738d2e3d7cb",
+      "bytes": 2228
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-bash-current/stdout.json",
+      "sha256": "0ac8e844651b26a580a51f10af6c7d0788f3983ec26cd6b68b1cb10e4a0bb69e",
+      "bytes": 52818
+    }
+  ],
+  "remaining": [
+    "Actual current-source Apple complete preview and native Windows helper/wrapper/full-entry/variant-normal receiving.",
+    "R0015 dependency native findings, independent current candidate review and source/fixture stability receiving.",
+    "Final public README/builder/raw/served-byte observations, prerequisite/campaign reconciliation, owner approval and deliberate closure."
+  ],
+  "testsExecutedByReviewer": 0,
+  "powershellExecuted": false,
+  "nativeExecuted": false,
+  "sharedOrSourceFilesChanged": false,
+  "inputsStableAtWrite": true
+}
