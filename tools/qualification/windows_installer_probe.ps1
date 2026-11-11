@@ -281,14 +281,14 @@ try{
         $case=Join-Path $root ('case-'+$tag);Probe-NewDirectory $case
         $temporary=Join-Path $root ('temp-'+$(if($selected -eq 'compiler-unicode'){[string][char]0x0635}elseif($selected -eq 'path-length'){'L'}else{'A'}));Probe-NewDirectory $temporary
         $evidence=Join-Path $case 'evidence';Probe-NewDirectory $evidence
-        $home=Join-Path $case 'home';Probe-NewDirectory $home
-        foreach($part in @('roaming','local','cache')){Probe-NewDirectory (Join-Path $home $part)}
+        $subjectHome=Join-Path $case 'home';Probe-NewDirectory $subjectHome
+        foreach($part in @('roaming','local','cache')){Probe-NewDirectory (Join-Path $subjectHome $part)}
         $nonceValue=[guid]::NewGuid().ToString('N')
         $arguments='-NoLogo -NoProfile -NonInteractive -File "'+$PSCommandPath+'" -SourceFile "'+$sourceCopy+'" -OutputRoot "'+$root+'" -Mode '+$selected+' -InternalChild -CaseRoot "'+$case+'" -TempParent "'+$temporary+'" -Nonce '+$nonceValue+' -ExpectedSourceSha256 '+$sourceHash
         $names=@('TEMP','TMP','HOME','USERPROFILE','APPDATA','LOCALAPPDATA','PSModuleAnalysisCachePath','DOTNET_CLI_HOME');$saved=@{}
         foreach($name in $names){$saved[$name]=[Environment]::GetEnvironmentVariable($name,'Process')}
         try{
-            $env:TEMP=$temporary;$env:TMP=$temporary;$env:HOME=$home;$env:USERPROFILE=$home;$env:APPDATA=Join-Path $home 'roaming';$env:LOCALAPPDATA=Join-Path $home 'local';$env:PSModuleAnalysisCachePath=Join-Path $home 'cache\ModuleAnalysisCache';$env:DOTNET_CLI_HOME=$home
+            $env:TEMP=$temporary;$env:TMP=$temporary;$env:HOME=$subjectHome;$env:USERPROFILE=$subjectHome;$env:APPDATA=Join-Path $subjectHome 'roaming';$env:LOCALAPPDATA=Join-Path $subjectHome 'local';$env:PSModuleAnalysisCachePath=Join-Path $subjectHome 'cache\ModuleAnalysisCache';$env:DOTNET_CLI_HOME=$subjectHome
             $run=Probe-Direct $hostExe $arguments $cwd ('child-'+$tag) $ChildTimeoutSeconds
         }finally{foreach($name in $names){$restore=if($null -eq $saved[$name]){[Management.Automation.Language.NullString]::Value}else{$saved[$name]};[Environment]::SetEnvironmentVariable($name,$restore,'Process')}}
         $receipt=Join-Path $case 'result.json';$observed=$null;$receivingError=$null;$ready=$false
