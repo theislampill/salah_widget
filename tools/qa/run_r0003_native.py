@@ -181,6 +181,9 @@ def run(engine, root, out, headed, cells, tag):
 
         def settings(page, edit):
             page.click('.buckle'); page.wait_for_selector('.c.settings-open', timeout=5000)
+            # _openSettings moves focus to #set-label on a 30 ms timer; editing before it lands races that
+            # focus move (reconciliation finding). Wait for the product's own focus, then edit.
+            page.wait_for_function("document.activeElement && document.activeElement.id === 'set-label'", timeout=5000)
             edit(page)
             page.click('#setClose'); page.wait_for_timeout(50)
 
