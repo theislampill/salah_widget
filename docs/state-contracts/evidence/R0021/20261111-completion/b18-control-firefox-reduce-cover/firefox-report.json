@@ -1,0 +1,228 @@
+{
+  "schema": "r0021-native/3",
+  "engine": "firefox",
+  "headed": false,
+  "out": "b18-control-firefox-reduce-cover",
+  "complete": true,
+  "evidenceLevel": "page-level only (no CDP request log in this engine)",
+  "root": "control-32f97b06",
+  "policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'",
+  "policyDelivery": "response header on index.html",
+  "served": {
+    "index.html": "9f2fb30b19aa103c2511418970291bba84dbe3bf3acaca536f4410a8669498d5",
+    "real-sky/native-sky.js": "426754834c6c116c4521ad5067bb1e37a9845830fc07ebbb62dd22fcdc757d66",
+    "real-sky/native-worker.js": "30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745",
+    "real-sky/native-data.js": "649d7ecc4fae05d655c934c4b2e69467427b9d215e0f1e6ae95701364e29167f",
+    "moon/moon-host.js": "7c0f0b67ba02fdadc4a4da23a70c0dfa464ba4304b9f722652dbb0092a316ef4",
+    "moon/moon-worker.js": "62b8753d518d8047e268c86d378de76c70d4b4e33b4467283feab06e3f3bb42e",
+    "config.js": "719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80"
+  },
+  "options": {
+    "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1",
+    "cells": [
+      "retirement-cover-change"
+    ],
+    "cyclesWaitMs": 200,
+    "cyclesSettleMs": 500,
+    "cyclesFreshPage": false,
+    "composedWaitMs": 60000,
+    "inPagePrayer": true,
+    "enableBfcache": false,
+    "reducedMotion": true,
+    "preconditionRule": "changing",
+    "moon404Cacheable": false,
+    "coverWaitMs": 90000
+  },
+  "bfcache": "disabled by the Playwright Firefox build: its playwright.cfg sets fission.bfcacheInParent=false and states that BFCache is also disabled in content via a docShell property",
+  "cells": {
+    "retirement-cover-change": {
+      "pass": false,
+      "return": "reload (back/forward cache not used)",
+      "persisted": false,
+      "bfcache": "disabled by the Playwright Firefox build: its playwright.cfg sets fission.bfcacheInParent=false and states that BFCache is also disabled in content via a docShell property",
+      "notRestoredReasons": null,
+      "bfcacheNotUsed": [],
+      "cleanRetirement": false,
+      "traceMarker": true,
+      "maskChangingAtNavigation": true,
+      "maskPrefixes": [
+        "url(\"data:image/png;base64,iVBORw0KGgoAA",
+        "differs-from-preview-decoded"
+      ],
+      "refinedComposedBeforeNavigation": true,
+      "retiringImages": [
+        {
+          "kind": "image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "publish@http://127.0.0.1:54591/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1:2605:19\npaint@http://127.0.0.1:54591/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1:3006:21\nupdate@http://127.0.0.1:54591/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1:3052:12\nclear@http://127.0.0.1:54591/real-sky/native-sky.js:2409:42\ninvalidate@http://127.0.0.1:54591/real-sky/native-sky.js:2188:123\ndispose@http://127.0.0.1:54591/real-sky/native-sky.js:2240:41\ndispose@http://127.0.0.1:54591/real-sky/native-sky.js:2562:159\nreset@http://127.0.0.1:54591/real-sky/native-sky.js:2284:47",
+          "phase": "retiring",
+          "t": 5129,
+          "doc": "o8iignxv"
+        }
+      ],
+      "retiringViolations": [],
+      "retiringImagesInMemory": null,
+      "retiringCdp": [],
+      "rafCallbacksWhileRetiring": 12,
+      "preconditionRule": "decoded-differs",
+      "trustedPagehideAt": 5119,
+      "rafAfterTrustedPagehide": 0,
+      "rafCallbackTimesTail": [
+        5103,
+        5104,
+        5106,
+        5106,
+        5109,
+        5109,
+        5112,
+        5112,
+        5115,
+        5115,
+        5118,
+        5118
+      ],
+      "lifecycleEvents": [
+        {
+          "kind": "lifecycle",
+          "type": "pagehide",
+          "persisted": false,
+          "vis": "visible",
+          "trusted": true,
+          "phase": "retiring",
+          "t": 5119,
+          "doc": "o8iignxv"
+        },
+        {
+          "kind": "lifecycle",
+          "type": "visibilitychange",
+          "persisted": null,
+          "vis": "hidden",
+          "trusted": true,
+          "phase": "retiring",
+          "t": 5130,
+          "doc": "o8iignxv"
+        }
+      ],
+      "initiators": {
+        "retirementInitiated": 1,
+        "other": 0,
+        "cdpRetiringRequests": 0
+      },
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 28,
+        "moonRuntime": true,
+        "moonDisposed": null,
+        "moonDetail": true
+      },
+      "afterReturn": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 5,
+        "moonRuntime": true,
+        "moonDisposed": null,
+        "moonDetail": true
+      },
+      "readyAfterReturn": true,
+      "requestLevel": false,
+      "coverSamples": [
+        {
+          "t": 0,
+          "composed": true,
+          "mask": "url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEU",
+          "decoded": "url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEU",
+          "wx": 1
+        },
+        {
+          "t": 0.0,
+          "composed": true,
+          "mask": "E4soYjAAAAAElFTkSuQmCC\")",
+          "decoded": "E4soYjAAAAAElFTkSuQmCC\")",
+          "wx": 1,
+          "differs": false
+        },
+        {
+          "t": 0.27,
+          "composed": true,
+          "mask": "E4soYjAAAAAElFTkSuQmCC\")",
+          "decoded": "E4soYjAAAAAElFTkSuQmCC\")",
+          "wx": 1,
+          "differs": false
+        },
+        {
+          "t": 0.53,
+          "composed": true,
+          "mask": "E4soYjAAAAAElFTkSuQmCC\")",
+          "decoded": "E4soYjAAAAAElFTkSuQmCC\")",
+          "wx": 1,
+          "differs": false
+        },
+        {
+          "t": 0.8,
+          "composed": true,
+          "mask": "E4soYjAAAAAElFTkSuQmCC\")",
+          "decoded": "E4soYjAAAAAElFTkSuQmCC\")",
+          "wx": 1,
+          "differs": false
+        },
+        {
+          "t": 1.06,
+          "composed": true,
+          "mask": "YQ1wAAAABJRU5ErkJggg==\")",
+          "decoded": "E4soYjAAAAAElFTkSuQmCC\")",
+          "wx": 1,
+          "differs": true
+        }
+      ],
+      "coverWaitMs": 90000
+    }
+  },
+  "console": [
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ],
+    [
+      "cover",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ],
+    [
+      "cover",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ]
+  ],
+  "cdp": [],
+  "bfcacheNotUsed": [],
+  "crashes": [],
+  "serverErrors": [],
+  "browserVersion": "153.0",
+  "diagnosticCells": {},
+  "pass": false
+}

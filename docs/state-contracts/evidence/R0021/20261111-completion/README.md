@@ -52,6 +52,23 @@ later run:
 | `b15-{candidate,control}-firefox-reduce-published` | same, Firefox | PASS on both: non-discriminating |
 | `c5-chromium`, `c6-firefox` | `--compare-presentation`, b8 / b9 candidate vs control | pass (6 scenes) |
 
+## Delta-review runs
+
+All runs used driver `00a18b54`. Since that commit the driver sanitises reports and server errors itself, and the
+withheld Moon 404 is `no-store` by default. The control was run first in each pair.
+
+| Dir | Options | Result |
+|---|---|---|
+| `b16`, `b17-{control,candidate}-chromium-reduce-cover` | `--in-page-prayer --reduced-motion --fragment '#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1' --cells retirement-cover-change` | control FAIL (1 retirement image, CDP `blockedReason:"csp"`); candidate PASS (0) |
+| `b18-{control,candidate}-firefox-reduce-cover` | same, Firefox | control FAIL (1, page level); candidate PASS (0) |
+| `b19-{candidate,control}-chromium-moon-asset` | `--in-page-prayer --cells moon-asset-failure` | PASS on both: settled recovery |
+| `b20-{candidate,control}-firefox-moon-asset` | same, Firefox | PASS on both: settled recovery |
+| `b21-{candidate,control}-firefox-moon-asset-cacheable404` | plus `--moon-404-cacheable` | FAIL on both: Firefox serves the cached 404 to `force-cache`, so no retry reaches the server; pre-existing behaviour, routed |
+
+Rebuilt history: this folder was first committed in `ff654d7b` (unpushed) and was recommitted as `f39538b7` with
+local prefixes redacted. The driver commits it cites are `9a070e65` and `d6af6493` (formerly `18cdcf05` and
+`db443768`; identical content with LF line endings).
+
 Redaction: five run logs (b8 and b12 of both trees, plus b13-candidate) contain harmless `ConnectionAbortedError`
 tracebacks from the fixture HTTP server. Two prefixes in those tracebacks were replaced: the local Python installation prefix with `<python>`,
 and the repository checkout path with `<repo>`. Nothing else in any log was changed.
