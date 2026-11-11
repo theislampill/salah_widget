@@ -1,0 +1,194 @@
+{
+  "schema": "r0007-independent-exact-source-review/v1",
+  "reviewer": "/root/sleep_observation_exact_review",
+  "reviewedAtUtc": "2026-11-10T23:33:01.989451+00:00",
+  "verdict": "PASS",
+  "scope": "Exact three-file observation-only successor; source behavior, pure dispatch/effects, diagnostic error custody and finite request selection only",
+  "baseCommit": "4bac6a4781fce62f08ab550a20fe5234d3ebb746",
+  "baseTree": "a5e51a591200296e3e73b9ecedbd8c0539e07ee5",
+  "packetPath": "/workspace/scratch/66b3aaff4329/recovery/ingress-sleep-observation/source-manifest.json",
+  "packetSha256": "09d151f36eeaef26c5dc1806288ced740657fe09b1e4766e5fc47860050adbc1",
+  "patchSha256": "521fcf9a51dae1ede87ae6a3db2b0b36e320a03438ae70d974fa56e289e25f07",
+  "reviewedPaths": [
+    {
+      "path": "tools/cp9/r0007_browser.py",
+      "bytes": 43471,
+      "sha256": "8d23a6d459e1a8010bf1c5bb66a773d165aa0b8ccc0fdc1ad7710ef38abcf09e",
+      "gitBlob": "1ddc6bb56f9ed98fc46ce0999ff6a1d5c7405cac",
+      "baseSha256": "080e9a9529b21134ae923a713cef14168297c53b7ddee8ffeb18f3d6e673f397"
+    },
+    {
+      "path": "tests/test_r0007_operation_timing.py",
+      "bytes": 6064,
+      "sha256": "d2e46533d1723b61c5314a2a325f659203874a588e90caa8f221221fd892afd2",
+      "gitBlob": "de8447bcc08cf7cda183cbd297e6c753689b6a04",
+      "baseSha256": "9249bfa96813d8b3a52531eba0b6399b92a725ac0cac76a0c321c92a2e848621"
+    },
+    {
+      "path": "tests/rlgwo/R0007-native-request.json",
+      "bytes": 610,
+      "sha256": "47fc789210cabf470e641b876a25e3ecfbe4927477c60b6799acfd2fd1cd7f2f",
+      "gitBlob": "4c4e9cea28e81350b88cdb3a06980fcce724f659",
+      "baseSha256": "de8c00da173b60a79d888e6a682d595ff87d9afef071aabc12ddeda9bcb923d3"
+    }
+  ],
+  "unchangedSupportingFilesVerifiedAgainstBase": 8,
+  "defects": [],
+  "supportedFindings": [
+    {
+      "id": "SO-R1",
+      "status": "PASS",
+      "finding": "The driver is byte-exactly the immutable original with only the specified sleep hunk replaced. In ingress-active cases, one existing time.sleep(action[\"ms\"]/1000) is invoked through the unchanged measure/observe_operation; the no-mode direct call is retained. No added page call, wait, retry, release, scheduler pump, fixture effect or deadline change appears in the source delta."
+    },
+    {
+      "id": "SO-R2",
+      "status": "PASS",
+      "finding": "All six candidate timing tests pass. The same exact candidate tests against the privately copied original driver fail with exactly two assertion failures and zero errors: successful and failed diagnostic sleeps lack operationTimings. This independently demonstrates call-site sensitivity rather than helper-only coverage."
+    },
+    {
+      "id": "SO-R3",
+      "status": "PASS",
+      "finding": "The diagnostic sleep failure path retains a failed host timing row and safe error type, omits untrusted error text, suppresses displayed cause chaining, propagates failure and prevents the following release. The unchanged 52-control ingress suite passes, including driver finalization, cleanup and selected/absent-mode error-custody controls."
+    },
+    {
+      "id": "SO-R4",
+      "status": "PASS",
+      "finding": "An independent probe executes the actual AST dispatcher and local measure for both unchanged seven-action recipes, with only native/time boundaries doubled. It confirms one requested 0.25-second sleep at index 2, release at index 3, identical external effects between original and candidate, and exact original/candidate absent-mode trace parity. The added timing row supports pre-sleep, enclosed sleep and post-sleep host elapsed partitions using adjacent existing brackets."
+    },
+    {
+      "id": "SO-R5",
+      "status": "PASS",
+      "finding": "The pure request planner selects the same two cases as the original request: NE07-fall24 and NE07-font-fallback-fall24; Firefox only, headed, video-only, two planned cells. The unchanged recipe requires serial execution. Only requestId/reason change; no native collector entry point was invoked."
+    }
+  ],
+  "verification": {
+    "runs": [
+      {
+        "label": "green-timing",
+        "testCount": 6,
+        "exitCode": 0,
+        "failures": 0,
+        "errors": 0,
+        "receipt": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-timing.json",
+        "log": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-timing.log",
+        "logSha256": "087f184b06e077b614773f97b8c9c1cbd79df12cbf8feb1134a43b33eb89a92b"
+      },
+      {
+        "label": "green-ingress",
+        "testCount": 52,
+        "exitCode": 0,
+        "failures": 0,
+        "errors": 0,
+        "receipt": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-ingress.json",
+        "log": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-ingress.log",
+        "logSha256": "585f93cb7934fbe1be55cbfc03e9ab1cbb79b977c6d3837ef5673036565f229a"
+      },
+      {
+        "label": "red-original-driver",
+        "testCount": 6,
+        "exitCode": 1,
+        "failures": 2,
+        "errors": 0,
+        "receipt": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/red-original-driver.json",
+        "log": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/red-original-driver.log",
+        "logSha256": "027b66fc03c6be7e01a75a2e8ce0f072579848f119a94ccda5215fd2b5e2aa35"
+      }
+    ],
+    "realRecipeProbe": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/real-recipe-probe.json",
+    "probeCaseCount": 2,
+    "requestPlan": {
+      "profile": "firefox-font-ingress",
+      "engines": [
+        "firefox"
+      ],
+      "videoOnly": true,
+      "requestedCaseIds": [
+        "NE07-fall24",
+        "NE07-font-fallback-fall24"
+      ],
+      "selectedCaseIds": [
+        "NE07-fall24",
+        "NE07-font-fallback-fall24"
+      ],
+      "plannedCells": 2,
+      "arguments": [
+        "--engine",
+        "firefox",
+        "--headed",
+        "--video-only",
+        "--recipe",
+        "tests/rlgwo/R0007-font-ingress-recipes.json",
+        "--case-id",
+        "NE07-fall24",
+        "--case-id",
+        "NE07-font-fallback-fall24"
+      ]
+    },
+    "requestId": "r0007-font-ingress-20261110-02",
+    "nativeLaunched": false,
+    "networkUsed": false
+  },
+  "residuals": [
+    "This receipt does not review a future final publication manifest or any docs/evidence additions. It does not authorize publication, merge, native execution, whole R0007 acceptance or closure.",
+    "The new interval encloses the host sleep invocation plus ordinary measurement overhead and possible rescheduling. It is not a kernel-only sleep duration, and instrumentation is not guaranteed to leave observed elapsed scheduling identical.",
+    "All probe clock values and native objects are synthetic. Host monotonic brackets do not associate native performance clocks or video frames and do not establish the historical host/OS/browser cause.",
+    "The observation change provides no timing cure or guarantee that the original body release will beat its unchanged 10-second deadline. A successful later run would not explain the historical failed pair.",
+    "CSS identity or independent equivalence, complete request/body custody, phase/terminal/finalization/cleanup and independent full-video/pixel review remain required before any future paired inference. Existing setup failure and readability observations receive no waiver from this source PASS."
+  ],
+  "authority": {
+    "findingsOnly": true,
+    "targetRepoRefIndexControllerMutation": false,
+    "nativeExecution": false,
+    "publication": false,
+    "nativeAcceptance": false,
+    "wholeR0007Acceptance": false,
+    "closure": false
+  },
+  "evidence": [
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/identity.json",
+      "bytes": 3524,
+      "sha256": "d6e9ed38edf77aca45e9f2da5f859e16f614df4a663d99c05d4ea48381e26c5f"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-timing.json",
+      "bytes": 567,
+      "sha256": "281658b596780d36520bcc32ca119cbbc9c3221c5e4310e904f9fc90a318cca4"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-timing.log",
+      "bytes": 1057,
+      "sha256": "087f184b06e077b614773f97b8c9c1cbd79df12cbf8feb1134a43b33eb89a92b"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-ingress.json",
+      "bytes": 564,
+      "sha256": "f7ed28496e17fcd478d5370bf5d4be9c10de8656f207673ca9eefdeaead95911"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/green-ingress.log",
+      "bytes": 12393,
+      "sha256": "585f93cb7934fbe1be55cbfc03e9ab1cbb79b977c6d3837ef5673036565f229a"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/red-original-driver.json",
+      "bytes": 709,
+      "sha256": "c4a290e528d2e0b3b70c9051baca400009da1659a8a25584fcc8cfac66625d07"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/red-original-driver.log",
+      "bytes": 2804,
+      "sha256": "027b66fc03c6be7e01a75a2e8ce0f072579848f119a94ccda5215fd2b5e2aa35"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/probe_real_recipe.py",
+      "bytes": 8958,
+      "sha256": "ec98b3211ff4ef092db6614f8121da468aacd8f1568f6668cf41141caa41ad34"
+    },
+    {
+      "path": "/workspace/scratch/66b3aaff4329/recovery/sleep-observation-exact-review/real-recipe-probe.json",
+      "bytes": 16296,
+      "sha256": "9a5631f9f61cbe584050dd8e3cb3aa22b7f8396af94386df0e27c344c4a042c9"
+    }
+  ]
+}

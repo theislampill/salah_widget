@@ -1,0 +1,68 @@
+✔ midday fades only Fajr/Sunrise; future Maghrib/Isha remain normal (81.926688ms)
+✔ actual clock boundary 00:00:00 preserves elapsed/current/upcoming hierarchy (55.840776ms)
+✔ actual clock boundary 04:59:59 preserves elapsed/current/upcoming hierarchy (50.778789ms)
+✔ actual clock boundary 05:00:00 preserves elapsed/current/upcoming hierarchy (49.299451ms)
+✔ actual clock boundary 05:59:59 preserves elapsed/current/upcoming hierarchy (50.863959ms)
+✔ actual clock boundary 06:00:00 preserves elapsed/current/upcoming hierarchy (49.802288ms)
+✔ actual clock boundary 06:19:59 preserves elapsed/current/upcoming hierarchy (62.793584ms)
+✔ actual clock boundary 06:20:00 preserves elapsed/current/upcoming hierarchy (53.419419ms)
+✔ actual clock boundary 11:59:59 preserves elapsed/current/upcoming hierarchy (48.841797ms)
+✔ actual clock boundary 12:00:00 preserves elapsed/current/upcoming hierarchy (62.282708ms)
+✔ actual clock boundary 15:29:59 preserves elapsed/current/upcoming hierarchy (49.044643ms)
+✔ actual clock boundary 15:30:00 preserves elapsed/current/upcoming hierarchy (63.782759ms)
+✔ actual clock boundary 17:59:59 preserves elapsed/current/upcoming hierarchy (53.250442ms)
+✔ actual clock boundary 18:00:00 preserves elapsed/current/upcoming hierarchy (48.437651ms)
+✔ actual clock boundary 19:29:59 preserves elapsed/current/upcoming hierarchy (49.720123ms)
+✔ actual clock boundary 19:30:00 preserves elapsed/current/upcoming hierarchy (79.969886ms)
+✔ actual clock boundary 23:59:59 preserves elapsed/current/upcoming hierarchy (73.814881ms)
+✔ actual midnight adoption resets elapsed statuses for the new civil day (90.845527ms)
+✔ equal admitted clocks are normal at the event instant and past one second later (53.764456ms)
+✔ all equal polar clocks preserve exact-instant and elapsed states without row ordering (77.178245ms)
+✔ reordered admitted clocks classify elapsed time independently of displayed row index (61.777497ms)
+✔ annotated admitted clocks use the same source clock parser as the model (58.058962ms)
+✖ missing tomorrow preserves next-key precedence while actual countdown stays unavailable (59.985623ms)
+✔ mutant fading every inactive row is rejected by the actual midday caller (52.485755ms)
+✔ mutant inferring elapsed state by row index is rejected by reordered timings (73.768375ms)
+✔ mutant fading equal-time events at the exact instant is rejected (70.516943ms)
+✔ mutant dropping current/next precedence is rejected after Isha (143.417479ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 26
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1737.18788
+
+✖ failing tests:
+
+test at tests/r0018-prayer-row-status.test.cjs:83:1
+✖ missing tomorrow preserves next-key precedence while actual countdown stays unavailable (59.985623ms)
+  AssertionError [ERR_ASSERTION]: Past/current/next classes from the actual rendered rows
+  + actual - expected
+  
+    [
+  -   'on',
+      'past',
+      'past',
+      'past',
+      'past',
+  +   'past',
+      'now'
+    ]
+  
+      at verify (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0018-prayer-row-status.test.cjs:26:10)
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0018-prayer-row-status.test.cjs:85:17)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [Array],
+    expected: [Array],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

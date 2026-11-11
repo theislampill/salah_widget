@@ -1,0 +1,775 @@
+{
+  "populationDefinition": "Every case object in immutable candidate recipe; one caseId per independent native context, not one assertion or passing case",
+  "populationSize": 30,
+  "examinedCount": 30,
+  "healthy": 17,
+  "mutants": 9,
+  "preservation": 4,
+  "cases": [
+    {
+      "caseId": "NE07-reordered24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-01",
+        "ES07-11",
+        "ES07-13",
+        "ES07-14"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-ordinary24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-02",
+        "ES07-13"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-missing",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-05",
+        "ES07-12"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-wrong-day",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-05",
+        "ES07-12"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-recovery24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-06",
+        "ES07-11",
+        "7.07",
+        "R0007-A05"
+      ],
+      "requiredRecoveryFirstFrameReview": {
+        "required": true,
+        "afterEvent": {
+          "type": "json-settle",
+          "key": "tomorrow:1"
+        },
+        "currentDay": "07-09-2026",
+        "tomorrowDay": "08-09-2026",
+        "fixedAcceptedUtcMs": 1788822000000,
+        "rule": "Inspect all original render-completed snapshots after genuine adoption. Earliest eligible dirty frame must show fixed expected endpoint; bounded scheduling wait only transports actual latest render and does not itself prove earliest-frame association."
+      },
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-recovery12",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-06",
+        "7.07",
+        "R0007-A05"
+      ],
+      "requiredRecoveryFirstFrameReview": {
+        "required": true,
+        "afterEvent": {
+          "type": "json-settle",
+          "key": "tomorrow:1"
+        },
+        "currentDay": "07-09-2026",
+        "tomorrowDay": "08-09-2026",
+        "fixedAcceptedUtcMs": 1788822000000,
+        "rule": "Inspect all original render-completed snapshots after genuine adoption. Earliest eligible dirty frame must show fixed expected endpoint; bounded scheduling wait only transports actual latest render and does not itself prove earliest-frame association."
+      },
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-equal-polar",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-04",
+        "ES07-11",
+        "ES07-13"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-spring24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A04",
+        "ES07-07",
+        "ES07-13",
+        "ES07-14",
+        "7.12",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render&&s.render.timetableDate==='08-03-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-spring12",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A04",
+        "ES07-07",
+        "ES07-13",
+        "ES07-14",
+        "7.12",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render&&s.render.timetableDate==='08-03-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-fall24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T05:30:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A04",
+        "ES07-07",
+        "ES07-13",
+        "ES07-14",
+        "7.12",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='01-11-2026'&&s.render&&s.render.timetableDate==='01-11-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-dst-ordinary24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T05:30:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A04",
+        "ES07-07",
+        "ES07-13",
+        "ES07-14",
+        "7.12",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-gap",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A05",
+        "ES07-08",
+        "7.13"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render&&s.render.timetableDate==='07-03-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-fold",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T03:30:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A05",
+        "ES07-08",
+        "7.13"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='31-10-2026'&&s.render&&s.render.timetableDate==='31-10-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-dst-recovery24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A05",
+        "ES07-06",
+        "7.13"
+      ],
+      "requiredRecoveryFirstFrameReview": {
+        "required": true,
+        "afterEvent": {
+          "type": "json-settle",
+          "key": "tomorrow:1"
+        },
+        "currentDay": "07-03-2026",
+        "tomorrowDay": "08-03-2026",
+        "fixedAcceptedUtcMs": 1772944200000,
+        "rule": "First genuine post-adoption eligible dirty render, not an eventual still; retain native timers/rAF and same epoch, inspect raw all-render trace."
+      },
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render&&s.render.timetableDate==='07-03-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-reordered-offline",
+      "entry": "offline.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-01",
+        "ES07-11",
+        "ES07-13",
+        "ES07-14",
+        "R0007-A04"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-reordered-iframe",
+      "entry": "index.html",
+      "iframe": true,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "ES07-01",
+        "ES07-11",
+        "ES07-13",
+        "ES07-14",
+        "R0007-A04"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-mut-hardcoded-fajr",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": "hardcoded-fajr",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "ES07-01",
+        "ES07-11",
+        "ES07-13",
+        "ES07-14"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": "render/nextKey: expected 'Isha', observed 'Fajr'",
+      "healthyControlCaseIds": [
+        "NE07-reordered24",
+        "NE07-ordinary24"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-name-order",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": "name-order",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "ES07-01",
+        "ES07-11",
+        "ES07-13",
+        "ES07-14"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": "render/nextKey: expected 'Isha', observed 'Fajr'",
+      "healthyControlCaseIds": [
+        "NE07-reordered24",
+        "NE07-ordinary24"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-lost-date",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": "lost-date",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "ES07-01",
+        "ES07-11",
+        "ES07-13",
+        "ES07-14"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": "render/nextKey: expected 'Isha', observed None",
+      "healthyControlCaseIds": [
+        "NE07-reordered24",
+        "NE07-ordinary24"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-independent-label",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": "independent-label",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "ES07-01",
+        "ES07-11",
+        "ES07-13",
+        "ES07-14"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'",
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'&&s.tomorrowDay==='08-09-2026'"
+      ],
+      "expectedFailureContains": "missing actual consumer text: until Isha",
+      "healthyControlCaseIds": [
+        "NE07-reordered24",
+        "NE07-ordinary24"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-ambiguous-epoch",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T03:30:00Z"
+      },
+      "variant": "ambiguous-epoch",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "R0007-A05",
+        "ES07-08",
+        "7.13"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='31-10-2026'&&s.render&&s.render.timetableDate==='31-10-2026'"
+      ],
+      "expectedFailureContains": "render/selectionState: expected 'endpoint-unresolved', observed 'next-day-target'",
+      "healthyControlCaseIds": [
+        "NE07-fold",
+        "NE07-ordinary24"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-remove-next-dirty",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T23:00:00Z"
+      },
+      "variant": "remove-next-dirty",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "ES07-06",
+        "ES07-11",
+        "7.07",
+        "R0007-A05"
+      ],
+      "requiredRecoveryFirstFrameReview": {
+        "required": true,
+        "afterEvent": {
+          "type": "json-settle",
+          "key": "tomorrow:1"
+        },
+        "currentDay": "07-09-2026",
+        "tomorrowDay": "08-09-2026",
+        "fixedAcceptedUtcMs": 1788822000000,
+        "rule": "Inspect all original render-completed snapshots after genuine adoption. Earliest eligible dirty frame must show fixed expected endpoint; bounded scheduling wait only transports actual latest render and does not itself prove earliest-frame association."
+      },
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'"
+      ],
+      "expectedFailureContains": "dom/.nt/text: expected '00:31', observed '\u2014'",
+      "healthyControlCaseIds": [
+        "NE07-recovery24",
+        "NE07-recovery12"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-epoch-plus24",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T04:30:00Z"
+      },
+      "variant": "epoch-plus24",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "R0007-A05",
+        "ES07-06",
+        "7.13"
+      ],
+      "requiredRecoveryFirstFrameReview": {
+        "required": true,
+        "afterEvent": {
+          "type": "json-settle",
+          "key": "tomorrow:1"
+        },
+        "currentDay": "07-03-2026",
+        "tomorrowDay": "08-03-2026",
+        "fixedAcceptedUtcMs": 1772944200000,
+        "rule": "First genuine post-adoption eligible dirty render, not an eventual still; retain native timers/rAF and same epoch, inspect raw all-render trace."
+      },
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-03-2026'&&s.render&&s.render.timetableDate==='07-03-2026'"
+      ],
+      "expectedFailureContains": "render/leftMin: expected 270, observed 330",
+      "healthyControlCaseIds": [
+        "NE07-dst-recovery24"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-wall-spring",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00Z"
+      },
+      "variant": "wall-countdown",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "R0007-A04",
+        "ES07-07",
+        "ES07-13",
+        "ES07-14",
+        "7.12",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='08-03-2026'&&s.render&&s.render.timetableDate==='08-03-2026'"
+      ],
+      "expectedFailureContains": "render/leftMin: expected 150, observed 210",
+      "healthyControlCaseIds": [
+        "NE07-spring24",
+        "NE07-wall-ordinary-control"
+      ]
+    },
+    {
+      "caseId": "NE07-mut-wall-fall",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-11-01T05:30:00Z"
+      },
+      "variant": "wall-countdown",
+      "expectedFailure": true,
+      "acceptanceIds": [
+        "R0007-A04",
+        "ES07-07",
+        "ES07-13",
+        "ES07-14",
+        "7.12",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='01-11-2026'&&s.render&&s.render.timetableDate==='01-11-2026'"
+      ],
+      "expectedFailureContains": "render/leftMin: expected 270, observed 210",
+      "healthyControlCaseIds": [
+        "NE07-fall24",
+        "NE07-wall-ordinary-control"
+      ]
+    },
+    {
+      "caseId": "NE07-wall-ordinary-control",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-09-07T05:30:00Z"
+      },
+      "variant": "wall-countdown",
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A04",
+        "ES07-07",
+        "ES07-13",
+        "ES07-14",
+        "7.12",
+        "7.15",
+        "7.10",
+        "R0007-A06"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [
+        "s.stage==='render-completed'&&s.currentDay==='07-09-2026'&&s.render&&s.render.timetableDate==='07-09-2026'"
+      ],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-preserve-no-preference",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A02",
+        "R0007-A07",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-preserve-reduce",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A02",
+        "R0007-A07",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-preserve-reduce-full",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "native"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A02",
+        "R0007-A07",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    },
+    {
+      "caseId": "NE07-preserve-warm-ashen-below-horizon",
+      "entry": "index.html",
+      "iframe": false,
+      "clockPolicy": {
+        "mode": "fixed",
+        "epoch": "2026-03-08T06:30:00.000Z"
+      },
+      "variant": null,
+      "expectedFailure": false,
+      "acceptanceIds": [
+        "R0007-A02",
+        "R0007-A07",
+        "7.15"
+      ],
+      "requiredRecoveryFirstFrameReview": null,
+      "firstCapturePredicates": [],
+      "expectedFailureContains": null,
+      "healthyControlCaseIds": []
+    }
+  ]
+}

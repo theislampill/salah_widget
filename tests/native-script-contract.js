@@ -27,6 +27,25 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0007 gated web-font activation at ec69edf; explicitly rebound like the
+    // 5e946fe inputs below, which remain admitted unchanged.
+    'e059305e2602adead696c2639c5332656e240f1b58628dde05924414ea99bc8d':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ec69edf863cae569462d91a4a5ae2feb6554fbe1',path:'src/native/index.html',layout:'config,native'}),
+    '494b8424a5e35108aec7604cb2e2fbda7ca33c61522005786e3674176fb5aa15':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ec69edf863cae569462d91a4a5ae2feb6554fbe1',path:'index.html',
+      parentSha256:'5a200d9ab428c24ad7967253ee57156fcbca3483c123eed228bd88fd354dd6ab',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0007 source reviewed at 5e946fe; these complete inputs are admitted by
+    // explicit identity. Earlier retained records and split prerequisites stay
+    // unchanged; this does not admit an altered authored or structural input.
+    'e8603192a095cd8682c35416f3ecca00938d772f5152324b37f9928077eac037':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'5e946fe18a31750cf528bd58210ce79182dcf1e1',path:'src/native/index.html',layout:'config,native'}),
+    'c60eef46e0feeb4fcbc2daa34ec7069af470326648d8cf53943ee42a21865308':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'5e946fe18a31750cf528bd58210ce79182dcf1e1',path:'index.html',
+      parentSha256:'983f8b609eba48821e8d8c539cca7d0b9e40caf3f35a924514a4e93eb24766e9',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     '6054f1eb3e7f04aa5975707345810b64fc824bc99e17ce3798369a959a123fad':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'f71fef6ccf7e4efcb57b5a26688d2360461a3253',path:'src/native/index.html',layout:'config,native'}),
     '446453b522f56f5f1bc0afd1a3abd09b73756754fa58a6b3b0ff09ce953a2eec':Object.freeze({

@@ -1,0 +1,127 @@
+{
+  "schema": "audit-andon-direct-findings-v1",
+  "entry": "explicit-bounded-direct-cord-pull",
+  "caller": "/root",
+  "status": "BOUNDED_DIAGNOSIS_RETURNED",
+  "sourceCommit": "4bac6a4781fce62f08ab550a20fe5234d3ebb746",
+  "sourceTree": "a5e51a591200296e3e73b9ecedbd8c0539e07ee5",
+  "authority": {
+    "findingsOnly": true,
+    "canonicalStateMutation": false,
+    "repairExecution": false,
+    "nativeExecution": false,
+    "publication": false,
+    "nativeAcceptance": false,
+    "closure": false
+  },
+  "abnormality": {
+    "classification": "INCOMPLETE_DIAGNOSTIC_SETUP_WITH_HOST_OBSERVATION_GAP",
+    "observedFailure": "Fallback release action fails after original 10,000 ms prayer timer fires and aborts the held fixture body, before optional CSS delivery or ingress observations.",
+    "hostGapsMs": {
+      "baseline": 5328,
+      "fallback": 7640
+    },
+    "requestedWaitMs": 250,
+    "baselinePageDeadlineSlackAtReleaseMs": 185,
+    "fallbackPageTimerElapsedAtFireMs": 10016,
+    "fontPairRealized": false
+  },
+  "findings": [
+    {
+      "id": "IR-A1",
+      "certainty": "observed-and-source-supported",
+      "finding": "Original fallback body abort precedes the missing successful release; the fixture removes the pending boundary on abort.",
+      "consequence": "Font intervention did not begin; fallback cleanup stylesheet abort is not a primary font failure."
+    },
+    {
+      "id": "IR-A2",
+      "certainty": "demonstrated-observation-gap",
+      "finding": "Exact source interval contains unmeasured time.sleep(0.25) and local dispatch/bookkeeping, with no intermediate browser call.",
+      "consequence": "Original evidence does not partition sleep residence from adjacent host intervals."
+    },
+    {
+      "id": "IR-A3",
+      "certainty": "dependency-mechanism-observed; causal-attribution-unproven",
+      "finding": "Installed and actual-run Playwright are 1.62.0. Synchronous API waits pump the dispatcher; ordinary host sleep does not.",
+      "consequence": "Pumping is a scheduling intervention, not a demonstrated repair of this gap."
+    },
+    {
+      "id": "IR-A4",
+      "certainty": "observed",
+      "finding": "Baseline release was only 185 ms before its nominal original deadline.",
+      "consequence": "Baseline success does not establish robust setup scheduling or paired native acceptance."
+    }
+  ],
+  "causalBoundary": {
+    "established": [
+      "Page fixture holds body",
+      "Product 10,000 ms timer fires in fallback",
+      "Abort listener removes pending boundary",
+      "Host release attempt fails before font intervention"
+    ],
+    "unknown": [
+      "Sleep entry and exit times",
+      "Host elapsed time inside versus adjacent to sleep",
+      "Responsible host, scheduler or browser component",
+      "Cause of independently observed text loss"
+    ],
+    "prohibitedInference": [
+      "The 250 ms sleep itself lasted 7,640 ms",
+      "A particular Windows, Playwright, Firefox, runner or compositor component caused the gap",
+      "A pumping wait guarantees on-time release",
+      "A later successful pair explains the historical failure"
+    ]
+  },
+  "localVsSystemic": {
+    "demonstratedLocalDefect": "Existing observation omitted the deliberate wait immediately before a deadline-sensitive release.",
+    "sharedExposure": "Host-driven release depends on host resumption while an independent page deadline continues; same source branch is shared.",
+    "systemicAttribution": "Not established; do not widen campaign or alter other profiles from this evidence."
+  },
+  "countermeasures": [
+    {
+      "id": "A",
+      "recommendation": "PREFERRED",
+      "scope": "Ingress-active action dispatch only",
+      "change": "Wrap exactly the existing time.sleep(action[\"ms\"]/1000) in measure(action_index,\"sleep\",...) and keep no-mode direct sleep.",
+      "preserves": [
+        "250 ms request",
+        "one sleep call",
+        "same release operation",
+        "all seven actions and oracles",
+        "10,000 ms product timer",
+        "font pair rules",
+        "all producer/job deadlines",
+        "no-mode path"
+      ],
+      "newPageCalls": 0,
+      "newWaits": 0,
+      "newActionBoundarySchema": false,
+      "claim": "Observation repair only; no causal cure claim."
+    },
+    {
+      "id": "B",
+      "recommendation": "OPTIONAL_HYPOTHESIS_OR_HARDENING_NOT_PROVEN_CURE",
+      "change": "Measured page.wait_for_timeout(250) for selected diagnostic",
+      "risk": "Changes callback pumping and adds protocol operation; release still waits for host resumption."
+    },
+    {
+      "id": "C",
+      "recommendation": "NOT_WITHIN_CURRENT_PRESERVATION_CONTRACT",
+      "change": "Page/fixture-owned delayed release",
+      "risk": "Moves release effect out of original host action and would require fixture/scope design review."
+    }
+  ],
+  "followUpEvidenceObligation": [
+    "Pure control through actual action-dispatch branch must fail if sleep timing wrapper is absent; helper-only tests are insufficient.",
+    "Verify sleep exactly once with 0.25; timing row uses action index 2, start/finish and return state; use controlled elapsed jump.",
+    "Retain failure/cleanup semantics and no-mode direct behavior; no new page call, wait, retry, deadline or fixture change.",
+    "If root commissions acquisition, use only existing finite serial Firefox pair with changed observation and no automatic retries.",
+    "Receive new sleep bracket and existing outer brackets as pre-sleep, in-sleep, post-sleep elapsed intervals; do not claim OS cause.",
+    "Both arms must complete original actions and all ingress/terminal/body/pair/finalization/cleanup rules before any paired conclusion.",
+    "Independent full-video review remains required; retain prior setup failure and text-loss observations."
+  ],
+  "escalationRecommendation": "Return to root for one exact minimal observability patch and independent receipt; continue existing R0007. No new RXX, widened campaign, product fix or acceptance authority is established.",
+  "rootSteeringIncorporated": "Root explicitly selected diagnostic-only existing measure wrapper; no generic loop refactor or additional action-boundary schema.",
+  "evidencePath": "/workspace/scratch/66b3aaff4329/recovery/ingress-release-andon/evidence.json",
+  "markdownPath": "/workspace/scratch/66b3aaff4329/recovery/reviews/ingress_release_andon.md"
+}

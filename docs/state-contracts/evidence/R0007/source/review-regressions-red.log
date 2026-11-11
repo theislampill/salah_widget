@@ -1,0 +1,138 @@
+✖ review SRC-02 admitted year 0001 retains canonical target and completed-render dates (34.939264ms)
+✖ review SRC-02 admitted year 0099 retains canonical target and completed-render dates (6.001215ms)
+✖ review SRC-02 admitted year 0999 retains canonical target and completed-render dates (6.971231ms)
+✔ review SRC-02 admitted year 1000 retains canonical target and completed-render dates (72.735866ms)
+✔ review SRC-02 admitted year 2026 retains canonical target and completed-render dates (48.232123ms)
+✖ review SRC-02 small-year next-day event retains its actual civil successor (6.780435ms)
+✖ review SRC-01 elapsed start-of-day gap retains its known ordering bound without inventing an endpoint (42.724858ms)
+✖ review SRC-01 later end-of-day gap retains its known ordering bound without inventing an endpoint (41.358627ms)
+✔ review SRC-01 ordinary companion in America/Santiago preserves its supported Fajr target (43.247123ms)
+✔ review SRC-01 ordinary companion in America/Nuuk preserves its supported Fajr target (43.587252ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 4
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 746.850103
+
+✖ failing tests:
+
+test at tests/prayer-next-event-state.test.cjs:45:56
+✖ review SRC-02 admitted year 0001 retains canonical target and completed-render dates (34.939264ms)
+  AssertionError [ERR_ASSERTION]: valid admitted current timetable remains usable
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:48:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:45:56
+✖ review SRC-02 admitted year 0099 retains canonical target and completed-render dates (6.001215ms)
+  AssertionError [ERR_ASSERTION]: valid admitted current timetable remains usable
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:48:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:45:56
+✖ review SRC-02 admitted year 0999 retains canonical target and completed-render dates (6.971231ms)
+  AssertionError [ERR_ASSERTION]: valid admitted current timetable remains usable
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:48:3)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:58:1
+✖ review SRC-02 small-year next-day event retains its actual civil successor (6.780435ms)
+  AssertionError [ERR_ASSERTION]: valid admitted timetable renders
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:60:50)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:149:3
+✖ review SRC-01 elapsed start-of-day gap retains its known ordering bound without inventing an endpoint (42.724858ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'endpoint-unresolved'
+  - 'same-day-target'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:151:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at node:internal/test_runner/test:1305:31
+      at node:internal/process/task_queues:151:7
+      at AsyncResource.runInAsyncScope (node:async_hooks:227:14)
+      at AsyncResource.runMicrotask (node:internal/process/task_queues:148:8) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'endpoint-unresolved',
+    expected: 'same-day-target',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/prayer-next-event-state.test.cjs:149:3
+✖ review SRC-01 later end-of-day gap retains its known ordering bound without inventing an endpoint (41.358627ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'endpoint-unresolved'
+  - 'same-day-target'
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:151:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'endpoint-unresolved',
+    expected: 'same-day-target',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

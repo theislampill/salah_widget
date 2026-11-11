@@ -1,0 +1,142 @@
+✖ QUAL-01 pending stylesheet with empty loaded font set cannot release (4.912494ms)
+✖ an unrelated LINK receipt and preconnect completion cannot supply stylesheet terminality (1.881785ms)
+✖ a loaded stylesheet must have its actual media activation applied (1.71237ms)
+✔ terminal stylesheet failure permits settled fallback with no registered font faces (5.079876ms)
+✖ terminal active stylesheet and settled fonts with clear dirty flag permit release (3.031712ms)
+✖ font loading is awaited without releasing the held reply (3.180354ms)
+✖ read-only layout precedes ready so stylesheet application can expose pending font work (1.444158ms)
+✔ actual product font completion callback keeps release held until original dirty work clears (5.726326ms)
+✖ existing dirty work and a missing stylesheet cannot be treated as a settled barrier (2.934234ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 2
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37.101113
+
+✖ failing tests:
+
+test at tests/r0007-recovery-precondition.test.cjs:35:1
+✖ QUAL-01 pending stylesheet with empty loaded font set cannot release (4.912494ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:36:38
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:33:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:38:1
+✖ an unrelated LINK receipt and preconnect completion cannot supply stylesheet terminality (1.881785ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24{"url":"https://fonts.googleapis.com"}
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:40:12
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:33:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:42:1
+✖ a loaded stylesheet must have its actual media activation applied (1.71237ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:43:10
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:33:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:48:1
+✖ terminal active stylesheet and settled fonts with clear dirty flag permit release (3.031712ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24 observes actual FontFaceSet.ready
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:49:70
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:33:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:51:1
+✖ font loading is awaited without releasing the held reply (3.180354ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24 remains held while fonts load
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:55:10
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:33:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:57:1
+✖ read-only layout precedes ready so stylesheet application can expose pending font work (1.444158ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24 waits for load revealed by layout
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:61:10
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:33:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/r0007-recovery-precondition.test.cjs:69:1
+✖ existing dirty work and a missing stylesheet cannot be treated as a settled barrier (2.934234ms)
+  AssertionError [ERR_ASSERTION]: NE07-recovery24 missing stylesheet
+  
+  true !== false
+  
+      at /workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:71:10
+      at async each (/workspace/scratch/8726e3e6def5/r0007-work/tests/r0007-recovery-precondition.test.cjs:33:54)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

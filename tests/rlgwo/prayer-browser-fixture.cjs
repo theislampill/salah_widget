@@ -117,16 +117,36 @@ if(typeof showError==='function'){const prayerOriginalError=showError;showError=
 function instrument(source,spec){
  let normalized=source.replace(/\r\n/g,'\n');
  const variants={
+  // Diagnostic only: keep the existing fallback lists and ordinary font ingress.
+  'font-fallback':[
+    ['--font-body:"Inter",','--font-body:'],
+    ['--font-display:"Fraunces",','--font-display:']
+  ],
   'wall-countdown':['leftMin, nowEpoch, nextEpoch,','leftMin:nextMin-nowMin, nowEpoch, nextEpoch,'],
   'sec-only':['if(sec!==_lastSec || _renderDirty)','if(sec!==_lastSec)'],
-  'epoch-plus24':['const nextEpoch=nextDay ?','const nextEpoch=tomorrowFlag && nextDay && currentDay ? epochForTzTime(currentDay.y,currentDay.mo,currentDay.d,nextHour,nextMinute,nextZone)+86400000 : nextDay ?'],
+  'epoch-plus24':['const epoch=epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone);','const epoch=record===tomorrow ? epochForTzTime(prayerDayFields(today).y,prayerDayFields(today).mo,prayerDayFields(today).d,Math.floor(minute/60),minute%60,zone)+86400000 : epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone);'],
+  'hardcoded-fajr':['const nextCandidates=prayerEventCandidates(nextRecord,generation);','const nextCandidates=prayerEventCandidates(nextRecord,generation).filter(candidate=>candidate.key==="Fajr");'],
+  'name-order':['.sort((a,b)=>a.epoch-b.epoch || a.rank-b.rank)','.sort((a,b)=>a.rank-b.rank)'],
+  'lost-date':['const day=prayerDayFields(record), zone=record.meta.timezone;','const day=prayerDayFields(today), zone=record.meta.timezone;'],
+  'ambiguous-epoch':['const epoch=epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone);','const uniqueEpoch=epochForTzTime(day.y,day.mo,day.d,Math.floor(minute/60),minute%60,zone); const epoch=Number.isFinite(uniqueEpoch)?uniqueEpoch:zoneDay(day.y,day.mo,day.d,zone).minutes?.[minute]?.[0];'],
+  'independent-label':['${M.nextKey}</span>','${M.needTomorrow?"Fajr":M.nextKey}</span>'],
+  'remove-adoption-dirty-only':['tomorrow=admitted.data; _renderDirty=true; return true;','tomorrow=admitted.data; return true;'],
+  // Both owners can wake the same accepted prefetch: removing only adoption's
+  // dirty flag is a surviving redundancy control, not a full wakeup removal.
+  'remove-next-dirty':[
+    ['tomorrow=admitted.data; _renderDirty=true; return true;','tomorrow=admitted.data; return true;'],
+    ['if(!alreadyRendered) _renderDirty=true;','if(!alreadyRendered && op.kind!=="prefetch") _renderDirty=true;']
+  ],
   'early-cache-filter':['const cached=readPrayerCache(op.cacheKey);','const rawCached=readPrayerCache(op.cacheKey); const cached=rawCached && rawCached.date===prayerCivilDay() ? rawCached : null;'],
   'removed-day-check':['if(day!==requested){','if(false){'],
   'unconditional-finally':['if(!requestEligible(op)) return false;\n  _requestSlots[op.kind]=null; return true;','_requestSlots[op.kind]=null; return true;']
  };
  if(spec.variant&&spec.variant!=='no-abort'){
-  const edit=variants[spec.variant];if(!edit||normalized.split(edit[0]).length!==2)throw Error('exact variant anchor drift: '+spec.variant);
-  normalized=normalized.replace(edit[0],edit[1]);
+  const variant=variants[spec.variant];if(!variant)throw Error('unknown variant: '+spec.variant);
+  for(const edit of (Array.isArray(variant[0])?variant:[variant])){
+   if(normalized.split(edit[0]).length!==2)throw Error('exact variant anchor drift: '+spec.variant);
+   normalized=normalized.replace(edit[0],edit[1]);
+  }
  }
  if(normalized.split('\nboot();').length!==2)throw Error('unique natural boot anchor drift');
  if(normalized.split('<head>').length!==2)throw Error('unique head anchor drift');

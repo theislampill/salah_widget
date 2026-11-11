@@ -1,0 +1,143 @@
+name: R0017 C18 remaining reduced-motion qualification
+
+on:
+  push:
+    branches:
+      - pro/r0017-corrective-windows-qualification-20261107
+    paths:
+      - .github/workflows/r0017-windows-phase2.yml
+      - tools/qualification/r0017-windows-phase2.cjs
+      - tools/qualification/r0017-phase2-controls.cjs
+      - tools/qualification/r0017-windows-passive.cjs
+      - tools/qualification/r0017-passive-network.cjs
+      - tools/qualification/r0017-request-accounting.cjs
+      - tools/qualification/r0017-windows-proof.cjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0017-native-windows-qualification
+  cancel-in-progress: false
+
+jobs:
+  qualify:
+    if: github.repository == 'theislampill/salah_widget'
+    runs-on: windows-2022
+    timeout-minutes: 20
+    # Preserve Git blob bytes on Windows without changing machine Git settings.
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - name: Establish the qualification operation deadline
+        id: qualification_clock
+        shell: pwsh
+        run: |
+          $r0017Deadline = [DateTimeOffset]::UtcNow.AddMinutes(16).ToString('o')
+          "R0017_OPERATION_DEADLINE_UTC=$r0017Deadline" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Check out the reviewed one-off collector
+        id: collector_checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; same pin as existing repository workflow
+        with:
+          path: qualification
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: tools/qualification
+
+      - name: Check out the exact reviewed payload
+        id: payload_checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: candidate
+          ref: eebba178172f96b3ffe5ab3845bc0fffd57c6e1b
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout: |
+            src/native
+            tests
+            real-sky
+            moon
+            vendor
+            docs/state-contracts
+
+      - name: Observe the remaining Chromium reduced-motion context
+        id: native_collection
+        timeout-minutes: 17
+        shell: pwsh
+        run: |
+          node qualification/tools/qualification/r0017-windows-passive.cjs --base-file qualification/tools/qualification/r0017-windows-proof.cjs --base-sha da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279 --root candidate --out artifacts-phase2 --payload-sha eebba178172f96b3ffe5ab3845bc0fffd57c6e1b --network-observation passive --security-provenance csp --request-accounting observed-records --groups public --cases chromium-public-healthy-reduce
+          exit $LASTEXITCODE
+
+      - name: Preserve workflow setup outcomes on every result
+        if: always()
+        shell: pwsh
+        env:
+          R0017_CLOCK_OUTCOME: ${{ steps.qualification_clock.outcome }}
+          R0017_COLLECTOR_CHECKOUT_OUTCOME: ${{ steps.collector_checkout.outcome }}
+          R0017_PAYLOAD_CHECKOUT_OUTCOME: ${{ steps.payload_checkout.outcome }}
+          R0017_COLLECTION_OUTCOME: ${{ steps.native_collection.outcome }}
+        run: |
+          $r0017Output = Join-Path $env:GITHUB_WORKSPACE 'artifacts-phase2'
+          New-Item -ItemType Directory -Path $r0017Output -Force | Out-Null
+          $r0017Summary = Join-Path $r0017Output 'summary.json'
+          $r0017Receipt = [ordered]@{
+            schema = 'r0017-workflow-passive-outcomes/v1'
+            phase = 'C18'
+            purpose = 'BOUNDED_QUALIFICATION_CANDIDATE_NO_AUTOMATIC_ACCEPTANCE'
+            evidenceQuestion = 'What is the remaining reduced-motion outcome under the reviewed source-only nested-request accounting?'
+            preservedPriorRun = '42784152352 attempt1 remains failed; no-preference is not replayed or promoted'
+            wholePreferenceDenominator = 'no-preference and reduce; this invocation supplies only the previously unattempted reduce observation'
+            securityProvenance = 'csp; same owned connection and setup; source and security receipts retained'
+            imageAssignmentProvenance = 'NOT_REQUESTED; unchanged original storage preload'
+            networkObservation = 'passive-bidi-cdp/v2'
+            requestAccounting = 'observed-records; outcomes remain completed, error or unknown'
+            interception = 'NOT_REQUESTED_NO_INTERCEPTION_CREDIT'
+            plannedCases = @('chromium-public-healthy-reduce')
+            plannedNativeSessions = 1
+            plannedTopLevelDocuments = 1
+            plannedInitializationDocuments = 1
+            initializationScope = 'Driver-created blank contexts, separate from meaningful public documents'
+            plannedCalendarPrerequisiteDocuments = 0
+            plannedCalendarTargetDocuments = 0
+            historicalActiveRecords = 'UNCHANGED; no C12 gate change or upstream-fix claim'
+            healthyCredit = 'NOT_PREASSIGNED; inspect actual original consumers, errors and independent acceptance'
+            fullOriginalSmoke = 'DECLARED_30_CASES_141_ASSERTIONS_EACH_CONTEXT; inspect actual collector outcomes'
+            automaticRepeat = $false
+            baseCollectorSha256 = 'da890861d874a8fe5b05351071bca9bb290a061dbe51f59bb8cfa78ff19a2279'
+            qualification = 'PARTIAL'
+            recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
+            runId = $env:GITHUB_RUN_ID
+            runAttempt = $env:GITHUB_RUN_ATTEMPT
+            collectorCommit = $env:GITHUB_SHA
+            ref = $env:GITHUB_REF
+            payloadCommit = 'eebba178172f96b3ffe5ab3845bc0fffd57c6e1b'
+            runnerOS = $env:RUNNER_OS
+            imageVersion = $env:ImageVersion
+            collectorSummaryPresent = (Test-Path -LiteralPath $r0017Summary)
+            stepOutcomes = [ordered]@{
+              clock = $env:R0017_CLOCK_OUTCOME
+              collectorCheckout = $env:R0017_COLLECTOR_CHECKOUT_OUTCOME
+              payloadCheckout = $env:R0017_PAYLOAD_CHECKOUT_OUTCOME
+              collection = $env:R0017_COLLECTION_OUTCOME
+            }
+          }
+          $r0017ReceiptPath = Join-Path $r0017Output 'workflow-step-outcomes.json'
+          if (Test-Path -LiteralPath $r0017ReceiptPath) { throw 'Refusing to overwrite workflow outcome evidence' }
+          $r0017Receipt | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $r0017ReceiptPath -Encoding utf8
+          if (-not $r0017Receipt.collectorSummaryPresent) {
+            $r0017SetupPath = Join-Path $r0017Output 'setup-failure.json'
+            if (Test-Path -LiteralPath $r0017SetupPath) { throw 'Refusing to overwrite setup failure evidence' }
+            [ordered]@{ schema = 'r0017-collector-uninitialized/v1'; qualification = 'PARTIAL'; status = 'COLLECTOR_NOT_INITIALIZED'; browserExecution = 'NOT_ESTABLISHED'; reason = 'No collector summary exists; inspect actual workflow step outcomes and job logs'; outcomes = $r0017Receipt } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $r0017SetupPath -Encoding utf8
+          }
+
+      - name: Retain every recorded outcome
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4; same pin as existing repository workflow
+        with:
+          name: r0017-windows-phase2-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts-phase2/
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,53 @@
+MUTANT hardcoded-fajr 7c2ee3df2f053b9694ae6317757a4064fdb98e8fdc88fa31b730b53e8d2f920a
+MUTANT hardcoded-fajr 7c2ee3df2f053b9694ae6317757a4064fdb98e8fdc88fa31b730b53e8d2f920a
+MUTANT name-order a5c3664a223a06da4a97264fa601cae9cba68ad834ccc3528cb3dcccc9967c77
+MUTANT name-order a5c3664a223a06da4a97264fa601cae9cba68ad834ccc3528cb3dcccc9967c77
+MUTANT lost-date b9ee8f4ce4287aa6c204cb1dca284890ab8af174db59cb4b895e32101bfb871b
+MUTANT lost-date b9ee8f4ce4287aa6c204cb1dca284890ab8af174db59cb4b895e32101bfb871b
+MUTANT ambiguous-epoch c94dbc7610e563101be7df0ac20d50890a9ab201ebe6932e95f4ac7c3a331e72
+MUTANT ambiguous-epoch c94dbc7610e563101be7df0ac20d50890a9ab201ebe6932e95f4ac7c3a331e72
+MUTANT independent-label a37f68c559454e0e33cf67987778d404062edfbad79f7b54aa341126bcc9131d
+MUTANT remove-next-dirty 8f882b0457cf91be1d01f029a89088757c12ba076dd66e7a6df92316a9f23d07
+MUTANT remove-adoption-dirty-only 63f642bfb69ba1a8f7b0d143e4a954cb18b94a7022aefe7d2506e0107b18509f
+✔ ES07-01 actual admitted reordered tomorrow selects Isha 00:31 and 91 elapsed minutes (98.200277ms)
+✔ ES07-02 actual admitted ordinary tomorrow retains Fajr 05:00 and 360 elapsed minutes (73.628806ms)
+✔ ES07-05/12 missing, rejected, foreign-zone and wrong-day successors never guess a next target (357.573678ms)
+✔ ES07-03 same day preserves ordinary rendered labels (62.308067ms)
+✔ ES07-03 strict exact event preserves ordinary rendered labels (56.956514ms)
+✔ ES07-03 Sunrise instant preserves ordinary rendered labels (46.611798ms)
+✔ ES07-03 Forenoon boundary preserves ordinary rendered labels (48.455882ms)
+✔ ES07-11/13 reordered target supplies one date/zone/interval/marker and completed-render receipt (75.435029ms)
+✔ ES07-13 supported before-first target retains decorative wall progress without invented previous history (43.070549ms)
+✔ ES07-04 future tie stays admitted with deterministic rank and finite progress (39.439104ms)
+✔ ES07-04 exact tie stays admitted with deterministic rank and finite progress (73.404378ms)
+✔ ES07-04 midnight polar tie stays admitted with deterministic rank and finite progress (70.305216ms)
+✔ ES07-08 gap later than healthy winner does not blanket-disable a supported target (41.595486ms)
+✔ ES07-08 gap already elapsed does not blanket-disable a supported target (42.386258ms)
+✔ ES07-08 fold later than healthy winner does not blanket-disable a supported target (45.024278ms)
+✔ ES07-08 fold all alternatives elapsed does not blanket-disable a supported target (47.903583ms)
+✔ ES07-08 potentially earlier gap blocks false next precision (76.217563ms)
+✔ ES07-08 fold wall past but second epoch future blocks false next precision (47.248778ms)
+✔ ES07-08 unsupported inverse profile cannot skip uncertain candidates (7.913141ms)
+✔ ES07-09 reordered target uses actual successor 2026-10-01 (80.780814ms)
+✔ ES07-09 reordered target uses actual successor 2027-01-01 (69.10933ms)
+✔ ES07-09 reordered target uses actual successor 2024-02-29 (76.860478ms)
+✔ ES07-09 reordered target uses actual successor 2024-03-01 (71.635973ms)
+✔ ES07-11 diagnostics retain the rendered model instant when wall time moves during the consumer (67.137539ms)
+✔ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 24h (66.847235ms)
+✔ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 12h (67.443639ms)
+✔ ES07-10 A to B to A rejects old held current and next replies before frozen selected target (74.921056ms)
+✔ ES07 mutation hardcoded-fajr fails reordered consumer while ordinary target survives (189.89722ms)
+✔ ES07 mutation name-order fails reordered consumer while ordinary target survives (210.520018ms)
+✔ ES07 mutation lost-date is caught by actual next-date consumer with healthy same-day companion (123.769892ms)
+✔ ES07 mutation ambiguous-epoch cannot invent precision from the first fold alternative (209.593917ms)
+✔ ES07 mutation independent-label is caught despite a correct selected epoch and countdown (222.718637ms)
+✔ ES07 mutation remove-next-dirty is caught after genuine adoption on a frozen existing-loop source control (103.033599ms)
+✔ single adoption-hook mutation survives because actual prefetch finalization also wakes the frozen frame (84.625075ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3134.69176

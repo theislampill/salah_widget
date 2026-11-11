@@ -1,0 +1,122 @@
+{
+  "schema": "r0007-reviewed-public-integration/v1",
+  "status": "PURE_INTEGRATION_VERIFIED_NO_NATIVE_DELIVERY",
+  "preparedScopeSha256": "a4b739abae63218d5aca6d04018a46f6aac687d9f5b7f26e6c5abb2d15679923",
+  "independentReviewSha256": "9e790aef67b250c86c1986314b1bd1e352dd65830f91c3d1d002378cccf6ef22",
+  "placements": [
+    {
+      "preparedPath": "r0007_public_consumer.py",
+      "repositoryPath": "tools/qualification/r0007_public_consumer.py",
+      "bytes": 46937,
+      "sha256": "e76debff6c6b2ebba1c191aa7eddd07699d886cf020b272462f8f091fc4ff209",
+      "byteIdentical": true
+    },
+    {
+      "preparedPath": "r0007_public_cases.json",
+      "repositoryPath": "tools/qualification/r0007_public_cases.json",
+      "bytes": 23008,
+      "sha256": "b834e2435b7cdd735dadd2902c74e2994df7e454ed7397d1b2f8b81938646bf3",
+      "byteIdentical": true
+    },
+    {
+      "preparedPath": "r0007_font_observer.js",
+      "repositoryPath": "tools/cp9/r0007_font_observer.js",
+      "bytes": 3193,
+      "sha256": "ca8fcb547fca54e5edd8ba40c896497c6cda75b38acc7a6e4df276a2eeb21d1b",
+      "byteIdentical": true
+    },
+    {
+      "preparedPath": "r0007-public-delivery.yml",
+      "repositoryPath": ".github/workflows/r0007-public-delivery.yml",
+      "bytes": 6315,
+      "sha256": "4b818e0cbfc9d7683b6fd3822bc7af76a2c66315e6231f29269c7e0dae540695",
+      "byteIdentical": true
+    },
+    {
+      "preparedPath": "delivery-request.template.json",
+      "repositoryPath": "docs/state-contracts/evidence/R0007/delivery/request.template.json",
+      "bytes": 1909,
+      "sha256": "47a113634a5cfa2a8d275892b04a065387e04faac4bad4e65a4446eff79b2235",
+      "byteIdentical": true
+    },
+    {
+      "preparedPath": "test_delivery_init.cjs",
+      "repositoryPath": "tests/rlgwo/r0007-public-observer-control.cjs",
+      "bytes": 4518,
+      "sha256": "9325844b8f1048e91f7b53ad033854950b00c791f8d045af5ab0ea1fd5a56e43",
+      "byteIdentical": true
+    }
+  ],
+  "adaptedTest": {
+    "path": "tests/test_r0007_public_delivery.py",
+    "sha256": "8b664f1c38d31eb8687421b9ef1ce887c08f70457500e7ff4f1ac36786196474",
+    "scope": "Repository paths and external temporary-output placement only; reviewed23 assertions and doubles unchanged",
+    "diff": "test-path-adaptation.diff"
+  },
+  "runs": [
+    {
+      "name": "integrated-pure-controls",
+      "command": [
+        "python",
+        "tests/test_r0007_public_delivery.py"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "integrated-pure-controls.log",
+      "logSha256": "d6d8bdce27eecaa88d9656abcea90f0dbdf3a2816da3dba8ae3a4eeead25fd7a"
+    },
+    {
+      "name": "integrated-observer-controls",
+      "command": [
+        "node",
+        "tests/rlgwo/r0007-public-observer-control.cjs"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "integrated-observer-controls.log",
+      "logSha256": "90104c7555c72b8a5eaf9505d150d365f9d6773fa83938b5da1f8e384e25b2ac"
+    },
+    {
+      "name": "integrated-template",
+      "command": [
+        "python",
+        "tools/qualification/r0007_public_consumer.py",
+        "--request",
+        "docs/state-contracts/evidence/R0007/delivery/request.template.json",
+        "--cases",
+        "tools/qualification/r0007_public_cases.json",
+        "--font-observer",
+        "tools/cp9/r0007_font_observer.js",
+        "--validate-only",
+        "--template"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "log": "integrated-template.log",
+      "logSha256": "7fbf1bf32f0b4677cbfbdd4ee26cd3cedfa353cfeaf450969dc4085353c4e714"
+    },
+    {
+      "name": "integrated-unbound-rejection",
+      "command": [
+        "python",
+        "tools/qualification/r0007_public_consumer.py",
+        "--request",
+        "docs/state-contracts/evidence/R0007/delivery/request.template.json",
+        "--cases",
+        "tools/qualification/r0007_public_cases.json",
+        "--font-observer",
+        "tools/cp9/r0007_font_observer.js",
+        "--validate-only"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "log": "integrated-unbound-rejection.log",
+      "logSha256": "99aeb06526e2d32454df0e9418154a7c7986eb1c63d3f3a3b322b070ed0d655d"
+    }
+  ],
+  "triggeringRequestPresent": false,
+  "nativeExecutions": 0,
+  "networkRequests": 0,
+  "mergeApproval": "PENDING",
+  "delivery": "PENDING_APPROVAL_MERGE_PAGES_AND_NATIVE_PIXELS"
+}

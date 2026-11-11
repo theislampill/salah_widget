@@ -266,18 +266,28 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   from the prayer Sunrise/Sunset times, so it always matches the widget.
 - **Next prayer** front and centre. The countdown measures actual elapsed time from
   the current instant to the selected prayer instant in the location's IANA time
-  zone, including DST changes. The timetable, prayer arc and progress keep their
-  existing wall-clock presentation. The duration rounds to the nearest second,
+  zone, including DST changes. It selects the earliest supported future event
+  from the admitted current civil day, or the matching next civil day when needed.
+  Reordered or equal clocks remain valid; equal future instants use the displayed
+  prayer order. The selected key, clock, civil date and zone also drive its row and
+  next arc marker. The timetable, prayer arc and progress keep their wall-clock
+  presentation. The duration rounds to the nearest second,
   then displays hours and whole minutes at one hour or more, whole minutes at one
   minute or more, and seconds below one minute.
-- **Progress bar** showing how far you are through the current interval.
+- **Progress bar** showing a wall-clock interval. Before the first event, its
+  previous-day starting point is a decorative display convention, even when the
+  next target is precise. When an endpoint is unavailable, the bar remains a
+  decorative current-timetable display and does not estimate an exact prayer time.
 - **Time-zone correct** — a supplied `tz` is an initial hint. Valid selected-cache or
   prayer-provider metadata resolves the location's time zone; a timetable is accepted
   as current only for that zone's civil date at adoption. The times and countdown
   reflect the *location's* clock, no matter where you view the widget.
   If the prayer endpoint is nonexistent, ambiguous or otherwise unsupported, or
   required next-day data is missing or for the wrong day, the next-time field shows
-  **—** and the countdown reads **Countdown unavailable**. The valid current-day
+  **—** and the countdown reads **Countdown unavailable**. An unresolved event
+  that could precede a supported candidate also prevents a precise next claim;
+  no row or arc marker is highlighted as next until that target is supported.
+  The valid current-day
   timetable, date and arc remain available; no estimated tomorrow Fajr or invented
   exact time is displayed. A valid matching tomorrow record restores the countdown
   on the next eligible visible render, including in a frozen preview.

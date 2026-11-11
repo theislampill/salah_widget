@@ -1,0 +1,70 @@
+MUTANT hardcoded-fajr 7c2ee3df2f053b9694ae6317757a4064fdb98e8fdc88fa31b730b53e8d2f920a
+MUTANT hardcoded-fajr 7c2ee3df2f053b9694ae6317757a4064fdb98e8fdc88fa31b730b53e8d2f920a
+MUTANT name-order a5c3664a223a06da4a97264fa601cae9cba68ad834ccc3528cb3dcccc9967c77
+MUTANT name-order a5c3664a223a06da4a97264fa601cae9cba68ad834ccc3528cb3dcccc9967c77
+MUTANT lost-date b9ee8f4ce4287aa6c204cb1dca284890ab8af174db59cb4b895e32101bfb871b
+MUTANT lost-date b9ee8f4ce4287aa6c204cb1dca284890ab8af174db59cb4b895e32101bfb871b
+MUTANT ambiguous-epoch c94dbc7610e563101be7df0ac20d50890a9ab201ebe6932e95f4ac7c3a331e72
+MUTANT ambiguous-epoch c94dbc7610e563101be7df0ac20d50890a9ab201ebe6932e95f4ac7c3a331e72
+MUTANT independent-label a37f68c559454e0e33cf67987778d404062edfbad79f7b54aa341126bcc9131d
+MUTANT remove-next-dirty 1ef0f7738c55ee3cf4dc730d0a925358c6fb81f15c433a9b46cf72a071cb3696
+✔ ES07-01 actual admitted reordered tomorrow selects Isha 00:31 and 91 elapsed minutes (137.67947ms)
+✔ ES07-02 actual admitted ordinary tomorrow retains Fajr 05:00 and 360 elapsed minutes (90.10346ms)
+✔ ES07-05/12 missing, rejected, foreign-zone and wrong-day successors never guess a next target (172.491238ms)
+✔ ES07-03 same day preserves ordinary rendered labels (43.058471ms)
+✔ ES07-03 strict exact event preserves ordinary rendered labels (59.117005ms)
+✔ ES07-03 Sunrise instant preserves ordinary rendered labels (60.002239ms)
+✔ ES07-03 Forenoon boundary preserves ordinary rendered labels (65.166198ms)
+✔ ES07-11/13 reordered target supplies one date/zone/interval/marker and completed-render receipt (70.524425ms)
+✔ ES07-13 supported before-first target retains decorative wall progress without invented previous history (38.200425ms)
+✔ ES07-04 future tie stays admitted with deterministic rank and finite progress (43.497619ms)
+✔ ES07-04 exact tie stays admitted with deterministic rank and finite progress (74.540518ms)
+✔ ES07-04 midnight polar tie stays admitted with deterministic rank and finite progress (67.922493ms)
+✔ ES07-08 gap later than healthy winner does not blanket-disable a supported target (44.242617ms)
+✔ ES07-08 gap already elapsed does not blanket-disable a supported target (39.565692ms)
+✔ ES07-08 fold later than healthy winner does not blanket-disable a supported target (49.664869ms)
+✔ ES07-08 fold all alternatives elapsed does not blanket-disable a supported target (39.143359ms)
+✔ ES07-08 potentially earlier gap blocks false next precision (70.021941ms)
+✔ ES07-08 fold wall past but second epoch future blocks false next precision (58.939701ms)
+✔ ES07-08 unsupported inverse profile cannot skip uncertain candidates (9.02826ms)
+✔ ES07-09 reordered target uses actual successor 2026-10-01 (121.950275ms)
+✔ ES07-09 reordered target uses actual successor 2027-01-01 (67.329794ms)
+✔ ES07-09 reordered target uses actual successor 2024-02-29 (69.2548ms)
+✔ ES07-09 reordered target uses actual successor 2024-03-01 (71.816188ms)
+✔ ES07-11 diagnostics retain the rendered model instant when wall time moves during the consumer (76.202557ms)
+✔ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 24h (75.955005ms)
+✔ ES07-06 actual frozen next-day arrival restores reordered target on first dirty frame 12h (69.659843ms)
+✔ ES07-10 A to B to A rejects old held current and next replies before frozen selected target (85.30922ms)
+✔ ES07 mutation hardcoded-fajr fails reordered consumer while ordinary target survives (185.345173ms)
+✔ ES07 mutation name-order fails reordered consumer while ordinary target survives (247.202183ms)
+✔ ES07 mutation lost-date is caught by actual next-date consumer with healthy same-day companion (205.501339ms)
+✔ ES07 mutation ambiguous-epoch cannot invent precision from the first fold alternative (189.166374ms)
+✔ ES07 mutation independent-label is caught despite a correct selected epoch and countdown (155.031993ms)
+✖ ES07 mutation remove-next-dirty is caught after genuine adoption on a frozen native-loop control (73.403404ms)
+ℹ tests 33
+ℹ suites 0
+ℹ pass 32
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2957.590452
+
+✖ failing tests:
+
+test at tests/prayer-next-event-state.test.cjs:210:1
+✖ ES07 mutation remove-next-dirty is caught after genuine adoption on a frozen native-loop control (73.403404ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  true !== false
+  
+      at TestContext.<anonymous> (/workspace/scratch/8726e3e6def5/r0007-work/tests/prayer-next-event-state.test.cjs:213:88)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: false,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

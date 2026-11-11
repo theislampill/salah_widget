@@ -1,0 +1,281 @@
+name: R0017 C19 bounded Windows icon consumers
+
+on:
+  push:
+    branches:
+      - pro/r0017-corrective-windows-qualification-20261107
+    paths:
+      - .github/workflows/r0017-windows-icon-consumers.yml
+      - tools/qualification/r0017-icon-consumers/observe_icon_consumers.py
+      - tools/qualification/r0017-icon-consumers/integrated/SOURCE_IDENTITY.json
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0017-native-windows-qualification
+  cancel-in-progress: false
+
+jobs:
+  observe:
+    if: github.repository == 'theislampill/salah_widget'
+    runs-on: windows-2022
+    timeout-minutes: 16
+    env:
+      # Preserve checked-out Git blob bytes without changing machine Git settings.
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+      SALAH_BROWSER: chromium
+      SALAH_BROWSER_EXECUTABLE: 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - name: Initialize outcome evidence before checkout
+        id: envelope
+        timeout-minutes: 1
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r0017Output = Join-Path $env:GITHUB_WORKSPACE 'artifacts-icon'
+          New-Item -ItemType Directory -Path $r0017Output -Force | Out-Null
+          [ordered]@{
+            schema = 'r0017-icon-workflow-start/v1'
+            status = 'SETUP_STARTED'
+            recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
+            runId = $env:GITHUB_RUN_ID
+            runAttempt = $env:GITHUB_RUN_ATTEMPT
+            repository = $env:GITHUB_REPOSITORY
+            ref = $env:GITHUB_REF
+            expectedCandidateCommit = $env:GITHUB_SHA
+            workflowRef = $env:GITHUB_WORKFLOW_REF
+            workflowExecutionCommit = $env:GITHUB_WORKFLOW_SHA
+            plannedMeaningfulDocuments = @('direct-wrapper:no-preference:8000ms', 'smoke:reduce:120000ms')
+            automaticRetry = $false
+            scope = 'Premerge actual-checkout HTTP icon component observation; no public-delivery or whole-contract acceptance'
+          } | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $r0017Output 'workflow-start.json') -Encoding utf8
+
+      - name: Check out the exact pushed candidate and observation inputs
+        id: candidate_checkout
+        timeout-minutes: 2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          path: candidate
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Record current identities and prepare the exact Python dependency
+        id: readiness
+        timeout-minutes: 4
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r0017Output = Join-Path $env:GITHUB_WORKSPACE 'artifacts-icon'
+          $r0017Candidate = Join-Path $env:GITHUB_WORKSPACE 'candidate'
+          $r0017PythonHome = Join-Path $env:RUNNER_TEMP "r0017-icon-python-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT)"
+          $r0017Identity = [ordered]@{
+            schema = 'r0017-icon-windows-readiness/v1'
+            status = 'SETUP_STARTED'
+            recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
+            candidateRoot = $r0017Candidate
+            expectedCandidateCommit = $env:GITHUB_SHA
+            workflowRef = $env:GITHUB_WORKFLOW_REF
+            workflowExecutionCommit = $env:GITHUB_WORKFLOW_SHA
+            runnerOS = $env:RUNNER_OS
+            runnerArchitecture = $env:RUNNER_ARCH
+            imageOS = $env:ImageOS
+            imageVersion = $env:ImageVersion
+            bindingReceiptScope = 'Byte-identical historical precommit integration receipt; current input identity is the pushed candidateCommit/candidateTree below'
+            sandboxRequestedByUnchangedHelper = $true
+          }
+          Start-Transcript -LiteralPath (Join-Path $r0017Output 'setup.log') | Out-Null
+          try {
+            $r0017Copies = [ordered]@{
+              'inputs/observe_icon_consumers.py' = 'tools/qualification/r0017-icon-consumers/observe_icon_consumers.py'
+              'integrated/SOURCE_IDENTITY.json' = 'tools/qualification/r0017-icon-consumers/integrated/SOURCE_IDENTITY.json'
+              'inputs/browser_runtime.py' = 'tools/cp9/browser_runtime.py'
+              'inputs/r0017-windows-icon-consumers.yml' = '.github/workflows/r0017-windows-icon-consumers.yml'
+            }
+            foreach ($r0017Copy in $r0017Copies.GetEnumerator()) {
+              $r0017Destination = Join-Path $r0017Output $r0017Copy.Key
+              New-Item -ItemType Directory -Path (Split-Path -Parent $r0017Destination) -Force | Out-Null
+              Copy-Item -LiteralPath (Join-Path $r0017Candidate $r0017Copy.Value) -Destination $r0017Destination
+            }
+            $r0017ExpectedHashes = [ordered]@{
+              'inputs/observe_icon_consumers.py' = '9efebdbff572b8538767b0fb2b9d68b5ff98aa47bb9bbbb5d0bfc5fc7ca92d60'
+              'integrated/SOURCE_IDENTITY.json' = '8d928fd61aab803717734850be2f2a0eddc2ab1e1b8ecc304d077c14da2df634'
+              'inputs/browser_runtime.py' = 'af7e6376ac8fe3c731ea1e215dac37faadc48f1f766a6bdf32637426e1daa4e0'
+            }
+            $r0017Identity.inputHashes = [ordered]@{}
+            foreach ($r0017Expected in $r0017ExpectedHashes.GetEnumerator()) {
+              $r0017ActualHash = (Get-FileHash -LiteralPath (Join-Path $r0017Output $r0017Expected.Key) -Algorithm SHA256).Hash.ToLowerInvariant()
+              $r0017Identity.inputHashes[$r0017Expected.Key] = $r0017ActualHash
+              if ($r0017ActualHash -ne $r0017Expected.Value) { throw "Reviewed input hash differs: $($r0017Expected.Key)" }
+            }
+            $r0017Identity.workflowFileSha256 = (Get-FileHash -LiteralPath (Join-Path $r0017Output 'inputs/r0017-windows-icon-consumers.yml') -Algorithm SHA256).Hash.ToLowerInvariant()
+            $r0017Identity.candidateCommit = (& git -C $r0017Candidate rev-parse HEAD)
+            if ($LASTEXITCODE -ne 0 -or $r0017Identity.candidateCommit -ne $env:GITHUB_SHA) { throw 'Checkout is not the pushed GITHUB_SHA' }
+            $r0017Identity.candidateTree = (& git -C $r0017Candidate rev-parse 'HEAD^{tree}')
+            if ($LASTEXITCODE -ne 0) { throw 'Candidate tree identity unavailable' }
+            $r0017Identity.candidateParents = (& git -C $r0017Candidate show -s '--format=%P' HEAD)
+            if ($LASTEXITCODE -ne 0) { throw 'Candidate parent identity unavailable' }
+            $r0017Identity.changedPathsFromFirstParent = @(& git -C $r0017Candidate diff --name-status 'HEAD^' HEAD --)
+            if ($LASTEXITCODE -ne 0) { throw 'Candidate changed-path identity unavailable' }
+            $r0017Binding = Get-Content -Raw -LiteralPath (Join-Path $r0017Output 'integrated/SOURCE_IDENTITY.json') | ConvertFrom-Json
+            $r0017Identity.repairedSourceFiles = @()
+            foreach ($r0017File in $r0017Binding.files.PSObject.Properties) {
+              $r0017Path = Join-Path $r0017Candidate $r0017File.Name
+              $r0017Actual = [ordered]@{ path = $r0017File.Name; bytes = (Get-Item -LiteralPath $r0017Path).Length; sha256 = (Get-FileHash -LiteralPath $r0017Path -Algorithm SHA256).Hash.ToLowerInvariant() }
+              $r0017Identity.repairedSourceFiles += $r0017Actual
+              if ($r0017Actual.bytes -ne $r0017File.Value.bytes -or $r0017Actual.sha256 -ne $r0017File.Value.sha256) { throw "Repaired source bytes differ: $($r0017File.Name)" }
+            }
+            $r0017Browser = Get-Item -LiteralPath $env:SALAH_BROWSER_EXECUTABLE
+            $r0017Identity.browser = [ordered]@{
+              executable = $r0017Browser.FullName
+              bytes = $r0017Browser.Length
+              sha256 = (Get-FileHash -LiteralPath $r0017Browser.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+              productVersion = $r0017Browser.VersionInfo.ProductVersion
+              fileVersion = $r0017Browser.VersionInfo.FileVersion
+              source = 'Preinstalled runner Chrome; no download, replacement or version substitution'
+            }
+            if ([string]::IsNullOrWhiteSpace($r0017Identity.browser.productVersion)) { throw 'Installed Chrome version identity unavailable' }
+            $r0017Identity.bootstrapPython = (Get-Command python -CommandType Application | Select-Object -First 1).Source
+            $r0017Identity | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $r0017Output 'setup-identity.json') -Encoding utf8
+            & $r0017Identity.bootstrapPython -m venv $r0017PythonHome 1> (Join-Path $r0017Output 'venv.stdout.log') 2> (Join-Path $r0017Output 'venv.stderr.log')
+            if ($LASTEXITCODE -ne 0) { throw 'Job-scoped Python environment creation failed' }
+            $r0017Python = Join-Path $r0017PythonHome 'Scripts/python.exe'
+            & $r0017Python -m pip install --disable-pip-version-check --no-input --no-cache-dir 'playwright==1.62.0' 1> (Join-Path $r0017Output 'pip.stdout.log') 2> (Join-Path $r0017Output 'pip.stderr.log')
+            if ($LASTEXITCODE -ne 0) { throw 'Exact Playwright installation failed; no browser launch permitted' }
+            & $r0017Python -c "import importlib.metadata,json,platform,sys; from playwright.sync_api import sync_playwright; assert importlib.metadata.version('playwright') == '1.62.0'; print(json.dumps({'pythonExecutable':sys.executable,'pythonVersion':sys.version,'platform':platform.platform(),'packages':{d.metadata['Name']:d.version for d in importlib.metadata.distributions()}},indent=2))" 1> (Join-Path $r0017Output 'python-runtime.json') 2> (Join-Path $r0017Output 'python-runtime.stderr.log')
+            if ($LASTEXITCODE -ne 0) { throw 'Python/Playwright readiness import failed' }
+            $r0017Identity.status = 'READY'
+          } catch {
+            $r0017Identity.status = 'SETUP_FAILED'
+            $r0017Identity.error = $_.Exception.ToString()
+            throw
+          } finally {
+            $r0017Identity.finishedUtc = [DateTimeOffset]::UtcNow.ToString('o')
+            $r0017Identity | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath (Join-Path $r0017Output 'setup-identity.json') -Encoding utf8
+            Stop-Transcript | Out-Null
+          }
+
+      - name: Observe the two affected consumers once in the reviewed order
+        id: native_observation
+        # This outer bound leaves the always-run receipt and upload steps time to finish.
+        timeout-minutes: 5
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r0017Output = Join-Path $env:GITHUB_WORKSPACE 'artifacts-icon'
+          $r0017Candidate = Join-Path $env:GITHUB_WORKSPACE 'candidate'
+          $r0017Python = Join-Path $env:RUNNER_TEMP "r0017-icon-python-$($env:GITHUB_RUN_ID)-$($env:GITHUB_RUN_ATTEMPT)/Scripts/python.exe"
+          & $r0017Python (Join-Path $r0017Output 'inputs/observe_icon_consumers.py') --root $r0017Candidate --out (Join-Path $r0017Output 'native') 1> (Join-Path $r0017Output 'native.stdout.log') 2> (Join-Path $r0017Output 'native.stderr.log')
+          $r0017NativeExit = $LASTEXITCODE
+          [ordered]@{ exitCode = $r0017NativeExit; recordedUtc = [DateTimeOffset]::UtcNow.ToString('o') } | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $r0017Output 'native-exit.json') -Encoding utf8
+          exit $r0017NativeExit
+
+      - name: Preserve setup and result availability on every outcome
+        if: always()
+        timeout-minutes: 1
+        shell: pwsh
+        env:
+          R0017_ENVELOPE_OUTCOME: ${{ steps.envelope.outcome }}
+          R0017_CHECKOUT_OUTCOME: ${{ steps.candidate_checkout.outcome }}
+          R0017_READINESS_OUTCOME: ${{ steps.readiness.outcome }}
+          R0017_OBSERVATION_OUTCOME: ${{ steps.native_observation.outcome }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r0017Output = Join-Path $env:GITHUB_WORKSPACE 'artifacts-icon'
+          New-Item -ItemType Directory -Path $r0017Output -Force | Out-Null
+          $r0017ResultPath = Join-Path $r0017Output 'native/result.json'
+          $r0017Result = $null
+          $r0017Receipt = [ordered]@{
+            schema = 'r0017-icon-workflow-outcomes/v1'
+            recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
+            runId = $env:GITHUB_RUN_ID
+            runAttempt = $env:GITHUB_RUN_ATTEMPT
+            candidateCommit = $env:GITHUB_SHA
+            workflowRef = $env:GITHUB_WORKFLOW_REF
+            workflowExecutionCommit = $env:GITHUB_WORKFLOW_SHA
+            ref = $env:GITHUB_REF
+            resultPresent = (Test-Path -LiteralPath $r0017ResultPath -PathType Leaf)
+            resultFinalized = $false
+            scope = 'Icon component observation only; native errors retain their original meaning; no C18/public-delivery/whole-contract acceptance'
+            stepOutcomes = [ordered]@{ envelope = $env:R0017_ENVELOPE_OUTCOME; checkout = $env:R0017_CHECKOUT_OUTCOME; readiness = $env:R0017_READINESS_OUTCOME; observation = $env:R0017_OBSERVATION_OUTCOME }
+          }
+          if ($r0017Receipt.resultPresent) {
+            $r0017Receipt.resultSha256 = (Get-FileHash -LiteralPath $r0017ResultPath -Algorithm SHA256).Hash.ToLowerInvariant()
+            try {
+              $r0017Result = Get-Content -Raw -LiteralPath $r0017ResultPath | ConvertFrom-Json
+              $r0017Receipt.nativeStatus = $r0017Result.status
+              $r0017Receipt.resultFinalized = ($r0017Result.schema -eq 'r0017-icon-consumers/v1' -and -not [string]::IsNullOrWhiteSpace($r0017Result.finishedUtc) -and $r0017Result.status -in @('ICON_COMPONENTS_OBSERVED', 'INCOMPLETE', 'CAPABILITY_OR_OBSERVATION_FAILED', 'CLEANUP_UNVERIFIED'))
+            } catch { $r0017Receipt.resultReadError = $_.Exception.ToString() }
+          }
+          # Read only the exact owned IDs/profile disclosed by this observation.
+          # A recorded browser disconnect is not an OS process/profile postcondition.
+          $r0017Cleanup = [ordered]@{
+            schema = 'r0017-icon-owned-cleanup-readback/v1'
+            recordedUtc = [DateTimeOffset]::UtcNow.ToString('o')
+            browserDisconnectedRecordedByObserver = $r0017Result.cleanup.browserDisconnected
+            observedProcessInventoryAvailable = $false
+            observedProcesses = @()
+            profile = [ordered]@{ status = 'UNAVAILABLE' }
+            postconditionsVerified = $false
+            scope = 'Direct read-only checks of returned owned Chrome PIDs and exact --user-data-dir; no process search, kill or cleanup mutation'
+          }
+          $r0017ObservedProcesses = @($r0017Result.processes.processInfo)
+          if ($null -ne $r0017Result.browser -and $r0017ObservedProcesses.Count -gt 0 -and @($r0017ObservedProcesses | Where-Object { $_.type -eq 'browser' }).Count -eq 1) {
+            $r0017Cleanup.observedProcessInventoryAvailable = $true
+            foreach ($r0017ObservedProcess in $r0017ObservedProcesses) {
+              $r0017ProcessReadback = [ordered]@{ observedId = $r0017ObservedProcess.id; observedType = $r0017ObservedProcess.type; status = 'UNAVAILABLE' }
+              try {
+                $r0017OwnedId = [int]$r0017ObservedProcess.id
+                if ($r0017OwnedId -le 0) { throw 'Invalid observed process ID' }
+                $r0017ProcessErrors = @()
+                $r0017CurrentProcess = @(Get-Process -Id $r0017OwnedId -ErrorAction SilentlyContinue -ErrorVariable r0017ProcessErrors)
+                if ($r0017CurrentProcess.Count -gt 0) {
+                  $r0017ProcessReadback.status = 'PRESENT'
+                  $r0017ProcessReadback.currentProcessNames = @($r0017CurrentProcess.ProcessName)
+                } elseif ($r0017ProcessErrors.Count -eq 1 -and $r0017ProcessErrors[0].FullyQualifiedErrorId -like 'NoProcessFoundForGivenId,*') {
+                  $r0017ProcessReadback.status = 'ABSENT'
+                } else {
+                  $r0017ProcessReadback.lookupErrors = @($r0017ProcessErrors | ForEach-Object { $_.ToString() })
+                }
+              } catch { $r0017ProcessReadback.error = $_.Exception.ToString() }
+              $r0017Cleanup.observedProcesses += $r0017ProcessReadback
+            }
+          }
+          $r0017ProfileArguments = @($r0017Result.browserCommandLine.arguments | Where-Object { $_ -like '--user-data-dir=*' })
+          if ($null -ne $r0017Result.browser -and $r0017ProfileArguments.Count -eq 1) {
+            try {
+              $r0017ProfilePath = $r0017ProfileArguments[0].Substring('--user-data-dir='.Length)
+              if (-not [IO.Path]::IsPathFullyQualified($r0017ProfilePath)) { throw 'Observed profile path is not absolute' }
+              $r0017Cleanup.profile.path = $r0017ProfilePath
+              $r0017Cleanup.profile.status = if (Test-Path -LiteralPath $r0017ProfilePath -ErrorAction Stop) { 'PRESENT' } else { 'ABSENT' }
+            } catch { $r0017Cleanup.profile.error = $_.Exception.ToString() }
+          }
+          $r0017Cleanup.postconditionsVerified = ($r0017Cleanup.observedProcessInventoryAvailable -and @($r0017Cleanup.observedProcesses | Where-Object { $_.status -ne 'ABSENT' }).Count -eq 0 -and $r0017Cleanup.profile.status -eq 'ABSENT')
+          $r0017Cleanup | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $r0017Output 'owned-cleanup-readback.json') -Encoding utf8
+          $r0017Receipt.ownedCleanupReadbackVerified = $r0017Cleanup.postconditionsVerified
+          $r0017Receipt | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $r0017Output 'workflow-step-outcomes.json') -Encoding utf8
+          if (-not $r0017Receipt.resultFinalized -or -not $r0017Cleanup.postconditionsVerified) {
+            [ordered]@{
+              schema = 'r0017-icon-workflow-incomplete/v1'
+              status = 'NATIVE_RESULT_OR_OWNED_CLEANUP_UNVERIFIED'
+              reason = 'Finalized native result or direct owned process/profile cleanup is unverified; inspect unchanged native result, cleanup readback, step outcomes and logs. No success or cleanup credit is inferred.'
+              outcomes = $r0017Receipt
+            } | ConvertTo-Json -Depth 9 | Set-Content -LiteralPath (Join-Path $r0017Output 'setup-failure.json') -Encoding utf8
+            throw 'Native result or owned cleanup unverified; retained evidence remains failed/incomplete'
+          }
+
+      - name: Retain all inputs and observed evidence
+        if: always()
+        timeout-minutes: 2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0017-icon-windows-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts-icon/
+          if-no-files-found: error
+          retention-days: 14

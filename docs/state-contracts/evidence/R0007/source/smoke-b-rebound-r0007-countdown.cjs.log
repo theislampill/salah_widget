@@ -1,0 +1,34 @@
+SOURCE 4f63d01b85c7979ba884a58ce6a3edc071047444efee0eb2a405fe58023a2256 MODEL 2cbd552a7b7f24d0f448e570540925d5290ced86662ae8bb51e5c8bf0644c0fc RENDER 3689a6fa7a779cabf0443bf96ba262e01836daa4d0ed402927aae7d5b85ecc83
+MUTANT wall-minutes 038dda89092b477d2fadf204717ce48f5a4e9b0196169d494688e09161ed9a91 / elapsed-24h 9b854d2d8d1d8d4a921abe7c6d39eb6f429a8ad316be915381c636f36b8776dc rejected
+MUTANT sec-only e34024e35d7affb575555234932218d55a2c7136bae8d7cb98a1cb123a00e6d5 rejected by actual late-prefetch consumer
+✔ spring reaches actual model and countdown assignments (77.75932ms)
+✔ fall first 01:30 reaches actual model and countdown assignments (46.383789ms)
+✔ ordinary control reaches actual model and countdown assignments (43.126179ms)
+✔ fall 00:30 additional control reaches actual model and countdown assignments (41.461575ms)
+✔ fall second 01:30 reaches actual model and countdown assignments (41.561255ms)
+✔ fractional offset control reaches actual model and countdown assignments (47.127278ms)
+✔ overnight uses the actual next-day date across spring; missing/wrong-day data stays unavailable then recovers (83.472615ms)
+✔ gap endpoint is withheld by actual render (56.307144ms)
+✔ fold endpoint is withheld by actual render (43.329595ms)
+✔ exact boundary selects the following event and ordinary wall progress is retained (39.246553ms)
+✔ year boundary resolves next-day Fajr without adding 24 elapsed hours (77.374872ms)
+✔ leap boundary resolves next-day Fajr without adding 24 elapsed hours (84.024877ms)
+✔ finite model defense precedes normalization {"Fajr":"--:--"} (6.401235ms)
+✔ finite model defense precedes normalization {"Sunset":"Infinity:00"} (46.419673ms)
+✔ finite model defense precedes normalization {"Sunset":"1e300:00"} (44.338053ms)
+✔ ordinary baseline control reaches real render without tomorrow (52.39309ms)
+✔ actual repeated model consumer reuses the same day profile (51.317893ms)
+✔ invalid explicit model exits before nonfinite wall projection (38.788153ms)
+✔ wall-minute subtraction and today-plus-24h mutants are caught while ordinary control survives (167.741465ms)
+✔ finite equal/reordered polar records remain usable (101.451685ms)
+✔ actual held prefetch restores the frozen overnight countdown on the dirty visible frame (77.045107ms)
+✔ sec-only loop mutant cannot paint a late countdown in a frozen scene (75.609923ms)
+✔ actual config generation cancels a held old-zone prefetch before the recovered countdown (111.735264ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1465.608223

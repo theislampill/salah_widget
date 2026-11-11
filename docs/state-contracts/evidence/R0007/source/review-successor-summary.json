@@ -1,0 +1,73 @@
+{
+  "status": "SOURCE_REPAIRS_VERIFIED_INDEPENDENT_SUCCESSOR_NATIVE_DELIVERY_PENDING",
+  "base": "eebba178172f96b3ffe5ab3845bc0fffd57c6e1b",
+  "reviewedPriorCandidate": "d641741df1397659da6ef817fa41aa975f7f3930",
+  "identity": {
+    "src/native/index.html": "e8603192a095cd8682c35416f3ecca00938d772f5152324b37f9928077eac037",
+    "index.html": "983f8b609eba48821e8d8c539cca7d0b9e40caf3f35a924514a4e93eb24766e9",
+    "offline.html": "697ed290d2f71a777b9c1a44c3d7b12350cd51dfc66648e8c8907ff897e9be57",
+    "moon/BUILD.json": "225938b31cef0136e76a9ca5c9482eeede7b2e52f10f148bea13ecb7d56d1c93",
+    "tests/prayer-next-event-state.test.cjs": "3671ddda05287150269e58a1ebca5b94cfcbd908965e5db1425364c8c19ff696",
+    "tests/r0007-countdown.cjs": "4ce2c98972a4b262f8bdc9a195732006412b7eca6ab5129dd028731603920dc7",
+    "tests/r0018-prayer-row-status.test.cjs": "e41c4c8e271785d5e97ddc4f4e2099b4142b13623d8c8b4aa70dfbfe1ef9c58a",
+    "tests/rlgwo/prayer-browser-fixture.cjs": "12e37a2dc97719c3e05de9095b5aa26833f99bdb09bf664d381373cbf09ea18f"
+  },
+  "parity": {
+    "model": {
+      "authoredRootOfflineEqual": true,
+      "sha256": "ffc96c6bfff298983b6eded37eaeb48a89d17cd4a991079e2b19b1eb30cf9c52"
+    },
+    "render": {
+      "authoredRootOfflineEqual": true,
+      "sha256": "96042bc80d5518f671dd62139fcc8180f42576139dd8448c3ead75ba26d36419"
+    }
+  },
+  "protected": {
+    "src/native/index.html": {
+      "outsideModelAndRenderUnchangedFromBase": true,
+      "sha256": "2c0fc9b73ae34b07020360def3425a867a488e8bb17c269d5107c700d12e01c9"
+    },
+    "index.html": {
+      "outsideModelAndRenderUnchangedFromBase": true,
+      "sha256": "400bca892b10e506c2444ac124da8ffbc4109282109ee20b38eecd1b9aa19791"
+    },
+    "offline.html": {
+      "outsideModelAndRenderUnchangedFromBase": true,
+      "sha256": "4023a3f911fd260a406e0f7b222374dbe48945665a42de0b7e84f2655a8ec04e"
+    }
+  },
+  "moonManifestChangedKeys": [
+    "/source/src/native/index.html"
+  ],
+  "reviewFindings": [
+    "SRC-01 day-edge gap bounds",
+    "SRC-02 canonical padded year dates"
+  ],
+  "newControls": 10,
+  "red": {
+    "sourceCommit": "d641741df1397659da6ef817fa41aa975f7f3930",
+    "generatedSourceSha256": "4f63d01b85c7979ba884a58ce6a3edc071047444efee0eb2a405fe58023a2256",
+    "tests": 10,
+    "passed": 4,
+    "failed": 6,
+    "producerExitCode": 1,
+    "log": "review-regressions-red.log"
+  },
+  "green": {
+    "tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "producerExitCode": 0,
+    "log": "review-regressions-green.log"
+  },
+  "nativeProof": false,
+  "v1": "review-verify-v1.log exit0",
+  "fixtureCorrection": "Existing prayerRecord helper emitted an unpadded composite date; local test input now supplies the canonical date before real admission. Initial fixture-only failures retained; not behavioral RED.",
+  "affectedCohort": {
+    "tests": 288,
+    "passed": 288,
+    "failed": 0,
+    "producerExitCode": 0,
+    "receipt": "review-affected-cohort.json"
+  }
+}

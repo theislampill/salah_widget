@@ -1,0 +1,86 @@
+name: R0017 process inventory discriminator
+
+on:
+  push:
+    branches:
+      - pro/r0017-corrective-windows-qualification-20261107
+    paths:
+      - .github/workflows/r0017-windows-inventory.yml
+      - tools/qualification/r0017-inventory-probe.cjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0017-native-windows-qualification
+  cancel-in-progress: false
+
+jobs:
+  winps:
+    runs-on: windows-2022
+    timeout-minutes: 5
+    outputs:
+      contained: ${{ steps.receipt.outputs.contained }}
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          sparse-checkout: tools/qualification
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Observe first Windows PowerShell CIM query
+        id: probe
+        shell: pwsh
+        run: |
+          node tools/qualification/r0017-inventory-probe.cjs --base-file tools/qualification/r0017-windows-proof.cjs --base-sha dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517 --engine winps --out inventory-winps
+          exit $LASTEXITCODE
+      - name: Read actual owned containment receipt
+        id: receipt
+        if: always()
+        shell: pwsh
+        run: |
+          $r0017Contained = 'false'
+          if (Test-Path 'inventory-winps/inventory-probe.json') {
+            $r0017Receipt = Get-Content -Raw 'inventory-winps/inventory-probe.json' | ConvertFrom-Json
+            if ($r0017Receipt.containment.ok -eq $true) { $r0017Contained = 'true' }
+          }
+          "contained=$r0017Contained" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r0017-inventory-winps-${{ github.run_id }}-${{ github.run_attempt }}
+          path: inventory-winps/
+          if-no-files-found: error
+          retention-days: 14
+
+  pwsh:
+    needs: winps
+    if: always() && needs.winps.outputs.contained == 'true'
+    runs-on: windows-2022
+    timeout-minutes: 5
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          sparse-checkout: tools/qualification
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Observe first installed PowerShell Core CIM query
+        id: probe
+        shell: pwsh
+        run: |
+          node tools/qualification/r0017-inventory-probe.cjs --base-file tools/qualification/r0017-windows-proof.cjs --base-sha dfbd7c58c63afb716499694e1f6da239c16fb64ace070663e893e7fafbe7e517 --engine pwsh --out inventory-pwsh
+          exit $LASTEXITCODE
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: r0017-inventory-pwsh-${{ github.run_id }}-${{ github.run_attempt }}
+          path: inventory-pwsh/
+          if-no-files-found: error
+          retention-days: 14

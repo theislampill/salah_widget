@@ -1,0 +1,55 @@
+name: R0007 bounded candidate materialization
+
+on:
+  push:
+    branches: [pro/r0007-explicit-next-event-state-20261106]
+    paths: [.github/workflows/r0007-materialize.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: r0007-publication-materialization
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/pro/r0007-explicit-next-event-state-20261106'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+      - name: Verify payload, rebuild, verify exact tree, upload non-workflow blobs
+        timeout-minutes: 20
+        env:
+          R0007_UPLOAD_TOKEN: ${{ github.token }}
+          R0007_EXPECTED_MANIFEST_SHA256: __MANIFEST_SHA256__
+        run: |
+          mkdir -p "$RUNNER_TEMP/r0007-materialization"
+          set +e
+          python3 .github/r0007-bootstrap/materialize.py --source-root "$GITHUB_WORKSPACE" --manifest "$GITHUB_WORKSPACE/.github/r0007-bootstrap/manifest.json" --evidence-root "$RUNNER_TEMP/r0007-materialization" --upload-blobs > "$RUNNER_TEMP/r0007-materialization/launcher.log" 2>&1
+          r0007_exit=$?
+          python3 - "$RUNNER_TEMP/r0007-materialization/launcher-producer.json" "$r0007_exit" <<'PY'
+          import json,sys
+          from pathlib import Path
+          Path(sys.argv[1]).write_text(json.dumps({'schema':'r0007-materialization-launch/v1','exitCode':int(sys.argv[2]),'refUpdated':False})+'\n')
+          PY
+          tail -n 12 "$RUNNER_TEMP/r0007-materialization/launcher.log"
+          exit "$r0007_exit"
+      - name: Retain all materialization and upload outcomes
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0007-materialization-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r0007-materialization/
+          if-no-files-found: error
+          retention-days: 14
