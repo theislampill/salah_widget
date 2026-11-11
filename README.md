@@ -153,14 +153,30 @@ those identities are excluded or refused before setup instead of being treated
 as another profile. Rename or choose a supported profile through the browser's
 own profile management, or use manual setup.
 
-On macOS and Linux, each normal attempt uses a fresh private download directory
-and a separate retained manual-install bundle. A verified download can be
-reused within that attempt; the old shared cache is not automatically reused
-or modified. Temporary downloads are cleaned up, while the printed bundle is
-kept for manual installation and import. Keep an unpacked extension directory
-for as long as the browser uses it. Reaching an acknowledgement prompt or
-receiving a staged path does not verify that extension installation or preset
-import has happened.
+Each normal attempt uses fresh private scratch and a separate retained bundle
+for manual browser setup. On macOS/Linux, the bundle is a new
+`$HOME/salah-widget-install.*` directory; on Windows it is a new
+`%USERPROFILE%\SalahWidgetBundle-*` directory. A validated download can be reused
+within the same attempt. Windows rechecks the admitted file identity and bytes
+before reuse. Old shared caches and earlier bundles are not reused by a later
+attempt or modified to make them ready.
+
+Cleanup removes only verified scratch owned by the current attempt. The printed
+manual bundle stays available after exit, failure or interruption, including
+when a newer bundle is prepared. If cleanup cannot prove scratch custody, it
+retains that material and reports the skipped cleanup. Failed extraction or
+publication can leave partial files inside the new retained bundle; partial
+files are not offered as ready assets and are not adopted on the next run.
+
+Keep an unpacked extension directory for as long as the browser uses it through
+**Load unpacked**. A successful replacement does not prove the browser has
+released an older directory. After confirming the manual installation or preset
+import succeeded, you may remove an unneeded preset JSON or XPI yourself.
+Reaching an acknowledgement prompt or receiving a staged path does not verify
+that extension installation or preset import happened. Windows requires the
+supported local NTFS custody boundary described in the
+[artifact transaction contract](docs/r0015-artifact-transactions.md); an
+unprovable staging location is refused rather than reused.
 
 ---
 

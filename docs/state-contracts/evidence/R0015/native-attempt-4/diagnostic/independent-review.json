@@ -1,0 +1,326 @@
+{
+  "schema": "r0015-native4-probe-independent-review-v1",
+  "reviewer": "/root/r0015_contract",
+  "observedUtc": "2026-11-11T11:15:36.710112+00:00",
+  "phase": "final bounded static review of exact diagnostic runner/workflow/probe",
+  "continuity": "refs/implementaudit/continuity-receipts/installer-20261111/G0010@347dad01900a2906bb77568534404c8c91b916ab",
+  "scope": {
+    "readOnly": true,
+    "executedInstaller": false,
+    "executedPowerShell": false,
+    "executedTests": false,
+    "sourceOrSharedEdits": false,
+    "externalMutations": false,
+    "acceptanceAuthority": false
+  },
+  "inputs": [
+    {
+      "role": "runner",
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tools/qualification/windows_installer_probe.py",
+      "sha256": "a9d61e7604158bc2d95f95bd3af2325285b1b602741fadcd5366b466da262679",
+      "bytes": 6481
+    },
+    {
+      "role": "workflow",
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/.github/workflows/installer-diagnostic.yml",
+      "sha256": "e804e4874900442eb87da5e15689150bf19748c6026f046d129bf20cead42651",
+      "bytes": 2911
+    },
+    {
+      "role": "productionSource",
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+      "sha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+      "bytes": 100271
+    },
+    {
+      "role": "unaffectedNativeWorkflow",
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/.github/workflows/installer-native.yml",
+      "sha256": "927e70d72ad0047f4feda17ac1e80f345b5ad8aec242321255d599f906056deb",
+      "bytes": 5491
+    },
+    {
+      "role": "maintainedProbe",
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tools/qualification/windows_installer_probe.ps1",
+      "sha256": "736907841a66c5de27b12223d2da5afaadf7a859f80e84b2c63c8c4c1c6b8f39",
+      "bytes": 37223
+    },
+    {
+      "role": "authorProbe",
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/install-native4-forensics.ps1",
+      "sha256": "736907841a66c5de27b12223d2da5afaadf7a859f80e84b2c63c8c4c1c6b8f39",
+      "bytes": 37223
+    }
+  ],
+  "originalReviewedInputs": {
+    "runner": "d8e0fa0a61ebccb77742c14703fd03c342d4f3f8fb18c6f1a45b7aa050c2c798",
+    "workflow": "90e5151ee8304c130175ecede640d7a5362dccc2341600a0a28da85bd4a32d5d"
+  },
+  "findings": [
+    {
+      "id": "PROBE-RUNNER-01",
+      "classification": "CONFIRMED STATIC ACQUISITION GAP, CORRECTION REVIEWED",
+      "original": "Initial runner wrote result.json only after all six subprocess launches and final source reads; unhandled launch OSError could discard the packaging route for already captured evidence because the always-packager required that final result.",
+      "current": "Initial, prelaunch-intent and terminal atomic checkpoints plus caught OSError preserve partial capture. Archive mode saves the raw directory before reading fixture rows and handles missing/unparseable JSON. No real execution of this path by reviewer.",
+      "sourceLines": {
+        "runner": [
+          33,
+          54,
+          69,
+          108
+        ],
+        "workflow": [
+          57,
+          70
+        ]
+      },
+      "status": "resolved-by-static-review; runtime still pending",
+      "currentSourceBinding": {
+        "runner": "a9d61e7604158bc2d95f95bd3af2325285b1b602741fadcd5366b466da262679",
+        "workflow": "e804e4874900442eb87da5e15689150bf19748c6026f046d129bf20cead42651"
+      }
+    },
+    {
+      "id": "PROBE-RUNNER-02",
+      "classification": "CONFIRMED BUDGET MISMATCH, CORRECTION REVIEWED",
+      "original": "Six 240-second case deadlines leave only one minute within the former 25-minute job for checkout/runtime download/packaging.",
+      "current": "35-minute job provides 11 minutes beyond the summed 24-minute case deadlines. This is an acquisition margin, not a guarantee of artifact capture after forced whole-job cancellation.",
+      "status": "resolved-by-static-review; runtime still pending",
+      "currentSourceBinding": {
+        "runner": "a9d61e7604158bc2d95f95bd3af2325285b1b602741fadcd5366b466da262679",
+        "workflow": "e804e4874900442eb87da5e15689150bf19748c6026f046d129bf20cead42651"
+      }
+    },
+    {
+      "id": "PROBE-INTEGRATION-03",
+      "classification": "CONFIRMED STATIC CLI PREMISE MISMATCH; CORRECTION REVIEWED",
+      "original": "Runner a9d61 constructs a new nonexistent r15d OutputRoot; probe 2828 required that directory already exist, so every launch would fail before the intended native observation. Ordinary inherited-owner mkdir would not by itself establish product TrustedParent.",
+      "evidence": "Original probe line 243 and runner line 80; native4 saved ambient Temp is Administrators-owned TrustedAncestor=true/TrustedParent=false.",
+      "correction": "Final probe owns fixture setup: it holds actual Open-CompilerDirectoryLease handles for every existing ancestor and requires actual TrustedAncestor replacement safety plus NTFS/persistent ACLs. It exclusively creates OutputRoot with current-user protected descriptor using actual emitted CreateDirectoryW, verifies Private readback, and then passes that new self-owned parent to unchanged production New-StagingCompilerContext. Existing paths are not adopted; no ancestor ACL or ownership is repaired.",
+      "status": "resolved-by-static-review; native setup execution pending"
+    },
+    {
+      "id": "PROBE-COLD-04",
+      "classification": "STATIC COVERAGE PREMISE STRENGTHENED",
+      "original": "Both native type absence flags were only recorded, so a preloaded type could skip the intended baseline compilation without triggering acquisition failure. No such native survivor was observed.",
+      "correction": "Final child requires both recorded absence flags before fixture checks. The later inspection warms CompilerNative, which is explicitly a diagnostic setup effect; StageNative compilation remains cold.",
+      "status": "resolved-by-static-review"
+    },
+    {
+      "id": "PROBE-PATH-05",
+      "classification": "AUTHOR-IDENTIFIED EXPERIMENTAL AMBIGUITY REMOVED",
+      "original": "Join-Path was used to construct the 259/260/261/268-character target before the actual CreatePrivateFile call. A provider-level failure could obscure the intended native boundary; no new native failure was claimed.",
+      "correction": "Final probe concatenates the path as a string, verifies UTF-16 length and component length, and calls the actual StageNative.CreatePrivateFile. Extended-prefix retry happens only after a failed bare call plus native absent code 2/3; observed existing/collision objects are never presented as a successful prefix experiment.",
+      "status": "resolved-by-static-review"
+    },
+    {
+      "id": "PROBE-ENCODING-06",
+      "classification": "ROOT-IDENTIFIED CAPTURE PREMISE CORRECTED",
+      "original": "Parent strict UTF-8 decoding lacked explicit encoding in the child probe. Existing campaign evidence already demonstrated locale-based stdout corruption. This review did not execute a new counterexample.",
+      "correction": "Final 736907 differs from bdc3 only by setting Console.OutputEncoding to the existing BOM-free UTF-8 encoder before any console JSON. Raw streams and exact UTF-8 receipt bytes remain preserved.",
+      "status": "resolved-by-static-review"
+    },
+    {
+      "id": "PROBE-ENCODING-07",
+      "classification": "MEASUREMENT LABEL CORRECTED",
+      "original": "Encoding.Default.CodePage was labelled defaultAnsiCodePage, which could overstate a Windows ACP observation on a non-Framework host.",
+      "correction": "Final probe labels the measured property encodingDefaultCodePage, including the child reporter. No Windows ACP API measurement is inferred.",
+      "status": "resolved-by-static-review"
+    }
+  ],
+  "checks": [
+    {
+      "name": "workflow trigger isolation",
+      "status": "PASS (static)",
+      "evidence": "Diagnostic push filters contain only the two new diagnostic tools and installer-diagnostic.yml. Those paths do not match the existing native qualification workflow filters. Source edits are not part of this diagnostic packet."
+    },
+    {
+      "name": "host and immutable acquisition binding",
+      "status": "PASS (static)",
+      "evidence": "Windows 2022, current github.sha checkout, autocrlf false, pinned checkout/upload actions and read-only repository permission. PowerShell 5.1 comes from SystemRoot; PS7.6.6 official ZIP is verified against 02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860. Actual host/version and process identity are recorded by the probe; no native result is inferred."
+    },
+    {
+      "name": "prestart telemetry flags",
+      "status": "PASS (static)",
+      "evidence": "The job and Python child launch set PowerShell/.NET opt-outs and updatecheck Off before process creation. Nested direct processes set the same flags; the probe refuses if the launcher fields differ. This is not independent egress isolation."
+    },
+    {
+      "name": "fresh fixture boundary",
+      "status": "PASS (static)",
+      "evidence": "OutputRoot and descendant fixture directories are native exclusive CreateDirectoryW creations with current-user protected descriptors and actual Private readback. Ambient ancestors remain unchanged and held through final receipts. Unsupported filesystem/foreign replacement/collision fails closed. Partial creation is retained."
+    },
+    {
+      "name": "source and receipt binding",
+      "status": "PASS WITH RECEIVING LIMITS (static)",
+      "evidence": "Exact f801 is required before AST-loading only source functions. The inner source copy is hash-checked; source/probe hashes are checked at terminal. Parent requires nonce/PID/source/test agreement, matching readiness marker, exit0, no timeout and completed stdout/stderr drain. Maintained probe is byte-identical to reviewed author probe. Python copies the confined result.json as exact bytes and records SHA256."
+    },
+    {
+      "name": "normal source/caller boundary",
+      "status": "PASS (static)",
+      "evidence": "No installer main, network, browser, clipboard or prompt flow is executed. Actual Initialize-StagingNative is called, actual Add-Type parameters forwarded, and actual Clear-StagingCompilerContext delegated after read-only snapshots. No source rewrite or replacement product admission predicate."
+    },
+    {
+      "name": "baseline versus experiments",
+      "status": "PASS (static)",
+      "evidence": "Baseline compile/cleanup observations and phase receipt precede an extra actual New-StagingCompilerContext used only for CodeDOM Executor, direct environment child, and optional direct csc. No extra diagnostic artifact participates in the baseline cleanup decision. The direct compiler output is retained and never loaded/admitted."
+    },
+    {
+      "name": "ASCII versus Unicode pair",
+      "status": "PASS (static pairing design; native facts pending)",
+      "evidence": "Within each host, runner r15d names and all fresh context IDs have equal length; only temp-A versus temp-U+0635 adds the intended character distinction. Raw lengths/ACLs/source bytes/working directories are recorded for receiving, not presumed equal from labels."
+    },
+    {
+      "name": "path-length mechanism",
+      "status": "PASS (static experimental design; native facts pending)",
+      "evidence": "Actual StageNative.CreatePrivateFile is invoked at exact 259/260/261/268 lengths using strings. Only a failed bare call with native absence permits the extended-prefix attempt. Native identity/ACL/regular-file/link readback and raw copies are retained; original production semantics are untouched."
+    },
+    {
+      "name": "capture and budgets",
+      "status": "PASS WITH LIMITS (static)",
+      "evidence": "Runner checkpoints before each launch, retains binary output and acquisition errors. Outer deadline240s per mode, inner cold child default180s, direct subprocess default75s with bounded drain and owned PID tree termination attempts. Six outer budgets24min versus job35min. Global job cancellation can still truncate evidence; timeout snapshots never prove all descendants stopped."
+    },
+    {
+      "name": "original archival",
+      "status": "PASS WITH LIMITS (static)",
+      "evidence": "Always packaging preserves raw directory even absent/unparseable final result. Fixture paths are constrained to native temporary parent plus r15d prefix; tar dereference=False; no fixture cleanup. Same-origin final JSON and copied JSON hash can be independently reconciled after receiving."
+    },
+    {
+      "name": "diagnostic claim boundary",
+      "status": "PASS (static)",
+      "evidence": "Runner qualification=false; final probe diagnosticOnly=true, installerQualified=false, productPass=false. OBSERVATIONS_ACQUIRED means captured diagnostic completion, not compiler success, healthy cleanup, successful long-path support or the 51-row acceptance denominator."
+    }
+  ],
+  "limits": [
+    "Reviewer executed no Python test, PowerShell, native compiler, workflow, installer, or target probe. Python was used only to read/hash/diff and write this report.",
+    "Final author receipt is parse-only under Linux PS7.6.6; no native Windows execution or successful production behavior is established.",
+    "The input source remains f801. A native diagnostic finding requires exact new artifact/source/fixture/host receiving and is not pre-approved by this report.",
+    "The wrapper records cold CompilerNative at child start, then invokes it for read-only fixture/native observations before Initialize-StagingNative. This is a cold StageNative compilation diagnostic, not an untouched first-entry bootstrap or complete production command.",
+    "Snapshots are bounded and expose complete/error fields. In particular, absence after actual successful cleanup is an expected snapshot failure. Readers must inspect per-stage facts; top diagnostic acquisition does not certify that every optional observation succeeded.",
+    "The inner CodeDOM environment reporter and direct compiler are diagnostic boundary controls. They cannot substitute for actual installer success and do not establish a global filesystem/network effect trace.",
+    "Runner receipt existence and zero process exit are only acquisition prerequisites. Independent receiving must parse, validate exact source/test/host/mode and reconcile original versus copied bytes before using observations.",
+    "Parent/descendant timeout scope is explicit. A tree archived after timeout is a snapshot unless terminal state is independently established; no output is silently credited as accepted native proof.",
+    "No same-user/admin isolation, global egress denial, real browser installation, reboot persistence, complete original/amended denominator closure or release authority is claimed."
+  ],
+  "disposition": "No additional concrete blocker remains in the exact reviewed diagnostic packet for root-controlled native observation. This is a bounded static review, not native qualification, acceptance, publication authorization or a production correction.",
+  "interimReport": {
+    "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe-runner/review-interim-b7036643.json",
+    "sha256": "b703664399d3bec5028442fa57a466bfcf7c94e7edf405e0ee9754b43f5443f0"
+  },
+  "authorArtifacts": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/candidate-2828a697.ps1",
+      "sha256": "2828a697ec56f3eec9f116b079ca6132d8b7858b777ca28c9e1f7612ac96abd8",
+      "bytes": 34015
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/candidate-bdc3e6b7.ps1",
+      "sha256": "bdc3e6b708f1d029ce26e2f514569e5bf94f0d655bf0e0fffc3b79dea60a1787",
+      "bytes": 37184
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/candidate-2.patch",
+      "sha256": "a0a839f92cfb8aca66292728e2dc4743fd1aaef7b45432e87a9eaa52e0f3e32c",
+      "bytes": 16865
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/utf8-only-from-bdc.patch",
+      "sha256": "3daa25870c566938e3676add440f304af5e835d5ebb3d741faf4c782027dcae9",
+      "bytes": 561
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/final-from-2828.patch",
+      "sha256": "628cc727c442e22411a511bad8829c2d15b52194d45fc9c6d92c8bc304e17f26",
+      "bytes": 17365
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/parse.stdout.json",
+      "sha256": "745c00bbc22f27ed59e8fcb8f1508329efc0369110fb2858031fed89fdbdff69",
+      "bytes": 529
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/parse.stderr.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/parse-receipt.json",
+      "sha256": "ae43306c80ceac194ff5cecdf40f0dd0b78b0ca8f1b5e6cc3346e10b11f0c32f",
+      "bytes": 2933
+    }
+  ],
+  "parseReceiptReceiving": {
+    "classification": "Author-produced parse-only evidence, independently byte-bound; no reviewer execution.",
+    "targetSha256": "736907841a66c5de27b12223d2da5afaadf7a859f80e84b2c63c8c4c1c6b8f39",
+    "parseErrors": [],
+    "ascii": true,
+    "targetExecuted": false,
+    "nativeWindows": false,
+    "host": "7.6.6",
+    "exitCode": 0,
+    "reportedNetworkProof": {
+      "parentNetns": "net:[4026532429]",
+      "childNetns": "net:[4026532348]",
+      "interfaces": [
+        "lo"
+      ],
+      "routeRows": 0,
+      "disconnected": true
+    },
+    "scope": "Does not establish Windows runtime compatibility, successful native calls, compiler behavior, child environment behavior or product qualification."
+  },
+  "nextReceivingRequirements": [
+    "Verify artifact run head/tree, source f801, runner a9d61, workflow e804 and probe 736907 exactly.",
+    "Reconcile six host/mode command intents with terminal/raw/receipt entries; classify timeout/acquisition failure separately from observed product failures.",
+    "Read actual token User/Owner and original child security descriptors before choosing a cleanup policy change.",
+    "Compare the actual CodeDOM-Executor child TEMP/TMP byte values with parent and direct-child values; do not infer child environment from intact UTF-8 compiler command arguments.",
+    "Use actual bare/extended call outcomes and native identities for any long-path correction; no blanket prefix workaround is accepted by this review."
+  ],
+  "allInputsStableAtClose": true,
+  "finalAuthorManifestReceiving": {
+    "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe/freeze-v1.json",
+    "sha256": "c9803bca979b67ca293a45f55144f278e7906e54b16d97d30c045f9eee84722f",
+    "fileCount": 17,
+    "allFileBytesAndHashesIndependentlyMatched": true,
+    "nativeExecutionRequired": true
+  },
+  "rootAcquisitionControlReceipt": {
+    "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native4-probe-runner/controls.json",
+    "sha256": "87c7b3e307df6085487222e301c75292bacf9dd0f1b8ec6bd27d938bdc01adca",
+    "runnerSha256": "a9d61e7604158bc2d95f95bd3af2325285b1b602741fadcd5366b466da262679",
+    "rows": [
+      {
+        "case": "launch-error",
+        "pass": true,
+        "actualRunnerCalls": 6,
+        "realProcesses": 0,
+        "exit": 1,
+        "receiptSha256": "040d426273fbc6f332684913d3f03c8f066cd234609800d595156fdf7cc841bb"
+      },
+      {
+        "case": "launch-error-archive",
+        "pass": true,
+        "realProcesses": 0
+      },
+      {
+        "case": "timeout",
+        "pass": true,
+        "actualRunnerCalls": 6,
+        "realProcesses": 0,
+        "exit": 1,
+        "receiptSha256": "cc9a6e9eac16bf1feee470cbd943fb7fe0b9113dde3472a7f8b849496f29d6bf"
+      },
+      {
+        "case": "timeout-archive",
+        "pass": true,
+        "realProcesses": 0
+      },
+      {
+        "case": "malformed-final-retains-original-streams",
+        "pass": true,
+        "realProcesses": 0
+      }
+    ],
+    "scope": "Actual runner/archiver under declared Windows/platform and process-failure adapters; all subprocess launches intercepted; no PowerShell or native product execution",
+    "qualification": false,
+    "reviewBoundary": "Received and checked summary binding/count/typed pass and zero-process fields; no reviewer rerun or native execution. These synthetic process-failure controls do not validate native compiler/probe behavior."
+  }
+}
