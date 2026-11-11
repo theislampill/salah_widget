@@ -11,6 +11,7 @@ const cases=[
   ["ES0F-02 each actual change issues exactly one navigation with correct output","changedOnce"],
   ["ES0F-05 canonically equivalent raw spellings do not restart","equivalentSpellings"],
   ["ES0F-03 mode switches publish once; local-mode location edits and active re-click do not","localMode"],
+  ["ES0F-10 radio Enter/Space keydown left to native activation; one click, one publication","radioKeys"],
   ["rapid typing navigates only for distinct outputs, in order, ending at the draft","rapid"],
   ["ES0F-04/11/14 issued record equals what the iframe received; no cachebuster or readiness","issuedIdentity"],
   ["ES0F-06 D1 invalid draft keeps preview and export; Copy/Install/Open refuse","invalidDraft"],

@@ -93,6 +93,16 @@ S.localMode=async mk=>{
   f.elements.get("mode-portable").focus(); f.key("mode-portable","ArrowRight");
   assert.equal(navs(f),4,"arrow switch issues one navigation"); coherent(f);
 };
+// ES0F-10 (VM part): radio Enter/Space keydowns are left to native activation (the click); one click = one
+// publication. Native Enter/Space default activation itself is only observable in a browser (native driver).
+S.radioKeys=async mk=>{
+  const f=mk();
+  for(const id of ["mode-local","mode-portable"])for(const key of ["Enter"," "]) {
+    const {event}=f.key(id,key); assert.equal(event.defaultPrevented,false,"native activation not prevented");
+    assert.equal(navs(f),1,"keydown alone issues no publication ("+id+" "+JSON.stringify(key)+")");
+  }
+  f.click("mode-local"); assert.equal(navs(f),2,"one activation, one publication"); coherent(f);
+};
 // Rapid typing: navigations only for distinct outputs, in order; the final preview equals the final draft.
 S.rapid=async mk=>{
   const f=mk();
