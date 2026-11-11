@@ -580,7 +580,12 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
 - **Runtime apply** (`applyConfig`): the settings panel updates the live config **in-memory, no reload** (so it
   works when third-party-iframe storage is blocked). `cacheKey`/`wxKey` are **functions** (not consts) so the new
   location's caches are keyed correctly; the post-config pipeline (`startWeather`/`loadPrayerData`/`startRenderLoop`)
-  is shared by `boot()` and apply.
+  is shared by `boot()` and apply. Before any effect, apply classifies the proposal against the accepted config
+  (`classifyConfigChange`, table `CONFIG_EFFECTS`; docs/state-contracts/R0003.md): an unchanged config only reports
+  its save outcome; label / 12-24h / date format / appearance rebind the display and mark the frame dirty, keeping
+  the request generation, in-flight requests, adopted time zone, weather/radar retry state and sky scene; any
+  location, calculation, time-zone, units, light-pollution, seed, evidence/provenance or unknown field, and the
+  settings Reset, take the full invalidating path.
 - **Settings affordance:** the header buckle becomes a `role=button` (weather emoji ⇄ ⚙ gear on hover/focus; tap +
   `Enter`/`Space` work; not hover-dependent) **only in local/preferLocal mode** — hardcoded embeds are untouched.
   The panel overlays the prayer display inside the same 325×530 card (internal scroll; never resizes the iframe or
