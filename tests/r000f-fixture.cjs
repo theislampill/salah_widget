@@ -11,6 +11,7 @@ function readSource(file, ref) {
   return ref ? execFileSync("git", ["show", `${ref}:${file}`], {cwd:root, encoding:"utf8"})
     : fs.readFileSync(path.join(root, file), "utf8");
 }
+function asDetailed(v) { return Array.isArray(v) ? {status:v.length?"matches":"no-match",coverage:"complete",candidates:v,attempts:[]} : v; }
 function deferred() {
   let resolve, reject;
   const promise = new Promise((yes,no)=>{ resolve=yes; reject=no; });
@@ -115,6 +116,9 @@ function fixture(kind,options={}) {
   const calls={search:[],reverse:[],copy:[],fallback:[],applied:[]};
   function queue(name,args) { const d=deferred(); queues[name].push(d); if(calls[name])calls[name].push(args); return d.promise; }
   sandbox.SalahConfig.geocodeSearch=(q,opts)=>queue("search",{q,homeCC:opts.homeCC});
+  // R0026: the actual consumers read the detailed outcome. An array resolution stands for the engine's
+  // complete-coverage matches/no-match result; a rejection stays a rejection (consumers report unavailable).
+  sandbox.SalahConfig.geocodeSearchDetailed=(q,opts)=>queue("search",{q,homeCC:opts.homeCC}).then(asDetailed);
   sandbox.SalahConfig.coarseDetect=()=>queue("coarse",{});
   sandbox.SalahConfig.geolocate=()=>queue("gps",{});
   sandbox.SalahConfig.permissionState=()=> options.deferPermission ? queue("permission",{}) : Promise.resolve("granted");
@@ -174,4 +178,4 @@ function fixture(kind,options={}) {
     resolve:async(name,index,value)=>{ queues[name][index].resolve(value); await drain(); },
     reject:async(name,index)=>{ queues[name][index].reject(new Error("controlled provider failure")); await drain(); }};
 }
-module.exports={fixture,environment,deferred,drain,readSource};
+module.exports={fixture,environment,deferred,drain,readSource,asDetailed};

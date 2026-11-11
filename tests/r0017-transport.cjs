@@ -38,7 +38,9 @@ const legacySource=legacyHostCount===0
 const sourceProfiles={actual:{scriptCount:actualScripts.length,firstPaint:!!firstPaint,legacyHostCount},
   legacyMoon:{input:legacyHostCount===0?"source-derived structural fixture":"actual source",
     sourceSha256:crypto.createHash("sha256").update(legacySource).digest("hex"),runtimeQualified:false,
-    parentCommit:'ba0851ae28520c0b402dcbd876e3135f502500df',parentSha256:'e41ba4341cb22741f97719dc08bccfad895f8fe5f11bc67288ad70663913f1f5',
+    // R0003 reconciliation onto main 7f2e8d16 (merge 64258c86). Previous parents, retained with their structural
+    // digests in native-script-contract.js RETAINED_INPUTS: ff7b042d/987125da (R0026), a06957c6/598287a4 (R0003).
+    parentCommit:'64258c865846aa27b70681ae33038dae017f864c',parentSha256:'9f2fb30b19aa103c2511418970291bba84dbe3bf3acaca536f4410a8669498d5',
     transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.'}};
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
@@ -207,7 +209,7 @@ async function main(){
   });
   await check("legacy Moon structural branch admits its exact positive source before parser stop",async()=>{
     assert.equal(legacySource.split('src="moon/moon-host.js"').length-1,1,"legacy host is absent or ambiguous");
-    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'7a83847286468bd9f2443e36b2709ba555e89bf79a9523d8e19b28eb6a2b7a9d','retained structural input must be explicitly rebound on source change');
+    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'5269f97a5370cf26469f30a47b53d3d17c23e3286f91347f1c1f7995409f286d','retained structural input must be explicitly rebound on source change');
     const h=await setup('healthy',{source:legacySource});assert.match(h.report.error,/Controlled parser stop/);
     assert.equal(h.report.storageIsolated,true);assert.equal(h.realStorageCalls,0);
     assert.equal(h.report.sourceSha256,sourceProfiles.legacyMoon.sourceSha256);

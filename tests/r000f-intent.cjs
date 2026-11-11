@@ -13,7 +13,8 @@ function fixture(kind,options={}) {
   const mutate=source=>{
     if(kind==="builder"&&["coarse","reverse","gps","forward"].includes(mutant)) {
       const fn={coarse:"detectArea",reverse:"fillNameFromCoords",gps:"locate",forward:"doSearch"}[mutant];
-      return removeGate(source,fn,"if(!ownsLookup(owner)) return;");
+      // R0026: doSearch's gate now also reports the consumer-derived "superseded" outcome.
+      return removeGate(source,fn,mutant==="forward"?'if(!ownsLookup(owner)) return "superseded";':"if(!ownsLookup(owner)) return;");
     }
     if(kind==="settings"&&mutant==="settings-gps")return removeGate(source,"_usePrecise","if(!_ownsSetLookup(owner)) return;");
     if(kind==="settings"&&mutant==="close")return source.replace("_setOpen=false; _setSession++; _invalidateSetLocation(); clearTimeout(_setFocusTimer);","clearTimeout(_setFocusTimer);");

@@ -27,6 +27,42 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0003 reconciled onto accepted main 7f2e8d16 (R0026) by merge 64258c86;
+    // explicitly rebound like the a06957c6 and ff7b042d inputs below, which remain admitted unchanged.
+    'b09f51ed5d48f8b3978b5644e3661fee3935886744e4b320853a1c5bb815ffd8':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'64258c865846aa27b70681ae33038dae017f864c',path:'src/native/index.html',layout:'config,native'}),
+    '5269f97a5370cf26469f30a47b53d3d17c23e3286f91347f1c1f7995409f286d':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'64258c865846aa27b70681ae33038dae017f864c',path:'index.html',
+      parentSha256:'9f2fb30b19aa103c2511418970291bba84dbe3bf3acaca536f4410a8669498d5',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0003 configuration-effect classifier at a06957c6 on accepted main 645b53cc;
+    // explicitly rebound like the ba0851ae inputs below, which remain admitted unchanged.
+    'e7538e8767d3dc95c11031becc9a2a26d05833617baf1bcf73aa430ad32eb6e7':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'a06957c6ef3f838e3b02c664492b4423342d60ab',path:'src/native/index.html',layout:'config,native'}),
+    'ee53ffdce473d0381cc1ec532bbd6b763b1978ed8dddca68dadbd2d9207c0d5f':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'a06957c6ef3f838e3b02c664492b4423342d60ab',path:'index.html',
+      parentSha256:'598287a419f43ce52eb71d4c68e0f3d51013446bbf89666086ce1f40150fed21',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0026 review follow-up (settings partial/unavailable wording) at ff7b042d;
+    // explicitly rebound like the ba2a8679 inputs below, which remain admitted unchanged.
+    'b68ed74b5c3b110d231c3672628b98925dae09bd1836b04bb61602469be97b34':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ff7b042d8a65b9376e40da26e5ffcf10d6ca0233',path:'src/native/index.html',layout:'config,native'}),
+    'aec0d2243be01598cebb89ba87ad31bc2c992ffd5b4eb55a3e600f7754415f74':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ff7b042d8a65b9376e40da26e5ffcf10d6ca0233',path:'index.html',
+      parentSha256:'987125da46481042b6c8a5eacceec638b99a090cd61afbca6918d9115b281f82',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0026 settings search consumer (detailed outcomes) at ba2a8679 on accepted main 645b53cc;
+    // explicitly rebound like the ba0851ae inputs below, which remain admitted unchanged.
+    'bcd68708a37f2fab9546c113b8c4b141e6b79fb4bcb511d73655058f1dd7f867':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ba2a867939a60ab3814a82f89fa18757022ce2ff',path:'src/native/index.html',layout:'config,native'}),
+    '4604961a23877063a80a84822ce2dc0532903fb92b8146e21117c514b06519cf':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ba2a867939a60ab3814a82f89fa18757022ce2ff',path:'index.html',
+      parentSha256:'01b720c58e4885978af06c2b3893256cfeae425139418b4fab7279a5b1f8ad5c',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R000D elapsed retry record at ba0851ae on accepted main da126880;
     // explicitly rebound like the d5ede8b9 inputs below, which remain admitted unchanged.
     '2444e2a9017a4ce3e54c5a3f186668798f29b883fe0fe869f036dcf80f44c81c':Object.freeze({

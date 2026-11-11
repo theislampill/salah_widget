@@ -41,6 +41,10 @@ const cases=[
   ["m20 refusal text never cleared once valid",'  if(!bad.length) [["copied",""]','  if(false) [["copied",""]',"refusalCleared"],
   ["m21 identity omits the permission policy",'function previewIdentity(allow,h){ return allow+" "+base+"#"+h; }',
     'function previewIdentity(allow,h){ return base+"#"+h; }',"issuedIdentity"],
+  ["m22 browser position bypasses the shared admission","const a=window.SalahConfig?SalahConfig.admitCoordinates(pos&&pos.coords&&pos.coords.latitude,pos&&pos.coords&&pos.coords.longitude):{ok:false};",
+    "const a={ok:true,lat:+pos.coords.latitude,lon:+pos.coords.longitude};","admissionSeam"],
+  ["m23 admitted search result never issues",'  if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";\n  update();\n',
+    '  if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";\n',"admissionSeam"],
 ];
 for(const [name,from,to,key]of cases)test("R000F publication mutation: "+name+" -> "+key,async()=>{
   assert.equal(script.split(from).length,2,"one declared mutation location");

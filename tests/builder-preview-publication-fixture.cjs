@@ -346,4 +346,40 @@ S.describedBy=async mk=>{
     assert.match(page,/<p class="note" id="draftnote" role="status" aria-live="polite" hidden><\/p>/,file+" note element unchanged");
   }
 };
+// R0026 x R000F seam: the shared admission (SalahConfig.admitCoordinates, geocodeSearchDetailed) is the ONLY entry
+// into the draft->issued pipeline for external coordinates. A rejected browser position never issues, never clears
+// the invalid-draft marking and never makes a refused export current; an admitted search result (complete or
+// partial coverage) issues exactly once and makes the export current again.
+S.admissionSeam=async mk=>{
+  const f=mk(), code0=f.elements.get("code").value, note=f.elements.get("draftnote");
+  const gps=(i,lat,lon)=>f.resolve("gps",i,{coords:{latitude:lat,longitude:lon,accuracy:12},timestamp:0});
+  // Valid draft + rejected position: nothing issued, export and draft untouched.
+  f.click("geo"); await gps(0,999,10);
+  assert.equal(navs(f),1,"rejected position issues no navigation"); assert.equal(f.elements.get("code").value,code0);
+  assert.match(f.elements.get("geotip").textContent,/^Browser location invalid — not used/);
+  assert.equal(f.elements.get("lat").value,"24.4672"); assert.equal(f.calls.reverse.length,0);
+  // Invalid draft + rejected position: still invalid, still refused, nothing issued.
+  pair(f,"lat",""); assert.equal(navs(f),1); assert.equal(note.hidden,false);
+  f.click("geo"); await gps(1,-91,10);
+  assert.equal(navs(f),1,"rejected position cannot issue the invalid draft");
+  assert.equal(f.elements.get("lat").value,"",'rejected position does not fill the draft');
+  assert.equal(note.hidden,false,"draft still marked invalid"); assert.equal(f.elements.get("lat").getAttribute("aria-invalid"),"true");
+  assert.equal(f.elements.get("code").value,code0,"export still the last valid one");
+  await Promise.all(f.click("copy").results); await drain(); assert.equal(f.calls.copy.length,0,"Copy still refuses");
+  assert.equal(f.elements.get("copied").textContent,f.run("REFUSED"));
+  f.click("open"); assert.equal(f.opens.length,0,"Open still refuses");
+  // Admitted (partial-coverage) search result while invalid: issues exactly once, export current again.
+  f.input("label","Makkah","input"); f.key("label","Enter");
+  await f.resolve("search",0,{status:"matches",coverage:"partial",candidates:[{lat:21.42251,lon:39.82616,cc:"sa",norm:"Makkah"}],attempts:[]});
+  assert.match(f.elements.get("geotip").textContent,/^Partial results, a provider failed: Makkah/);
+  assert.equal(navs(f),2,"admitted search result issues exactly once"); coherent(f);
+  assert.equal(param(srcHash(last(f).src),"lat"),"21.42251");
+  assert.equal(note.hidden,true,"valid again"); assert.equal(f.elements.get("copied").textContent,"","refusal cleared");
+  await Promise.all(f.click("copy").results); await drain();
+  assert.deepEqual(f.calls.copy,[f.elements.get("code").value],"Copy hands out the current output");
+  // Admitted browser position: issues once with the admitted coordinates.
+  f.click("geo"); await gps(2,52.52,13.41);
+  assert.equal(navs(f),3,"admitted position issues exactly once"); coherent(f);
+  assert.equal(param(srcHash(last(f).src),"lat"),"52.52");
+};
 module.exports={S,loader,pair,navs,ledger};

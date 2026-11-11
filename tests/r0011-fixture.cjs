@@ -2,7 +2,7 @@
 // Actual config resolution, boot, applyConfig and settings source. Provider and
 // renderer lifecycle doubles contain no owner storage, GPS or network effects.
 // DOM/event scheduling here is supplementary to the parent's native bridge.
-const {environment,readSource,deferred,drain}=require("./r000f-fixture.cjs");
+const {environment,readSource,deferred,drain,asDetailed}=require("./r000f-fixture.cjs");
 const {nativeInlineRuntime,SetupError}=require("./native-inline-runtime.cjs");
 function widget(options={}) {
   const f=environment(), page=options.source??readSource("index.html",options.ref),source=nativeInlineRuntime(page);
@@ -18,6 +18,8 @@ function widget(options={}) {
   function queue(name,args){const d=deferred();calls[name].push({...d,args});return d.promise;}
   if(!options.realCoarse)f.sandbox.SalahConfig.coarseDetect=(...args)=>queue("coarse",args);
   f.sandbox.SalahConfig.geocodeSearch=(...args)=>queue("search",args);
+  // R0026 consumers read the detailed outcome; arrays stand for complete-coverage matches/no-match.
+  f.sandbox.SalahConfig.geocodeSearchDetailed=(...args)=>queue("search",args).then(asDetailed);
   f.sandbox.navigator.geolocation={getCurrentPosition:(ok,bad,opts)=>{queue("gps",opts).then(ok,bad);}};
   f.sandbox.SalahConfig.permissionState=()=>Promise.resolve("granted");
   if(options.moduleMissing)delete f.sandbox.SalahConfig;
@@ -46,6 +48,8 @@ function widget(options={}) {
   function helper(name){const match=unique(new RegExp('^function '+name+'\\(','m'),name),end=source.indexOf("\n}",match.index);if(end<0)throw new SetupError(name+" source boundary missing");return source.slice(match.index,end+2);}
   function declaration(pattern){const match=unique(pattern,String(pattern)),end=source.indexOf(";",match.index);if(end<0)throw new SetupError("declaration terminator missing");return source.slice(match.index,end+1).trim();}
   load(declaration(/^const \$\s*=/m));
+  // R0003's presentation path writes the directly owned header label; load its actual one-line owner.
+  if(/^function setLocLabel\(\)/m.test(source))load(unique(/^function setLocLabel\(\)\{[^\n]+\}$/m,"setLocLabel")[0]);
   for(const pattern of [/^let today=/m,/^let weather=null/m,/^let weatherTrack=null/m,/^let weatherRadar=null/m,/^let _prayerStale=/m])load(declaration(pattern));
   if(/^let _renderDirty=/m.test(source))load(declaration(/^let _renderDirty=/m));
   if(source.includes("function beginSkyScene(")){
