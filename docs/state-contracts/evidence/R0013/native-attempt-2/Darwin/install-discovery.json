@@ -1,0 +1,960 @@
+{
+  "host": "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin24)",
+  "platform": "darwin",
+  "uid": 501,
+  "source": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+  "fixture": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu",
+  "results": [
+    {
+      "case": "retained actual parser positives are useful",
+      "pass_": true,
+      "observation": {
+        "positives": 3
+      }
+    },
+    {
+      "case": "healthy complete entry interception control",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 28,
+        "inputs": {
+          "menu": true,
+          "confirmations": 2,
+          "sourceChoices": 0
+        },
+        "fixture": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-healthy-entry-control",
+        "readiness": {
+          "nonce": "491380b6448d8a5bd75a2b5a2a180cfe",
+          "processes": [
+            "6698",
+            "6700"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-healthy-entry-control/subject/home",
+              "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-healthy-entry-control/subject/home",
+              "uid": 501,
+              "gid": 20,
+              "device": 16777231,
+              "inode": 3508523,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-healthy-entry-control/subject/tmp",
+              "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-healthy-entry-control/subject/tmp",
+              "uid": 501,
+              "gid": 20,
+              "device": 16777231,
+              "inode": 3508524,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-healthy-entry-control",
+              "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-healthy-entry-control",
+              "uid": 501,
+              "gid": 20,
+              "device": 16777231,
+              "inode": 3508521,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 501,
+            "gid": 20,
+            "groups": [
+              20,
+              12,
+              61,
+              79,
+              80,
+              81,
+              264,
+              701,
+              33,
+              98,
+              100,
+              204,
+              250,
+              395,
+              398,
+              399,
+              400
+            ],
+            "bash": "/bin/bash",
+            "python": "/opt/homebrew/opt/python@3.15/bin/python3.15"
+          }
+        }
+      }
+    },
+    {
+      "case": "actual parser empty",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-empty/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser malformed",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-malformed/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser missing",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-absent",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-missing/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser unreadable",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unreadable",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-unreadable/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser invalid-encoding",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-encoding",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-invalid-encoding/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser legacy",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-legacy",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-legacy/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser new",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-new",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-new/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser both",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-both",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-both/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape root-array",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-root-array/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape root-null",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-root-null/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape missing-addons",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-missing-addons/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape addons-object",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-addons-object/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape addons-null",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-addons-null/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape addon-scalar",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-addon-scalar/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape locale-scalar",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-locale-scalar/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape name-object",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-name-object/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity empty-object",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-empty-object/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity unrelated-keys",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-unrelated-keys/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity null-identities",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-null-identities/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity empty-identities",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-empty-identities/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity whitespace-identities",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-whitespace-identities/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "supported identity id-only",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-id-only/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "supported identity name-only",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-name-only/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "supported identity locale-name-only",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-locale-name-only/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "partial metadata preserves conservative legacy hint",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-partial-legacy/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON trailing-comma",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-trailing-comma/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON trailing-comment",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-trailing-comment/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON internal-comment",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-internal-comment/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON single-quotes",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-single-quotes/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON bare-key",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-bare-key/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON duplicate-addons",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-duplicate-addons/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON duplicate-name",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-duplicate-name/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON escaped-duplicate-name",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-escaped-duplicate-name/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON duplicate-locale-name",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-duplicate-locale-name/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON non-json-NaN",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-non-json-NaN/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON non-json-Infinity",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-non-json-Infinity/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON empty-document",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-empty-document/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON array-trailing-comma",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-array-trailing-comma/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON leading-zero",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-leading-zero/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON leading-plus",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-leading-plus/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON leading-dot",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-leading-dot/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON trailing-dot",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-trailing-dot/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON missing-exponent",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-missing-exponent/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON missing-comma",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-missing-comma/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON multiple-roots",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-multiple-roots/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON invalid-string-escape",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-invalid-string-escape/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON short-unicode-escape",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-short-unicode-escape/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON complex valid control",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-complex-valid/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "no Python empty",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-no-python-empty/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n"
+      }
+    },
+    {
+      "case": "no Python malformed",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-no-python-malformed/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n"
+      }
+    },
+    {
+      "case": "no Python new",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-no-python-new/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n"
+      }
+    },
+    {
+      "case": "no Python legacy",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-no-python-legacy/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n[WARN] Possible legacy Tabliss found; refusing this target.\n"
+      }
+    },
+    {
+      "case": "no Python both",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/parser-no-python-both/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n[WARN] Possible legacy Tabliss found; refusing this target.\n"
+      }
+    },
+    {
+      "case": "metadata delimiters retain one truthful record",
+      "pass_": true,
+      "observation": {
+        "fields": 7,
+        "status": "known-new"
+      }
+    },
+    {
+      "case": "actual target builder keeps states and source identity",
+      "pass_": true,
+      "observation": {
+        "count": 6,
+        "statuses": [
+          "known-neither",
+          "unknown",
+          "known-legacy",
+          "known-new",
+          "known-both",
+          "unknown"
+        ]
+      }
+    },
+    {
+      "case": "complete native detector matrix chromium",
+      "pass_": true,
+      "observation": {
+        "family": "chromium",
+        "cardinalities": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "backslash": true,
+        "unterminated": true,
+        "reset": true
+      }
+    },
+    {
+      "case": "complete native detector matrix firefox",
+      "pass_": true,
+      "observation": {
+        "family": "firefox",
+        "cardinalities": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "backslash": true,
+        "unterminated": true,
+        "reset": true
+      }
+    },
+    {
+      "case": "delimiter-corrupt profile cannot be selected",
+      "pass_": true,
+      "observation": {
+        "targets": 0,
+        "diagnostic": "[WARN] Unsupported Firefox metadata path; target held.\n[WARN] Unsupported delimiter in target identity or discovery record; target held without staging.\n"
+      }
+    },
+    {
+      "case": "newline profile cannot alias a safe target chromium",
+      "pass_": true,
+      "observation": {
+        "family": "chromium",
+        "targets": 1,
+        "safePath": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/newline-chromium/Profile safe"
+      }
+    },
+    {
+      "case": "newline profile cannot alias a safe target firefox",
+      "pass_": true,
+      "observation": {
+        "family": "firefox",
+        "targets": 1,
+        "safePath": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-izst7lyu/newline-firefox/safe"
+      }
+    },
+    {
+      "case": "actual all mixed selection keeps useful known peer",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 neither extension identified by firefox-extensions-json\r\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (metadata-malformed)\r\n[5] Firefox / profile-2 \u2014 legacy Tabliss evidence: REFUSED (known-legacy)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 1 eligible, 3 held, 1 refused.\r\n\r\n== Google Chrome / (no profile detected) ==\r\n[WARN] Held Google Chrome / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Microsoft Edge / (no profile detected) ==\r\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Firefox / profile-0 ==\r\n\r\n== Download TablissNG from GitHub latest release for Firefox ==\r\nDownloading tabliss-firefox-signed.xpi\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-mixed-all/asset.zip\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100   174  100   174    0     0   274k      0 --:--:-- --:--:-- --:--:--  169k\r\n\r\nFirefox-family install steps:\r\n  1. Open Add-ons Manager.\r\n  2. Click the gear icon.\r\n  3. Click Install Add-on From File.\r\n  4. Select this file:\r\n     /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-mixed-all/subject/home/salah-widget-install.B4GRj7LV/tabliss-firefox-signed.xpi\r\n[OK] Copied XPI path to clipboard.\r\nPress Enter after the browser step (installation remains manual): \r\nDownloading Salah Widget preset:\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-mixed-all/preset.json\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100    21  100    21    0     0  47835      0 --:--:-- --:--:-- --:--:-- 21000\r\n[OK] Preset JSON validated: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-mixed-all/subject/home/salah-widget-install.B4GRj7LV/presets/salah-widget.tablissng.json\r\n\r\n== Import Salah Widget preset for Firefox / profile-0 ==\r\nPreset file:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-mixed-all/subject/home/salah-widget-install.B4GRj7LV/presets/salah-widget.tablissng.json\r\n[OK] Copied the preset file path to clipboard.\r\n\r\nManual import path:\r\n  1. Open a new tab controlled by TablissNG.\r\n  2. Open TablissNG settings.\r\n  3. Use Import/Restore settings.\r\n  4. Select the preset JSON file above.\r\n\r\nThis wizard does not directly write into browser extension storage.\r\nThat avoids corrupting profiles and avoids touching legacy Tabliss.\r\n[WARN] Importing the preset replaces your current TablissNG dashboard.\r\n\r\n== Firefox / profile-1 ==\r\n[WARN] Held Firefox / profile-1: metadata-malformed. Review metadata manually; no automatic actions.\r\n\r\n== Firefox / profile-2 ==\r\n[WARN] Legacy Tabliss detected in this profile. Refusing to touch this browser/profile.\r\nMatches: Tabliss\r\n\r\n== Manual action pending ==\r\nValidated manual-install files retained in:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-mixed-all/subject/home/salah-widget-install.B4GRj7LV\r\nKeep unpacked extension directories while installed. Preset/XPI removal after import/install is optional and manual.\r\n"
+    },
+    {
+      "case": "actual explicit known target stays useful",
+      "pass_": false,
+      "error": "{'exit': 1, 'effects': [], 'output': \"\\r\\nSalah Widget Installer\\r\\n\\r\\nThis wizard can:\\r\\n- detect supported browsers/profiles\\r\\n- check for TablissNG\\r\\n- safely refuse to modify legacy Tabliss profiles\\r\\n- download the right TablissNG build from GitHub latest release when needed\\r\\n- guide the browser-required install step\\r\\n- stage the Salah Widget preset for import\\r\\n\\r\\nIt will not silently force-install extensions or write directly into extension storage.\\r\\n\\r\\n== Detecting browsers ==\\r\\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\\r\\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\\r\\n[3] Firefox / profile-0 \u2014 neither extension identified by firefox-extensions-json\\r\\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (metadata-malformed)\\r\\n[5] Firefox / profile-2 \u2014 legacy Tabliss evidence: REFUSED (known-legacy)\\r\\n\\r\\nSelect target numbers separated by commas, or 'all' (default all): 1\\r\\nSelected targets: 0 eligible, 1 held, 0 refused.\\r\\n[ERROR] No eligible target selected; unknown targets are held and legacy Tabliss profiles refused. Manual actions remain pending.\\r\\n\"}"
+    },
+    {
+      "case": "actual explicit unknown refuses before staging",
+      "pass_": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": true,
+        "fixture": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-explicit-unknown",
+        "inputs": {
+          "menu": true,
+          "confirmations": 0,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "2bc8091bd8438f9f980f4a4ecbc4f2c6",
+          "processes": [
+            "8051",
+            "8053"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-explicit-unknown/subject/home",
+              "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-explicit-unknown/subject/home",
+              "uid": 501,
+              "gid": 20,
+              "device": 16777231,
+              "inode": 3509046,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-explicit-unknown/subject/tmp",
+              "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-explicit-unknown/subject/tmp",
+              "uid": 501,
+              "gid": 20,
+              "device": 16777231,
+              "inode": 3509047,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-explicit-unknown",
+              "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-explicit-unknown",
+              "uid": 501,
+              "gid": 20,
+              "device": 16777231,
+              "inode": 3509044,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 501,
+            "gid": 20,
+            "groups": [
+              20,
+              12,
+              61,
+              79,
+              80,
+              81,
+              264,
+              701,
+              33,
+              98,
+              100,
+              204,
+              250,
+              395,
+              398,
+              399,
+              400
+            ],
+            "bash": "/bin/bash",
+            "python": "/opt/homebrew/opt/python@3.15/bin/python3.15"
+          }
+        }
+      }
+    },
+    {
+      "case": "actual unknown only refuses before staging",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 discovery unknown: HELD (metadata-malformed)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 0 eligible, 3 held, 0 refused.\r\n[ERROR] No eligible target selected; unknown targets are held and legacy Tabliss profiles refused. Manual actions remain pending.\r\n"
+    },
+    {
+      "case": "actual known both refuses before staging",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 legacy Tabliss evidence: REFUSED (known-both)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 0 eligible, 2 held, 1 refused.\r\n[ERROR] No eligible target selected; unknown targets are held and legacy Tabliss profiles refused. Manual actions remain pending.\r\n"
+    },
+    {
+      "case": "actual missing metadata is held",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 discovery unknown: HELD (metadata-absent)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 0 eligible, 3 held, 0 refused.\r\n[ERROR] No eligible target selected; unknown targets are held and legacy Tabliss profiles refused. Manual actions remain pending.\r\n"
+    },
+    {
+      "case": "actual no profile is held",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 0 eligible, 3 held, 0 refused.\r\n[ERROR] No eligible target selected; unknown targets are held and legacy Tabliss profiles refused. Manual actions remain pending.\r\n"
+    },
+    {
+      "case": "actual wrong shape preserves independent peer",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 neither extension identified by firefox-extensions-json\r\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (metadata-unsupported)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 1 eligible, 3 held, 0 refused.\r\n\r\n== Google Chrome / (no profile detected) ==\r\n[WARN] Held Google Chrome / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Microsoft Edge / (no profile detected) ==\r\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Firefox / profile-0 ==\r\n\r\n== Download TablissNG from GitHub latest release for Firefox ==\r\nDownloading tabliss-firefox-signed.xpi\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-wrong-shape-peer/asset.zip\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100   174  100   174    0     0   350k      0 --:--:-- --:--:-- --:--:--  169k\r\n\r\nFirefox-family install steps:\r\n  1. Open Add-ons Manager.\r\n  2. Click the gear icon.\r\n  3. Click Install Add-on From File.\r\n  4. Select this file:\r\n     /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-wrong-shape-peer/subject/home/salah-widget-install.qNtTmpke/tabliss-firefox-signed.xpi\r\n[OK] Copied XPI path to clipboard.\r\nPress Enter after the browser step (installation remains manual): \r\nDownloading Salah Widget preset:\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-wrong-shape-peer/preset.json\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100    21  100    21    0     0  52896      0 --:--:-- --:--:-- --:--:-- 21000\r\n[OK] Preset JSON validated: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-wrong-shape-peer/subject/home/salah-widget-install.qNtTmpke/presets/salah-widget.tablissng.json\r\n\r\n== Import Salah Widget preset for Firefox / profile-0 ==\r\nPreset file:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-wrong-shape-peer/subject/home/salah-widget-install.qNtTmpke/presets/salah-widget.tablissng.json\r\n[OK] Copied the preset file path to clipboard.\r\n\r\nManual import path:\r\n  1. Open a new tab controlled by TablissNG.\r\n  2. Open TablissNG settings.\r\n  3. Use Import/Restore settings.\r\n  4. Select the preset JSON file above.\r\n\r\nThis wizard does not directly write into browser extension storage.\r\nThat avoids corrupting profiles and avoids touching legacy Tabliss.\r\n[WARN] Importing the preset replaces your current TablissNG dashboard.\r\n\r\n== Firefox / profile-1 ==\r\n[WARN] Held Firefox / profile-1: metadata-unsupported. Review metadata manually; no automatic actions.\r\n\r\n== Manual action pending ==\r\nValidated manual-install files retained in:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-wrong-shape-peer/subject/home/salah-widget-install.qNtTmpke\r\nKeep unpacked extension directories while installed. Preset/XPI removal after import/install is optional and manual.\r\n"
+    },
+    {
+      "case": "preview mixed keeps knowledge without effects",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \nSalah Widget Installer\n\nThis wizard can:\n- detect supported browsers/profiles\n- check for TablissNG\n- safely refuse to modify legacy Tabliss profiles\n- download the right TablissNG build from GitHub latest release when needed\n- guide the browser-required install step\n- stage the Salah Widget preset for import\n\nIt will not silently force-install extensions or write directly into extension storage.\n\n== Detecting browsers ==\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\n[3] Firefox / profile-0 \u2014 neither extension identified by firefox-extensions-json\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (metadata-malformed)\n[5] Firefox / profile-2 \u2014 legacy Tabliss evidence: REFUSED (known-legacy)\n\n== Offline preview ==\nWould prepare Firefox / profile-0.\nWould resolve/download GitHub release; release/version/path unresolved until execution.\nWould stage the configured preset and guide manual import; path unresolved until execution.\nWould offer clipboard paths and open the browser manual installation/import pages.\nPreview targets: 1 eligible, 3 held, 1 refused.\nPreview only; no changes made. No network requests were made.\n[WARN] Held Google Chrome / (no profile detected): no-profile. Review metadata manually; no automatic actions.\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\n[WARN] Held Firefox / profile-1: metadata-malformed. Review metadata manually; no automatic actions.\n[WARN] Legacy Tabliss: refusing Firefox / profile-2.\n[WARN] Importing the preset replaces your current TablissNG dashboard.\n"
+    },
+    {
+      "case": "preview unknown only has no success or effects",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \nSalah Widget Installer\n\nThis wizard can:\n- detect supported browsers/profiles\n- check for TablissNG\n- safely refuse to modify legacy Tabliss profiles\n- download the right TablissNG build from GitHub latest release when needed\n- guide the browser-required install step\n- stage the Salah Widget preset for import\n\nIt will not silently force-install extensions or write directly into extension storage.\n\n== Detecting browsers ==\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\n[3] Firefox / profile-0 \u2014 discovery unknown: HELD (metadata-malformed)\n\n== Offline preview ==\nPreview targets: 0 eligible, 3 held, 0 refused.\n[WARN] Held Google Chrome / (no profile detected): no-profile. Review metadata manually; no automatic actions.\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\n[WARN] Held Firefox / profile-0: metadata-malformed. Review metadata manually; no automatic actions.\n[WARN] Importing the preset replaces your current TablissNG dashboard.\n[ERROR] No eligible target; preview made no changes.\n"
+    },
+    {
+      "case": "no Python mixed preview keeps independent Chromium peer",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \nSalah Widget Installer\n\nThis wizard can:\n- detect supported browsers/profiles\n- check for TablissNG\n- safely refuse to modify legacy Tabliss profiles\n- download the right TablissNG build from GitHub latest release when needed\n- guide the browser-required install step\n- stage the Salah Widget preset for import\n\nIt will not silently force-install extensions or write directly into extension storage.\n\n== Detecting browsers ==\n[1] Google Chrome / Default \u2014 neither extension identified by chromium-extension-directories\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\n[3] Firefox / profile-0 \u2014 discovery unknown: HELD (parser-unavailable)\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (parser-unavailable)\n[5] Firefox / profile-2 \u2014 legacy Tabliss evidence: REFUSED (unknown)\n\n== Offline preview ==\nWould prepare Google Chrome / Default.\nWould resolve/download GitHub release; release/version/path unresolved until execution.\nWould stage the configured preset and guide manual import; path unresolved until execution.\nWould offer clipboard paths and open the browser manual installation/import pages.\nPreview targets: 1 eligible, 3 held, 1 refused.\nPreview only; no changes made. No network requests were made.\n[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n[WARN] Possible legacy Tabliss found; refusing this target.\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\n[WARN] Held Firefox / profile-0: parser-unavailable. Review metadata manually; no automatic actions.\n[WARN] Held Firefox / profile-1: parser-unavailable. Review metadata manually; no automatic actions.\n[WARN] Legacy Tabliss: refusing Firefox / profile-2.\n[WARN] Importing the preset replaces your current TablissNG dashboard.\n"
+    },
+    {
+      "case": "actual existing new target remains useful with unknown peer",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 TablissNG detected\r\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (metadata-unsupported)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 1 eligible, 3 held, 0 refused.\r\n\r\n== Google Chrome / (no profile detected) ==\r\n[WARN] Held Google Chrome / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Microsoft Edge / (no profile detected) ==\r\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Firefox / profile-0 ==\r\n[OK] TablissNG already appears to be installed.\r\nDownloading Salah Widget preset:\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-new-unknown-peer/preset.json\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100    21  100    21    0     0  26086      0 --:--:-- --:--:-- --:--:-- 21000\r\n[OK] Preset JSON validated: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-new-unknown-peer/subject/home/salah-widget-install.Gvyad4t2/presets/salah-widget.tablissng.json\r\n\r\n== Import Salah Widget preset for Firefox / profile-0 ==\r\nPreset file:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-new-unknown-peer/subject/home/salah-widget-install.Gvyad4t2/presets/salah-widget.tablissng.json\r\n[OK] Copied the preset file path to clipboard.\r\n\r\nManual import path:\r\n  1. Open a new tab controlled by TablissNG.\r\n  2. Open TablissNG settings.\r\n  3. Use Import/Restore settings.\r\n  4. Select the preset JSON file above.\r\n\r\nThis wizard does not directly write into browser extension storage.\r\nThat avoids corrupting profiles and avoids touching legacy Tabliss.\r\n[WARN] Importing the preset replaces your current TablissNG dashboard.\r\n\r\n== Firefox / profile-1 ==\r\n[WARN] Held Firefox / profile-1: metadata-unsupported. Review metadata manually; no automatic actions.\r\n\r\n== Manual action pending ==\r\nValidated manual-install files retained in:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-new-unknown-peer/subject/home/salah-widget-install.Gvyad4t2\r\nKeep unpacked extension directories while installed. Preset/XPI removal after import/install is optional and manual.\r\n"
+    },
+    {
+      "case": "actual insufficient identity held with known peer",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 neither extension identified by firefox-extensions-json\r\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (metadata-unsupported)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 1 eligible, 3 held, 0 refused.\r\n\r\n== Google Chrome / (no profile detected) ==\r\n[WARN] Held Google Chrome / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Microsoft Edge / (no profile detected) ==\r\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Firefox / profile-0 ==\r\n\r\n== Download TablissNG from GitHub latest release for Firefox ==\r\nDownloading tabliss-firefox-signed.xpi\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-insufficient-peer/asset.zip\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100   174  100   174    0     0   398k      0 --:--:-- --:--:-- --:--:--  169k\r\n\r\nFirefox-family install steps:\r\n  1. Open Add-ons Manager.\r\n  2. Click the gear icon.\r\n  3. Click Install Add-on From File.\r\n  4. Select this file:\r\n     /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-insufficient-peer/subject/home/salah-widget-install.oZHxk4iD/tabliss-firefox-signed.xpi\r\n[OK] Copied XPI path to clipboard.\r\nPress Enter after the browser step (installation remains manual): \r\nDownloading Salah Widget preset:\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-insufficient-peer/preset.json\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100    21  100    21    0     0  51219      0 --:--:-- --:--:-- --:--:-- 21000\r\n[OK] Preset JSON validated: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-insufficient-peer/subject/home/salah-widget-install.oZHxk4iD/presets/salah-widget.tablissng.json\r\n\r\n== Import Salah Widget preset for Firefox / profile-0 ==\r\nPreset file:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-insufficient-peer/subject/home/salah-widget-install.oZHxk4iD/presets/salah-widget.tablissng.json\r\n[OK] Copied the preset file path to clipboard.\r\n\r\nManual import path:\r\n  1. Open a new tab controlled by TablissNG.\r\n  2. Open TablissNG settings.\r\n  3. Use Import/Restore settings.\r\n  4. Select the preset JSON file above.\r\n\r\nThis wizard does not directly write into browser extension storage.\r\nThat avoids corrupting profiles and avoids touching legacy Tabliss.\r\n[WARN] Importing the preset replaces your current TablissNG dashboard.\r\n\r\n== Firefox / profile-1 ==\r\n[WARN] Held Firefox / profile-1: metadata-unsupported. Review metadata manually; no automatic actions.\r\n\r\n== Manual action pending ==\r\nValidated manual-install files retained in:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-insufficient-peer/subject/home/salah-widget-install.oZHxk4iD\r\nKeep unpacked extension directories while installed. Preset/XPI removal after import/install is optional and manual.\r\n"
+    },
+    {
+      "case": "actual duplicate keys cannot hide legacy from selection",
+      "pass_": false,
+      "error": "Held/refused summary missing or false: \r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[2] Microsoft Edge / (no profile detected) \u2014 discovery unknown: HELD (no-profile)\r\n[3] Firefox / profile-0 \u2014 neither extension identified by firefox-extensions-json\r\n[4] Firefox / profile-1 \u2014 discovery unknown: HELD (metadata-malformed)\r\n\r\nSelect target numbers separated by commas, or 'all' (default all): all\r\nSelected targets: 1 eligible, 3 held, 0 refused.\r\n\r\n== Google Chrome / (no profile detected) ==\r\n[WARN] Held Google Chrome / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Microsoft Edge / (no profile detected) ==\r\n[WARN] Held Microsoft Edge / (no profile detected): no-profile. Review metadata manually; no automatic actions.\r\n\r\n== Firefox / profile-0 ==\r\n\r\n== Download TablissNG from GitHub latest release for Firefox ==\r\nDownloading tabliss-firefox-signed.xpi\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-duplicate-peer/asset.zip\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100   174  100   174    0     0   383k      0 --:--:-- --:--:-- --:--:--  169k\r\n\r\nFirefox-family install steps:\r\n  1. Open Add-ons Manager.\r\n  2. Click the gear icon.\r\n  3. Click Install Add-on From File.\r\n  4. Select this file:\r\n     /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-duplicate-peer/subject/home/salah-widget-install.4fgMf4jg/tabliss-firefox-signed.xpi\r\n[OK] Copied XPI path to clipboard.\r\nPress Enter after the browser step (installation remains manual): \r\nDownloading Salah Widget preset:\r\n  file:///private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-duplicate-peer/preset.json\r\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\r\n                                 Dload  Upload   Total   Spent    Left  Speed\r\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r100    21  100    21    0     0  27741      0 --:--:-- --:--:-- --:--:-- 21000\r\n[OK] Preset JSON validated: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-duplicate-peer/subject/home/salah-widget-install.4fgMf4jg/presets/salah-widget.tablissng.json\r\n\r\n== Import Salah Widget preset for Firefox / profile-0 ==\r\nPreset file:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-duplicate-peer/subject/home/salah-widget-install.4fgMf4jg/presets/salah-widget.tablissng.json\r\n[OK] Copied the preset file path to clipboard.\r\n\r\nManual import path:\r\n  1. Open a new tab controlled by TablissNG.\r\n  2. Open TablissNG settings.\r\n  3. Use Import/Restore settings.\r\n  4. Select the preset JSON file above.\r\n\r\nThis wizard does not directly write into browser extension storage.\r\nThat avoids corrupting profiles and avoids touching legacy Tabliss.\r\n[WARN] Importing the preset replaces your current TablissNG dashboard.\r\n\r\n== Firefox / profile-1 ==\r\n[WARN] Held Firefox / profile-1: metadata-malformed. Review metadata manually; no automatic actions.\r\n\r\n== Manual action pending ==\r\nValidated manual-install files retained in:\r\n  /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-sq1y3ewi/r0013-duplicate-peer/subject/home/salah-widget-install.4fgMf4jg\r\nKeep unpacked extension directories while installed. Preset/XPI removal after import/install is optional and manual.\r\n"
+    }
+  ]
+}

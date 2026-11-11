@@ -1,0 +1,54 @@
+{
+  "schema": "r0013-independent-native-infrastructure-review/1",
+  "reviewer": "/root/r0013_review",
+  "capturedAt": "2026-11-11T06:56:58.471645+00:00",
+  "baselineCommit": "74558cdc596b815a6e24271d4253785a6f519b42",
+  "scope": "Bounded infrastructure repair review only; source bytes unchanged; no native/runtime/whole-contract acceptance",
+  "inspectedHashes": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4",
+    ".github/workflows/installer-native.yml": "812739272e7119072939362f108e9ddd15972c50510e8f97ebb21265c60241e6",
+    "tools/qualification/installer_native.py": "1cca4b4692e5836c405f19569826029a2156bad6cf0fcd229f5ba52596ebcfd9",
+    "tests/install-native-receipts.py": "e56367e4295605c63bab6bb9a3ed50e2af96d06d018bfcadda39f0ef678d9103"
+  },
+  "diffSha256": "ccd85e2af656cc2cf7066d238a4f67e96b9d579a26bf33b265e5cc91f30f078b",
+  "run1Evidence": {
+    "classification.json": "9164759656357ea2d0187797a61cb67ba1ad108e1a72961b49d312376e3de013",
+    "r0013-archive-control.json": "ed0196fcf38ea947b12bf8e4b36db17472f02e1edec6b02bf1d7c7d603d890bf",
+    "r0013-native-run1-linux.log": "24d40a682921ffa1b7a40d477d0bf9d30bc7a92a8226223d6008d25d7c7c98bd",
+    "r0013-native-run1-macos-annotations.json": "2d33769db9999d7660e8320d980770cca39cc6b67767e61256962e54ab05942a",
+    "r0013-native-run1-windows.log": "ee85a6a59aea3882661b6c3b8a2c05dfb9affdaa50763ab7ecad2eff2b1e81b5",
+    "windows-result.json": "f9d3b9815f7338b9f42b2f314012626ad6effa18e5791f13c4c2850c80c26758"
+  },
+  "observedRun1": {
+    "run": 42975105297,
+    "Linux": "Retained log has seven suite PASS exit0 messages; uploader rejects an intentional LF filename. Complete detailed receipts were not received and are not inferred.",
+    "Darwin": "Annotation says configuration macos-14-arm64-us-default is not supported. No product execution credited. Retirement-date statement is not independently needed or asserted by this review.",
+    "Windows": "Retained artifact identifies exact candidate/source hashes, statusINCOMPLETE, commands[]. Raw log fails on env[SystemRoot] before the first fixture. No Windows product observation credited."
+  },
+  "repairReview": {
+    "runner": "macos15 label replaces macos14; collector still demands actual Darwin and Apple /bin/bash3.2. New runner availability and native results remain to be observed.",
+    "archive": "Both workflow branches use identical Python tarfile packaging with dereference=False. Only the safe archive basename reaches upload-artifact. Names, file data and symlinks remain inside the archive; always() preserves failed/incomplete evidence and does not convert failed test steps to success.",
+    "environment": "Collector uses uppercase SYSTEMROOT from the copied Windows environment mapping and records IMAGEVERSION fallback. Exact version requirements and command PASS criteria are unchanged."
+  },
+  "independentProbe": {
+    "report": "native-infra-probe.json",
+    "sha256": "d9f9434aea9ef1b48356525a0ee073c70c732a8ac5491c91e4bfb514c53555b2",
+    "checks": 4,
+    "result": "PASS",
+    "scope": "Local exact packaging command and actual collector AST expression tests; no actual Windows/macOS host claim"
+  },
+  "findings": {
+    "Critical": [],
+    "Important": [],
+    "Minor": []
+  },
+  "disposition": "No blocker identified in this infrastructure-only delta at the recorded hashes. Installer engineering rereview remains applicable because both product hashes are unchanged. Proceed to parent-owned hosted execution and artifact review.",
+  "openGates": [
+    "Bind the infrastructure delta to its eventual immutable commit/tree.",
+    "Receive complete source-bound hosted Linux, Apple and native Windows receipts, validate actual host/acquisition/entry/mutation scope and inspect retained failures.",
+    "Final README Bash/Windows pins, rendered/public/copied-command delivery and full original12/residual7/ES14 ledger remain open.",
+    "Campaign predecessors, exact owner approval, authorized integration, whole certificate and deliberate completed closure remain parent-owned."
+  ],
+  "mutationStatement": "Reviewer wrote only attributed probes, owned disposable archive fixtures and reports under recovery/r0013-review. No product/shared source/index/branch/governor/remote writes; no installer execution in this pass."
+}

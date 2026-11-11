@@ -1,0 +1,261 @@
+{
+  "reviewer": "/root/r0013_review",
+  "scope": "bounded independent repair discrimination; Linux hosts only, not native Apple or Windows qualification",
+  "sourcesBefore": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4"
+  },
+  "sourcesAfter": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4"
+  },
+  "results": [
+    {
+      "case": "actual strict helper vs independent grammar corpus",
+      "pass": true,
+      "count": 81,
+      "valid": 25,
+      "invalid": 56,
+      "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/strict-grammar-result.json"
+    },
+    {
+      "case": "original PS actual-parser adverse cases repaired",
+      "pass": true,
+      "count": 9,
+      "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/parser-edge-repaired.json"
+    },
+    {
+      "case": "PS actual main healthy-empty",
+      "pass": true,
+      "exit": 0,
+      "effects": [
+        "prompt",
+        "stage",
+        "asset",
+        "clipboard",
+        "open:about:addons",
+        "prompt",
+        "preset",
+        "clipboard",
+        "open:about:newtab"
+      ],
+      "profileUnchanged": true,
+      "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-healthy-empty"
+    },
+    {
+      "case": "PS actual main legacy-control",
+      "pass": true,
+      "exit": 1,
+      "effects": [
+        "prompt"
+      ],
+      "profileUnchanged": true,
+      "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-legacy-control"
+    },
+    {
+      "case": "PS actual main malformed-unquoted",
+      "pass": true,
+      "exit": 1,
+      "effects": [
+        "prompt"
+      ],
+      "profileUnchanged": true,
+      "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-malformed-unquoted"
+    },
+    {
+      "case": "PS actual main duplicate-inventory",
+      "pass": true,
+      "exit": 1,
+      "effects": [
+        "prompt"
+      ],
+      "profileUnchanged": true,
+      "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/rereview-fixtures/ps-duplicate-inventory"
+    },
+    {
+      "case": "Bash actual full-file healthy-empty",
+      "pass": true,
+      "exit": 0,
+      "effects": [
+        "mktemp -d /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.XXXXXXXX",
+        "mktemp -d /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.XXXXXXXX",
+        "mkdir /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets",
+        "metadata firefox",
+        "mkdir /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture",
+        "mktemp /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/.asset.XXXXXXXX",
+        "download -fL file:///tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/asset.zip -o /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/.asset.1q2LtIAO",
+        "move -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/.asset.1q2LtIAO /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/tabliss-firefox-signed.xpi",
+        "mktemp /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/.asset.XXXXXXXX",
+        "copy -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5/downloads/v-fixture/tabliss-firefox-signed.xpi /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/.asset.xeNQVwvx",
+        "move -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/.asset.xeNQVwvx /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/tabliss-firefox-signed.xpi",
+        "clipboard /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/tabliss-firefox-signed.xpi",
+        "open about:addons",
+        "mktemp /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/.preset.XXXXXXXX",
+        "download -fL file:///tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/preset.json -o /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/.preset.R60Du8eM",
+        "move -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/.preset.R60Du8eM /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/salah-widget.tablissng.json",
+        "clipboard /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home/salah-widget-install.jUFaOT3E/presets/salah-widget.tablissng.json",
+        "open about:newtab",
+        "remove -rf -- /tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp/salah-widget-download.G3xFXTG5"
+      ],
+      "profileUnchanged": true,
+      "snapshotUnchanged": false,
+      "readiness": {
+        "nonce": "49c24781e9f6fe25af6065edd65aac8a",
+        "processes": [
+          "135",
+          "137"
+        ],
+        "loadedBeforeEntry": true,
+        "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+        "acquisition": {
+          "home": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/home",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127277,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "temporary": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty/subject/tmp",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127278,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "fixture": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127275,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "uid": 1000,
+          "gid": 1000,
+          "groups": [],
+          "bash": "/bin/bash",
+          "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+        }
+      },
+      "fixture": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-healthy-empty"
+    },
+    {
+      "case": "Bash actual full-file legacy-control",
+      "pass": true,
+      "exit": 1,
+      "effects": [],
+      "profileUnchanged": true,
+      "snapshotUnchanged": true,
+      "readiness": {
+        "nonce": "3b964e530e3e914105e048ead29b28ac",
+        "processes": [
+          "353",
+          "355"
+        ],
+        "loadedBeforeEntry": true,
+        "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+        "acquisition": {
+          "home": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/home",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/home",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127300,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "temporary": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/tmp",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control/subject/tmp",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127301,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "fixture": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127298,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "uid": 1000,
+          "gid": 1000,
+          "groups": [],
+          "bash": "/bin/bash",
+          "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+        }
+      },
+      "fixture": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-legacy-control"
+    },
+    {
+      "case": "Bash actual full-file duplicate-inventory",
+      "pass": true,
+      "exit": 1,
+      "effects": [],
+      "profileUnchanged": true,
+      "snapshotUnchanged": true,
+      "readiness": {
+        "nonce": "436b869dc65145a16bcfe9320f6cf63c",
+        "processes": [
+          "378",
+          "380"
+        ],
+        "loadedBeforeEntry": true,
+        "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+        "acquisition": {
+          "home": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/home",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/home",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127314,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "temporary": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/tmp",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory/subject/tmp",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127315,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "fixture": {
+            "path": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory",
+            "physical": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory",
+            "uid": 1000,
+            "gid": 1000,
+            "device": 39,
+            "inode": 127312,
+            "mode": "0o700",
+            "symlink": false
+          },
+          "uid": 1000,
+          "gid": 1000,
+          "groups": [],
+          "bash": "/bin/bash",
+          "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+        }
+      },
+      "fixture": "/tmp/salah-entry-bash-35hiqgvm/independent-repaired-duplicate-inventory"
+    }
+  ]
+}

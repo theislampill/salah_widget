@@ -220,48 +220,178 @@ function Get-ChromiumExtensionStatus($ProfilePath, [string[]]$NewIds, [string[]]
         }
     }
 
+    $hasNewResult = (($newFound | Select-Object -Unique).Count -gt 0)
+    $hasOldResult = (($oldFound | Select-Object -Unique).Count -gt 0)
     [pscustomobject]@{
-        HasNew = (($newFound | Select-Object -Unique).Count -gt 0)
-        HasOld = (($oldFound | Select-Object -Unique).Count -gt 0)
+        HasNew = $hasNewResult
+        HasOld = $hasOldResult
         NewMatches = @($newFound | Select-Object -Unique)
         OldMatches = @($oldFound | Select-Object -Unique)
+        Status = $(if ($hasNewResult -and $hasOldResult) { 'known-both' } elseif ($hasOldResult) { 'known-legacy' } elseif ($hasNewResult) { 'known-new' } else { 'known-neither' })
+        Reason = 'existing-chromium-detector'
+        EvidenceClass = 'chromium-directory-and-preferences'
+        MetadataSource = $ProfilePath
     }
+}
+
+# Validate strict JSON grammar and unambiguous object keys before the host's
+# permissive ConvertFrom-Json conversion. This helper has no external effects.
+function Test-StrictJson([string]$Json) {
+    $lexer = [regex]'\G(?:(?<space>[ \t\r\n]+)|(?<string>"(?:[^"\\\x00-\x1f]|\\(?:["\\/bfnrt]|u[0-9a-fA-F]{4}))*")|(?<number>-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)|(?<literal>true|false|null)|(?<mark>[{}\[\],:]))'
+    $frames = New-Object 'System.Collections.Generic.List[object]'
+    $position=0; $rootComplete=$false
+    try {
+        while ($position -lt $Json.Length) {
+            $tokenMatch=$lexer.Match($Json,$position)
+            if (-not $tokenMatch.Success -or $tokenMatch.Index -ne $position) { return $false }
+            $position += $tokenMatch.Length
+            if ($tokenMatch.Groups['space'].Success) { continue }
+            $token=$tokenMatch.Value
+            $frame=if ($frames.Count) { $frames[$frames.Count-1] } else { $null }
+
+            if ($null -ne $frame -and $frame.Kind -eq 'object' -and ($frame.State -eq 'key-or-end' -or $frame.State -eq 'key')) {
+                if ($token -eq '}' -and $frame.State -eq 'key-or-end') { $frames.RemoveAt($frames.Count-1); continue }
+                if (-not $tokenMatch.Groups['string'].Success) { return $false }
+                # Decode strict JSON string escapes so name and na\u006de are
+                # the same property. Compare case-insensitively because the
+                # downstream PowerShell object's property lookup does so too.
+                $keyText=New-Object System.Text.StringBuilder
+                for ($i=1; $i -lt $token.Length-1; $i++) {
+                    if ($token[$i] -ne [char]92) { [void]$keyText.Append($token[$i]); continue }
+                    $i++
+                    switch ($token[$i]) {
+                        '"' { [void]$keyText.Append([char]34) }
+                        '\' { [void]$keyText.Append([char]92) }
+                        '/' { [void]$keyText.Append([char]47) }
+                        'b' { [void]$keyText.Append([char]8) }
+                        'f' { [void]$keyText.Append([char]12) }
+                        'n' { [void]$keyText.Append([char]10) }
+                        'r' { [void]$keyText.Append([char]13) }
+                        't' { [void]$keyText.Append([char]9) }
+                        'u' { [void]$keyText.Append([char][Convert]::ToInt32($token.Substring($i+1,4),16)); $i+=4 }
+                    }
+                }
+                if (-not $frame.Keys.Add($keyText.ToString())) { return $false }
+                $frame.State='colon'; continue
+            }
+            if ($null -ne $frame -and $frame.State -eq 'colon') {
+                if ($token -ne ':') { return $false }
+                $frame.State='value'; continue
+            }
+            if ($null -ne $frame -and $frame.State -eq 'after-value') {
+                $closing=if ($frame.Kind -eq 'object') { '}' } else { ']' }
+                if ($token -eq $closing) { $frames.RemoveAt($frames.Count-1); continue }
+                if ($token -ne ',') { return $false }
+                $frame.State=if ($frame.Kind -eq 'object') { 'key' } else { 'value' }
+                continue
+            }
+            if ($null -ne $frame -and $frame.Kind -eq 'array' -and $frame.State -eq 'value-or-end' -and $token -eq ']') {
+                $frames.RemoveAt($frames.Count-1); continue
+            }
+
+            # A value consumes exactly one parent slot; nested containers must
+            # close before that parent accepts its next separator or member.
+            if ($null -ne $frame) { $frame.State='after-value' }
+            elseif ($rootComplete) { return $false }
+            else { $rootComplete=$true }
+            if ($token -eq '{') {
+                $keys=New-Object 'System.Collections.Generic.HashSet[string]' -ArgumentList ([StringComparer]::OrdinalIgnoreCase)
+                [void]$frames.Add([pscustomobject]@{Kind='object';State='key-or-end';Keys=$keys})
+            } elseif ($token -eq '[') {
+                [void]$frames.Add([pscustomobject]@{Kind='array';State='value-or-end'})
+            } elseif (-not ($tokenMatch.Groups['string'].Success -or $tokenMatch.Groups['number'].Success -or $tokenMatch.Groups['literal'].Success)) {
+                return $false
+            }
+        }
+        return ($rootComplete -and $frames.Count -eq 0)
+    } catch { return $false }
 }
 
 function Get-FirefoxExtensionStatus($ProfilePath) {
     $extensionsJson = Join-Path $ProfilePath "extensions.json"
-    $hasNew = $false
-    $hasOld = $false
+    $result = [pscustomobject]@{
+        HasNew=$false; HasOld=$false; NewMatches=@(); OldMatches=@()
+        Status='unknown'; Reason='metadata-absent'; EvidenceClass='firefox-extensions-json'; MetadataSource=$extensionsJson
+    }
     $newMatches = New-Object System.Collections.Generic.List[string]
     $oldMatches = New-Object System.Collections.Generic.List[string]
-
-    if (Test-Path -LiteralPath $extensionsJson) {
-        try {
-            $data = Get-Content -Raw -LiteralPath $extensionsJson | ConvertFrom-Json
-            foreach ($addon in @($data.addons)) {
-                $parts = @()
-                if ($addon.id) { $parts += [string]$addon.id }
-                if ($addon.name) { $parts += [string]$addon.name }
-                if ($addon.defaultLocale -and $addon.defaultLocale.name) { $parts += [string]$addon.defaultLocale.name }
-                $hay = ($parts -join " ")
-                if ($hay -match "(?i)\bTablissNG\b|tablissng") {
-                    $hasNew = $true
-                    [void]$newMatches.Add($hay)
-                } elseif ($hay -match "(?i)\bTabliss\b" -and $hay -notmatch "(?i)NG|tablissng") {
-                    $hasOld = $true
-                    [void]$oldMatches.Add($hay)
-                }
-            }
-        } catch {
-            Write-Warn "Could not parse Firefox extension metadata: $extensionsJson"
+    try {
+        if (-not (Test-Path -LiteralPath $extensionsJson)) { return $result }
+        $decoder = New-Object System.Text.UTF8Encoding -ArgumentList $false,$true
+        $raw = [IO.File]::ReadAllText($extensionsJson, $decoder)
+    } catch [System.Text.DecoderFallbackException] {
+        $result.Reason='metadata-encoding'
+        Write-Warn "Firefox discovery held: invalid metadata encoding."
+        return $result
+    } catch {
+        $result.Reason='metadata-unreadable'
+        Write-Warn "Firefox discovery held: metadata could not be read."
+        return $result
+    }
+    try {
+        if (-not (Test-StrictJson $raw)) { throw 'Invalid or ambiguous JSON metadata.' }
+        $data = ConvertFrom-Json -InputObject $raw
+    }
+    catch {
+        $result.Reason='metadata-malformed'
+        Write-Warn "Firefox discovery held: malformed metadata."
+        return $result
+    }
+    # ConvertFrom-Json can unwrap a singleton root array into one object.
+    if ($raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $null -eq $data.PSObject.Properties['addons'] -or $data.PSObject.Properties['addons'].Name -cne 'addons' -or -not ($data.addons -is [array])) {
+        $result.Reason='metadata-unsupported'
+        return $result
+    }
+    $supported=$true
+    foreach ($addon in $data.addons) {
+        if (-not ($addon -is [pscustomobject])) { $supported=$false; break }
+        # PowerShell member lookup ignores case; Firefox JSON field names do not.
+        foreach ($key in 'id','name','defaultLocale') {
+            $property=$addon.PSObject.Properties[$key]
+            if ($null -ne $property -and $property.Name -cne $key) { $supported=$false }
+        }
+        foreach ($key in 'id','name') {
+            if ($null -ne $addon.$key -and -not ($addon.$key -is [string])) { $supported=$false }
+        }
+        $locale=$addon.defaultLocale
+        if ($null -ne $locale -and (-not ($locale -is [pscustomobject]) -or ($null -ne $locale.name -and -not ($locale.name -is [string])))) { $supported=$false }
+        if ($locale -is [pscustomobject]) {
+            $localeName=$locale.PSObject.Properties['name']
+            if ($null -ne $localeName -and $localeName.Name -cne 'name') { $supported=$false }
+        }
+        if (-not $supported) { break }
+        $parts = @()
+        if ($addon.id) { $parts += $addon.id }
+        if ($addon.name) { $parts += $addon.name }
+        if ($locale -and $locale.name) { $parts += $locale.name }
+        $hay = ($parts -join " ")
+        if ([string]::IsNullOrWhiteSpace($hay)) { $supported=$false; break }
+        if ($hay -match "(?i)\bTablissNG\b|tablissng") {
+            $result.HasNew=$true; [void]$newMatches.Add($hay)
+        } elseif ($hay -match "(?i)\bTabliss\b" -and $hay -notmatch "(?i)NG|tablissng") {
+            $result.HasOld=$true; [void]$oldMatches.Add($hay)
         }
     }
+    $result.NewMatches=@($newMatches | Select-Object -Unique)
+    $result.OldMatches=@($oldMatches | Select-Object -Unique)
+    if ($supported) {
+        $result.Status = if ($result.HasNew -and $result.HasOld) { 'known-both' } elseif ($result.HasOld) { 'known-legacy' } elseif ($result.HasNew) { 'known-new' } else { 'known-neither' }
+        $result.Reason='supported-metadata'
+    } else {
+        $result.Reason='metadata-unsupported'
+    }
+    return $result
+}
 
-    [pscustomobject]@{
-        HasNew = $hasNew
-        HasOld = $hasOld
-        NewMatches = @($newMatches | Select-Object -Unique)
-        OldMatches = @($oldMatches | Select-Object -Unique)
+# One derived guard serves preview, pre-staging selection and actual dispatch.
+function Get-DiscoveryEligibility($Target) {
+    if ($Target.HasLegacyTabliss) { return 'legacy-refused' }
+    switch ($Target.DiscoveryStatus) {
+        'known-new' { return 'eligible-known' }
+        'known-neither' { return 'eligible-known' }
+        'known-legacy' { return 'legacy-refused' }
+        'known-both' { return 'legacy-refused' }
+        default { return 'unknown-held' }
     }
 }
 
@@ -278,6 +408,7 @@ function Get-Targets {
                     Index=$targets.Count + 1; Config=$cfg; Browser=$cfg.Label; Family=$cfg.Family;
                     ProfileName="(no profile detected)"; ProfilePath=$null; ExePath=$exe;
                     HasTablissNG=$false; HasLegacyTabliss=$false; NewMatches=@(); OldMatches=@()
+                    DiscoveryStatus='unknown'; DiscoveryReason='no-profile'; DiscoveryEvidence='browser-profile-discovery'; DiscoverySource=$cfg.UserData
                 })
             }
             continue
@@ -294,6 +425,8 @@ function Get-Targets {
                 ProfileName=$p.Name; ProfilePath=$p.FullName; ExePath=$exe;
                 HasTablissNG=$status.HasNew; HasLegacyTabliss=$status.HasOld;
                 NewMatches=$status.NewMatches; OldMatches=$status.OldMatches
+                DiscoveryStatus=$status.Status; DiscoveryReason=$status.Reason;
+                DiscoveryEvidence=$status.EvidenceClass; DiscoverySource=$status.MetadataSource
             })
         }
     }
@@ -527,12 +660,15 @@ if ($targets.Count -eq 0) {
 }
 
 foreach ($t in $targets) {
-    $status = if ($t.HasLegacyTabliss) {
-        "legacy Tabliss detected: SKIP"
-    } elseif ($t.HasTablissNG) {
+    $eligibility=Get-DiscoveryEligibility $t
+    $status = if ($eligibility -eq 'legacy-refused') {
+        "legacy Tabliss evidence: REFUSED ($($t.DiscoveryStatus))"
+    } elseif ($eligibility -eq 'unknown-held') {
+        "discovery unknown: HELD ($($t.DiscoveryReason))"
+    } elseif ($t.DiscoveryStatus -eq 'known-new') {
         "TablissNG detected"
     } else {
-        "TablissNG not detected"
+        "neither extension identified by $($t.DiscoveryEvidence)"
     }
     Write-Host ("[{0}] {1} / {2} - {3}" -f $t.Index, $t.Browser, $t.ProfileName, $status)
 }
@@ -540,9 +676,11 @@ foreach ($t in $targets) {
 # Preview is a whole-entry boundary: no terminal prompts or artifact helpers run.
 if ($DryRun) {
     Write-Section "Offline preview"
-    $eligibleCount=0
+    $eligibleCount=0; $heldCount=0; $refusedCount=0
     foreach ($target in $targets) {
-        if ($target.HasLegacyTabliss) { Write-Warn "Legacy Tabliss: refusing $($target.Browser) / $($target.ProfileName)."; continue }
+        $eligibility=Get-DiscoveryEligibility $target
+        if ($eligibility -eq 'legacy-refused') { $refusedCount++; Write-Warn "Legacy Tabliss: refusing $($target.Browser) / $($target.ProfileName)."; continue }
+        if ($eligibility -ne 'eligible-known') { $heldCount++; Write-Warn "Held $($target.Browser) / $($target.ProfileName): $($target.DiscoveryReason). Review metadata manually; no automatic actions."; continue }
         $eligibleCount++
         Write-Host "Would prepare $($target.Browser) / $($target.ProfileName)."
         if (-not $target.HasTablissNG) {
@@ -554,6 +692,7 @@ if ($DryRun) {
         else { Write-Warn "No preset URL configured; preset import cannot be prepared." }
         Write-Host "Would open the browser's manual installation/import pages and offer clipboard paths."
     }
+    Write-Host "Preview targets: $eligibleCount eligible, $heldCount held, $refusedCount refused."
     Write-Warn "Importing the preset replaces your current TablissNG dashboard."
     if ($eligibleCount -eq 0) { Write-Err "No eligible target; preview made no changes."; exit 1 }
     Write-Host "Preview only; no changes made. No network requests were made."
@@ -577,8 +716,17 @@ if ($selected.Count -eq 0) {
     exit 1
 }
 
-if (@($selected | Where-Object {-not $_.HasLegacyTabliss}).Count -eq 0) {
-    Write-Err "No eligible target selected; legacy Tabliss profiles are refused."
+$eligibleCount=0; $heldCount=0; $refusedCount=0
+foreach ($target in $selected) {
+    switch (Get-DiscoveryEligibility $target) {
+        'eligible-known' { $eligibleCount++ }
+        'legacy-refused' { $refusedCount++ }
+        default { $heldCount++ }
+    }
+}
+Write-Host "Selected targets: $eligibleCount eligible, $heldCount held, $refusedCount refused."
+if ($eligibleCount -eq 0) {
+    Write-Err "No eligible target selected; unknown targets are held and legacy Tabliss profiles refused. Manual actions remain pending."
     exit 1
 }
 Initialize-Staging
@@ -588,12 +736,17 @@ $presetFile = $null
 foreach ($target in $selected) {
     Write-Section "$($target.Browser) / $($target.ProfileName)"
 
-    if ($target.HasLegacyTabliss) {
+    $eligibility=Get-DiscoveryEligibility $target
+    if ($eligibility -eq 'legacy-refused') {
         Write-Warn "Legacy Tabliss detected in this profile. Refusing to touch this browser/profile."
         if ($target.OldMatches.Count -gt 0) {
             Write-Host "Matches:"
             foreach ($m in $target.OldMatches) { Write-Host "  $m" }
         }
+        continue
+    }
+    if ($eligibility -ne 'eligible-known') {
+        Write-Warn "Held $($target.Browser) / $($target.ProfileName): $($target.DiscoveryReason). Review metadata manually; no automatic actions."
         continue
     }
 
@@ -607,7 +760,7 @@ foreach ($target in $selected) {
     Show-ImportInstructions $target $presetFile
 }
 
-Write-Section "Done"
+Write-Section "Manual action pending"
 Write-Host "Manual browser installation/import remain pending. Staging directory:"
 Write-Host "  $WorkRoot"
 Write-Host ""

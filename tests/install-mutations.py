@@ -5,7 +5,8 @@ import hashlib, json, os, pathlib, subprocess, sys, tempfile
 source=pathlib.Path(sys.argv[1]).resolve()
 tests=source.parent/'tests'
 text=source.read_text(encoding='utf-8')
-root=pathlib.Path(tempfile.mkdtemp(prefix='salah-install-mutants-'))
+root=pathlib.Path(tempfile.mkdtemp(prefix='salah-install-mutants-')).resolve()
+BASH=os.environ.get('SALAH_TEST_BASH','/bin/bash')
 results=[]
 
 def replace_once(old,new):
@@ -13,6 +14,16 @@ def replace_once(old,new):
     return text.replace(old,new,1)
 
 if source.suffix=='.sh':
+    assertions={
+        'cached-status-stdout': ('cached stdout is one path', 'actual Firefox producer zero/one profiles'),
+        'restore-mapfile': ('detector supports missing mapfile and Unicode paths', 'actual Firefox producer zero/one profiles'),
+        'stdin-human-read': ('pipe actual PTY all and later confirmations', 'offline github'),
+        'eager-staging': ('offline github', 'NO_OPEN retains normal effects'),
+        'retained-deletion': ('cross-run freshness and retained lifetime', 'actual Firefox producer zero/one profiles'),
+        'symlink-admission': ('write confinement symlink', 'archive safe'),
+        'archive-parent-member': ('archive traversal', 'archive safe'),
+        'preview-cleanup': ('offline cached', 'NO_OPEN retains normal effects'),
+    }
     cases=[
         ('cached-status-stdout',replace_once("ok() { printf '[OK] %s\\n' \"$1\" >&2; }","ok() { printf '[OK] %s\\n' \"$1\"; }"),'install-bash.py'),
         ('restore-mapfile',replace_once('while IFS= read -r p || [ -n "$p" ]; do profiles+=("$p"); profile_count=$((profile_count + 1)); done < <(chromium_profiles "$user_data")','mapfile -t profiles < <(chromium_profiles "$user_data"); profile_count=${#profiles[@]}'),'install-bash.py'),
@@ -25,12 +36,23 @@ if source.suffix=='.sh':
     ]
     for name,mutant,fixture in cases:
         path=root/(name+'.sh'); path.write_text(mutant,encoding='utf-8')
-        parser=subprocess.run(['bash','-n',str(path)],capture_output=True,text=True)
+        parser=subprocess.run([BASH,'-n',str(path)],capture_output=True,text=True)
         if parser.returncode: raise RuntimeError('Invalid mutant syntax: '+name+parser.stderr)
-        run=subprocess.run([sys.executable,str(tests/fixture),str(path)],capture_output=True,text=True,timeout=90)
+        adverse,control=assertions[name]
+        env=dict(os.environ,SALAH_INSTALL_CASES=json.dumps([adverse,control]))
+        healthy=subprocess.run([sys.executable,str(tests/fixture),str(source)],capture_output=True,text=True,timeout=90,env=env)
+        (root/(name+'-healthy.txt')).write_text(healthy.stdout+healthy.stderr,encoding='utf-8')
+        healthy_rows={r['case']:r for r in json.loads(healthy.stdout)['results']}
+        healthy_ok=healthy.returncode==0 and set(healthy_rows)=={adverse,control} and all(r['pass_'] is True for r in healthy_rows.values())
+        if not healthy_ok:
+            results.append(dict(case=name,detected=False,healthy=False,healthyExit=healthy.returncode,reason='Named actual-source controls did not pass; no mutation credit'))
+            continue
+        run=subprocess.run([sys.executable,str(tests/fixture),str(path)],capture_output=True,text=True,timeout=90,env=env)
         receipt=root/(name+'.txt'); receipt.write_text(run.stdout+run.stderr,encoding='utf-8')
         parsed=json.loads(run.stdout); failed=[r['case'] for r in parsed['results'] if not r['pass_']]
-        results.append(dict(case=name,syntaxExit=parser.returncode,fixtureExit=run.returncode,detected=run.returncode!=0 and bool(failed),failedCases=failed,mutant=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),receipt=str(receipt)))
+        rows={r['case']:r for r in parsed['results']}
+        detected=(run.returncode!=0 and set(rows)=={adverse,control} and failed==[adverse] and rows[control]['pass_'] is True)
+        results.append(dict(case=name,syntaxExit=parser.returncode,healthy=True,healthyExit=healthy.returncode,fixtureExit=run.returncode,detected=detected,requiredAdverse=adverse,pairedControl=control,failedCases=failed,mutant=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest(),receipt=str(receipt)))
 else:
     host=sys.argv[2] if len(sys.argv)>2 else r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe'
     native_env=dict(os.environ)

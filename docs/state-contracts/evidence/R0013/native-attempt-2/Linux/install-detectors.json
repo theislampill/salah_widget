@@ -1,0 +1,296 @@
+{
+  "source": "/home/runner/work/salah_widget/salah_widget/install.sh",
+  "source_sha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+  "test_sha256": "ed47a8c7f14db4883da1126ff6d4c7d2aadc63394e5c392dddcad91eb4438848",
+  "host": {
+    "system": "Linux",
+    "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+    "bash": "/bin/bash",
+    "version": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)"
+  },
+  "fixture": "/tmp/salah-detectors-1ye4hkvd",
+  "results": [
+    {
+      "case": "chromium actual producer/detector native cardinality and exact bytes",
+      "pass_": true,
+      "detail": {
+        "cases": [
+          "absent",
+          "empty-data-fallback",
+          "executable-fallback",
+          "one",
+          "multiple-unicode-backslash",
+          "per-config-reset"
+        ],
+        "actual_paths": [
+          "/tmp/salah-detectors-1ye4hkvd/chromium-controls-many/Default",
+          "/tmp/salah-detectors-1ye4hkvd/chromium-controls-many/Profile Back\\Slash",
+          "/tmp/salah-detectors-1ye4hkvd/chromium-controls-many/Profile One \u0645\u062f\u064a\u0646\u0629"
+        ]
+      }
+    },
+    {
+      "case": "chromium unterminated final producer line",
+      "pass_": true,
+      "detail": {
+        "producer_override": "final line framing only",
+        "path": "/tmp/salah-detectors-1ye4hkvd/chromium-final-line/Profile Last\\\u0645\u062f\u064a\u0646\u0629"
+      }
+    },
+    {
+      "case": "chromium parse-valid mapfile mutant and healthy pair",
+      "pass_": true,
+      "detail": {
+        "boundary": "modern shell with only mapfile builtin disabled; supplemental, not Apple proof",
+        "healthy_exit": 0,
+        "mutant_exit": 127,
+        "actual_mutant_rows": []
+      }
+    },
+    {
+      "case": "chromium parse-valid subshell mutant and healthy pair",
+      "pass_": true,
+      "detail": {
+        "boundary": "actual pipeline loses current-shell array/count",
+        "healthy_exit": 0,
+        "mutant_exit": 0,
+        "actual_mutant_rows": [
+          [
+            "1",
+            "first",
+            "first",
+            "chromium",
+            "(no profile detected)",
+            "",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "no-profile",
+            "browser-profile-discovery",
+            "/tmp/salah-detectors-1ye4hkvd/subshell-chromium"
+          ],
+          [
+            "2",
+            "second",
+            "second",
+            "chromium",
+            "(no profile detected)",
+            "",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "no-profile",
+            "browser-profile-discovery",
+            "/tmp/salah-detectors-1ye4hkvd/subshell-chromium-empty"
+          ]
+        ]
+      }
+    },
+    {
+      "case": "chromium parse-valid read-r mutant and healthy pair",
+      "pass_": true,
+      "detail": {
+        "boundary": "actual read loses literal backslash in profile path",
+        "healthy_exit": 0,
+        "mutant_exit": 0,
+        "actual_mutant_rows": [
+          [
+            "1",
+            "first",
+            "first",
+            "chromium",
+            "Profile Back\u0645\u062f\u064a\u0646\u0629",
+            "/tmp/salah-detectors-1ye4hkvd/read-r-chromium/Profile Back\u0645\u062f\u064a\u0646\u0629",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "profile-unavailable",
+            "chromium-extension-directories",
+            "/tmp/salah-detectors-1ye4hkvd/read-r-chromium/Profile Back\u0645\u062f\u064a\u0646\u0629/Extensions"
+          ],
+          [
+            "2",
+            "second",
+            "second",
+            "chromium",
+            "(no profile detected)",
+            "",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "no-profile",
+            "browser-profile-discovery",
+            "/tmp/salah-detectors-1ye4hkvd/read-r-chromium-empty"
+          ]
+        ]
+      }
+    },
+    {
+      "case": "firefox actual producer/detector native cardinality and exact bytes",
+      "pass_": true,
+      "detail": {
+        "cases": [
+          "absent",
+          "empty-data-fallback",
+          "executable-fallback",
+          "one",
+          "multiple-unicode-backslash",
+          "per-config-reset"
+        ],
+        "actual_paths": [
+          "/tmp/salah-detectors-1ye4hkvd/firefox-controls-many/Back\\Slash",
+          "/tmp/salah-detectors-1ye4hkvd/firefox-controls-many/One Profile",
+          "/tmp/salah-detectors-1ye4hkvd/firefox-controls-many/\u0645\u062f\u064a\u0646\u0629"
+        ]
+      }
+    },
+    {
+      "case": "firefox unterminated final producer line",
+      "pass_": true,
+      "detail": {
+        "producer_override": "final line framing only",
+        "path": "/tmp/salah-detectors-1ye4hkvd/firefox-final-line/Last\\\u0645\u062f\u064a\u0646\u0629"
+      }
+    },
+    {
+      "case": "firefox parse-valid mapfile mutant and healthy pair",
+      "pass_": true,
+      "detail": {
+        "boundary": "modern shell with only mapfile builtin disabled; supplemental, not Apple proof",
+        "healthy_exit": 0,
+        "mutant_exit": 127,
+        "actual_mutant_rows": []
+      }
+    },
+    {
+      "case": "firefox parse-valid subshell mutant and healthy pair",
+      "pass_": true,
+      "detail": {
+        "boundary": "actual pipeline loses current-shell array/count",
+        "healthy_exit": 0,
+        "mutant_exit": 0,
+        "actual_mutant_rows": [
+          [
+            "1",
+            "first",
+            "first",
+            "firefox",
+            "(no profile detected)",
+            "",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "no-profile",
+            "browser-profile-discovery",
+            "/tmp/salah-detectors-1ye4hkvd/subshell-firefox"
+          ],
+          [
+            "2",
+            "second",
+            "second",
+            "firefox",
+            "(no profile detected)",
+            "",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "no-profile",
+            "browser-profile-discovery",
+            "/tmp/salah-detectors-1ye4hkvd/subshell-firefox-empty"
+          ]
+        ]
+      }
+    },
+    {
+      "case": "firefox parse-valid read-r mutant and healthy pair",
+      "pass_": true,
+      "detail": {
+        "boundary": "actual read loses literal backslash in profile path",
+        "healthy_exit": 0,
+        "mutant_exit": 0,
+        "actual_mutant_rows": [
+          [
+            "1",
+            "first",
+            "first",
+            "firefox",
+            "Back\u0645\u062f\u064a\u0646\u0629",
+            "/tmp/salah-detectors-1ye4hkvd/read-r-firefox/Back\u0645\u062f\u064a\u0646\u0629",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "metadata-absent",
+            "firefox-extensions-json",
+            "/tmp/salah-detectors-1ye4hkvd/read-r-firefox/Back\u0645\u062f\u064a\u0646\u0629/extensions.json"
+          ],
+          [
+            "2",
+            "second",
+            "second",
+            "firefox",
+            "(no profile detected)",
+            "",
+            "",
+            "0",
+            "0",
+            "",
+            "fixture:store",
+            "fixture:manager",
+            "fixture:newtab",
+            "unknown",
+            "no-profile",
+            "browser-profile-discovery",
+            "/tmp/salah-detectors-1ye4hkvd/read-r-firefox-empty"
+          ]
+        ]
+      }
+    }
+  ],
+  "applicability": [
+    {
+      "case": "chromium empty-array nounset mutant",
+      "executed": false,
+      "disposition": "Requires actual Apple /bin/bash 3.2; modern Bash accepts the empty expansion. Not counted as a PASS here."
+    },
+    {
+      "case": "firefox empty-array nounset mutant",
+      "executed": false,
+      "disposition": "Requires actual Apple /bin/bash 3.2; modern Bash accepts the empty expansion. Not counted as a PASS here."
+    }
+  ]
+}

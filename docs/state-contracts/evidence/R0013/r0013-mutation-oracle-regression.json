@@ -1,0 +1,47 @@
+{
+  "source_sha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+  "fault_model": "Use actual old/repaired mutation driver, limit to first cache mutant, substitute unchanged source bytes. No oracle code is substituted.",
+  "results": [
+    {
+      "driver": "old",
+      "exit": 0,
+      "results": [
+        {
+          "case": "cached-status-stdout",
+          "syntaxExit": 0,
+          "fixtureExit": 1,
+          "detected": true,
+          "failedCases": [
+            "parent refuses wrong-owner-home"
+          ],
+          "mutant": "/tmp/salah-install-mutants-_dp9dqx_/cached-status-stdout.sh",
+          "sha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+          "receipt": "/tmp/salah-install-mutants-_dp9dqx_/cached-status-stdout.txt"
+        }
+      ],
+      "driver_sha256": "b1a8b410762b2e3ece47d987e4625f340af24610ff29a27014423472cb8e0a01"
+    },
+    {
+      "driver": "repaired",
+      "exit": 1,
+      "results": [
+        {
+          "case": "cached-status-stdout",
+          "syntaxExit": 0,
+          "healthy": true,
+          "healthyExit": 0,
+          "fixtureExit": 0,
+          "detected": false,
+          "requiredAdverse": "cached stdout is one path",
+          "pairedControl": "actual Firefox producer zero/one profiles",
+          "failedCases": [],
+          "mutant": "/tmp/salah-install-mutants-4kl5v85j/cached-status-stdout.sh",
+          "sha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+          "receipt": "/tmp/salah-install-mutants-4kl5v85j/cached-status-stdout.txt"
+        }
+      ],
+      "driver_sha256": "355f54bd95701627d59d45f77b3adb310f9b49d652fe4aca9368ffc091b242a3"
+    }
+  ],
+  "interpretation": "Old driver falsely credits unrelated wrong-owner failure; repaired named-case driver refuses mutation credit on identical source."
+}

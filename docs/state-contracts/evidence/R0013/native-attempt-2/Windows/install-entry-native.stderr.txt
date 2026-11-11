@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "D:\a\salah_widget\salah_widget\tests\install-entry-native.py", line 152, in <module>
+    case(host_name,host,native_modules,scenario)
+  File "D:\a\salah_widget\salah_widget\tests\install-entry-native.py", line 109, in case
+    run = subprocess.run(command,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=25)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py", line 1630, in _communicate
+    raise TimeoutExpired(self.args, orig_timeout)
+subprocess.TimeoutExpired: Command '['C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe', '-NoProfile', '-File', 'D:\\a\\salah_widget\\salah_widget\\install.ps1', '-PresetUrl', 'https://example.invalid/preset', '-InstallSource', 'github', '-WidgetHash', 'lat=24.47&lon=39.61&method=4', '-DryRun']' timed out after 25 seconds
