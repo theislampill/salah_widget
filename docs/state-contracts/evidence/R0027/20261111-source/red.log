@@ -1,0 +1,307 @@
+# R0027 RED at base 645b53cc (generated core = unmodified vendor spectral.mjs; transform not present)
+# node v24.14.0; Python 3.11.9; git HEAD 645b53cc5d04d35444f6da0e27bf5a5b6b11ce67
+$ node --test --test-reporter=spec --test-concurrency=1 tests/real-sky/spectral-fit-cache-state.test.mjs tests/real-sky/spectral-fit-cache-oracle.test.mjs tests/real-sky/spectral-fit-cache-generated.test.mjs
+✖ ES27-11 every generated bundle carries exactly the generated spectral module text and compiles (5.6991ms)
+✖ ES27-01/06 the real generated worker bundle is bounded when executed (2044.2692ms)
+ℹ {"n":1,"size":12002,"same":true,"outer":12000,"first":-0.26999645312500004}
+(node:52416) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added to [Worker]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52416) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added to [Worker]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+✖ ES27-14 old vs new generated worker bundle: first-paint preview and refined worker outputs are byte-identical (cold / hit / recomputed) (59394.6482ms)
+ℹ scenes=6 bytesCompared=1084652340 newInnerRetained=85399 oldInnerRetained=1399 oldBundleSha256=30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745 newBundleSha256=30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745
+✖ ES27-09/10/11/12 Python generator contract and its mutation controls pass (executed from the integration route) (213.5509ms)
+✖ ES27-03 cold / hit / evicted / recomputed selectSpectrum, passband and XYZ are bit-identical to the vendor oracle across >= 3x capacity keys (33120.3099ms)
+ℹ distinctKeys=40247 comparisons=60941 cold=40113 hit=20405 recomputed=0 fallback=423 fits=40114 evictions=0 retained=40114
+✔ ES27-03 catalogue star colours (spectralStarFlux over all records) are bit-identical to the vendor oracle (1946.0704ms)
+ℹ starComparisons=17842 candidateInner=1881 oracleInner=1881
+✖ ES27-06/14 actual callers (createSkyModel, first-paint preview, refined renderPhysicalSky) cold / hit / recomputed are bit-identical to the oracle graph (5015.1229ms)
+✖ ES27-01 capacity-1 / capacity / capacity+1 / +2: inner fit retention never exceeds 12,000 (1900.8929ms)
+✖ ES27-01/03 FIFO: hit neither refits nor reorders; oldest evicted first; evicted key refits bit-identically (2161.0572ms)
+✖ ES27-02 outer selection cache keeps its unchanged admission bound, reported separately (2047.4928ms)
+✖ ES27-04 caller-held returned samples stay frozen and bit-identical after their fit is evicted (2047.8747ms)
+✔ ES27-05 invalid / out-of-fit / fallback inputs at capacity: unchanged results, no insertion, no eviction (2198.2531ms)
+✔ ES27-07 exact keys: 1-ulp neighbours are distinct entries; +0/-0 share the Map key exactly as before (11.8985ms)
+✖ ES27-08 union of retained references: outer may still hold samples whose inner fit was evicted (4681.7223ms)
+✖ ES27-06 actual physical caller: createSkyModel over continuous twilight altitudes is bounded (2122.3441ms)
+ℹ altitudes=12600 distinctTwilightBV=12600 inFitDomain=12486 neutralFallbacks=114 fits=12486 retainedInner=12486 outer=12000 evictions=0
+✖ ES27-06 actual preview caller: renderNativeBackgroundPreview at twilight inserts through the bounded map (2365.3296ms)
+ℹ previews=30 withTwilightDisplay=30 newFits=50 evictions=0 retained=12050
+ℹ tests 16
+ℹ suites 0
+ℹ pass 3
+ℹ fail 13
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 121710.7189
+
+✖ failing tests:
+
+test at tests\real-sky\spectral-fit-cache-generated.test.mjs:22:1
+✖ ES27-11 every generated bundle carries exactly the generated spectral module text and compiles (5.6991ms)
+  AssertionError [ERR_ASSERTION]: generated core differs from vendor (transform applied)
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-generated.test.mjs:24:9)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.start (node:internal/test_runner/test:1015:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-generated.test.mjs:36:1
+✖ ES27-01/06 the real generated worker bundle is bounded when executed (2044.2692ms)
+  AssertionError [ERR_ASSERTION]: worker realm retains at most 12,000 fits
+  
+  12002 !== 12000
+  
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-generated.test.mjs:44:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 12002,
+    expected: 12000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-generated.test.mjs:60:1
+✖ ES27-14 old vs new generated worker bundle: first-paint preview and refined worker outputs are byte-identical (cold / hit / recomputed) (59394.6482ms)
+  AssertionError [ERR_ASSERTION]: new realm bounded
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-generated.test.mjs:80:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-generated.test.mjs:83:1
+✖ ES27-09/10/11/12 Python generator contract and its mutation controls pass (executed from the integration route) (213.5509ms)
+  AssertionError [ERR_ASSERTION]:  self.mod = load_transform()
+                 ^^^^^^^^^^^^^^^^
+    File "<worktree>\tests\real-sky\native_spectral_cache_build_test.py", line 24, in load_transform
+      text = TRANSFORM_PATH.read_text(encoding='utf-8') if text is None else text
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<local-path>", line 1058, in read_text
+      with self.open(mode='r', encoding=encoding, errors=errors) as f:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<local-path>", line 1044, in open
+      return io.open(self, mode, buffering, encoding, errors, newline)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: '<worktree>\\tools\\native_core_spectral_cache.py'
+  
+  ======================================================================
+  ERROR: test_real_builder_invokes_transform_and_keeps_horizon (__main__.SpectralCacheTransformTest.test_real_builder_invokes_transform_and_keeps_horizon)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "<worktree>\tests\real-sky\native_spectral_cache_build_test.py", line 160, in setUp
+      self.mod = load_transform()
+                 ^^^^^^^^^^^^^^^^
+    File "<worktree>\tests\real-sky\native_spectral_cache_build_test.py", line 24, in load_transform
+      text = TRANSFORM_PATH.read_text(encoding='utf-8') if text is None else text
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<local-path>", line 1058, in read_text
+      with self.open(mode='r', encoding=encoding, errors=errors) as f:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<local-path>", line 1044, in open
+      return io.open(self, mode, buffering, encoding, errors, newline)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: '<worktree>\\tools\\native_core_spectral_cache.py'
+  
+  ======================================================================
+  ERROR: test_transform_applies_exactly_once_with_whitelisted_diff (__main__.SpectralCacheTransformTest.test_transform_applies_exactly_once_with_whitelisted_diff)
+  ----------------------------------------------------------------------
+  Traceback (most recent call last):
+    File "<worktree>\tests\real-sky\native_spectral_cache_build_test.py", line 160, in setUp
+      self.mod = load_transform()
+                 ^^^^^^^^^^^^^^^^
+    File "<worktree>\tests\real-sky\native_spectral_cache_build_test.py", line 24, in load_transform
+      text = TRANSFORM_PATH.read_text(encoding='utf-8') if text is None else text
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<local-path>", line 1058, in read_text
+      with self.open(mode='r', encoding=encoding, errors=errors) as f:
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<local-path>", line 1044, in open
+      return io.open(self, mode, buffering, encoding, errors, newline)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  FileNotFoundError: [Errno 2] No such file or directory: '<worktree>\\tools\\native_core_spectral_cache.py'
+  
+  ----------------------------------------------------------------------
+  Ran 8 tests in 0.004s
+  
+  FAILED (errors=8)
+  
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-generated.test.mjs:87:9)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-oracle.test.mjs:25:1
+✖ ES27-03 cold / hit / evicted / recomputed selectSpectrum, passband and XYZ are bit-identical to the vendor oracle across >= 3x capacity keys (33120.3099ms)
+  AssertionError [ERR_ASSERTION]: every case class exercised
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-oracle.test.mjs:55:9)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-oracle.test.mjs:68:1
+✖ ES27-06/14 actual callers (createSkyModel, first-paint preview, refined renderPhysicalSky) cold / hit / recomputed are bit-identical to the oracle graph (5015.1229ms)
+  AssertionError [ERR_ASSERTION]: 2026-10-07T23:25:00Z: flooded run refits exactly what the cold run fitted
+  
+  0 !== 2
+  
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-oracle.test.mjs:89:60)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-state.test.mjs:10:1
+✖ ES27-01 capacity-1 / capacity / capacity+1 / +2: inner fit retention never exceeds 12,000 (1900.8929ms)
+  AssertionError [ERR_ASSERTION]: capacity+1: retained count stays at capacity
+  
+  12001 !== 12000
+  
+      at boundary (file:///<worktree>/tests/real-sky/spectral-fit-cache-fixture.mjs:114:9)
+      at async TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-state.test.mjs:10:108)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 12001,
+    expected: 12000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-state.test.mjs:12:1
+✖ ES27-01/03 FIFO: hit neither refits nor reorders; oldest evicted first; evicted key refits bit-identically (2161.0572ms)
+  AssertionError [ERR_ASSERTION]: the oldest inserted key is evicted even though it was just hit
+      at fifo (file:///<worktree>/tests/real-sky/spectral-fit-cache-fixture.mjs:134:9)
+      at async TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-state.test.mjs:12:125)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-state.test.mjs:14:1
+✖ ES27-02 outer selection cache keeps its unchanged admission bound, reported separately (2047.4928ms)
+  AssertionError [ERR_ASSERTION]: inner bound reported separately: 12051
+      at outerUnchanged (file:///<worktree>/tests/real-sky/spectral-fit-cache-fixture.mjs:152:9)
+      at async TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-state.test.mjs:15:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-state.test.mjs:19:1
+✖ ES27-04 caller-held returned samples stay frozen and bit-identical after their fit is evicted (2047.8747ms)
+  AssertionError [ERR_ASSERTION]: held fits have been evicted
+      at callerRetained (file:///<worktree>/tests/real-sky/spectral-fit-cache-fixture.mjs:161:9)
+      at async TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-state.test.mjs:20:15)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-state.test.mjs:56:1
+✖ ES27-08 union of retained references: outer may still hold samples whose inner fit was evicted (4681.7223ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  24001 !== 12000
+  
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-state.test.mjs:59:9)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 24001,
+    expected: 12000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-state.test.mjs:69:1
+✖ ES27-06 actual physical caller: createSkyModel over continuous twilight altitudes is bounded (2122.3441ms)
+  AssertionError [ERR_ASSERTION]: createSkyModel retention is bounded at 12,000
+  
+  12486 !== 12000
+  
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-state.test.mjs:81:9)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 12486,
+    expected: 12000,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\real-sky\spectral-fit-cache-state.test.mjs:85:1
+✖ ES27-06 actual preview caller: renderNativeBackgroundPreview at twilight inserts through the bounded map (2365.3296ms)
+  AssertionError [ERR_ASSERTION]: every preview insertion at capacity evicted exactly one oldest fit
+  
+  0 !== 50
+  
+      at TestContext.<anonymous> (file:///<worktree>/tests/real-sky/spectral-fit-cache-state.test.mjs:96:9)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 50,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+exit=1
