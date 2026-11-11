@@ -84,6 +84,36 @@
     return normalizeLocationEvidence({ source:"place", provider:c && c.provider, area:c && c.norm, bounds:c && c.bounds }, {});
   }
 
+  // ---- external location admission (R0026) ----------------------------------
+  // EXTERNAL evidence (coarse IP providers, place search, browser geolocation) must earn
+  // validity BEFORE normalize(): a finite JSON number, or a complete decimal string
+  // (sign, fraction, surrounding whitespace allowed; no hex/exponent/Infinity/prefix),
+  // inside [-90,90]/[-180,180]. ±0 and boundaries pass unchanged; nothing is clamped.
+  // Manual/hash/saved input keeps R001E normalize() clamping and is NOT routed here.
+  var DECIMAL = /^[+-]?(?:\d+(?:\.\d+)?|\.\d+)$/;
+  function admitNumber(x) {
+    if (typeof x === "string") { x = x.trim(); if (!DECIMAL.test(x)) return null; x = parseFloat(x); }
+    return finiteNumber(x);
+  }
+  function admitCoordinates(lat, lon) {
+    var a = admitNumber(lat), o = admitNumber(lon);
+    if (a === null || a < -90 || a > 90) return { ok: false, reason: "latitude" };
+    if (o === null || o < -180 || o > 180) return { ok: false, reason: "longitude" };
+    return { ok: true, lat: a, lon: o };
+  }
+  // Provider accuracy in metres: unknown (null) unless a finite non-negative value.
+  function admitAccuracy(x) { var n = admitNumber(x); return n !== null && n >= 0 ? n : null; }
+  // One bounded provider-attempt record: name, terminal state, short code (never a body or query).
+  // state ∈ ok | no-match | transport | http | parse | timeout | admission.
+  function attemptError(state, reason) { var e = new Error(state); e.attempt = { state: state, reason: reason }; return e; }
+  function attemptOf(provider, e) {
+    var a = e && e.attempt || { state: "parse", reason: "unexpected" };
+    return { provider: provider, state: a.state, reason: a.reason };
+  }
+  function httpStage(r) { if (!r.ok) throw attemptError("http", "status " + (+r.status | 0)); return r; }
+  function jsonStage(r) { return r.json().then(null, function () { throw attemptError("parse", "json"); }); }
+  function transportFailure() { throw attemptError("transport", "network"); }
+
   // ---- parse: URL hash → partial config (present keys only) + mode flags -----
   function parseHash(hashStr) {
     var s = hashStr == null ? "" : String(hashStr);
@@ -232,40 +262,44 @@
     var timeoutMs = opts.timeoutMs || 6000, tzIntl = detectTz();
     var providers = [
       { name: "GeoJS", url: "https://get.geojs.io/v1/ip/geo.json", parse: function (j) {
-          return { lat: parseFloat(j.latitude), lon: parseFloat(j.longitude),
+          return { lat: j.latitude, lon: j.longitude,          // raw values: admitted below, before normalize()
             label: j.city || j.region || j.country || "",   // concise: the small header shows just the locality
             area: [j.city, j.region, j.country].filter(Boolean).join(", "),
-            tz: j.timezone || "", cc: j.country_code, accuracy: j.accuracy != null ? +j.accuracy : null }; } },
+            tz: j.timezone || "", cc: j.country_code, accuracy: admitAccuracy(j.accuracy) }; } },
       { name: "ipinfo", url: "https://ipinfo.io/json", parse: function (j) {
-          var loc = String(j.loc || "").split(",");
-          return { lat: parseFloat(loc[0]), lon: parseFloat(loc[1]),
+          var loc = typeof j.loc === "string" ? j.loc.split(",") : [];   // exactly "lat,lon"
+          if (loc.length !== 2) loc = [];
+          return { lat: loc[0], lon: loc[1],
             label: j.city || j.region || j.country || "",
             area: [j.city, j.region, j.country].filter(Boolean).join(", "),
             tz: j.timezone || "", cc: j.country, accuracy: null }; } }
     ];
+    var attempts = [];   // additive, bounded: one {provider,state,reason} per attempt
     return (function next(i) {
-      if (i >= providers.length) return Promise.resolve({ ok: false, source: "coarse-ip", status: "failed" });
+      if (i >= providers.length) return Promise.resolve({ ok: false, source: "coarse-ip", status: "failed", attempts: attempts });
       var p = providers[i], ac = new AbortController(), to;
       // Headers are not completion: the deadline owns the whole body/parse wait.
       // Reject as well as abort so an abort-ignorant body cannot hold fallback.
       var deadline = new Promise(function (_, reject) {
-        to = setTimeout(function () { reject(new Error("coarse location timeout")); ac.abort(); }, timeoutMs);
+        to = setTimeout(function () { reject(attemptError("timeout", "deadline")); ac.abort(); }, timeoutMs);
       });
       var work = Promise.resolve().then(function () {
         return fetch(p.url, { signal: ac.signal, mode: "cors", referrerPolicy: "no-referrer", cache: "no-store" });
-      }).then(function (r) { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      }).then(null, transportFailure).then(httpStage).then(jsonStage)
         .then(function (j) {
-          var d = p.parse(j);
-          if (d.lat == null || d.lon == null || isNaN(d.lat) || isNaN(d.lon)) throw new Error("no coords");
-          var cfg = normalize({ lat: d.lat, lon: d.lon, label: d.label || "",
+          if (!j || typeof j !== "object" || Array.isArray(j)) throw attemptError("parse", "envelope");
+          var d = p.parse(j), a = admitCoordinates(d.lat, d.lon);
+          // Admission precedes normalize(): an impossible coordinate is a failed attempt, never a clamp.
+          if (!a.ok) throw attemptError("admission", a.reason);
+          var cfg = normalize({ lat: a.lat, lon: a.lon, label: d.label || "",
             tz: tzIntl || d.tz || "", method: methodForCC(d.cc), units: unitsForCC(d.cc), source: "coarse-ip",
             detectProvider:p.name, area:d.area || d.label || "" });
           cfg.source = "coarse-ip"; cfg.detectProvider = p.name; cfg.accuracy = d.accuracy; cfg.area = d.area || cfg.label;
-          return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok" };
+          return { ok: true, cfg: cfg, source: "coarse-ip", provider: p.name, status: "ok", attempts: attempts };
         });
       // The race handles late work without another fallback or adoption effect.
-      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); return result; },
-        function () { clearTimeout(to); return next(i + 1); });
+      return Promise.race([work, deadline]).then(function (result) { clearTimeout(to); attempts.push({ provider: p.name, state: "ok", reason: null }); return result; },
+        function (e) { clearTimeout(to); attempts.push(attemptOf(p.name, e)); return next(i + 1); });
     })(0);
   }
 
@@ -275,8 +309,9 @@
     return new Promise(function (resolve) {
       if (!root.navigator || !root.navigator.geolocation) { resolve({ ok: false, error: "unsupported" }); return; }
       root.navigator.geolocation.getCurrentPosition(
-        function (pos) { var evidence = browserLocationEvidence(pos);
-          resolve({ ok: true, lat: pos.coords.latitude, lon: pos.coords.longitude,
+        function (pos) { var evidence = browserLocationEvidence(pos), a = admitCoordinates(pos && pos.coords && pos.coords.latitude, pos && pos.coords && pos.coords.longitude);
+          if (!a.ok) { resolve({ ok: false, error: "invalid coordinates", code: null }); return; }
+          resolve({ ok: true, lat: a.lat, lon: a.lon,
             accuracy:evidence.accuracyM, acquiredAt:evidence.acquiredAt, locationEvidence:evidence, source:"browser-geolocation" }); },
         function (err) { resolve({ ok: false, error: (err && err.message) || "denied", code: err && err.code }); },
         { enableHighAccuracy: false, timeout: opts.timeoutMs || 10000, maximumAge: 600000 }
@@ -329,55 +364,102 @@
   // ---- forward geocoding (type a place / postcode → coordinates) ------------
   // Shared by builder.html AND the in-widget settings panel so the search behaviour
   // (Nominatim places/postcodes + Zippopotam Canadian FSA fallback, deduped) is identical
-  // and never forks. Returns a Promise of candidates: {lat, lon, name, norm, cc}.
+  // and never forks. ONE engine: geocodeSearchDetailed. Candidates: {lat, lon, name, norm, cc, provider, bounds}.
+  // Nominatim items are admitted first; the place/boundary preference then applies to admitted items.
   function _nomCands(arr) {
-    if (!Array.isArray(arr)) return [];
-    var places = arr.filter(function (r) { return r.class === "place" || r.class === "boundary"; });
-    return (places.length ? places : arr).map(function (res) {
-      var a = res.address || {};
+    var rejected = 0, admitted = arr.filter(function (res) {
+      if (res && typeof res === "object" && admitCoordinates(res.lat, res.lon).ok) return true;
+      rejected++; return false;
+    });
+    var places = admitted.filter(function (r) { return r.class === "place" || r.class === "boundary"; });
+    return { rejected: rejected, cands: (places.length ? places : admitted).map(function (res) {
+      var a = res.address || {}, c = admitCoordinates(res.lat, res.lon);
       var place = a.city || a.town || a.village || a.hamlet || a.municipality || a.suburb || a.county || res.name || "";
-      return { lat: parseFloat(res.lat), lon: parseFloat(res.lon), name: place,
+      return { lat: c.lat, lon: c.lon, name: place,
         norm: [place, a.state || a.region || a.province || "", a.country || ""].filter(Boolean).join(", "),
         cc: (a.country_code || "").toLowerCase(), provider:"Nominatim",
         bounds:Array.isArray(res.boundingbox) && res.boundingbox.length === 4 ? locationBounds({south:boundsNumber(res.boundingbox[0]),north:boundsNumber(res.boundingbox[1]),west:boundsNumber(res.boundingbox[2]),east:boundsNumber(res.boundingbox[3])}) : null };
-    });
+    }) };
   }
   function _zipCand(j) {
-    if (!j || !j.places || !j.places.length) return null;
-    var p = j.places[0], place = (p["place name"] || "").split(" (")[0].trim();
-    return { lat: +p.latitude, lon: +p.longitude, name: place,
+    var p = j.places[0], c = p && typeof p === "object" ? admitCoordinates(p.latitude, p.longitude) : { ok: false };
+    if (!c.ok) return null;   // a missing/null latitude is rejected, never coerced to 0
+    var place = (p["place name"] || "").split(" (")[0].trim();
+    return { lat: c.lat, lon: c.lon, name: place,
       norm: [place, p.state || "", j.country || ""].filter(Boolean).join(", "),
       cc: (j["country abbreviation"] || "").toLowerCase(), provider:"Zippopotam", bounds:null };
   }
   function _dedupeCands(cs) {
     var out = [];
     cs.forEach(function (c) {
-      if (c.lat == null || isNaN(c.lat) || c.lon == null || isNaN(c.lon)) return;
+      if (!admitCoordinates(c.lat, c.lon).ok) return;
       if (!out.some(function (o) { return o.norm === c.norm || (Math.abs(o.lat - c.lat) < 0.2 && Math.abs(o.lon - c.lon) < 0.2); })) out.push(c);
     });
     return out;
   }
-  function geocodeSearch(query, opts) {
+  var ZIP_NOT_FOUND = {};
+  function providerResult(provider, state, reason, cands) { return { provider: provider, state: state, reason: reason, cands: cands }; }
+  // Detailed outcome (R0026): {status, coverage, candidates, attempts}.
+  //   status:   not-requested (trimmed query < 2, no request) | matches | no-match | unavailable
+  //   coverage: null (not requested) | complete | partial (some provider failed) | none (every provider failed)
+  //   attempts: [{provider, state, reason}], state ok | no-match | transport | http | parse | timeout | admission
+  // Valid no-match = every attempted provider completed a supported empty result (Nominatim 200 []; Zippopotam
+  // 200 without places, or HTTP 404, the provider's documented unknown-postcode reply). Any failure prevents a
+  // no-match conclusion. cancelled/superseded is not an engine state: consumers derive it from their own
+  // edit/session ownership guards. Nothing here is persisted; no body text or query enters the record.
+  function geocodeSearchDetailed(query, opts) {
     opts = opts || {};
     var q = String(query == null ? "" : query).trim();
-    if (q.length < 2) return Promise.resolve([]);
+    if (q.length < 2) return Promise.resolve({ status: "not-requested", coverage: null, candidates: [], attempts: [] });
     var homeCC = opts.homeCC || "";
-    var ac = new AbortController(), to = setTimeout(function () { ac.abort(); }, opts.timeoutMs || 8000);
+    // One shared deadline (the existing 8 s budget) rejects as well as aborts, so an abort-ignorant
+    // body settles the outcome once; a late body cannot reopen it.
+    var ac = new AbortController(), to, deadline = new Promise(function (_, reject) {
+      to = setTimeout(function () { reject(attemptError("timeout", "deadline")); ac.abort(); }, opts.timeoutMs || 8000);
+    });
+    function request(url) { try { return fetch(url, { signal: ac.signal }); } catch (e) { return Promise.reject(e); } }
+    function settle(provider, job) {
+      return Promise.race([job, deadline]).then(null, function (e) { var a = attemptOf(provider, e); return providerResult(provider, a.state, a.reason, []); });
+    }
     var bias = (/\d/.test(q) && homeCC) ? ("&countrycodes=" + homeCC) : "";      // a digit ⇒ likely a postcode ⇒ keep it in the viewer's country
     var bare = q.replace(/\s/g, ""), caFSA = /^[A-Za-z]\d[A-Za-z]/.test(bare) ? bare.slice(0, 3).toUpperCase() : null;
-    var jobs = [ fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5" + bias + "&q=" + encodeURIComponent(q), { signal: ac.signal })
-      .then(function (r) { return r.json(); }).then(_nomCands).catch(function () { return []; }) ];
-    if (caFSA) jobs.push( fetch("https://api.zippopotam.us/ca/" + caFSA, { signal: ac.signal })
-      .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { var c = _zipCand(j); return c ? [c] : []; }).catch(function () { return []; }) );
-    return Promise.all(jobs).then(function (res) {
+    var jobs = [ settle("Nominatim", request("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=5" + bias + "&q=" + encodeURIComponent(q))
+      .then(null, transportFailure).then(httpStage).then(jsonStage).then(function (arr) {
+        if (!Array.isArray(arr)) throw attemptError("parse", "envelope");     // a provider error object is not a search result
+        if (!arr.length) return providerResult("Nominatim", "no-match", null, []);
+        var n = _nomCands(arr);
+        if (!n.cands.length) throw attemptError("admission", "coordinates");
+        return providerResult("Nominatim", "ok", n.rejected ? "rejected " + n.rejected : null, n.cands);
+      })) ];
+    if (caFSA) jobs.push( settle("Zippopotam", request("https://api.zippopotam.us/ca/" + caFSA)
+      .then(null, transportFailure).then(function (r) { return r.status === 404 ? ZIP_NOT_FOUND : jsonStage(httpStage(r)); })
+      .then(function (j) {
+        if (j === ZIP_NOT_FOUND) return providerResult("Zippopotam", "no-match", "status 404", []);
+        if (!j || typeof j !== "object" || !Array.isArray(j.places)) throw attemptError("parse", "envelope");
+        if (!j.places.length) return providerResult("Zippopotam", "no-match", null, []);
+        var c = _zipCand(j);
+        if (!c) throw attemptError("admission", "coordinates");
+        return providerResult("Zippopotam", "ok", null, [c]);
+      })) );
+    return Promise.all(jobs).then(function (rs) {
       clearTimeout(to);
-      return _dedupeCands(res.reduce(function (a, b) { return a.concat(b); }, []));
-    }).catch(function () { clearTimeout(to); return []; });
+      var cands = _dedupeCands(rs.reduce(function (a, r) { return a.concat(r.cands); }, []));
+      var failed = rs.filter(function (r) { return r.state !== "ok" && r.state !== "no-match"; }).length;
+      return { status: cands.length ? "matches" : failed ? "unavailable" : "no-match",
+        coverage: !failed ? "complete" : failed < rs.length ? "partial" : "none", candidates: cands,
+        attempts: rs.map(function (r) { return { provider: r.provider, state: r.state, reason: r.reason }; }) };
+    });
+  }
+  // Documented, intentionally LOSSY compatibility projection of the same engine (candidates only): it cannot
+  // distinguish no-match from unavailable or partial coverage, so current UI consumers use the detailed result.
+  function geocodeSearch(query, opts) {
+    return geocodeSearchDetailed(query, opts).then(function (r) { return r.candidates; }, function () { return []; });
   }
 
   root.SalahConfig = {
     KEY: KEY, DEFAULTS: DEFAULTS, DATEFMT_PRESETS: DATEFMT_PRESETS,
-    geocodeSearch: geocodeSearch, browserLocationEvidence:browserLocationEvidence, placeLocationEvidence:placeLocationEvidence,
+    geocodeSearch: geocodeSearch, geocodeSearchDetailed: geocodeSearchDetailed, admitCoordinates: admitCoordinates,
+    browserLocationEvidence:browserLocationEvidence, placeLocationEvidence:placeLocationEvidence,
     parseHash: parseHash, normalize: normalize, validate: validate, serialize: serialize,
     storageAvailable: storageAvailable, loadLocal: loadLocal, saveLocal: saveLocal, clearLocal: clearLocal,
     coarseDetect: coarseDetect, geolocate: geolocate, permissionState: permissionState,

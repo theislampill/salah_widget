@@ -69,7 +69,7 @@ iframe{box-shadow:0 18px 50px #0008}
   <form class="card form" onsubmit="return false">
     <div class="loc-head">
       <label for="label" id="loclabel">Location name</label>
-      <span class="geotip" id="geotip">Detecting your area…</span>
+      <span class="geotip" id="geotip" role="status" aria-live="polite">Detecting your area…</span>
     </div>
     <div class="locrow">
       <input id="label" placeholder="city, postcode, or place name" value="Madinah">
@@ -275,38 +275,49 @@ function setGeoPin(state){
           : "Configured site — click to request browser location";
   b.setAttribute("aria-label", b.title);
 }
-function setTip(text){ $("geotip").textContent=text; }
-function startDots(){ $("geotip").textContent="Searching…"; }
+// One-line tip: the visible text leads with the outcome so an ellipsis cannot change its meaning; title (hover)
+// carries the full text plus any longer guidance. The element is a polite status region for assistive technology.
+function setTip(text,detail){ const t=$("geotip"); t.textContent=text; t.title=detail?text+" "+detail:text; }
+function startDots(){ setTip("Searching…"); }
 function stopDots(){}
 // All location operations share this form's edit owner; separate fetch counters
 // would still let an old GPS/coarse/reverse result overwrite a newer search.
 function searchReset(){ clearTimeout(srchDebounce); clearTimeout(tipRevert); clearTimeout(geoTimer); locationEdit++; srchSeq++; multiCands=[]; multiOwner=null; setTip(TIP_DEFAULT); }
 function captureLookup(){ return {edit:locationEdit,seq:++srchSeq}; }
 function ownsLookup(owner){ return owner.edit===locationEdit && owner.seq===srchSeq; }
-function searchFailed(owner){ setTip("Couldn’t find that — try the pin (browser location) or enter coordinates."); tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
+// A valid no-match and an unavailable search (transport/HTTP/parse/timeout/admission failure) say different things.
+function searchFailed(owner,status){
+  if(status==="no-match") setTip("No matching place found — try the pin or coordinates.","Every search source answered with no match. Use the pin (browser location) or enter coordinates.");
+  else setTip("Search unavailable — a provider failed. Try again.","No match can be concluded because a search source failed. Try again, use the pin (browser location), or enter coordinates.");
+  tipRevert=setTimeout(()=>{ if(ownsLookup(owner)) setTip(TIP_DEFAULT); },4000); }
+const PARTIAL="Partial results, a provider failed";   // matches exist but a search source failed (leads the tip so an ellipsis keeps it)
 function applyCand(c){                                // push a candidate's coords (+ method) into the form & preview
   builderLocation=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null;
   $("lat").value=(+c.lat).toFixed(5); $("lon").value=(+c.lon).toFixed(5);
   if(methodAuto) $("method").value=(c.cc==="us"||c.cc==="ca"||c.cc==="mx")?"2":"4";
   update();
 }
-function foundSingle(c){ applyCand(c); setGeoPin("off"); setTip("Found: "+c.norm); }
+function foundSingle(c,partial){ applyCand(c); setGeoPin("off"); setTip((partial?PARTIAL:"Found")+": "+c.norm); }
 function showMulti(){                                 // several distinct matches (Inverness Scotland vs Florida) — Enter cycles
   const c=multiCands[multiIdx]; applyCand(c); setGeoPin("off");
-  setTip("Match "+(multiIdx+1)+"/"+multiCands.length+": "+c.norm+" — Enter to cycle");
+  setTip((multiOwner&&multiOwner.partial?PARTIAL+" — ":"Match ")+(multiIdx+1)+"/"+multiCands.length+": "+c.norm+" — Enter to cycle");
 }
-// Place/postcode search now lives in the shared module (SalahConfig.geocodeSearch) so the widget's
+// Place/postcode search lives in the shared module (SalahConfig.geocodeSearchDetailed) so the widget's
 // in-card settings panel and this builder use the SAME geocoder (Nominatim + Zippopotam, deduped).
+// Resolves to the detailed status, or "superseded" when a newer edit/lookup owns the form (no UI effect).
 async function doSearch(q){
   clearTimeout(tipRevert);
   const owner=captureLookup(), bias=homeCC;
-  let cands=[];
-  try{ cands = window.SalahConfig ? await SalahConfig.geocodeSearch(q,{homeCC:bias}) : []; }catch(e){}
-  if(!ownsLookup(owner)) return;
+  let r=null;
+  try{ if(window.SalahConfig) r=await SalahConfig.geocodeSearchDetailed(q,{homeCC:bias}); }catch(e){}
+  if(!ownsLookup(owner)) return "superseded";
   stopDots();
-  if(!cands.length) searchFailed(owner);
-  else if(cands.length===1) foundSingle(cands[0]);
-  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value}; showMulti(); }
+  const status=r&&r.status||"unavailable", cands=status==="matches"?r.candidates:[], partial=!!r&&r.coverage==="partial";
+  if(status==="not-requested") setTip(TIP_DEFAULT);
+  else if(!cands.length) searchFailed(owner,status);
+  else if(cands.length===1) foundSingle(cands[0],partial);
+  else { multiCands=cands; multiIdx=0; multiOwner={...owner,label:$("label").value,partial}; showMulti(); }
+  return status;
 }
 $("label").addEventListener("input",()=>{
   labelAuto=false;                                  // a display-name edit does not change the target's acquisition
@@ -440,10 +451,13 @@ function locate(auto){                                 // pin click → precise 
   const owner=captureLookup(); setTip("Requesting browser location…");
   navigator.geolocation.getCurrentPosition(
     pos=>{ if(!ownsLookup(owner)) return;
-           builderLocation=window.SalahConfig?SalahConfig.browserLocationEvidence(pos):null;
-           $("lat").value=pos.coords.latitude.toFixed(5); $("lon").value=pos.coords.longitude.toFixed(5);
+           // The shared external-coordinate admission runs before anything is published (no clamping).
+           const a=window.SalahConfig?SalahConfig.admitCoordinates(pos&&pos.coords&&pos.coords.latitude,pos&&pos.coords&&pos.coords.longitude):{ok:false};
+           if(!a.ok){ if(!auto) setTip("Browser location invalid — not used. Type a place.","The browser reported out-of-range or non-numeric coordinates; the selected location is kept."); return; }
+           builderLocation=SalahConfig.browserLocationEvidence(pos);
+           $("lat").value=a.lat.toFixed(5); $("lon").value=a.lon.toFixed(5);
            setGeoPin("glow"); setTip("Using browser position · accuracy "+(builderLocation && builderLocation.accuracyM!=null?builderLocation.accuracyM+" m":"unknown")+"."); update(); fillNameFromCoords(owner.edit); },
-    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable ("+err.message+"). Type a place, or keep the selected location."); },
+    err=>{ if(ownsLookup(owner) && !auto) setTip("Browser location unavailable — type a place.","("+err.message+") The selected location is kept."); },
     {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
   );
 }
@@ -461,7 +475,7 @@ async function detectArea(){
     if(labelAuto && d.cfg.label) $("label").value=d.cfg.label;
     if(methodAuto && d.cfg.method) $("method").value=d.cfg.method;
     setGeoPin("lit"); setTip("Detected: "+(d.cfg.label||"your area")+" (approx.)"); update();
-  } else { setGeoPin("off"); setTip("Couldn’t detect — type a place, or click the pin for browser location."); }
+  } else { setGeoPin("off"); setTip("Couldn’t detect your area — type a place or use the pin.","Area detection failed. Type a place, or click the pin for browser location."); }
 }
 
 // on load: coarse IP auto-detect (no prompt) fills the form and lits the pin; precise GPS is opt-in via

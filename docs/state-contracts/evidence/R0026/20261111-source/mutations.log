@@ -1,0 +1,54 @@
+# node --test tests/location-admission-mutations.test.cjs (candidate after 4c1c8a9e); node v24.14.0
+✔ R0026 mutation discriminator: m1 restore parseFloat partial acceptance (coarse) (16.9202ms)
+ℹ killed by assertion: invalid GeoJS evidence must reach the one fallback
+✔ R0026 mutation discriminator: m1 restore parseFloat partial acceptance (forward) (16.6557ms)
+ℹ killed by assertion: {"status":"matches","coverage":"complete","candidates":[{"lat":12,"lon":10,"name":"Fixture","norm":"Fixture, Fixture","cc":"fx","provider":"Nominatim","bounds":
+✔ R0026 mutation discriminator: m2 admit via clamping: domain check after clamp (1.9894ms)
+ℹ killed by assertion: invalid GeoJS evidence must reach the one fallback
+✔ R0026 mutation discriminator: m3 omit Nominatim HTTP gate (2.442ms)
+ℹ killed by assertion: {"status":"matches","coverage":"complete","candidates":[{"lat":51.5,"lon":-0.12,"name":"London","norm":"London, Fixture","cc":"fx","provider":"Nominatim","bound
+✔ R0026 mutation discriminator: m4a Zippopotam 404 treated as failure (6.8738ms)
+ℹ killed by assertion: {"status":"unavailable","coverage":"partial","candidates":[],"attempts":[{"provider":"Nominatim","state":"no-match","reason":null},{"provider":"Zippopotam","sta
+✔ R0026 mutation discriminator: m4b Zippopotam 5xx treated as no-match (6.218ms)
+ℹ killed by assertion: {"status":"no-match","coverage":"complete","candidates":[],"attempts":[{"provider":"Nominatim","state":"no-match","reason":null},{"provider":"Zippopotam","state
+✔ R0026 mutation discriminator: m5 null latitude coerced to 0 (5.7035ms)
+ℹ killed by assertion: {"status":"matches","coverage":"complete","candidates":[{"lat":0,"lon":-79.4,"name":"Toronto","norm":"Toronto, Ontario, Canada","cc":"ca","provider":"Zippopotam
+✔ R0026 mutation discriminator: m6 lose partial-match evidence: partial reported as complete (4.3474ms)
+ℹ killed by assertion: Expected values to be strictly equal:
+✔ R0026 mutation discriminator: m6 lose partial-match evidence in the builder UI (11.5555ms)
+ℹ killed by assertion: The input did not match the regular expression /^Found \(partial search\): Toronto/. Input:
+✔ R0026 mutation discriminator: m7 failure plus no-match reported as comprehensive no-match (5.9095ms)
+ℹ killed by assertion: {"status":"no-match","coverage":"partial","candidates":[],"attempts":[{"provider":"Nominatim","state":"no-match","reason":null},{"provider":"Zippopotam","state"
+✔ R0026 mutation discriminator: collapse error into empty (6.7976ms)
+ℹ killed by assertion: {"status":"no-match","coverage":"complete","candidates":[],"attempts":[{"provider":"Nominatim","state":"no-match","reason":null}]}
+✔ R0026 mutation discriminator: m8 remove late-intent guard: stale error updates the builder form (3.8256ms)
+ℹ killed by assertion: stale result cannot touch the current form
+✔ R0026 mutation discriminator: m8 remove late-intent guard: stale error updates the settings form (18.8034ms)
+ℹ killed by assertion: stale result cannot touch the current form
+✔ R0026 mutation discriminator: m9 invalid accuracy coerced to 0 (1.7671ms)
+ℹ killed by assertion: accuracy abc → 0
+✔ R0026 mutation discriminator: m10 builder geolocation bypasses admission (20.1352ms)
+ℹ killed by assertion: 999,10 must not be published
+✔ R0026 mutation discriminator: m10 SalahConfig.geolocate bypasses admission (7.0092ms)
+ℹ killed by assertion: 999,10 must not be published
+✔ R0026 mutation discriminator: m11 legacy projection returns a non-array (4.1927ms)
+ℹ killed by assertion: array for every case
+✔ R0026 mutation discriminator: m11 legacy projection throws (3.2433ms)
+ℹ killed by assertion: array for every case
+✔ R0026 mutation discriminator: current UI keeps the old compatibility array (builder) (10.7317ms)
+ℹ killed by assertion: {"status":503,"body":[{"class":"place","lat":"51.5","lon":"-0.12","name":"London","address":{"city":"London","country":"Fixture","country_code":"fx"}}]}: Couldn
+✔ R0026 mutation discriminator: current UI keeps the old compatibility array (settings) (61.3686ms)
+ℹ killed by assertion: {"status":503,"body":[{"class":"place","lat":"51.5","lon":"-0.12","name":"London","address":{"city":"London","country":"Fixture","country_code":"fx"}}]}: Couldn
+✔ R0026 mutation discriminator: forward deadline abort-only (no terminal outcome) (2.2659ms)
+ℹ killed by assertion: Expected values to be strictly equal:
+✔ R0026 mutation discriminator: replace acquiredAt with savedAt (17.2264ms)
+ℹ killed by assertion: Expected values to be strictly equal:
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 306.6662
+# exit=0
