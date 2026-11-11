@@ -18,15 +18,29 @@
   // Moon bodies retain the review at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
   // A new delivery requires explicit source review/rebinding, never an automatic
   // update from the same untrusted body whose admission is being checked.
+  // R0021 rebind (branch claude/r0021-instance-lifecycle-20261111 over 645b53cc):
+  // first-paint carries the preview-host construction custody; moon-initial
+  // carries moon-install-guard.mjs and the instance-captured detail in
+  // moon-native.mjs. Previous pins, retained for attribution: first-paint
+  // be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7 (R000B),
+  // moon-initial 837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14
+  // (f71fef6c review). moon-refinement is unchanged.
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7',
-    'moon-initial':'837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14',
+    'first-paint':'a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819',
+    'moon-initial':'5f1d42df4e3d962a9c0b82d30db77db3291ba0083de4489516dc76050e2aafe5',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0021 instance lifecycle at dcc8206b0e466fefc4827872e7d784b99ff56c63 over accepted main 645b53cc: legacy-Moon
+    // structural control of index c6e0e2e0; earlier entries below remain admitted unchanged.
+    '20d1a5b0564d0bc8bb5d4f56a3b65ed33b4738d7b49494293dcca2c26b2f7f0c':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'dcc8206b0e466fefc4827872e7d784b99ff56c63',path:'index.html',
+      parentSha256:'c6e0e2e089d53a00626c3014f1db040162af8849a35973d8b453b1c19b00a2ff',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R000D elapsed retry record at ba0851ae on accepted main da126880;
     // explicitly rebound like the d5ede8b9 inputs below, which remain admitted unchanged.
     '2444e2a9017a4ce3e54c5a3f186668798f29b883fe0fe869f036dcf80f44c81c':Object.freeze({
