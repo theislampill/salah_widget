@@ -29,6 +29,18 @@ const cases=[
     "  issuePreview=(f=>(...a)=>{ f(...a); $(\"code\").value=snippet(); })(issuePreview);\n","assignmentFailure"],
   ["m12 radio Enter/Space double-handled in keydown","  if(!direction) return;",
     '  if(!direction){ if(e.key==="Enter"||e.key===" ") setMode(e.target.id==="mode-local"?"local":"portable"); return; }',"radioKeys"],
+  ["m13 Refresh uses the current allow instead of issued.allow","issuePreview(issued.identity,issued.allow,issued.hash)",
+    'issuePreview(issued.identity,embedMode==="local"?"geolocation":"",issued.hash)',"localPortableRefresh"],
+  ["m14 Refresh uses the current output instead of issued.hash","issuePreview(issued.identity,issued.allow,issued.hash)",
+    "issuePreview(issued.identity,issued.allow,hash())","localPortableRefresh"],
+  ["m15 invalid note ignores the retained issue's mode",'issued&&issued.allow==="geolocation"?INVALID_NOTE_LOCAL:INVALID_NOTE',"INVALID_NOTE","localPortableRefresh"],
+  ["m16 refusal keeps the earlier copy's timer and sequence","clearTimeout(state.timer); state.seq++; $(buttonId)","$(buttonId)","refusalTimer"],
+  ["m17 refusal does not invalidate an in-flight copy","state.seq++; $(buttonId)","$(buttonId)","refusalInFlight"],
+  ["m18 refusal leaves the abandoned button disabled","$(buttonId).disabled=false;","","refusalInFlight"],
+  ["m19 refusal leaves the manual-recovery box visible",'  $((buttonId==="copy"?"embed":"install")+"-recovery-wrap").hidden=true;\n',"","refusalRecovery"],
+  ["m20 refusal text never cleared once valid",'  if(!bad.length) [["copied",""]','  if(false) [["copied",""]',"refusalCleared"],
+  ["m21 identity omits the permission policy",'function previewIdentity(allow,h){ return allow+" "+base+"#"+h; }',
+    'function previewIdentity(allow,h){ return base+"#"+h; }',"issuedIdentity"],
 ];
 for(const [name,from,to,key]of cases)test("R000F publication mutation: "+name+" -> "+key,async()=>{
   assert.equal(script.split(from).length,2,"one declared mutation location");

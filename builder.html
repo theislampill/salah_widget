@@ -79,8 +79,8 @@ iframe{box-shadow:0 18px 50px #0008}
     </div>
 
     <div class="row">
-      <div><label for="lat">Latitude</label><input id="lat" inputmode="decimal" value="24.4672"></div>
-      <div><label for="lon" style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142" style="text-align:center"></div>
+      <div><label for="lat">Latitude</label><input id="lat" inputmode="decimal" value="24.4672" aria-describedby="draftnote"></div>
+      <div><label for="lon" style="text-align:center">Longitude</label><input id="lon" inputmode="decimal" value="39.6142" style="text-align:center" aria-describedby="draftnote"></div>
       <div>
         <label for="time" style="text-align:right">Time format</label>
         <select id="time" style="text-align:right">
@@ -231,16 +231,24 @@ function draftInvalid(){
   const c=SalahConfig.normalize(formConfig());
   return ["lat","lon"].filter(id=>c[id]==null);
 }
+// The note names what the retained preview/export actually is: a portable issue keeps its location; a retained
+// self-configuring (local) issue has no location at all.
 const INVALID_NOTE="Enter a valid latitude and longitude (numbers) — the preview and embed code keep the last valid location.";
+const INVALID_NOTE_LOCAL="Enter a valid latitude and longitude (numbers) — the preview and embed code still show the previous self-configuring embed.";
 const REFUSED="Enter a valid latitude and longitude first.";
 function showValidity(bad){
   ["lat","lon"].forEach(id=>$(id).setAttribute("aria-invalid",bad.includes(id)?"true":"false"));
-  const note=$("draftnote"); note.textContent=bad.length?INVALID_NOTE:""; note.hidden=!bad.length;
+  const note=$("draftnote"); note.textContent=!bad.length?"":issued&&issued.allow==="geolocation"?INVALID_NOTE_LOCAL:INVALID_NOTE; note.hidden=!bad.length;
   if(!bad.length) [["copied",""],["installtip","copies terminal script for installation wizard"]].forEach(([id,text])=>{
     if($(id).textContent===REFUSED){ $(id).textContent=text; $(id).style.color=""; } });
 }
 function refuseInvalid(tipId){                    // D1: Copy / Install / Open never hand out a coordinate-less export
   if(!draftInvalid().length) return false;
+  // Same reset as copyArtifact: an earlier copy on this tip (its pending result, success-clear timer, recovery box
+  // holding the old payload) is abandoned, so it cannot erase or overwrite the refusal.
+  const buttonId=tipId==="copied"?"copy":"install", state=copyActions[buttonId];
+  clearTimeout(state.timer); state.seq++; $(buttonId).disabled=false;
+  $((buttonId==="copy"?"embed":"install")+"-recovery-wrap").hidden=true;
   $(tipId).textContent=REFUSED; $(tipId).style.color="#ffb38a"; return true;
 }
 // The widget reads only location.hash, so a changing ?r= query is ignored by it but forces the iframe to actually

@@ -19,7 +19,11 @@ change → exactly one, frame fragment = embed snippet) / rapidTyping (navigatio
 frame = final draft) / invalidDraft (preview + export kept, aria-invalid + note, Copy/Install/Open refuse with readable
 feedback, no popup) / refresh (forced re-issue once, also while invalid, never the invalid draft) / radios (Space,
 Enter, arrow, click: one navigation per real mode change, none for the active mode; allow attribute follows) /
-localEdits (local-mode location edits → none) / layout (boxes; #pv 325x530). Screenshots per stage.
+localEdits (local-mode location edits → none) / localPortableInvalid (a retained LOCAL issue under a portable-invalid
+draft: note names the retained self-configuring embed, Copy refuses with the exact refusal string, Refresh re-issues
+the local issue once with allow=geolocation, export unchanged) / layout (boxes; #pv 325x530). Screenshots per stage.
+Refusal and note texts are compared EXACTLY to the served builder's REFUSED / INVALID_NOTE / INVALID_NOTE_LOCAL
+constants (read from the served file; None on a tree that lacks them, which then fails the cell).
 --root selects the served tree (use a checkout of main for the control run); --out receives all evidence.
 """
 import argparse, functools, hashlib, http.server, json, re, subprocess, sys, threading, time
@@ -120,6 +124,15 @@ def compare_boxes(a, b, tol=0.5):
     return diff
 
 
+def builder_constants(text):
+    """The served builder's exact user-facing D1 strings (None when a constant is absent, e.g. on main)."""
+    out = {}
+    for name in ('REFUSED', 'INVALID_NOTE', 'INVALID_NOTE_LOCAL'):
+        m = re.search(r'const ' + name + r'="([^"]*)";', text)
+        out[name] = m.group(1) if m else None
+    return out
+
+
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
 
@@ -154,6 +167,7 @@ def run(engine, root, out, headed, tag, compare=None):
                         'load/render claim'}
     # navs = ISSUED (#pv src assignments, absolute URLs); reqs = REQUESTED; commits = COMMITTED (see module docstring).
     navs, reqs, commits = report.setdefault('issued', []), report['documentRequests'], report['framesLog']
+    K = report['builderConstants'] = builder_constants((root / 'builder.html').read_text(encoding='utf-8'))
     with sync_playwright() as p:
         browser = getattr(p, engine).launch(headless=not headed)
         report['browserVersion'] = browser.version
@@ -244,8 +258,9 @@ def run(engine, root, out, headed, tag, compare=None):
         page.click('#install'); page.wait_for_timeout(300); install = state()
         pops = report['popups']; page.click('#open'); page.wait_for_timeout(500)
         cells['invalidDraft'] = {'pass': bool(len(navs) == n0 and s['pvSrc'] == good['pvSrc'] and s['codeSrc'] == good['codeSrc'] and s['latInvalid'] == 'true'
-                                 and s['note'] and not s['note']['hidden'] and bool(s['note']['text']) and 'valid' in copy['copied']
-                                 and 'valid' in install['installtip'] and report['popups'] == pops and copy['embedRecoveryHidden']),
+                                 and s['note'] and not s['note']['hidden'] and K['INVALID_NOTE'] is not None and s['note']['text'] == K['INVALID_NOTE']
+                                 and K['REFUSED'] is not None and copy['copied'] == K['REFUSED']
+                                 and install['installtip'] == K['REFUSED'] and report['popups'] == pops and copy['embedRecoveryHidden']),
                                  'navs': len(nav_delta(navs, n0)), 'state': s, 'copyFeedback': copy['copied'], 'installFeedback': install['installtip'],
                                  'popupsDuringOpen': report['popups'] - pops}
         # Refresh (D3) while invalid: one forced re-issue of the last valid output, never the invalid draft.
@@ -276,6 +291,23 @@ def run(engine, root, out, headed, tag, compare=None):
         page.click('#mode-portable'); settle(); d = nav_delta(navs, n0)
         cells['localEdits'] = {'pass': quiet and len(d) == 1 and hash_params(d[0]).get('lat') == '30.04' and coherent(state()), 'urls': d}
         shot('4-final')
+
+        # Local issue retained under a portable-invalid draft (D1 note wording + D3 Refresh of issued.allow/hash).
+        page.click('#mode-local'); settle(); local = state(); n0 = len(navs)
+        page.fill('#lat', ''); settle(); page.click('#mode-portable'); settle(); s = state(); shot('5-local-portable-invalid')
+        quiet = len(navs) == n0
+        page.click('#copy'); page.wait_for_timeout(300); copy = state()
+        page.click('#reload'); settle(); d = nav_delta(navs, n0); after = state(); shot('6-local-portable-invalid-refresh')
+        cells['localPortableInvalid'] = {
+            'pass': bool(quiet and s['mode'] == 'portable' and s['pvSrc'] == local['pvSrc'] and s['pvAllow'] == 'geolocation'
+                         and s['codeSrc'] == local['codeSrc'] and s['codeAllow'] and s['latInvalid'] == 'true'
+                         and s['note'] and not s['note']['hidden'] and K['INVALID_NOTE_LOCAL'] is not None
+                         and s['note']['text'] == K['INVALID_NOTE_LOCAL'] and copy['copied'] == K['REFUSED']
+                         and len(d) == 1 and hash_params(d[0]).get('local') == '1' and fragment(d[0]) == fragment(local['pvSrc'])
+                         and rparam(d[0]) != rparam(local['pvSrc']) and after['pvAllow'] == 'geolocation'
+                         and after['codeSrc'] == local['codeSrc'] and after['note'] and after['note']['text'] == K['INVALID_NOTE_LOCAL']),
+            'quietOnSwitch': quiet, 'state': s, 'copyFeedback': copy['copied'], 'refreshIssued': d, 'afterRefresh': after}
+        page.fill('#lat', '30.04'); settle()
         boxes2 = page.evaluate(BOXES)
         # After the run the page may be scrolled (focus moves), so only SIZES are judged here; positions are compared
         # between runs only at load (same scroll state) via --compare.

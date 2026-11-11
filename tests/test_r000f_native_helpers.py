@@ -43,6 +43,15 @@ class Helpers(unittest.TestCase):
         self.assertEqual(sorted(D.compare_boxes(a, b)), ['#copy'])
         self.assertEqual(D.compare_boxes(a, dict(a)), {})
 
+    def test_builder_constants_exact_from_served_builder(self):
+        text = (Path(__file__).resolve().parents[1] / 'builder.html').read_text(encoding='utf-8')
+        k = D.builder_constants(text)
+        self.assertEqual(k['REFUSED'], 'Enter a valid latitude and longitude first.')
+        self.assertIn('self-configuring', k['INVALID_NOTE_LOCAL'])
+        self.assertIn('last valid location', k['INVALID_NOTE'])
+        self.assertEqual(D.builder_constants('<script>const X=1;</script>'),
+                         {'REFUSED': None, 'INVALID_NOTE': None, 'INVALID_NOTE_LOCAL': None})   # main: cell must fail
+
 
 if __name__ == '__main__':
     unittest.main()
