@@ -1,0 +1,788 @@
+{
+  "schema": "r0016-native1-entry-review-projection.v1",
+  "createdAt": "2026-11-11T14:53:23.853456+00:00",
+  "reviewer": "/root/g18_ps7_entry",
+  "independentBasis": "Fresh reviewer; no authorship or mutation of reviewed product/test/evidence bytes; root owns all implementation.",
+  "continuity": "refs/implementaudit/continuity-receipts/installer-20261111/G0018@24b9fa26ae7a186c735bfdc4afd1bc691bd6e778",
+  "candidate": {
+    "commit": "3d091c3515c6258e4983ea71d2426be399881936",
+    "tree": "2e57dcac25c52f3fd968006bfd3ddacb5d7073bb",
+    "parent": "bf566111fe530b5de2c7c63ca4586e83d5f4b965"
+  },
+  "archiveInventory": {
+    "members": 5559,
+    "regular": 2617,
+    "directories": 2942,
+    "other": 0
+  },
+  "checkSummary": {
+    "count": 688,
+    "passed": 688,
+    "failed": 0
+  },
+  "scope": "PS7 original full -File/profile/readability and actual-caller routes; no core63 assessment, no whole46 remap, no runtime/product execution.",
+  "originalAggregate": {
+    "status": "FAIL",
+    "qualification_status": "FAIL",
+    "diagnostic_acquisition_status": "COMPLETE",
+    "host": {
+      "system": "Windows",
+      "platform": "Windows-2022Server-10.0.20348-SP0",
+      "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+      "image_version": "20261101.353.1",
+      "ps7": {
+        "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "version": "7.6.6"
+      }
+    }
+  },
+  "causalFinding": {
+    "commonPath": "AppData/Local/Microsoft/PowerShell/StartupProfileData-NonInteractive",
+    "fourteenRecordedFailuresRetained": true,
+    "changedFields": [
+      "bytes",
+      "mtimeNs",
+      "sha256"
+    ],
+    "attributeIdentitySecurityChanged": false,
+    "allHostControlsCreateSamePathAfterReady": true,
+    "allHostAfterEqualsEntryBefore": true,
+    "hostMechanismCorroboration": "Tagged PowerShell 7.6.6 ConsoleHost invokes CLR ProfileOptimization.StartProfile with the exact changed filename. Fixture redirects PSModuleAnalysisCachePath, which is a separate setting.",
+    "attributionLimit": "No native system-call/call-stack trace is retained for these profile rewrites. Cold host-only creation is measured; same-process installer-window changes are measured. Source plus filename corroborates host optimization, but does not independently prove every recorded write caller or exclude installer/adapter influence on collected methods.",
+    "diagnosticAssessment": "No archive/entry evidence obstacle to a separately scoped controlled-host causal diagnostic. Prestart runtime controls must be declared and demonstrated on native host; retain complete profile before/ready/after equality, raw original failures, useful positive companions, exact subject/TEMP checks and restoration gates. No path whitelist or product pass is inferred."
+  },
+  "sourceAnchors": {
+    "profileInventory": "tests/install-entry-coverage-support.py:66-95",
+    "exactProfileOracle": "tests/install-entry-coverage-support.py:106-126",
+    "coldHostBaseline": "tests/install-entry-native-coverage.py:192-207,241-267",
+    "pidNonceReadyBoundary": "tests/install-entry-coverage-support.py:221-274 and tests/install-entry-native-coverage.py:91-99",
+    "preEntryQuiescenceAndReadability": "tests/install-entry-native-coverage.py:310-325",
+    "positiveAndNoOpen": "tests/install-entry-native-coverage.py:326-353",
+    "previewChecks": "tests/install-entry-native-coverage.py:354-366",
+    "nativeShareRefusalAndRestoration": "tests/install-entry-coverage-support.py:129-213",
+    "restorationFailureRemovesCredit": "tests/install-entry-native-coverage.py:371-386",
+    "routeActualCallerChecks": "tests/install-powershell-routes.ps1:115-184",
+    "currentCollectorRouteHealthyOnly": "tools/qualification/installer_native.py:247-264,278-310",
+    "upstreamHostStartProfile": "PowerShell/PowerShell v7.6.6 src/Microsoft.PowerShell.ConsoleHost/host/msh/ConsoleHost.cs:318-330; blob f923481bc5e849eeb83a7ee714183b7398d3c460"
+  },
+  "limits": [
+    "Fourteen full-entry rows remain FAIL, including readable/unreadable and normal positive/no-open. Useful sub-behaviors do not waive profile failure.",
+    "Snapshots and known effect spies do not establish OS-wide denial or egress containment.",
+    "Host control loads the same private Utility wrapper and native Utility module, but its own script invokes no installer. It records no installer-effect spy event; this is not an entirely uninstrumented host.",
+    "Normal-mode addition of exactly eight bundle paths and root mtime is independently corroborated; the existing profile file still violates the comparator.",
+    "Route tests replace transport, artifact admission, prompts, browser and clipboard with declared adapters; raw JSON cannot independently re-prove managed object reference identity beyond exact-source assertion execution.",
+    "Current collector schedules healthy -RoutesOnly cases, no fresh current-source native route mutants. Historical mutants remain separate.",
+    "Upstream tagged source corroboration is not a native binary attestation and no runtime version or suppression control is qualified here.",
+    "Native PS51 and whole33/51/46 work remain outside this receiving lane."
+  ],
+  "disposition": "RECEIVING_PASS_WITH_RETAINED_PRODUCT_FAILURES",
+  "productExecuted": false,
+  "repositoryMutated": false,
+  "remoteMutated": false,
+  "governorMutated": false,
+  "nativeWindowsQualified": false,
+  "wholeContractSatisfied": false,
+  "projectionOwner": "root; compact projection of immutable independent review, not a replacement original",
+  "originalReview": {
+    "path": "recovery/r0016-native-entry-g18-review/review.json",
+    "sha256": "8eadb87c91500eac5432c43af68795c9e4b3c7d57d77b63ad401d4681d5e39a5"
+  },
+  "entryRows": [
+    {
+      "case": "github",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "cached",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "store",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "ask",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "installed",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "mixed",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "legacy",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 1,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "none",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 1,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "missing-preset",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "bad-option",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 1,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "positive",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed outside the one validated new bundle",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "no-open",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed outside the one validated new bundle",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "readable",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 0,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    },
+    {
+      "case": "unreadable",
+      "originalPass": false,
+      "originalError": "USERPROFILE changed during the actual entry window",
+      "exit": 1,
+      "subjectUnchanged": true,
+      "hostAfterEqualsEntryBefore": true,
+      "changedFields": [
+        "bytes",
+        "mtimeNs",
+        "sha256"
+      ],
+      "stableProfileFileFields": [
+        "attributes",
+        "ctimeNs",
+        "device",
+        "gid",
+        "inode",
+        "kind",
+        "links",
+        "mode",
+        "path",
+        "security",
+        "uid"
+      ]
+    }
+  ],
+  "readability": [
+    {
+      "case": "readable",
+      "proof": {
+        "pid": 6620,
+        "nonce": "39d9bd76004e793b36e07e94852c34f7",
+        "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-h6vzkoiw\\ps7-readable\\subject\\roam\\Mozilla\\Firefox\\Profiles\\fixture profile\\extensions.json",
+        "exists": true,
+        "readSucceeded": true,
+        "nativeCode": null,
+        "exceptionType": null,
+        "targetSha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa",
+        "peerReadable": true,
+        "peerSha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa"
+      },
+      "archivedMetadataSha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa",
+      "subjectUnchanged": true,
+      "entryCriterionPassed": false
+    },
+    {
+      "case": "unreadable",
+      "proof": {
+        "pid": 2336,
+        "nonce": "6ff879f2082265eea70bc07d9e8f5558",
+        "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-h6vzkoiw\\ps7-unreadable\\subject\\roam\\Mozilla\\Firefox\\Profiles\\fixture profile\\extensions.json",
+        "exists": true,
+        "readSucceeded": false,
+        "nativeCode": 32,
+        "exceptionType": "System.IO.IOException",
+        "targetSha256": null,
+        "peerReadable": true,
+        "peerSha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa"
+      },
+      "archivedMetadataSha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa",
+      "subjectUnchanged": true,
+      "entryCriterionPassed": false,
+      "restoration": {
+        "before": {
+          "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-h6vzkoiw\\ps7-unreadable\\subject\\roam\\Mozilla\\Firefox\\Profiles\\fixture profile\\extensions.json",
+          "volume": 2695480082,
+          "indexHigh": 196608,
+          "indexLow": 1703607,
+          "bytes": 15,
+          "sha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa",
+          "attributes": 32,
+          "links": 1,
+          "created": [
+            31289831,
+            4098311821
+          ],
+          "written": [
+            31289831,
+            4098311821
+          ],
+          "security": "O:BAG:S-1-5-21-3708201392-4242277230-667464164-513D:AI(A;ID;FA;;;LA)"
+        },
+        "heldAfter": {
+          "path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-h6vzkoiw\\ps7-unreadable\\subject\\roam\\Mozilla\\Firefox\\Profiles\\fixture profile\\extensions.json",
+          "volume": 2695480082,
+          "indexHigh": 196608,
+          "indexLow": 1703607,
+          "bytes": 15,
+          "sha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa",
+          "attributes": 32,
+          "links": 1,
+          "created": [
+            31289831,
+            4098311821
+          ],
+          "written": [
+            31289831,
+            4098311821
+          ],
+          "security": "O:BAG:S-1-5-21-3708201392-4242277230-667464164-513D:AI(A;ID;FA;;;LA)"
+        },
+        "restoredSha256": "f1781b70ed7dcc84cb0a9ddaec2af491dcd7b2f8b796dab3bdf60db992b35afa",
+        "restoredIdentity": [
+          333453060169384722,
+          844424931835575
+        ],
+        "restored": true,
+        "scope": "Actual Windows handle share refusal; no ACL mutation; bytes observed through the own held handle."
+      }
+    }
+  ],
+  "routes": {
+    "originalResults": [
+      {
+        "case": "route chromium explicit-store",
+        "pass": true
+      },
+      {
+        "case": "route chromium ask-store",
+        "pass": true
+      },
+      {
+        "case": "route chromium ask-github",
+        "pass": true
+      },
+      {
+        "case": "route chromium ask-default-github",
+        "pass": true
+      },
+      {
+        "case": "route firefox explicit-store",
+        "pass": true
+      },
+      {
+        "case": "route firefox ask-store",
+        "pass": true
+      },
+      {
+        "case": "route firefox ask-github",
+        "pass": true
+      },
+      {
+        "case": "route firefox ask-default-github",
+        "pass": true
+      }
+    ],
+    "observations": [
+      {
+        "case": "route chromium explicit-store",
+        "family": "chromium",
+        "requestedSource": "store",
+        "choice": null,
+        "expectedRoute": "store",
+        "events": [
+          "open:https://store.invalid",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 0,
+        "downloadedAssets": [],
+        "admissionCalls": [],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      },
+      {
+        "case": "route chromium ask-store",
+        "family": "chromium",
+        "requestedSource": "ask",
+        "choice": "2",
+        "expectedRoute": "store",
+        "events": [
+          "prompt:Choose [1/2] (default 1)",
+          "open:https://store.invalid",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 0,
+        "downloadedAssets": [],
+        "admissionCalls": [],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      },
+      {
+        "case": "route chromium ask-github",
+        "family": "chromium",
+        "requestedSource": "ask",
+        "choice": "1",
+        "expectedRoute": "github",
+        "events": [
+          "prompt:Choose [1/2] (default 1)",
+          "download:tabliss-chromium.zip",
+          "extract",
+          "copy:C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip unpacked",
+          "warning:Keep this unpacked folder while the browser uses it. This wizard never deletes an earlier manual bundle.",
+          "open:fixture://manager",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 1,
+        "downloadedAssets": [
+          {
+            "name": "tabliss-chromium.zip",
+            "browser_download_url": "https://example.invalid/tabliss-chromium.zip"
+          }
+        ],
+        "admissionCalls": [
+          {
+            "Path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip",
+            "Kind": "asset",
+            "State": "published"
+          },
+          {
+            "Path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip unpacked",
+            "Kind": "unpacked",
+            "State": "handed-off"
+          }
+        ],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      },
+      {
+        "case": "route chromium ask-default-github",
+        "family": "chromium",
+        "requestedSource": "ask",
+        "choice": "",
+        "expectedRoute": "github",
+        "events": [
+          "prompt:Choose [1/2] (default 1)",
+          "download:tabliss-chromium.zip",
+          "extract",
+          "copy:C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip unpacked",
+          "warning:Keep this unpacked folder while the browser uses it. This wizard never deletes an earlier manual bundle.",
+          "open:fixture://manager",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 1,
+        "downloadedAssets": [
+          {
+            "name": "tabliss-chromium.zip",
+            "browser_download_url": "https://example.invalid/tabliss-chromium.zip"
+          }
+        ],
+        "admissionCalls": [
+          {
+            "Path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip",
+            "Kind": "asset",
+            "State": "published"
+          },
+          {
+            "Path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip unpacked",
+            "Kind": "unpacked",
+            "State": "handed-off"
+          }
+        ],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      },
+      {
+        "case": "route firefox explicit-store",
+        "family": "firefox",
+        "requestedSource": "store",
+        "choice": null,
+        "expectedRoute": "store",
+        "events": [
+          "open:https://store.invalid",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 0,
+        "downloadedAssets": [],
+        "admissionCalls": [],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      },
+      {
+        "case": "route firefox ask-store",
+        "family": "firefox",
+        "requestedSource": "ask",
+        "choice": "2",
+        "expectedRoute": "store",
+        "events": [
+          "prompt:Choose [1/2] (default 1)",
+          "open:https://store.invalid",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 0,
+        "downloadedAssets": [],
+        "admissionCalls": [],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      },
+      {
+        "case": "route firefox ask-github",
+        "family": "firefox",
+        "requestedSource": "ask",
+        "choice": "1",
+        "expectedRoute": "github",
+        "events": [
+          "prompt:Choose [1/2] (default 1)",
+          "download:tabliss-firefox-signed.xpi",
+          "copy:C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip",
+          "open:fixture://manager",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 1,
+        "downloadedAssets": [
+          {
+            "name": "tabliss-firefox-signed.xpi",
+            "browser_download_url": "https://example.invalid/tabliss-firefox-signed.xpi"
+          }
+        ],
+        "admissionCalls": [
+          {
+            "Path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip",
+            "Kind": "asset",
+            "State": "handed-off"
+          }
+        ],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      },
+      {
+        "case": "route firefox ask-default-github",
+        "family": "firefox",
+        "requestedSource": "ask",
+        "choice": "",
+        "expectedRoute": "github",
+        "events": [
+          "prompt:Choose [1/2] (default 1)",
+          "download:tabliss-firefox-signed.xpi",
+          "copy:C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip",
+          "open:fixture://manager",
+          "prompt:Press Enter after TablissNG is installed"
+        ],
+        "releaseCalls": 1,
+        "downloadedAssets": [
+          {
+            "name": "tabliss-firefox-signed.xpi",
+            "browser_download_url": "https://example.invalid/tabliss-firefox-signed.xpi"
+          }
+        ],
+        "admissionCalls": [
+          {
+            "Path": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\fixture path \u0645 asset.zip",
+            "Kind": "asset",
+            "State": "handed-off"
+          }
+        ],
+        "remainingAnswers": 0,
+        "eligibility": "eligible-known"
+      }
+    ],
+    "adapters": [
+      "controlled release object",
+      "download/expansion path spy",
+      "artifact admission record spy",
+      "prompt answer queue",
+      "browser/clipboard spies"
+    ],
+    "scope": "Actual Install-TablissNG, Select-TablissNgAsset and positive Get-DiscoveryEligibility functions from exact source. Route semantics only; native admission and whole-entry unknown refusal are separate.",
+    "freshNativeRouteMutantsScheduled": false
+  }
+}

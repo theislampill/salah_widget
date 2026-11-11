@@ -1,0 +1,619 @@
+{
+  "schema": "r0016-native1-linux-independent-receiving.v1",
+  "reviewer": "/root/r0013_review",
+  "observedAt": "2026-11-11T14:21:56.026755+00:00",
+  "candidate": {
+    "commit": "3d091c3515c6258e4983ea71d2426be399881936",
+    "tree": "2e57dcac25c52f3fd968006bfd3ddacb5d7073bb",
+    "run": 43036427882
+  },
+  "artifact": {
+    "id": 13863975129,
+    "zipSha256": "ea8a418d5d4ad709ced772252760f60180a9382cd040bfe6048299ea675a7a44",
+    "tarSha256": "0e992cd814ef1d3647c3216a0b28d33f1745912d50f2f9192d84e985fbd3b21f",
+    "members": 1322,
+    "topRegularFilesVerified": 33,
+    "sourceInputBindings": 32
+  },
+  "host": {
+    "system": "Linux",
+    "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "image_version": "20261101.360.1",
+    "bash": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)",
+    "uid": 1001,
+    "gid": 1001,
+    "groups": [
+      4,
+      100,
+      118,
+      999,
+      1001
+    ],
+    "native_tools": {
+      "bash": "/usr/bin/bash",
+      "python3": "/usr/bin/python3",
+      "stat": "/usr/bin/stat",
+      "id": "/usr/bin/id",
+      "mktemp": "/usr/bin/mktemp",
+      "find": "/usr/bin/find",
+      "sort": "/usr/bin/sort",
+      "curl": "/usr/bin/curl",
+      "uname": "/usr/bin/uname",
+      "df": "/usr/bin/df",
+      "sandbox-exec": null,
+      "log": null,
+      "dtruss": null
+    },
+    "parent_identities": [
+      {
+        "path": "/home/runner/work/salah_widget/salah_widget",
+        "physical": "/home/runner/work/salah_widget/salah_widget",
+        "device": 66305,
+        "inode": 9175645,
+        "uid": 1001,
+        "gid": 1001,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/home/runner/work/_temp",
+        "physical": "/home/runner/work/_temp",
+        "device": 66305,
+        "inode": 9175635,
+        "uid": 1001,
+        "gid": 1001,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/tmp",
+        "physical": "/tmp",
+        "device": 66305,
+        "inode": 1700,
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o1777",
+        "symlink": false
+      },
+      {
+        "path": "/tmp",
+        "physical": "/tmp",
+        "device": 66305,
+        "inode": 1700,
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o1777",
+        "symlink": false
+      },
+      {
+        "path": "/home/runner",
+        "physical": "/home/runner",
+        "device": 66305,
+        "inode": 283495,
+        "uid": 1001,
+        "gid": 1001,
+        "mode": "0o750",
+        "symlink": false
+      }
+    ],
+    "fixture_parent": "/tmp",
+    "acquisition": {
+      "uname": {
+        "command": [
+          "/usr/bin/uname",
+          "-a"
+        ],
+        "exit": 0,
+        "stdout": "Linux runnervm7aw5e 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+        "stderr": ""
+      },
+      "filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/home/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem     1024-blocks     Used Available Capacity Mounted on\n/dev/root        151263856 61276628  89970844      41% /\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/tmp"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem     1024-blocks     Used Available Capacity Mounted on\n/dev/root        151263856 61276628  89970844      41% /\n",
+        "stderr": ""
+      },
+      "native_stat": {
+        "command": [
+          "stat",
+          "-c",
+          "%d:%i:%u:%g:%a",
+          "/home/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "66305:9175754:1001:1001:755\n",
+        "stderr": ""
+      },
+      "filesystem_volume": {
+        "command": [
+          "stat",
+          "-f",
+          "-c",
+          "%T",
+          "/home/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "ext2/ext3\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_volume": {
+        "command": [
+          "stat",
+          "-f",
+          "-c",
+          "%T",
+          "/tmp"
+        ],
+        "exit": 0,
+        "stdout": "ext2/ext3\n",
+        "stderr": ""
+      }
+    }
+  },
+  "disposition": "LINUX_PREVIEW_ACQUISITION_BLOCKED; ORIGINAL_FAIL_RETAINED",
+  "preview": {
+    "exit": 2,
+    "classification": "BOOTSTRAP_BLOCKED",
+    "bootstrapRows": 1,
+    "productRowsExecuted": 0,
+    "healthyPreviewRowsQualified": 0,
+    "mutationRowsQualified": 0,
+    "sourceSha256": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c",
+    "testSha256": "5a3a39906f0ff40d959cce5f985a368f01eaf92cb4a3cecdd8f39a1941327760",
+    "rawReceiptMember": "installer-evidence/install-preview.json",
+    "retainedReceiptMember": "installer-evidence/install-preview-fixture/results.json"
+  },
+  "inheritedCommands": {
+    "aggregatePassed": 9,
+    "scope": "Actual original command exits and retained top receipt bindings received. These remain distinct inherited suite observations; no new preview43 credit and no repeated broad causal review."
+  },
+  "findings": {
+    "Critical": [],
+    "Important": [
+      {
+        "id": "R16-NATIVE1-LINUX-ACQ-01",
+        "kind": "fixture-acquisition prerequisite",
+        "finding": "The actual Linux fixture prerequisite lookup did not find bwrap in its execution PATH. The mandatory independent containment guard raised before its launch and before the helper/entry/normal/mutant branches.",
+        "evidence": [
+          "tests/install-preview.py:331-339",
+          "tests/install-preview.py:812-819",
+          "installer-evidence/install-preview.json#/results/0"
+        ],
+        "effect": "Current Linux43 preview qualification is unacquired. This is not an installer regression and does not establish zero installer effects through the new preview fixture.",
+        "requiredFollowup": "Root may provision/verify the approved native test prerequisite and receive an exact-source native replay. Keep independent containment, source assertions and original failed run unchanged; no bypass or source change is justified by this receipt."
+      }
+    ],
+    "Minor": []
+  },
+  "scopeLimits": [
+    "The native host is no longer observed live; bwrap absence is the actual fixture PATH lookup result, not a separately rerun package inventory.",
+    "Native trace/denial controls and all43 new preview rows did not run successfully. Nine inherited commands are not a substitute.",
+    "No Apple or Windows qualification inferred. Whole46 and final order/owner/delivery/closure gates remain open."
+  ],
+  "checks": [
+    {
+      "name": "original top file binding: install-bash.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-bash.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-bash.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-builder.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-builder.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-builder.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-detectors.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-detectors.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-detectors.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery-mutations.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery-mutations.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery-mutations.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-entry-bash.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-entry-bash.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-entry-bash.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-linux-owner-fixture-manifest.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-linux-owner-fixture.tar.gz",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-linux-owner.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-linux-owner.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-linux-owner.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-original-mutations.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-original-mutations.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-original-mutations.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-preview.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-preview.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-preview.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-staging-native.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-staging-native.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-staging-native.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: result.json",
+      "passed": true
+    },
+    {
+      "name": "preview raw stdout/retained/top JSON agreement",
+      "passed": true
+    },
+    {
+      "name": "exact sole bootstrap failure and no product rows",
+      "passed": true
+    },
+    {
+      "name": "preview receipt failure retained",
+      "passed": true
+    },
+    {
+      "name": "collector terminal exit2 and FAIL retained",
+      "passed": true
+    },
+    {
+      "name": "nine inherited command passes distinct",
+      "passed": true
+    },
+    {
+      "name": "actual retained source equals published source",
+      "passed": true
+    },
+    {
+      "name": "actual Linux Bash identity",
+      "passed": true
+    },
+    {
+      "name": "archive member count",
+      "passed": true
+    },
+    {
+      "name": "exact tested harness bound",
+      "passed": true
+    },
+    {
+      "name": "actual missing-tool guard precedes launch",
+      "passed": true
+    },
+    {
+      "name": "actual bootstrap exception skips all product suites",
+      "passed": true
+    },
+    {
+      "name": "prior archive receiving has only expected qualification gaps",
+      "passed": true
+    },
+    {
+      "name": "all32 source inputs bind expected tree",
+      "passed": true
+    },
+    {
+      "name": "root artifact association received",
+      "passed": true
+    }
+  ],
+  "allReceivingChecksPassed": true,
+  "bindings": [
+    {
+      "member": "installer-evidence/install-bash.json",
+      "bytes": 2303,
+      "sha256": "22fddb8748411307d907f0126994559d9f250710dd4308a8d1a05efd4c9128ec"
+    },
+    {
+      "member": "installer-evidence/install-bash.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-bash.stdout.txt",
+      "bytes": 2303,
+      "sha256": "22fddb8748411307d907f0126994559d9f250710dd4308a8d1a05efd4c9128ec"
+    },
+    {
+      "member": "installer-evidence/install-builder.json",
+      "bytes": 623,
+      "sha256": "a7cc9c114f06d9fccc5260eae50d5ebf79e14f614a8f012a6365ca672300e28d"
+    },
+    {
+      "member": "installer-evidence/install-builder.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-builder.stdout.txt",
+      "bytes": 623,
+      "sha256": "a7cc9c114f06d9fccc5260eae50d5ebf79e14f614a8f012a6365ca672300e28d"
+    },
+    {
+      "member": "installer-evidence/install-detectors.json",
+      "bytes": 8744,
+      "sha256": "fccb97dbe7e57980ed5b4b4805869caba981afdcbba226b7b1a2bf058ed09c83"
+    },
+    {
+      "member": "installer-evidence/install-detectors.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-detectors.stdout.txt",
+      "bytes": 8544,
+      "sha256": "e95de4caba5a92b79d78a473fd3c7ca81885e51d1755504fec649ba35737febf"
+    },
+    {
+      "member": "installer-evidence/install-discovery-mutations.json",
+      "bytes": 8856,
+      "sha256": "d51268c3c628e395e31e6e09a391049c96a5fe6ef421252ec91b77e4316dd9da"
+    },
+    {
+      "member": "installer-evidence/install-discovery-mutations.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-discovery-mutations.stdout.txt",
+      "bytes": 8856,
+      "sha256": "d51268c3c628e395e31e6e09a391049c96a5fe6ef421252ec91b77e4316dd9da"
+    },
+    {
+      "member": "installer-evidence/install-discovery.json",
+      "bytes": 56149,
+      "sha256": "6b942fa52c742672c10179e0e821f6cf49afb141860f4ec2ec37d7c9af9311df"
+    },
+    {
+      "member": "installer-evidence/install-discovery.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-discovery.stdout.txt",
+      "bytes": 56143,
+      "sha256": "b11a485930160dd91ed0601a2701cc6f2abacc6ee536a97d7d1a745c45dc85d9"
+    },
+    {
+      "member": "installer-evidence/install-entry-bash.json",
+      "bytes": 49234,
+      "sha256": "5eb5cde853b99cfbec2c28e66341cd04244338a4a77f2a62b51e38587acb617d"
+    },
+    {
+      "member": "installer-evidence/install-entry-bash.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-entry-bash.stdout.txt",
+      "bytes": 49234,
+      "sha256": "5eb5cde853b99cfbec2c28e66341cd04244338a4a77f2a62b51e38587acb617d"
+    },
+    {
+      "member": "installer-evidence/install-linux-owner-fixture-manifest.json",
+      "bytes": 4576,
+      "sha256": "a1231277c1594f00f0254b3621d231735d16ac16cb2a187c2ea407bc581a4c76"
+    },
+    {
+      "member": "installer-evidence/install-linux-owner-fixture.tar.gz",
+      "bytes": 7066,
+      "sha256": "2418a1e6d8449492f84b2dbdcd4c3abfa5e15d7718f1c13d8fdf6e365db30a65"
+    },
+    {
+      "member": "installer-evidence/install-linux-owner.json",
+      "bytes": 99932,
+      "sha256": "d2c8c7a162e6cd758e4762049f399617a29415af89dd1d27152cf30da887b98d"
+    },
+    {
+      "member": "installer-evidence/install-linux-owner.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-linux-owner.stdout.txt",
+      "bytes": 99932,
+      "sha256": "d2c8c7a162e6cd758e4762049f399617a29415af89dd1d27152cf30da887b98d"
+    },
+    {
+      "member": "installer-evidence/install-original-mutations.json",
+      "bytes": 4845,
+      "sha256": "072d28eaa5ce4cc015588888224c12e0e607f79873af004133020173429d9652"
+    },
+    {
+      "member": "installer-evidence/install-original-mutations.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-original-mutations.stdout.txt",
+      "bytes": 4845,
+      "sha256": "072d28eaa5ce4cc015588888224c12e0e607f79873af004133020173429d9652"
+    },
+    {
+      "member": "installer-evidence/install-preview.json",
+      "bytes": 2184,
+      "sha256": "3d16f36920d3a26bdf5ff32147c89fb751a830572b37e3a1b3e3e16d8f15f399"
+    },
+    {
+      "member": "installer-evidence/install-preview.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-preview.stdout.txt",
+      "bytes": 2184,
+      "sha256": "3d16f36920d3a26bdf5ff32147c89fb751a830572b37e3a1b3e3e16d8f15f399"
+    },
+    {
+      "member": "installer-evidence/install-staging-native.json",
+      "bytes": 12635,
+      "sha256": "97064678df57a6aed9f499b49952ab6bb2cb76ba4ddc70c8cc9df6bff0b9a42b"
+    },
+    {
+      "member": "installer-evidence/install-staging-native.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-staging-native.stdout.txt",
+      "bytes": 12115,
+      "sha256": "35469ad190c4656e3603c98acc33c577370fed4bd275a24df626eab75ed9479a"
+    },
+    {
+      "member": "installer-evidence/result.json",
+      "bytes": 13945,
+      "sha256": "b7129e1c8594ef4ed218975f340e2bf9552ea9037def7c172a128ad7d2e16e80"
+    },
+    {
+      "member": "installer-evidence/result.json",
+      "bytes": 13945,
+      "sha256": "b7129e1c8594ef4ed218975f340e2bf9552ea9037def7c172a128ad7d2e16e80"
+    },
+    {
+      "member": "installer-evidence/install-preview.json",
+      "bytes": 2184,
+      "sha256": "3d16f36920d3a26bdf5ff32147c89fb751a830572b37e3a1b3e3e16d8f15f399"
+    },
+    {
+      "member": "installer-evidence/install-preview.stdout.txt",
+      "bytes": 2184,
+      "sha256": "3d16f36920d3a26bdf5ff32147c89fb751a830572b37e3a1b3e3e16d8f15f399"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/results.json",
+      "bytes": 2184,
+      "sha256": "3d16f36920d3a26bdf5ff32147c89fb751a830572b37e3a1b3e3e16d8f15f399"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/source.sh",
+      "bytes": 41623,
+      "sha256": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/host-acquisition/acquisition.json",
+      "bytes": 560,
+      "sha256": "de0949993c4327b99a8178be00010f5bcaa0a9eb691ad1e23abbd960b70863f9"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/host-acquisition/bash-version.stdout.txt",
+      "bytes": 308,
+      "sha256": "2863f49cc4f8660ba23be8f2a4d3468281ba704a263409e4e5179033c9a770f0"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/host-acquisition/bash-version.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "inputReceipts": [
+    {
+      "path": "Linux-top-receiving.json",
+      "sha256": "e2b15d3963c1fd0448a2812c4e7435149c4e3b15a0b77b2d988363c7a750455c"
+    },
+    {
+      "path": "recovery/r0016-native-run1/Linux-receiving.json",
+      "sha256": "bb5483783b5fad4fea666930dd7f7436aac2c1f82c5272c05da884811d0fdfe4"
+    }
+  ],
+  "fixtureExecutedByReviewer": false,
+  "fixtureArchiveExtractedByReviewer": false,
+  "sourceOrSharedMutation": false
+}
