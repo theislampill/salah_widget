@@ -27,6 +27,15 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0026 settings search consumer (detailed outcomes) at ba2a8679 on accepted main 645b53cc;
+    // explicitly rebound like the ba0851ae inputs below, which remain admitted unchanged.
+    'bcd68708a37f2fab9546c113b8c4b141e6b79fb4bcb511d73655058f1dd7f867':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ba2a867939a60ab3814a82f89fa18757022ce2ff',path:'src/native/index.html',layout:'config,native'}),
+    '4604961a23877063a80a84822ce2dc0532903fb92b8146e21117c514b06519cf':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ba2a867939a60ab3814a82f89fa18757022ce2ff',path:'index.html',
+      parentSha256:'01b720c58e4885978af06c2b3893256cfeae425139418b4fab7279a5b1f8ad5c',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R000D elapsed retry record at ba0851ae on accepted main da126880;
     // explicitly rebound like the d5ede8b9 inputs below, which remain admitted unchanged.
     '2444e2a9017a4ce3e54c5a3f186668798f29b883fe0fe869f036dcf80f44c81c':Object.freeze({

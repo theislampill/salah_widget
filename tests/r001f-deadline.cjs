@@ -12,9 +12,11 @@ function make(realTime=false) {
     clearTimeout:realTime?clearTimeout:key=>timers.delete(key),
     fetch:(url,opts)=>{const d=deferred();requests.push({url,opts,...d});return d.promise;}};
   context.window=context;vm.createContext(context);
-  let source=readSource("config.js",ref);
-  if(mutant==="headers")source=source.replace('.then(function (r) { if (!r.ok)', '.then(function (r) { clearTimeout(to); if (!r.ok)');
-  if(mutant==="abort-only")source=source.replace('reject(new Error("coarse location timeout"));','');
+  let source=readSource("config.js",ref);const original=source;
+  // R0026 rebinding: the coarse header/deadline stages are now httpStage and attemptError("timeout").
+  if(mutant==="headers")source=source.replace('}).then(null, transportFailure).then(httpStage)', '}).then(null, transportFailure).then(function (r) { clearTimeout(to); return httpStage(r); })');
+  if(mutant==="abort-only")source=source.replace('reject(attemptError("timeout", "deadline")); ac.abort(); }, timeoutMs);','ac.abort(); }, timeoutMs);');
+  if(mutant&&source===original)throw new Error("mutant boundary missing");
   vm.runInContext(source,context);
   function fire(){assert.equal(timers.size,1,"attempt must still own its deadline");const [key,timer]=[...timers][0];timers.delete(key);timer.fn();}
   return {context,timers,requests,fire,run:opts=>context.SalahConfig.coarseDetect(opts)};
@@ -33,7 +35,7 @@ test("healthy GeoJS body retains original shape, timezone precedence and cleans 
   assert.equal(r.ok,true);assert.equal(r.provider,"GeoJS");assert.equal(r.source,"coarse-ip");assert.equal(r.status,"ok");assert.deepEqual([r.cfg.lat,r.cfg.lon,r.cfg.method,r.cfg.units],[24.47,39.61,"4","c"]);assert.equal(r.cfg.tz,Intl.DateTimeFormat().resolvedOptions().timeZone);assert.equal(f.requests.length,1);assert.equal(f.timers.size,0);
 });
 test("both hung attempts exhaust with no third request or active timer",async()=>{
-  const f=make();let value;f.run({timeoutMs:5}).then(v=>value=v);await drain();f.fire();await drain();assert.equal(f.requests.length,2);f.requests[1].resolve({ok:true,json:()=>new Promise(()=>{})});await drain();f.fire();await drain();assert.deepEqual(JSON.parse(JSON.stringify(value)),{ok:false,source:"coarse-ip",status:"failed"});assert.equal(f.requests.length,2);assert.equal(f.timers.size,0);
+  const f=make();let value;f.run({timeoutMs:5}).then(v=>value=v);await drain();f.fire();await drain();assert.equal(f.requests.length,2);f.requests[1].resolve({ok:true,json:()=>new Promise(()=>{})});await drain();f.fire();await drain();assert.deepEqual(JSON.parse(JSON.stringify(value)),{ok:false,source:"coarse-ip",status:"failed",attempts:[{provider:"GeoJS",state:"timeout",reason:"deadline"},{provider:"ipinfo",state:"timeout",reason:"deadline"}]});assert.equal(f.requests.length,2);assert.equal(f.timers.size,0);
 });
 for(const [name,response] of [
   ["HTTP failure",{ok:false,status:503}],

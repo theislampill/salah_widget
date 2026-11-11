@@ -2,7 +2,7 @@
 // Actual config resolution, boot, applyConfig and settings source. Provider and
 // renderer lifecycle doubles contain no owner storage, GPS or network effects.
 // DOM/event scheduling here is supplementary to the parent's native bridge.
-const {environment,readSource,deferred,drain}=require("./r000f-fixture.cjs");
+const {environment,readSource,deferred,drain,asDetailed}=require("./r000f-fixture.cjs");
 const {nativeInlineRuntime,SetupError}=require("./native-inline-runtime.cjs");
 function widget(options={}) {
   const f=environment(), page=options.source??readSource("index.html",options.ref),source=nativeInlineRuntime(page);
@@ -18,6 +18,8 @@ function widget(options={}) {
   function queue(name,args){const d=deferred();calls[name].push({...d,args});return d.promise;}
   if(!options.realCoarse)f.sandbox.SalahConfig.coarseDetect=(...args)=>queue("coarse",args);
   f.sandbox.SalahConfig.geocodeSearch=(...args)=>queue("search",args);
+  // R0026 consumers read the detailed outcome; arrays stand for complete-coverage matches/no-match.
+  f.sandbox.SalahConfig.geocodeSearchDetailed=(...args)=>queue("search",args).then(asDetailed);
   f.sandbox.navigator.geolocation={getCurrentPosition:(ok,bad,opts)=>{queue("gps",opts).then(ok,bad);}};
   f.sandbox.SalahConfig.permissionState=()=>Promise.resolve("granted");
   if(options.moduleMissing)delete f.sandbox.SalahConfig;
