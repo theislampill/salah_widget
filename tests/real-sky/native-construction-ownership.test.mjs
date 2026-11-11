@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
+import crypto from 'node:crypto';
 import * as contract from '../../real-sky/native-contract.mjs';
 import {LatestRenderQueue} from '../../real-sky/core/src/latest-render-queue.mjs';
 import {ReferenceRenderClient} from '../../real-sky/core/src/reference-worker-client.mjs';
@@ -20,7 +21,7 @@ const flush=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
 
 async function harness({preview=true,assets=true,failPreview=null}={}){
  let serial=0,cloudAlpha=31,previewDraws=0,refinedDraws=0,arm=null;
- const nodes=new Set(),classes=new Set(),styleSets=[],images=[],issued=[],workers=[],rafs=new Map(),intervals=new Map(),events=new Map(),docEvents=new Map(),urls=new Set(),counts={revoke:0,terminate:0,removeDoc:0,canvasRemove:0};
+ const trace=[],nodes=new Set(),classes=new Set(),styleSets=[],images=[],issued=[],workers=[],rafs=new Map(),intervals=new Map(),events=new Map(),docEvents=new Map(),urls=new Set(),counts={revoke:0,terminate:0,removeDoc:0,canvasRemove:0};
  // One-shot failure injection at an exact acquisition stage.
  const fire=stage=>{if(arm===stage){arm=null;throw new Error('controlled '+stage+' failure');}};
  const cloud={width:325,height:530};
@@ -37,7 +38,7 @@ async function harness({preview=true,assets=true,failPreview=null}={}){
   const ctx={resetTransform(){},clearRect(){alpha=0;pixels=null;},fillRect(){},setTransform(){},createLinearGradient:()=>({addColorStop(){}}),
    drawImage(source){if(source===cloud)alpha=cloudAlpha;},
    getImageData(_x,_y,width,height){const data=new Uint8ClampedArray(width*height*4);data[3]=alpha;return {data};},
-   putImageData(image){pixels=image.data;if(node.className==='real-sky-preview')previewDraws++;if(node.className==='real-sky-canvas')refinedDraws++;}};
+   putImageData(image){pixels=image.data;trace.push([node.className,crypto.createHash('sha256').update(image.data).digest('hex')]);if(node.className==='real-sky-preview')previewDraws++;if(node.className==='real-sky-canvas')refinedDraws++;}};
   node.getContext=(_type,options)=>{
    if(node.className==='real-sky-canvas'&&arm==='context'){arm=null;return null;}
    if(node.className==='real-sky-preview'&&arm==='preview-context'){arm=null;return null;}
@@ -80,7 +81,7 @@ async function harness({preview=true,assets=true,failPreview=null}={}){
   renderNativeBackgroundPreview:s=>({job:contract.nativeJob(s,true),utcMs:s.utcMs,quality:'controlled-background',rgba:backgroundRGBA.slice(),raster:{width:325,height:530,physicalState:{sun:{altDeg:30}}}}),
   encodeNativeFrame(){throw Error('controlled preview supplies its own pixels');},requireNativeWorker(){throw Error('unexpected worker fallback');}};
  vm.createContext(context);vm.runInContext(sources.join('\n'),context);
- const h={window:w,context,classes,styleSets,images,issued,workers,rafs,intervals,events,docEvents,nodes,urls,counts,snapshot,
+ const h={trace,window:w,context,classes,styleSets,images,issued,workers,rafs,intervals,events,docEvents,nodes,urls,counts,snapshot,
   arm(stage){arm=stage;},get armed(){return arm;},
   changeMask(){cloudAlpha++;},get draws(){return previewDraws;},get refinedDraws(){return refinedDraws;},
   async finishMasks(){for(const image of images)image.resolve?.();await flush();},
@@ -355,4 +356,23 @@ test('source-slice anchors used by sibling harnesses remain present and unique',
  assert.equal(lines.filter(line=>line.startsWith(' function animate(')).length,1);
  assert.equal(lines.filter(line=>line.startsWith(' function release(')).length,1);
  for(const anchor of [' function clear(',' function prepareForeground'])assert.equal(preview.split(anchor).length,2,anchor);
+});
+
+// Visual-identity guard (the look is finished): a scripted NORMAL-operation
+// sequence (startup, mask change, live invalidation, active retry, refined
+// replacement) yields a presentation trace of every framebuffer upload, CSS
+// mask/class write and issued mask request. Run with SALAH_REAL_SKY_SOURCE_DIR
+// pointing at the 645b53cc owners to compare; the digest is a diagnostic.
+test('normal-operation presentation trace (compare across source revisions)',async t=>{
+ const h=await harness();
+ try{
+  h.changeMask();h.window.SalahSkyPreview.update();await h.finishMasks();
+  h.changeMask();h.window.SalahRealSky.invalidate('controlled live withdrawal');await h.finishMasks();
+  h.changeMask();await h.window.SalahRealSkyAssets.retry();await h.finishMasks();
+  h.changeMask();h.startRefined();await flush();await h.finishMasks();
+  const record={uploads:h.trace,styles:h.styleSets,issued:h.issued,classes:[...h.classes].sort(),preview:h.window.SalahSkyPreview.state.status};
+  const digest=crypto.createHash('sha256').update(JSON.stringify(record)).digest('hex');
+  t.diagnostic('r0021-presentation-trace '+digest+' uploads='+h.trace.length+' styles='+h.styleSets.length+' issued='+h.issued.length);
+  assert.ok(h.trace.length>0&&h.issued.length>0);
+ }finally{h.close();}
 });
