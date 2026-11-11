@@ -229,5 +229,5 @@ check('no Python mixed preview keeps independent Chromium peer',lambda:whole_ent
 check('actual existing new target remains useful with unknown peer',lambda:whole_entry('new-unknown-peer',[NEW,'[]'],eligible=1,held=1))
 check('actual insufficient identity held with known peer',lambda:whole_entry('insufficient-peer',[EMPTY,'{"addons":[{}]}'],eligible=1,held=1))
 check('actual duplicate keys cannot hide legacy from selection',lambda:whole_entry('duplicate-peer',[EMPTY,'{"addons":[{"name":"Tabliss"}],"addons":[]}'],eligible=1,held=1))
-print(json.dumps(dict(host=subprocess.check_output([BASH,'--version'],text=True).splitlines()[0],platform=sys.platform,uid=os.getuid(),source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),results=RESULTS),ensure_ascii=False,indent=2))
+print(json.dumps(dict(host=subprocess.check_output([BASH,'--version'],text=True).splitlines()[0],platform=sys.platform,uid=os.getuid(),source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),auxiliaryFixtures=[str(entry.ROOT)],results=RESULTS),ensure_ascii=False,indent=2))
 sys.exit(1 if any(not row['pass_'] for row in RESULTS) else 0)

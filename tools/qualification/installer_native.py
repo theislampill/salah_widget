@@ -62,6 +62,27 @@ def native_fact(command):
         return {"command": command, "exit": None, "error": str(error)}
 
 
+def copy_fixtures(parsed, out, name, temporary_parent):
+    """Preserve primary and explicitly reported auxiliary disposable roots."""
+    primary = parsed.get("fixture") or parsed.get("fixtureRoot")
+    candidates = ([primary] if primary else []) + parsed.get("auxiliaryFixtures", [])
+    if len(candidates) > 16:
+        raise ValueError("too many fixture roots")
+    parent = Path(temporary_parent).resolve()
+    copied = []
+    for number, candidate in enumerate(candidates):
+        path = Path(candidate)
+        resolved = path.resolve()
+        if not path.is_absolute() or path.is_symlink() or resolved == parent or not resolved.is_relative_to(parent):
+            raise ValueError("reported fixture is outside the disposable temporary parent")
+        if not path.is_dir():
+            raise ValueError("reported fixture root is missing")
+        destination = out / (name + ("-fixture" if number == 0 else f"-fixture-{number}"))
+        shutil.copytree(path, destination, symlinks=True)
+        copied.append({"original": str(path), "archive_directory": destination.name})
+    return copied
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--expected-os", choices=("Linux", "Darwin", "Windows"), required=True)
@@ -103,15 +124,16 @@ def main():
             stdout, stderr, code, parsed, good = "", str(error), None, {}, False
         (out / (name + ".stdout.txt")).write_text(stdout, encoding="utf-8")
         (out / (name + ".stderr.txt")).write_text(stderr, encoding="utf-8")
+        try:
+            archived = copy_fixtures(parsed, out, name, tempfile.gettempdir())
+        except (OSError, ValueError) as error:
+            archived = []
+            parsed["fixture_copy_error"] = str(error)
+            good = False
         (out / (name + ".json")).write_text(json.dumps(parsed, indent=2) + "\n", encoding="utf-8")
         report["commands"].append({"name": name, "command": command, "started": started,
                                    "finished": dt.datetime.now(dt.timezone.utc).isoformat(),
-                                   "exit": code, "passed": good})
-        # Keep fixture-produced detail (including adverse cases) in the artifact.
-        fixture = parsed.get("fixture")
-        if fixture and Path(fixture).is_dir():
-            destination = out / (name + "-fixture")
-            shutil.copytree(fixture, destination, symlinks=True)
+                                   "exit": code, "passed": good, "archived_fixtures": archived})
         save()
         print(f"{name}: {'PASS' if good else 'FAIL'} (exit {code})", flush=True)
 
@@ -177,7 +199,7 @@ def main():
                 report["gate_error"] = "required PowerShell version unavailable"
                 save()
                 return 1
-            files = ["install-powershell.ps1", "install-powershell-guards.ps1", "install-discovery.ps1"]
+            files = ["install-host-bootstrap.ps1", "install-powershell.ps1", "install-powershell-guards.ps1", "install-discovery.ps1"]
             if args.phase in ("r0015", "r0016"):
                 files.append("install-powershell-transactions.ps1")
             if args.phase == "r0016":
@@ -186,6 +208,8 @@ def main():
                 command = [executable, "-NoProfile", "-File", str(root / "tests" / test), "-SourceFile", str(root / "install.ps1")]
                 if test == "install-powershell-transactions.ps1":
                     command.extend(["-PresetFile", str(root / "presets/salah-widget.tablissng.json")])
+                if test == "install-host-bootstrap.ps1":
+                    command.extend(["-OutputRoot", tempfile.gettempdir()])
                 run(name + "-" + test[:-4], command)
             run(name + "-discovery-mutations", [sys.executable, str(root / "tests/install-discovery-mutations.py"), str(root / "install.ps1"), executable])
         run("install-entry-native", [sys.executable, str(root / "tests/install-entry-native.py"), str(root / "install.ps1")])

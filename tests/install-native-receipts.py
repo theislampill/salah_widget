@@ -2,6 +2,7 @@
 """Collector controls: failures and missing observations must not become PASS."""
 import importlib.util
 import pathlib
+import tempfile
 import unittest
 
 path = pathlib.Path(__file__).resolve().parents[1] / 'tools/qualification/installer_native.py'
@@ -27,6 +28,20 @@ class ReceiptControls(unittest.TestCase):
         self.assertEqual(module.receipt('message\n{"results":[{"pass":true}]}\n')['results'], [{'pass': True}])
         with self.assertRaises(ValueError):
             module.receipt('{"results":[{"pass":true}]}\nunfinished output')
+
+    def test_primary_and_imported_entry_raw_fixtures_are_retained(self):
+        with tempfile.TemporaryDirectory(prefix='salah-collector-control-') as directory:
+            root=pathlib.Path(directory)
+            primary=root/'primary'; auxiliary=root/'entry'; out=root/'out'
+            for path in (primary,auxiliary,out): path.mkdir()
+            (primary/'result.txt').write_text('primary')
+            (auxiliary/'entry-output.txt').write_text('actual entry observation')
+            rows=module.copy_fixtures({'fixtureRoot':str(primary),'auxiliaryFixtures':[str(auxiliary)]},out,'case',root)
+            self.assertEqual(len(rows),2)
+            self.assertEqual((out/'case-fixture-1/entry-output.txt').read_text(),'actual entry observation')
+            with self.assertRaises(ValueError):
+                module.copy_fixtures({'fixture':str(root.parent)},out,'outside',root)
+            self.assertFalse((out/'outside-fixture').exists())
 
 
 if __name__ == '__main__':

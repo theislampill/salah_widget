@@ -64,7 +64,12 @@ foreach($row in @(
     @('root-array','[]'),@('root-singleton-empty','[{"addons":[]}]'),@('root-singleton-new','[{"addons":[{"name":"TablissNG"}]}]'),
     @('root-null','null'),@('missing-addons','{}'),@('addons-object','{"addons":{}}'),
     @('addons-null','{"addons":null}'),@('addon-scalar','{"addons":[1]}'),@('locale-scalar','{"addons":[{"defaultLocale":2}]}'),
-    @('name-object','{"addons":[{"name":{}}]}')
+    @('name-object','{"addons":[{"name":{}}]}'),
+    @('addons-key-case','{"ADDONS":[]}'),
+    @('id-key-case','{"addons":[{"ID":"ordinary@example.invalid"}]}'),
+    @('name-key-case','{"addons":[{"NAME":"TablissNG"}]}'),
+    @('locale-key-case','{"addons":[{"defaultlocale":{"name":"TablissNG"}}]}'),
+    @('locale-name-key-case','{"addons":[{"defaultLocale":{"NAME":"TablissNG"}}]}')
 )){
     $r=$row
     Check ('unsupported shape '+$r[0]) {Parser-Case $r[0] $r[1] 'unknown' 'metadata-unsupported' $false $false}
@@ -201,5 +206,7 @@ Check 'actual existing new target stays useful with unknown peer' {Main-Case 'ne
 Check 'actual insufficient identity held with known peer' {Main-Case 'insufficient-peer' @($empty,'{"addons":[{}]}') 'all' $false 1 1 0}
 Check 'actual singleton root array held with known peer' {Main-Case 'singleton-root-peer' @($empty,'[{"addons":[]}]') 'all' $false 1 1 0}
 Check 'actual duplicate keys cannot hide legacy from selection' {Main-Case 'duplicate-peer' @($empty,'{"addons":[{"name":"Tabliss"}],"addons":[]}') 'all' $false 1 1 0}
+Check 'actual wrong-case addons cannot certify absence' {Main-Case 'addons-case' @('{"ADDONS":[]}') 'all' $false 0 1 0}
+Check 'actual wrong-case identity held with known peer' {Main-Case 'identity-case-peer' @($empty,'{"addons":[{"NAME":"TablissNG"}]}') 'all' $false 1 1 0}
 [pscustomobject]@{host=$PSVersionTable.PSVersion.ToString();platform=[Environment]::OSVersion.Platform.ToString();source=(Get-FileHash -LiteralPath $SourceFile -Algorithm SHA256).Hash.ToLowerInvariant();fixture=$FixtureRoot;results=$script:results} | ConvertTo-Json -Depth 10
 if(@($script:results|Where-Object {-not $_.pass}).Count){exit 1}
