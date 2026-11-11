@@ -1,0 +1,46 @@
+# R0027 mutation controls at candidate 77014952 (generated module mutants, in memory); node v24.14.0
+$ node --test --test-reporter=spec tests/real-sky/spectral-fit-cache-mutations.test.mjs
+✔ healthy generated module passes every discriminator (7388.7145ms)
+✔ R0027 mutation discriminator: m1 no eviction (numbers right, entries leak) (2022.2638ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: m2a capacity 11,999 (1955.7497ms)
+ℹ killed by boundary: exactly capacity distinct fits retained at capacity
+✔ R0027 mutation discriminator: m2b capacity 12,001 (1875.1317ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: m2c comparison off by one (> for >=) (1905.5416ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: omit capacity guard (evict unconditionally) (1867.1807ms)
+ℹ killed by boundary: capacity-1 distinct fits are all retained
+✔ R0027 mutation discriminator: m3 LRU instead of FIFO (2049.931ms)
+ℹ killed by fifo: a hit does not refit
+✔ R0027 mutation discriminator: m4 evicts the newest (2590.3825ms)
+ℹ killed by fifo: the oldest inserted key is evicted even though it was just hit
+✔ R0027 mutation discriminator: m5 clears the whole map at capacity (4243.7464ms)
+ℹ killed by boundary: capacity+1: retained count stays at capacity
+✔ R0027 mutation discriminator: m6 bounds the outer map too (3858.9869ms)
+ℹ killed by outerUnchanged: outer map never evicts
+✔ R0027 mutation discriminator: m9a fit iterations 48 -> 47 (counts right, numbers wrong) (2537.286ms)
+ℹ killed by smallOracle: bv -0.2736: samples differ bit-for-bit
+✔ R0027 mutation discriminator: m9b reordered temperature arithmetic (2016.8298ms)
+ℹ killed by smallOracle: bv -0.2736: samples differ bit-for-bit
+✔ R0027 mutation discriminator: round B-V key (21.1704ms)
+ℹ killed by smallOracle: bv 0.65000001: samples differ bit-for-bit
+✔ R0027 mutation discriminator: m11 mutate shared returned samples on eviction (1800.8807ms)
+ℹ killed by callerRetained: returned value and samples stay frozen
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 36239.4185
+
+$ python tests/real-sky/native_spectral_cache_build_test.py   (transform/builder mutants, stderr lines)
+MUTANT m7 transform without digest guard: killed by check_digest_guard: "R0027 spectral source drift" does not match "R0027 spectral output digest mismatch: the whitelisted delta changed" : trailing byte
+MUTANT m8 anchor drift silently accepted: killed by check_anchor_guard: ValueError not raised : absent sfCache=new Map(),sfFitCache=n
+MUTANT m10 constant collides with a bundle identifier: killed by check_identifiers: <re.Match object; span=(537, 546), match='sfWeights'> is not None : sfWeights collides with vendor/real-sky/src/spectral.mjs
+MUTANT m10b constant collides with another module: killed by check_identifiers: <re.Match object; span=(411, 416), match='clamp'> is not None : clamp collides with vendor/real-sky/src/astronomy.mjs
+MUTANT bypass generator invocation: killed by <lambda>: b"/**[640 chars]Map();\nfunction sfValidate(samples){if(!Array[5920 chars];}\n" != b"/**[640 chars]Map(),sfFitCacheLimit=12000;\n// R0027 retenti[6250 chars];}\n" : builder writes transform(vendor)
+Ran 8 tests in 0.919s
+OK

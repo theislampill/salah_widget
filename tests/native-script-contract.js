@@ -29,8 +29,15 @@
   // (dcc8206b) -> 4dc7140f (Moon detail acquired at the registration boundary with unwind).
   // R0021 third rebind at 145b7ba9: moon-initial 4dc7140f763417d0d8928e02f96cb010eec31f5363fb234f656785d7bfaae90b
   // (de68e848) -> d5e648ac (a half-built runtime reports disposed and leaves the registry slot).
+  // R0027 first-paint rebind: the only R0027 change to the generated first-paint body is
+  // the reviewed retention-only spectral transform (tools/native_core_spectral_cache.py,
+  // generated real-sky/core/src/spectral.mjs SHA256
+  // 4fcda07d1fc5a210d7d748a4c33518ed3068dbbf25eacf7415fa10abaad14489). History: R0027 on accepted main
+  // 645b53cc5d04d35444f6da0e27bf5a5b6b11ce67 rebound be62ab92 (R000B) -> 8817c6599ff3958574b8d34f0cf9355368522ce03a6bc4e70fa5adfcedddcd8b;
+  // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06): R0021 a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819
+  // -> 1ba361b6 (R0021 body plus the same spectral transform).
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819',
+    'first-paint':'1ba361b60f46ac631f70315b2542018c151013cb83c6b4e0f458da63ed55769e',
     'moon-initial':'d5e648ac08b80a8291140eddbd73dc7305aa7d40f38ebcbea71e239d5be54f16',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });
@@ -38,6 +45,14 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06) by merge 5dd7c558: legacy-Moon structural control
+    // of index e3a3dedb (R0021 generated index plus the R0027 spectral hunks only). The authored source is R0021's,
+    // unchanged; every entry below, including R0021's 4af7e86f and R0027's 902f326d, remains admitted unchanged.
+    '1a5c50314e0d4c86dd2a7222211843a154e899addc44bffc944fa74777125fc8':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'5dd7c558207d76aa022f0bda73354918cc3bfc46',path:'index.html',
+      parentSha256:'e3a3dedbfaaf5e5d604add26fa071852da109d72773a077b444fdd376f771185',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0021 stacked on the R000F candidate 2aa3bd11 (R0003 54e29e6a, main 7f2e8d16) by merge 65f7c75a: legacy-Moon
     // structural control of index 0f765e33. The authored source is the admitted b09f51ed (64258c86) unchanged;
     // every entry below, including R0021's 20d1a5b0 (dcc8206b), remains admitted unchanged.
@@ -87,6 +102,14 @@
     '20d1a5b0564d0bc8bb5d4f56a3b65ed33b4738d7b49494293dcca2c26b2f7f0c':Object.freeze({
       profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'dcc8206b0e466fefc4827872e7d784b99ff56c63',path:'index.html',
       parentSha256:'c6e0e2e089d53a00626c3014f1db040162af8849a35973d8b453b1c19b00a2ff',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0027 generated spectral retention on accepted main 645b53cc: only the generated
+    // root index.html changed (authored src/native/index.html unchanged, so its
+    // R000D identity below stays current); the R000D inputs below remain admitted unchanged.
+    '902f326da4b79e3e64b56877b8a2a93421174f6e893a00f423b049f13d57f052':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'77014952203f373d3646cef7ea291a2196833aa6',path:'index.html',
+      parentSha256:'df1c6e9daf008247d9c6377275a6a905039ff58e2d4c21694d8824590022b37f',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R000D elapsed retry record at ba0851ae on accepted main da126880;

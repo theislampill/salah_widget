@@ -3,6 +3,7 @@
 from pathlib import Path
 import re,json,shutil,hashlib
 from native_core_horizon import correct_horizon
+from native_core_spectral_cache import bound_spectral_cache
 from native_star_bootstrap import star_bootstrap
 R=Path(__file__).resolve().parents[1]; S=R/'vendor/real-sky'; W=R; N=W/'real-sky'
 physical=(N/'checkpoint.json').exists() and json.loads((N/'checkpoint.json').read_text(encoding='utf-8'))['physical']
@@ -11,6 +12,7 @@ core=['src/time-scales.mjs','src/astronomy.mjs','src/projection.mjs','src/photom
 for p in core+['src/reference-worker-client.mjs','src/latest-render-queue.mjs']:
  target=N/'core'/p; target.parent.mkdir(parents=True,exist_ok=True)
  if p=='src/physical-sky-renderer.mjs':target.write_bytes(correct_horizon((S/p).read_bytes()))
+ elif p=='src/spectral.mjs':target.write_bytes(bound_spectral_cache((S/p).read_bytes()))
  else:shutil.copyfile(S/p,target)
 # Preserve the already retained notices beside a separately copied widget too.
 for name in ['LICENSE-CODE.txt','LICENSE-DATA.md','THIRD_PARTY_NOTICES.md',
