@@ -508,7 +508,9 @@ print(json.dumps(result))
         terminal = root / "terminal-probe"
         terminal.mkdir(mode=0o700)
         terminal_probe = r"""
-import json,os,pty
+import json,os,pty,select,signal,time
+started=time.monotonic()
+signal.signal(signal.SIGCHLD,signal.SIG_DFL)
 pid,fd=pty.fork()
 if pid==0:
  try:
@@ -518,10 +520,75 @@ if pid==0:
   os._exit(0)
  except OSError:
   os._exit(77)
-done,status=os.waitpid(pid,0)
-os.close(fd)
-code=os.waitstatus_to_exitcode(status)
-print(json.dumps({"controllingTerminalAllowed":code==0,"childExit":code}))
+expected=b"native terminal control\n"
+received=bytearray()
+reaped=False
+ownership_lost=False
+status=None
+master_closed=False
+signals=[]
+error=None
+# Keep the outer original 30-second ceiling. Reserve four seconds for owned
+# child cleanup; neither a timeout nor cleanup-assisted exit can pass.
+deadline=started+25
+try:
+ os.set_blocking(fd,False)
+ while bytes(received).replace(b"\r\n",b"\n")!=expected:
+  remaining=deadline-time.monotonic()
+  if remaining<=0 or not select.select([fd],[],[],remaining)[0]:
+   raise TimeoutError("PTY sentinel deadline expired")
+  try:chunk=os.read(fd,4096)
+  except BlockingIOError:continue
+  if not chunk:raise RuntimeError("PTY EOF before original sentinel")
+  received.extend(chunk)
+  if len(received)>len(expected)+expected.count(b"\n"):
+   raise RuntimeError("PTY bytes exceed original sentinel")
+ # Drain first: macOS can hold child exit while terminal output is unread.
+ while not reaped:
+  try:done,observed_status=os.waitpid(pid,os.WNOHANG)
+  except OSError:ownership_lost=True;raise
+  if done==pid:
+   reaped=True;status=observed_status
+   if time.monotonic()>deadline:raise TimeoutError("PTY child exit observed after deadline")
+   break
+  if done!=0:ownership_lost=True;raise RuntimeError("Unexpected child wait identity")
+  if time.monotonic()>=deadline:raise TimeoutError("PTY child reap deadline expired")
+  time.sleep(0.01)
+ if os.waitstatus_to_exitcode(status)!=0:raise RuntimeError("PTY child refused terminal I/O")
+except BaseException as problem:
+ error=type(problem).__name__+": "+str(problem)
+finally:
+ try:os.close(fd);master_closed=True
+ except OSError as problem:error=error or ("master close failed: "+str(problem))
+ if not reaped and not ownership_lost:
+  # Re-establish ownership immediately before a signal. ECHILD or an unknown
+  # wait result cannot authorize killing a potentially reused PID.
+  owned=False
+  try:
+   done,observed_status=os.waitpid(pid,os.WNOHANG)
+   if done==pid:reaped=True;status=observed_status
+   elif done==0:owned=True
+   else:ownership_lost=True;error=error or "Unexpected cleanup wait identity"
+  except OSError as problem:ownership_lost=True;error=error or ("child ownership unavailable: "+str(problem))
+  if owned:
+   try:os.kill(pid,signal.SIGKILL);signals.append("SIGKILL")
+   except ProcessLookupError:pass
+   except OSError as problem:error=error or ("child kill failed: "+str(problem))
+   cleanup_deadline=min(started+29,time.monotonic()+4)
+   while time.monotonic()<cleanup_deadline:
+    try:done,observed_status=os.waitpid(pid,os.WNOHANG)
+    except OSError as problem:ownership_lost=True;error=error or ("child wait failed: "+str(problem));break
+    if done==pid:reaped=True;status=observed_status;break
+    time.sleep(0.01)
+code=os.waitstatus_to_exitcode(status) if reaped else None
+allowed=(error is None and reaped and code==0 and master_closed and not signals
+         and bytes(received).replace(b"\r\n",b"\n")==expected)
+print(json.dumps({"controllingTerminalAllowed":allowed,"childExit":code,
+ "childPid":pid,"childReaped":reaped,"masterClosed":master_closed,
+ "childOwnershipLost":ownership_lost,
+ "ptyBytesHex":bytes(received).hex(),"cleanupSignals":signals,"error":error,
+ "elapsedSeconds":time.monotonic()-started,"subjectCeilingSeconds":30}))
+raise SystemExit(0 if allowed else 2)
 """
         terminal_run = sandbox_run([sys.executable, "-c", terminal_probe], terminal, env)
         require(terminal_run.returncode == 0, "BOOTSTRAP: native terminal capability probe failed: " + terminal_run.stderr)
@@ -569,8 +636,9 @@ print(json.dumps({"controllingTerminalAllowed":code==0,"childExit":code}))
 
 def preview(name, source=FROZEN, population="known", route="github", expected_failure=False,
             missing_preset=False, invalid=False, malformed_boolean=False, arguments=None,
-            pipe=False):
+            pipe=False, no_open=False):
     root, subject, env = fixture(name, population, route)
+    env["NO_OPEN"] = "1" if no_open else "0"
     if missing_preset:
         env["SALAH_WIDGET_PRESET_URL"] = ""
     if invalid:
@@ -659,6 +727,12 @@ def preview(name, source=FROZEN, population="known", route="github", expected_fa
         require(re.search(r"unknown|held", text, flags=re.I), "Unknown discovery lacks explicit held/unknown diagnosis")
         require(not re.search(r"Traceback|TypeError|JSONDecodeError", text), "Parser crash substituted for an explicit held target")
         require(not re.search(r"Would prepare[^\n]*r0016-unknown", text), "Unknown discovery produced an eligible plan")
+    if no_open and not expected_failure:
+        automatic_lines = [clause for clause in re.split(r"[;\r\n]+", text)
+                           if re.search(r"\bwould\b.*\b(open|launch)\b", clause, re.I)]
+        require(not automatic_lines, "NoOpen preview promises automatic browser opens: " + repr(automatic_lines))
+        require(re.search(r"NoOpen|NO_OPEN|open(?:ed)? manually|pages? yourself", text, re.I),
+                "NoOpen preview does not explain manual browser opening")
     observed["entryScope"] = "complete source piped to native Bash" if pipe else "complete source file in native Bash"
     return observed
 
@@ -823,6 +897,9 @@ else:
     if ARGS.suites in ("all", "entry"):
         for route in ("github", "store", "ask"):
             check("whole-entry " + route, "entry", lambda r=route: preview("entry-" + r, route=r))
+        for route in ("github", "store"):
+            check("whole-entry NoOpen " + route, "entry",
+                  lambda r=route: preview("entry-noopen-" + r, route=r, no_open=True))
         check("whole-entry advertised pipe", "entry", lambda: preview("entry-pipe", pipe=True))
         for population in ("installed", "mixed-legacy", "mixed-unknown"):
             check("whole-entry " + population, "interface" if population == "mixed-unknown" else "entry",

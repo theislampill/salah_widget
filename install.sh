@@ -785,13 +785,17 @@ if [ "$DRY_RUN" = 1 ]; then
     if [ "$has_new" != 1 ]; then
       case "$SALAH_INSTALL_SOURCE" in
         ask) printf 'Install source unresolved: GitHub manual route or official store page.\n' ;;
-        store) printf 'Would open official store: %s\n' "$store" ;;
+        store) if [ "$NO_OPEN" = 1 ]; then
+                 printf 'Would show official store URL for manual opening (NO_OPEN=1): %s\n' "$store"
+               else printf 'Would open official store: %s\n' "$store"; fi ;;
         github) printf 'Would resolve/download GitHub release; release/version/path unresolved until execution.\n' ;;
       esac
     fi
     if [ -n "$SALAH_WIDGET_PRESET_URL" ]; then printf 'Would stage the configured preset and guide manual import; path unresolved until execution.\n'
     else warn "No preset URL configured; preset import cannot be prepared."; fi
-    printf 'Would offer clipboard paths and open the browser manual installation/import pages.\n'
+    if [ "$NO_OPEN" = 1 ]; then
+      printf 'Would offer clipboard paths and show the browser manual installation/import URLs (NO_OPEN=1); open those pages manually.\n'
+    else printf 'Would offer clipboard paths and open the browser manual installation/import pages.\n'; fi
   done
   printf 'Preview targets: %s eligible, %s held, %s refused.\n' "$eligible_count" "$held_count" "$refused_count"
   warn "Importing the preset replaces your current TablissNG dashboard."

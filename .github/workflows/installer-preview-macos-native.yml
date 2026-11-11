@@ -1,0 +1,71 @@
+name: R0016 actual macOS installer qualification
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - install.sh
+      - tests/install-preview.py
+      - tests/install-entry-bash.py
+      - tests/install-bash.py
+      - tests/install-discovery.py
+      - tests/install-detectors.py
+      - tests/install-discovery-mutations.py
+      - tests/install-mutations.py
+      - tests/install-staging-native.py
+      - tests/install-builder.cjs
+      - src/native/builder.html
+      - src/native/config.js
+      - tools/qualification/installer_native.py
+      - .github/workflows/installer-preview-macos-native.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-macos-native-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  darwin:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /src/native/builder.html
+            /src/native/config.js
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Execute full native R0016 matrix with Apple Bash 3.2
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_native.py --expected-os Darwin --phase r0016 --output "$RUNNER_TEMP/installer-evidence"
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, tarfile
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'
+          assert root.is_dir(), 'No native evidence directory'
+          with tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False) as archive:
+              archive.add(root, arcname='installer-evidence')
+          PY
+      - name: Retain original macOS qualification evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-native-Darwin-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30

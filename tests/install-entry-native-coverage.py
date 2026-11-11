@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Direct native -File entry with private startup spies; no owner profile is used."""
-import argparse, base64, collections, datetime, hashlib, json, os, pathlib, secrets, subprocess, sys, tempfile, time, zipfile
+import argparse, base64, collections, datetime, hashlib, json, os, pathlib, re, secrets, subprocess, sys, tempfile, time, zipfile
 import xml.etree.ElementTree as ET
 import importlib.util
 SUPPORT_PATH = pathlib.Path(__file__).with_name('install-entry-coverage-support.py')
@@ -12,7 +12,7 @@ LOCKS = {}
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('source', type=pathlib.Path, nargs='?', default=pathlib.Path(__file__).resolve().parents[1]/'install.ps1')
 parser.add_argument('--host', action='append', choices=('ps51','ps7'))
-SCENARIOS = ('github','cached','store','ask','installed','mixed','legacy','none','missing-preset','bad-option','positive','no-open','readable','unreadable')
+SCENARIOS = ('github','cached','store','ask','installed','mixed','legacy','none','missing-preset','bad-option','positive','no-open','readable','unreadable','invalid-env-source','valid-env-store','preview-noopen-github','preview-noopen-store')
 parser.add_argument('--scenario', action='append', choices=SCENARIOS)
 parser.add_argument('--preset', type=pathlib.Path, default=pathlib.Path(__file__).resolve().parents[1]/'presets/salah-widget.tablissng.json')
 args = parser.parse_args()
@@ -244,11 +244,13 @@ def _case_impl(host_name, host, native_modules, scenario):
                INSTALL_PRESET_FIXTURE=str(preset_fixture),
                INSTALL_FIXTURE_PF=str(subject/'pf'), INSTALL_FIXTURE_PF86=str(subject/'pf86'),
                SALAH_INSTALL_SOURCE='github', SALAH_WIDGET_HASH='lat=24.47&lon=39.61&method=4')
+    route = 'store' if scenario in ('store','valid-env-store','preview-noopen-store') else 'ask' if scenario == 'ask' else 'invalid' if scenario == 'bad-option' else 'github'
+    env['SALAH_INSTALL_SOURCE'] = 'invalid' if scenario == 'invalid-env-source' else route
     command = [host,'-NoProfile','-File',str(SOURCE),'-PresetUrl','' if scenario == 'missing-preset' else 'https://example.invalid/preset',
-               '-InstallSource',scenario if scenario in ('ask','store') else 'invalid' if scenario == 'bad-option' else 'github',
                '-WidgetHash',env['SALAH_WIDGET_HASH']]
+    if scenario not in ('invalid-env-source','valid-env-store'): command += ['-InstallSource',route]
     if not normal: command += ['-DryRun']
-    if scenario == 'no-open': command += ['-NoOpen']
+    if scenario in ('no-open','preview-noopen-github','preview-noopen-store'): command += ['-NoOpen']
     # Independently observe host-only startup in this same owned profile. No
     # observed path becomes an exclusion: actual entry comparisons remain exact.
     startup = root/'host-only-control'; startup.mkdir()
@@ -308,7 +310,7 @@ def _case_impl(host_name, host, native_modules, scenario):
     observation.update(profileWindow=profile_window,hostOnlyBaseline=startup_window,
                        profileScope='Complete owned USERPROFILE before launch, at actual PID/nonce readiness, and after exit; no path-name exclusions.')
     try:
-        if scenario != 'bad-option':
+        if scenario not in ('bad-option','invalid-env-source'):
             require(ready(root,env),'BOOTSTRAP_BLOCKED: final startup interception nonce missing or wrong')
             require(profile_window['before']==profile_window['atReady'],'PROFILE_STARTUP_NOT_QUIESCENT: actual host changed USERPROFILE before the installer boundary; no exclusion is credited')
         if scenario in ('readable','unreadable'):
@@ -355,18 +357,29 @@ def _case_impl(host_name, host, native_modules, scenario):
             require(unchanged and not effects,'Dry-run changed owned state or reached effects')
             require(not list(host_home.glob('SalahWidgetBundle-*')),'Dry-run created a retained bundle outside the temp subject')
             support.assert_profile_window(profile_window['before'],profile_window['after'])
-            failure = scenario in ('legacy','none','bad-option','unreadable')
+            failure = scenario in ('legacy','none','bad-option','unreadable','invalid-env-source')
             require((run.returncode != 0) == failure,'Wrong direct process exit')
+            if scenario == 'invalid-env-source':
+                require(('InstallSource' in stdout+stderr or 'SALAH_INSTALL_SOURCE' in stdout+stderr) and 'Preview only; no changes made' not in stdout,
+                        'Invalid environment source did not produce a specific unsuccessful option refusal')
             if not failure:
                 require('Preview only; no changes made' in stdout,'Preview completion missing')
                 require('Importing the preset replaces your current TablissNG dashboard' in stdout,'Replacement warning missing')
                 if scenario == 'ask': require('Install source unresolved' in stdout,'Choice fabricated')
                 if scenario in ('github','cached','mixed'): require('release/version/path unresolved' in stdout,'Remote facts fabricated')
                 if scenario == 'missing-preset': require('No preset URL configured' in stdout,'Empty preset URL not honored')
+                if scenario == 'valid-env-store':
+                    for url in ('https://chromewebstore.google.com/detail/tablissng/dlaogejjiafeobgofajdlkkhjlignalk','https://addons.mozilla.org/en-US/firefox/addon/tablissng/'):
+                        require(re.search(r'^Would open official store: '+re.escape(url)+r'\r?$',stdout,re.M),'Valid environment source did not select the resolved fixture store plan')
+                    require('Install source unresolved' not in stdout,'Valid environment store source remained unresolved')
+                if scenario in ('preview-noopen-github','preview-noopen-store'):
+                    automatic=[clause for clause in re.split(r'[;\r\n]+',stdout) if re.search(r'\bwould\b.*\b(open|launch)\b',clause,re.I)]
+                    require(not automatic,'NoOpen preview promises automatic browser opens: '+repr(automatic))
+                    require(re.search(r'NoOpen|NO_OPEN|open(?:ed)? manually|pages? yourself',stdout,re.I),'NoOpen preview lacks manual-opening guidance')
         RESULTS.append(dict(host=host_name,case=scenario,pass_=True,observation=observation))
     except Exception as error:
         RESULTS.append(dict(host=host_name,case=scenario,pass_=False,error=str(error),observation=observation))
-    return scenario=='bad-option' or ready(root,env)
+    return scenario in ('bad-option','invalid-env-source') or ready(root,env)
 
 def case(host_name,host,native_modules,scenario):
     start=len(RESULTS)

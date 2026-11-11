@@ -31,6 +31,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# ValidateSet does not validate a parameter's environment-derived default.
+if ($InstallSource -notin @('ask', 'github', 'store')) {
+    throw 'InstallSource (SALAH_INSTALL_SOURCE) must be ask, github, or store.'
+}
+
 $ChromeTablissNgId = "dlaogejjiafeobgofajdlkkhjlignalk"
 $EdgeTablissNgId   = "mkaphhbkcccpgkfaifhhdfckagnkcmhm"
 
@@ -1640,12 +1645,16 @@ if ($DryRun) {
         Write-Host "Would prepare $($target.Browser) / $($target.ProfileName)."
         if (-not $target.HasTablissNG) {
             if ($InstallSource -eq "ask") { Write-Host "Install source unresolved: GitHub manual route or official store page." }
-            elseif ($InstallSource -eq "store") { Write-Host "Would open official store: $($target.Config.StoreUrl)" }
+            elseif ($InstallSource -eq "store") {
+                if ($NoOpen) { Write-Host "Would show official store URL for manual opening (NoOpen): $($target.Config.StoreUrl)" }
+                else { Write-Host "Would open official store: $($target.Config.StoreUrl)" }
+            }
             else { Write-Host "Would resolve/download GitHub release; release/version/path unresolved until execution." }
         }
         if ($PresetUrl) { Write-Host "Would stage configured preset and guide manual import; path unresolved until execution." }
         else { Write-Warn "No preset URL configured; preset import cannot be prepared." }
-        Write-Host "Would open the browser's manual installation/import pages and offer clipboard paths."
+        if ($NoOpen) { Write-Host "Would show the browser's manual installation/import URLs and offer clipboard paths (NoOpen); open those pages manually." }
+        else { Write-Host "Would open the browser's manual installation/import pages and offer clipboard paths." }
     }
     Write-Host "Preview targets: $eligibleCount eligible, $heldCount held, $refusedCount refused."
     Write-Warn "Importing the preset replaces your current TablissNG dashboard."

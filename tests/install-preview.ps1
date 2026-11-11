@@ -233,7 +233,9 @@ try {
     } else {
         $env:ProgramFiles=$env:R0016_FIXTURE_PF
         [Environment]::SetEnvironmentVariable('ProgramFiles(x86)',$env:R0016_FIXTURE_PF86,'Process')
-        $parameters=@{DryRun=$true;InstallSource=$spec.route;PresetUrl=$spec.presetUrl;WidgetHash=$WidgetHash}
+        $parameters=@{DryRun=$true;PresetUrl=$spec.presetUrl;WidgetHash=$WidgetHash}
+        if(-not $spec.omitInstallSource){$parameters.InstallSource=$spec.route}
+        if($spec.noOpen){$parameters.NoOpen=$true}
         $global:LASTEXITCODE=0
         try{& $spec.source @parameters | ForEach-Object {if($null -ne $_){[void]$returned.Add($_)}else{$nullReturnCount++}};$entryExit=$LASTEXITCODE}
         catch{$entryExit=1;$reason=$_.Exception.Message;$reasonStack=$_.ScriptStackTrace}
@@ -306,7 +308,7 @@ function New-PreviewCase([string]$Name,[string]$Mode,[string]$Population='known'
         readiness=(Join-Path $context.hostControl 'preview-ready');nonce=[guid]::NewGuid().ToString('N')
         result=(Join-Path $context.hostControl 'child-result.json')
         work=$work;retained=$retained;download=$download;presets=$presets;unpacked=$unpacked;cached=$cached;preset=$preset;profile=$fixtureProfile;compiler=$compiler
-        call='';route='github';presetUrl='https://fixture.invalid/preset'
+        call='';route='github';presetUrl='https://fixture.invalid/preset';omitInstallSource=$false;noOpen=$false;expectedSource=''
     }
     $context.values.R0016_METHOD_TARGET=Join-Path $context.hostControl 'method-must-not-run'
     $context.values.R0016_PREVIEW_SPEC=Join-Path $context.hostControl 'case.json'
@@ -411,6 +413,23 @@ function Run-PreviewCase($Case,[string]$Contract,[bool]$ExpectedFailure=$false){
             }
             if($Case.population -eq 'mixed-unknown' -and $text -notmatch 'Would prepare Google Chrome'){throw 'Held target suppressed an eligible peer'}
             if($Case.spec.presetUrl -eq '' -and $text -notmatch 'No preset URL configured'){throw 'Missing preset was not reported honestly'}
+            if($Case.spec.noOpen -and -not $ExpectedFailure){
+                $automaticLines=@($text -split '[;\r\n]+' | Where-Object {
+                    $_ -match '(?i)\bwould\b.*\b(open|launch)\b'
+                })
+                if($automaticLines.Count){throw 'NoOpen preview still promises automatic browser opens'}
+                if($text -notmatch '(?i)NoOpen|NO_OPEN|open(?:ed)? manually|pages? yourself'){throw 'NoOpen preview does not explain manual browser opening'}
+            }
+            if(-not $ExpectedFailure -and $Case.spec.expectedSource -eq 'store'){
+                foreach($url in @('https://chromewebstore.google.com/detail/tablissng/dlaogejjiafeobgofajdlkkhjlignalk','https://addons.mozilla.org/en-US/firefox/addon/tablissng/')){
+                    if($text -notmatch ('(?m)^Would open official store: '+[regex]::Escape($url)+'\r?$')){throw 'Effective source did not select the resolved fixture store plan'}
+                }
+                if($text -match 'Install source unresolved'){throw 'Effective store source remained unresolved'}
+            }
+            if(-not $ExpectedFailure -and $Case.spec.expectedSource -eq 'github' -and $text -notmatch 'release/version/path unresolved'){throw 'Effective source did not select the GitHub plan'}
+            if($Case.spec.omitInstallSource -and $ExpectedFailure){
+                if($value.reason -notmatch '(?i)InstallSource|SALAH_INSTALL_SOURCE' -or $text -match 'Preview only; no changes made'){throw 'Invalid environment source lacked a specific unsuccessful option refusal'}
+            }
         }
     } catch {
         $caseError=$_.Exception.Message
@@ -570,6 +589,22 @@ if($guardProven -and $Suite -in @('Wrapper','All')){
     $Results.Add((Run-PreviewCase $case 'entry'))
     $case=New-PreviewCase 'wrapper-invalid-option' 'wrapper';$case.spec.route='invalid'
     $Results.Add((Run-PreviewCase $case 'entry' $true))
+    foreach($sourceCase in @(
+        @{name='invalid-environment-source';environment='invalid';route='github';omit=$true;failure=$true},
+        @{name='empty-environment-default-source';environment='';route='github';omit=$true;failure=$false},
+        @{name='valid-environment-store-source';environment='store';route='store';omit=$true;failure=$false},
+        @{name='explicit-source-overrides-invalid-environment';environment='invalid';route='store';omit=$false;failure=$false}
+    )){
+        $case=New-PreviewCase ('wrapper-'+$sourceCase.name) 'wrapper'
+        $case.context.values.SALAH_INSTALL_SOURCE=$sourceCase.environment
+        $case.spec.route=$sourceCase.route;$case.spec.expectedSource=$sourceCase.route;$case.spec.omitInstallSource=$sourceCase.omit
+        $Results.Add((Run-PreviewCase $case 'entry' $sourceCase.failure))
+    }
+    foreach($route in @('github','store')){
+        $case=New-PreviewCase ('wrapper-noopen-'+$route) 'wrapper'
+        $case.spec.route=$route;$case.spec.noOpen=$true
+        $Results.Add((Run-PreviewCase $case 'entry'))
+    }
 }
 if($guardProven -and $Suite -in @('Mutants','All')){
     $mutantRows=@(
