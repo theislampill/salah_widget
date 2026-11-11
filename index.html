@@ -4171,6 +4171,57 @@ function bindConfig(c){            // copy a resolved WidgetConfig into the live
   datefmtStr=c.datefmt; LPOLL=c.lp||0;
   const card=document.querySelector(".c"); if(card) card.dataset.appearance=c.appearance==="contrast"?"contrast":"glass";
 }
+// ---- R0003 configuration-effect contract (docs/state-contracts/R0003.md) ----
+// One row per key any real producer puts on a WidgetConfig. applyConfig classifies a proposal against the
+// accepted CONFIG exactly once and is the only effect dispatcher: "none" adopts persistence metadata only,
+// "presentation" rebinds display preferences without generation/reset/provider/sky work, "broad" is the
+// existing invalidating chain. An unknown key, any target/calculation/time-intent/evidence/provenance
+// difference, or an explicit Reset is broad. Pure: reads only its arguments and these frozen constants.
+const CONFIG_EFFECTS=Object.freeze({
+  v:{kind:"schema",path:"none"}, savedAt:{kind:"persistence-metadata",path:"none"},
+  label:{kind:"label",path:"presentation"}, time:{kind:"time-format",path:"presentation"},
+  datefmt:{kind:"date-format",path:"presentation"}, appearance:{kind:"appearance",path:"presentation"},
+  source:{kind:"provenance",path:"broad",compare:"origin"}, origin:{kind:"provenance",path:"broad",compare:"origin"},
+  locationEvidence:{kind:"location-evidence",path:"broad",compare:"evidence"},
+  detectProvider:{kind:"acquisition-input",path:"broad",compare:"if-proposed"},
+  area:{kind:"acquisition-input",path:"broad",compare:"if-proposed"}, accuracy:{kind:"acquisition-input",path:"broad",compare:"if-proposed"},
+  lat:{kind:"location-target",path:"broad"}, lon:{kind:"location-target",path:"broad"},
+  method:{kind:"calculation",path:"broad"}, school:{kind:"calculation",path:"broad"}, tz:{kind:"time-intent",path:"broad"},
+  units:{kind:"units",path:"broad"}, lp:{kind:"light-pollution",path:"broad"}, seed:{kind:"seed",path:"broad"}
+});
+const CONFIG_EVIDENCE_FIELDS=Object.freeze(["intent","source","accuracyM","acquiredAt","provider","area","bounds"]);
+function sameConfigEvidence(a,b){
+  if(a==null||b==null) return a==null&&b==null;
+  for(const k of new Set([...Object.keys(a),...Object.keys(b)])){
+    if(!CONFIG_EVIDENCE_FIELDS.includes(k)) return false;          // unclassified evidence fails closed
+    const x=a[k],y=b[k];
+    if(k==="bounds"){ if(x==null||y==null){ if(!(x==null&&y==null)) return false; }
+      else if(!["south","north","west","east"].every(e=>x[e]===y[e])||Object.keys(x).length!==4||Object.keys(y).length!==4) return false; }
+    else if(x!==y) return false;
+  }
+  return true;
+}
+function classifyConfigChange(accepted,proposed,intent){
+  if(intent&&intent.reset) return Object.freeze({path:"broad",changed:Object.freeze([]),reason:"explicit-reset"});
+  if(!accepted||!proposed) return Object.freeze({path:"broad",changed:Object.freeze([]),reason:"no-accepted-config"});
+  const has=(o,k)=>Object.prototype.hasOwnProperty.call(o,k), changed=[];
+  let path="none", reason="equal";
+  for(const key of new Set([...Object.keys(accepted),...Object.keys(proposed)])){
+    const row=Object.prototype.hasOwnProperty.call(CONFIG_EFFECTS,key)?CONFIG_EFFECTS[key]:null;
+    let differs;
+    if(!row) differs=true;
+    else if(row.compare==="origin") differs=(accepted.origin||accepted.source)!==(proposed.origin||proposed.source);
+    else if(row.compare==="evidence") differs=!sameConfigEvidence(accepted[key],proposed[key]);
+    else if(row.compare==="if-proposed") differs=has(proposed,key)&&proposed[key]!==accepted[key];
+    else differs=row.path!=="none"&&accepted[key]!==proposed[key];
+    if(!differs) continue;
+    changed.push(key);
+    if(!row){ path="broad"; reason="unclassified-field"; }
+    else if(row.path==="broad"){ path="broad"; if(reason!=="unclassified-field") reason=row.kind; }
+    else if(path==="none"){ path="presentation"; reason="display-only"; }
+  }
+  return Object.freeze({path,changed:Object.freeze(changed),reason});
+}
 if(window.SalahConfig){
   const _r=SalahConfig.resolve(location.hash);
   _cfgMode=_r.mode; _needsDetect=_r.needsDetect; _hashCfg=_r.hashCfg||{}; _cfgFlags=_r.flags||_cfgFlags;
@@ -7065,22 +7116,22 @@ function resetForNewLocation(){
 async function applyConfig(cfg, opts){
   opts=opts||{};
   cfg=window.SalahConfig?SalahConfig.normalize(cfg):cfg;
-  // A timetable material choice cannot revoke weather, prayer or celestial
-  // ownership. Compare every scene/data preference before persistence changes
-  // source/savedAt; acquisition evidence must also remain exactly the same.
-  const appearanceOnly=!!(CONFIG&&cfg.appearance!==CONFIG.appearance&&
-    ["lat","lon","tz","label","method","school","time","units","datefmt","lp","seed"].every(k=>cfg[k]===CONFIG[k])&&
-    JSON.stringify(cfg.locationEvidence)===JSON.stringify(CONFIG.locationEvidence));
+  // Classify against the live accepted configuration BEFORE persistence changes
+  // source/savedAt (R0003). Reset is an explicit intent, never inferred from equality.
+  const change=classifyConfigChange(CONFIG,cfg,{reset:!!opts.reset});
   if(opts.save && window.SalahConfig){
     const r=SalahConfig.saveLocal(cfg);
     _publishPersistence("save",r);                 // publish before any awaited provider work
     if(r.ok){ cfg.origin=cfg.origin||cfg.source; cfg.source="localStorage"; cfg.savedAt=r.savedAt; }   // acquisition evidence and original origin survive the storage marker
   }
-  if(appearanceOnly){
-    // Provider-adopted live tz can differ from CONFIG.tz. A row material change
-    // publishes only this preference; rebinding the hint would retarget the sky.
-    CONFIG=cfg;
+  if(change.path==="none"){ CONFIG=cfg; return; }  // no semantic change: the persistence outcome above is the only effect
+  if(change.path==="presentation"){
+    // Display preferences only. Never bindConfig here: the provider-adopted live tz,
+    // the frozen _cacheTz, generation, request owners, throttles and sky stay as accepted.
+    CONFIG=cfg; label=cfg.label||""; fmt24=(cfg.time!=="12"); datefmtStr=cfg.datefmt;
     const card=document.querySelector(".c");if(card)card.dataset.appearance=cfg.appearance==="contrast"?"contrast":"glass";
+    setLocLabel();                                  // directly owned header text
+    _renderDirty=true;                              // time/date strings on the next eligible (visible) frame
     return;
   }
   beginRuntimeGeneration();
@@ -7461,7 +7512,7 @@ async function _resetLocal(){
     // Reset still owns the detected location, while preferences edited since
     // dispatch (or during apply's await) own their fields and their close-save.
     Object.assign(c,_newerSetPrefs(prefOwner));
-    await applyConfig(c,{save:false});
+    await applyConfig(c,{save:false,reset:true});     // an explicit Reset resets even when values are equal (R0003 D1)
     if(!_ownsSetLookup(owner)) return;
     const prefs=_newerSetPrefs(prefOwner);
     _populateSettingsForm();
