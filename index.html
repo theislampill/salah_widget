@@ -7356,16 +7356,23 @@ function _setPin(src){
   b.title = t; b.setAttribute("aria-label", t);   // state-bearing accessible name (not color-only)
 }
 
-// forward-geocode search on the location field (same shared SalahConfig.geocodeSearch as the builder):
-// type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter.
+// forward-geocode search on the location field (same shared SalahConfig.geocodeSearchDetailed as the builder):
+// type a place/postcode + Enter → search → fill lat/lon; multiple matches cycle on Enter. A valid no-match,
+// an unavailable search and partial provider coverage get distinct feedback. Resolves to the detailed status,
+// or "superseded" when a newer session/edit/lookup owns the form (then nothing is touched).
 async function _runSetSearch(q){
   const owner=_captureSetLookup(), bias=_setHomeCC;
   _setStatus("Searching…");
-  let cands=[];
-  try{ if(window.SalahConfig) cands=await SalahConfig.geocodeSearch(q,{homeCC:bias}); }catch(e){}
-  if(!_ownsSetLookup(owner)) return;
-  if(!cands.length){ _setCands=[]; _setStatus("Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for browser location.",true); return; }
-  _setCands=cands; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value}; _showSetCand();
+  let r=null;
+  try{ if(window.SalahConfig) r=await SalahConfig.geocodeSearchDetailed(q,{homeCC:bias}); }catch(e){}
+  if(!_ownsSetLookup(owner)) return "superseded";
+  const status=r&&r.status||"unavailable";
+  if(status!=="matches"){ _setCands=[];
+    _setStatus(status==="no-match" ? "Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for browser location."
+      : "Search unavailable for “"+q+"” — a provider failed. Try again, set coordinates below, or tap the pin for browser location.",true);
+    return status; }
+  _setCands=r.candidates; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value,partial:r.coverage==="partial"}; _showSetCand();
+  return status;
 }
 function _showSetCand(){
   if(!_setCandOwner || !_ownsSetLookup(_setCandOwner)) return;
@@ -7376,9 +7383,10 @@ function _showSetCand(){
   _setLocationEvidence=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null; _setLocationOrigin="place"; _setLocationSaved=false;
   _setCandOwner.label=_byId("set-label").value;              // cycling owns its programmatic display-name update
   _setPin("manual"); _setDirty=true;                          // a searched place is a user choice, not live sensing → grey pin
+  const partial=_setCandOwner.partial?"Partial results, a provider failed":"";   // matches exist but a search source failed (leads the line)
   _setStatus(_setCands.length>1
-    ? ("Match "+(_setCandIdx+1)+" of "+_setCands.length+": "+c.norm+"\npress Enter to cycle")
-    : ("Found: "+c.norm));
+    ? ((partial?partial+" — match ":"Match ")+(_setCandIdx+1)+" of "+_setCands.length+": "+c.norm+"\npress Enter to cycle")
+    : ((partial||"Found")+": "+c.norm));
 }
 // date format: keep the preset dropdown in sync with the editable code box (mirrors builder.html)
 const _DF_PRESETS=["YYYY-MM-DD","MM/DD/YYYY","DD/MM/YYYY","DD MMMM YYYY"];
