@@ -562,6 +562,21 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   the async `coarseDetect()` in `boot()`; failure opens the manual settings panel (never crashes).
 - **Coarse detect:** GeoJS (`get.geojs.io/v1/ip/geo.json`) → ipinfo.io fallback, AbortController timeout, IANA tz
   from the device (`Intl`) first. Approximate (IP-based) — surfaced as "estimated area," never "precise."
+- **External location admission (R0026):** provider and browser coordinates pass `admitCoordinates` BEFORE
+  `normalize()` — a finite JSON number or a complete decimal string (sign/fraction, trimmed; no hex, exponent,
+  `Infinity` or prefix garbage) inside [-90,90]/[-180,180]; ±0 and boundaries unchanged; never clamped. A
+  rejected coarse body is a failed attempt and advances to the one existing fallback. Coarse results carry
+  additive `attempts:[{provider,state,reason}]`; invalid provider accuracy is `null`, never 0. Manual, hash and
+  saved configuration keep R001E `normalize()` clamping (e.g. a typed 999 becomes 90); that is user input, not
+  provider evidence. `SalahConfig.geolocate` and the builder's one-shot pin apply the same admission.
+- **Place search outcomes:** `geocodeSearchDetailed(q,{homeCC})` is the one engine →
+  `{status, coverage, candidates, attempts}`; `status ∈ {not-requested, matches, no-match, unavailable}`,
+  `coverage ∈ {complete, partial, none}` (null when not requested), per-provider
+  `state ∈ {ok, no-match, transport, http, parse, timeout, admission}`. HTTP status and envelope shape are checked
+  before candidates; Zippopotam HTTP 404 is that provider's valid no-match; one shared rejecting 8 s deadline
+  settles the outcome once. `geocodeSearch` remains a documented lossy array projection (candidates only); the
+  builder and settings consume the detailed result and derive `superseded` from their own ownership guards
+  (a stale success or error changes nothing). No provider body, query or attempt record is persisted.
 - **Runtime apply** (`applyConfig`): the settings panel updates the live config **in-memory, no reload** (so it
   works when third-party-iframe storage is blocked). `cacheKey`/`wxKey` are **functions** (not consts) so the new
   location's caches are keyed correctly; the post-config pipeline (`startWeather`/`loadPrayerData`/`startRenderLoop`)
