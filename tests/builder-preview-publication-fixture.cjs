@@ -25,7 +25,7 @@ function loader(mutate) {
     return f;
   };
 }
-const ledger=f=>f.sandbox.__pvLedger;
+const ledger=f=>[...f.sandbox.__pvLedger];             // copied into this realm (deepEqual-safe)
 const navs=f=>ledger(f).length;
 const last=f=>ledger(f)[ledger(f).length-1];
 const srcHash=src=>new URL(src).hash.slice(1);

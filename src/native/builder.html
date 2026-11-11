@@ -89,6 +89,7 @@ iframe{box-shadow:0 18px 50px #0008}
         </select>
       </div>
     </div>
+    <p class="note" id="draftnote" role="status" aria-live="polite" hidden></p>
 
     <div class="row">
       <div>
@@ -211,17 +212,53 @@ function formConfig(){
 function hash(){ return window.SalahConfig ? SalahConfig.serialize(formConfig(), embedMode==="local"?{mode:"local",explicitPrefs:["method","units","appearance"]}:{explicitPrefs:["appearance"]}) : ""; }
 let rev=0;
 function url(){ return base+"#"+hash(); }
-// the widget reads only location.hash, so a changing ?r= query is ignored by it but
-// forces the iframe to actually reload (a hash-only change wouldn't re-run the script).
-function previewUrl(){ return base+"?r="+(rev++)+"#"+hash(); }
 function snippet(){
   const allow = embedMode==="local" ? '\n  allow="geolocation"' : '';
   return `<iframe\n  title="Prayer Times"\n  referrerpolicy="no-referrer"${allow}\n  src="${url()}"\n  style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden"\n  scrolling="no">\n</iframe>`;
 }
+// Preview publication (R000F). Three separate facts: the draft (form fields + embedMode, owned by the handlers
+// above/below), the canonical output (hash()/snippet() through the one shared serializer), and `issued` = the last
+// preview navigation actually assigned to the iframe. `issued` is an issue receipt only: nothing observes the
+// cross-origin frame loading or rendering, so it never means "loaded".
+let issued=null;                                  // {identity,src,allow,hash,rev} | null
+// Owner decision D2 (2026-11-11): identity = permission policy + destination + canonical serialized output.
+// The ?r= cachebuster and provenance (builderLocation; never serialized) are deliberately excluded.
+function previewIdentity(allow,h){ return allow+" "+base+"#"+h; }
+// Owner decision D1 (2026-11-11): a portable draft whose normalized latitude or longitude is missing or
+// non-numeric is invalid (out-of-range values keep their R001E clamping; local mode carries no coordinates).
+function draftInvalid(){
+  if(embedMode==="local" || !window.SalahConfig) return [];
+  const c=SalahConfig.normalize(formConfig());
+  return ["lat","lon"].filter(id=>c[id]==null);
+}
+const INVALID_NOTE="Enter a valid latitude and longitude (numbers) — the preview and embed code keep the last valid location.";
+const REFUSED="Enter a valid latitude and longitude first.";
+function showValidity(bad){
+  ["lat","lon"].forEach(id=>$(id).setAttribute("aria-invalid",bad.includes(id)?"true":"false"));
+  const note=$("draftnote"); note.textContent=bad.length?INVALID_NOTE:""; note.hidden=!bad.length;
+  if(!bad.length) [["copied",""],["installtip","copies terminal script for installation wizard"]].forEach(([id,text])=>{
+    if($(id).textContent===REFUSED){ $(id).textContent=text; $(id).style.color=""; } });
+}
+function refuseInvalid(tipId){                    // D1: Copy / Install / Open never hand out a coordinate-less export
+  if(!draftInvalid().length) return false;
+  $(tipId).textContent=REFUSED; $(tipId).style.color="#ffb38a"; return true;
+}
+// The widget reads only location.hash, so a changing ?r= query is ignored by it but forces the iframe to actually
+// reload (a hash-only change wouldn't re-run the script). The receipt and revision are recorded only after the
+// src setter returned, so a throwing assignment cannot suppress the next legitimate attempt.
+function issuePreview(identity,allow,h){
+  const src=base+"?r="+rev+"#"+h;
+  $("pv").allow=allow;                            // permission policy in force before the navigation
+  $("pv").src=src;
+  issued={identity,src,allow,hash:h,rev}; rev++;
+}
 function update(){
-  $("code").value=snippet();
-  $("pv").allow = embedMode==="local" ? "geolocation" : "";
-  $("pv").src=previewUrl();
+  const bad=draftInvalid(); showValidity(bad);
+  if(bad.length) return;                          // D1: keep the last issued preview and export
+  const h=hash(), allow=embedMode==="local"?"geolocation":"", identity=previewIdentity(allow,h);
+  $("code").value=snippet();                      // export always reflects the current valid draft
+  if(issued && issued.identity===identity) return; // equivalent output: no navigation, no revision
+  issuePreview(identity,allow,h);
 }
 function setMode(m){
   const buttons=[$("mode-portable"),$("mode-local")], requested=m==="local"?"mode-local":"mode-portable";
@@ -364,9 +401,11 @@ $("datefmt").addEventListener("change",()=>{
 $("dfcode").addEventListener("input",()=>{ syncDateFromBox(); update(); });
 syncDateFromBox();
 
-$("reload").onclick=()=>{ $("pv").src=previewUrl(); };
-$("open").onclick=()=>window.open(url(),"_blank","noreferrer");
-$("copy").onclick=()=>copyArtifact("copy",$("code").value,false);
+// Owner decision D3 (2026-11-11): Refresh is a forced, deliberate re-issue of the last issued (valid) preview with a
+// new ?r=, even when nothing changed; it never issues an invalid draft.
+$("reload").onclick=()=>{ if(issued) issuePreview(issued.identity,issued.allow,issued.hash); else update(); };
+$("open").onclick=()=>{ if(refuseInvalid("copied")) return; window.open(url(),"_blank","noreferrer"); };
+$("copy").onclick=()=>{ if(refuseInvalid("copied")) return; return copyArtifact("copy",$("code").value,false); };
 // ---- "Install widget" → copy the one-line terminal command that runs the GitHub install wizard ----
 // The command pipes install.ps1 (Windows) or install.sh (mac/Linux) from published main, not a local candidate.
 // Normal execution is interactive; reviewed local-file and offline-preview instructions are in README.md.
@@ -432,6 +471,7 @@ async function copyArtifact(buttonId,payload,carry){
   }
 }
 $("install").onclick=()=>{
+  if(refuseInvalid("installtip")) return;
   const {cmd,carry}=installCmd(); return copyArtifact("install",cmd,carry);
 };
 function locate(auto){                                 // pin click → precise GPS (browser permission)
