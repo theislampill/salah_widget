@@ -1,0 +1,139 @@
+# R0013 integration requalification (integration-owned, additive).
+#
+# Why this file exists: `installer-native.yml` (blob 3815d6ad, bound by the
+# R0013 independent review's sourceBindings) triggers only on pushes to three
+# named `pro/...` engineering branches and maps the branch name to `--phase`.
+# It therefore cannot run on the R0013 integration branch, and editing it is
+# outside integration custody (R0015 and R0016 rewrite the same file).
+#
+# This workflow is a faithful COPY of that workflow's jobs with the phase fixed
+# to `r0013`: same runner images (ubuntu-24.04, macos-15 with Apple /bin/bash
+# 3.2, windows-2022 with Windows PowerShell 5.1 and the digest-pinned
+# PowerShell 7.6.6), same pinned action SHAs, same sparse checkouts, same
+# timeouts, same collector invocation
+# (`tools/qualification/installer_native.py --phase r0013`) and the same
+# artifact packaging/upload and artifact names. The collector itself sets
+# SALAH_TEST_BASH=/bin/bash on POSIX hosts; this file does not set it.
+#
+# Deliberate differences from the original, and nothing else:
+#   - triggers: push to `claude/r0013-integration-*` and workflow_dispatch;
+#   - `--phase r0013` is literal instead of being derived from the ref name;
+#   - the concurrency group name is distinct;
+#   - the path filter adds this file itself.
+# The original `installer-native.yml` is untouched.
+name: R0013 integration qualification
+
+on:
+  push:
+    branches:
+      - claude/r0013-integration-*
+    paths:
+      - install.sh
+      - install.ps1
+      - tests/install*
+      - src/native/builder.html
+      - src/native/config.js
+      - tools/qualification/installer_native.py
+      - .github/workflows/installer-native.yml
+      - .github/workflows/r0013-integration-qualification.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0013-integration-qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  posix:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            native: Linux
+          - runner: macos-15
+            native: Darwin
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /src/native/builder.html
+            /src/native/config.js
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Execute native disposable installer fixtures
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_native.py --expected-os '${{ matrix.native }}' --phase r0013 --output "$RUNNER_TEMP/installer-evidence"
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: bash
+        run: |
+          python3 -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-${{ matrix.native }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Execute both native PowerShell hosts
+        shell: powershell
+        run: |
+          python tools/qualification/installer_native.py --expected-os Windows --phase r0013 --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+          exit $LASTEXITCODE
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: powershell
+        run: |
+          python -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+          exit $LASTEXITCODE
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
