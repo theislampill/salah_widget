@@ -1,0 +1,9 @@
+from pathlib import Path
+import hashlib,json,sys,shutil
+plans=json.loads('{"tests/r0025-context.cjs": {"anchor": "function publish({admitPrayerDay=false}={}){", "before": "29a3a42db4869501ff4de1b94e67dae86c977fdfc8b0231b16a24e5e3e53061f", "after": "b98f647d6f5ed9ad575846283696ad367e3eb5ba522f24ea628e0d85018e60cc"}, "tests/r0025-continuity.cjs": {"anchor": "h.publish({admitPrayerDay:true});", "before": "e56c858e55980220ec267380b411a1f655be382c80adc3bd8941da16d39fd258", "after": "bdc484f7b0781d0df1eb10d620ecafb30f9ee7ab72b1dd8e72770718dd75ea75"}, "tests/r0025-lifecycle.cjs": {"anchor": "h.publish({admitPrayerDay:true});", "before": "b7744212576e8a6ff671d7443f79b93f0046a0a05273bd1d89df43019f317cc2", "after": "54ec8d26ac8904a451cc217ec9f27794d9710ade91b18cd13de1c51c56a48bee"}, "tests/real-sky/native-head-handoff.cjs": {"anchor": "SIM:{wx:null},ADVANCING:false,_clockPreview:false,", "before": "4a167590ac6b0e447520f5ac329044c4b71913853d648f7769d9cab1112411cc", "after": "6b09278d992526ff493a2aa8150ec6ebd03c3a7c53fff5c68aeb5ae0ec10d108"}}')
+name=sys.argv[1];plan=plans[name];src=Path('/workspace/scratch/15b8fb6ac4c2/r000b-work')/name;dst=Path('/workspace/scratch/15b8fb6ac4c2/r000b-build-2')/name
+assert hashlib.sha256(src.read_bytes()).hexdigest()==plan["after"],name
+assert hashlib.sha256(dst.read_bytes()).hexdigest()==plan["before"],name
+shutil.copyfile(src,dst)
+assert src.read_bytes()==dst.read_bytes()
+print("copied exact bounded fixture: "+name)

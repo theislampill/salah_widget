@@ -1,0 +1,563 @@
+TAP version 13
+# Subtest: blocked storage getter leaves optional cloud lighting unavailable during manual recovery
+ok 1 - blocked storage getter leaves optional cloud lighting unavailable during manual recovery
+  ---
+  duration_ms: 3.859887
+  type: 'test'
+  ...
+# Subtest: denied reads and invalid saved records do not require an astronomical observer
+ok 2 - denied reads and invalid saved records do not require an astronomical observer
+  ---
+  duration_ms: 3.508048
+  type: 'test'
+  ...
+# Subtest: either missing coordinate withdraws optional lighting without coercion
+ok 3 - either missing coordinate withdraws optional lighting without coercion
+  ---
+  duration_ms: 2.414015
+  type: 'test'
+  ...
+# Subtest: valid native observer still reaches the unchanged physical lighting owner
+ok 4 - valid native observer still reaches the unchanged physical lighting owner
+  ---
+  duration_ms: 4.746348
+  type: 'test'
+  ...
+# Subtest: numeric invalid coordinates retain strict native validation
+ok 5 - numeric invalid coordinates retain strict native validation
+  ---
+  duration_ms: 5.835033
+  type: 'test'
+  ...
+# Subtest: invalid native clock and camera remain errors for a resolved observer
+ok 6 - invalid native clock and camera remain errors for a resolved observer
+  ---
+  duration_ms: 1.221244
+  type: 'test'
+  ...
+# Subtest: manual coordinate recovery recaptures the accepted target
+ok 7 - manual coordinate recovery recaptures the accepted target
+  ---
+  duration_ms: 1.344759
+  type: 'test'
+  ...
+# Subtest: missing optional lighting module still returns unavailable
+ok 8 - missing optional lighting module still returns unavailable
+  ---
+  duration_ms: 0.601603
+  type: 'test'
+  ...
+# Subtest: actual foreground capture withdraws expired cloud state before reading raster when render and painter have not run
+ok 9 - actual foreground capture withdraws expired cloud state before reading raster when render and painter have not run
+  ---
+  duration_ms: 141.284307
+  type: 'test'
+  ...
+# Subtest: captured authority is serializable and final-currentness read rejects expiry without repairing cloud state
+ok 10 - captured authority is serializable and final-currentness read rejects expiry without repairing cloud state
+  ---
+  duration_ms: 94.154003
+  type: 'test'
+  ...
+# Subtest: refined rejects an old cloud capture and publishes clear successor at next opportunity
+ok 11 - refined rejects an old cloud capture and publishes clear successor at next opportunity
+  ---
+  duration_ms: 248.016597
+  type: 'test'
+  ...
+# Subtest: refined rejects an old cloud capture and publishes clear successor at decode completion
+ok 12 - refined rejects an old cloud capture and publishes clear successor at decode completion
+  ---
+  duration_ms: 330.455976
+  type: 'test'
+  ...
+# Subtest: preview rejects an old cloud capture and publishes clear successor at next opportunity
+ok 13 - preview rejects an old cloud capture and publishes clear successor at next opportunity
+  ---
+  duration_ms: 131.132183
+  type: 'test'
+  ...
+# Subtest: preview rejects an old cloud capture and publishes clear successor at decode completion
+ok 14 - preview rejects an old cloud capture and publishes clear successor at decode completion
+  ---
+  duration_ms: 113.745376
+  type: 'test'
+  ...
+# Subtest: refined checks cloud authority again after detail composition
+ok 15 - refined checks cloud authority again after detail composition
+  ---
+  duration_ms: 156.222496
+  type: 'test'
+  ...
+# Subtest: preview checks cloud authority again after detail composition
+ok 16 - preview checks cloud authority again after detail composition
+  ---
+  duration_ms: 102.322698
+  type: 'test'
+  ...
+# Subtest: refined retains eligible consumed A through a healthy post-detail replacement
+ok 17 - refined retains eligible consumed A through a healthy post-detail replacement
+  ---
+  duration_ms: 130.83535
+  type: 'test'
+  ...
+# Subtest: preview retains eligible consumed A through a healthy post-detail replacement
+ok 18 - preview retains eligible consumed A through a healthy post-detail replacement
+  ---
+  duration_ms: 87.853534
+  type: 'test'
+  ...
+# Subtest: same-byte refined reuse retains eligible A during a healthy replacement without an extra draw
+ok 19 - same-byte refined reuse retains eligible A during a healthy replacement without an extra draw
+  ---
+  duration_ms: 113.341317
+  type: 'test'
+  ...
+# Subtest: pending solar context is bounded and released without adding owner references to decoded cache
+ok 20 - pending solar context is bounded and released without adding owner references to decoded cache
+  ---
+  duration_ms: 0.438944
+  type: 'test'
+  ...
+# Subtest: same-byte refined reuse still checks consumed cloud authority after detail
+ok 21 - same-byte refined reuse still checks consumed cloud authority after detail
+  ---
+  duration_ms: 151.883429
+  type: 'test'
+  ...
+# Subtest: native failure handoff revokes the raw cloud raster before removing refined ownership
+ok 22 - native failure handoff revokes the raw cloud raster before removing refined ownership
+  ---
+  duration_ms: 173.245196
+  type: 'test'
+  ...
+# Subtest: refined failed detail cannot retain revoked displayed cloud coverage
+ok 23 - refined failed detail cannot retain revoked displayed cloud coverage
+  ---
+  duration_ms: 135.213128
+  type: 'test'
+  ...
+# Subtest: preview failed detail cannot retain revoked displayed cloud coverage
+ok 24 - preview failed detail cannot retain revoked displayed cloud coverage
+  ---
+  duration_ms: 130.977522
+  type: 'test'
+  ...
+# Subtest: preview direct withdrawal clears the revoked raw cloud raster before releasing its layer
+ok 25 - preview direct withdrawal clears the revoked raw cloud raster before releasing its layer
+  ---
+  duration_ms: 100.812586
+  type: 'test'
+  ...
+# Subtest: F01 healthy full-model refresh keeps normal easing: capture-before-render
+ok 26 - F01 healthy full-model refresh keeps normal easing: capture-before-render
+  ---
+  duration_ms: 224.119152
+  type: 'test'
+  ...
+# Subtest: F01 healthy full-model refresh keeps normal easing: render-before-capture
+ok 27 - F01 healthy full-model refresh keeps normal easing: render-before-capture
+  ---
+  duration_ms: 181.451377
+  type: 'test'
+  ...
+# Subtest: F01 repeated captures and final checks retain A without a producer, timestamp or easing mutation
+ok 28 - F01 repeated captures and final checks retain A without a producer, timestamp or easing mutation
+  ---
+  duration_ms: 178.562019
+  type: 'test'
+  ...
+# Subtest: F01 fresh B cannot retain A after the genuine model becomes unavailable
+ok 29 - F01 fresh B cannot retain A after the genuine model becomes unavailable
+  ---
+  duration_ms: 236.14847
+  type: 'test'
+  ...
+# Subtest: F01 cold consumer cannot restore a deck from weather and model availability alone
+ok 30 - F01 cold consumer cannot restore a deck from weather and model availability alone
+  ---
+  duration_ms: 84.836316
+  type: 'test'
+  ...
+# Subtest: F01 already-withdrawn consumer cannot restore a deck from weather and model availability alone
+ok 31 - F01 already-withdrawn consumer cannot restore a deck from weather and model availability alone
+  ---
+  duration_ms: 158.582811
+  type: 'test'
+  ...
+# Subtest: F01 owns A currentValidAt boundary with fresh B: 899999
+ok 32 - F01 owns A currentValidAt boundary with fresh B: 899999
+  ---
+  duration_ms: 120.778439
+  type: 'test'
+  ...
+# Subtest: F01 owns A currentValidAt boundary with fresh B: 900000
+ok 33 - F01 owns A currentValidAt boundary with fresh B: 900000
+  ---
+  duration_ms: 112.369314
+  type: 'test'
+  ...
+# Subtest: F01 owns A currentValidAt boundary with fresh B: 900001
+ok 34 - F01 owns A currentValidAt boundary with fresh B: 900001
+  ---
+  duration_ms: 146.679274
+  type: 'test'
+  ...
+# Subtest: F01 owns A currentValidAt boundary with fresh B: -1
+ok 35 - F01 owns A currentValidAt boundary with fresh B: -1
+  ---
+  duration_ms: 95.401379
+  type: 'test'
+  ...
+# Subtest: F01 owns A retrievedAt boundary with fresh B: 899999
+ok 36 - F01 owns A retrievedAt boundary with fresh B: 899999
+  ---
+  duration_ms: 143.906116
+  type: 'test'
+  ...
+# Subtest: F01 owns A retrievedAt boundary with fresh B: 900000
+ok 37 - F01 owns A retrievedAt boundary with fresh B: 900000
+  ---
+  duration_ms: 159.713568
+  type: 'test'
+  ...
+# Subtest: F01 owns A retrievedAt boundary with fresh B: 900001
+ok 38 - F01 owns A retrievedAt boundary with fresh B: 900001
+  ---
+  duration_ms: 91.627843
+  type: 'test'
+  ...
+# Subtest: F01 owns A retrievedAt boundary with fresh B: -1
+ok 39 - F01 owns A retrievedAt boundary with fresh B: -1
+  ---
+  duration_ms: 116.274414
+  type: 'test'
+  ...
+# Subtest: F01 successive fresh B/C records do not renew A or its cached decision lifetime
+ok 40 - F01 successive fresh B/C records do not renew A or its cached decision lifetime
+  ---
+  duration_ms: 81.026874
+  type: 'test'
+  ...
+# Subtest: F01 generation replacement cannot reuse the old active receipt
+ok 41 - F01 generation replacement cannot reuse the old active receipt
+  ---
+  duration_ms: 99.919935
+  type: 'test'
+  ...
+# Subtest: F01 coordinates replacement cannot reuse the old active receipt
+ok 42 - F01 coordinates replacement cannot reuse the old active receipt
+  ---
+  duration_ms: 130.584821
+  type: 'test'
+  ...
+# Subtest: F01 scene replacement cannot reuse the old active receipt
+ok 43 - F01 scene replacement cannot reuse the old active receipt
+  ---
+  duration_ms: 79.435094
+  type: 'test'
+  ...
+# Subtest: F01 mode replacement cannot reuse the old active receipt
+ok 44 - F01 mode replacement cannot reuse the old active receipt
+  ---
+  duration_ms: 88.064884
+  type: 'test'
+  ...
+# Subtest: F01 genuine simulation object turnover; missing model=false
+ok 45 - F01 genuine simulation object turnover; missing model=false
+  ---
+  duration_ms: 49.135679
+  type: 'test'
+  ...
+# Subtest: F01 genuine simulation object turnover; missing model=true
+ok 46 - F01 genuine simulation object turnover; missing model=true
+  ---
+  duration_ms: 45.747513
+  type: 'test'
+  ...
+# Subtest: F01 genuine forecast object turnover; missing model=false
+ok 47 - F01 genuine forecast object turnover; missing model=false
+  ---
+  duration_ms: 365.644158
+  type: 'test'
+  ...
+# Subtest: F01 genuine forecast object turnover; missing model=true
+ok 48 - F01 genuine forecast object turnover; missing model=true
+  ---
+  duration_ms: 163.972409
+  type: 'test'
+  ...
+# Subtest: F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=false
+ok 49 - F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=false
+  ---
+  duration_ms: 54.14321
+  type: 'test'
+  ...
+# Subtest: F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=true
+ok 50 - F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=true
+  ---
+  duration_ms: 62.161743
+  type: 'test'
+  ...
+# Subtest: F02 same-record present lease reaches no-model raster at 999ms
+ok 51 - F02 same-record present lease reaches no-model raster at 999ms
+  ---
+  duration_ms: 74.983929
+  type: 'test'
+  ...
+# Subtest: F02 same-record present lease reaches no-model raster at 1000ms
+ok 52 - F02 same-record present lease reaches no-model raster at 1000ms
+  ---
+  duration_ms: 52.10461
+  type: 'test'
+  ...
+# Subtest: F02 same-record present lease reaches no-model raster at 1001ms
+ok 53 - F02 same-record present lease reaches no-model raster at 1001ms
+  ---
+  duration_ms: 51.684278
+  type: 'test'
+  ...
+# Subtest: F02 same-record replacement publishes the actual wet receipt
+ok 54 - F02 same-record replacement publishes the actual wet receipt
+  ---
+  duration_ms: 77.019215
+  type: 'test'
+  ...
+# Subtest: F02 same-record replacement publishes the actual dry receipt
+ok 55 - F02 same-record replacement publishes the actual dry receipt
+  ---
+  duration_ms: 53.64357
+  type: 'test'
+  ...
+# Subtest: F02 no-model same-record replacement stays withheld until genuine full publication
+ok 56 - F02 no-model same-record replacement stays withheld until genuine full publication
+  ---
+  duration_ms: 58.542198
+  type: 'test'
+  ...
+# Subtest: F01 actual consumer mutant: missing-model guard
+ok 57 - F01 actual consumer mutant: missing-model guard
+  ---
+  duration_ms: 173.951305
+  type: 'test'
+  ...
+# Subtest: F01 actual consumer mutant: borrowed-B age
+ok 58 - F01 actual consumer mutant: borrowed-B age
+  ---
+  duration_ms: 413.366324
+  type: 'test'
+  ...
+# Subtest: F01 actual consumer mutant: dropped active-receipt identity
+ok 59 - F01 actual consumer mutant: dropped active-receipt identity
+  ---
+  duration_ms: 224.764043
+  type: 'test'
+  ...
+# Subtest: F01 pending actual solar decode respects active receipt; B published=false
+ok 60 - F01 pending actual solar decode respects active receipt; B published=false
+  ---
+  duration_ms: 83.10141
+  type: 'test'
+  ...
+# Subtest: F01 pending actual solar decode respects active receipt; B published=true
+ok 61 - F01 pending actual solar decode respects active receipt; B published=true
+  ---
+  duration_ms: 107.754742
+  type: 'test'
+  ...
+# R000B authored source /workspace/scratch/15b8fb6ac4c2/r000b-work/src/native/index.html SHA256 fe0ec24a6f26839ec6439c172a3b098bebd03388b3f7b0385cead0febecf4327
+# Subtest: healthy current model establishes the actual cloud deck and full-model expiry still withdraws
+ok 62 - healthy current model establishes the actual cloud deck and full-model expiry still withdraws
+  ---
+  duration_ms: 169.938008
+  type: 'test'
+  ...
+# Subtest: midnight missing timetable at 901s withdraws joined cloud state and retained raster before another painter
+ok 63 - midnight missing timetable at 901s withdraws joined cloud state and retained raster before another painter
+  ---
+  duration_ms: 108.135288
+  type: 'test'
+  ...
+# Subtest: actual loop painter at 900077ms withdraws after inclusive expiry within the same rendered second
+ok 64 - actual loop painter at 900077ms withdraws after inclusive expiry within the same rendered second
+  ---
+  duration_ms: 104.310555
+  type: 'test'
+  ...
+# Subtest: hidden expiry resumes once with immediate withdrawal and held axes; reduced=false
+ok 65 - hidden expiry resumes once with immediate withdrawal and held axes; reduced=false
+  ---
+  duration_ms: 90.599247
+  type: 'test'
+  ...
+# Subtest: hidden expiry resumes once with immediate withdrawal and held axes; reduced=true
+ok 66 - hidden expiry resumes once with immediate withdrawal and held axes; reduced=true
+  ---
+  duration_ms: 93.871767
+  type: 'test'
+  ...
+# Subtest: warm exact-record fresh no-model retains; cold and fresh replacement no-model withhold until real prayer recovery
+ok 67 - warm exact-record fresh no-model retains; cold and fresh replacement no-model withhold until real prayer recovery
+  ---
+  duration_ms: 352.794209
+  type: 'test'
+  ...
+# Subtest: consumed cloud and effect diagnostics stay honest without repairing state or adopting a pending candidate
+ok 68 - consumed cloud and effect diagnostics stay honest without repairing state or adopting a pending candidate
+  ---
+  duration_ms: 84.781881
+  type: 'test'
+  ...
+# Subtest: repeated expired render and paint are idempotent for authority, population, axes and retained resources
+ok 69 - repeated expired render and paint are idempotent for authority, population, axes and retained resources
+  ---
+  duration_ms: 106.85407
+  type: 'test'
+  ...
+# Subtest: currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: 899999
+ok 70 - currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: 899999
+  ---
+  duration_ms: 115.130234
+  type: 'test'
+  ...
+# Subtest: currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: 900000
+ok 71 - currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: 900000
+  ---
+  duration_ms: 82.501455
+  type: 'test'
+  ...
+# Subtest: currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: 900001
+ok 72 - currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: 900001
+  ---
+  duration_ms: 133.514122
+  type: 'test'
+  ...
+# Subtest: currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: -1
+ok 73 - currentValidAt preserves inclusive and zero-future bounds at actual no-model consumer: -1
+  ---
+  duration_ms: 123.313217
+  type: 'test'
+  ...
+# Subtest: retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: 899999
+ok 74 - retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: 899999
+  ---
+  duration_ms: 79.171014
+  type: 'test'
+  ...
+# Subtest: retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: 900000
+ok 75 - retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: 900000
+  ---
+  duration_ms: 116.850231
+  type: 'test'
+  ...
+# Subtest: retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: 900001
+ok 76 - retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: 900001
+  ---
+  duration_ms: 106.68465
+  type: 'test'
+  ...
+# Subtest: retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: -1
+ok 77 - retrievedAt preserves inclusive and zero-future bounds at actual no-model consumer: -1
+  ---
+  duration_ms: 51.13937
+  type: 'test'
+  ...
+# Subtest: same coordinates in a new generation and A-to-B-to-A cannot retain old coverage
+ok 78 - same coordinates in a new generation and A-to-B-to-A cannot retain old coverage
+  ---
+  duration_ms: 58.735169
+  type: 'test'
+  ...
+# Subtest: unknown weather cannot become an observed clear condition and gated overlays withdraw
+ok 79 - unknown weather cannot become an observed clear condition and gated overlays withdraw
+  ---
+  duration_ms: 64.031898
+  type: 'test'
+  ...
+# Subtest: authored test ingress retains exact runtime bytes and rejects malformed, missing or duplicate owners
+ok 80 - authored test ingress retains exact runtime bytes and rejects malformed, missing or duplicate owners
+  ---
+  duration_ms: 17.757207
+  type: 'test'
+  ...
+# Subtest: withdrawn painter opportunities do not republish unchanged weather DOM sinks
+ok 81 - withdrawn painter opportunities do not republish unchanged weather DOM sinks
+  ---
+  duration_ms: 163.556914
+  type: 'test'
+  ...
+# Subtest: explicit preview lane keeps eligible supported clouds beyond live TTL: &simWx=3&simCloud=95
+ok 82 - explicit preview lane keeps eligible supported clouds beyond live TTL: &simWx=3&simCloud=95
+  ---
+  duration_ms: 102.543932
+  type: 'test'
+  ...
+# Subtest: explicit preview lane keeps eligible supported clouds beyond live TTL: &timeScale=2
+ok 83 - explicit preview lane keeps eligible supported clouds beyond live TTL: &timeScale=2
+  ---
+  duration_ms: 99.98997
+  type: 'test'
+  ...
+# Subtest: obsolete weather settlement cannot install or clear a published successor after A-to-B-to-A
+ok 84 - obsolete weather settlement cannot install or clear a published successor after A-to-B-to-A
+  ---
+  duration_ms: 138.327238
+  type: 'test'
+  ...
+# Subtest: actual units reconfiguration revokes the old exact-record target through generation ownership
+ok 85 - actual units reconfiguration revokes the old exact-record target through generation ownership
+  ---
+  duration_ms: 226.519195
+  type: 'test'
+  ...
+# Subtest: real-consumer mutation discriminator: bypass no-model withdrawal
+ok 86 - real-consumer mutation discriminator: bypass no-model withdrawal
+  ---
+  duration_ms: 275.354243
+  type: 'test'
+  ...
+# Subtest: real-consumer mutation discriminator: header-only repair
+ok 87 - real-consumer mutation discriminator: header-only repair
+  ---
+  duration_ms: 201.797449
+  type: 'test'
+  ...
+# Subtest: real-consumer mutation discriminator: zero numeric state but retain raster
+ok 88 - real-consumer mutation discriminator: zero numeric state but retain raster
+  ---
+  duration_ms: 292.988463
+  type: 'test'
+  ...
+# Subtest: real-consumer mutation discriminator: expiry checked only at acquisition
+ok 89 - real-consumer mutation discriminator: expiry checked only at acquisition
+  ---
+  duration_ms: 245.516123
+  type: 'test'
+  ...
+# Subtest: real-consumer mutation discriminator: source age reset on receipt
+ok 90 - real-consumer mutation discriminator: source age reset on receipt
+  ---
+  duration_ms: 158.216321
+  type: 'test'
+  ...
+# Subtest: real-consumer mutation discriminator: reseed every tick
+ok 91 - real-consumer mutation discriminator: reseed every tick
+  ---
+  duration_ms: 206.230654
+  type: 'test'
+  ...
+# Subtest: real-consumer mutation discriminator: unknown labelled observed-clear
+ok 92 - real-consumer mutation discriminator: unknown labelled observed-clear
+  ---
+  duration_ms: 148.046113
+  type: 'test'
+  ...
+1..92
+# tests 92
+# suites 0
+# pass 92
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4806.602592

@@ -1,0 +1,519 @@
+{
+  "scope": "Pure predicates only; no browser/product-body/main execution or native-pixel result",
+  "oldDriverSha256": "6f0669ced88030c2dd3b9db40520cf1b5aa68669e019cfc3623b0952494f0e7f",
+  "newDriverSha256": "82b65b459dd1122fd13a8d204c16192b88cde740541f1e540a29bfd40bfc5144",
+  "HN2": {
+    "inputBefore": {
+      "elapsedMs": 8900,
+      "motion": {
+        "key": "declared-fixed-site",
+        "population": 313.25,
+        "fieldSeed": 17.75,
+        "phase": [
+          1.2308685189282167,
+          1.226085648660271,
+          1.2213027783923252
+        ],
+        "life": [
+          32100000.0,
+          39200000.0,
+          46300000.0
+        ],
+        "wander": 19600000.0,
+        "lastRt": 9000,
+        "elapsedRtMs": 8900,
+        "paused": false,
+        "reduced": false,
+        "wind": {
+          "wx": 0.7071067811865475,
+          "wspd": 0.12666666666666665
+        }
+      }
+    },
+    "inputAfter": {
+      "elapsedMs": 8920,
+      "motion": {
+        "key": "declared-fixed-site",
+        "population": 313.25,
+        "fieldSeed": 17.75,
+        "phase": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "life": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "wander": 0.0,
+        "lastRt": 9000,
+        "elapsedRtMs": 8920,
+        "paused": false,
+        "reduced": false,
+        "wind": {
+          "wx": 0.7071067811865475,
+          "wspd": 0.12666666666666665
+        }
+      }
+    },
+    "oldDeltas": [
+      0.019131481071783307,
+      0.02391435133972908,
+      0.02869722160767485
+    ],
+    "oldAllowedStep": 0.03,
+    "oldPass": true,
+    "newResult": {
+      "schema": "r000b-motion-continuity/v2",
+      "ok": false,
+      "steps": 1,
+      "violations": [
+        {
+          "step": 0,
+          "axis": "phase0",
+          "delta": 0.019131481071783307,
+          "maximumForwardDistance": 4.299209229614208e-05,
+          "reason": "Wrong direction or excessive phase step"
+        },
+        {
+          "step": 0,
+          "axis": "phase1",
+          "delta": 0.02391435133972908,
+          "maximumForwardDistance": 5.37401153701776e-05,
+          "reason": "Wrong direction or excessive phase step"
+        },
+        {
+          "step": 0,
+          "axis": "phase2",
+          "delta": 0.02869722160767485,
+          "maximumForwardDistance": 6.448813844421312e-05,
+          "reason": "Wrong direction or excessive phase step"
+        },
+        {
+          "step": 0,
+          "axis": "life0",
+          "delta": 4262867296.0,
+          "maximumForwardDistance": 0.00035999999999999997,
+          "reason": "Lifecycle reset/backwards/excessive step"
+        },
+        {
+          "step": 0,
+          "axis": "life1",
+          "delta": 4255767296.0,
+          "maximumForwardDistance": 0.00043999999999999996,
+          "reason": "Lifecycle reset/backwards/excessive step"
+        },
+        {
+          "step": 0,
+          "axis": "life2",
+          "delta": 4248667296.0,
+          "maximumForwardDistance": 0.00052,
+          "reason": "Lifecycle reset/backwards/excessive step"
+        },
+        {
+          "step": 0,
+          "axis": "wander",
+          "delta": 4275367296.0,
+          "maximumForwardDistance": 0.00021999999999999998,
+          "reason": "Wander reset/backwards/excessive step"
+        }
+      ],
+      "phaseDirection": "decreasing modulo1.25 for declared225deg wind",
+      "phaseRatesPerSecond": [
+        0.002149604614807104,
+        0.00268700576850888,
+        0.0032244069222106563
+      ],
+      "lifeRatesPerSecond": [
+        0.018,
+        0.022,
+        0.026
+      ],
+      "wanderRatePerSecond": 0.011,
+      "phaseNumericalTolerance": 1e-09,
+      "noiseNumericalTolerance": 1e-05,
+      "hiddenIntervalsElapsedMs": []
+    }
+  },
+  "HN3": {
+    "displaced-base": {
+      "oldHealthyCloudPass": true,
+      "oldRainOriginPass": true,
+      "newRainOriginPass": false,
+      "newEvidence": {
+        "schema": "r000b-rain-origin/v2",
+        "ok": false,
+        "particles": [
+          {
+            "index": 0,
+            "baseOrigin": {
+              "left": 12.215277777777779,
+              "top": 1,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegment": {
+              "left": 16.21527777777778,
+              "top": 62.0,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegmentOpacity": 0.6,
+            "animation": "fall",
+            "errors": [
+              "Declared19% CSS base origin displaced"
+            ],
+            "fallFraction": 0.5,
+            "publishedCoordinateAllowanceCssPx": 0.4969230769230769,
+            "nativeAssociationAllowanceCssPx": 2.771527777777778,
+            "nativeSupport": {
+              "firstColumn": 3,
+              "lastColumn": 6,
+              "alphaSum": 255,
+              "alphaMax": 255,
+              "nonzeroPixels": 1
+            },
+            "publishedSupport": {
+              "firstColumn": 10,
+              "lastColumn": 13,
+              "alphaSum": 255,
+              "alphaMax": 255,
+              "nonzeroPixels": 1
+            }
+          }
+        ],
+        "contract": "measured CSS base origin plus assigned visible cloud column; not an exact cloud contour at an invisible animation start",
+        "coordinateToleranceCssPx": 0.75,
+        "supportAlphaThreshold": 0,
+        "publishedSupport": "exact inverse-alpha PNG already includes native scaling, blur and vertical mask"
+      },
+      "measuredGeometry": {
+        "position": {
+          "left": 11.215277777777779,
+          "top": 0,
+          "width": 1.5,
+          "height": 14
+        },
+        "baseOrigin": {
+          "left": 12.215277777777779,
+          "top": 1,
+          "width": 1.5,
+          "height": 14
+        },
+        "parent": {
+          "bounds": {
+            "left": 1,
+            "top": 1,
+            "width": 323,
+            "height": 528
+          },
+          "clientLeft": 0,
+          "clientTop": 0,
+          "clientWidth": 323,
+          "clientHeight": 528,
+          "offsetWidth": 323,
+          "offsetHeight": 528
+        },
+        "transform": {
+          "is2D": true,
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 1,
+          "e": 4.0,
+          "f": 61.0
+        }
+      }
+    },
+    "empty-actual-column": {
+      "oldHealthyCloudPass": true,
+      "oldRainOriginPass": true,
+      "newRainOriginPass": false,
+      "newEvidence": {
+        "schema": "r000b-rain-origin/v2",
+        "ok": false,
+        "particles": [
+          {
+            "index": 0,
+            "baseOrigin": {
+              "left": 12.215277777777779,
+              "top": 101.32000000000001,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegment": {
+              "left": 16.21527777777778,
+              "top": 162.32,
+              "width": 1.5,
+              "height": 14
+            },
+            "visibleSegmentOpacity": 0.6,
+            "animation": "fall",
+            "errors": [
+              "No independently read native cloud alpha near the assigned source column",
+              "No actually published masked cloud alpha in the assigned source column"
+            ],
+            "fallFraction": 0.5,
+            "publishedCoordinateAllowanceCssPx": 0.4969230769230769,
+            "nativeAssociationAllowanceCssPx": 2.771527777777778,
+            "nativeSupport": {
+              "firstColumn": 3,
+              "lastColumn": 6,
+              "alphaSum": 0,
+              "alphaMax": 0,
+              "nonzeroPixels": 0
+            },
+            "publishedSupport": {
+              "firstColumn": 10,
+              "lastColumn": 13,
+              "alphaSum": 0,
+              "alphaMax": 0,
+              "nonzeroPixels": 0
+            }
+          }
+        ],
+        "contract": "measured CSS base origin plus assigned visible cloud column; not an exact cloud contour at an invisible animation start",
+        "coordinateToleranceCssPx": 0.75,
+        "supportAlphaThreshold": 0,
+        "publishedSupport": "exact inverse-alpha PNG already includes native scaling, blur and vertical mask"
+      },
+      "measuredGeometry": {
+        "position": {
+          "left": 11.215277777777779,
+          "top": 100.32000000000001,
+          "width": 1.5,
+          "height": 14
+        },
+        "baseOrigin": {
+          "left": 12.215277777777779,
+          "top": 101.32000000000001,
+          "width": 1.5,
+          "height": 14
+        },
+        "parent": {
+          "bounds": {
+            "left": 1,
+            "top": 1,
+            "width": 323,
+            "height": 528
+          },
+          "clientLeft": 0,
+          "clientTop": 0,
+          "clientWidth": 323,
+          "clientHeight": 528,
+          "offsetWidth": 323,
+          "offsetHeight": 528
+        },
+        "transform": {
+          "is2D": true,
+          "a": 1,
+          "b": 0,
+          "c": 0,
+          "d": 1,
+          "e": 4.0,
+          "f": 61.0
+        }
+      }
+    }
+  },
+  "HN4": {
+    "first": {
+      "modelIsNull": true,
+      "actualCloud": {
+        "ready": false,
+        "coverage": [
+          0,
+          0,
+          0
+        ],
+        "targets": [
+          0,
+          0,
+          0
+        ],
+        "density": {
+          "sum": 0,
+          "max": 0,
+          "nonzero": 0
+        },
+        "raster": {
+          "alphaSum": 0,
+          "alphaNonzero": 0
+        },
+        "publication": {
+          "revision": 2,
+          "state": "withdrawn-unavailable"
+        }
+      },
+      "effects": {
+        "precip": "off",
+        "lightning": "off",
+        "rainOpacity": 0,
+        "displayedParticles": 0
+      },
+      "celestial": {
+        "owner": "refined",
+        "status": "pending",
+        "consumedSolarMask": {
+          "blockedAlphaSum": 255
+        },
+        "composition": {
+          "maxCloudAlpha": 1,
+          "meanCloudAlpha": 0.2,
+          "cloudAuthority": {
+            "revision": 1,
+            "state": "eligible-published"
+          }
+        },
+        "activeCanvas": {
+          "visibility": "visible",
+          "display": "block",
+          "opacity": 1,
+          "rgbNonzero": 100,
+          "maxRGB": 100,
+          "minRGB": 0,
+          "bounds": {
+            "left": 1,
+            "top": 1,
+            "width": 323,
+            "height": 528
+          }
+        },
+        "skyPending": false,
+        "frameAgeMs": 3000,
+        "moonReady": true,
+        "moonPresence": 0.02,
+        "visibleForegrounds": [
+          {
+            "owner": "refined",
+            "status": "pending",
+            "canvas": {
+              "visibility": "visible",
+              "display": "block",
+              "opacity": 1,
+              "rgbNonzero": 100,
+              "maxRGB": 100,
+              "minRGB": 0,
+              "bounds": {
+                "left": 1,
+                "top": 1,
+                "width": 323,
+                "height": 528
+              }
+            },
+            "composition": {
+              "maxCloudAlpha": 1,
+              "meanCloudAlpha": 0.2,
+              "cloudAuthority": {
+                "revision": 1,
+                "state": "eligible-published"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "later": {
+      "modelIsNull": true,
+      "actualCloud": {
+        "ready": false,
+        "coverage": [
+          0,
+          0,
+          0
+        ],
+        "targets": [
+          0,
+          0,
+          0
+        ],
+        "density": {
+          "sum": 0,
+          "max": 0,
+          "nonzero": 0
+        },
+        "raster": {
+          "alphaSum": 0,
+          "alphaNonzero": 0
+        },
+        "publication": {
+          "revision": 2,
+          "state": "withdrawn-unavailable"
+        }
+      },
+      "effects": {
+        "precip": "off",
+        "lightning": "off",
+        "rainOpacity": 0,
+        "displayedParticles": 0
+      },
+      "celestial": {
+        "owner": "refined",
+        "status": "ready",
+        "consumedSolarMask": {
+          "blockedAlphaSum": 0
+        },
+        "composition": {
+          "maxCloudAlpha": 0,
+          "meanCloudAlpha": 0,
+          "cloudAuthority": {
+            "revision": 2,
+            "state": "withdrawn-unavailable"
+          }
+        },
+        "activeCanvas": {
+          "visibility": "visible",
+          "display": "block",
+          "opacity": 1,
+          "rgbNonzero": 100,
+          "maxRGB": 100,
+          "minRGB": 0,
+          "bounds": {
+            "left": 1,
+            "top": 1,
+            "width": 323,
+            "height": 528
+          }
+        },
+        "skyPending": false,
+        "frameAgeMs": 3000,
+        "moonReady": true,
+        "moonPresence": 0.02,
+        "visibleForegrounds": [
+          {
+            "owner": "refined",
+            "status": "ready",
+            "canvas": {
+              "visibility": "visible",
+              "display": "block",
+              "opacity": 1,
+              "rgbNonzero": 100,
+              "maxRGB": 100,
+              "minRGB": 0,
+              "bounds": {
+                "left": 1,
+                "top": 1,
+                "width": 323,
+                "height": 528
+              }
+            },
+            "composition": {
+              "maxCloudAlpha": 0,
+              "meanCloudAlpha": 0,
+              "cloudAuthority": {
+                "revision": 2,
+                "state": "withdrawn-unavailable"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "oldFirstNativeGuardPass": true,
+    "oldObserverSelectsFirst": false,
+    "oldLaterGuardPass": true,
+    "newFirstVisibleJoinPass": false,
+    "newSequencePass": false
+  }
+}

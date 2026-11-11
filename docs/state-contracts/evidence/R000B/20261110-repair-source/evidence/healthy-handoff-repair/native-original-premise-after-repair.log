@@ -1,0 +1,89 @@
+Native SHA256: b17801b33cc99c95710b916016dfd542eddce304145b493c0adecc4c3412e37f
+Test SHA256: bd9d71acbc52b6cf4857fe1da93827a51ed2b166ca841eee91de85556290437d
+Command: node --test tests/real-sky/native-weather-withdrawal.test.mjs
+Exit: 1
+
+✔ actual foreground capture withdraws expired cloud state before reading raster when render and painter have not run (133.914784ms)
+✔ captured authority is serializable and final-currentness read rejects expiry without repairing cloud state (90.673379ms)
+✔ refined rejects an old cloud capture and publishes clear successor at next opportunity (320.288426ms)
+✔ refined rejects an old cloud capture and publishes clear successor at decode completion (241.575537ms)
+✔ preview rejects an old cloud capture and publishes clear successor at next opportunity (187.280682ms)
+✔ preview rejects an old cloud capture and publishes clear successor at decode completion (145.231748ms)
+✖ refined checks cloud authority again after detail composition (105.174156ms)
+✖ preview checks cloud authority again after detail composition (93.411964ms)
+✔ pending solar context is bounded and released without adding owner references to decoded cache (0.465208ms)
+✖ same-byte refined reuse still checks consumed cloud authority after detail (117.740888ms)
+✔ native failure handoff revokes the raw cloud raster before removing refined ownership (196.404957ms)
+✔ refined failed detail cannot retain revoked displayed cloud coverage (199.543421ms)
+✔ preview failed detail cannot retain revoked displayed cloud coverage (259.720468ms)
+✔ preview direct withdrawal clears the revoked raw cloud raster before releasing its layer (118.208985ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 11
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2381.023718
+
+✖ failing tests:
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:86:41
+✖ refined checks cloud authority again after detail composition (105.174156ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 0.7529411764705882
+  - 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:89:47
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:46:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0.7529411764705882,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:86:41
+✖ preview checks cloud authority again after detail composition (93.411964ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 0.7529411764705882
+  - 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:89:47
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:46:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0.7529411764705882,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:100:1
+✖ same-byte refined reuse still checks consumed cloud authority after detail (117.740888ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 0.7529411764705882
+  - 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:103:9
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:46:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0.7529411764705882,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

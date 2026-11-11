@@ -24,7 +24,7 @@ function host({foregroundMs=25,skyMs=30,timeScale=600,parseMs=0,starMs=0,detailM
   NativeStarPreview:class{static async create(pack){if(pack.wait)await pack.wait;return new this(pack);}constructor(pack){now+=parseMs;if(pack.invalid)throw new Error('Invalid catalogue');this.identity={sha256:pack.sha256};}render(){now+=starMs;starRenders++;return {diagnostics:this.identity};}},
   joinNativeStarPreview:(next,bytes,stars)=>({...next,rgba:bytes,raster:{...next.raster,starPreview:stars.diagnostics}}),nativeStarPreviewRegion:()=>rgba,
   renderNativeBackgroundPreview(c){now+=Array.isArray(skyMs)?skyMs.shift()??30:skyMs;return {job:{utcMs:c.utcMs,generation:c.generation},utcMs:c.utcMs,quality:'test',raster:{linear:new Float64Array(3),width:rasterSize[0],height:rasterSize[1],physicalState:{sun:{altDeg:30}}}};}};
- s.window.SalahNativeSkyHost={capture:()=>({utcMs:now*timeScale,generation:1,timeScale,sceneIdentity:'A',lat:1,lon:2})};
+ s.window.SalahNativeSkyHost={reconcileClouds(){},cloudsCurrent:()=>true,capture:()=>({utcMs:now*timeScale,generation:1,timeScale,sceneIdentity:'A',lat:1,lon:2})};
  s.window.SalahMoonDetail={clear(){},compose(){now+=Array.isArray(detailMs)?detailMs.shift()??0:detailMs;if(Array.isArray(throwDetail)?throwDetail.shift():throwDetail)throw Error('controlled detail readback failure');}};
  if(bootstrap)s.window.SalahStarBootstrap=new s.NativeStarPreview({sha256:'same-parent',bootstrapSha256:'seed'});
  if(initialHead)s.window.SalahFirstPaint=initialHead;

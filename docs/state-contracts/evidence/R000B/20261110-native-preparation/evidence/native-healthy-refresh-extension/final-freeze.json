@@ -1,0 +1,54 @@
+{
+  "schema": "r000b-healthy-refresh-extension-freeze/v1",
+  "status": "FROZEN_PENDING_INDEPENDENT_DELTA_REVIEW",
+  "observedAtUtc": "2026-11-10T03:11:43.912823+00:00",
+  "harness": {
+    "tools/qa/run_r000b_withdrawal.py": {
+      "sha256": "9c4931b82f39f559f0e876943c1d0bb1bd0e2c43a25e9501d8fe661aba76420e",
+      "bytes": 85443
+    },
+    "tests/weather-no-timetable-native-oracles.test.py": {
+      "sha256": "36b1d515b8e101365065695ab3a92540f58e73ae60c0ecc450df5410332f0209",
+      "bytes": 31259
+    },
+    "tests/rlgwo/r000b-no-timetable-fixture.html": {
+      "sha256": "5bdce6f58fc01b2a8d88d55348163bea71b13fa3a83b49a5799e2511d8b62b5c",
+      "bytes": 34196
+    }
+  },
+  "acceptedV2Manifest": {
+    "path": "/workspace/scratch/15b8fb6ac4c2/evidence/native-harness-v2/manifest.json",
+    "sha256": "bade8756fc2e1cec1c42934b477f81d5b15254e9e8785c47087b0870a94fe418",
+    "bytes": 512
+  },
+  "report": {
+    "path": "/workspace/scratch/15b8fb6ac4c2/reviews/native-healthy-refresh-extension.md",
+    "sha256": "50cb87b7a2a7f8dbb813bce9adf00717fa7e787ec965116a930fd549d33e7f1f",
+    "bytes": 13965
+  },
+  "verification": {
+    "pureTests": 35,
+    "testExit": 0,
+    "unchangedV2TopLevelFunctionsExcludingMain": 23,
+    "unchangedV2TestClasses": 4,
+    "original30SecondWatchPreserved": true,
+    "fixture240SecondCapPreserved": true,
+    "mutationWindowExits": [
+      0,
+      0
+    ],
+    "progressExpressionSyntaxExit": 0,
+    "scopedDiffCheckExit": 0
+  },
+  "intervalChoice": "Keep recovered pre-capture across the original watch and extra wait; require exact A/B identities throughout retained samples and reject a third record. Conservative failure possible.",
+  "limitations": [
+    "No forced capture-before-render ordering; deterministic source test supplies that race",
+    "Passive samples have no raster bytes; every retained full snapshot checks actual alpha and the original clip remains required",
+    "Handled Moon worker diagnostic errors remain uninspected under accepted HN1 boundary"
+  ],
+  "nativeRun": false,
+  "productBodiesExecuted": false,
+  "browserOrListenerAcquired": false,
+  "productSourceOrGeneratedWrites": false,
+  "runningProcessOwnedByThisLane": false
+}

@@ -10,11 +10,16 @@
   }
   const requireSetup=(condition,message)=>{if(!condition)throw new SetupError(message);};
   const MOON_FILE_BOOTSTRAP='if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;';
-  // Reviewed generated prerequisite bodies at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
+  // R000B first-paint rebind: reviewed composition and preview-host changes on
+  // engineering baseline eebba178172f96b3ffe5ab3845bc0fffd57c6e1b, with uncommitted
+  // frozen owners (not a source-revision claim for the separate plan HEAD):
+  // real-sky/native-composition.mjs SHA256 d3e5d216cad8942e923c9418ed18458f8d8a6e719238c7001288c730323e4fb5
+  // real-sky/native-preview-host.mjs SHA256 2d77893c59b5fd25fcbe5a647133e6a9e7aacd986f143666975e811d3412b3e8
+  // Moon bodies retain the review at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
   // A new delivery requires explicit source review/rebinding, never an automatic
   // update from the same untrusted body whose admission is being checked.
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'3591c4460aeb291e487ef1f750071b6b7436fa904b619fb3b54659c6fa4b83ed',
+    'first-paint':'be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7',
     'moon-initial':'837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });
@@ -22,6 +27,16 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R000B reconciled with accepted main dbf3370f (R0017 + R0007) at merge
+    // d5ede8b9; explicitly rebound like the ec69edf inputs below, which remain
+    // admitted unchanged.
+    '2fb7e8e04175b921b7d4c9057b0c655db89f9064c01b52068124394d0d334dfd':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'d5ede8b9f9a03953dba58eb3525e86c3d1653084',path:'src/native/index.html',layout:'config,native'}),
+    '240178afe7e01d8cbe64ce3aa4de5ccdab41713188ee292e7813f26d4909eb98':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'d5ede8b9f9a03953dba58eb3525e86c3d1653084',path:'index.html',
+      parentSha256:'dc2af3801a4314d062ed904c7c95610a0f6afd37166e1e7ef88cf1d5bd97dc82',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0007 gated web-font activation at ec69edf; explicitly rebound like the
     // 5e946fe inputs below, which remain admitted unchanged.
     'e059305e2602adead696c2639c5332656e240f1b58628dde05924414ea99bc8d':Object.freeze({

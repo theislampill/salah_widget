@@ -69,6 +69,8 @@ export function startNativeSky(pack,workerSource,physical){
  let client,lifecycle,frame=null,job=null,pendingJob=null,disposed=false,paintedFrame=null,paintedJob=null,previousPresentation=null,previousSolarMask=null,previousMoonBottom=0,lastCompose=-Infinity,animationId=null,workerUrl=null;
  function publish(){const preview=window.SalahSkyPreview?.state.status==='ready';badge.textContent=status.status==='ready'?(status.last?.diffuseAsset?.mode==='cp6-fallback'?'Diffuse unavailable — CP6 sky':status.last?.diffuseState?.exposureComplete===false?'Diffuse support incomplete':''):status.availability?.reason==='rate-throughput'?`${preview?'Sky preview · r':'R'}efinement unavailable at ${status.availability.rate}×`:preview?'Sky preview · refining…':status.status==='loading'?'Real sky loading…':status.status==='pending'?'Real sky updating…':'Real sky unavailable';badge.title=status.errors.at(-1)??'Optional astronomy; prayer readiness is independent. A current preview is distinct from registered diffuse refinement.';canvas.dataset.status=status.status;}
  function clear(reason='invalidated'){
+  // Releasing a composed layer can expose the raw native cloud canvas.
+  window.SalahNativeSkyHost.reconcileClouds();
   solarPublication?.cancel();
   pendingJob=null;
   const preview=window.SalahSkyPreview,previewCurrent=!!preview?.frame?.current?.(),previewOwnsDetail=previewCurrent&&window.SalahMoonDetail?.state?.skyOwner==='atmospheric-preview';
@@ -100,7 +102,7 @@ export function startNativeSky(pack,workerSource,physical){
    if(disposed||frame!==acceptedFrame||job!==acceptedJob)return;
    // Retention remains bounded by the ORIGINAL displayed job, not this failed
    // preparation. A target/clock/visibility change must still withdraw it.
-   if(paintedJob&&lifecycle.current(paintedJob)){
+   if(paintedJob&&lifecycle.current(paintedJob)&&(!foreground||window.SalahNativeSkyHost.cloudsCurrent(previousPresentation?.cloudAuthority))){
     status.presentationRejections++;status.lastPresentationError=String(e?.message??e);if(status.displayed)status.displayed={...status.displayed,retained:true,reason:status.lastPresentationError};lastCompose=performance.now();return;
    }
    failure(e);
@@ -113,6 +115,7 @@ export function startNativeSky(pack,workerSource,physical){
      // Never join old clouds to a newer mutable frame, or publish after a clear.
      if(disposed||frame!==acceptedFrame||job!==acceptedJob)return false;
      if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during mask decode');return false;}
+     if(!window.SalahNativeSkyHost.cloudsCurrent(capture.cloudAuthority)){compose();return false;}
       // The detail owner needs the refined class for geometry, but its fallible
       // readback must finish before replacing the displayed background/identity.
       // Restore the previous owner in this same turn if the candidate fails.
@@ -120,6 +123,8 @@ export function startNativeSky(pack,workerSource,physical){
       try{window.SalahMoonDetail?.compose(acceptedFrame,encodeNativeDisplay);}
       catch(error){if(!wasComposed)card.classList.remove('real-sky-composed');throw error;}
       if(!lifecycle.current(acceptedJob,snapshot())){clear('superseded during detail composition');return false;}
+      // A detail read may consume enough wall time to revoke this cloud receipt.
+      if(!window.SalahNativeSkyHost.cloudsCurrent(capture.cloudAuthority)){status.reason='superseded cloud capture during detail composition';compose();return false;}
      ctx.putImageData(image,0,0);card.style.setProperty('--native-sun-cloud-mask',solarMask);
      paintedFrame=acceptedFrame;paintedJob=acceptedJob;status.presentationUtcMs=acceptedJob.observer.utcMs;previousMoonBottom=bottom;
      status.displayed={utcMs:acceptedJob.observer.utcMs,identity:acceptedJob.native.identity,exposure:acceptedFrame.raster.effectiveExposure,presentation:acceptedFrame.raster.displayPresentation??null,retained:false};
@@ -136,6 +141,8 @@ export function startNativeSky(pack,workerSource,physical){
    const current=snapshot();if(!lifecycle.current(job,current)){clear('host target changed or expired');return;}
    if(paintedJob&&!lifecycle.current(paintedJob,current)){clear('displayed sky target changed or expired');return;}
    if(pendingJob&&!lifecycle.current(pendingJob,current)){solarPublication.cancel();pendingJob=null;}
+   if(foreground)window.SalahNativeSkyHost.reconcileClouds();
+   if(solarPublication?.pending&&!window.SalahNativeSkyHost.cloudsCurrent(solarPublication.pendingContext?.cloudAuthority)){solarPublication.cancel();pendingJob=null;}
    if(solarPublication?.pending)return;
    const started=performance.now();
    if(foreground){
@@ -143,13 +150,15 @@ export function startNativeSky(pack,workerSource,physical){
     // can move independently; repaint their entire old/new support, not all 530 rows.
     const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom);
     const capture=foreground.capture(rows),geometry=calendarGeometry(rows);
-    const presentation={frame,rows,maskKey:geometry.key,cloudRGBA:capture.cloudRGBA,moonRGBA:capture.moonRGBA};
+    const presentation={frame,rows,maskKey:geometry.key,cloudRGBA:capture.cloudRGBA,moonRGBA:capture.moonRGBA,cloudAuthority:capture.cloudAuthority};
     // Unlike the donor cloud-only guard, this also fences physical frame, PBR
     // bytes, native cutout geometry and old/new foreground support dimensions.
     if(sameNativePresentation(previousPresentation,presentation)){
-     status.presentationSkips++;lastCompose=performance.now();
+     window.SalahMoonDetail?.compose(frame,encodeNativeDisplay);
+     if(!window.SalahNativeSkyHost.cloudsCurrent(capture.cloudAuthority)){compose();return;}
+     status.presentationSkips++;lastCompose=performance.now();previousPresentation=presentation;
      Object.assign(status.last.composition,capture.native,{lastComposeMs:lastCompose-started});
-     card.classList.add('real-sky-composed');canvas.style.visibility='visible';window.SalahMoonDetail?.compose(frame,encodeNativeDisplay);return;
+     card.classList.add('real-sky-composed');canvas.style.visibility='visible';return;
     }
     const base=nativeCalendarRegion(frame.raster,geometry.mask(),rows);
     const joined=nativeForeground(base,{...capture,atmosphereLinear:(frame.raster.skyBackgroundLinear??frame.raster.backgroundLinear).subarray(0,base.length),exposure:frame.raster.effectiveExposure});
@@ -212,7 +221,7 @@ export function startNativeSky(pack,workerSource,physical){
   // A replacement failure does not revoke the independently current displayed
   // job. Keep its matching pixels/mask while normal currentness fences and the
   // existing request loop govern withdrawal and recovery.
-  if(paintedJob&&lifecycle.current(paintedJob)){
+  if(paintedJob&&lifecycle.current(paintedJob)&&(!foreground||window.SalahNativeSkyHost.cloudsCurrent(previousPresentation?.cloudAuthority))){
    solarPublication?.cancel();pendingJob=null;frame=paintedFrame;job=paintedJob;
    if(status.displayed)status.displayed={...status.displayed,retained:true,reason:message};
   }else clear('render failure');

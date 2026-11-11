@@ -14,23 +14,23 @@ function loop(h){
     visibility(value){h.ctx.document.visibilityState=value;listeners.get('visibilitychange')();}};
 }
 test('live reduced/full toggles hold all axes and rebase without a substituted epoch',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.paint();const l=loop(h);l.frame(100);const before=axes(h);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();h.paint();const l=loop(h);l.frame(100);const before=axes(h);
   l.reduce(true);l.frame(100);assert.deepEqual(axes(h),before);
   for(let i=0;i<30;i++)l.frame(1000);assert.deepEqual(axes(h),before);
   l.reduce(false);l.frame(100);assert.deepEqual(axes(h),before);l.frame(100);assert.notDeepEqual(axes(h),before);
 });
 test('motion=full respects the explicit override under a reduced OS signal',()=>{
-  const h=fixture('&timeScale=1&motion=full');h.run('TIMESCALE=1');h.paint();const l=loop(h);l.reduce(true);const before=axes(h);l.frame(1000);
+  const h=fixture('&timeScale=1&motion=full');h.run('TIMESCALE=1');h.publish();h.paint();const l=loop(h);l.reduce(true);const before=axes(h);l.frame(1000);
   assert.notDeepEqual(axes(h),before);assert.equal(h.select('.c').classList.contains('motionfull'),true);
 });
 test('hidden/resumed repeats freeze and rebase while retaining exactly one loop',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.paint();const l=loop(h);l.frame(100);const before=axes(h);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();h.paint();const l=loop(h);l.frame(100);const before=axes(h);
   l.visibility('hidden');assert.equal(l.callbacks.size,0);h.clock.now+=60000;h.clock.wall+=60000;
   l.visibility('visible');l.visibility('visible');assert.equal(l.callbacks.size,1);l.frame();assert.deepEqual(axes(h),before);
   l.frame(100);assert.notDeepEqual(axes(h),before);l.visibility('hidden');l.visibility('visible');l.visibility('visible');assert.equal(l.callbacks.size,1);
 });
 test('a missing-frame gap over two seconds is bounded suspension, followed by resumed travel',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.paint();const before=axes(h);h.step(5000);assert.deepEqual(axes(h),before);h.step(1000);assert.notDeepEqual(axes(h),before);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();h.paint();const before=axes(h);h.step(5000);assert.deepEqual(axes(h),before);h.step(1000);assert.notDeepEqual(axes(h),before);
 });
 test('ordinary wall corrections preserve visual axes at the same monotonic instant',()=>{
   const h=cloudFixture({sourcePath,hash:'#lat=24.47&lon=39.61&tz=Asia%2FRiyadh&units=c&seed=1&simMoon=.5&simMoonAlt=20&simMoonH=42'});h.paint();const before=axes(h);
@@ -38,31 +38,31 @@ test('ordinary wall corrections preserve visual axes at the same monotonic insta
   h.clock.wall-=7200000;h.run('render()');h.paint();assert.deepEqual(axes(h),before);h.step(1000);assert.notDeepEqual(axes(h),before);
 });
 test('explicit forward/backward seeks reconstruct deterministic scene axes',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.paint();h.step(1000);
-  h.run('_simBase=Date.parse("2026-09-09T10:00:00Z");_rafT0=performance.now();render()');h.paint();const forward=axes(h);h.step(1000);
-  h.run('_simBase=Date.parse("2026-09-07T10:00:00Z");_rafT0=performance.now();render()');h.paint();assert.notDeepEqual(axes(h),forward);
-  h.run('_simBase=Date.parse("2026-09-09T10:00:00Z");_rafT0=performance.now();render()');h.paint();assert.deepEqual(axes(h),forward);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();h.paint();h.step(1000);
+  h.run('_simBase=Date.parse("2026-09-09T10:00:00Z");_rafT0=performance.now()');h.publish({admitPrayerDay:true});h.paint();const forward=axes(h);h.step(1000);
+  h.run('_simBase=Date.parse("2026-09-07T10:00:00Z");_rafT0=performance.now()');h.publish({admitPrayerDay:true});h.paint();assert.notDeepEqual(axes(h),forward);
+  h.run('_simBase=Date.parse("2026-09-09T10:00:00Z");_rafT0=performance.now()');h.publish({admitPrayerDay:true});h.paint();assert.deepEqual(axes(h),forward);
 });
 test('frozen explicit preview stays frozen when only monotonic time advances',()=>{
   const h=fixture();h.paint();const before=axes(h);h.step(1000);assert.deepEqual(axes(h),before);
 });
 for(const boundary of ['2026-09-09T00:00:00Z','2026-10-01T00:00:00Z','2027-01-01T00:00:00Z'])test(boundary+' retains lifecycle identity through ordinary preview travel',()=>{
-  const h=fixture('&timeScale=1');h.run('_simBase=Date.parse('+JSON.stringify(boundary)+')-38;_rafT0=0;TIMESCALE=1');const a=h.paint(),b=h.step(76);
+  const h=fixture('&timeScale=1');h.run('_simBase=Date.parse('+JSON.stringify(boundary)+')-38;_rafT0=0;TIMESCALE=1');h.publish({admitPrayerDay:true});const a=h.paint(),b=h.step(76);
   const population=s=>s.noise.filter(n=>n[1]===7.3).map(n=>n.slice(0,2));assert.deepEqual(population(b),population(a));assert.equal(axes(h).population,h.run('_cloudMotion.population'));
 });
 test('all decks advance once with coverage-independent state and equal-time idempotence',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.paint();const before=axes(h);h.step(1000);const after=axes(h);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();h.paint();const before=axes(h);h.step(1000);const after=axes(h);
   for(let di=0;di<3;di++)assert.ok(Math.abs((after.life[di]-before.life[di])-(.018+di*.004))<1e-7);
   h.paint();h.paint();assert.deepEqual(axes(h),after);
 });
 test('new speed/heading/gust affect subsequent travel without changing accumulated axes',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.paint();h.step(1000);const before=axes(h);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();h.paint();h.step(1000);const before=axes(h);
   h.run('weather.wind=9;weather.windDir=45;weather.gust=18;render()');h.paint();assert.deepEqual(axes(h),before);
   const wind=h.run('cloudState.wx*cloudState.wspd');assert.ok(wind<0);h.step(1000);const after=axes(h);
   for(let di=0;di<3;di++){const expected=((before.phase[di]-wind*(.024+di*.006))%1.25+1.25)%1.25;assert.ok(Math.abs(after.phase[di]-expected)<1e-10);}
 });
 test('periodic edge copies keep actual painter commands continuous at phase wrap',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');const initial=h.paint(),lowSeed=h.run('19.1+_cloudMotion.population');
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();const initial=h.paint(),lowSeed=h.run('19.1+_cloudMotion.population');
   // Cross the wrapped coordinate of a real visible low-deck cell, rather than
   // merely wrapping the accumulator while every cell remains away from an edge.
   const cell=initial.noise.find(n=>n[1]===2&&n[0]>=lowSeed&&n[0]<=lowSeed+6*1.37);assert.ok(cell,'visible low-deck cell');h.ctx.__edgeCellSeed=cell[0];
@@ -73,12 +73,12 @@ test('periodic edge copies keep actual painter commands continuous at phase wrap
   assert.equal(a.columns.length,144);assert.equal(b.columns.length,144);
 });
 test('accelerated motion remains finite and bounded with a fixed amount of retained state',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1e12');h.paint();h.step(1000);const a=axes(h);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1e12');h.publish();h.paint();h.step(1000);const a=axes(h);
   assert.equal(a.phase.length,3);assert.equal(a.life.length,3);for(const x of a.phase)assert.ok(Number.isFinite(x)&&x>=0&&x<1.25);
   for(const x of [...a.life,a.wander])assert.ok(Number.isFinite(x)&&x>=0&&x<4294967296);assert.equal(h.run('_colDens.length'),144);
 });
 test('clear scene paints no puffs or density while its hidden decks keep evolving',()=>{
-  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.paint();const before=axes(h);h.run('cloudState.covLow=cloudState.covMid=cloudState.covHigh=0');const s=h.step(1000);
+  const h=fixture('&timeScale=1');h.run('TIMESCALE=1');h.publish();h.paint();const before=axes(h);h.run('cloudState.covLow=cloudState.covMid=cloudState.covHigh=0');const s=h.step(1000);
   assert.equal(s.trace.length,0);assert.ok(s.columns.every(v=>v===0));assert.notDeepEqual(axes(h),before);
 });
 test('rain columns follow actual visible copies without granting particle permission',()=>{

@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' data:; font-src 'none'; base-uri 'self'; form-action 'none'">
+<title>R000B isolated no-timetable withdrawal</title>
+</head>
+<body><pre id="fixture-error">Loading verified widget source…</pre>
+<script>
+// R000B_HN1_HN4_READ_ONLY_OBSERVER_V2
+// Test-only document and transport wrapper. Every product script body is kept
+// byte-for-byte. The appended bridge only reads existing owners and pixels.
+(function(){
+  "use strict";
+  const nativeFetch=window.fetch.bind(window),NativeDate=window.Date;
+  const query=new URLSearchParams(location.search),hash=location.hash.slice(1),cfg=new URLSearchParams(hash);
+  const run=query.get("run"),attempt=Number(query.get("attempt")),caseId=query.get("case"),expectedSourceSha256=query.get("expectedSource");
+  const hiddenCase=query.get("visibility")==="controlled",visibility={mode:hiddenCase?"controlled-document-visibility-event":"native-visible-document",hidden:false,changes:[]};
+  const rootURL=new URL("/product/",location.href),started=performance.now();
+  const startUtc=NativeDate.parse("2026-09-08T20:59:50.000Z"),sourceUtc=NativeDate.parse("2026-09-08T20:45:00.000Z");
+  // One initial epoch offset, then ordinary native elapsed time at 1x. There is
+  // no seek, frozen second, accelerated time, or callable clock-setting seam.
+  const elapsed=()=>performance.now()-started,wall=()=>startUtc+Math.floor(elapsed());
+  const documentId=crypto.randomUUID(),ownedDocument=document;
+  const policy="default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' data:; font-src 'none'; base-uri 'self'; form-action 'none'";
+  let weatherRequests=0,prayerRequests=0,radarRequests=0;
+  const report=window.__withdrawalFixture={schema:"r000b-no-timetable-fixture/v1",run,attempt,caseId,documentId,hash,
+    state:"setup",error:null,sourceSha256:null,expectedSourceSha256,scriptBodies:[],bridgeSha256:null,started,startUtc,initialSourceUtc:sourceUtc,visibility,
+    clockPolicy:"native-elapsed-1x; integer milliseconds; single initial epoch offset",clockIsolated:false,fetchIntercepted:false,
+    storageIsolated:false,initialStorageEntries:null,prayerRecoveryNotBeforeMs:100000,maxElapsedMs:240000,
+    weatherOracle:"Synthetic current-model input; quantity-supported model rain is not a direct local observation; no lightning authority",
+    boundaryPolicy:"The 900000 ms source bound and midnight coincide. Preserve naturally reached warm/no-model samples; never manufacture an exact-boundary frame.",
+    ledger:[],storageEvents:[],consoleErrors:[],events:[],passive:[],latest:null};
+  const identity=()=>({run,attempt,documentId,hash,sourceSha256:report.sourceSha256});
+  function assertOwned(owner){
+    if(!owner||owner.run!==run||owner.attempt!==attempt||owner.documentId!==documentId||owner.hash!==hash||
+      owner.sourceSha256!==report.sourceSha256||document!==ownedDocument||window.__withdrawalFixture!==report||
+      location.hash.slice(1)!==hash||report.state!=="ready")throw Error("Fixture requires the exact ready document/source identity");
+  }
+  function failure(error){
+    report.error=String(error&&error.message||error);report.state="error";
+    const el=document.getElementById("fixture-error");if(el)el.textContent="Fixture bootstrap error: "+report.error;
+  }
+  const digest=async bytes=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))].map(b=>b.toString(16).padStart(2,"0")).join("");
+  // Synthetic dates and Hijri labels are test inputs, not calendar conversions.
+  function prayerFixture(day){
+    const number=Number(day.slice(0,2));
+    if(!["08-09-2026","09-09-2026","10-09-2026"].includes(day))throw Error("Unexpected synthetic prayer day");
+    return {code:200,status:"OK",data:{timings:{Fajr:"05:00",Sunrise:"06:00",Dhuhr:"12:00",Asr:"15:30",Sunset:"18:00",Maghrib:"18:00",Isha:"19:30"},
+      meta:{timezone:"Asia/Riyadh"},date:{gregorian:{date:day,day:String(number).padStart(2,"0"),month:{number:9,en:"September"},year:"2026"},
+        hijri:{day:String(number-7).padStart(2,"0"),month:{number:1,en:"Synthetic month"},year:"1500"}}}};
+  }
+  function weatherFixture(){
+    const valid=weatherRequests===1?sourceUtc:Math.floor(wall()/60000)*60000;
+    return {timezone:"Asia/Riyadh",elevation:612,current:{
+      time:new NativeDate(valid+3*3600000).toISOString().slice(0,16),interval:900,
+      weather_code:63,temperature_2m:24,apparent_temperature:23,relative_humidity_2m:90,dew_point_2m:18,
+      wind_speed_10m:2,wind_direction_10m:225,wind_gusts_10m:4,
+      cloud_cover:92,cloud_cover_low:92,cloud_cover_mid:90,cloud_cover_high:60,
+      visibility:20000,is_day:0,precipitation:2,rain:2,showers:0,snowfall:0}};
+  }
+  function jsonResponse(value,row,status=200){
+    row.status=status;row.inputBody=value;
+    const response=new Response(JSON.stringify(value),{status,headers:{"Content-Type":"application/json"}}),nativeJson=response.json.bind(response);
+    response.json=()=>{row.jsonReads++;return nativeJson().then(value=>{
+      row.result="json-consumed";row.jsonSettled=true;row.jsonElapsedMs=elapsed();return value;
+    });};
+    return Promise.resolve(response);
+  }
+  function fixtureFetch(input,init){
+    const u=new URL(typeof input==="string"||input instanceof URL?String(input):input.url,location.href);
+    const row={attempt,url:u.origin+u.pathname,jsonReads:0,elapsedMs:elapsed(),wallUtcMs:wall(),result:"requested",cache:init&&init.cache||null};
+    report.ledger.push(row);
+    if(u.origin===rootURL.origin&&u.pathname.startsWith(rootURL.pathname)){
+      row.kind="local-asset";row.url=u.pathname;row.result="local-asset-passthrough";
+      return nativeFetch(input,init);
+    }
+    const sameKeys=keys=>[...u.searchParams.keys()].length===keys.length&&[...u.searchParams.keys()].every(k=>keys.includes(k));
+    const owner=kind=>{const op=_requestSlots[kind],a=op?.attempt;return op?{generation:op.generation,operationId:op.operationId,requestedDay:op.requestedDay??null,attemptId:a?.attemptId??null,deadlineAt:a?.deadlineAt??null}:null;};
+    const currentFields="temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall";
+    const hourlyFields="temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,wind_speed_10m,wind_direction_10m,wind_gusts_10m,precipitation,weather_code,visibility,is_day";
+    if(u.origin==="https://api.open-meteo.com"&&u.pathname==="/v1/forecast"&&
+      u.searchParams.get("latitude")===String(Number(cfg.get("lat")))&&u.searchParams.get("longitude")===String(Number(cfg.get("lon")))&&
+      u.searchParams.get("timezone")==="Asia/Riyadh"&&u.searchParams.get("temperature_unit")==="celsius"&&
+      u.searchParams.get("wind_speed_unit")==="ms"&&u.searchParams.get("forecast_days")==="3"&&
+      u.searchParams.get("current")===currentFields&&u.searchParams.get("hourly")===hourlyFields&&
+      sameKeys(["latitude","longitude","current","hourly","forecast_days","temperature_unit","wind_speed_unit","timezone"])){
+      row.kind="weather";row.url=u.href;row.weatherOrdinal=++weatherRequests;row.nativeOwner=owner("weather");
+      return jsonResponse(weatherFixture(),row);
+    }
+    if(u.href==="https://api.rainviewer.com/public/weather-maps.json"){
+      row.kind="radar";row.url=u.href;row.radarOrdinal=++radarRequests;row.nativeOwner=owner("radar");
+      // No frame and no tile is an unavailable radar diagnostic, never dry.
+      return jsonResponse({generated:Math.floor(wall()/1000),host:rootURL.origin+"/unused-tile",radar:{past:[]}},row);
+    }
+    const day=u.pathname.slice("/v1/timings/".length);
+    if(u.origin==="https://api.aladhan.com"&&u.pathname.startsWith("/v1/timings/")&&
+      u.searchParams.get("latitude")===String(Number(cfg.get("lat")))&&u.searchParams.get("longitude")===String(Number(cfg.get("lon")))&&
+      u.searchParams.get("method")==="4"&&u.searchParams.get("school")==="0"&&sameKeys(["latitude","longitude","method","school"])&&
+      ["08-09-2026","09-09-2026","10-09-2026"].includes(day)){
+      row.kind="prayer";row.url=u.href;row.prayerOrdinal=++prayerRequests;row.prayerDay=day;
+      row.nativeOwner=owner(_requestSlots.current?.attempt?.requestedDay===day?"current":"prefetch");
+      const unavailable=day!=="08-09-2026"&&elapsed()<report.prayerRecoveryNotBeforeMs;
+      return unavailable?jsonResponse({code:503,status:"Synthetic next-day timetable unavailable"},row,503):jsonResponse(prayerFixture(day),row);
+    }
+    row.kind="unexpected";row.result="unexpected-request";
+    failure("Unexpected fixture request origin/path: "+u.origin+u.pathname);
+    return Promise.reject(Error(report.error));
+  }
+  // This bridge does not call qaState(): the baseline implementation derives
+  // atmosphere(model()) even when model() is null. It reads the actual lexical
+  // coverage/raster and the new immutable receipt when that getter exists.
+  // No render, acquisition, admission, cloud reconciliation, foreground capture,
+  // lunar surface producer, or currentness/painter helper is exposed or invoked.
+  function installWithdrawalReadBridge(){
+    "use strict";
+    const control=window.__withdrawalControl,report=window.__withdrawalFixture;
+    const copy=value=>value==null?null:JSON.parse(JSON.stringify(value,(_,v)=>typeof v==="number"&&!Number.isFinite(v)?{$nativeNonFiniteNumber:String(v)}:v));
+    const rect=(el,parent)=>{const r=el.getBoundingClientRect(),p=parent?parent.getBoundingClientRect():{left:0,top:0};return {left:r.left-p.left,top:r.top-p.top,width:r.width,height:r.height,right:r.right-p.left,bottom:r.bottom-p.top};};
+    const publication=()=>typeof cloudPublicationReceipt==="function"?copy(cloudPublicationReceipt()):null;
+    const motion=()=>({key:_cloudMotion.key,population:_cloudMotion.population,phase:[..._cloudMotion.phase],life:[..._cloudMotion.life],wander:_cloudMotion.wander,
+      lastRt:_cloudMotion.lastRt,elapsedRtMs:_cloudMotion.lastRt==null?null:_cloudMotion.lastRt-report.started,
+      paused:_cloudMotion.paused,reduced:_cloudMotion.reduced,fieldSeed:_cloudFieldSeed,wind:{wx:cloudState.wx,wspd:cloudState.wspd}});
+    const actuallyDisplayed=el=>{
+      if(!el)return false;const style=getComputedStyle(el),bounds=el.getBoundingClientRect();
+      return style.display!=="none"&&style.visibility==="visible"&&Number(style.opacity)>0&&bounds.width>0&&bounds.height>0;
+    };
+    function passive(){
+      const elapsedMs=performance.now()-report.started,at=Date.now(),M=model(),e=weatherEligibility(weather,at),c=document.querySelector(".c");
+      const foregroundOwner=c?.classList.contains("real-sky-composed")?"refined":c?.classList.contains("real-sky-preview-ready")?"preview":null;
+      const foreground=foregroundOwner?document.querySelector(foregroundOwner==="refined"?".real-sky-canvas":".real-sky-preview"):null;
+      return {wallUtcMs:at,elapsedMs,modelIsNull:M===null,loopStarted:_loopStarted,
+        currentDay:prayerCivilDay(),todayDay:today?.date?.gregorian?.date??null,tomorrowDay:tomorrow?.date?.gregorian?.date??null,
+        candidate:{eligible:e.eligible,reason:e.reason,sourceAgeMs:e.sourceAgeMs,receiptAgeMs:e.receiptAgeMs,sourceValidAt:weather?.currentValidAt??null,retrievedAt:weather?.retrievedAt??null},
+        cloudReady:_cloudReady,coverage:[cloudState.covLow,cloudState.covMid,cloudState.covHigh],
+        publication:publication(),motion:motion(),documentHidden:document.hidden,documentVisibility:document.visibilityState,cardPaused:c?.classList.contains("paused"),
+        foregroundOwner,foregroundVisible:foreground?.style.visibility==="visible",foregroundHasCloudMask:!!c?.style.getPropertyValue("--native-sun-cloud-mask").includes("data:image/png;base64,"),
+        temperature:document.querySelector("#wt")?.textContent,icon:document.querySelector("#wi")?.textContent,
+        fx:c?.dataset.fx,precip:c?.dataset.precip,lightning:c?.dataset.lightning,lastRender:copy(_lastRender)};
+    }
+    function canvasRead(selector,media,name){
+      const cv=document.querySelector(selector);if(!cv)return null;
+      const pixels=cv.getContext("2d").getImageData(0,0,cv.width,cv.height).data;
+      let sum=0,max=0,nonzero=0,rgbNonzero=0,mx=0,my=0,minRGB=255,maxRGB=0;
+      const columns=new Array(cv.width).fill(0);
+      for(let i=0;i<pixels.length;i+=4){
+        const p=i/4,a=pixels[i+3],x=p%cv.width,y=Math.floor(p/cv.width);sum+=a;max=Math.max(max,a);if(a)nonzero++;
+        mx+=a*x;my+=a*y;columns[x]+=a;
+        const top=Math.max(pixels[i],pixels[i+1],pixels[i+2]);if(top)rgbNonzero++;minRGB=Math.min(minRGB,pixels[i],pixels[i+1],pixels[i+2]);maxRGB=Math.max(maxRGB,top);
+      }
+      media[name]=cv.toDataURL("image/png");const style=getComputedStyle(cv);
+      return {width:cv.width,height:cv.height,alphaSum:sum,alphaMax:max,alphaNonzero:nonzero,meanAlpha:sum/(255*cv.width*cv.height),
+        alphaCentroid:sum?{x:mx/sum,y:my/sum}:null,columnAlpha:columns,rgbNonzero,minRGB,maxRGB,
+        bounds:rect(cv,document.querySelector(".c")),filter:style.filter,maskImage:style.maskImage||style.webkitMaskImage||"none",
+        display:style.display,visibility:style.visibility,opacity:Number(style.opacity)};
+    }
+    function snapshot(){
+      const state=passive(),c=document.querySelector(".c"),cs=getComputedStyle(c),media={};
+      const density=_colDens?Array.from(_colDens):[],densityMax=density.length?Math.max(...density):0;
+      const particles=[...document.querySelectorAll(".wfx .drop,.wfx .flake")].map((el,index)=>{
+        const style=getComputedStyle(el),leftPercent=parseFloat(el.style.left)||50,col=density.length?Math.min(density.length-1,Math.max(0,(leftPercent/100*density.length)|0)):null;
+        const bounds=rect(el,c),displayed=style.display!=="none"&&style.visibility==="visible"&&Number(style.opacity)>.03&&
+          bounds.right>0&&bounds.left<325&&bounds.bottom>0&&bounds.top<530&&c.dataset.precip==="on";
+        // The source column belongs to the untransformed CSS base position.
+        // Keep the currently visible segment separately; its opacity/translation
+        // must never be mistaken for the invisible start of the fall animation.
+        const parent=el.offsetParent,pixels=value=>/^-?[0-9.]+px$/.test(value)?Number.parseFloat(value):null;
+        const position={left:pixels(style.left),top:pixels(style.top),width:pixels(style.width),height:pixels(style.height)};
+        const parentGeometry=parent?{bounds:rect(parent,c),clientLeft:parent.clientLeft,clientTop:parent.clientTop,
+          clientWidth:parent.clientWidth,clientHeight:parent.clientHeight,offsetWidth:parent.offsetWidth,offsetHeight:parent.offsetHeight,classes:String(parent.className)}:null;
+        // R000B_HN_GEOMETRY_CONSTRUCTOR_V2_1
+        const matrix=style.transform==="none"?new DOMMatrixReadOnly():new DOMMatrixReadOnly(style.transform);
+        const transform={is2D:matrix.is2D,a:matrix.a,b:matrix.b,c:matrix.c,d:matrix.d,e:matrix.e,f:matrix.f};
+        const baseOrigin=parentGeometry&&Object.values(position).every(Number.isFinite)?{
+          left:parentGeometry.bounds.left+parentGeometry.clientLeft+position.left,
+          top:parentGeometry.bounds.top+parentGeometry.clientTop+position.top,width:position.width,height:position.height}:null;
+        return {index,kind:el.classList.contains("drop")?"rain":"snow",leftPercent,column:col,density:col==null?null:density[col],
+          normalizedDensity:col==null||densityMax===0?null:density[col]/densityMax,inlineDisplay:el.style.display,display:style.display,
+          visibility:style.visibility,opacity:Number(style.opacity),displayed,originTop:style.top,rect:bounds,animation:style.animationName,animationPlayState:style.animationPlayState,
+          originGeometry:{position,parent:parentGeometry,transform,baseOrigin,transformText:style.transform,
+            contract:"CSS base top19%; assigned untransformed cloud column; visible segment is base plus current translation"}};
+      });
+      const nativeCloud=canvasRead(".cloudcanvas",media,"native-cloud");
+      const refinedCanvas=canvasRead(".real-sky-canvas",media,"refined-foreground"),previewCanvas=canvasRead(".real-sky-preview",media,"preview-foreground");
+      const refined=typeof window.realSkyState==="function"?copy(window.realSkyState()):null,preview=copy(window.SalahSkyPreview?.state);
+      const owner=c.classList.contains("real-sky-composed")?"refined":c.classList.contains("real-sky-preview-ready")?"preview":null;
+      const active=owner==="refined"?refined:owner==="preview"?preview:null;
+      const composition=owner==="refined"?refined?.last?.composition:owner==="preview"?preview?.composition:null;
+      const frameUtcMs=owner==="refined"?(refined?.displayed?.utcMs??refined?.presentationUtcMs):preview?.utcMs;
+      const visibleForegrounds=[
+        {owner:"refined",canvas:refinedCanvas,status:refined?.status??null,composition:copy(refined?.last?.composition),frameUtcMs:refined?.displayed?.utcMs??refined?.presentationUtcMs??null},
+        {owner:"preview",canvas:previewCanvas,status:preview?.status??null,composition:copy(preview?.composition),frameUtcMs:preview?.utcMs??null}
+      ].filter(layer=>layer.canvas&&layer.canvas.display!=="none"&&layer.canvas.visibility==="visible"&&layer.canvas.opacity>0&&layer.canvas.bounds.width>0&&layer.canvas.bounds.height>0);
+      const photo=document.querySelector(".mphoto"),moonGroup=document.querySelector(".moon");
+      const moonDOM={photoHrefPresent:!!photo?.getAttribute("href"),photoBounds:photo?rect(photo,c):null,
+        groupBounds:moonGroup?rect(moonGroup,c):null,groupOpacity:moonGroup?Number(getComputedStyle(moonGroup).opacity):null};
+      const solarMask=c.style.getPropertyValue("--native-sun-cloud-mask");
+      const cacheKey=wxKey(),cacheBytes=localStorage.getItem(cacheKey);
+      return {...state,identity:control.identity(),clock:{TIMESCALE,FOLLOW_WALL_CLOCK,ADVANCING},
+        motionPreference:{reduced:matchMedia("(prefers-reduced-motion: reduce)").matches,full:new URLSearchParams(location.hash.slice(1)).get("motion")==="full"},
+        target:copy(currentWeatherTarget()),sceneIdentity:skySceneIdentity(),runtimeGeneration:_runtimeGeneration,
+        prayer:{modelIsNull:state.modelIsNull,currentDay:state.currentDay,todayDay:state.todayDay,tomorrowDay:state.tomorrowDay,
+          recordsGeneration:_prayerRecordsGeneration,stale:_prayerStale,lastRender:copy(_lastRender),cooldown:copy(_prayerCooldown),
+          requests:{current:copy(_requestSlots.current),prefetch:copy(_requestSlots.prefetch)}},
+        raw:copy(weather),selected:!!selectedWeather(state.wallUtcMs),cache:{key:cacheKey,bytes:cacheBytes,parsed:cacheBytes==null?null:JSON.parse(cacheBytes)},
+        lastWeatherHeader:copy(_lastWeatherHeader),header:{icon:state.icon,temperature:state.temperature,label:document.querySelector("#wi").title},
+        actualCloud:{ready:_cloudReady,coverage:[cloudState.covLow,cloudState.covMid,cloudState.covHigh],targets:[cloudState.tgtLow,cloudState.tgtMid,cloudState.tgtHigh],
+          density:{values:density,length:density.length,sum:density.reduce((a,b)=>a+b,0),max:densityMax,nonzero:density.filter(v=>v!==0).length},
+          raster:nativeCloud,motion:motion(),publication:publication(),wind:{wx:cloudState.wx,wy:cloudState.wy,wspd:cloudState.wspd}},
+        effects:{fx:state.fx,precip:state.precip,lightning:state.lightning,rainOpacity:Number(cs.getPropertyValue("--rain-op")),
+          rainSlant:cs.getPropertyValue("--rain-slant"),particles,displayedParticles:particles.filter(p=>p.displayed).length,
+          particleCount:particles.length,cloudGateActive:densityMax>=2,
+          overlays:[...document.querySelectorAll(".veil,.fog,.godray,.sunhalo,.sundogs,.sunpillar,.mhalo,.mcorona,.mparhelia")].map(el=>{
+            const style=getComputedStyle(el);return {classes:el.getAttribute("class"),opacity:Number(style.opacity),display:style.display,visibility:style.visibility};})},
+        celestial:{owner,status:active?.status??null,frameUtcMs,frameAgeMs:Number.isFinite(frameUtcMs)?state.wallUtcMs-frameUtcMs:null,
+          activeCanvas:owner==="refined"?refinedCanvas:owner==="preview"?previewCanvas:null,composition:copy(composition),refined,preview,
+          skyPending:c.classList.contains("sky-pending"),moonReady:c.classList.contains("moon-ready"),moonPresence:_skyMoonPresence,
+          moonGeometry:copy(moonSky),moonDOM,visibleForegrounds,solarMask,
+          diagnosticReadLimit:"Moon runtime state/surface/presentation getters are not read; handled Moon worker diagnostic errors are uninspected"},
+        rows:[...document.querySelectorAll(".p")].map(el=>({key:el.dataset.prayerKey,time:el.querySelector(".tm")?.textContent,text:el.textContent,rect:rect(el,c)})),
+        card:rect(c),footer:rect(document.querySelector(".d"),c),countdown:document.querySelector(".left").textContent,
+        resources:{canvases:document.querySelectorAll("canvas").length,cloudCanvases:document.querySelectorAll(".cloudcanvas").length,particles:particles.length,sceneBuilt:_sceneBuilt,loopStarted:_loopStarted},media};
+    }
+    let lastRetained=-Infinity,lastKey=null;
+    const observer=setInterval(()=>{
+      if(report.state!=="ready")return;
+      try{
+        const state=passive();report.latest=state;
+        const key=JSON.stringify([state.modelIsNull,state.candidate.eligible,state.candidate.sourceValidAt,state.cloudReady,state.publication?.state,state.temperature,state.precip]);
+        if(state.elapsedMs<16000||key!==lastKey||state.elapsedMs-lastRetained>=1000){
+          if(report.passive.length>=4096)throw Error("Bounded passive trace exhausted");
+          report.passive.push(state);lastRetained=state.elapsedMs;lastKey=key;
+        }
+        if(state.elapsedMs>report.maxElapsedMs){clearInterval(observer);throw Error("Bounded fixture elapsed budget exhausted");}
+      }catch(error){clearInterval(observer);report.error=String(error.message||error);report.state="error";}
+    },20);
+    window.__withdrawalRead=Object.freeze({identity:control.identity,
+      read(owner){control.assertOwned(owner);const value=snapshot();report.events.push({action:"consumer-read",elapsedMs:value.elapsedMs,wallUtcMs:value.wallUtcMs});return value;},
+      observeResume(owner){
+        control.assertOwned(owner);if(report.resumeObservationArmed)throw Error("Resume observation is single-use");report.resumeObservationArmed=true;
+        const begin=performance.now();let frames=0;report.resumeOpportunities=[];
+        const readFrame=()=>{
+          if(report.state!=="ready")return;
+          try{
+            frames++;const first=frames===1;
+            // CSS visibility, dimensions and opacity determine observation.
+            // A pending diagnostic status never suppresses displayed pixels.
+            const visible=actuallyDisplayed(document.querySelector(".real-sky-canvas"))||actuallyDisplayed(document.querySelector(".real-sky-preview"));
+            const value=first||visible?snapshot():null;
+            report.resumeOpportunities.push({frame:frames,elapsedMs:performance.now()-report.started,visible,state:value});
+            if(first)report.resumeFirstRaf=value;
+            if(visible&&!report.resumeFirstVisible)report.resumeFirstVisible=value;
+            // Ready recovery is a separate endpoint after every earlier
+            // actually visible opportunity has been retained for checking.
+            const ready=value?.celestial?.visibleForegrounds.some(layer=>layer.owner===value.celestial.owner&&layer.status==="ready");
+            if(ready){
+              report.resumeReady=value;report.resumeObservation={complete:true,frames,elapsedMs:performance.now()-begin,kind:"all visible post-event rAF opportunities retained independently of diagnostic readiness"};return;
+            }
+            if(frames>=120||performance.now()-begin>5000)throw Error("No ready foreground within bounded resume observation; visible pending frames retained");
+            requestAnimationFrame(readFrame);
+          }catch(error){report.error=String(error.message||error);report.state="error";}
+        };
+        requestAnimationFrame(readFrame);
+      }});
+  }
+  async function start(){
+    if(caseId!=="ES0B-midnight-withdrawal"||!run||!Number.isSafeInteger(attempt)||attempt<1||!/^[0-9a-f]{64}$/.test(expectedSourceSha256||""))throw Error("Unknown bounded fixture/source identity");
+    if(query.has("visibility")&&!hiddenCase)throw Error("Unreviewed visibility mode");
+    const expected={lat:"24.7136",lon:"46.6753",tz:"Asia/Riyadh",label:"Riyadh",method:"4",school:"0",units:"c",seed:"1"};
+    if(!Object.entries(expected).every(([k,v])=>cfg.get(k)===v)||[...cfg.keys()].some(k=>!Object.hasOwn(expected,k)&&k!=="motion")||
+      (cfg.has("motion")&&cfg.get("motion")!=="full"))throw Error("Fixture accepts only its declared live Riyadh configuration");
+    const response=await nativeFetch(new URL("index.html",rootURL),{cache:"no-store",credentials:"same-origin"});
+    if(!response.ok)throw Error("Widget source fetch HTTP "+response.status);
+    const bytes=await response.arrayBuffer(),source=new TextDecoder("utf-8",{fatal:true}).decode(bytes);
+    report.sourceSha256=await digest(bytes);
+    if(report.sourceSha256!==expectedSourceSha256)throw Error("Fetched product does not match the declared source manifest");
+    if(!/^<!doctype html>/i.test(source)||!source.includes('<title>Prayer Times</title>'))throw Error("Widget document anchors changed");
+    const scripts=[...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    // Current generated entry has the retained first-paint and two Moon bodies.
+    // Refuse a new layout until reviewed instead of silently dropping a script.
+    if(scripts.length!==6||!/^\s+src="config\.js"\s*$/.test(scripts[0][1])||
+      !/^\s+id="native-first-paint-code"\s+data-sha256="[0-9a-f]{64}"\s*$/.test(scripts[1][1])||
+      !/^\s+id="moon-initial-code"\s*$/.test(scripts[2][1])||scripts[3][1].trim()||
+      !/^\s+id="moon-refinement-code"\s*$/.test(scripts[4][1])||!/^\s+src="real-sky\/native-sky\.js"\s*$/.test(scripts[5][1])||
+      scripts[0][2].trim()||scripts[5][2].trim())throw Error("Unreviewed generated script anchors");
+    for(const anchor of ["async function fetchTimings(","async function loadPrayerData(","function model(","function render(","window.qaState=function()"])
+      if(scripts[3][2].split(anchor).length!==2)throw Error("Missing or ambiguous product owner anchor: "+anchor);
+    if(scripts[3][2].split("\nboot();").length!==2||!/\nboot\(\);\s*$/.test(scripts[3][2]))throw Error("Missing unchanged native boot caller");
+    if(!scripts[1][2].includes("function prepareNativeFirstPaint()")||!scripts[2][2].startsWith("window.__SALAH_MOON_INLINE__=true;")||
+      !scripts[4][2].startsWith("window.SalahMoonRuntime.installWorkerSource("))throw Error("Generated bootstrap anchors changed");
+    for(let i=0;i<scripts.length;i++)report.scriptBodies.push({index:i,attributes:scripts[i][1],sha256:await digest(new TextEncoder().encode(scripts[i][2])),characters:scripts[i][2].length});
+    if(!scripts[1][1].includes('data-sha256="'+report.scriptBodies[1].sha256+'"'))throw Error("First-paint body digest mismatch");
+    function privateStorage(name){
+      const values=new Map();return {get length(){return values.size;},key(n){return [...values.keys()][n]??null;},
+        getItem(k){k=String(k);report.storageEvents.push([name,"get",k]);return values.has(k)?values.get(k):null;},
+        setItem(k,v){k=String(k);report.storageEvents.push([name,"set",k]);values.set(k,String(v));},
+        removeItem(k){k=String(k);report.storageEvents.push([name,"remove",k]);values.delete(k);},
+        clear(){report.storageEvents.push([name,"clear"]);values.clear();}};
+    }
+    const local=privateStorage("local"),session=privateStorage("session");
+    Object.defineProperty(window,"localStorage",{configurable:true,enumerable:true,get:()=>local});
+    Object.defineProperty(window,"sessionStorage",{configurable:true,enumerable:true,get:()=>session});
+    class FixtureDate extends NativeDate{constructor(...args){super(...(args.length?args:[wall()]));}static now(){return wall();}}
+    window.Date=FixtureDate;window.fetch=fixtureFetch;
+    window.__withdrawalControl=Object.freeze({identity,assertOwned});report.initialStorageEntries=local.length+session.length;
+    if(hiddenCase){
+      Object.defineProperty(document,"hidden",{configurable:true,get:()=>visibility.hidden});
+      Object.defineProperty(document,"visibilityState",{configurable:true,get:()=>visibility.hidden?"hidden":"visible"});
+      window.__withdrawalVisibility=Object.freeze({transition(owner,hidden){
+        assertOwned(owner);const t=elapsed();
+        if(typeof hidden!=="boolean"||hidden===visibility.hidden||
+          (hidden&&(visibility.changes.length!==0||t<4000||t>=10000))||
+          (!hidden&&(visibility.changes.length!==1||t<12000||t>=15000)))throw Error("Visibility boundary outside the declared single hide/resume schedule");
+        visibility.hidden=hidden;const event={hidden,elapsedMs:t,wallUtcMs:wall(),kind:"controlled document property plus visibilitychange; not OS visibility"};
+        visibility.changes.push(event);report.events.push({action:hidden?"visibility-hidden":"visibility-visible",...event});
+        document.dispatchEvent(new Event("visibilitychange"));
+        // Passive values after the product's own pause/resume listeners establish
+        // exact elapsed boundaries for the no-backlog continuity oracle.
+        event.nativeMotionAfter={key:_cloudMotion.key,population:_cloudMotion.population,phase:[..._cloudMotion.phase],life:[..._cloudMotion.life],wander:_cloudMotion.wander,
+          lastRt:_cloudMotion.lastRt,elapsedRtMs:_cloudMotion.lastRt==null?null:_cloudMotion.lastRt-started,paused:_cloudMotion.paused,reduced:_cloudMotion.reduced,
+          fieldSeed:_cloudFieldSeed,wind:{wx:cloudState.wx,wspd:cloudState.wspd}};
+        event.elapsedAfterDispatchMs=elapsed();
+        if(!hidden)window.__withdrawalRead.observeResume(owner);
+        return event;
+      }});
+    }
+    function verifyHooks(){
+      report.storageIsolated=window.localStorage===local&&window.sessionStorage===session;
+      report.clockIsolated=window.Date===FixtureDate&&Math.abs(Date.now()-wall())<=1;
+      report.fetchIntercepted=window.fetch===fixtureFetch;
+      if(!report.storageIsolated||!report.clockIsolated||!report.fetchIntercepted)throw Error("Fixture hooks changed");
+    }
+    verifyHooks();
+    const doc=new DOMParser().parseFromString(source,"text/html");
+    const fonts=new Map([["https://fonts.googleapis.com","preconnect"],["https://fonts.gstatic.com","preconnect"],
+      ["https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap","stylesheet"]]);
+    let suppressed=0;
+    for(const el of doc.querySelectorAll("link[href]")){
+      const href=el.getAttribute("href"),u=new URL(href,rootURL);if(u.origin===rootURL.origin)continue;
+      if(fonts.get(href)!==el.getAttribute("rel"))throw Error("Unreviewed external link origin/path: "+u.origin+u.pathname);
+      suppressed++;el.remove();
+    }
+    if(suppressed!==3)throw Error("Expected exactly three known font anchors");
+    for(const el of doc.querySelectorAll("script[src],img[src],iframe[src],audio[src],video[src],source[src],object[data],embed[src],image[href]")){
+      const raw=el.getAttribute("src")||el.getAttribute("href")||el.getAttribute("data");if(!raw)continue;
+      const u=new URL(raw,rootURL);if(u.origin!==rootURL.origin&&u.protocol!=="data:")throw Error("Unreviewed external resource origin/path: "+u.origin+u.pathname);
+    }
+    const base=doc.createElement("base");base.href=rootURL.href;
+    const csp=doc.createElement("meta");csp.httpEquiv="Content-Security-Policy";csp.content=policy;doc.head.prepend(csp,base);
+    let html="<!doctype html>"+doc.documentElement.outerHTML;
+    const unchanged=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    if(unchanged.length!==scripts.length||unchanged.some((s,i)=>s[2]!==scripts[i][2]))throw Error("Product script body changed during wrapping");
+    const bridge="("+installWithdrawalReadBridge.toString()+")();",hook=doc.createElement("script");
+    hook.id="r000b-no-timetable-read-only-bridge";hook.textContent=bridge;doc.body.append(hook);report.bridgeSha256=await digest(new TextEncoder().encode(bridge));
+    html="<!doctype html>"+doc.documentElement.outerHTML;
+    const wrapped=[...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+    if(wrapped.length!==scripts.length+1||scripts.some((s,i)=>wrapped[i][2]!==s[2])||wrapped[scripts.length][2]!==bridge)throw Error("Unchanged product/labeled bridge identity mismatch");
+    report.productBodiesUnchanged=true;report.fontAnchorsSuppressed=suppressed;report.state="loading";
+    document.open();
+    window.addEventListener("error",event=>{report.consoleErrors.push(event.message||"Resource/script error");failure(event.message||"Product resource/script error");});
+    window.addEventListener("unhandledrejection",event=>{report.consoleErrors.push(String(event.reason));failure(event.reason);});
+    document.addEventListener("securitypolicyviolation",event=>failure("CSP blocked an unexpected resource of type "+event.violatedDirective));
+    document.addEventListener("DOMContentLoaded",()=>{try{
+      verifyHooks();if(!window.SalahConfig||typeof window.qaState!=="function"||!window.__withdrawalRead)throw Error("Actual product/config/bridge did not initialize");
+      if(!report.error)report.state="ready";
+    }catch(error){failure(error);}},{once:true});
+    document.write(html);document.close();
+  }
+  start().catch(failure);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+# Continue R000B — successor recovery checkpoint
+
+## Root application record — successor evidence
+
+Root has received the bounded F02 source-remedy PASS and verified the complete successor generated outputs. The actual workflow-consumed `docs/state-contracts/r000b-native-candidate.json` now has SHA256 `3f7053e0c4108297be5c91db98732f8c1ec1c07f9bc3984dae196e478958790b`, binding runtime inventory `04ab5ba61f1351a8e4c4b459904c79ba51bcb2ccf19478302bdbfcc3950970f8` and unchanged native instrument. This is preparation for native execution, not a native result.
+
+The named frozen successor evidence has now been copied byte-for-byte into `docs/state-contracts/evidence/R000B/20261110-successor/`. Its `MANIFEST.json` binds the complete local evidence packet. Provisional-copy wording in the retained drafting snapshot below records the earlier state; this application record supersedes that wording for the files actually enumerated in the packet. Public commit/ref and native readbacks are still required. The containing Git commit/tree must be read directly; d124 remains the recovered predecessor identity, not an invented identity for these changed files. All 46 original obligation rows and historical evidence remain preserved.
+
+**State: ACTIVE ENGINEERING / QUALIFICATION; not published, not natively qualified, not merge-ready and not complete.** This is a prepared successor documentation snapshot for root's identity check and application. Root owns actual governor/currentness, final review/dispositions and all consequential effects. Do not infer a final receipt from this continuation record.
+
+## Exact retained state
+
+| Object | Identity / actual boundary |
+|---|---|
+| Repository/worktree | `theislampill/salah_widget`; `/workspace/scratch/15b8fb6ac4c2/r000b-work`. |
+| Canonical owned branch | `pro/r000b-explicit-weather-withdrawal-20261106`; saved successor remote heads show the canonical ref absent. Do not assume it remains absent when acting. |
+| Engineering base | `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`; tree `6b94a3933f9d1381b1c2ceaab287c93afb215ecb`. |
+| Recovered committed checkpoint | `d124f050ec68fa8608022b1ed5fead426d42dcb9`; tree `54c61ab27f95adcf0837f737ca3dfd09649fc5c3`. Preserve it and all earlier NF02/F01/instrument/evidence snapshots. |
+| Frozen F02 authored overlay | `src/native/index.html`: SHA256 `fe0ec24a6f26839ec6439c172a3b098bebd03388b3f7b0385cead0febecf4327`. This is a working repair overlay, not a new committed head/tree in this snapshot. |
+| Frozen F02 test | `tests/weather-no-timetable-handoff.test.cjs`: SHA256 `f1669a82fa40691e0179372b282a41a9e369147887cec8f89c6f88ad58b23110`. Existing fixture: `a26b75bd596fc1cd9aff55ef3ee7c44defd4d3b848905bf04eeb309df6d0477f`. |
+| New local generated result | Canonical generation, frozen V1 and protected checks exited 0. Ten affected/generated commands: 312 pass/0 fail/four unchanged R000C TODOs. Actual output hashes are in the acceptance ledger and `build-successor/outputs.json`; no final candidate commit/tree, native or public qualification is credited. Old R outputs remain historical. |
+| Bundle | `/workspace/scratch/d9a9ea2be931/recovery/R000B_RECOVERED_D124F050.bundle`; 686,816 bytes; SHA256 `b51de04ea67d4f15a6a6adea9458c937f59a54403ad80ae83f7c2cd70cb673e0`; root verified; requires prerequisite `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`. Contains d124, not the F02 overlay. |
+
+## F02 finding and attained source evidence
+
+Original F02 / SR-01 independently admitted wet present evidence over an unchanged SIM-clear record. After its lease expired, the old publication remained current and retained coverage/raster despite actual no-model render/painter calls. A same-record dry complete replacement retained the old wet consumed receipt. The original probe is preserved at `/workspace/scratch/d9a9ea2be931/recovery/source-lease-probe.cjs` (SHA256 `c0500e9cab8cfb39e09037f6de51ab37594f14181d2c17492249f02a1c3fcbc6`), with original result `source-lease-probe.json` (`439876f6713c6ebaa458e2d12860781160cc374ab3e3234e85dedfae00f1f4be`). These are source/sentinel observations, not native pixels or a live-provider incident.
+
+Root's `f02-red.log` (`9b73710af2cdcf5044b741dbc60ba810fcffbc02a66934091f40ea3a929f81b6`) records **36 tests: 31 pass and five intended assertion failures** on recovered source. Root's `f02-green.log` (`e991a7c377e41359d56d252e5961cfa4f742abdc6700a841d3ece54b3fabeba9`) records **36/36, zero fail/skipped/TODO** on the frozen repair. `source-f02-preflight.json` (`52f1229f9f1ca03b5cf07539d657611f31c689236680761561965e37d2aa0688`) binds source/test/dependencies and preserved original artifacts. **Independent F02 review is now FINAL bounded source-remedy PASS** at 2026-11-10T05:53:04.090436+00:00. Its report SHA256 is `9a847bedad15e0be0ea693865140ed3aa73b67a7b68ed21e2c16bce55ae9e9c5`; the report preserves the earlier PARTIAL checkpoint and appends the final source-only disposition. It records 35 repaired-source schedules, two old-source named-assertion discriminators and 53 affected suite passes. No final candidate/native/whole-owner acceptance follows.
+
+The repair is limited to consumed-evidence authority and receipt semantics: require any consumed present-evidence identity and lease before the same-record shortcut; make genuine changed consumed evidence/render-code/condition state produce a fresh receipt. Unchanged still-current publication remains idempotent. Preserve both F01 healthy event orders, ordinary easing, own-A ages, exact active receipt, no-model withholding and useful preview/model output. Eligible SIM clear is not unavailable, and complete-model dry replacement may use ordinary easing toward its new targets. No admission, source TTL, precipitation/observation policy, prayer, retry, painter mathematics or motion/lifetime redesign is authorized by this repair.
+
+Directly affected obligations are B07 and ES0B-02/-06/-12/-13; regression/documentation/review joins remain in the existing **46-row** ledger. B05/ES0B-11's 15-minute source/receipt policy and ES0B-01's particular 901s model-record case are not redefined by the independent synthetic lease.
+
+## Completed successor source/build records
+
+Root's `source-cohorts.log` (`40a99f54157fb0d22b09e826002a5e09b6d6ec58896377617d0aee10fbf4ea57`) records 92/92 source checks, zero fail/skipped/TODO. `build-successor/commands.json` (`13115a67dfd964869e8657e4a433529cace0700358155cb9c7f34b1600cfa9ff`) binds the successful canonical builder, frozen V1 and protected checks. `generated-cohorts/results.json` (`a9b520a672fc57f37d0210ccd446a3db51a04b2992c2a50a8c682b7f732508ce`) binds all ten successful affected/generated commands and raw logs: 312 pass, zero fail, four unchanged R000C TODOs. Source/TAP/case totals overlap or mix boundaries and must not be added into an invented independent-experiment total.
+
+The resulting index SHA256 is `e8da0b7646ad4c3b04e1571739dcc295c605cca8e46af59c11d5f1fefd120657`; offline is `b215ce9b5977f880ebfe87e626fe08963e36cdacd3f5f860b7aa2dc3f5af10a7`; unchanged native-sky is `426754834c6c116c4521ad5067bb1e37a9845830fc07ebbb62dd22fcdc757d66`; Moon build metadata is `2dbc98959742fd3d65f7c4bbcc7de45ded790b0fe0c48ef0fb4efe5d668b2747`. `build-successor/outputs.json` has SHA256 `9b85986979652ad41322f7f9b78ec32d22f879a4d838e85e2d2ebecf39edfa12` and records their Git blobs and byte sizes.
+
+A disk-capacity interruption required removal of the reproducible disposable build after preserving all four dirty files exactly under `/tmp/r000b-successor-build-preserved/`: authored source, index, offline and Moon metadata. `preservation.json` has SHA256 `547935dac431fe19ce8907e25d89dd3e70f5f8b69155df345a65bfebe3d15269`, and each preserved file matches the frozen source/output hash. The unchanged native-sky is retained in d124. All source/build/cohort evidence remains in the recovery directory. Root must bind the complete final assembly and actual publication separately; removing the checkout neither invalidates preserved execution evidence nor supplies any final tree or delivery receipt.
+
+The successor expected native manifest `r000b-native-candidate-f02.json` is prepared at SHA256 `3f7053e0c4108297be5c91db98732f8c1ec1c07f9bc3984dae196e478958790b`, binding 142 runtime files to runtime-tree SHA256 `04ab5ba61f1351a8e4c4b459904c79ba51bcb2ccf19478302bdbfcc3950970f8`. **This is expected-identity preparation only; independent identity review is active and no native acquisition or pixel result follows.**
+
+Root reports successful durable preservation of `R000B_SUCCESSOR_RECOVERY_20261110_G0009.zip`: **7,682,996 bytes**, SHA256 `6bdd5894e8e77fad8d17d77ecf41525c263b45f86e08825956d9d3e16613db31`; the local archive bytes match. This is recovery custody, not a public evidence locator, final candidate or delivery receipt.
+
+## Native and publication facts
+
+The local sandbox-preserving Chromium canary is **BLOCKED before any product page** by `socket() EPERM`; loopback bind succeeded. `/workspace/scratch/d9a9ea2be931/recovery/native-environment-canary.json` has SHA256 `e654d0931b51e3c4abb3628981976a3063a0a0acd431204613b9760c6809b0c2`. It supplies no product/native result and no reason to bypass the sandbox. Actual native pixels, first-visible resumed publication, ordinary acquired recovery, healthy refresh, celestial usefulness, visible-column origin and real default/reduced/full motion remain required through an available lawful reviewed route.
+
+Root's saved `remote_candidate_commit.json`, `remote_source_tree.json` and `remote_full_tree.json` return 404 for the old candidate/source-stage/full-tree queries. Saved `remote_heads.json` has no canonical R000B owned ref; `remote_main.json` records main at `eebba178172f96b3ffe5ab3845bc0fffd57c6e1b`. The returned open-PR collection includes R0017 PR #71 open/draft at `cfd8e4e670149ad9311602eae5b94bcf036dab95`, with no R0007 PR; issue #11 is open/reopened. These are scoped saved reads, not proof every blob is absent or a promise of future remote state. Read before replaying any uncertain effect.
+
+**Selected route under engineering:** separate coherent-baseline staging Git-bundle/carrier; root runtime and workflow unchanged during carrier push; later connector publication of the complete exact final tree. The old changed-source/baseline-generated staging route is superseded under the owner's current constraint. Retain its historical reports without treating them as acceptance of this new mechanism. A carrier push/import/verification is not canonical candidate publication, native qualification or deployment.
+
+## Evidence custody and provisional repository locations
+
+Existing frozen successor artifacts are under `/workspace/scratch/d9a9ea2be931/recovery/`. Proposed exact-copy destination: `docs/state-contracts/evidence/R000B/20261110-successor/`, preserving file names and the `build-successor/` and `generated-cohorts/` subdirectories. **Those repository/public references are provisional.** Root must copy the existing bytes unchanged, verify every hash and actual locator, and retain the completed source review/build/cohort records at the hashes above. Future full-candidate/carrier/native results need their own freeze. Do not cite a planned destination as a published receipt.
+
+The existing `R000B_ACCEPTANCE.md` retains C/P historical acceptance, RB/RS/F01/G2/SH2/HR4/M2 and all original limits. New root source results supplement rather than rewrite them. The new source overlay and its actual generated outputs still require complete final-tree/native/currentness bindings. Source totals are correlated tests; expected manifests are not observations.
+
+## Next executable obligations for root
+
+1. Receive/adjudicate the FINAL bounded F02 source review and the completed source/build/cohort receipts at the exact frozen inputs; preserve original failures and intended controls. Confirm the existing evidence and preserved output hashes. Do not replay unchanged tests just to repeat counts; refresh only an actual affected boundary or required gate.
+2. Freeze the final coherent authored/generated/test/docs/instrument/evidence candidate and exact tree. Verify canonical generation, V1/protected boundary and affected input closure; do not use old R hashes as F02 output.
+3. Complete and review the selected separate carrier/bundle mechanism. Before effects inspect real refs/pending effects and prove root runtime/workflow unchanged during carrier push. The connector publishes the complete exact final tree later, followed by actual ref/tree/blob readback.
+4. Obtain required actual native observations and independent pixel/source/generated/full-envelope review through an available lawful capability. Continue other authorized decision-changing work while native or predecessor dependencies are unavailable; do not weaken acceptance.
+5. Respect accepted integration order **R0017 corrective → R0007 → R000B**. Freshly receive predecessor acceptance/current main, incorporate accepted changes only into the owned branch, regenerate and refresh affected joins/review. Do not take over predecessor branches or repeat untouched campaigns for totals.
+6. Keep PR wording non-closing `Implements #11`. No draft-to-ready transition until real source/review/native/publication/integration blockers clear. Only when exact approval alone is missing use `AWAITING_OWNER_MERGE_APPROVAL` with actual head/base/tree, review, whole ledger and concrete terminal plan.
+7. After actual exact approval, root performs/reads back approved merge, configured delivery and affected public consumer; publishes/reads back the whole-owner certificate; then deliberately closes completed and verifies actual state/reason/event. Formal audit lifecycle and product issue state remain separate. No such effect is credited now.
+
+A future continuation starts from exact local/remote/governor/pending-effect readbacks and the current acceptance frontier. It does not reconstruct a success from a transcript or recreate an uncertain one-shot effect without checking. Preserve source/evidence identities and actual unavailable inputs; no arbitrary retry/revision cap or manufactured completion applies.

@@ -1,0 +1,107 @@
+TAP version 13
+# {"warmLoop":{"frames":100,"elapsed":1600,"intl":0,"admission":0,"paints":1,"requests":0,"stale":false}}
+# Subtest: R0005 completed prefetch promotes at midnight while network is offline
+ok 1 - R0005 completed prefetch promotes at midnight while network is offline
+  ---
+  duration_ms: 118.710293
+  type: 'test'
+  ...
+# Subtest: R0005 positive normal next-day prefetch remains tomorrow before midnight
+ok 2 - R0005 positive normal next-day prefetch remains tomorrow before midnight
+  ---
+  duration_ms: 76.403643
+  type: 'test'
+  ...
+# Subtest: R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+ok 3 - R0005 late prefetch crossing midnight cannot repopulate tomorrow with current day
+  ---
+  duration_ms: 35.638102
+  type: 'test'
+  ...
+# Subtest: R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+ok 4 - R0005 frozen simulated second repaints accepted asynchronous rollover in existing rAF
+  ---
+  duration_ms: 154.824269
+  type: 'test'
+  ...
+# Subtest: R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+ok 5 - R0005 held-out warm 100-frame control avoids repeated admission/Intl construction
+  ---
+  duration_ms: 135.203557
+  type: 'test'
+  ...
+# Subtest: R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+ok 6 - R0005 late next-day prefetch rescues current when midnight acquisition exhausts
+  ---
+  duration_ms: 98.525449
+  type: 'test'
+  ...
+# Subtest: R0005 payload neither current nor successor is discarded after further day movement
+ok 7 - R0005 payload neither current nor successor is discarded after further day movement
+  ---
+  duration_ms: 85.791499
+  type: 'test'
+  ...
+# Subtest: R0005 backward correction reclassifies and acquires the actual earlier civil day
+ok 8 - R0005 backward correction reclassifies and acquires the actual earlier civil day
+  ---
+  duration_ms: 162.777185
+  type: 'test'
+  ...
+# Subtest: R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+ok 9 - R0005 hidden next-day completion marks dirty and paints once on frozen visible resume
+  ---
+  duration_ms: 129.252717
+  type: 'test'
+  ...
+# Subtest: R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+ok 10 - R0005 usable next-day record suppresses redundant work; promotion allows one new successor
+  ---
+  duration_ms: 230.031701
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+ok 11 - R0005 full actual midnight promotion across 31-12-2026 -> 01-01-2027 in UTC
+  ---
+  duration_ms: 86.372732
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+ok 12 - R0005 full actual midnight promotion across 29-02-2028 -> 01-03-2028 in UTC
+  ---
+  duration_ms: 88.228678
+  type: 'test'
+  ...
+# Subtest: R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+ok 13 - R0005 full actual midnight promotion across 07-03-2026 -> 08-03-2026 in America/New_York
+  ---
+  duration_ms: 83.675271
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing promotion is killed by offline completed prefetch
+ok 14 - R0005 mutant removing promotion is killed by offline completed prefetch
+  ---
+  duration_ms: 83.757925
+  type: 'test'
+  ...
+# Subtest: R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+ok 15 - R0005 mutant unconditional tomorrow settlement is killed by actual midnight duplicate
+  ---
+  duration_ms: 33.628405
+  type: 'test'
+  ...
+# Subtest: R0005 mutant removing dirty consumer is killed by frozen async visible resume
+ok 16 - R0005 mutant removing dirty consumer is killed by frozen async visible resume
+  ---
+  duration_ms: 91.433451
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1919.433838

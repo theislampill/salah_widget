@@ -1,0 +1,130 @@
+diff --git a/tests/native-script-contract.js b/tests/native-script-contract.js
+index adc661b..ae093ad 100644
+--- a/tests/native-script-contract.js
++++ b/tests/native-script-contract.js
+@@ -10,11 +10,16 @@
+   }
+   const requireSetup=(condition,message)=>{if(!condition)throw new SetupError(message);};
+   const MOON_FILE_BOOTSTRAP='if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;';
+-  // Reviewed generated prerequisite bodies at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
++  // R000B first-paint rebind: reviewed composition and preview-host changes on
++  // engineering baseline eebba178172f96b3ffe5ab3845bc0fffd57c6e1b, with uncommitted
++  // frozen owners (not a source-revision claim for the separate plan HEAD):
++  // real-sky/native-composition.mjs SHA256 d3e5d216cad8942e923c9418ed18458f8d8a6e719238c7001288c730323e4fb5
++  // real-sky/native-preview-host.mjs SHA256 2d77893c59b5fd25fcbe5a647133e6a9e7aacd986f143666975e811d3412b3e8
++  // Moon bodies retain the review at f71fef6ccf7e4efcb57b5a26688d2360461a3253.
+   // A new delivery requires explicit source review/rebinding, never an automatic
+   // update from the same untrusted body whose admission is being checked.
+   const SPLIT_PINS=Object.freeze({
+-    'first-paint':'3591c4460aeb291e487ef1f750071b6b7436fa904b619fb3b54659c6fa4b83ed',
++    'first-paint':'be62ab92d4eb436981a2a3f8ce48c4961249c2904f14d31435f75d8a2657a9c7',
+     'moon-initial':'837b77f23fffcb5fc24c3561632143733653d32918046dd1f65a17e227456a14',
+     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
+   });
+diff --git a/tests/r0003-harness.cjs b/tests/r0003-harness.cjs
+index 26c8740..7bf5b4d 100644
+--- a/tests/r0003-harness.cjs
++++ b/tests/r0003-harness.cjs
+@@ -49,6 +49,9 @@ function harness(options={}){
+     }
+     const n=owner?owner.node:query(selector);if(owner&&n)nodes.set(selector,n);
+     if(!n||classesRecorded.has(n))return n;classesRecorded.add(n);
++    // The existing style sink does not compute or render CSS. The exact lunar
++    // withdrawal helper may read its empty style boundary without inventing pixels.
++    n.style.getPropertyValue=()=>"";
+     const read=()=>new Set((n.getAttribute("class")||"").split(/\s+/).filter(Boolean)),write=values=>n.setAttribute("class",[...values].join(" "));
+     n.classList={contains:value=>read().has(value),add:(...values)=>{const set=read();values.forEach(v=>set.add(v));write(set);},
+       remove:(...values)=>{const set=read();values.forEach(v=>set.delete(v));write(set);},
+@@ -81,10 +84,14 @@ function harness(options={}){
+     // Header withdrawal is now independent of prayer readiness. These are
+     // weather-boundary doubles, like fetchWeather above; actual header/effects
+     // are exercised by hotfix-prayer-weather and the full-runtime browser tests.
+-    "function weatherDecision(){return {record:null};} function weatherHeader(){return {};} function paintWeatherHeader(){}\n"+
++    "function weatherDecision(){return {record:null,conditionState:'unavailable',target:currentWeatherTarget(),lane:null};} function weatherHeader(){return {};} function paintWeatherHeader(){}\n"+
+     "function buildStars(){recordSkyBuilder('stars');} function buildWeather(){recordSkyBuilder('weather');} function renderMoon(){} function fitCn(){} function applyTheme(){recordPrayerPaint();}\n"+
+     "function moonNow(){return {phase:0.5};} function phaseEmoji(){return 'moon';} function moonGeometryObservation(){return {fresh:true};} function paintClouds(){} function tieRainToClouds(){} function updateSimClock(){}\n"+
+     "function enableSettingsAffordance(){} function openSettings(){}\n"+
++    // The unavailable weather double uses the real current target; exact source
++    // cloud receipts below retain their own revision and invalidation state.
++    slice("function wxNumber(","\nfunction wxValue(")+"\n"+
++    slice("function captureWeatherTarget(","\nfunction loadWx(")+"\n"+
+     // Exact production declarations/helpers: no copied ready flags or boundary substitutes.
+     slice("const _RAD=Math.PI/180,","function _sunCoords(d){")+"\n"+
+     slice("let _mAlb=null,","(function loadMoonMaps(){")+"\n"+
+diff --git a/tests/r000b-sky-withdrawal.test.mjs b/tests/r000b-sky-withdrawal.test.mjs
+index 088d6ef..a148a8b 100644
+--- a/tests/r000b-sky-withdrawal.test.mjs
++++ b/tests/r000b-sky-withdrawal.test.mjs
+@@ -21,18 +21,22 @@ const initial=()=>({utcMs:1788806700016,lat:24.47,lon:39.61,heightM:0,
+ function fixture(current,{hasPreview=true,hasTerrain=true,detailOwner='refined-sky'}={}){
+   const classes=new Set(['real-sky-composed','real-sky-preview-ready']);
+   if(hasTerrain)classes.add('moon-ready');
+-  let detailVisible=hasTerrain;
++  let detailVisible=hasTerrain,cloudReconciliations=0;
++  // Explicit cloud-port double: these cases qualify sky ownership, not weather
++  // eligibility or pixels. Real cloud withdrawal has its separate source controls.
+   const card={classList:{contains:x=>classes.has(x),add:x=>classes.add(x),remove:x=>classes.delete(x)},style:{removeProperty(){}}};
+-  const window={SalahMoonDetail:{clear(){detailVisible=false;},get state(){return {skyOwner:detailOwner,visible:detailVisible};}}};
++  const window={SalahNativeSkyHost:{reconcileClouds(){cloudReconciliations++;}},SalahMoonDetail:{clear(){detailVisible=false;},get state(){return {skyOwner:detailOwner,visible:detailVisible};}}};
+   const job=nativeJob(initial());
+-  const preview={card,window,solarPublication:new NativeSolarMaskPublication(),pendingValue:{job},value:{job},previewFrame:hasPreview?{current:()=>nativeResultCurrent(job,current)}:null,
++  const preview={card,window,host:window.SalahNativeSkyHost,solarPublication:new NativeSolarMaskPublication(),pendingValue:{job},value:{job},previewFrame:hasPreview?{current:()=>nativeResultCurrent(job,current)}:null,
+     status:{status:'ready'},retireFirstPaint(){},canvas:{style:{visibility:'visible'}}};
+   vm.createContext(preview);vm.runInContext(previewClear,preview);
+   window.SalahSkyPreview={get frame(){return preview.previewFrame;},get state(){return preview.status;},clear:reason=>preview.clear(reason)};
+   const full={card,window,solarPublication:new NativeSolarMaskPublication(),pendingJob:{},frame:{},job:{},status:{},paintedFrame:{},paintedJob:{},previousPresentation:{},previousMoonBottom:100,
+     ctx:{clearRect(){}},canvas:{style:{visibility:'visible'}},publish(){}};
+   vm.createContext(full);vm.runInContext(fullClear,full);
+-  return {classes,preview,full,get detailVisible(){return detailVisible;},withdraw(){full.clear('accepted weather changed');
++  return {classes,preview,full,get detailVisible(){return detailVisible;},get cloudReconciliations(){return cloudReconciliations;},withdraw(){
++    const before=cloudReconciliations;full.clear('accepted weather changed');
++    assert.ok(cloudReconciliations>before,'refined withdrawal reconciles native clouds before exposing their canvas');
+     assert.equal(full.solarPublication.revision,1,'withdrawal cancels the previous solar publication');
+     assert.equal(full.pendingJob,null,'withdrawal drops the pending refined job');
+   }};
+@@ -78,6 +82,7 @@ test('a current preview does not invent unavailable lunar terrain',()=>{
+ 
+ test('explicit preview withdrawal still removes its own ready flag and detail',()=>{
+   const h=fixture(initial());h.preview.clear('native target invalidated');
++  assert.equal(h.cloudReconciliations,1,'explicit preview withdrawal reconciles native clouds');
+   assert.equal(h.classes.has('real-sky-preview-ready'),false);
+   assert.equal(h.preview.canvas.style.visibility,'hidden');assert.equal(h.detailVisible,false);
+   assert.equal(h.preview.solarPublication.revision,1);assert.equal(h.preview.pendingValue,null);
+diff --git a/tests/real-sky/native-head-handoff.cjs b/tests/real-sky/native-head-handoff.cjs
+index 8bc3d40..5c4bed5 100644
+--- a/tests/real-sky/native-head-handoff.cjs
++++ b/tests/real-sky/native-head-handoff.cjs
+@@ -18,14 +18,21 @@ function section(start,end){
+  assert.ok(a>=0&&b>a,'actual source section '+start);return html.slice(a,b);
+ }
+ const lifecycle=section('let _skySceneKey=null','// A current V5 receiver presentation');
+-const celestial=section('function paintCelestialWithoutTimetable(){','function atmosphere(');
++const celestial=section('function paintCelestialWithoutTimetable(decision=weatherDecision()){','function atmosphere(');
++// The scene invalidator now consumes the real cloud-publication owner. Bind its
++// target and receipt dependencies from source instead of fabricating ready state.
++const cloudPublication=[
++ section('function wxNumber(','\nfunction wxValue('),
++ section('function captureWeatherTarget(','\nfunction loadWx('),
++ section('let _cloudFieldSeed=0;','\nconst _CLOUD_NOISE_PERIOD=')
++].join('\n');
+ const boot=section('async function boot(){','// SINGLE rAF render clock');
+ function setup(){
+  const r=rig({initial:true,deferWorker:true}),c=r.context;r.head();
+  const card={classList:{add(){},remove(){}},style:{setProperty(){}}};
+  Object.assign(c,{
+-  _runtimeGeneration:0,_cfgMode:'bare',QA:false,lat:28.5,lon:-81.4,_needsDetect:false,
+-  $:()=>card,cloudState:{},_colDens:null,_cloudCtx:null,_cloudCv:null,
++  _runtimeGeneration:0,_cfgMode:'bare',QA:false,lat:28.5,lon:-81.4,CONFIG:null,_needsDetect:false,
++  $:()=>card,
+   updateSkySurface(){},skySceneIdentity:()=>r.state.sceneIdentity,
+   nowParts:()=>({h:2,mi:0,s:0}),moonGeometryObservation:()=>({fresh:true}),
+   renderMoon(){},projectStars(){},simDate:()=>new Date(),
+@@ -39,7 +46,7 @@ function setup(){
+  });
+  r.w.SalahNativeSkyHost={cloudLighting:()=>({sun:{altDeg:-20}})};
+  r.w.SalahStartSkyPreview=()=>{};
+- vm.runInContext(lifecycle+'\n'+celestial+'\n'+boot,c);
++ vm.runInContext(cloudPublication+'\n'+lifecycle+'\n'+celestial+'\n'+boot,c);
+  c.render=()=>vm.runInContext('paintCelestialWithoutTimetable()',c);
+  return r;
+ }

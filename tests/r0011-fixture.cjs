@@ -64,6 +64,18 @@ function widget(options={}) {
     const first=source.indexOf("function cacheKey()"),last=source.indexOf("function readPrayerCache(",first);if(first<0||last<first)throw new SetupError("request lifecycle source boundary missing");
     f.sandbox.AbortController=AbortController;load(declaration(/^const _RAFNOW\s*=/m));load(declaration(/^const _prayerCooldown=/m));load(source.slice(first,last));
   }
+  if(source.includes("function withdrawCloudState(")){
+    // beginSkyScene revokes the cloud publication through the actual R000B
+    // owners. Load those owners and the exact target/scene/mode identities they
+    // read; the weather decision itself stays the explicit boundary double above.
+    function region(start,end){const a=source.indexOf(start),b=source.indexOf(end,a);if(a<0||b<a)throw new SetupError(start+" source boundary missing");return source.slice(a,b);}
+    if(!/^const _RAFNOW\s*=/m.test(source)||!source.includes("beginRuntimeGeneration();"))throw new SetupError("cloud publication clock boundary missing");
+    for(const pattern of [/^const _tsParam=/m,/^let TIMESCALE =/m,/^let ADVANCING =/m,/^let FOLLOW_WALL_CLOCK =/m,/^let _clockPreview=/m,/^let _rafT0=/m])load(declaration(pattern));
+    load(helper("simNow"));load(helper("skySceneIdentity"));
+    load(region("function wxNumber(","\nfunction wxValue("));
+    load(region("function captureWeatherTarget(","\nfunction loadWx("));
+    load(region("// A receipt of what the cloud consumer published","// Pure final-publication fence."));
+  }
   load(helper("resetForNewLocation"));
   const applyStart=source.indexOf("async function applyConfig("), bootStart=source.indexOf("async function boot(){",applyStart), bootEnd=source.indexOf("// SINGLE rAF render clock",bootStart);
   if(applyStart<0 || bootStart<applyStart || bootEnd<bootStart)throw new SetupError("apply/boot source boundary missing");

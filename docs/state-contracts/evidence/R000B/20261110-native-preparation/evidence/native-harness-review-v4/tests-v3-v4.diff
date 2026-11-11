@@ -1,0 +1,277 @@
+--- frozen-v3
++++ frozen-v4
+@@ -7,6 +7,7 @@
+ """
+ 
+ # R000B_F01_HEALTHY_REFRESH_ORACLE_CONTROLS_V1
++# R000B_HR1_HR2_INTERFACE_CONTROLS_V1
+ import ast
+ import datetime
+ from copy import deepcopy
+@@ -24,6 +25,7 @@
+          'rain_origin', 'observed_sky_error_fields', 'all_visible_joins_empty',
+          'resume_visible_sequence', 'cloud_motion_continuity', 'phase_progress',
+          'actual_empty', 'effects_off', 'joined_empty', 'independent_celestial', 'healthy_cloud',
++         '_healthy_refresh_target_projection', '_healthy_refresh_clock',
+          'healthy_refresh_record', '_healthy_refresh_request', '_healthy_refresh_receipt',
+          '_healthy_refresh_sample', 'healthy_refresh_pair', 'healthy_refresh_evidence'}
+ 
+@@ -290,15 +292,17 @@
+ REFRESH_START_UTC = 1788900300000 + 890000
+ 
+ 
+-def healthy_refresh_case(refresh_ms=180000, end_ms=None, mode='default'):
++def healthy_refresh_case(refresh_ms=180000, end_ms=None, mode='default', performance_origin=125.25):
+     """Invented observations/owned responses; no product or browser execution."""
+     start_ms, end_ms = 130000, (refresh_ms + 1000 if end_ms is None else end_ms)
+     prior_ms = refresh_ms - 60000
+-    target = {'generation': 7, 'lat': 24.7136, 'lon': 46.6753}
++    clock = {'started': performance_origin, 'startUtc': REFRESH_START_UTC}
++    target = {'generation': 7, 'lat': 24.7136, 'lon': 46.6753, 'intent': 'fixed-site', 'source': 'hash',
++              'accuracyM': None, 'acquiredAt': None, 'provider': None, 'area': None, 'bounds': None}
+ 
+     def receipt(request_ms, revision):
+         return {'revision': revision, 'state': 'eligible-published', 'reason': 'complete atmosphere',
+-                'target': target.copy(), 'lane': 'live',
++                'target': {'generation': 7, 'lat': 24.7136, 'lon': 46.6753}, 'lane': 'live',
+                 'sourceValidAt': (REFRESH_START_UTC + request_ms) // 60000 * 60000,
+                 'retrievedAt': REFRESH_START_UTC + request_ms + 10,
+                 'conditionState': 'model-estimated-rain',
+@@ -320,6 +324,7 @@
+             raw={'currentValidAt': candidate['sourceValidAt'], 'retrievedAt': candidate['retrievedAt'], 'target': target.copy()},
+             rainOriginEvidence={'schema': 'r000b-rain-origin/v2', 'ok': True})
+         moved = advance(seed, at, seconds=0 if mode == 'reduced' else (at - start_ms) / 1000)['motion']
++        moved['lastRt'] = clock['started'] + moved['elapsedRtMs']
+         state['motion'] = deepcopy(moved)
+         state['actualCloud'].update(publication=deepcopy(active), targets=EXPECTED_REFRESH_COVERAGE.copy(), motion=deepcopy(moved))
+         canvas = {'visibility': 'visible', 'display': 'block', 'opacity': 1, 'rgbNonzero': 100,
+@@ -335,7 +340,7 @@
+         return {'kind': 'weather', 'weatherOrdinal': ordinal, 'elapsedMs': at, 'wallUtcMs': REFRESH_START_UTC + at,
+                 'jsonElapsedMs': at + 5, 'jsonReads': 1, 'jsonSettled': True, 'status': 200, 'result': 'json-consumed',
+                 'nativeOwner': {'generation': 7, 'operationId': ordinal * 2, 'attemptId': ordinal * 3,
+-                                'deadlineAt': REFRESH_START_UTC + at + 12000},
++                                'deadlineAt': clock['started'] + at + 10000},
+                 'inputBody': {'timezone': 'Asia/Riyadh', 'current': {'time': civil.strftime('%Y-%m-%dT%H:%M'), 'interval': 900}}}
+ 
+     def passive_frame(at, active, candidate=None):
+@@ -354,7 +359,7 @@
+     watch = frame(watch_end, old if watch_end < refresh_ms + 20 else new)
+     return {'before': before, 'after': after, 'passive': trace, 'full': [before, watch, after],
+             'ledger': [request(prior_ms, old, 2), request(refresh_ms, new, 3)], 'mode': mode, 'frame': frame, 'passiveFrame': passive_frame,
+-            'old': old, 'new': new, 'refreshMs': refresh_ms}
++            'old': old, 'new': new, 'refreshMs': refresh_ms, 'clock': clock}
+ 
+ 
+ EXPECTED_REFRESH_COVERAGE = [0.92, 0.90, 0.60]
+@@ -362,7 +367,7 @@
+ 
+ def refresh_verdict(case):
+     return ORACLE.healthy_refresh_evidence(case['before'], case['after'], case['passive'],
+-                                         case['full'], case['ledger'], case['mode'])
++                                         case['full'], case['ledger'], case['mode'], case.get('clock'))
+ 
+ 
+ class HealthyRefreshTests(unittest.TestCase):
+@@ -388,11 +393,11 @@
+         case = healthy_refresh_case()
+         case['after'] = case['frame'](181000, case['old'])
+         self.assertFalse(refresh_verdict(case)['ok'])
+-        self.assertFalse(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++        self.assertFalse(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'], case.get('clock'))['ok'])
+ 
+     def test_request_started_before_model_recovery_cannot_qualify(self):
+         case = healthy_refresh_case(refresh_ms=120000, end_ms=160000)
+-        pair = ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])
++        pair = ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'], case.get('clock'))
+         self.assertFalse(pair['ok'])
+         self.assertIn('after recovery', pair['reason'])
+ 
+@@ -412,7 +417,7 @@
+                 elif fault == 'same-operation':
+                     case['ledger'][-1]['nativeOwner']['operationId'] = case['ledger'][0]['nativeOwner']['operationId']
+                 else:
+-                    case['ledger'][-1]['nativeOwner']['deadlineAt'] = case['new']['retrievedAt']
++                    case['ledger'][-1]['nativeOwner']['deadlineAt'] = case['clock']['started'] + (case['new']['retrievedAt'] - case['clock']['startUtc'])
+                 self.assertFalse(refresh_verdict(case)['ok'])
+ 
+     def test_supplied_body_time_cannot_be_substituted_by_candidate_timestamp(self):
+@@ -439,7 +444,7 @@
+             with self.subTest(field=field):
+                 case = healthy_refresh_case()
+                 case['passive'][12][field] = bad_value
+-                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'], case.get('clock'))['ok'])
+                 verdict = refresh_verdict(case)
+                 self.assertFalse(verdict['ok'])
+                 self.assertFalse(verdict['checks']['allRetainedPassiveSamplesHealthy'])
+@@ -458,7 +463,7 @@
+                     middle['celestial']['visibleForegrounds'][0]['composition']['meanCloudAlpha'] = 0
+                 else:
+                     middle['rainOriginEvidence']['ok'] = False
+-                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'], case.get('clock'))['ok'])
+                 verdict = refresh_verdict(case)
+                 self.assertFalse(verdict['ok'])
+                 self.assertFalse(verdict['checks']['allRetainedFullSamplesHealthy'])
+@@ -469,7 +474,7 @@
+                 case = healthy_refresh_case()
+                 motion = case['passive'][12]['motion']
+                 motion[axis] = [0, 0, 0] if axis in ('phase', 'life') else 0
+-                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'], case.get('clock'))['ok'])
+                 verdict = refresh_verdict(case)
+                 self.assertFalse(verdict['ok'])
+                 self.assertFalse(verdict['checks']['signedPhaseLifeWanderAndPopulationContinuity'])
+@@ -520,5 +525,152 @@
+                 self.assertTrue(verdict['ok'], verdict)
+ 
+ 
++class HealthyRefreshInterfaceTests(unittest.TestCase):
++    def receipt_probe(self, case, receipt_epoch):
++        receipt = deepcopy(case['new'])
++        receipt.update(retrievedAt=receipt_epoch, at=receipt_epoch + 1)
++        captured = case['frame'](case['after']['elapsedMs'], receipt)
++        record = ORACLE.healthy_refresh_record(captured)
++        self.assertIsNotNone(record)
++        return record, captured
++
++    def test_actual_rich_targets_compact_receipts_and_monotonic_deadlines_qualify(self):
++        case = healthy_refresh_case()
++        record = ORACLE.healthy_refresh_record(case['after'])
++        self.assertIsNotNone(record)
++        self.assertEqual(len(record['target']), 10)
++        self.assertEqual(set(record['publication']['target']), {'generation', 'lat', 'lon'})
++        self.assertNotEqual(record['target'], record['publication']['target'])
++        self.assertEqual(record['target'], case['after']['raw']['target'])
++        self.assertTrue(ORACLE._healthy_refresh_sample(case['before'], [case['old'], case['new']], full=True))
++        request = ORACLE._healthy_refresh_request(record, case['after'], case['ledger'], case['clock'])
++        self.assertIsNotNone(request)
++        self.assertEqual(request['clockOrigin']['started'], 125.25)
++        self.assertEqual(request['timing']['jsonPerformanceMs'], 180130.25)
++        self.assertEqual(request['timing']['retrievalPerformanceInterval'], [180135.25, 180136.25])
++        self.assertEqual(request['timing']['deadlinePerformanceMs'], 190125.25)
++        self.assertTrue(refresh_verdict(case)['ok'])
++
++    def test_target_coordinates_and_generation_still_reject_drift(self):
++        for surface in ['snapshot', 'raw', 'receipt']:
++            for key in ['generation', 'lat', 'lon']:
++                with self.subTest(surface=surface, key=key):
++                    case = healthy_refresh_case()
++                    target = (case['after']['target'] if surface == 'snapshot' else case['after']['raw']['target']
++                              if surface == 'raw' else case['after']['actualCloud']['publication']['target'])
++                    target[key] += 1
++                    self.assertIsNone(ORACLE.healthy_refresh_record(case['after']))
++                    self.assertFalse(refresh_verdict(case)['ok'])
++        for owner in ['runtime', 'request']:
++            with self.subTest(owner=owner):
++                case = healthy_refresh_case()
++                if owner == 'runtime':
++                    case['after']['runtimeGeneration'] += 1
++                else:
++                    case['ledger'][-1]['nativeOwner']['generation'] += 1
++                self.assertFalse(refresh_verdict(case)['ok'])
++
++    def test_raw_and_snapshot_provenance_must_remain_equal(self):
++        case = healthy_refresh_case()
++        case['after']['raw']['target']['provider'] = 'unmatched provenance'
++        self.assertIsNone(ORACLE.healthy_refresh_record(case['after']))
++        case = healthy_refresh_case()
++        case['full'][1]['raw']['target']['source'] = 'manual'
++        self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'], case['clock'])['ok'])
++        verdict = refresh_verdict(case)
++        self.assertFalse(verdict['ok'])
++        self.assertFalse(verdict['checks']['allRetainedFullSamplesHealthy'])
++
++    def test_absent_or_wrong_observed_clock_origin_fails_closed(self):
++        good = healthy_refresh_case()['clock']
++        origins = [None, {}, {'started': good['started']}, {'startUtc': good['startUtc']},
++                   {**good, 'started': 0}, {**good, 'started': good['started'] + 1},
++                   {**good, 'started': -1}, {**good, 'started': True}, {**good, 'startUtc': good['startUtc'] + 1}]
++        for origin in origins:
++            with self.subTest(origin=origin):
++                case = healthy_refresh_case(); case['clock'] = origin
++                self.assertFalse(refresh_verdict(case)['ok'])
++        case = healthy_refresh_case()
++        # Omitting the new context is explicit missing evidence, never a zero origin.
++        self.assertFalse(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++
++    def test_consistent_nonzero_origins_do_not_assume_navigation_zero(self):
++        for origin in [0.125, 125.25, 7777.375, 65536.5]:
++            with self.subTest(origin=origin):
++                case = healthy_refresh_case(performance_origin=origin)
++                request = ORACLE._healthy_refresh_request(ORACLE.healthy_refresh_record(case['after']),
++                                                         case['after'], case['ledger'], case['clock'])
++                self.assertIsNotNone(request)
++                self.assertEqual(request['timing']['jsonPerformanceMs'], origin + 180005)
++                self.assertTrue(refresh_verdict(case)['ok'])
++
++    def test_origin_is_bound_to_existing_native_motion_observations(self):
++        for endpoint in ['before', 'after']:
++            for field in ['lastRt', 'elapsedRtMs']:
++                with self.subTest(endpoint=endpoint, field=field):
++                    case = healthy_refresh_case()
++                    case[endpoint]['actualCloud']['motion'][field] += 0.01
++                    self.assertIsNone(ORACLE._healthy_refresh_clock(case[endpoint], case['clock']))
++                    self.assertFalse(refresh_verdict(case)['ok'])
++        case = healthy_refresh_case()
++        del case['after']['actualCloud']['motion']['lastRt']
++        self.assertIsNone(ORACLE._healthy_refresh_clock(case['after'], case['clock']))
++
++    def test_epoch_shaped_deadline_cannot_masquerade_as_native_deadline(self):
++        case = healthy_refresh_case()
++        case['ledger'][-1]['nativeOwner']['deadlineAt'] = REFRESH_START_UTC + 192000
++        self.assertFalse(refresh_verdict(case)['ok'])
++
++    def test_body_completion_at_or_after_native_deadline_is_refused(self):
++        for late_ms in [0, 0.25, 5]:
++            with self.subTest(late_ms=late_ms):
++                case = healthy_refresh_case(end_ms=205000)
++                request = case['ledger'][-1]
++                request['jsonElapsedMs'] = request['nativeOwner']['deadlineAt'] - case['clock']['started'] + late_ms
++                record, captured = self.receipt_probe(case, case['clock']['startUtc'] + math.ceil(request['jsonElapsedMs']))
++                self.assertIsNone(ORACLE._healthy_refresh_request(record, captured, case['ledger'], case['clock']))
++
++    def test_whole_integer_receipt_interval_must_strictly_precede_deadline(self):
++        case = healthy_refresh_case(end_ms=205000)
++        deadline_elapsed = case['ledger'][-1]['nativeOwner']['deadlineAt'] - case['clock']['started']
++        self.assertEqual(deadline_elapsed, 190000)
++        # Whole interval ending one millisecond before the deadline is proven safe.
++        record, captured = self.receipt_probe(case, case['clock']['startUtc'] + deadline_elapsed - 2)
++        matched = ORACLE._healthy_refresh_request(record, captured, case['ledger'], case['clock'])
++        self.assertIsNotNone(matched)
++        self.assertEqual(matched['timing']['deadlineMarginFromReceiptUpperMs'], 1)
++        # Exact upper-bound contact is deliberately conservative; receipt at the
++        # deadline or later must also fail. These are matcher-only interval probes.
++        for offset in [-1, 0, 1]:
++            with self.subTest(receipt_offset_from_deadline=offset):
++                record, captured = self.receipt_probe(case, case['clock']['startUtc'] + deadline_elapsed + offset)
++                self.assertIsNone(ORACLE._healthy_refresh_request(record, captured, case['ledger'], case['clock']))
++        case['ledger'][-1]['nativeOwner']['deadlineAt'] -= 0.5
++        record, captured = self.receipt_probe(case, case['clock']['startUtc'] + deadline_elapsed - 1)
++        self.assertIsNone(ORACLE._healthy_refresh_request(record, captured, case['ledger'], case['clock']))
++
++    def test_ambiguous_consumed_response_is_still_refused(self):
++        case = healthy_refresh_case()
++        case['ledger'].append(deepcopy(case['ledger'][-1]))
++        self.assertIsNone(ORACLE._healthy_refresh_request(ORACLE.healthy_refresh_record(case['after']),
++                                                        case['after'], case['ledger'], case['clock']))
++        self.assertFalse(refresh_verdict(case)['ok'])
++
++    def test_fractional_epoch_receipt_cannot_claim_an_integer_clock_interval(self):
++        case = healthy_refresh_case()
++        record, captured = self.receipt_probe(case, case['new']['retrievedAt'] + 0.5)
++        self.assertIsNone(ORACLE._healthy_refresh_request(record, captured, case['ledger'], case['clock']))
++
++    def test_source_or_receipt_substitution_does_not_match_consumed_record(self):
++        for surface, field in [('raw', 'currentValidAt'), ('raw', 'retrievedAt'),
++                               ('candidate', 'sourceValidAt'), ('candidate', 'retrievedAt'), ('receipt', 'retrievedAt')]:
++            with self.subTest(surface=surface, field=field):
++                case = healthy_refresh_case()
++                value = case['after']['actualCloud']['publication'] if surface == 'receipt' else case['after'][surface]
++                value[field] += 1
++                self.assertIsNone(ORACLE.healthy_refresh_record(case['after']))
++                self.assertFalse(refresh_verdict(case)['ok'])
++
++
+ if __name__ == '__main__':
+     unittest.main()

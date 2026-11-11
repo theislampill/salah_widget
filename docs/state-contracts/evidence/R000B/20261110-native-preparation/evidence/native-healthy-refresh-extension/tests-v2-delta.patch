@@ -1,0 +1,270 @@
+--- accepted-v2/tests/weather-no-timetable-native-oracles.test.py
++++ extension/tests/weather-no-timetable-native-oracles.test.py
+@@ -6,7 +6,9 @@
+ The new predicates are extracted from the actual driver FunctionDef nodes.
+ """
+ 
++# R000B_F01_HEALTHY_REFRESH_ORACLE_CONTROLS_V1
+ import ast
++import datetime
+ from copy import deepcopy
+ import math
+ from pathlib import Path
+@@ -21,13 +23,16 @@
+ NAMES = {'_finite_number', '_bounds', '_column_alpha_support', 'rain_origin_evidence',
+          'rain_origin', 'observed_sky_error_fields', 'all_visible_joins_empty',
+          'resume_visible_sequence', 'cloud_motion_continuity', 'phase_progress',
+-         'actual_empty', 'effects_off', 'joined_empty', 'independent_celestial', 'healthy_cloud'}
++         'actual_empty', 'effects_off', 'joined_empty', 'independent_celestial', 'healthy_cloud',
++         'healthy_refresh_record', '_healthy_refresh_request', '_healthy_refresh_receipt',
++         '_healthy_refresh_sample', 'healthy_refresh_pair', 'healthy_refresh_evidence'}
+ 
+ 
+ def load_oracles(path=DRIVER):
+     parsed = ast.parse(path.read_text())
+     functions = [node for node in parsed.body if isinstance(node, ast.FunctionDef) and node.name in NAMES]
+-    namespace = {'math': math, 're': re, 'EXPECTED_COVERAGE': [0.92, 0.90, 0.60]}
++    namespace = {'math': math, 're': re, 'datetime': datetime, 'EXPECTED_COVERAGE': [0.92, 0.90, 0.60],
++                 'INITIAL_SOURCE_UTC': 1788900300000}
+     exec(compile(ast.Module(body=functions, type_ignores=[]), str(path), 'exec'), namespace)
+     return SimpleNamespace(**{name: namespace[name] for name in NAMES if name in namespace})
+ 
+@@ -282,5 +287,238 @@
+         self.assertIn('if(visible&&!report.resumeFirstVisible)', observer)
+ 
+ 
++REFRESH_START_UTC = 1788900300000 + 890000
++
++
++def healthy_refresh_case(refresh_ms=180000, end_ms=None, mode='default'):
++    """Invented observations/owned responses; no product or browser execution."""
++    start_ms, end_ms = 130000, (refresh_ms + 1000 if end_ms is None else end_ms)
++    prior_ms = refresh_ms - 60000
++    target = {'generation': 7, 'lat': 24.7136, 'lon': 46.6753}
++
++    def receipt(request_ms, revision):
++        return {'revision': revision, 'state': 'eligible-published', 'reason': 'complete atmosphere',
++                'target': target.copy(), 'lane': 'live',
++                'sourceValidAt': (REFRESH_START_UTC + request_ms) // 60000 * 60000,
++                'retrievedAt': REFRESH_START_UTC + request_ms + 10,
++                'conditionState': 'model-estimated-rain',
++                'at': REFRESH_START_UTC + (start_ms if revision == 4 else request_ms + 20)}
++
++    old, new = receipt(prior_ms, 4), receipt(refresh_ms, 5)
++    seed = motion_point(start_ms, phase=[0.6, 0.8, 1.0], reduced=mode == 'reduced')
++
++    def frame(at, active, candidate=None):
++        candidate = active if candidate is None else candidate
++        state = rain_scene()[0]
++        state.update(elapsedMs=at, wallUtcMs=REFRESH_START_UTC + at, modelIsNull=False,
++            loopStarted=True, cloudReady=True, coverage=EXPECTED_REFRESH_COVERAGE.copy(),
++            publication=deepcopy(active), documentHidden=False, documentVisibility='visible', cardPaused=False,
++            foregroundOwner='refined', foregroundVisible=True, foregroundHasCloudMask=True,
++            precip='on', lightning='off', target=target.copy(), runtimeGeneration=7, selected=True,
++            prayer={'modelIsNull': False, 'todayDay': '09-09-2026'},
++            candidate={'eligible': True, 'sourceValidAt': candidate['sourceValidAt'], 'retrievedAt': candidate['retrievedAt']},
++            raw={'currentValidAt': candidate['sourceValidAt'], 'retrievedAt': candidate['retrievedAt'], 'target': target.copy()},
++            rainOriginEvidence={'schema': 'r000b-rain-origin/v2', 'ok': True})
++        moved = advance(seed, at, seconds=0 if mode == 'reduced' else (at - start_ms) / 1000)['motion']
++        state['motion'] = deepcopy(moved)
++        state['actualCloud'].update(publication=deepcopy(active), targets=EXPECTED_REFRESH_COVERAGE.copy(), motion=deepcopy(moved))
++        canvas = {'visibility': 'visible', 'display': 'block', 'opacity': 1, 'rgbNonzero': 100,
++                  'maxRGB': 100, 'minRGB': 0, 'bounds': {'left': 1, 'top': 1, 'width': 323, 'height': 528}}
++        composition = {'maxCloudAlpha': 0.8, 'meanCloudAlpha': 0.1, 'cloudAuthority': deepcopy(active)}
++        state['celestial'].update(owner='refined', status='ready', skyPending=False, frameAgeMs=100,
++            moonReady=True, moonPresence=0.02, activeCanvas=deepcopy(canvas), composition=deepcopy(composition),
++            visibleForegrounds=[{'owner': 'refined', 'status': 'ready', 'canvas': deepcopy(canvas), 'composition': deepcopy(composition)}])
++        return state
++
++    def request(at, active, ordinal):
++        civil = datetime.datetime.fromtimestamp(active['sourceValidAt'] / 1000, datetime.timezone.utc) + datetime.timedelta(hours=3)
++        return {'kind': 'weather', 'weatherOrdinal': ordinal, 'elapsedMs': at, 'wallUtcMs': REFRESH_START_UTC + at,
++                'jsonElapsedMs': at + 5, 'jsonReads': 1, 'jsonSettled': True, 'status': 200, 'result': 'json-consumed',
++                'nativeOwner': {'generation': 7, 'operationId': ordinal * 2, 'attemptId': ordinal * 3,
++                                'deadlineAt': REFRESH_START_UTC + at + 12000},
++                'inputBody': {'timezone': 'Asia/Riyadh', 'current': {'time': civil.strftime('%Y-%m-%dT%H:%M'), 'interval': 900}}}
++
++    def passive_frame(at, active, candidate=None):
++        full = frame(at, active, candidate)
++        names = ('elapsedMs', 'wallUtcMs', 'modelIsNull', 'loopStarted', 'cloudReady', 'coverage', 'publication',
++                 'motion', 'candidate', 'documentHidden', 'documentVisibility', 'cardPaused', 'foregroundOwner',
++                 'foregroundVisible', 'foregroundHasCloudMask', 'precip', 'lightning')
++        return {name: full[name] for name in names}
++
++    before, after = frame(start_ms, old), frame(end_ms, new)
++    trace = [passive_frame(at, old if at < refresh_ms + 20 else new) for at in range(start_ms + 1000, end_ms, 1000)]
++    if start_ms < refresh_ms + 15 < end_ms:
++        trace.append(passive_frame(refresh_ms + 15, old, new))
++    trace.sort(key=lambda value: value['elapsedMs'])
++    watch_end = min(start_ms + 30000, end_ms)
++    watch = frame(watch_end, old if watch_end < refresh_ms + 20 else new)
++    return {'before': before, 'after': after, 'passive': trace, 'full': [before, watch, after],
++            'ledger': [request(prior_ms, old, 2), request(refresh_ms, new, 3)], 'mode': mode, 'frame': frame, 'passiveFrame': passive_frame,
++            'old': old, 'new': new, 'refreshMs': refresh_ms}
++
++
++EXPECTED_REFRESH_COVERAGE = [0.92, 0.90, 0.60]
++
++
++def refresh_verdict(case):
++    return ORACLE.healthy_refresh_evidence(case['before'], case['after'], case['passive'],
++                                         case['full'], case['ledger'], case['mode'])
++
++
++class HealthyRefreshTests(unittest.TestCase):
++    def test_refresh_inside_existing_30_second_watch_reuses_real_pair(self):
++        case = healthy_refresh_case(refresh_ms=150000, end_ms=160000)
++        verdict = refresh_verdict(case)
++        self.assertTrue(verdict['ok'], verdict)
++        self.assertGreater(verdict['pair']['afterRequest']['elapsedMs'], case['before']['elapsedMs'])
++        self.assertEqual(verdict['pair']['afterRecord']['publication'], case['after']['celestial']['composition']['cloudAuthority'])
++
++    def test_later_ordinary_refresh_allows_A_lease_during_B_handoff(self):
++        case = healthy_refresh_case()
++        handoff = case['frame'](case['refreshMs'] + 15, case['old'], case['new'])
++        handoff['celestial']['status'] = 'pending'
++        handoff['celestial']['visibleForegrounds'][0]['status'] = 'pending'
++        case['full'].append(handoff)
++        verdict = refresh_verdict(case)
++        self.assertTrue(verdict['ok'], verdict)
++        self.assertEqual(handoff['publication']['retrievedAt'], case['old']['retrievedAt'])
++        self.assertNotEqual(handoff['candidate']['retrievedAt'], handoff['publication']['retrievedAt'])
++
++    def test_no_post_recovery_record_replacement_cannot_qualify(self):
++        case = healthy_refresh_case()
++        case['after'] = case['frame'](181000, case['old'])
++        self.assertFalse(refresh_verdict(case)['ok'])
++        self.assertFalse(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++
++    def test_request_started_before_model_recovery_cannot_qualify(self):
++        case = healthy_refresh_case(refresh_ms=120000, end_ms=160000)
++        pair = ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])
++        self.assertFalse(pair['ok'])
++        self.assertIn('after recovery', pair['reason'])
++
++    def test_timestamp_only_renewal_or_missing_consumed_owned_response_fails(self):
++        for fault in ['same-source-renewal', 'json-unread', 'json-unsettled', 'missing-owner', 'same-operation', 'expired-attempt']:
++            with self.subTest(fault=fault):
++                case = healthy_refresh_case()
++                if fault == 'same-source-renewal':
++                    renewed = deepcopy(case['new']); renewed['sourceValidAt'] = case['old']['sourceValidAt']
++                    case['after'] = case['frame'](181000, renewed)
++                elif fault == 'json-unread':
++                    case['ledger'][-1]['jsonReads'] = 0
++                elif fault == 'json-unsettled':
++                    case['ledger'][-1]['jsonSettled'] = False
++                elif fault == 'missing-owner':
++                    case['ledger'][-1]['nativeOwner']['operationId'] = None
++                elif fault == 'same-operation':
++                    case['ledger'][-1]['nativeOwner']['operationId'] = case['ledger'][0]['nativeOwner']['operationId']
++                else:
++                    case['ledger'][-1]['nativeOwner']['deadlineAt'] = case['new']['retrievedAt']
++                self.assertFalse(refresh_verdict(case)['ok'])
++
++    def test_supplied_body_time_cannot_be_substituted_by_candidate_timestamp(self):
++        case = healthy_refresh_case()
++        case['ledger'][-1]['inputBody']['current']['time'] = case['ledger'][0]['inputBody']['current']['time']
++        self.assertFalse(refresh_verdict(case)['ok'])
++
++    def test_candidate_B_without_native_or_foreground_B_receipt_fails(self):
++        for fault in ['native-A', 'foreground-A', 'no-receipt']:
++            with self.subTest(fault=fault):
++                case = healthy_refresh_case()
++                if fault == 'native-A':
++                    case['after'] = case['frame'](181000, case['old'], case['new'])
++                elif fault == 'foreground-A':
++                    case['after']['celestial']['composition']['cloudAuthority'] = deepcopy(case['old'])
++                    case['after']['celestial']['visibleForegrounds'][0]['composition']['cloudAuthority'] = deepcopy(case['old'])
++                else:
++                    case['after']['actualCloud']['publication'] = None
++                self.assertFalse(refresh_verdict(case)['ok'])
++
++    def test_every_retained_passive_gap_is_checked_despite_healthy_endpoints(self):
++        for field, bad_value in [('modelIsNull', True), ('cloudReady', False), ('coverage', [0, 0, 0]),
++                                 ('foregroundVisible', False), ('foregroundHasCloudMask', False), ('precip', 'off')]:
++            with self.subTest(field=field):
++                case = healthy_refresh_case()
++                case['passive'][12][field] = bad_value
++                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++                verdict = refresh_verdict(case)
++                self.assertFalse(verdict['ok'])
++                self.assertFalse(verdict['checks']['allRetainedPassiveSamplesHealthy'])
++
++    def test_every_retained_full_raster_mask_and_foreground_is_checked(self):
++        for fault in ['native-raster', 'mask', 'foreground-alpha', 'rain-origin']:
++            with self.subTest(fault=fault):
++                case = healthy_refresh_case()
++                middle = case['full'][1]
++                if fault == 'native-raster':
++                    middle['actualCloud']['raster']['alphaSum'] = 0
++                    middle['actualCloud']['raster']['alphaNonzero'] = 0
++                elif fault == 'mask':
++                    middle['celestial']['consumedSolarMask']['blockedAlphaSum'] = 0
++                elif fault == 'foreground-alpha':
++                    middle['celestial']['visibleForegrounds'][0]['composition']['meanCloudAlpha'] = 0
++                else:
++                    middle['rainOriginEvidence']['ok'] = False
++                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++                verdict = refresh_verdict(case)
++                self.assertFalse(verdict['ok'])
++                self.assertFalse(verdict['checks']['allRetainedFullSamplesHealthy'])
++
++    def test_resets_between_clean_endpoints_use_existing_motion_oracle(self):
++        for axis in ['phase', 'life', 'wander', 'population']:
++            with self.subTest(axis=axis):
++                case = healthy_refresh_case()
++                motion = case['passive'][12]['motion']
++                motion[axis] = [0, 0, 0] if axis in ('phase', 'life') else 0
++                self.assertTrue(ORACLE.healthy_refresh_pair(case['before'], case['after'], case['ledger'])['ok'])
++                verdict = refresh_verdict(case)
++                self.assertFalse(verdict['ok'])
++                self.assertFalse(verdict['checks']['signedPhaseLifeWanderAndPopulationContinuity'])
++
++    def test_retained_full_snapshot_at_endpoint_timestamp_is_not_skipped(self):
++        case = healthy_refresh_case()
++        retained = deepcopy(case['before'])
++        retained['actualCloud']['raster']['alphaSum'] = 0
++        case['full'].append(retained)
++        verdict = refresh_verdict(case)
++        self.assertFalse(verdict['ok'])
++        self.assertFalse(verdict['checks']['allRetainedFullSamplesHealthy'])
++
++    def test_active_A_cannot_renew_its_lease_change_target_lane_or_withdraw(self):
++        for fault in ['renew', 'target', 'lane', 'withdrawn', 'expired-age']:
++            with self.subTest(fault=fault):
++                case = healthy_refresh_case()
++                handoff = next(sample for sample in case['passive'] if sample['elapsedMs'] == case['refreshMs'] + 15)
++                if fault == 'renew':
++                    handoff['publication']['retrievedAt'] = case['new']['retrievedAt']
++                elif fault == 'target':
++                    handoff['publication']['target']['lat'] += 1
++                elif fault == 'lane':
++                    handoff['publication']['lane'] = 'preview'
++                elif fault == 'withdrawn':
++                    handoff['publication']['state'] = 'withdrawn-unavailable'
++                else:
++                    handoff['wallUtcMs'] += 900001
++                self.assertFalse(refresh_verdict(case)['ok'])
++
++    def test_publication_cannot_roll_back_from_B_to_A_between_endpoints(self):
++        case = healthy_refresh_case()
++        case['passive'].extend([case['passiveFrame'](180500, case['new']), case['passiveFrame'](180750, case['old'], case['new'])])
++        verdict = refresh_verdict(case)
++        self.assertFalse(verdict['ok'])
++        self.assertFalse(verdict['checks']['consumedPublicationMovesOnlyFromAToB'])
++
++    def test_missing_passive_interval_is_not_continuity_proof(self):
++        case = healthy_refresh_case(); case['passive'] = []
++        verdict = refresh_verdict(case)
++        self.assertFalse(verdict['ok'])
++        self.assertFalse(verdict['checks']['allRetainedPassiveSamplesHealthy'])
++
++    def test_reduced_and_full_healthy_refresh_use_existing_motion_modes(self):
++        for mode in ['reduced', 'full']:
++            with self.subTest(mode=mode):
++                verdict = refresh_verdict(healthy_refresh_case(mode=mode))
++                self.assertTrue(verdict['ok'], verdict)
++
++
+ if __name__ == '__main__':
+     unittest.main()

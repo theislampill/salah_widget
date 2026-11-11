@@ -1,0 +1,93 @@
+[
+  {
+    "name": "engineering-baseline-sky-withdrawal",
+    "cwd": "/workspace/scratch/15b8fb6ac4c2/r000b-build-1",
+    "command": [
+      "node",
+      "--require",
+      "/tmp/r000b-baseline-inputs.cjs",
+      "--test",
+      "--test-reporter=tap",
+      "tests/r000b-sky-withdrawal.test.mjs"
+    ],
+    "exitCode": 1,
+    "log": "/workspace/scratch/15b8fb6ac4c2/evidence/generated-cohorts/engineering-baseline-sky-withdrawal.log",
+    "logSha256": "cace90c43ebfde2215b60eb16577864c66a629c795618c3bf89b7e195337d6c5"
+  },
+  {
+    "name": "engineering-baseline-head-handoff",
+    "cwd": "/workspace/scratch/15b8fb6ac4c2/r000b-build-1",
+    "command": [
+      "node",
+      "--require",
+      "/tmp/r000b-baseline-inputs.cjs",
+      "tests/real-sky/native-head-handoff.cjs"
+    ],
+    "exitCode": 1,
+    "log": "/workspace/scratch/15b8fb6ac4c2/evidence/generated-cohorts/engineering-baseline-head-handoff.log",
+    "logSha256": "cd685c23ab200dc56111478bfba84aa95528c46e47e2834d12f1b4981883ac3f"
+  },
+  {
+    "name": "engineering-baseline-startup-handoff",
+    "cwd": "/workspace/scratch/15b8fb6ac4c2/r000b-build-1",
+    "command": [
+      "node",
+      "--require",
+      "/tmp/r000b-baseline-inputs.cjs",
+      "--test",
+      "--test-reporter=tap",
+      "tests/real-sky/native-startup-handoff.test.cjs"
+    ],
+    "exitCode": 1,
+    "log": "/workspace/scratch/15b8fb6ac4c2/evidence/generated-cohorts/engineering-baseline-startup-handoff.log",
+    "logSha256": "ebe389b045909ac7a715d7a7c6f4f23b128d6c4e276c40c26291df10698daf6b"
+  },
+  {
+    "name": "rebound-adapter-admission",
+    "cwd": "/workspace/scratch/15b8fb6ac4c2/r000b-build-1",
+    "command": [
+      "node",
+      "-e",
+      "const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict'),c=require('./tests/native-script-contract.js');const sha=x=>crypto.createHash('sha256').update(x).digest('hex'),source=fs.readFileSync('index.html','utf8'),scripts=c.parseScripts(source),result=c.admitScripts(source,scripts,scripts.map(x=>sha(x.body)),sha(source));assert.equal(result.profile,'split-moon');assert.equal(result.runtimeQualified,false);assert.equal(result.native.body,scripts[3].body);console.log(JSON.stringify({sourceSha256:sha(source),adapterSha256:sha(fs.readFileSync('tests/native-script-contract.js')),profile:result.profile,runtimeQualified:result.runtimeQualified,prerequisites:result.prerequisites},null,2));"
+    ],
+    "exitCode": 0,
+    "log": "/workspace/scratch/15b8fb6ac4c2/evidence/generated-cohorts/rebound-adapter-admission.log",
+    "logSha256": "1ff16c28470fa44b25594b437d7937c107854ff8aaf10f7c33bb3180260fe79a"
+  },
+  {
+    "name": "rebound-r0025-continuity",
+    "cwd": "/workspace/scratch/15b8fb6ac4c2/r000b-build-1",
+    "command": [
+      "node",
+      "tests/r0025-continuity.cjs"
+    ],
+    "exitCode": 0,
+    "log": "/workspace/scratch/15b8fb6ac4c2/evidence/generated-cohorts/rebound-r0025-continuity.log",
+    "logSha256": "edd09eee0abcf52674fc0bb1046e6eef4046f3b764ec4ca659e4066ba1946cb3"
+  },
+  {
+    "name": "rebound-r0025-lifecycle",
+    "cwd": "/workspace/scratch/15b8fb6ac4c2/r000b-build-1",
+    "command": [
+      "node",
+      "tests/r0025-lifecycle.cjs"
+    ],
+    "exitCode": 0,
+    "log": "/workspace/scratch/15b8fb6ac4c2/evidence/generated-cohorts/rebound-r0025-lifecycle.log",
+    "logSha256": "5b156ebd8c4e2c4bc5940f4d35197a16c3e25b61392bdb314a20cf02b6a79769"
+  },
+  {
+    "name": "rebound-contract-controls",
+    "cwd": "/workspace/scratch/15b8fb6ac4c2/r000b-build-1",
+    "command": [
+      "node",
+      "--test",
+      "--test-reporter=tap",
+      "--test-name-pattern=^(current delivered|stripping the delivered|missing, duplicate|current Moon prerequisites|an unknown script|simultaneously missing current prerequisites)",
+      "tests/r0017-adapters.test.cjs"
+    ],
+    "exitCode": 0,
+    "log": "/workspace/scratch/15b8fb6ac4c2/evidence/generated-cohorts/rebound-contract-controls.log",
+    "logSha256": "0a085e8d0d73dc0fe1e17484d21984065bceb8791407e55626a954fce9460d07"
+  }
+]

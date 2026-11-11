@@ -1,0 +1,308 @@
+Frozen native SHA256: 67acbca548a6285e78119c45872fea412db67cfa1f8b640b56d681071a18f195
+Test SHA256: 5b5b020f13073b7b06b72873f1dd2731978eb5beaec3bee23f132e783b450530
+Command: SALAH_WITHDRAWAL_SOURCE=/workspace/scratch/15b8fb6ac4c2/evidence/healthy-handoff-repair/frozen-9dab-native.html node --test tests/weather-no-timetable-handoff.test.cjs
+Exit: 1
+
+✖ F01 healthy full-model refresh keeps normal easing: capture-before-render (134.650066ms)
+✔ F01 healthy full-model refresh keeps normal easing: render-before-capture (102.938805ms)
+✖ F01 repeated captures and final checks retain A without a producer, timestamp or easing mutation (89.552819ms)
+✔ F01 fresh B cannot retain A after the genuine model becomes unavailable (81.443157ms)
+✔ F01 cold consumer cannot restore a deck from weather and model availability alone (51.927239ms)
+✔ F01 already-withdrawn consumer cannot restore a deck from weather and model availability alone (91.630736ms)
+✖ F01 owns A currentValidAt boundary with fresh B: 899999 (93.361472ms)
+✖ F01 owns A currentValidAt boundary with fresh B: 900000 (84.741263ms)
+✔ F01 owns A currentValidAt boundary with fresh B: 900001 (84.315224ms)
+✔ F01 owns A currentValidAt boundary with fresh B: -1 (62.592755ms)
+✖ F01 owns A retrievedAt boundary with fresh B: 899999 (101.637484ms)
+✖ F01 owns A retrievedAt boundary with fresh B: 900000 (126.512291ms)
+✔ F01 owns A retrievedAt boundary with fresh B: 900001 (150.439776ms)
+✔ F01 owns A retrievedAt boundary with fresh B: -1 (108.277557ms)
+✖ F01 successive fresh B/C records do not renew A or its cached decision lifetime (88.909646ms)
+✔ F01 generation replacement cannot reuse the old active receipt (97.969613ms)
+✔ F01 coordinates replacement cannot reuse the old active receipt (113.723019ms)
+✔ F01 scene replacement cannot reuse the old active receipt (92.319553ms)
+✖ F01 mode replacement cannot reuse the old active receipt (93.012699ms)
+✖ F01 genuine simulation object turnover; missing model=false (50.135843ms)
+✔ F01 genuine simulation object turnover; missing model=true (54.943573ms)
+✖ F01 genuine forecast object turnover; missing model=false (81.637669ms)
+✖ F01 genuine forecast object turnover; missing model=true (94.669313ms)
+✖ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=false (55.769998ms)
+✖ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=true (60.385324ms)
+✖ F01 pending actual solar decode respects active receipt; B published=false (86.198939ms)
+✖ F01 pending actual solar decode respects active receipt; B published=true (96.37449ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 12
+ℹ fail 15
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2564.885253
+
+✖ failing tests:
+
+test at tests/weather-no-timetable-handoff.test.cjs:50:70
+✖ F01 healthy full-model refresh keeps normal easing: capture-before-render (134.650066ms)
+  AssertionError [ERR_ASSERTION]: an eligible active A deck cannot disappear before normal full render
+  
+  0 !== 192
+  
+      at /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:56:10
+      at captureBoundary (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:38:19)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:54:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 192,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:79:1
+✖ F01 repeated captures and final checks retain A without a producer, timestamp or easing mutation (89.552819ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 192
+  
+      at /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:88:11
+      at captureBoundary (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:38:19)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:85:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 192,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:138:2
+✖ F01 owns A currentValidAt boundary with fresh B: 899999 (93.361472ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:141:31)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:138:2
+✖ F01 owns A currentValidAt boundary with fresh B: 900000 (84.741263ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:141:31)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:138:2
+✖ F01 owns A retrievedAt boundary with fresh B: 899999 (101.637484ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:141:31)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:138:2
+✖ F01 owns A retrievedAt boundary with fresh B: 900000 (126.512291ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:141:31)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:145:1
+✖ F01 successive fresh B/C records do not renew A or its cached decision lifetime (88.909646ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 192
+  
+      at /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:147:42
+      at captureBoundary (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:38:19)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:147:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 192,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:158:63
+✖ F01 mode replacement cannot reuse the old active receipt (93.012699ms)
+  index.html:inline:2938
+    maintainPrayerDay();render();window.SalahNativeSkyHost?.notify();
+                                                            ^
+  
+  TypeError: window.SalahNativeSkyHost?.notify is not a function
+      at Object.set (index.html:inline:2938:59)
+      at evalmachine.<anonymous>:1:19
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at Object.run (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/r001d-harness.cjs:104:22)
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:163:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/weather-no-timetable-handoff.test.cjs:194:84
+✖ F01 genuine simulation object turnover; missing model=false (50.135843ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 192
+  
+      at /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:197:43
+      at captureBoundary (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:38:19)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:197:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 192,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:194:84
+✖ F01 genuine forecast object turnover; missing model=false (81.637669ms)
+  index.html:inline:2938
+    maintainPrayerDay();render();window.SalahNativeSkyHost?.notify();
+                                                            ^
+  
+  TypeError: window.SalahNativeSkyHost?.notify is not a function
+      at Object.set (index.html:inline:2938:59)
+      at evalmachine.<anonymous>:1:19
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at Object.run (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/r001d-harness.cjs:104:22)
+      at previewReplacement (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:183:5)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:195:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/weather-no-timetable-handoff.test.cjs:194:84
+✖ F01 genuine forecast object turnover; missing model=true (94.669313ms)
+  index.html:inline:2938
+    maintainPrayerDay();render();window.SalahNativeSkyHost?.notify();
+                                                            ^
+  
+  TypeError: window.SalahNativeSkyHost?.notify is not a function
+      at Object.set (index.html:inline:2938:59)
+      at evalmachine.<anonymous>:1:19
+      at Script.runInContext (node:vm:149:12)
+      at Object.runInContext (node:vm:301:6)
+      at Object.run (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/r001d-harness.cjs:104:22)
+      at previewReplacement (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:183:5)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:195:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/weather-no-timetable-handoff.test.cjs:210:44
+✖ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=false (55.769998ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:214:87)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:210:44
+✖ F01 consumed direct evidence lease cannot be replaced by candidate evidence; renewed=true (60.385324ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:214:87)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:220:38
+✖ F01 pending actual solar decode respects active receipt; B published=false (86.198939ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 192
+  
+      at /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:225:43
+      at captureBoundary (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:38:19)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:224:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 192,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/weather-no-timetable-handoff.test.cjs:220:38
+✖ F01 pending actual solar decode respects active receipt; B published=true (96.37449ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 192
+  
+      at /workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:225:43
+      at captureBoundary (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:38:19)
+      at async TestContext.<anonymous> (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-handoff.test.cjs:224:2)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 192,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

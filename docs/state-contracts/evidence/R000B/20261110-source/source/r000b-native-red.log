@@ -1,0 +1,201 @@
+✖ actual foreground capture withdraws expired cloud state before reading raster when render and painter have not run (123.588381ms)
+✖ captured authority is serializable and final-currentness read rejects expiry without repairing cloud state (82.6202ms)
+✖ refined rejects an old cloud capture and publishes clear successor at next opportunity (177.829987ms)
+✖ refined rejects an old cloud capture and publishes clear successor at decode completion (111.801517ms)
+✖ preview rejects an old cloud capture and publishes clear successor at next opportunity (71.9175ms)
+✖ preview rejects an old cloud capture and publishes clear successor at decode completion (61.973052ms)
+✖ refined checks cloud authority again after detail composition (126.162963ms)
+✖ preview checks cloud authority again after detail composition (79.830558ms)
+✖ pending solar context is bounded and released without adding owner references to decoded cache (1.276062ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 0
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1029.673893
+
+✖ failing tests:
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:59:1
+✖ actual foreground capture withdraws expired cloud state before reading raster when render and painter have not run (123.588381ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   0.92,
+  +   0.9,
+  +   0.6
+  -   0,
+  -   0,
+  -   0
+    ]
+  
+      at withdrawn (/workspace/scratch/15b8fb6ac4c2/r000b-work/tests/weather-no-timetable-fixture.cjs:74:34)
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:61:39
+      at boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 0.92, 0.9, 0.6 ],
+    expected: [ 0, 0, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:64:1
+✖ captured authority is serializable and final-currentness read rejects expiry without repairing cloud state (82.6202ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'undefined'
+  - 'function'
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:65:73
+      at boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'undefined',
+    expected: 'function',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:70:100
+✖ refined rejects an old cloud capture and publishes clear successor at next opportunity (177.829987ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:71:136
+      at boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:70:100
+✖ refined rejects an old cloud capture and publishes clear successor at decode completion (111.801517ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:71:136
+      at boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:70:100
+✖ preview rejects an old cloud capture and publishes clear successor at next opportunity (71.9175ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:71:136
+      at boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:70:100
+✖ preview rejects an old cloud capture and publishes clear successor at decode completion (61.973052ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:71:136
+      at boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:79:41
+✖ refined checks cloud authority again after detail composition (126.162963ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  undefined !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:82:47
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:79:41
+✖ preview checks cloud authority again after detail composition (79.830558ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  undefined !== 0
+  
+      at file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:82:47
+      at async boundary (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:39:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/real-sky/native-weather-withdrawal.test.mjs:84:1
+✖ pending solar context is bounded and released without adding owner references to decoded cache (1.276062ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - {
+  -   cloudAuthority: {
+  -     revision: 1
+  -   }
+  - }
+  
+      at TestContext.<anonymous> (file:///workspace/scratch/15b8fb6ac4c2/r000b-work/tests/real-sky/native-weather-withdrawal.test.mjs:86:82)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: { cloudAuthority: { revision: 1 } },
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

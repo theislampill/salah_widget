@@ -21,18 +21,22 @@ const initial=()=>({utcMs:1788806700016,lat:24.47,lon:39.61,heightM:0,
 function fixture(current,{hasPreview=true,hasTerrain=true,detailOwner='refined-sky'}={}){
   const classes=new Set(['real-sky-composed','real-sky-preview-ready']);
   if(hasTerrain)classes.add('moon-ready');
-  let detailVisible=hasTerrain;
+  let detailVisible=hasTerrain,cloudReconciliations=0;
+  // Explicit cloud-port double: these cases qualify sky ownership, not weather
+  // eligibility or pixels. Real cloud withdrawal has its separate source controls.
   const card={classList:{contains:x=>classes.has(x),add:x=>classes.add(x),remove:x=>classes.delete(x)},style:{removeProperty(){}}};
-  const window={SalahMoonDetail:{clear(){detailVisible=false;},get state(){return {skyOwner:detailOwner,visible:detailVisible};}}};
+  const window={SalahNativeSkyHost:{reconcileClouds(){cloudReconciliations++;}},SalahMoonDetail:{clear(){detailVisible=false;},get state(){return {skyOwner:detailOwner,visible:detailVisible};}}};
   const job=nativeJob(initial());
-  const preview={card,window,solarPublication:new NativeSolarMaskPublication(),pendingValue:{job},value:{job},previewFrame:hasPreview?{current:()=>nativeResultCurrent(job,current)}:null,
+  const preview={card,window,host:window.SalahNativeSkyHost,solarPublication:new NativeSolarMaskPublication(),pendingValue:{job},value:{job},previewFrame:hasPreview?{current:()=>nativeResultCurrent(job,current)}:null,
     status:{status:'ready'},retireFirstPaint(){},canvas:{style:{visibility:'visible'}}};
   vm.createContext(preview);vm.runInContext(previewClear,preview);
   window.SalahSkyPreview={get frame(){return preview.previewFrame;},get state(){return preview.status;},clear:reason=>preview.clear(reason)};
   const full={card,window,solarPublication:new NativeSolarMaskPublication(),pendingJob:{},frame:{},job:{},status:{},paintedFrame:{},paintedJob:{},previousPresentation:{},previousMoonBottom:100,
     ctx:{clearRect(){}},canvas:{style:{visibility:'visible'}},publish(){}};
   vm.createContext(full);vm.runInContext(fullClear,full);
-  return {classes,preview,full,get detailVisible(){return detailVisible;},withdraw(){full.clear('accepted weather changed');
+  return {classes,preview,full,get detailVisible(){return detailVisible;},get cloudReconciliations(){return cloudReconciliations;},withdraw(){
+    const before=cloudReconciliations;full.clear('accepted weather changed');
+    assert.ok(cloudReconciliations>before,'refined withdrawal reconciles native clouds before exposing their canvas');
     assert.equal(full.solarPublication.revision,1,'withdrawal cancels the previous solar publication');
     assert.equal(full.pendingJob,null,'withdrawal drops the pending refined job');
   }};
@@ -78,6 +82,7 @@ test('a current preview does not invent unavailable lunar terrain',()=>{
 
 test('explicit preview withdrawal still removes its own ready flag and detail',()=>{
   const h=fixture(initial());h.preview.clear('native target invalidated');
+  assert.equal(h.cloudReconciliations,1,'explicit preview withdrawal reconciles native clouds');
   assert.equal(h.classes.has('real-sky-preview-ready'),false);
   assert.equal(h.preview.canvas.style.visibility,'hidden');assert.equal(h.detailVisible,false);
   assert.equal(h.preview.solarPublication.revision,1);assert.equal(h.preview.pendingValue,null);

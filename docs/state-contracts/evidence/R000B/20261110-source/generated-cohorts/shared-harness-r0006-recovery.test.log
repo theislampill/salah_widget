@@ -1,0 +1,119 @@
+TAP version 13
+# {"cooldownMutantRequests":65}
+# Subtest: R0006 stalled headers settle three whole attempts by 32.7 seconds and start recovery loop
+ok 1 - R0006 stalled headers settle three whole attempts by 32.7 seconds and start recovery loop
+  ---
+  duration_ms: 50.590273
+  type: 'test'
+  ...
+# Subtest: R0006 stalled body is covered by same whole-attempt deadline
+ok 2 - R0006 stalled body is covered by same whole-attempt deadline
+  ---
+  duration_ms: 16.395107
+  type: 'test'
+  ...
+# Subtest: R0006 positive two prompt failures preserve third success with 900/1800 backoffs
+ok 3 - R0006 positive two prompt failures preserve third success with 900/1800 backoffs
+  ---
+  duration_ms: 87.144019
+  type: 'test'
+  ...
+# Subtest: R0006 same-day cold failure recovers at real elapsed 60s without midnight or wall clock
+ok 4 - R0006 same-day cold failure recovers at real elapsed 60s without midnight or wall clock
+  ---
+  duration_ms: 17.081979
+  type: 'test'
+  ...
+# Subtest: R0006 deadline trace is 0/10900/22700; terminal operation clears timers and busy
+ok 5 - R0006 deadline trace is 0/10900/22700; terminal operation clears timers and busy
+  ---
+  duration_ms: 13.729065
+  type: 'test'
+  ...
+# Subtest: R0006 late old body after timeout cannot overwrite healthy retry or produce an unhandled rejection
+ok 6 - R0006 late old body after timeout cannot overwrite healthy retry or produce an unhandled rejection
+  ---
+  duration_ms: 59.992376
+  type: 'test'
+  ...
+# Subtest: R0006 delayed timeout callback cannot admit a body beyond real elapsed deadline
+ok 7 - R0006 delayed timeout callback cannot admit a body beyond real elapsed deadline
+  ---
+  duration_ms: 60.328525
+  type: 'test'
+  ...
+# Subtest: R0006 recovered same-day network at elapsed60s paints without reload or midnight
+ok 8 - R0006 recovered same-day network at elapsed60s paints without reload or midnight
+  ---
+  duration_ms: 61.524767
+  type: 'test'
+  ...
+# Subtest: R0006 forward wall retains real elapsed cold retry eligibility
+ok 9 - R0006 forward wall retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 12.709143
+  type: 'test'
+  ...
+# Subtest: R0006 backward wall retains real elapsed cold retry eligibility
+ok 10 - R0006 backward wall retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 16.440736
+  type: 'test'
+  ...
+# Subtest: R0006 frozen scene retains real elapsed cold retry eligibility
+ok 11 - R0006 frozen scene retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 91.698869
+  type: 'test'
+  ...
+# Subtest: R0006 accelerated same-day scene retains real elapsed cold retry eligibility
+ok 12 - R0006 accelerated same-day scene retains real elapsed cold retry eligibility
+  ---
+  duration_ms: 109.507979
+  type: 'test'
+  ...
+# Subtest: R0006 hidden cooldown schedules one current operation on eligible visible resume
+ok 13 - R0006 hidden cooldown schedules one current operation on eligible visible resume
+  ---
+  duration_ms: 48.79685
+  type: 'test'
+  ...
+# Subtest: R0006 66 actual render opportunities with real retry delays make exactly six low-level starts
+ok 14 - R0006 66 actual render opportunities with real retry delays make exactly six low-level starts
+  ---
+  duration_ms: 310.782531
+  type: 'test'
+  ...
+# Subtest: R0006 mutant removing cooldown is killed by the same 66-opportunity schedule
+ok 15 - R0006 mutant removing cooldown is killed by the same 66-opportunity schedule
+  ---
+  duration_ms: 276.825042
+  type: 'test'
+  ...
+# Subtest: R0006 mutant removing cold branch is killed by same-day recovery
+ok 16 - R0006 mutant removing cold branch is killed by same-day recovery
+  ---
+  duration_ms: 26.768173
+  type: 'test'
+  ...
+# Subtest: R0006 mutant removing deadline recreates indefinitely pending headers
+ok 17 - R0006 mutant removing deadline recreates indefinitely pending headers
+  ---
+  duration_ms: 19.078928
+  type: 'test'
+  ...
+# Subtest: R0006 headers-only deadline mutant is killed by stalled actual response body
+ok 18 - R0006 headers-only deadline mutant is killed by stalled actual response body
+  ---
+  duration_ms: 19.784257
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1430.160813

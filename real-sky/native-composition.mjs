@@ -34,10 +34,10 @@ export function nativeSolarTransmission(cloudRGBA){
  */
 const nativeClearSolarMask=Object.freeze({mask:'linear-gradient(#fff,#fff)',image:null});
 export class NativeSolarMaskPublication{
- constructor(imageFactory=()=>new Image()){this.imageFactory=imageFactory;this.revision=0;this.pending=null;this.displayed=null;this.decoded=null;this.disposed=false;}
+ constructor(imageFactory=()=>new Image()){this.imageFactory=imageFactory;this.revision=0;this.pending=null;this.pendingContext=null;this.displayed=null;this.decoded=null;this.disposed=false;}
  finish(candidate,revision,commit,onError,context){
   if(this.disposed||revision!==this.revision)return;
-  this.pending=null;
+  this.pending=null;this.pendingContext=null;
   this.decoded=candidate;
   try{if(commit(candidate.mask,context)!==false&&revision===this.revision)this.displayed=candidate;}
   catch(error){onError(error,context);}
@@ -51,7 +51,7 @@ export class NativeSolarMaskPublication{
   // (and its compositing group), and still run the caller's currentness guard.
   if(mask===nativeClearSolarMask.mask){this.finish(nativeClearSolarMask,revision,commit,onError,context);return true;}
   const image=this.imageFactory(),candidate={mask,image};
-  this.pending=candidate;
+  this.pending=candidate;this.pendingContext=context;
   try{
    image.crossOrigin='anonymous';
    image.src=JSON.parse(mask.slice(4,-1));
@@ -59,12 +59,12 @@ export class NativeSolarMaskPublication{
    // clear masks use stable owner handlers with their original capture context.
    image.decode().then(()=>this.finish(candidate,revision,commit,onError,context),error=>{
     if(this.disposed||revision!==this.revision)return;
-    this.pending=null;onError(error,context);
+    this.pending=null;this.pendingContext=null;onError(error,context);
    });
-  }catch(error){this.pending=null;onError(error,context);}
+  }catch(error){this.pending=null;this.pendingContext=null;onError(error,context);}
   return true;
  }
- cancel(){this.revision++;if(this.pending)this.pending.image.src='';this.pending=null;this.displayed=null;}
+ cancel(){this.revision++;if(this.pending)this.pending.image.src='';this.pending=null;this.pendingContext=null;this.displayed=null;}
  dispose(){this.cancel();this.decoded=null;this.disposed=true;}
 }
 export function nativeForeground(base,{cloudRGBA=null,moonRGBA=null,atmosphereLinear=null,exposure}={}){
@@ -129,6 +129,7 @@ export class NativeForegroundCapture{
  }
  capture(rows=530){
   if(!Number.isInteger(rows)||rows<1||rows>530)throw new RangeError('Native capture rows');
+  const cloudAuthority=window.SalahNativeSkyHost.reconcileClouds();
   for(const c of [this.cloud,this.moon])if(c.height!==rows)c.height=rows;
   const cloud=document.querySelector('.cloudcanvas'),photo=document.querySelector('.mphoto'),group=document.querySelector('.moon'),features=document.querySelector('.mfeatures'),card=document.querySelector('.c');
   const rect=this.canvas.getBoundingClientRect();if(!(rect.width>0&&rect.height>0))throw new Error('Native canvas has no drawable bounds');
@@ -150,7 +151,9 @@ export class NativeForegroundCapture{
     mx.drawImage(surface,Number(photo.getAttribute('x')),Number(photo.getAttribute('y')),Number(photo.getAttribute('width')),Number(photo.getAttribute('height')));mx.resetTransform();mx.globalAlpha=1;
    }
   }
-  return {cloudRGBA:cx.getImageData(0,0,325,rows).data,moonRGBA:mx.getImageData(0,0,325,rows).data,native:{moonSurface:detail?'device-resolution-owned':ready?'native-300px-backing-canvas':'unavailable',moonAlpha,cloudBuffer:cloud?{width:cloud.width,height:cloud.height}:null,maskStops:[0,.03,.24,.34,1],cloudSource:getComputedStyle(cloud).visibility}};
+  const cloudRGBA=cx.getImageData(0,0,325,rows).data;let sum=0,max=0;
+  for(let i=3;i<cloudRGBA.length;i+=4){sum+=cloudRGBA[i];max=Math.max(max,cloudRGBA[i]);}
+  return {cloudRGBA,moonRGBA:mx.getImageData(0,0,325,rows).data,cloudAuthority,native:{cloudAuthority,maxCloudAlpha:max/255,meanCloudAlpha:sum/(255*325*530),moonSurface:detail?'device-resolution-owned':ready?'native-300px-backing-canvas':'unavailable',moonAlpha,cloudBuffer:cloud?{width:cloud.width,height:cloud.height}:null,maskStops:[0,.03,.24,.34,1],cloudSource:getComputedStyle(cloud).visibility}};
  }
 }
 
