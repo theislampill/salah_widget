@@ -46,6 +46,13 @@ Check 'retained actual parser positive control' {
     $p=Profile 'retained-positive' $both;$r=Get-FirefoxExtensionStatus $p
     Assert ($r.HasNew -and $r.HasOld -and $r.NewMatches.Count -eq 1 -and $r.OldMatches.Count -eq 1) 'Known positives broken'
 }
+Check 'literal bracketed Firefox profile name' {
+    $p=Profile 'Profile [1]' $both
+    Assert (-not [IO.Directory]::Exists((Join-Path $FixtureRoot 'Profile 1'))) 'Wildcard alias contaminated the literal-path control'
+    $r=Get-FirefoxExtensionStatus $p
+    Assert ($r.Status -ceq 'known-both' -and $r.Reason -ceq 'supported-metadata' -and $r.HasNew -and $r.HasOld) 'Bracketed literal profile was not read'
+    Assert ($r.MetadataSource -ceq (Join-Path $p 'extensions.json')) 'Literal profile metadata identity changed'
+}
 foreach($row in @(
     @('empty',$empty,'known-neither','supported-metadata',$false,$false),
     @('object-leading-whitespace',("`r`n`t "+$empty),'known-neither','supported-metadata',$false,$false),

@@ -67,6 +67,7 @@ foreach($row in @(
         raise RuntimeError('Incomplete native parser capabilities')
     cases=[
         ('catch-to-absence',changed("$result.Reason='metadata-malformed'","$result.Reason='metadata-malformed'; $result.Status='known-neither'"),['actual parser malformed','actual unknown only refuses before staging']),
+        ('wildcard-profile-probe',changed('Test-Path -LiteralPath $extensionsJson','Test-Path -Path $extensionsJson'),['literal bracketed Firefox profile name']),
         ('singleton-root-array-admitted',changed("$raw -notmatch '^\\s*\\{' -or ",''),['unsupported shape root-singleton-empty','unsupported shape root-singleton-new','actual singleton root array held with known peer']),
         ('drop-builder-knowledge',changed('DiscoveryStatus=$status.Status; DiscoveryReason=$status.Reason;','DiscoveryStatus=$null; DiscoveryReason=$status.Reason;'),['actual target builder keeps states source and safe peers']),
         ('default-all-admits-unknown',changed("default { return 'unknown-held' }","default { return 'eligible-known' }"),['actual all mixed selection keeps known peer','actual unknown only refuses before staging']),
