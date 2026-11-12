@@ -1,0 +1,203 @@
+{
+  "schema": "r0015-independent-instrument-delta-review-v1",
+  "reviewer": "/root/r0013_review",
+  "baselineCommit": "00a08b69661b5c09e1b6890da032e88265802b9b",
+  "inspectedHashes": {
+    "install.ps1": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff",
+    "tests/install-entry-native.py": "223b8ed54b342c23e7d0380bc669072a5fd87f2e42eeadb276b024aa8aa29819",
+    "tests/install-staging-first-call.ps1": "1cc468a93f9990015797b5d2ab60edf8e99e70fd56d169cc58f0bbddb1ba7073",
+    "tests/install-powershell-mutations.py": "7a3839e3e150e3881011beb36e84bb9776078d27bad7cabb2fa09ad4896180c8",
+    "tests/install-host-bootstrap.ps1": "a553c9790f04c34ddbe672b469e157ddf6c5d4903484b1f3b17eb82bd2f86510",
+    "tools/qualification/installer_native.py": "58996bc81881973d9d2b45c8c9a422ec40174a3dbd20ef13cba7d4c6e68d304b",
+    ".github/workflows/installer-native.yml": "812739272e7119072939362f108e9ddd15972c50510e8f97ebb21265c60241e6"
+  },
+  "checks": [
+    {
+      "name": "All prior actual entry assertions retained except expanded owned fixture ACL boundary",
+      "pass": true,
+      "detail": [
+        "Call(func=Name(id='require', ctx=Load()), args=[BoolOp(op=And(), values=[Call(func=Attribute(value=Name(id='path', ctx=Load()), attr='is_dir', ctx=Load()), args=[], keywords=[]), Call(func=Attribute(value=Name(id='path', ctx=Load()), attr='is_relative_to', ctx=Load()), args=[Name(id='root', ctx=Load())], keywords=[])]), Constant(value='ACL setup escaped the owned fixture')], keywords=[])"
+      ]
+    },
+    {
+      "name": "Default complete denominator remains 12 scenarios per each of 2 hosts",
+      "pass": true
+    },
+    {
+      "name": "Filters retain default hosts/scenarios and record selected scope",
+      "pass": true
+    },
+    {
+      "name": "Actual -File entry and per-entry final readiness retained",
+      "pass": true
+    },
+    {
+      "name": "Owned parent ACL corrections include every newly owned ancestor with external unchanged readback",
+      "pass": true
+    },
+    {
+      "name": "First-call only readiness 20 to 60 derivative; actual 25 second initialization window unchanged",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: make_mutant",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: section_replace",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: invoke_pwsh",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: rows_by_case",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: passed",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: copy_count",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: EXTRA_CASES",
+      "pass": true
+    },
+    {
+      "name": "Mutation mechanism unchanged: SPECS",
+      "pass": true
+    },
+    {
+      "name": "Changed Python instruments parse",
+      "pass": true
+    },
+    {
+      "name": "Diagnostic acquisition semantics: complete observation adverse",
+      "pass": true
+    },
+    {
+      "name": "Diagnostic acquisition semantics: incomplete observation",
+      "pass": true
+    },
+    {
+      "name": "Diagnostic acquisition semantics: timing all rows pass",
+      "pass": true
+    },
+    {
+      "name": "Diagnostic acquisition semantics: timing top flag false",
+      "pass": true
+    },
+    {
+      "name": "Diagnostic acquisition semantics: missing rows",
+      "pass": true
+    },
+    {
+      "name": "Actual collector status classifier: product pass with observations",
+      "pass": true,
+      "detail": {
+        "commands": [
+          {
+            "passed": true
+          }
+        ],
+        "diagnostics": [
+          {
+            "acquired": true
+          }
+        ],
+        "qualification_status": "PASS",
+        "diagnostic_acquisition_status": "COMPLETE",
+        "status": "OBSERVATIONS_ACQUIRED",
+        "diagnostic_scope": "Acquisition is not product acceptance. Independently adjudicate each diagnostic's native observations, including pre-admission effects."
+      }
+    },
+    {
+      "name": "Actual collector status classifier: product fail with observations",
+      "pass": true,
+      "detail": {
+        "commands": [
+          {
+            "passed": false
+          }
+        ],
+        "diagnostics": [
+          {
+            "acquired": true
+          }
+        ],
+        "qualification_status": "FAIL",
+        "diagnostic_acquisition_status": "COMPLETE",
+        "status": "FAIL",
+        "diagnostic_scope": "Acquisition is not product acceptance. Independently adjudicate each diagnostic's native observations, including pre-admission effects."
+      }
+    },
+    {
+      "name": "Actual collector status classifier: diagnostic acquisition missing",
+      "pass": true,
+      "detail": {
+        "commands": [
+          {
+            "passed": true
+          }
+        ],
+        "diagnostics": [
+          {
+            "acquired": false
+          }
+        ],
+        "qualification_status": "PASS",
+        "diagnostic_acquisition_status": "BLOCKED",
+        "status": "FAIL",
+        "diagnostic_scope": "Acquisition is not product acceptance. Independently adjudicate each diagnostic's native observations, including pre-admission effects."
+      }
+    },
+    {
+      "name": "Actual collector status classifier: product-only pass",
+      "pass": true,
+      "detail": {
+        "commands": [
+          {
+            "passed": true
+          }
+        ],
+        "diagnostics": [],
+        "qualification_status": "PASS",
+        "diagnostic_acquisition_status": "NOT_REQUESTED",
+        "status": "PASS"
+      }
+    },
+    {
+      "name": "Actual collector status classifier: missing product command",
+      "pass": true,
+      "detail": {
+        "commands": [],
+        "diagnostics": [
+          {
+            "acquired": true
+          }
+        ],
+        "qualification_status": "FAIL",
+        "diagnostic_acquisition_status": "COMPLETE",
+        "status": "FAIL",
+        "diagnostic_scope": "Acquisition is not product acceptance. Independently adjudicate each diagnostic's native observations, including pre-admission effects."
+      }
+    },
+    {
+      "name": "First-call observation is independent of product pass",
+      "pass": true
+    }
+  ],
+  "findings": [],
+  "disposition": "No additional blocker to this bounded native qualification publication. No native correction, first-call safety, or full-contract acceptance is established by this instrument review.",
+  "limitations": [
+    "Actual Windows readback of the owned parent ACL repair remains required.",
+    "Native first-call diagnostic complete means observations acquired; adverse pre-admission effects still require independent source/contract adjudication.",
+    "R0015 selected normal/NoOpen replay contains four full-file rows, not the original 24-row whole-entry denominator. Default full scope remains available; unchanged preview rows require exact source/guard lineage.",
+    "Mutation roots are created directly beneath native tempfile parent (not tempfile.mkdtemp); acquisition must still prove native custody.",
+    "Old diagnostic failures and native run1 product failures are preserved; none is retrospectively reclassified."
+  ]
+}

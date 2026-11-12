@@ -1,0 +1,139 @@
+{
+  "schema": "r0015-compiler-custody.local-controls.v1",
+  "pass": true,
+  "nativeWindows": false,
+  "source": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+  "sourceSha256": "358bf1da1bf385b74e0ce2019e81d8018797fedecbe0ece186027872213602e1",
+  "fixture": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379",
+  "host": "7.6.6",
+  "results": [
+    {
+      "case": "DryRun native bootstrap",
+      "pass": true
+    },
+    {
+      "case": "DryRun directory lease",
+      "pass": true
+    },
+    {
+      "case": "DryRun compiler allocation",
+      "pass": true
+    },
+    {
+      "case": "DryRun staging native load",
+      "pass": true
+    },
+    {
+      "case": "DryRun cleanup preserves context and lease",
+      "pass": true
+    },
+    {
+      "case": "actual unsupported host refuses before Emit or filesystem allocation",
+      "pass": true
+    },
+    {
+      "case": "Emit metadata uses transient assembly and exact native imports",
+      "pass": true
+    },
+    {
+      "case": "real local compiler failure retains context and restores both environment values",
+      "pass": true
+    },
+    {
+      "case": "real local compile succeeds; unsupported native cleanup retains instead of deleting",
+      "pass": true
+    }
+  ],
+  "compilerCalls": [
+    {
+      "temp": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-ea6cc3cedc8e41a29d11b40f64038304",
+      "tmp": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-ea6cc3cedc8e41a29d11b40f64038304",
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-ea6cc3cedc8e41a29d11b40f64038304",
+      "status": "compiling"
+    },
+    {
+      "temp": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-4f99ad9b93ed403db1193ed6902ccdf2",
+      "tmp": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-4f99ad9b93ed403db1193ed6902ccdf2",
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-4f99ad9b93ed403db1193ed6902ccdf2",
+      "status": "compiling"
+    }
+  ],
+  "warnings": [
+    "Compiler scratch retained after compilation failure at /workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-ea6cc3cedc8e41a29d11b40f64038304",
+    "Compiler scratch retained because cleanup custody failed at /workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-custody/local-be7db187e88340f897214fa335fdd379/adapter-compiler-4f99ad9b93ed403db1193ed6902ccdf2"
+  ],
+  "importMetadata": [
+    {
+      "name": "CreateFileW",
+      "entry": "CreateFileW",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "CreateDirectoryW",
+      "entry": "CreateDirectoryW",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "GetFileInformationByHandle",
+      "entry": "GetFileInformationByHandle",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "GetFinalPathNameByHandleW",
+      "entry": "GetFinalPathNameByHandleW",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "GetFileType",
+      "entry": "GetFileType",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "GetSecurityInfo",
+      "entry": "GetSecurityInfo",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "GetSecurityDescriptorLength",
+      "entry": "GetSecurityDescriptorLength",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "LocalFree",
+      "entry": "LocalFree",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    },
+    {
+      "name": "GetVolumeInformationW",
+      "entry": "GetVolumeInformationW",
+      "lastError": true,
+      "exact": true,
+      "charSet": "Unicode"
+    }
+  ],
+  "restorationObservations": [
+    {
+      "beforeTemp": null,
+      "afterTemp": null,
+      "beforeTmp": null,
+      "afterTmp": null
+    }
+  ],
+  "scope": "Actual guards, Emit metadata, and compilation/finally/retention orchestration. Explicit host/temp/context boundary adapters only; no Windows ACL, identity, lease, CodeDOM or native cleanup qualification."
+}

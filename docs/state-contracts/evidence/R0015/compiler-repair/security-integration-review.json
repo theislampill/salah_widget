@@ -1,0 +1,211 @@
+{
+  "schema": "r0015-compiler-independent-review.security-integration.v1",
+  "reviewer": "/root/r0013_review",
+  "recordedUtc": "2026-11-11T12:52:14.814757+00:00",
+  "scope": "Final bounded read-only security-control integration and execution-budget review. Preserves prior source review and accepted-oracle addendum; no PowerShell/native execution.",
+  "bindings": {
+    "source": {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+      "sha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+      "bytes": 109775
+    },
+    "custody": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-custody-b67f38.ps1",
+      "sha256": "b67f38bd46839464d5f6131f18b6457bcc67de197955f1df6140bdc3d94b4b34",
+      "bytes": 34773
+    },
+    "observer": {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-staging-first-call.ps1",
+      "sha256": "9ad302faa53b089d5a1a579a457ed9f8b34659a40e10c8a6e8fae701cf7b951f",
+      "bytes": 36908
+    },
+    "collectorBudgetScope": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-collector-c159e0.py",
+      "sha256": "c159e018b922ea2ddf1c14028361fc95253aafef5c4c4667746b0f109ba82918",
+      "bytes": 18657
+    },
+    "workflow": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-workflow-66a1f3.yml",
+      "sha256": "66a1f3c4c1c58757c7d379ee26ab3d84e1a5ae700bde9764babd80743ec7fe8d",
+      "bytes": 5491
+    },
+    "baseCustody": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-custody-622d37.ps1",
+      "sha256": "622d37e1a19f68482d07c3e5d30a6262140a5c0f6ef4646802225de040ebbbc7",
+      "bytes": 21307
+    },
+    "securityFreeze": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/freeze.json",
+      "sha256": "4ba667d2a324c80263ac8e3b21fe6636951bf02f6a63ba637668f49460a0078b",
+      "bytes": 908
+    },
+    "originalSourceReview": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/review-v1.json",
+      "sha256": "7972c2fe2beea4e266b376d386222e9df67c433d6abbe242b6b0aefd367cd17c",
+      "bytes": 14480
+    },
+    "oracleCorrection": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/oracle-correction-addendum.json",
+      "sha256": "538470f9d52387c6ec30c93d50b4bc3a0c9337bccafefb7518bb4fd4dd94f5d7",
+      "bytes": 6430
+    }
+  },
+  "disposition": "NO_ADDITIONAL_STATIC_BLOCKER_FOR_ROOT_CONTROLLED_NATIVE_REPLAY",
+  "productQualified": false,
+  "nativeQualified": false,
+  "wholeContractComplete": false,
+  "findings": {
+    "Critical": [],
+    "Important": [],
+    "Minor": []
+  },
+  "reviewChecks": [
+    {
+      "area": "Actual cleanup delegation",
+      "anchors": "custody 65-137",
+      "result": "Hook captures the actual Clear-StagingCompilerContext before overriding. Interventions require Compiled, context status compiled, actual StageNative type, same script context reference, live root handle and single intervention; real cleanup is called exactly once. No production implementation is copied into the fixture."
+    },
+    {
+      "area": "WriteData-only causal refusal",
+      "anchors": "custody 84-104,189-197",
+      "result": "Fresh ordinary child receives subject owner/full access and one Everyone allow ACE for WriteData, permitting only the API-added Synchronize bit. Actual ACL readback checks exact intended mask. The policy under test is recorded without pre-asserting it; actual cleanup must retain for its specific custody error and preserve the child bytes."
+    },
+    {
+      "area": "Owned link controls",
+      "anchors": "custody 110-130,198-214",
+      "result": "Hardlink and junction targets are fresh sentinels in a private sibling inside the same owned case fixture. Setup proves two native links or reparse resolution to the unique sentinel. After actual refusal, original sentinel bytes/native identity and private parent identity must survive. No cross-UID or real-profile safety claim is made."
+    },
+    {
+      "area": "Useful default-owner positive",
+      "anchors": "custody 78-107,233-247",
+      "result": "Captures actual generated files before test injection. PS5.1 healthy requires real native.dll with captured token default owner, positive size, one link and full write restriction. Additional default-owner file is explicitly test-generated on both hosts. Healthy actual cleanup must close/remove its context, then original staging-file/digest and retained-lifetime assertions execute."
+    },
+    {
+      "area": "Single-mechanism mask mutant",
+      "anchors": "custody 300-314",
+      "result": "Exactly one C# StageNative.Read mask changes 0x500d0156u to weaker 0x500d0150u. PS compiler-output reader remains unchanged. Credit needs passing baseline, named real assertion failure, one actual compiler/delegated cleanup call, status closed and context absent, plus passing complete healthy companion. Setup/compiler failures or arbitrary assertion failures cannot satisfy the kill predicate."
+    },
+    {
+      "area": "Previously reviewed gates preserved",
+      "result": "All literal original Assert-Control lines remain present. Actual Add-Type/helper wrappers, corrected compiler-failure evidence, identity/lease controls, recorder and terminal-parent mutation pair remain. Observer 9ad302 and source ab2d847 are unchanged."
+    },
+    {
+      "area": "Budgets and caller interface",
+      "result": "Ten baseline children plus two adverse/healthy pairs equals 14 cold children per host. Default child ceiling remains 90 seconds. Collector still uses -FixtureParent and now allows 1500 seconds; Windows job changes only 45 to 60 minutes. No test assertion, child timeout or result-credit predicate is weakened by this budget change."
+    }
+  ],
+  "staticVerification": {
+    "securityManifestFiles": [
+      {
+        "file": "compiler-security-controls.patch",
+        "matches": true
+      },
+      {
+        "file": "install-compiler-custody.ps1",
+        "matches": true
+      },
+      {
+        "file": "static-receipt.json",
+        "matches": true
+      },
+      {
+        "file": "README.md",
+        "matches": true
+      },
+      {
+        "file": "static-attempt-1.json",
+        "matches": true
+      }
+    ],
+    "maintainedEqualsFrozenDerivative": true,
+    "originalAssertionLinesPresent": 31,
+    "missingOriginalAssertionLines": [],
+    "mutationAnchorCount": 1,
+    "mutatedSourceLines": 1,
+    "prospectiveMutantSha256": "8c90fd7bae7838e18e5002f809a09cbdc2b4272348a1a9967323245b6cb43ccd",
+    "asciiCustody": true
+  },
+  "parseReceiving": {
+    "receipt": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-test-parse-final/fixture-parse.stdout.json",
+      "sha256": "fe39833aafd82e4cb9c001863e307e90f62245a1eee41620496f6a6c71efb32e",
+      "bytes": 1640
+    },
+    "acquisition": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-test-parse-final/fixture-parse-acquisition.json",
+      "sha256": "3392d08ae93bd6e6cebf633071dffda707a29acea29a4fc2ad8cf61bde8e8f90",
+      "bytes": 3013
+    },
+    "rowBindings": [
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+        "sha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+        "pass": true,
+        "matchesCurrent": true
+      },
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-compiler-custody.ps1",
+        "sha256": "b67f38bd46839464d5f6131f18b6457bcc67de197955f1df6140bdc3d94b4b34",
+        "pass": true,
+        "matchesCurrent": true
+      },
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-staging-first-call.ps1",
+        "sha256": "9ad302faa53b089d5a1a579a457ed9f8b34659a40e10c8a6e8fae701cf7b951f",
+        "pass": true,
+        "matchesCurrent": true
+      },
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-volume-policy.ps1",
+        "sha256": "9537d24479a2f621991c74b3cc3ff87f881c8f6724db4b3db6fc2d9e4eb64798",
+        "pass": true,
+        "matchesCurrent": true
+      },
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-powershell-transactions.ps1",
+        "sha256": "c6f5734352edfc8240eabc4d0009ec957c289213f7842c1acaef99dc2e4789c0",
+        "pass": true,
+        "matchesCurrent": true
+      },
+      {
+        "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-preview.ps1",
+        "sha256": "1cb7eeea0f8e72ffb3ca8ef8492778dabef4d009474f26cfe5601c24f658094b",
+        "pass": true,
+        "matchesCurrent": true
+      }
+    ],
+    "scope": "Received actual PS7 AST parse only in verified empty network namespace/read-only host with one owned writable root. No fixture, installer, native API or compiler execution. Earlier parse receipt for 5ab137/0c2ab1 is not reused.",
+    "allSixRowsPass": true,
+    "allSixCurrentHashesMatch": true
+  },
+  "additionalSupplementalReceipt": {
+    "volumePolicy": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-volume-adapter-current/pure-controls.stdout.json",
+      "sha256": "5c34857938ab8704c7a03cda202fa010d00a2d7dc3a04b340bb177809b63418d",
+      "bytes": 9285
+    },
+    "scope": "Received supplemental volume-policy receipt only. Its explicit native-blocked result is not native qualification; no new volume-source review claimed in this bounded task."
+  },
+  "limitations": [
+    "No Windows or PowerShell test execution by reviewer. Link setup availability, generated DLL ownership, handle/cleanup effects and mutant behavior remain unexecuted here.",
+    "On PS7 the added default-owner file is test-generated, not evidence of a compiler-produced DLL. Native defaultOwnerDiffersFromUser must be read before claiming coverage of the newly allowed Administrators-owner branch.",
+    "All setup failures remain uncredited failures; no native mutation credit exists until actual receipt.",
+    "Collector review here covers the compiler budget/CLI only. Its existing mutation-root shortening and separate long-path case are distinct changes; reviewer authored that long-path fragment and does not independently approve it in this report.",
+    "The observer remains TEMP/TMP-scoped and its 25-second call window does not qualify the source 60-second timeout branch.",
+    "Original native failures, full original/amended contract denominator, immutable publication binding, public delivery/rendering, predecessor order and exact owner approval remain open."
+  ],
+  "requiredNextEvidence": [
+    "Root publishes immutable engineering candidate and receives exact source/test-bound native Windows PS5.1/PS7 artifacts.",
+    "All 10 baseline custody cases and both paired mutants, useful normal consumers and the independent first-call observation must be received and causally adjudicated.",
+    "Read actual raw compiler diagnostics and native ownership/link/ACL/identity facts; preserve acquisition failures and capability boundaries.",
+    "Complete remaining affected artifact/entry/volume/preview and full-contract gates without substituting this static review for runtime evidence."
+  ],
+  "execution": {
+    "powerShellLaunched": false,
+    "nativeLaunched": false,
+    "sharedFilesWritten": false,
+    "sourceWritten": false,
+    "remoteMutation": false,
+    "staticPythonOnly": true
+  }
+}

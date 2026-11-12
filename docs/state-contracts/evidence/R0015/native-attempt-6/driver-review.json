@@ -1,0 +1,517 @@
+{
+  "schema": "r0015-native6-driver-independent-receiving-v1",
+  "reviewer": "/root/r0016_recovery",
+  "run": 43028305607,
+  "commit": "d96f87825f02077da7f6afe742d30aecfd1fc005",
+  "tree": "5911c099ad446e0f1c7a1ff66687523cc9c97044",
+  "continuity": "G0017@494b0a43fd3bfe83afb9a3fbd8e892a4947d4d9c",
+  "scope": "Windows transaction mutation driver only; no independent judgment of authored compiler-security fixture or full R0015 denominator",
+  "host": {
+    "system": "Windows",
+    "platform": "Windows-2022Server-10.0.20348-SP0",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "image_version": "20261101.353.1",
+    "ps51": {
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "version": "5.1.20348.5773"
+    },
+    "ps7": {
+      "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+      "version": "7.6.6"
+    }
+  },
+  "sourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+  "driverSha256": "732acd9fb371926c28e2d410de2741703b1397f0eb38129384b1cd6e08ac23bc",
+  "oldDriverSha256": "08a1b3263f6eef4560581b0bf104ee4ef27fe0356cb9721d845740378caa567d",
+  "unchangedDriverFunctions": [
+    "sha",
+    "psq",
+    "json_output",
+    "section_replace",
+    "make_mutant",
+    "invoke_pwsh",
+    "rows_by_case",
+    "passed",
+    "copy_count"
+  ],
+  "hosts": {
+    "ps51": {
+      "runtime": {
+        "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "version": "5.1.20348.5773"
+      },
+      "commandStarted": "2026-11-11T13:30:09.607512+00:00",
+      "commandFinished": "2026-11-11T13:30:38.833442+00:00",
+      "commandExit": 0,
+      "prerequisitesPassed": 13,
+      "nativeCleanupPrerequisitesPassed": 2,
+      "mutationPairs": [
+        {
+          "mechanism": "existence-only-cache",
+          "sourceSha256": "278e17836867b336cf0d85e5ed386b38fdf7fca129823bf663141704f6aac8b9",
+          "targetCase": "partial download is not a ready cache hit and healthy retry recovers",
+          "targetError": "Retry after interrupted acquisition returned a usable-looking path",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "direct-write-to-ready",
+          "sourceSha256": "bd6bd6398c529fcd171d33a417123da775f6d1abd92053d5d689a0a16d61d2f3",
+          "targetCase": "same filename with changed source identity must reacquire",
+          "targetError": "Changed source overwrote the predecessor archive.",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "delete-predecessor-before-validation",
+          "sourceSha256": "209123e9e3ce8a3d82dc8f3937e4b6130ba2f621eca7569585835ebb54444eba",
+          "targetCase": "failed replacement preserves already handed-off bundle",
+          "targetError": "Failed replacement deleted the previously handed-off bundle.",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "delete-predecessor-after-success",
+          "sourceSha256": "d15ce360facbc997df2f14f7a72619e8481a56ce1110d1f8ce628688123aafab",
+          "targetCase": "successful restaging preserves already handed-off bundle",
+          "targetError": "Successful restaging deleted the previously handed-off bundle.",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "parse-warning-with-ready-path",
+          "sourceSha256": "f0c95c1844d52bbd8a46cda6d062445ab6eb00dc68783b4eef5dbda376177e38",
+          "targetCase": "malformed preset has no ready path or actual import handoff",
+          "targetError": "Malformed preset returned a usable-looking path",
+          "positiveCase": "targeted configured preset preserves unrelated strings and Unicode",
+          "actualTargetCopies": 1,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "global-string-replacement",
+          "sourceSha256": "5ac7e34c37d64ca9d70680b0d75a6297519277301bfdfb876c4548d0a5236681",
+          "targetCase": "targeted configured preset preserves unrelated strings and Unicode",
+          "targetError": "Configuration rewrite changed an unrelated local=1/Unicode string.",
+          "positiveCase": "large unrelated integer is preserved exactly or refused truthfully",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "foreign-root-cleanup",
+          "sourceSha256": "9eecde877ec1f883ffcdb7af5f80ad2ccfb34602112ca8c9b44fc813ae852bc5",
+          "targetCase": "native cleanup refuses a replaced root identity",
+          "targetError": "Exception calling \"ReadAllText\" with \"2\" argument(s): \"Could not find a part of the path 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-57cc4ac337484466bc2d4a3348a57917-ص\\replaced-root\\temp\\SalahWidgetAttempt-aadba1d174474dbea584d3be2b41b4f8\\replacement-sentinel.txt'.\"",
+          "positiveCase": "native cleanup holds ancestors and retains fresh-consumer output",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 0,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "dry-run-pretend-ready",
+          "sourceSha256": "e836c86612f694982961673b9187b3f41372728c8b934d29a00dc6d7b61c8fa3",
+          "targetCase": "dry helpers refuse warm cache and all artifact effects",
+          "targetError": "Dry warm-cache download returned a usable-looking path",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "success-pipeline-diagnostic",
+          "sourceSha256": "d2013d097895cf4bacf6e6a2af4775e598c3403a30baf4b09979bbd3d1f19429",
+          "targetCase": "healthy actual download and manual Chromium caller",
+          "targetError": "Download-Asset did not return one clean string path",
+          "positiveCase": "targeted configured preset preserves unrelated strings and Unicode",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        }
+      ],
+      "retainedChildren": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-d86c8fec5fbc4b408469865c55f7d3ac-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-1",
+          "regularFiles": 35,
+          "directories": 98,
+          "unicodeMemberNames": 7
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-464dd0b9912348578b6669e8cfcbc270-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-2",
+          "regularFiles": 4,
+          "directories": 16,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-90961f6ef674440082e188e77e178080-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-3",
+          "regularFiles": 6,
+          "directories": 16,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-8dc03c6aa33d4b9aa50c2925009f8c06-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-4",
+          "regularFiles": 5,
+          "directories": 16,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-4e01c16c42144693b74e565533df0f27-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-5",
+          "regularFiles": 7,
+          "directories": 19,
+          "unicodeMemberNames": 2
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-d2f134d595ce494993cb34b00dfe9b97-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-6",
+          "regularFiles": 3,
+          "directories": 13,
+          "unicodeMemberNames": 0
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-b1cbdb06f976413380218b09807915c0-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-7",
+          "regularFiles": 3,
+          "directories": 13,
+          "unicodeMemberNames": 0
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-2a5879b7de0f444591e49c7a74dbc1ac-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-8",
+          "regularFiles": 2,
+          "directories": 16,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-57cc4ac337484466bc2d4a3348a57917-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-9",
+          "regularFiles": 1,
+          "directories": 15,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-e3232376c39d4a739f495cca1d2e72d6-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-10",
+          "regularFiles": 9,
+          "directories": 19,
+          "unicodeMemberNames": 2
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-cb9bf9c86b8146a188b7a376494a6c3c-ص",
+          "archiveDirectory": "ps51-transaction-mutations-fixture-11",
+          "regularFiles": 3,
+          "directories": 13,
+          "unicodeMemberNames": 0
+        }
+      ],
+      "rawTerminalReceiptSets": 20,
+      "baseSourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+      "derivedTestSha256": "d401982fa83e4ba5242aacdf4f4bd20b84f444eed62944032cb36d58e0f677fa"
+    },
+    "ps7": {
+      "runtime": {
+        "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "version": "7.6.6"
+      },
+      "commandStarted": "2026-11-11T13:32:56.171440+00:00",
+      "commandFinished": "2026-11-11T13:33:31.029107+00:00",
+      "commandExit": 0,
+      "prerequisitesPassed": 13,
+      "nativeCleanupPrerequisitesPassed": 2,
+      "mutationPairs": [
+        {
+          "mechanism": "existence-only-cache",
+          "sourceSha256": "278e17836867b336cf0d85e5ed386b38fdf7fca129823bf663141704f6aac8b9",
+          "targetCase": "partial download is not a ready cache hit and healthy retry recovers",
+          "targetError": "Retry after interrupted acquisition returned a usable-looking path",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "direct-write-to-ready",
+          "sourceSha256": "bd6bd6398c529fcd171d33a417123da775f6d1abd92053d5d689a0a16d61d2f3",
+          "targetCase": "same filename with changed source identity must reacquire",
+          "targetError": "Changed source overwrote the predecessor archive.",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "delete-predecessor-before-validation",
+          "sourceSha256": "209123e9e3ce8a3d82dc8f3937e4b6130ba2f621eca7569585835ebb54444eba",
+          "targetCase": "failed replacement preserves already handed-off bundle",
+          "targetError": "Failed replacement deleted the previously handed-off bundle.",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "delete-predecessor-after-success",
+          "sourceSha256": "d15ce360facbc997df2f14f7a72619e8481a56ce1110d1f8ce628688123aafab",
+          "targetCase": "successful restaging preserves already handed-off bundle",
+          "targetError": "Successful restaging deleted the previously handed-off bundle.",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "parse-warning-with-ready-path",
+          "sourceSha256": "f0c95c1844d52bbd8a46cda6d062445ab6eb00dc68783b4eef5dbda376177e38",
+          "targetCase": "malformed preset has no ready path or actual import handoff",
+          "targetError": "Malformed preset returned a usable-looking path",
+          "positiveCase": "targeted configured preset preserves unrelated strings and Unicode",
+          "actualTargetCopies": 1,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "global-string-replacement",
+          "sourceSha256": "5ac7e34c37d64ca9d70680b0d75a6297519277301bfdfb876c4548d0a5236681",
+          "targetCase": "targeted configured preset preserves unrelated strings and Unicode",
+          "targetError": "Configuration rewrite changed an unrelated local=1/Unicode string.",
+          "positiveCase": "large unrelated integer is preserved exactly or refused truthfully",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "foreign-root-cleanup",
+          "sourceSha256": "9eecde877ec1f883ffcdb7af5f80ad2ccfb34602112ca8c9b44fc813ae852bc5",
+          "targetCase": "native cleanup refuses a replaced root identity",
+          "targetError": "Exception calling \"ReadAllText\" with \"2\" argument(s): \"Could not find a part of the path 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-b31a8d8a52114c61901bd2373c92a68c-ص\\replaced-root\\temp\\SalahWidgetAttempt-c8e0f7b1d3364d49b19025f8be7e1d8a\\replacement-sentinel.txt'.\"",
+          "positiveCase": "native cleanup holds ancestors and retains fresh-consumer output",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 0,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "dry-run-pretend-ready",
+          "sourceSha256": "e836c86612f694982961673b9187b3f41372728c8b934d29a00dc6d7b61c8fa3",
+          "targetCase": "dry helpers refuse warm cache and all artifact effects",
+          "targetError": "Dry warm-cache download returned a usable-looking path",
+          "positiveCase": "healthy actual download and manual Chromium caller",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        },
+        {
+          "mechanism": "success-pipeline-diagnostic",
+          "sourceSha256": "d2013d097895cf4bacf6e6a2af4775e598c3403a30baf4b09979bbd3d1f19429",
+          "targetCase": "healthy actual download and manual Chromium caller",
+          "targetError": "Download-Asset did not return one clean string path",
+          "positiveCase": "targeted configured preset preserves unrelated strings and Unicode",
+          "actualTargetCopies": 0,
+          "actualPositiveCopies": 1,
+          "disposition": "KILLED_WITH_HEALTHY_CONTROL"
+        }
+      ],
+      "retainedChildren": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-64b9f11259c04fc5ae86568a159fed2f-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-1",
+          "regularFiles": 35,
+          "directories": 98,
+          "unicodeMemberNames": 7
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-42a24cd570f74fa5807089ecfe6eb1f9-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-2",
+          "regularFiles": 4,
+          "directories": 16,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-825fa03586f14a7e9fa6526f6ed00499-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-3",
+          "regularFiles": 6,
+          "directories": 16,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-5d7ee39810754ba3bf04edd700ad7131-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-4",
+          "regularFiles": 5,
+          "directories": 16,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-d123bb3ffc624e66bf62294aeac16579-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-5",
+          "regularFiles": 7,
+          "directories": 19,
+          "unicodeMemberNames": 2
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-6c700a21147a428f8454cdd63a77b564-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-6",
+          "regularFiles": 3,
+          "directories": 13,
+          "unicodeMemberNames": 0
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-f2ce71e261d448adab302a4a414a4f68-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-7",
+          "regularFiles": 3,
+          "directories": 13,
+          "unicodeMemberNames": 0
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-ef48f40f176840058542526dded39233-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-8",
+          "regularFiles": 3,
+          "directories": 18,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-b31a8d8a52114c61901bd2373c92a68c-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-9",
+          "regularFiles": 2,
+          "directories": 17,
+          "unicodeMemberNames": 1
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-33dce32bc0884705bfedd6be8e5ffca3-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-10",
+          "regularFiles": 9,
+          "directories": 19,
+          "unicodeMemberNames": 2
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-063a85b04da34cfab77e0317fc7241d1-ص",
+          "archiveDirectory": "ps7-transaction-mutations-fixture-11",
+          "regularFiles": 3,
+          "directories": 13,
+          "unicodeMemberNames": 0
+        }
+      ],
+      "rawTerminalReceiptSets": 20,
+      "baseSourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+      "derivedTestSha256": "d401982fa83e4ba5242aacdf4f4bd20b84f444eed62944032cb36d58e0f677fa"
+    }
+  },
+  "native5Comparison": {
+    "ps51": {
+      "driverSha256": "08a1b3263f6eef4560581b0bf104ee4ef27fe0356cb9721d845740378caa567d",
+      "baselineStatus": "PASS",
+      "prerequisitesPassed": 13,
+      "prerequisiteCount": 13,
+      "mutantsExecuted": 9,
+      "qualifiedKills": 9,
+      "failuresPreserved": [],
+      "historicalStatusUnchanged": true
+    },
+    "ps7": {
+      "driverSha256": "08a1b3263f6eef4560581b0bf104ee4ef27fe0356cb9721d845740378caa567d",
+      "baselineStatus": "FAIL_OR_ACQUISITION_GAP",
+      "prerequisitesPassed": 3,
+      "prerequisiteCount": 13,
+      "mutantsExecuted": 0,
+      "qualifiedKills": 0,
+      "failuresPreserved": [
+        {
+          "case": "healthy actual download and manual Chromium caller",
+          "error": "Actual caller did not copy exactly one admitted unpacked path."
+        },
+        {
+          "case": "targeted configured preset preserves unrelated strings and Unicode",
+          "error": "Configured preset did not return one clean string path"
+        },
+        {
+          "case": "publication collision preserves predecessor and complete partial",
+          "error": "Exception calling \"Inspect\" with \"2\" argument(s): \"Open staging object without following reparse points\""
+        },
+        {
+          "case": "mid-extraction failure preserves predecessor and blocks actual handoff",
+          "error": "Exception calling \"CreatePrivateFile\" with \"2\" argument(s): \"Create exclusive private staging file\""
+        },
+        {
+          "case": "partial download is not a ready cache hit and healthy retry recovers",
+          "error": "Exception calling \"Inspect\" with \"2\" argument(s): \"Open staging object without following reparse points\""
+        },
+        {
+          "case": "same filename with changed source identity must reacquire",
+          "error": "Exception calling \"Inspect\" with \"2\" argument(s): \"Open staging object without following reparse points\""
+        },
+        {
+          "case": "failed replacement preserves already handed-off bundle",
+          "error": "Exception calling \"Inspect\" with \"2\" argument(s): \"Open staging object without following reparse points\""
+        },
+        {
+          "case": "successful restaging preserves already handed-off bundle",
+          "error": "Exception calling \"Inspect\" with \"2\" argument(s): \"Open staging object without following reparse points\""
+        },
+        {
+          "case": "large unrelated integer is preserved exactly or refused truthfully",
+          "error": "Integer-preserving configured preset did not return one clean string path"
+        },
+        {
+          "case": "dry helpers refuse warm cache and all artifact effects",
+          "error": "Exception calling \"Inspect\" with \"2\" argument(s): \"Open staging object without following reparse points\""
+        }
+      ],
+      "historicalStatusUnchanged": true
+    }
+  },
+  "disposition": "PASS_WITH_SCOPE_LIMITS",
+  "limits": [
+    "Only Windows transaction mutation driver results are independently assessed here; full51 and authored compiler-security fixture conclusions belong to the other reviewer.",
+    "No installer, PowerShell, compiler, native API, mutation, or product test was executed during receiving. Archives were inspected in memory, never bulk extracted.",
+    "Child exit attribution is the immutable driver's recorded gate and aggregate terminal command, corroborated by raw complete JSON; there is no separate external per-child process monitor in this archive.",
+    "Original Windows lstat/reparse/direct-child admission is executed by the exact driver. Offline receiving verifies that gate unchanged plus reported roots, exact raw receipt Unicode, collector mappings and retained regular member bytes; it cannot re-lstat the now-ended Windows VM.",
+    "All native5 failures remain historical. The source, tests, recipes and assertions are unchanged; moving child fixtures to siblings removes one redundant38-character component. New all-green prerequisites establish the new acquisition route, not a proved cause for every earlier failure.",
+    "No independent filesystem/network containment, browser installation, Windows long-path general support, release/merge/owner acceptance or full work-order closure is claimed."
+  ],
+  "assertionCount": 1837,
+  "allChecksPass": true,
+  "reviewedUtc": "2026-11-11T13:47:52.438301+00:00",
+  "bindingsSha256": "d192dc5d08bc3a93c1826abe328ed2a299c3e2c0684a418a81beec05d8c66783",
+  "receiverSha256": "54587cb28b6cdd92b14de4693448fcb9d23093b778f72bbf211ecdb8f6312674",
+  "receiverPremiseCorrections": [
+    {
+      "file": "receiving-failure-134617936242.json",
+      "sha256": "41342a474fb921bc39beaa84f2c0aca266ef4d9897d90698bbe2b04b977c451b",
+      "error": "AssertionError: baseline-controls raw/readable stdout correspondence",
+      "disposition": "RECEIVER_PREMISE_CORRECTED_NO_PRODUCT_CREDIT",
+      "explanation": "Receiver initially normalized CRLF once. Original raw CRLF is correctly expanded by Windows Path.write_text into CRCRLF. Final check requires the exact raw UTF-8 decode plus native newline transformation; raw bytes remain canonical."
+    },
+    {
+      "file": "receiving-failure-134635690166.json",
+      "sha256": "44674a25f2d3045116b405bd2bab5498b3e214e8c5c65fc9546f7600c61ed74a",
+      "error": "AssertionError: baseline-controls empty original stderr",
+      "disposition": "RECEIVER_PREMISE_CORRECTED_NO_PRODUCT_CREDIT",
+      "explanation": "Receiver initially required empty child stderr. Actual PS5.1 stderr is bounded CLIXML containing only module-preparation progress. Final checks parse every XML object and reject any non-progress or unexpected activity; no error output is discarded."
+    },
+    {
+      "file": "receiving-failure-134707746237.json",
+      "sha256": "dbaaf7c1972d5de719f51013325b52a8ebfeb8d6c8e0e1e31a6cfb54840b84c6",
+      "error": "AssertionError: ps51 baseline report exact raw rows",
+      "disposition": "RECEIVER_PREMISE_CORRECTED_NO_PRODUCT_CREDIT",
+      "explanation": "Receiver initially required row ordering equality. The fixture executes source order while the driver reports selection order. Final check requires equal unique case sets and exact per-case objects, including all13 rows."
+    },
+    {
+      "file": "receiving-failure-134719616177.json",
+      "sha256": "77f38b348581ef668cc65ca4309e45b1756003ec2218dd5706dec17dcb9583f0",
+      "error": "ParseError: not well-formed (invalid token): line 1, column 1",
+      "disposition": "RECEIVER_PREMISE_CORRECTED_NO_PRODUCT_CREDIT",
+      "explanation": "Receiver initially assumed one CLIXML envelope. The native cleanup positive launches a fresh consumer; raw stderr retains two headers and two XML envelopes. Final check requires exact framing and inspects every object in both envelopes."
+    }
+  ],
+  "receiverFinalization": "Four original failed static receiver attempts retained. Final receiving passed1837 checks before this provenance-only annotation; no installer or product test rerun."
+}

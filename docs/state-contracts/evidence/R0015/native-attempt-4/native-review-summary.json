@@ -1,0 +1,347 @@
+{
+  "schema": "r0015-native4-independent-receiving-v1",
+  "reviewer": "/root/r0016_recovery",
+  "capturedAt": "2026-11-11T10:57:33.887008+00:00",
+  "candidate": {
+    "runId": 43004375573,
+    "commit": "9eaf54cab8560f5fda7c6dd2f49ed4a622e0d6e9",
+    "tree": "2397874d8f6258bba2da4d6bce8824bb8bf81e89",
+    "powershellSha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+    "bashSha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22"
+  },
+  "disposition": "WINDOWS_NATIVE_QUALIFICATION_FAIL_WITH_MEASURED_PROGRESS",
+  "scope": "Independent read-only receiving of exact original archives/receipts. No product/test execution, archive extraction, source/shared/controller edits or remote polling. No-installer bootstrap derivative previously authored by reviewer is received as external acquisition observations only.",
+  "windowsSuites": {
+    "ps51": {
+      "install-powershell": {
+        "rows": 18,
+        "pass": 18,
+        "fail": 0,
+        "other": 0
+      },
+      "install-powershell-guards": {
+        "rows": 10,
+        "pass": 10,
+        "fail": 0,
+        "other": 0
+      },
+      "install-discovery": {
+        "rows": 78,
+        "pass": 78,
+        "fail": 0,
+        "other": 0
+      },
+      "install-powershell-transactions": {
+        "rows": 28,
+        "pass": 1,
+        "fail": 27,
+        "other": 0
+      },
+      "install-staging-windows": {
+        "rows": 8,
+        "pass": 0,
+        "fail": 8,
+        "other": 0
+      },
+      "install-compiler-custody": {
+        "rows": 8,
+        "pass": 6,
+        "fail": 2,
+        "other": 0
+      },
+      "install-volume-policy": {
+        "rows": 13,
+        "pass": 13,
+        "fail": 0,
+        "other": 0
+      },
+      "discovery-mutations": {
+        "rows": 14,
+        "pass": 1,
+        "fail": 0,
+        "other": 13,
+        "detected": 13,
+        "paired": 13
+      },
+      "volume-mutations": {
+        "rows": 0,
+        "pass": 0,
+        "fail": 0,
+        "other": 0,
+        "noTerminalReceipt": true,
+        "error": "no terminal structured receipt"
+      },
+      "transaction-mutations": {
+        "rows": 13,
+        "pass": 1,
+        "fail": 12,
+        "other": 0,
+        "complete": false,
+        "baselineStatus": "FAIL_OR_ACQUISITION_GAP",
+        "mutantsExecuted": 0,
+        "successfulPrerequisiteCases": [
+          "exact-file parser and ASCII source"
+        ]
+      },
+      "install-host-bootstrap": {
+        "rows": 4,
+        "pass": 4,
+        "fail": 0,
+        "other": 0
+      }
+    },
+    "ps7": {
+      "install-powershell": {
+        "rows": 18,
+        "pass": 18,
+        "fail": 0,
+        "other": 0
+      },
+      "install-powershell-guards": {
+        "rows": 10,
+        "pass": 10,
+        "fail": 0,
+        "other": 0
+      },
+      "install-discovery": {
+        "rows": 78,
+        "pass": 78,
+        "fail": 0,
+        "other": 0
+      },
+      "install-powershell-transactions": {
+        "rows": 28,
+        "pass": 28,
+        "fail": 0,
+        "other": 0
+      },
+      "install-staging-windows": {
+        "rows": 8,
+        "pass": 8,
+        "fail": 0,
+        "other": 0
+      },
+      "install-compiler-custody": {
+        "rows": 8,
+        "pass": 8,
+        "fail": 0,
+        "other": 0
+      },
+      "install-volume-policy": {
+        "rows": 13,
+        "pass": 13,
+        "fail": 0,
+        "other": 0
+      },
+      "discovery-mutations": {
+        "rows": 15,
+        "pass": 1,
+        "fail": 0,
+        "other": 14,
+        "detected": 14,
+        "paired": 14
+      },
+      "volume-mutations": {
+        "rows": 2,
+        "pass": 2,
+        "fail": 0,
+        "other": 0
+      },
+      "transaction-mutations": {
+        "rows": 13,
+        "pass": 3,
+        "fail": 10,
+        "other": 0,
+        "complete": false,
+        "baselineStatus": "FAIL_OR_ACQUISITION_GAP",
+        "mutantsExecuted": 0,
+        "successfulPrerequisiteCases": [
+          "exact-file parser and ASCII source",
+          "complete archive preflight precedes every delegated member writer",
+          "malformed preset has no ready path or actual import handoff"
+        ]
+      },
+      "install-host-bootstrap": {
+        "rows": 4,
+        "pass": 4,
+        "fail": 0,
+        "other": 0
+      }
+    }
+  },
+  "normalEntries": [
+    {
+      "host": "ps51",
+      "case": "positive",
+      "pass": true,
+      "entryExit": 0,
+      "interceptionLoaded": true,
+      "readinessNonce": "153f07dfa4b36888b578f566cc1d13d0",
+      "elapsedSeconds": 24.672000000000025,
+      "timeoutSeconds": 60,
+      "snapshotUnchanged": false,
+      "effects": {
+        "prompt": 3,
+        "metadata": 1,
+        "download": 3,
+        "clipboard": 4,
+        "open": 4
+      },
+      "compilerRetentionWarnings": [
+        "[WARN] Compiler scratch retained because cleanup custody failed at C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-m9ce6r69\\ps51-positive\\subject\\temp\\SalahWidgetCompiler-afb5902334544b2ab2cffb621af461b9"
+      ],
+      "rawStdoutMember": "installer-evidence/install-entry-native-fixture/ps51-positive/stdout.txt"
+    },
+    {
+      "host": "ps51",
+      "case": "no-open",
+      "pass": true,
+      "entryExit": 0,
+      "interceptionLoaded": true,
+      "readinessNonce": "960b9bfbd1d670d77be0ba0763ed352c",
+      "elapsedSeconds": 32.26599999999985,
+      "timeoutSeconds": 60,
+      "snapshotUnchanged": false,
+      "effects": {
+        "prompt": 3,
+        "metadata": 1,
+        "download": 3,
+        "clipboard": 4
+      },
+      "compilerRetentionWarnings": [
+        "[WARN] Compiler scratch retained because cleanup custody failed at C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-m9ce6r69\\ps51-no-open\\subject\\temp\\SalahWidgetCompiler-3eff9793b81848c9bf648df34c57c28f"
+      ],
+      "rawStdoutMember": "installer-evidence/install-entry-native-fixture/ps51-no-open/stdout.txt"
+    },
+    {
+      "host": "ps7",
+      "case": "positive",
+      "pass": true,
+      "entryExit": 0,
+      "interceptionLoaded": true,
+      "readinessNonce": "b1bf5ded5b92c8ddfd2a8b9c16923ea6",
+      "elapsedSeconds": 2.5620000000001255,
+      "timeoutSeconds": 60,
+      "snapshotUnchanged": true,
+      "effects": {
+        "prompt": 3,
+        "metadata": 1,
+        "download": 3,
+        "clipboard": 4,
+        "open": 4
+      },
+      "compilerRetentionWarnings": [],
+      "rawStdoutMember": "installer-evidence/install-entry-native-fixture/ps7-positive/stdout.txt"
+    },
+    {
+      "host": "ps7",
+      "case": "no-open",
+      "pass": true,
+      "entryExit": 0,
+      "interceptionLoaded": true,
+      "readinessNonce": "5af4d299cb9da398c86772dfd7b01a03",
+      "elapsedSeconds": 2.5160000000000764,
+      "timeoutSeconds": 60,
+      "snapshotUnchanged": true,
+      "effects": {
+        "prompt": 3,
+        "metadata": 1,
+        "download": 3,
+        "clipboard": 4
+      },
+      "compilerRetentionWarnings": [],
+      "rawStdoutMember": "installer-evidence/install-entry-native-fixture/ps7-no-open/stdout.txt"
+    }
+  ],
+  "findings": [
+    {
+      "id": "R15-N3-01",
+      "status": "CORRECTION_SUPPORTED_AT_DEMONSTRATED_EXPRESSION",
+      "scope": "The only production diff is explicit integer casts on both AceFlags operands at114. Native PS5.1 now traverses the guard, compiles on ASCII fixture paths and passes both complete-file normal entries. The original InvalidCastException remains historical; this does not settle new compiler/path/cleanup failures."
+    },
+    {
+      "id": "R15-N3-02",
+      "status": "CURRENT_TEMP_PREMISE_SUPPORTED",
+      "scope": "Affected fixtures now record identical TEMP/TMP/native GetTempPath for their owned temp paths. PS7 transactions28/28 and custody8/8 pass; PS5.1 progresses to compilation. This resolves the current recorded fixture premise without retroactively proving the unrecorded native3 selected parent."
+    },
+    {
+      "id": "R15-N4-01",
+      "severity": "Important",
+      "status": "OPEN",
+      "classification": "PS51_UNICODE_PATH_COMPILATION_FAILURE",
+      "source": "9eaf54cab8560f5fda7c6dd2f49ed4a622e0d6e9:install.ps1:423-428",
+      "evidence": [
+        "Windows/ps51-install-powershell-transactions.json",
+        "Windows/ps51-install-staging-windows.json",
+        "ps51-compiler-output.json"
+      ],
+      "detail": "All27 non-parser PS5.1 transaction rows fail CodeDOM output creation under U+0635 fixture roots; DLL paths168-184 characters. Seven custody rows fail similarly; one downstream type prerequisite is absent. Retained response file has UTF8 BOM and the exact U+0635 bytes, no question-mark replacement. Healthy ASCII compiler/normal paths compile. This is a measured path-character-associated compatibility failure, not a proved compiler encoding mechanism or generic path-length explanation."
+    },
+    {
+      "id": "R15-N4-02",
+      "severity": "Important",
+      "status": "OPEN",
+      "classification": "PS51_COMPILER_OUTPUT_CLEANUP_OWNER_MISMATCH",
+      "source": "9eaf54cab8560f5fda7c6dd2f49ed4a622e0d6e9:install.ps1:197",
+      "evidence": [
+        "Windows/ps51-install-compiler-custody.json#/results/6",
+        "Windows/ps51-first-call-observation.json#/results/1/compilerAfter/facts/readback/acl",
+        "ps51-compiler-output.json"
+      ],
+      "detail": "Owned private compiler root belongs to the subject SID, but all five recorded generated files belong to Administrators S-1-5-32-544 with inherited full-control subject ACEs. Actual cleanup explicitly requires each file owner equal context SID; it consequently retains scratch with Compiler output custody could not be proved. The healthy compiler assertion fails and its parent-mutant useful partner fails. Conservative retention is truthful; no unsafe deletion or foreign access is demonstrated. The current child ownership mismatch is directly observed, not merely inferred."
+    },
+    {
+      "id": "R15-NATIVE-05",
+      "severity": "Important",
+      "status": "MEASURED_REPRODUCTION_CAUSAL_DISCRIMINATOR_STILL_OPEN",
+      "classification": "PS7_PRIVATE_FILE_CREATE_FAILURE",
+      "source": "9eaf54cab8560f5fda7c6dd2f49ed4a622e0d6e9:install.ps1:362-369",
+      "evidence": [
+        "Windows/ps7-transaction-mutations.json#/results",
+        "private-file-failures.json"
+      ],
+      "detail": "Selected PS7 unchanged-source prerequisite is3/13 with10 failed rows and zero mutants. There are11 measured creation attempts, requested paths260-268 characters, parent paths219-227, each inner Win32Exception nativeErrorCode3. Every parent is currently read back as existing private/trusted directory with identity/owner/SDDL. TEMP/TMP/native compiler path are aligned. The broad standalone transaction suite passes. This localizes the current failing boundary and gives a length-correlated discriminator; it does not by itself prove the exact Windows long-path mechanism or retroactively assign a native code to native2."
+    },
+    {
+      "id": "R15-NATIVE-04",
+      "status": "PRIVATE_COMPILER_BOUNDARY_SUPPORTED_WITH_RESIDUALS",
+      "scope": "On both native hosts the unsafe-parent control refuses before observed temporary effects; fresh useful compilation occurs under an owned private compiler root, with no observed compiler-period event outside that root. PS5.1 now records real CodeDOM events39 healthy/27 deliberate failure. This supports the repaired admission boundary; healthy cleanup and Unicode path compatibility remain separately failing."
+    },
+    {
+      "id": "R15-N4-03",
+      "severity": "Minor",
+      "status": "OPEN",
+      "classification": "PS51_VOLUME_MUTANT_RECEIPT_UNAVAILABLE",
+      "source": "9eaf54cab8560f5fda7c6dd2f49ed4a622e0d6e9:tests/install-volume-mutations.py:55-61",
+      "evidence": [
+        "Windows/ps51-volume-mutations.stderr.txt",
+        "Windows/ps51-install-volume-policy.stdout.txt",
+        "Windows/result.json#/commands"
+      ],
+      "detail": "Standalone native volume policy13/13 JSON is preceded by a compiler-retention warning. The mutant driver parses entire child stdout and fails JSONDecodeError line1 column2 after its first child returns. Its output root is not archived: zero raw fixture members and no terminal structured summary. The measured warning prefix strongly matches the parsing failure, but the mutant child bytes are absent, so exact contamination remains inferred. Zero PS5.1 paired volume mutants are credited; do not relabel unavailable results as policy failures or passes."
+    }
+  ],
+  "denominator": {
+    "original": 17,
+    "residual": 9,
+    "NovemberES": 18,
+    "terminal": 7,
+    "total": 51
+  },
+  "notJudged": [
+    "Underlying PS5.1 Unicode CodeDOM mechanism beyond recorded path/response-file evidence.",
+    "Exact PS7 Windows long-path cause without a matched native discriminator; historical native2 error codes were not recorded.",
+    "First PS5.1 volume-mutant child bytes/exit and causal pair, which were not archived; second pair was not reached.",
+    "Current transaction mutants on either host: zero executed.",
+    "Complete R16 preview denominator/native hosts, final README/public copy-command delivery, campaign order, exact owner merge approval, certificate/closure and governor lifecycle.",
+    "Global OS/attempt absence, actual browser install/import, same-user/admin isolation or future retained-file liveness."
+  ],
+  "originalsUnchanged": true,
+  "productOrTestExecutions": 0,
+  "originalReview": {
+    "sha256": "9bebf5685e359e6a166647ffa2cf97cdd630b327c16808791d663561bffb806a",
+    "bytes": 242099,
+    "scope": "Exact original retained in recovery checkpoint; this publication is a selected-field projection, not a replacement review."
+  },
+  "acceptanceRowsFile": "acceptance-rows.json"
+}

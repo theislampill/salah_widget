@@ -7,6 +7,7 @@ Native platform facts come from the current host, not from fixture labels.
 import argparse
 import datetime as dt
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import uuid
 
 
 def receipt(text):
@@ -64,6 +66,29 @@ def native_fact(command):
 
 def copy_fixtures(parsed, out, name, temporary_parent):
     """Preserve primary and explicitly reported auxiliary disposable roots."""
+    if name == "install-linux-owner":
+        # The independent UID owns private0700 subject directories. Only its
+        # privileged test supervisor can capture them without changing modes.
+        # Consume that exact test module's no-follow, digest/identity-verified
+        # regular export; never fall back to walking the private source tree.
+        script = Path(__file__).resolve().parents[2] / "tests/install-linux-owner.py"
+        spec = importlib.util.spec_from_file_location("installer_linux_owner_export", script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        data, manifest = module.read_verified_fixture_export(parsed)
+        destination = out / (name + "-fixture.tar.gz")
+        with destination.open("xb") as stream:
+            stream.write(data)
+        if hashlib.sha256(destination.read_bytes()).hexdigest() != parsed["fixture_export"]["sha256"]:
+            raise ValueError("owned fixture export changed during collector copy")
+        manifest_path = out / (name + "-fixture-manifest.json")
+        with manifest_path.open("x", encoding="utf-8") as stream:
+            stream.write(json.dumps(manifest, indent=2) + "\n")
+        return [{"original": parsed["fixture"], "archive_file": destination.name,
+                 "sha256": parsed["fixture_export"]["sha256"], "source_manifest": manifest_path.name,
+                 "source_manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+                 "embedded_manifest_sha256": parsed["fixture_export"]["manifest_sha256"],
+                 "original_entries": len(manifest["entries"]), "extracted": False}]
     primary = parsed.get("fixture") or parsed.get("fixtureRoot")
     candidates = ([primary] if primary else []) + parsed.get("auxiliaryFixtures", [])
     if len(candidates) > 16:
@@ -93,10 +118,11 @@ def main():
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
     env = dict(os.environ)
+    env.update(POWERSHELL_TELEMETRY_OPTOUT="1", DOTNET_CLI_TELEMETRY_OPTOUT="1", POWERSHELL_UPDATECHECK="Off")
     report = {"schema": "installer-native-v1", "status": "INCOMPLETE",
               "phase": args.phase, "host": {"system": platform.system(),
               "platform": platform.platform(), "python": sys.version,
-              "image_version": env.get("ImageVersion", env.get("IMAGEVERSION"))}, "commands": []}
+              "image_version": env.get("ImageVersion", env.get("IMAGEVERSION"))}, "commands": [], "diagnostics": []}
     report["commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
     report["tree"] = subprocess.check_output(["git", "rev-parse", "HEAD^{tree}"], cwd=root, text=True).strip()
     report["source_hashes"] = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -107,21 +133,26 @@ def main():
     def save():
         (out / "result.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 
-    def run(name, command):
+    def run(name, command, timeout=240, diagnostic=False):
         started = dt.datetime.now(dt.timezone.utc).isoformat()
         try:
-            result = subprocess.run(command, cwd=root, env=env, capture_output=True, timeout=240)
+            result = subprocess.run(command, cwd=root, env=env, capture_output=True, timeout=timeout)
             stdout = result.stdout.decode("utf-8-sig", errors="replace")
             stderr = result.stderr.decode("utf-8-sig", errors="replace")
             code = result.returncode
             try:
                 parsed = receipt(stdout)
-                good = code == 0 and passed(parsed)
+                acquired = parsed.get("complete") is True if "complete" in parsed else passed(parsed) and parsed.get("pass") is not False
+                good = code == 0 and (acquired if diagnostic else passed(parsed))
             except ValueError as error:
                 parsed = {"parse_error": str(error)}
                 good = False
         except (OSError, subprocess.TimeoutExpired) as error:
-            stdout, stderr, code, parsed, good = "", str(error), None, {}, False
+            partial_stdout = getattr(error, "stdout", None) or b""
+            partial_stderr = getattr(error, "stderr", None) or b""
+            stdout = partial_stdout.decode("utf-8-sig", errors="replace")
+            stderr = partial_stderr.decode("utf-8-sig", errors="replace") + "\n" + str(error)
+            code, parsed, good = None, {}, False
         (out / (name + ".stdout.txt")).write_text(stdout, encoding="utf-8")
         (out / (name + ".stderr.txt")).write_text(stderr, encoding="utf-8")
         try:
@@ -131,11 +162,13 @@ def main():
             parsed["fixture_copy_error"] = str(error)
             good = False
         (out / (name + ".json")).write_text(json.dumps(parsed, indent=2) + "\n", encoding="utf-8")
-        report["commands"].append({"name": name, "command": command, "started": started,
+        report["diagnostics" if diagnostic else "commands"].append({"name": name, "command": command, "started": started,
                                    "finished": dt.datetime.now(dt.timezone.utc).isoformat(),
-                                   "exit": code, "passed": good, "archived_fixtures": archived})
+                                   "exit": code, "timeout_seconds": timeout,
+                                   "acquired" if diagnostic else "passed": good, "archived_fixtures": archived})
         save()
-        print(f"{name}: {'PASS' if good else 'FAIL'} (exit {code})", flush=True)
+        label = ("ACQUIRED" if good else "ACQUISITION_BLOCKED") if diagnostic else ("PASS" if good else "FAIL")
+        print(f"{name}: {label} (exit {code})", flush=True)
 
     save()
     if platform.system() != args.expected_os:
@@ -193,7 +226,7 @@ def main():
         hosts = [("ps51", str(Path(env["SYSTEMROOT"]) / "System32/WindowsPowerShell/v1.0/powershell.exe")),
                  ("ps7", env["INSTALL_TEST_PS7"])]
         for name, executable in hosts:
-            version = subprocess.check_output([executable, "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"], text=True).strip()
+            version = subprocess.check_output([executable, "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"], env=env, text=True).strip()
             report["host"][name] = {"executable": executable, "version": version}
             if (name == "ps51" and not version.startswith("5.1.")) or (name == "ps7" and version != "7.6.6"):
                 report["gate_error"] = "required PowerShell version unavailable"
@@ -202,20 +235,61 @@ def main():
             files = ["install-host-bootstrap.ps1", "install-powershell.ps1", "install-powershell-guards.ps1", "install-discovery.ps1"]
             if args.phase in ("r0015", "r0016"):
                 files.append("install-powershell-transactions.ps1")
+                files.append("install-staging-windows.ps1")
+                files.append("install-compiler-custody.ps1")
+                files.append("install-volume-policy.ps1")
             if args.phase == "r0016":
                 files.append("install-preview.ps1")
             for test in files:
                 command = [executable, "-NoProfile", "-File", str(root / "tests" / test), "-SourceFile", str(root / "install.ps1")]
                 if test == "install-powershell-transactions.ps1":
                     command.extend(["-PresetFile", str(root / "presets/salah-widget.tablissng.json")])
-                if test == "install-host-bootstrap.ps1":
+                if test in ("install-host-bootstrap.ps1", "install-volume-policy.ps1"):
                     command.extend(["-OutputRoot", tempfile.gettempdir()])
-                run(name + "-" + test[:-4], command)
+                if test == "install-compiler-custody.ps1":
+                    command.extend(["-FixtureParent", tempfile.gettempdir()])
+                # Fourteen cold native compiler children each have a bounded90s
+                # acquisition budget. Preserve every terminal/raw observation.
+                timeout = {"install-compiler-custody.ps1": 1500, "install-host-bootstrap.ps1": 360,
+                           "install-volume-policy.ps1": 180}.get(test, 240)
+                run(name + "-" + test[:-4], command, timeout=timeout,
+                    diagnostic=test == "install-host-bootstrap.ps1")
             run(name + "-discovery-mutations", [sys.executable, str(root / "tests/install-discovery-mutations.py"), str(root / "install.ps1"), executable])
-        run("install-entry-native", [sys.executable, str(root / "tests/install-entry-native.py"), str(root / "install.ps1")])
-    report["status"] = "PASS" if report["commands"] and all(x["passed"] for x in report["commands"]) else "FAIL"
+            if args.phase in ("r0015", "r0016"):
+                volume_root = str(Path(tempfile.gettempdir()) / ("r0015-volume-mutants-" + name + "-" + uuid.uuid4().hex))
+                run(name + "-volume-mutations", [sys.executable, str(root / "tests/install-volume-mutations.py"),
+                    "--source", str(root / "install.ps1"), "--fixture", str(root / "tests/install-volume-policy.ps1"),
+                    "--pwsh", executable, "--output-root", volume_root, "--timeout-seconds", "180"], timeout=390)
+                mutation_root = str(Path(tempfile.gettempdir()) / ("r15m-" + uuid.uuid4().hex))
+                run(name + "-transaction-mutations", [sys.executable, str(root / "tests/install-powershell-mutations.py"),
+                    "--source", str(root / "install.ps1"), "--test", str(root / "tests/install-powershell-transactions.ps1"),
+                    "--preset", str(root / "presets/salah-widget.tablissng.json"), "--native-test", str(root / "tests/install-staging-windows.ps1"),
+                    "--pwsh", executable, "--out", mutation_root], timeout=600)
+                if name == "ps7":
+                    # Native diagnostic3 measured this host's refusal boundary.
+                    # The explicit case is excluded from ordinary/mutant suites;
+                    # any capability or acquisition boundary retains its label.
+                    run(name + "-long-path-refusal", [executable, "-NoProfile", "-NonInteractive", "-File",
+                        str(root / "tests/install-powershell-transactions.ps1"),
+                        "-SourceFile", str(root / "install.ps1"), "-PresetFile", str(root / "presets/salah-widget.tablissng.json"),
+                        "-Case", "native long-path refusal preserves handed-off predecessor"], timeout=240)
+                run(name + "-first-call-observation", [executable, "-NoProfile", "-NonInteractive", "-File", str(root / "tests/install-staging-first-call.ps1"),
+                    "-SourceFile", str(root / "install.ps1"), "-OutputRoot", tempfile.gettempdir()], timeout=360, diagnostic=True)
+        entry_command = [sys.executable, str(root / "tests/install-entry-native.py"), str(root / "install.ps1")]
+        if args.phase == "r0015":
+            # The changed lease and fixture ancestry affect normal consumers.
+            # R0016 owns the complete offline preview replay on this stack.
+            entry_command.extend(["--scenario", "positive", "--scenario", "no-open"])
+        run("install-entry-native", entry_command, timeout=600)
+    qualifications_pass = bool(report["commands"]) and all(x["passed"] for x in report["commands"])
+    diagnostics_acquired = all(x["acquired"] for x in report["diagnostics"])
+    report["qualification_status"] = "PASS" if qualifications_pass else "FAIL"
+    report["diagnostic_acquisition_status"] = ("COMPLETE" if diagnostics_acquired else "BLOCKED") if report["diagnostics"] else "NOT_REQUESTED"
+    report["status"] = ("OBSERVATIONS_ACQUIRED" if report["diagnostics"] else "PASS") if qualifications_pass and diagnostics_acquired else "FAIL"
+    if report["diagnostics"]:
+        report["diagnostic_scope"] = "Acquisition is not product acceptance. Independently adjudicate each diagnostic's native observations, including pre-admission effects."
     save()
-    return 0 if report["status"] == "PASS" else 1
+    return 0 if qualifications_pass and diagnostics_acquired else 1
 
 
 if __name__ == "__main__":

@@ -1,0 +1,866 @@
+param(
+    [Parameter(Mandatory=$true)][string]$SourceFile,
+    [Parameter(Mandatory=$true)][string]$PresetFile,
+    [string]$FixtureParent = [IO.Path]::GetTempPath(),
+    [switch]$UsePosixNativeAdapter,
+    [string[]]$Case
+)
+
+# R0015 focused transaction controls. Import actual production functions, not main.
+# Only transport, clipboard, browser launch, prompts and host rendering are spies.
+# Linux PowerShell is supplemental; it does not qualify Windows ACL/NTFS behavior.
+$ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
+[Console]::OutputEncoding = New-Object Text.UTF8Encoding $false
+$script:results = @()
+$script:caseEvents = @()
+$script:caseNotes = [ordered]@{}
+$script:hostMessages = @()
+$script:downloadPlan = @()
+$script:downloadIndex = 0
+$script:releaseFixture = $null
+$script:expectedPreset = $null
+$script:fixtureRoot = $null
+$script:caseRoot = $null
+$script:sourceText = [IO.File]::ReadAllText($SourceFile, [Text.Encoding]::UTF8)
+$script:canonicalPresetText = [IO.File]::ReadAllText($PresetFile, [Text.Encoding]::UTF8)
+$script:utf8 = New-Object Text.UTF8Encoding $false
+$script:oldTemp = $env:TEMP
+$script:oldTmp = $env:TMP
+$script:oldUserProfile = $env:USERPROFILE
+
+function Assert-Case($Condition, [string]$Message) {
+    if (-not $Condition) { throw $Message }
+}
+
+function Get-BytesHash([byte[]]$Bytes) {
+    $hasher = [Security.Cryptography.SHA256]::Create()
+    try { return ([BitConverter]::ToString($hasher.ComputeHash($Bytes))).Replace('-', '').ToLowerInvariant() }
+    finally { $hasher.Dispose() }
+}
+
+function Read-TestJson([string]$Text) {
+    if ((Get-Command ConvertFrom-Json).Parameters.ContainsKey('DateKind')) {
+        return ConvertFrom-Json -InputObject $Text -DateKind String
+    }
+    return ConvertFrom-Json -InputObject $Text
+}
+
+function Assert-FixturePath([string]$Path) {
+    $full = [IO.Path]::GetFullPath($Path)
+    $prefix = $script:fixtureRoot.TrimEnd([IO.Path]::DirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
+    Assert-Case ($full.StartsWith($prefix, [StringComparison]::OrdinalIgnoreCase)) ('Fixture boundary violation: ' + $full)
+}
+
+function Get-FixtureSnapshot {
+    $rows = @()
+    foreach ($item in @(Get-ChildItem -LiteralPath $script:caseRoot -Force -Recurse | Sort-Object FullName)) {
+        $relative = $item.FullName.Substring($script:caseRoot.Length)
+        if ($item.PSIsContainer) { $rows += ('D:' + $relative) }
+        else { $rows += ('F:' + $relative + ':' + (Get-FileHash -LiteralPath $item.FullName -Algorithm SHA256).Hash) }
+    }
+    return $rows -join "`n"
+}
+
+function New-TestZip($Entries) {
+    $stream = New-Object IO.MemoryStream
+    $zip = New-Object IO.Compression.ZipArchive($stream, [IO.Compression.ZipArchiveMode]::Create, $true)
+    try {
+        foreach ($entry in $Entries) {
+            $member = $zip.CreateEntry([string]$entry.name)
+            if ($entry.PSObject.Properties['attributes']) { $member.ExternalAttributes = [int]$entry.attributes }
+            $writer = $member.Open()
+            try {
+                $bytes = $script:utf8.GetBytes([string]$entry.text)
+                $writer.Write($bytes, 0, $bytes.Length)
+            } finally { $writer.Dispose() }
+        }
+    } finally { $zip.Dispose() }
+    try { return ,$stream.ToArray() } finally { $stream.Dispose() }
+}
+
+function New-TestAsset([int]$Id, [byte[]]$Bytes, [string]$Suffix='a') {
+    return [pscustomobject]@{
+        id=$Id; name='tabliss-chromium.zip'; size=$Bytes.Length;
+        browser_download_url=('https://fixture.invalid/assets/' + $Suffix + '/tabliss-chromium.zip');
+        digest=('sha256:' + (Get-BytesHash $Bytes)); content_type='application/zip'
+    }
+}
+
+function Set-DownloadPlan($Rows) {
+    $script:downloadPlan = @($Rows)
+    $script:downloadIndex = 0
+}
+
+function New-DownloadStep([byte[]]$Bytes, [string]$Failure='') {
+    return [pscustomobject]@{bytes=$Bytes; failure=$Failure}
+}
+
+function New-Case([string]$Name, [byte[]]$Bytes) {
+    if ($script:StagingAttempt) {
+        $script:DryRun=$false
+        $null=Clear-OwnedScratch
+        $script:StagingAttempt=$null
+    }
+    $script:caseEvents = @()
+    $script:hostMessages = @()
+    $script:caseNotes = [ordered]@{}
+    $script:caseRoot = Join-Path $script:fixtureRoot $Name
+    [void][IO.Directory]::CreateDirectory($script:caseRoot)
+    $tempParent = Join-Path $script:caseRoot 'temp'
+    $profileParent = Join-Path $script:caseRoot 'profile'
+    [void][IO.Directory]::CreateDirectory($tempParent)
+    [void][IO.Directory]::CreateDirectory($profileParent)
+    if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
+        # Own and protect only these newly created disposable parent fixtures.
+        # Elevated Windows tokens may otherwise default new directory ownership
+        # to Administrators, which is not the product's self-owned HOME premise.
+        $sid=[Security.Principal.WindowsIdentity]::GetCurrent().User
+        foreach ($parent in @($tempParent,$profileParent)) {
+            $acl=New-Object Security.AccessControl.DirectorySecurity
+            $acl.SetOwner($sid); $acl.SetAccessRuleProtection($true,$false)
+            $rule=New-Object Security.AccessControl.FileSystemAccessRule($sid,[Security.AccessControl.FileSystemRights]::FullControl,[Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit',[Security.AccessControl.PropagationFlags]::None,[Security.AccessControl.AccessControlType]::Allow)
+            $acl.AddAccessRule($rule)
+            Set-Acl -LiteralPath $parent -AclObject $acl
+        }
+    }
+    $env:TEMP = $tempParent
+    $env:TMP = $tempParent
+    $env:USERPROFILE = $profileParent
+    $script:DryRun = $false
+    $script:NoOpen = $false
+    $script:InstallSource = 'github'
+    $script:TablissNgRepo = 'fixture/upstream'
+    $script:PresetUrl = 'https://fixture.invalid/preset.json'
+    $script:WidgetHash = ''
+    $script:LatestRelease = $null
+    # Baseline has these globals. Later Initialize-Staging owns fresh attempt state.
+    $script:WorkRoot = Join-Path $tempParent 'SalahWidgetInstaller'
+    $script:DownloadRoot = Join-Path $script:WorkRoot 'downloads'
+    $script:PresetRoot = Join-Path $script:WorkRoot 'presets'
+    $asset = New-TestAsset 101 $Bytes
+    $script:releaseFixture = [pscustomobject]@{id=201; tag_name='v-fixture'; assets=@($asset)}
+    Set-DownloadPlan @((New-DownloadStep $Bytes))
+    if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
+        $nativeTemp = [IO.Path]::GetTempPath()
+        $script:caseNotes.compilerParent = [pscustomobject]@{temp=$env:TEMP;tmp=$env:TMP;native=$nativeTemp}
+        Assert-Case ([string]::Equals($nativeTemp.TrimEnd('\'),$tempParent.TrimEnd('\'),[StringComparison]::OrdinalIgnoreCase)) 'SETUP: native compiler parent escaped the owned fixture.'
+    }
+    $null = Initialize-Staging
+    Assert-FixturePath $script:WorkRoot
+    $script:caseNotes.root = $script:caseRoot
+    return $asset
+}
+
+function Invoke-Case([string]$Name, [scriptblock]$Body) {
+    if ($Case -and $Name -notin $Case) { return }
+    $script:caseEvents = @()
+    $script:hostMessages = @()
+    $script:caseNotes = [ordered]@{}
+    $passed = $false
+    $failure = $null
+    try { & $Body; $passed = $true }
+    catch { $failure = $_.Exception.Message }
+    $script:results += [pscustomobject]@{
+        case=$Name; pass_=$passed; pass=$passed; status=$(if ($passed) {'PASS'} else {'FAIL'});
+        error=$failure; observations=$script:caseNotes; events=@($script:caseEvents); messages=@($script:hostMessages)
+    }
+}
+
+function Invoke-Captured([scriptblock]$Body) {
+    $items = @()
+    $failure = $null
+    try { $items = @(& $Body) } catch { $failure = $_.Exception.Message }
+    return [pscustomobject]@{items=$items; error=$failure}
+}
+
+function Assert-OnePath($Items, [string]$Description) {
+    Assert-Case (@($Items).Count -eq 1 -and $Items[0] -is [string] -and -not [string]::IsNullOrWhiteSpace($Items[0])) ($Description + ' did not return one clean string path')
+    Assert-FixturePath $Items[0]
+    Assert-Case ([IO.File]::Exists($Items[0]) -or [IO.Directory]::Exists($Items[0])) ($Description + ' returned a missing path')
+    return [string]$Items[0]
+}
+
+function Assert-NoReadyPath($Observation, [string]$Description) {
+    Assert-Case (@($Observation.items | Where-Object { $_ -is [string] -and -not [string]::IsNullOrWhiteSpace($_) }).Count -eq 0) ($Description + ' returned a usable-looking path')
+}
+
+try {
+    $fileTokens=$null; $fileErrors=$null
+    $null=[Management.Automation.Language.Parser]::ParseFile($SourceFile, [ref]$fileTokens, [ref]$fileErrors)
+    $tokens=$null; $parseErrors=$null
+    $sourceAst=[Management.Automation.Language.Parser]::ParseInput($script:sourceText, [ref]$tokens, [ref]$parseErrors)
+    if (@($parseErrors).Count) { throw 'SETUP: exact source functions did not parse.' }
+    # Do not execute discovery, profiles, terminal main or top-level native effects.
+    foreach ($definition in @($sourceAst.EndBlock.Statements | Where-Object { $_ -is [Management.Automation.Language.FunctionDefinitionAst] })) {
+        . ([scriptblock]::Create($definition.Extent.Text))
+    }
+    Add-Type -AssemblyName System.IO.Compression
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    if ($UsePosixNativeAdapter) {
+        if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) { throw 'SETUP: the POSIX boundary adapter is forbidden on native Windows qualification.' }
+        $script:fixtureStat=(Get-Command stat -CommandType Application | Select-Object -First 1).Source
+        $script:fixtureUid=((& id -u) -join '').Trim()
+        $script:actualNativeBootstrap=${function:Initialize-StagingNative}
+        if (-not $script:actualNativeBootstrap) { throw 'SETUP: source has no explicit native staging boundary to adapt.' }
+        $nativeDefinitions=@($sourceAst.EndBlock.Statements | Where-Object {$_ -is [Management.Automation.Language.FunctionDefinitionAst] -and $_.Name -ceq 'Initialize-StagingNative'})
+        $nativeLiterals=@($nativeDefinitions[0].FindAll({param($node) $node -is [Management.Automation.Language.StringConstantExpressionAst] -and $node.StringConstantType -eq [Management.Automation.Language.StringConstantType]::SingleQuotedHereString -and $node.Value.StartsWith('using System;',[StringComparison]::Ordinal)},$true))
+        if($nativeDefinitions.Count -ne 1 -or $nativeLiterals.Count -ne 1) {throw 'SETUP: actual native C# payload is not uniquely identifiable.'}
+        $script:fixtureNativeSource=$nativeLiterals[0].Value
+        # Only native platform boundaries are adapted. Actual production
+        # acquisition, admission, validation, publication, callers and cleanup
+        # remain in use. Native Windows ACL/lease claims are expressly excluded.
+        function Initialize-StagingNative {
+            # Production now correctly rejects unsupported hosts before any
+            # compilation. This fixture explicitly loads only its exact literal
+            # C# payload after New-Case has installed owned temporary parents.
+            # A dry call must still reach the real first guard without loading.
+            if($DryRun) { & $script:actualNativeBootstrap; return }
+            if(-not ('SalahInstaller.StageNative' -as [type])) {Add-Type -TypeDefinition $script:fixtureNativeSource}
+            try { & $script:actualNativeBootstrap }
+            catch {
+                if ($DryRun -or -not ('SalahInstaller.StageNative' -as [type]) -or $_.Exception.Message -notlike '*R0015 native staging requires Windows*') { throw }
+            }
+        }
+        function Get-StagingUserSid {
+            if ($DryRun) { throw 'Offline native-identity adapter refused.' }
+            return 'posix-fixture:'+$script:fixtureUid
+        }
+        function Get-StagingPathInfo([string]$Path) {
+            if ($DryRun) { throw 'Offline native-readback adapter refused.' }
+            Assert-FixturePath $Path
+            $item=Get-Item -LiteralPath $Path -Force
+            if (($item.Attributes -band [IO.FileAttributes]::ReparsePoint) -ne 0) { throw 'POSIX fixture link refused.' }
+            $values=((& $script:fixtureStat -c '%u:%a:%d:%i:%h:%s' '--' $Path) -join '').Split(':')
+            if ($LASTEXITCODE -ne 0 -or $values.Count -ne 6) { throw 'SETUP: actual POSIX identity acquisition failed.' }
+            $mode=[Convert]::ToInt32($values[1],8)
+            $owner='posix-fixture:'+$values[0]
+            return [pscustomobject]@{
+                Path=[IO.Path]::GetFullPath($Path); Identity=$values[2]+':'+$values[3]; Owner=$owner;
+                Directory=[bool]$item.PSIsContainer; Private=($values[0] -ceq $script:fixtureUid -and ($mode -band 63) -eq 0);
+                TrustedParent=($values[0] -ceq $script:fixtureUid -and ($mode -band 18) -eq 0);
+                Length=[long]$values[5]; Links=[uint32]$values[4]
+            }
+        }
+        function Open-StagingDirectoryLease([string]$Path) {
+            if ($DryRun) { throw 'Offline native-lease adapter refused.' }
+            $lease=[pscustomobject]@{Facts=(Get-StagingPathInfo $Path);Disposed=$false;NativeWindowsLease=$false}
+            $lease | Add-Member -MemberType ScriptMethod -Name Dispose -Value {$this.Disposed=$true}
+            return $lease
+        }
+        function Get-TrustedStagingParent([string]$Path) {
+            if ($DryRun) { throw 'Offline native-parent adapter refused.' }
+            $info=Get-StagingPathInfo $Path
+            if (-not $info.Directory -or -not $info.TrustedParent) { throw 'POSIX fixture parent does not meet its owned control premise.' }
+            return $info.Path
+        }
+        function New-PrivateStagingDirectory([string]$Path) {
+            if ($DryRun) { throw 'Offline native-create adapter refused.' }
+            Assert-FixturePath $Path
+            if ([IO.Directory]::Exists($Path) -or [IO.File]::Exists($Path)) { throw 'POSIX fixture exclusive-create collision.' }
+            [void][IO.Directory]::CreateDirectory($Path)
+            [IO.File]::SetUnixFileMode($Path,[IO.UnixFileMode]448)
+            return Get-StagingPathInfo $Path
+        }
+        function New-PrivateStagingFile([string]$Path) {
+            if ($DryRun) { throw 'Offline native-file adapter refused.' }
+            Assert-FixturePath $Path
+            $file=[IO.File]::Open($Path,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::None)
+            $file.Dispose()
+            [IO.File]::SetUnixFileMode($Path,[IO.UnixFileMode]384)
+            return Get-StagingPathInfo $Path
+        }
+    }
+
+    # Preserve the actual creation result/exception. Failed native acquisition
+    # needs its requested path and Win32 chain, not a guessed path-length cause.
+    $script:observedPrivateFileCreator=(Get-Command New-PrivateStagingFile).ScriptBlock
+    function New-PrivateStagingFile([string]$Path) {
+        try { return & $script:observedPrivateFileCreator $Path }
+        catch {
+            $originalError=$_
+            $chain=@();$exception=$originalError.Exception;$depth=0
+            while($exception -and $depth -lt 12) {
+                $nativeCode=$null
+                if($exception.PSObject.Properties['NativeErrorCode']) {$nativeCode=$exception.NativeErrorCode}
+                $chain += [pscustomobject]@{type=$exception.GetType().FullName;message=$exception.Message;hresult=$exception.HResult;nativeErrorCode=$nativeCode}
+                $exception=$exception.InnerException;$depth++
+            }
+            $parent=[IO.Path]::GetDirectoryName($Path);$facts=$null;$factsError=$null;$sddl=$null;$aclError=$null
+            try { $facts=Get-StagingPathInfo $parent } catch {$factsError=$_.Exception.Message}
+            if([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
+                try {$sddl=(Get-Acl -LiteralPath $parent).Sddl} catch {$aclError=$_.Exception.Message}
+            }
+            $observed=[pscustomobject]@{requestedPath=$Path;pathLength=$Path.Length;parent=$parent;parentLength=$parent.Length;exceptionChain=$chain;parentFacts=$facts;parentFactsError=$factsError;parentSddl=$sddl;parentAclError=$aclError}
+            if(-not $script:caseNotes.Contains('privateFileFailures')) {$script:caseNotes.privateFileFailures=@()}
+            $script:caseNotes.privateFileFailures += $observed
+            throw $originalError
+        }
+    }
+
+    # Host-output capture preserves real Write-Ok/Write-Warn wrappers and detects
+    # an accidental success-stream diagnostic returned by a production helper.
+    function Write-Host {
+        param([Parameter(Position=0, ValueFromRemainingArguments=$true)][object[]]$Object,
+              [object]$ForegroundColor, [object]$BackgroundColor, [string]$Separator=' ', [switch]$NoNewline)
+        $script:hostMessages += (($Object | ForEach-Object {[string]$_}) -join $Separator)
+    }
+    function Invoke-RestMethod {
+        param($Uri, $Headers)
+        $script:caseEvents += [pscustomobject]@{effect='metadata'; uri=[string]$Uri}
+        return $script:releaseFixture
+    }
+    function Invoke-WebRequest {
+        param($Uri, [string]$OutFile, [switch]$UseBasicParsing, $Headers)
+        Assert-FixturePath $OutFile
+        $script:caseEvents += [pscustomobject]@{effect='download'; uri=[string]$Uri; path=$OutFile; ordinal=$script:downloadIndex}
+        Assert-Case ($script:downloadIndex -lt $script:downloadPlan.Count) 'SETUP: unplanned acquisition reached the controlled transport.'
+        $step = $script:downloadPlan[$script:downloadIndex]
+        $script:downloadIndex++
+        if ($null -ne $step.bytes) { [IO.File]::WriteAllBytes($OutFile, [byte[]]$step.bytes) }
+        if ($step.failure) { throw [IO.IOException]::new([string]$step.failure) }
+    }
+    function Copy-Text([string]$Text) {
+        $script:caseEvents += [pscustomobject]@{effect='copy'; value=$Text}
+        return $true
+    }
+    function Open-TargetUrl($Target, [string]$Url) {
+        $script:caseEvents += [pscustomobject]@{effect='open'; value=$Url}
+    }
+    function Read-Host([string]$Prompt) {
+        $script:caseEvents += [pscustomobject]@{effect='prompt'; value=$Prompt}
+        return ''
+    }
+
+    $fixtureName = 'r0015-ps-' + [guid]::NewGuid().ToString('N') + '-' + [char]0x0635
+    $script:fixtureRoot = Join-Path ([IO.Path]::GetFullPath($FixtureParent)) $fixtureName
+    [void][IO.Directory]::CreateDirectory($script:fixtureRoot)
+    $manifest = '{"manifest_version":3,"name":"Fixture extension","version":"1.0","description":"R0015 disposable control"}'
+    $unicodeMember = 'extension/assets/space ' + [char]0x0635 + '.txt'
+    $goodBytes = New-TestZip @(
+        [pscustomobject]@{name='extension/manifest.json'; text=$manifest},
+        [pscustomobject]@{name=$unicodeMember; text=('payload ' + [char]0x0635)}
+    )
+    $secondBytes = New-TestZip @(
+        [pscustomobject]@{name='extension/manifest.json'; text=$manifest.Replace('1.0', '2.0')},
+        [pscustomobject]@{name=$unicodeMember; text='second payload'}
+    )
+    $script:targetFixture = [pscustomobject]@{
+        Index=1; Browser='Disposable Chromium'; Family='chromium'; ProfileName='Fixture'; ProfilePath='fixture-only'; ExePath=$null;
+        DiscoveryStatus='known-neither'; DiscoveryReason='Disposable complete negative observation';
+        DiscoverySource='fixture-only'; DiscoveryEvidence='chromium-directory-and-preferences';
+        HasLegacyTabliss=$false; HasTablissNG=$false; NewMatches=@(); OldMatches=@();
+        Config=[pscustomobject]@{StoreUrl='https://fixture.invalid/store'; ManagerUrl='fixture://extensions'; NewTabUrl='fixture://newtab'}
+    }
+
+    Invoke-Case 'exact-file parser and ASCII source' {
+        Assert-Case (@($fileErrors).Count -eq 0) ('Native ParseFile errors: ' + (@($fileErrors | ForEach-Object {$_.Message}) -join '; '))
+        Assert-Case (-not @([IO.File]::ReadAllBytes($SourceFile) | Where-Object {$_ -gt 127}).Count) 'Non-ASCII production source byte.'
+    }
+
+    Invoke-Case 'healthy actual download and manual Chromium caller' {
+        $asset = New-Case 'healthy-caller' $goodBytes
+        $direct = @(Download-Asset $asset)
+        $path = Assert-OnePath $direct 'Download-Asset'
+        Assert-Case ((Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant() -ceq (Get-BytesHash $goodBytes)) 'Downloaded bytes differ from the controlled valid archive.'
+        $null = Install-TablissNG $script:targetFixture
+        $copies = @($script:caseEvents | Where-Object {$_.effect -eq 'copy'})
+        Assert-Case ($copies.Count -eq 1) 'Actual caller did not copy exactly one admitted unpacked path.'
+        $bundle = $copies[0].value
+        Assert-FixturePath $bundle
+        Assert-Case ([IO.File]::Exists((Join-Path $bundle 'manifest.json'))) 'Actual caller handed off an unreadable manifest.'
+        Assert-Case ([IO.File]::Exists((Join-Path $bundle ('assets/space ' + [char]0x0635 + '.txt')))) 'Healthy nested Unicode/spaced member was lost.'
+        Assert-Case (@($script:caseEvents | Where-Object {$_.effect -eq 'download'}).Count -eq 1) 'Same-attempt actual caller refetched an unchanged validated asset.'
+        Assert-Case (@($script:caseEvents | Where-Object {$_.effect -eq 'open' -and $_.value -eq 'fixture://extensions'}).Count -eq 1) 'Actual caller did not reach the manual extension manager.'
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'open' -and $_.value -like '*store'}).Count) 'Healthy caller silently fell back to the store.'
+        $script:caseNotes.archive=$path; $script:caseNotes.bundle=$bundle
+    }
+
+    Invoke-Case 'partial download is not a ready cache hit and healthy retry recovers' {
+        $asset = New-Case 'partial-download' $goodBytes
+        Set-DownloadPlan @(
+            (New-DownloadStep $script:utf8.GetBytes('PK partial') 'fixture transport interrupted'),
+            (New-DownloadStep $null 'fixture second transport refused'),
+            (New-DownloadStep $goodBytes)
+        )
+        $first = Invoke-Captured { Download-Asset $asset }
+        $second = Invoke-Captured { Download-Asset $asset }
+        $script:caseNotes.first=$first; $script:caseNotes.second=$second
+        Assert-NoReadyPath $first 'Interrupted acquisition'
+        Assert-NoReadyPath $second 'Retry after interrupted acquisition'
+        Assert-Case ($script:downloadIndex -eq 2) 'Retry bypassed acquisition using unvalidated partial bytes.'
+        $recovered = Assert-OnePath @(Download-Asset $asset) 'Healthy retry'
+        Assert-Case ((Get-FileHash -LiteralPath $recovered -Algorithm SHA256).Hash.ToLowerInvariant() -ceq (Get-BytesHash $goodBytes)) 'Healthy retry did not publish complete bytes.'
+    }
+
+    Invoke-Case 'same filename with changed source identity must reacquire' {
+        $asset = New-Case 'source-identity' $goodBytes
+        $first = Assert-OnePath @(Download-Asset $asset) 'Initial source'
+        $otherAsset = New-TestAsset 102 $secondBytes 'b'
+        Set-DownloadPlan @((New-DownloadStep $secondBytes))
+        $other = Assert-OnePath @(Download-Asset $otherAsset) 'Changed source'
+        $script:caseNotes.first=$first; $script:caseNotes.other=$other
+        Assert-Case ($script:downloadIndex -eq 1) 'Changed asset id/URL reused an old filename hit.'
+        Assert-Case ((Get-FileHash -LiteralPath $other -Algorithm SHA256).Hash.ToLowerInvariant() -ceq (Get-BytesHash $secondBytes)) 'Changed source was bound to predecessor bytes.'
+        Assert-Case ((Get-FileHash -LiteralPath $first -Algorithm SHA256).Hash.ToLowerInvariant() -ceq (Get-BytesHash $goodBytes)) 'Changed source overwrote the predecessor archive.'
+    }
+
+    Invoke-Case 'altered admitted bytes cannot be reused by filename' {
+        $asset = New-Case 'altered-bytes' $goodBytes
+        $path = Assert-OnePath @(Download-Asset $asset) 'Initial source'
+        [IO.File]::WriteAllText($path, 'fixture externally altered bytes', $script:utf8)
+        Set-DownloadPlan @((New-DownloadStep $goodBytes))
+        $result = Invoke-Captured { Download-Asset $asset }
+        $script:caseNotes.reuse=$result
+        if ($result.items.Count -gt 0) {
+            $ready = Assert-OnePath $result.items 'Readback after alteration'
+            Assert-Case ((Get-FileHash -LiteralPath $ready -Algorithm SHA256).Hash.ToLowerInvariant() -ceq (Get-BytesHash $goodBytes)) 'Altered bytes inherited readiness.'
+            Assert-Case ($script:downloadIndex -eq 1) 'No actual reacquisition preceded restored readiness.'
+        } else { Assert-Case (-not [string]::IsNullOrWhiteSpace($result.error)) 'Alteration had neither rejection nor valid reacquisition.' }
+    }
+
+    Invoke-Case 'failed replacement preserves already handed-off bundle' {
+        $asset = New-Case 'failed-replacement' $goodBytes
+        $path = Assert-OnePath @(Download-Asset $asset) 'Initial source'
+        $old = Assert-OnePath @(Expand-ChromiumAsset $path) 'Initial extraction'
+        $sentinel = Join-Path $old 'browser-still-using.txt'
+        [IO.File]::WriteAllText($sentinel, 'old bundle remains needed', $script:utf8)
+        $oldManifest = (Get-FileHash -LiteralPath (Join-Path $old 'manifest.json') -Algorithm SHA256).Hash
+        [IO.File]::WriteAllText($path, 'bad candidate', $script:utf8)
+        $replacement = Invoke-Captured { Expand-ChromiumAsset $path }
+        $script:caseNotes.oldBundle=$old; $script:caseNotes.replacement=$replacement
+        Assert-NoReadyPath $replacement 'Failed extraction'
+        Assert-Case ([IO.File]::Exists($sentinel)) 'Failed replacement deleted the previously handed-off bundle.'
+        Assert-Case ([IO.File]::ReadAllText($sentinel, [Text.Encoding]::UTF8) -ceq 'old bundle remains needed') 'Failed replacement changed the old sentinel.'
+        Assert-Case ((Get-FileHash -LiteralPath (Join-Path $old 'manifest.json') -Algorithm SHA256).Hash -ceq $oldManifest) 'Failed replacement changed the old manifest.'
+    }
+
+    Invoke-Case 'successful restaging preserves already handed-off bundle' {
+        $asset = New-Case 'successful-replacement' $goodBytes
+        $path = Assert-OnePath @(Download-Asset $asset) 'Initial source'
+        $old = Assert-OnePath @(Expand-ChromiumAsset $path) 'Initial extraction'
+        $sentinel = Join-Path $old 'browser-still-using.txt'
+        [IO.File]::WriteAllText($sentinel, 'do not infer release from Enter', $script:utf8)
+        $next = Assert-OnePath @(Expand-ChromiumAsset $path) 'Successful restaging'
+        $script:caseNotes.oldBundle=$old; $script:caseNotes.nextBundle=$next
+        Assert-Case ([IO.File]::Exists($sentinel)) 'Successful restaging deleted the previously handed-off bundle.'
+        Assert-Case ([IO.File]::ReadAllText($sentinel, [Text.Encoding]::UTF8) -ceq 'do not infer release from Enter') 'Successful restaging changed the predecessor sentinel.'
+        Assert-Case ([IO.File]::Exists((Join-Path $next 'manifest.json'))) 'New handoff has no readable manifest.'
+    }
+
+    Invoke-Case 'unsafe late ZIP has no ready path or remaining member files' {
+        $unsafeBytes = New-TestZip @(
+            [pscustomobject]@{name='extension/manifest.json'; text=$manifest},
+            [pscustomobject]@{name='extension/early-marker.txt'; text='must not extract before late path refusal'},
+            [pscustomobject]@{name='../late-escape.txt'; text='must never escape'}
+        )
+        $asset = New-Case 'zip-preflight' $unsafeBytes
+        $observation = Invoke-Captured {
+            $candidate = Download-Asset $asset
+            if ($candidate) { Expand-ChromiumAsset $candidate }
+        }
+        $script:caseNotes.result=$observation
+        Assert-NoReadyPath $observation 'Unsafe late archive member'
+        $markers = @(Get-ChildItem -LiteralPath $script:caseRoot -Recurse -File | Where-Object {$_.Name -in @('early-marker.txt','late-escape.txt')})
+        Assert-Case ($markers.Count -eq 0) 'Unsafe archive left an earlier or escaping member in the fixture.'
+        $script:caseNotes.limit='Final snapshot does not prove no transient writes or complete member preflight; native effect controls remain required.'
+    }
+
+    Invoke-Case 'actual install caller refuses a filename-only malformed manifest' {
+        $badManifestBytes = New-TestZip @([pscustomobject]@{name='extension/manifest.json'; text='this is not JSON'})
+        $null = New-Case 'manifest-shape' $badManifestBytes
+        $null = Install-TablissNG $script:targetFixture
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'Actual install caller copied a directory whose manifest is malformed.'
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'open' -and $_.value -eq 'fixture://extensions'}).Count) 'Malformed manifest reached manual Load unpacked handoff.'
+        Assert-Case (@($script:caseEvents | Where-Object {$_.effect -eq 'open' -and $_.value -eq 'https://fixture.invalid/store'}).Count -eq 1) 'Failed archive did not reach truthful store fallback.'
+    }
+
+    Invoke-Case 'malformed preset has no ready path or actual import handoff' {
+        $null = New-Case 'preset-malformed' $goodBytes
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes('{broken fixture JSON')))
+        $observed = Invoke-Captured { Download-Preset }
+        $script:caseNotes.preset=$observed
+        $candidate = if ($observed.items.Count) {[string]$observed.items[0]} else {$null}
+        $null = Show-ImportInstructions $script:targetFixture $candidate
+        Assert-NoReadyPath $observed 'Malformed preset'
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'Malformed preset reached real import-copy caller.'
+        Assert-Case (-not @($script:hostMessages | Where-Object {$_ -match 'Select the preset JSON file above'}).Count) 'Unavailable preset is described as a selectable file above.'
+    }
+
+    Invoke-Case 'valid JSON with missing canonical widget is not import-ready' {
+        $null = New-Case 'preset-missing-target' $goodBytes
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes('{"version":3,"note":"ordinary JSON is not an admitted widget preset"}')))
+        $observed = Invoke-Captured { Download-Preset }
+        $script:caseNotes.preset=$observed
+        $candidate = if ($observed.items.Count) {[string]$observed.items[0]} else {$null}
+        $null = Show-ImportInstructions $script:targetFixture $candidate
+        Assert-NoReadyPath $observed 'Preset missing the intended iframe payload'
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'Wrong-shape JSON reached import-copy caller.'
+    }
+
+    Invoke-Case 'targeted configured preset preserves unrelated strings and Unicode' {
+        $null = New-Case 'preset-target-and-encoding' $goodBytes
+        $preset = Read-TestJson $script:canonicalPresetText
+        $note = 'unrelated local=1 literal ' + [char]0x0635 + ' ' + [char]0x03A9
+        $timestamp = '2026-10-08T02:03:04.125+03:00'
+        $preset | Add-Member -NotePropertyName 'fixtureNote' -NotePropertyValue $note
+        $preset | Add-Member -NotePropertyName 'fixtureTimestamp' -NotePropertyValue $timestamp
+        $preset | Add-Member -NotePropertyName 'fixtureOptional' -NotePropertyValue ([pscustomobject]@{nullValue=$null; literal='local=1'; enabled=$false; count=7})
+        $inputText = ConvertTo-Json -InputObject $preset -Depth 50
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes($inputText)))
+        $script:WidgetHash = 'lat=24.7&lon=46.7&label=%24%28Get-Process%29%20%D8%B5%20%26%3Ctag%3E'
+        $path = Assert-OnePath @(Download-Preset) 'Configured preset'
+        $actual = Read-TestJson ([IO.File]::ReadAllText($path, [Text.Encoding]::UTF8))
+        $payload = [string]$actual.'data/orpul7IDXSSP'.input
+        $match = [regex]::Match($payload, '\bsrc\s*=\s*"([^"]*)"')
+        Assert-Case $match.Success 'Configured intended iframe has no quoted src.'
+        $src = [Net.WebUtility]::HtmlDecode($match.Groups[1].Value)
+        Assert-Case ($src -ceq ('https://theislampill.github.io/salah_widget/#' + $script:WidgetHash)) 'The intended iframe fragment changed encoded literal meaning.'
+        Assert-Case ($actual.fixtureNote -ceq $note) 'Configuration rewrite changed an unrelated local=1/Unicode string.'
+        Assert-Case ($actual.fixtureTimestamp -is [string] -and $actual.fixtureTimestamp -ceq $timestamp) 'JSON rewrite changed an unrelated timestamp string.'
+        Assert-Case ($actual.fixtureOptional.literal -ceq 'local=1' -and $actual.fixtureOptional.enabled -eq $false -and $actual.fixtureOptional.count -eq 7 -and $null -eq $actual.fixtureOptional.nullValue) 'JSON rewrite changed unrelated optional semantics.'
+        Assert-Case ($payload -match 'width:325px;height:530px' -and $payload -match 'no-referrer' -and $payload -match 'geolocation' -and $payload -match 'Prayer Times') 'Configured iframe lost unrelated supported attributes.'
+        $null = Show-ImportInstructions $script:targetFixture $path
+        Assert-Case (@($script:caseEvents | Where-Object {$_.effect -eq 'copy' -and $_.value -ceq $path}).Count -eq 1) 'Valid configured preset did not reach the actual import caller once.'
+        $script:caseNotes.readyPath=$path; $script:caseNotes.src=$src
+    }
+
+    Invoke-Case 'unadmitted existing preset path cannot enter import caller' {
+        $null = New-Case 'preset-unadmitted' $goodBytes
+        $foreign = Join-Path $script:caseRoot 'outside-admission.json'
+        [IO.File]::WriteAllText($foreign, $script:canonicalPresetText, $script:utf8)
+        $observation = Invoke-Captured { Show-ImportInstructions $script:targetFixture $foreign }
+        $script:caseNotes.import=$observation
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'An unadmitted existing JSON path reached the import clipboard.'
+    }
+
+    Invoke-Case 'case-colliding JSON keys are explicitly unsupported and never import-ready' {
+        $null = New-Case 'preset-case-collision' $goodBytes
+        $inputText = $script:canonicalPresetText.Insert($script:canonicalPresetText.IndexOf('{') + 1, '"fixtureKeys":{"Keep":"first","keep":"second"},')
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes($inputText)))
+        $script:WidgetHash = 'lat=24.7&lon=46.7'
+        $observed = Invoke-Captured { Download-Preset }
+        $script:caseNotes.preset=$observed
+        $candidate = if ($observed.items.Count) {[string]$observed.items[0]} else {$null}
+        $null = Show-ImportInstructions $script:targetFixture $candidate
+        Assert-NoReadyPath $observed 'Unsupported case-colliding JSON object'
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'Unsupported JSON keys reached import-copy caller.'
+    }
+
+    Invoke-Case 'large unrelated integer is preserved exactly or refused truthfully' {
+        $null = New-Case 'preset-large-integer' $goodBytes
+        $inputText = $script:canonicalPresetText.Insert($script:canonicalPresetText.IndexOf('{') + 1, '"fixtureInteger":9007199254740993,')
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes($inputText)))
+        $script:WidgetHash = 'lat=24.7&lon=46.7'
+        $observed = Invoke-Captured { Download-Preset }
+        $script:caseNotes.preset=$observed
+        if ($observed.items.Count) {
+            $path = Assert-OnePath $observed.items 'Integer-preserving configured preset'
+            $raw = [IO.File]::ReadAllText($path, [Text.Encoding]::UTF8)
+            Assert-Case ([regex]::IsMatch($raw, '"fixtureInteger"\s*:\s*9007199254740993\s*[,}]')) 'The unrelated integer lost precision or changed numeric representation beyond this supported contract.'
+            $null = Show-ImportInstructions $script:targetFixture $path
+            Assert-Case (@($script:caseEvents | Where-Object {$_.effect -eq 'copy' -and $_.value -ceq $path}).Count -eq 1) 'Preserved valid integer preset did not reach actual import caller.'
+        } else {
+            Assert-Case ($observed.error -or @($script:hostMessages | Where-Object {$_ -match '\[WARN\]|\[ERROR\]'}).Count) 'Unsupported integer was silently discarded without a truthful rejection.'
+            $null = Show-ImportInstructions $script:targetFixture $null
+            Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'Refused integer preset still reached clipboard.'
+        }
+    }
+
+    Invoke-Case 'ambiguous canonical iframe payload has no ready import path' {
+        $null = New-Case 'preset-ambiguous-iframe' $goodBytes
+        $inputObject = Read-TestJson $script:canonicalPresetText
+        $inputObject.'data/orpul7IDXSSP'.input = $inputObject.'data/orpul7IDXSSP'.input + $inputObject.'data/orpul7IDXSSP'.input
+        $inputText = ConvertTo-Json -InputObject $inputObject -Depth 50
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes($inputText)))
+        $script:WidgetHash = 'lat=24.7&lon=46.7'
+        $observed = Invoke-Captured { Download-Preset }
+        $script:caseNotes.preset=$observed
+        $candidate = if ($observed.items.Count) {[string]$observed.items[0]} else {$null}
+        $null = Show-ImportInstructions $script:targetFixture $candidate
+        Assert-NoReadyPath $observed 'Ambiguous canonical iframe payload'
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'Ambiguous iframe preset reached import-copy caller.'
+    }
+
+    Invoke-Case 'boolean canonical widget identity is not import-ready' {
+        $null = New-Case 'preset-boolean-identity' $goodBytes
+        $inputObject = Read-TestJson $script:canonicalPresetText
+        $inputObject.'widget/orpul7IDXSSP'.id = $true
+        $inputObject.'widget/orpul7IDXSSP'.key = $true
+        $inputText = ConvertTo-Json -InputObject $inputObject -Depth 50
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes($inputText)))
+        $observed = Invoke-Captured { Download-Preset }
+        $script:caseNotes.preset=$observed
+        $candidate = if ($observed.items.Count) {[string]$observed.items[0]} else {$null}
+        $null = Show-ImportInstructions $script:targetFixture $candidate
+        Assert-NoReadyPath $observed 'Boolean values impersonating canonical string identity'
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'Boolean widget identity reached the actual import caller.'
+    }
+
+    Invoke-Case 'string manifest version is refused by actual install caller' {
+        $badTypeBytes = New-TestZip @([pscustomobject]@{name='extension/manifest.json'; text='{"manifest_version":"3","name":"Fixture","version":"1.0"}'})
+        $null = New-Case 'manifest-string-version' $badTypeBytes
+        $null = Install-TablissNG $script:targetFixture
+        Assert-Case (-not @($script:caseEvents | Where-Object {$_.effect -eq 'copy'}).Count) 'A string manifest_version reached actual Load unpacked handoff.'
+        Assert-Case (@($script:caseEvents | Where-Object {$_.effect -eq 'open' -and $_.value -eq 'https://fixture.invalid/store'}).Count -eq 1) 'Wrong manifest type did not reach truthful fallback.'
+    }
+
+    foreach ($requiredKey in @('manifest_version','name','version')) {
+        Invoke-Case ('manifest required key is case-sensitive: '+$requiredKey) {
+            $badManifest = $manifest.Replace(('"'+$requiredKey+'":'),('"'+$requiredKey.ToUpperInvariant()+'":'))
+            $bytes = New-TestZip @([pscustomobject]@{name='extension/manifest.json';text=$badManifest})
+            $null = New-Case ('manifest-key-'+$requiredKey) $bytes
+            $null = Install-TablissNG $script:targetFixture
+            Assert-Case (-not @($script:caseEvents|Where-Object{$_.effect -eq 'copy'}).Count) ('Wrong-case required manifest key reached handoff: '+$requiredKey)
+            Assert-Case (@($script:caseEvents|Where-Object{$_.effect -eq 'open' -and $_.value -eq 'https://fixture.invalid/store'}).Count -eq 1) 'Wrong-case manifest key did not reach truthful fallback.'
+        }
+    }
+
+    foreach ($keyCase in @(
+        [pscustomobject]@{label='widget';parent='';old='widget/orpul7IDXSSP';replacement='Widget/orpul7IDXSSP'},
+        [pscustomobject]@{label='data';parent='';old='data/orpul7IDXSSP';replacement='Data/orpul7IDXSSP'},
+        [pscustomobject]@{label='id';parent='widget/orpul7IDXSSP';old='id';replacement='ID'},
+        [pscustomobject]@{label='key';parent='widget/orpul7IDXSSP';old='key';replacement='KEY'},
+        [pscustomobject]@{label='input';parent='data/orpul7IDXSSP';old='input';replacement='INPUT'}
+    )) {
+        Invoke-Case ('preset required key is case-sensitive: '+$keyCase.label) {
+            $null = New-Case ('preset-key-'+$keyCase.label) $goodBytes
+            $object = Read-TestJson $script:canonicalPresetText
+            $parent = if ($keyCase.parent) {$object.PSObject.Properties[$keyCase.parent].Value} else {$object}
+            $value = $parent.PSObject.Properties[$keyCase.old].Value
+            $parent.PSObject.Properties.Remove($keyCase.old)
+            $parent | Add-Member -NotePropertyName $keyCase.replacement -NotePropertyValue $value
+            $inputText = ConvertTo-Json -InputObject $object -Depth 50
+            Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes($inputText)))
+            $observed = Invoke-Captured { Download-Preset }
+            $script:caseNotes.preset=$observed
+            $candidate = if ($observed.items.Count) {[string]$observed.items[0]} else {$null}
+            $null = Show-ImportInstructions $script:targetFixture $candidate
+            Assert-NoReadyPath $observed ('Wrong-case required preset key '+$keyCase.label)
+            Assert-Case (-not @($script:caseEvents|Where-Object{$_.effect -eq 'copy'}).Count) ('Wrong-case preset key reached actual import caller: '+$keyCase.label)
+        }
+    }
+
+    Invoke-Case 'scratch cleanup retains ancestor leases until deletion' {
+        $null = New-Case 'cleanup-lease-order' $goodBytes
+        $scratch = $script:StagingAttempt.Scratch.Path
+        $retained = $script:StagingAttempt.Retained.Path
+        $scratchFile = New-OwnedStagingFile $scratch 'owned-scratch.txt'
+        [IO.File]::WriteAllText($scratchFile,'scratch bytes',$script:utf8)
+        $retainedFile = New-OwnedStagingFile $retained 'retained-consumer.txt'
+        [IO.File]::WriteAllText($retainedFile,'keep retained bytes',$script:utf8)
+        $observations = New-Object 'System.Collections.Generic.List[object]'
+        $wrapped = New-Object 'System.Collections.Generic.List[object]'
+        foreach ($native in $script:StagingAttempt.Leases) {
+            $lease = [pscustomobject]@{Native=$native;Facts=$native.Facts;Scratch=$scratch;Events=$observations}
+            $lease | Add-Member -MemberType ScriptMethod -Name Dispose -Value {
+                [void]$this.Events.Add([pscustomobject]@{Path=$this.Facts.Path;ScratchExists=[IO.Directory]::Exists($this.Scratch)})
+                $this.Native.Dispose()
+            }
+            [void]$wrapped.Add($lease)
+        }
+        $script:StagingAttempt.Leases=$wrapped
+        Clear-OwnedScratch
+        $script:caseNotes.disposals=@($observations.ToArray())
+        Assert-Case (-not [IO.Directory]::Exists($scratch)) 'Owned scratch did not clean up.'
+        Assert-Case ([IO.File]::ReadAllText($retainedFile,[Text.Encoding]::UTF8) -ceq 'keep retained bytes') 'Cleanup touched retained manual output.'
+        $premature = @($observations | Where-Object {$_.Path -cne $scratch -and $_.ScratchExists})
+        Assert-Case ($premature.Count -eq 0) 'An ancestor or retained lease was released before the scratch deletion boundary.'
+    }
+
+    # This ancillary native refusal control runs only when explicitly selected.
+    # Ordinary transaction and mutation prerequisites retain their original scope.
+    if ($Case -and 'native long-path refusal preserves handed-off predecessor' -in $Case) {
+    # One Windows-only refusal observation; not a mutation recipe or a long-path
+    # support requirement. Keep the existing privateFileFailures recorder intact.
+    $longPathCaseName='native long-path refusal preserves handed-off predecessor'
+    $longPathResultCount=$script:results.Count
+    $script:longPathDisposition='ACQUISITION_BLOCKED_HEALTHY_BASELINE'
+    Invoke-Case $longPathCaseName {
+        if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT -or $UsePosixNativeAdapter) {
+            $script:longPathDisposition='BLOCKED_NATIVE_HOST'
+            throw 'Native Windows without a POSIX boundary adapter is required.'
+        }
+        $asset=New-Case 'lp' $goodBytes
+        $null=Install-TablissNG $script:targetFixture
+        $healthyCopies=@($script:caseEvents|Where-Object{$_.effect -eq 'copy'})
+        Assert-Case ($healthyCopies.Count -eq 1) 'Healthy short actual caller did not hand off one admitted bundle.'
+        $oldBundle=[string]$healthyCopies[0].value
+        $oldBundleRecord=Get-AdmittedArtifact $oldBundle 'unpacked'
+        $oldAsset=@($script:StagingAttempt.Artifacts|Where-Object{$_.Kind -eq 'asset'})[0]
+        $null=Get-AdmittedArtifact $oldAsset.Path 'asset'
+        Assert-Case ([IO.File]::Exists((Join-Path $oldBundle ('assets/space '+[char]0x0635+'.txt')))) 'Healthy Unicode/spaced predecessor member is missing.'
+        $oldFiles=@()
+        foreach($path in @($oldAsset.Path)+@($oldBundleRecord.Files|ForEach-Object{$_.Path})) {
+            $proof=Get-StagedFileDigest $path
+            $oldFiles += [pscustomobject]@{path=$path;identity=$proof.Identity;hash=$proof.Hash;length=$proof.Length}
+        }
+        $bundleBefore=Get-StagingPathInfo $oldBundle
+        $retained=$script:StagingAttempt.Retained.Path
+        $retainedBefore=Get-StagingPathInfo $retained
+        $scratch=$script:StagingAttempt.Scratch.Path
+        $script:caseNotes.longPathHealthy=[pscustomobject]@{bundle=$oldBundle;archive=$oldAsset.Path;files=$oldFiles;events=@($script:caseEvents);source='Actual Install-TablissNG, admission, extraction and handoff; existing controlled transport/clipboard/browser adapters.'}
+
+        # This sentinel is fixture-owned but outside both current-attempt roots.
+        # It is not a cross-UID claim or an invitation to change ancestor ACLs.
+        $foreign=Join-Path $script:caseRoot ('outside-attempt-'+[guid]::NewGuid().ToString('N')+'.txt')
+        Assert-FixturePath $foreign
+        [SalahInstaller.StageNative]::CreatePrivateFile($foreign,$script:StagingAttempt.Sid)
+        [IO.File]::WriteAllText($foreign,'outside-current-attempt sentinel',$script:utf8)
+        $foreignBefore=[SalahInstaller.StageNative]::Inspect($foreign,$script:StagingAttempt.Sid)
+        $foreignHash=(Get-FileHash -LiteralPath $foreign -Algorithm SHA256).Hash
+        $foreignSddl=(Get-Acl -LiteralPath $foreign).Sddl
+        $savedDownloadRoot=$script:DownloadRoot
+        $script:longPathDisposition='ACQUISITION_BOUNDARY_FIXTURE_LAYOUT'
+        try {
+            $null=Assert-OwnedStagingPath $savedDownloadRoot
+            $suffix=' space '+[char]0x0635
+            $padding=227-$savedDownloadRoot.Length-1-$suffix.Length
+            Assert-Case ($padding -gt 0 -and ($padding+$suffix.Length) -le 255) 'Fixture cannot form the bounded owned destination directory.'
+            $deep=$savedDownloadRoot+'\'+('p'*$padding)+$suffix
+            Assert-Case ($deep.Length -eq 227) 'Controlled destination directory length drifted.'
+            Assert-FixturePath $deep
+            $null=New-PrivateStagingDirectory $deep
+            $deepBefore=Assert-OwnedStagingPath $deep
+            Assert-Case ($deepBefore.Directory -and $deepBefore.Private) 'Actual native destination readback is not private.'
+            # Only the fixture's routing input changes. This remains a validated
+            # descendant of the same retained root; production guards are real.
+            $script:DownloadRoot=$deep
+            $other=New-TestAsset 990 $secondBytes 'long-path-control'
+            $script:releaseFixture=[pscustomobject]@{id=201;tag_name='v-fixture';assets=@($other)}
+            $script:LatestRelease=$script:releaseFixture
+            Set-DownloadPlan @((New-DownloadStep $secondBytes),(New-DownloadStep $secondBytes))
+            $recordStart=$script:StagingAttempt.Artifacts.Count
+            $failureStart=if($script:caseNotes.Contains('privateFileFailures')){@($script:caseNotes.privateFileFailures).Count}else{0}
+            $script:caseEvents=@()
+            $script:caseNotes.longPathSetup=[pscustomobject]@{ordinaryDownloadRoot=$savedDownloadRoot;controlledDownloadRoot=$deep;directoryLength=$deep.Length;directoryFacts=$deepBefore;expectedPrivateLeafLength=40;expectedPrivatePathLength=268;expectedLengthIsNotAnObservedCall=$true;assetName=$other.name;assetSha256=(Get-BytesHash $secondBytes);adapter='Route DownloadRoot to a freshly created actual private descendant; no source function or failure result replaced.'}
+
+            $script:longPathDisposition='ASSESSING_LONG_RESULT'
+            $first=Invoke-Captured {Download-Asset $other}
+            $script:caseNotes.longPathFirst=$first
+            $firstRecords=@($script:StagingAttempt.Artifacts.ToArray()|Select-Object -Skip $recordStart)
+            $accepted=(-not $first.error -and $first.items.Count -eq 1 -and $first.items[0] -is [string] -and -not [string]::IsNullOrWhiteSpace($first.items[0]))
+            if($accepted) {
+                $acceptedPath=[string]$first.items[0]
+                $acceptedRecord=Get-AdmittedArtifact $acceptedPath 'asset'
+                Assert-Case ($acceptedPath.Length -ge 260 -and $acceptedPath.StartsWith($deep+'\',[StringComparison]::OrdinalIgnoreCase) -and $acceptedRecord.Hash -ceq (Get-BytesHash $secondBytes)) 'A short, stale or wrong-byte result cannot establish long-path capability.'
+                $script:longPathDisposition='ACQUISITION_BOUNDARY_LONG_PATH_ACCEPTED'
+                $null=Install-TablissNG $script:targetFixture
+                $script:caseNotes.longPathCapability=[pscustomobject]@{admittedAsset=[string]$first.items[0];events=@($script:caseEvents);refusalCredit=$false;mutationCredit=$false;reason='This host admitted the selected long destination. The requested refusal premise was not established.'}
+            } else {
+                $observedFailures=@($script:caseNotes.privateFileFailures|Select-Object -Skip $failureStart)
+                $boundFailures=@($observedFailures|Where-Object{
+                    $_.pathLength -eq 268 -and $_.requestedPath.Length -eq 268 -and $_.parent -ceq $deep -and
+                    $_.parentFacts -and $_.parentFacts.Private -and $_.parentFacts.TrustedParent -and $_.parentFacts.Identity -ceq $deepBefore.Identity -and
+                    @($_.exceptionChain|Where-Object{$_.nativeErrorCode -in @(3,206)}).Count -gt 0
+                })
+                $script:caseNotes.longPathActualFailures=$observedFailures
+                if(-not $first.error -or $boundFailures.Count -eq 0) {
+                    $script:longPathDisposition='ACQUISITION_BOUNDARY_FAILURE_NOT_BOUND_TO_LONG_NATIVE_PATH'
+                    throw 'No actual recorded long private-file refusal matched this controlled destination; preserve the original failure without refusal credit.'
+                }
+                $script:longPathDisposition='REFUSAL_OBSERVED'
+                Assert-NoReadyPath $first 'Actual long-path download refusal'
+                Assert-Case ($firstRecords.Count -eq 1 -and $firstRecords[0].Kind -ceq 'asset' -and $firstRecords[0].State -ceq 'publication-failed' -and -not $firstRecords[0].Path -and $firstRecords[0].Hash -ceq (Get-BytesHash $secondBytes)) 'Refused candidate acquired readiness or failed at an unrelated transaction stage.'
+                $null=Install-TablissNG $script:targetFixture
+                $attempted=@($script:StagingAttempt.Artifacts.ToArray()|Select-Object -Skip $recordStart)
+                Assert-Case ($attempted.Count -eq 2 -and @($attempted|Where-Object{$_.Kind -cne 'asset' -or $_.State -cne 'publication-failed' -or $_.Path}).Count -eq 0) 'Retry adopted a failed/partial candidate or created a ready replacement.'
+                Assert-Case ($script:downloadIndex -eq 2 -and $attempted[0].Candidate -cne $attempted[1].Candidate) 'Actual caller reused the failed candidate instead of acquiring a fresh candidate.'
+                Assert-Case ($attempted[0].Source -ceq $attempted[1].Source -and $attempted[1].Hash -ceq (Get-BytesHash $secondBytes)) 'Retry did not validate the same supported artifact bytes/source.'
+                Assert-Case (-not @($script:caseEvents|Where-Object{$_.effect -eq 'copy'}).Count) 'Long-path refusal reached a clipboard handoff.'
+                Assert-Case (@($script:caseEvents|Where-Object{$_.effect -eq 'open' -and $_.value -eq $script:targetFixture.Config.StoreUrl}).Count -eq 1) 'Actual refusal caller did not provide the truthful store fallback.'
+                $allFailures=@($script:caseNotes.privateFileFailures|Select-Object -Skip $failureStart)
+                Assert-Case ($allFailures.Count -eq 2 -and @($allFailures|Where-Object{$_.pathLength -ne 268 -or $_.parent -cne $deep -or -not $_.parentFacts.Private -or $_.parentFacts.Identity -cne $deepBefore.Identity -or @($_.exceptionChain|Where-Object{$_.nativeErrorCode -in @(3,206)}).Count -eq 0}).Count -eq 0) 'Retry did not reach the same proven native refusal boundary.'
+                foreach($path in @($attempted|ForEach-Object{$_.Candidate})+@($allFailures|ForEach-Object{$_.requestedPath})) {
+                    $unadmitted=Invoke-Captured {Get-AdmittedArtifact $path 'asset'}
+                    Assert-Case ($unadmitted.error -and $unadmitted.items.Count -eq 0) 'A failed scratch or retained candidate was adopted as admitted.'
+                }
+                $script:caseNotes.longPathRefusal=[pscustomobject]@{records=@($attempted|ForEach-Object{[pscustomobject]@{state=$_.State;path=$_.Path;candidate=$_.Candidate;publicationCandidate=$_.PublicationCandidate;failure=$_.Failure}});actualFailures=$allFailures;events=@($script:caseEvents);refusalCredit=$false;mutationCredit=$false;publicationReached='Not required; a recorded private-file failure may precede PublicationCandidate assignment.'}
+            }
+            $null=Get-AdmittedArtifact $oldAsset.Path 'asset'
+            $null=Get-AdmittedArtifact $oldBundle 'unpacked'
+            $deepAfter=Assert-OwnedStagingPath $deep
+            Assert-Case ($deepAfter.Identity -ceq $deepBefore.Identity -and $deepAfter.Private) 'Long destination identity or custody changed.'
+            $script:caseNotes.longPathDestinationAfter=$deepAfter
+        } finally {
+            $script:DownloadRoot=$savedDownloadRoot
+        }
+        $script:caseNotes.longPathEvents=@($script:caseEvents)
+        $null=Clear-OwnedScratch
+        Assert-Case (-not [IO.Directory]::Exists($scratch)) 'Verified current scratch was not cleaned after the control.'
+        $retainedAfter=[SalahInstaller.StageNative]::Inspect($retained,$script:StagingAttempt.Sid)
+        $bundleAfter=[SalahInstaller.StageNative]::Inspect($oldBundle,$script:StagingAttempt.Sid)
+        $deepAfterCleanup=[SalahInstaller.StageNative]::Inspect($deep,$script:StagingAttempt.Sid)
+        Assert-Case ($retainedAfter.Identity -ceq $retainedBefore.Identity -and $retainedAfter.Private -and $bundleAfter.Identity -ceq $bundleBefore.Identity -and $bundleAfter.Private) 'Cleanup changed the retained root or predecessor bundle.'
+        Assert-Case ($deepAfterCleanup.Identity -ceq $deepBefore.Identity -and $deepAfterCleanup.Private) 'Cleanup removed or changed the retained candidate directory.'
+        foreach($old in $oldFiles) {
+            $facts=[SalahInstaller.StageNative]::Inspect($old.path,$script:StagingAttempt.Sid)
+            Assert-Case ($facts.Identity -ceq $old.identity -and $facts.Private -and $facts.Links -eq 1 -and $facts.Length -eq $old.length -and (Get-FileHash -LiteralPath $old.path -Algorithm SHA256).Hash.ToLowerInvariant() -ceq $old.hash) 'Predecessor archive/manifest/Unicode payload changed or became unusable.'
+        }
+        $foreignAfter=[SalahInstaller.StageNative]::Inspect($foreign,$script:StagingAttempt.Sid)
+        Assert-Case ($foreignAfter.Identity -ceq $foreignBefore.Identity -and $foreignAfter.Owner -ceq $foreignBefore.Owner -and (Get-FileHash -LiteralPath $foreign -Algorithm SHA256).Hash -ceq $foreignHash -and (Get-Acl -LiteralPath $foreign).Sddl -ceq $foreignSddl) 'The outside-current-attempt sentinel changed.'
+        $script:caseNotes.longPathSafety=[pscustomobject]@{scratchAbsent=$true;retained=$retainedAfter;retainedCandidateDirectory=$deepAfterCleanup;predecessor=$bundleAfter;outsideAttemptSentinel=$foreignAfter;outsideAttemptHash=$foreignHash;crossUidClaim=$false}
+    }
+    if($script:results.Count -gt $longPathResultCount) {
+        $longPathRow=$script:results[-1]
+        $boundary=($script:longPathDisposition -like 'ACQUISITION_*' -or $script:longPathDisposition -eq 'BLOCKED_NATIVE_HOST')
+        # A supported long path is not refusal credit. A later safety assertion
+        # failure still remains FAIL instead of being hidden by that boundary.
+        if($script:longPathDisposition -eq 'ACQUISITION_BOUNDARY_LONG_PATH_ACCEPTED' -and -not $longPathRow.pass_) {$boundary=$false}
+        if($boundary) {
+            $longPathRow.pass=$false;$longPathRow.pass_=$false;$longPathRow.status=$script:longPathDisposition
+            if(-not $longPathRow.error){$longPathRow.error='Capability/acquisition boundary: no long-path refusal credit.'}
+        }
+        $longPathRow.observations.longPathDisposition=$script:longPathDisposition
+        $longPathRow.observations.longPathMutationCredit=$false
+        if($longPathRow.pass_ -and $script:longPathDisposition -eq 'REFUSAL_OBSERVED') {$longPathRow.observations.longPathRefusal.refusalCredit=$true}
+    }
+
+    }
+
+    Invoke-Case 'dry helpers refuse warm cache and all artifact effects' {
+        $asset = New-Case 'dry-helper-boundary' $goodBytes
+        $path = Assert-OnePath @(Download-Asset $asset) 'Seeded archive'
+        $null = Expand-ChromiumAsset $path
+        Set-DownloadPlan @((New-DownloadStep $script:utf8.GetBytes($script:canonicalPresetText)))
+        $presetPath = Assert-OnePath @(Download-Preset) 'Seeded preset'
+        $before = Get-FixtureSnapshot
+        $script:caseEvents = @()
+        $script:DryRun = $true
+        $init = Invoke-Captured { Initialize-Staging }
+        $download = Invoke-Captured { Download-Asset $asset }
+        $extract = Invoke-Captured { Expand-ChromiumAsset $path }
+        $preset = Invoke-Captured { Download-Preset }
+        $null = Show-ImportInstructions $script:targetFixture $presetPath
+        $null = Install-TablissNG $script:targetFixture
+        $script:caseNotes.guards=[pscustomobject]@{init=$init; download=$download; extract=$extract; preset=$preset}
+        Assert-NoReadyPath $download 'Dry warm-cache download'
+        Assert-NoReadyPath $extract 'Dry extraction'
+        Assert-NoReadyPath $preset 'Dry preset'
+        Assert-Case ($script:caseEvents.Count -eq 0) 'Dry helper reached a transport, clipboard, browser or prompt boundary.'
+        Assert-Case ((Get-FixtureSnapshot) -ceq $before) 'Dry helper changed fixture files or directories.'
+    }
+} catch {
+    $script:results += [pscustomobject]@{case='fixture/bootstrap'; pass_=$false; pass=$false; status='SETUP_ERROR'; error=$_.Exception.Message}
+} finally {
+    $env:TEMP = $script:oldTemp
+    $env:TMP = $script:oldTmp
+    $env:USERPROFILE = $script:oldUserProfile
+}
+
+$receipt = [ordered]@{
+    schema='r0015-powershell-transactions-v1'; source=[IO.Path]::GetFullPath($SourceFile);
+    sourceSha256=(Get-FileHash -LiteralPath $SourceFile -Algorithm SHA256).Hash.ToLowerInvariant();
+    testSha256=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLowerInvariant();
+    presetSha256=(Get-FileHash -LiteralPath $PresetFile -Algorithm SHA256).Hash.ToLowerInvariant();
+    observedUtc=[DateTime]::UtcNow.ToString('o'); runtime=$PSVersionTable.PSVersion.ToString();
+    edition=$PSVersionTable.PSEdition; platform=[Environment]::OSVersion.ToString();
+    processArchitecture=$env:PROCESSOR_ARCHITECTURE;
+    scope=$(if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {'native Windows files; ACL-specific controls are separate'} elseif ($UsePosixNativeAdapter) {'supplemental POSIX native-boundary adapter; no Windows ACL/NTFS/lease qualification'} else {'supplemental native POSIX files; no Windows ACL/NTFS qualification'});
+    nativeBoundaryAdapter=[bool]$UsePosixNativeAdapter;
+    fixtureRoot=$script:fixtureRoot; retainedFixture=$true; results=@($script:results)
+}
+$receipt | ConvertTo-Json -Depth 50
+if (-not $script:results.Count -or @($script:results | Where-Object {-not $_.pass_}).Count) { exit 1 }
+exit 0
