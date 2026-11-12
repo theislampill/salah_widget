@@ -104,9 +104,10 @@ function Read-CompilerPathFacts($Handle, [string]$Path, [string]$Sid, [string]$T
         $actualOwner = if ($security.Owner) { $security.Owner.Value } else { '' }
         $trustedOwners = @($Sid,'S-1-5-18','S-1-5-32-544'); if ($TrustedInstallerSid) { $trustedOwners += $TrustedInstallerSid }
         $writeRestricted = $null -ne $security.DiscretionaryAcl
-        $parentSafe = $actualOwner -ceq $Sid -and $writeRestricted
+        # Final parent: owner is the user, SYSTEM or Administrators (the only admitted writers); the child stays user-owned.
+        $parentSafe = $actualOwner -cin @($Sid,'S-1-5-18','S-1-5-32-544') -and $writeRestricted
         $ancestorSafe = $actualOwner -cin $trustedOwners -and $null -ne $security.DiscretionaryAcl
-        $private = $parentSafe -and ($security.ControlFlags -band [Security.AccessControl.ControlFlags]::DiscretionaryAclProtected) -ne 0 -and $security.DiscretionaryAcl.Count -eq 1
+        $private = $actualOwner -ceq $Sid -and $writeRestricted -and ($security.ControlFlags -band [Security.AccessControl.ControlFlags]::DiscretionaryAclProtected) -ne 0 -and $security.DiscretionaryAcl.Count -eq 1
         foreach ($ace in $security.DiscretionaryAcl) {
             if ($ace -isnot [Security.AccessControl.CommonAce] -or $ace.IsCallback) { $parentSafe=$false; $ancestorSafe=$false; $private=$false; $writeRestricted=$false; continue }
             $allowed = $ace.AceQualifier -eq [Security.AccessControl.AceQualifier]::AccessAllowed
@@ -498,9 +499,10 @@ namespace SalahInstaller {
         RawSecurityDescriptor security = new RawSecurityDescriptor(bytes, 0);
         string actualOwner = security.Owner == null ? "" : security.Owner.Value;
         bool writeRestricted = security.DiscretionaryAcl != null;
-        bool parentSafe = actualOwner == sid && writeRestricted;
+        // Final parent: owner is the user, SYSTEM or Administrators (the only admitted writers); the child stays user-owned.
+        bool parentSafe = (actualOwner == sid || actualOwner == "S-1-5-18" || actualOwner == "S-1-5-32-544") && writeRestricted;
         bool ancestorSafe = TrustedOwner(actualOwner,sid) && security.DiscretionaryAcl != null;
-        bool privateAcl = parentSafe && (security.ControlFlags & ControlFlags.DiscretionaryAclProtected) != 0 && security.DiscretionaryAcl.Count == 1;
+        bool privateAcl = actualOwner == sid && writeRestricted && (security.ControlFlags & ControlFlags.DiscretionaryAclProtected) != 0 && security.DiscretionaryAcl.Count == 1;
         if (security.DiscretionaryAcl != null) foreach (GenericAce generic in security.DiscretionaryAcl) {
           CommonAce ace = generic as CommonAce;
           if (ace == null || ace.IsCallback) { parentSafe = false; ancestorSafe = false; privateAcl = false; writeRestricted = false; continue; }
