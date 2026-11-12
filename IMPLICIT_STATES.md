@@ -144,6 +144,13 @@ PowerShell's `Clear-OwnedScratch` sits in a `finally` that only begins after the
     profile and TEMP activity. Only the held source windows are equal.
   - On Mac, a direct-transport mutant added 41 Python-cache entries, preserved as an
     adverse delta.
+  - The combined Linux run 43171927513 remains FAIL 37/45, with eight
+    `PRODUCT_ASSERTION_FAILED` ownership refusals. It ran the same installer bytes (see
+    [R0016](docs/state-contracts/R0016.md), the "Preserved earlier native evidence" and
+    successor-record limits). The 45-PASS / 61-phase result is a later run (43173749709)
+    in an owned scaffold. Only the named reused subgroup of 43171927513 is credited.
+  - The receiving review did not recount the 248 macOS instrument rows of run
+    43173749688.
 - The independent security review of the exact tree is recorded in
   [R0016](docs/state-contracts/R0016.md), "Successor receiving and merge record". It
   reports that sandboxed dry-run before/after snapshots were identical and that no stub
@@ -204,7 +211,9 @@ R0013 owns this machine. R0015 and R0016 consume its result.
    `profile-path-unsupported`.
 2. Legacy flag (`has_old` / `HasLegacyTabliss`). This flag overrides knowledge.
 3. Derived eligibility: `eligible-known`, `unknown-held` or `legacy-refused`.
-4. Selection membership: `all`, or an explicit index list.
+4. Selection membership: `all`, or an explicit index list. In normal mode, Bash first
+   needs a readable controlling terminal (`acquire_terminal` ~L874). Without one, the
+   run exits 1 before selection and before any staging.
 5. Bash only: a record rejected for a delimiter or newline. It gets no index, cannot be
    selected, and is counted as held only under `all`.
 
@@ -225,15 +234,29 @@ R0013 owns this machine. R0015 and R0016 consume its result.
 - A held or refused target never reaches staging initialization, download, extraction,
   clipboard, browser opening or preset dispatch.
 - Independently eligible peers remain usable.
-- Unknown is never treated as verified absence.
+- Unknown is never treated as verified absence, within the scope of each detector.
+  Firefox metadata failures and missing profiles become `unknown`. Chromium keeps R0013's
+  existing detector scope ([R0013](docs/state-contracts/R0013.md) ~L66–70, "Chromium
+  retains its existing detector scope"). A PowerShell Chromium profile whose
+  `Preferences` read fails therefore still derives its knowledge from the directory
+  check alone (see Observed facts).
 
 **Observed facts.**
 - One derived predicate per host serves preview, pre-staging counting and dispatch
   (source above).
-- R0013 records the Windows rows as re-acquired in run 43146668695 (attempt 2, all 11
-  suites).
+- R0013 records the Windows rows as re-acquired in run 43146668695. Per `gh run view`,
+  that run is on EARLIER bytes: head `ddfb872a`, with `install.ps1` blob `cf353a7f`. Its
+  windows-2022 contract-host job passed on attempts 2 and 3. Its windows-2025 job failed
+  in all three attempts, and the run's overall conclusion is failure.
 - Bash Chromium discovery checks only the `Extensions/<id>` directories. PowerShell also
-  reads `Preferences` `extensions.settings`.
+  reads `Preferences` `extensions.settings`. A locked or malformed `Preferences` read is
+  silently swallowed (`install.ps1` ~L921–923). The profile then rests on the directory
+  check alone, and with no ID directory it becomes `known-neither` (eligible). This is a
+  limitation recorded within R0013's Chromium detector scope, not a violation of the
+  scoped invariant above.
+- Dispatch re-derives eligibility from the stored discovery record (Bash `TARGETS` row;
+  PS target object), not from a fresh disk read. Profile changes after discovery are not
+  observed.
 
 **Hypotheses.**
 - A legacy Tabliss loaded through "Load unpacked" has a path-derived ID, not the store
@@ -311,12 +334,24 @@ and processes already running as the same user are outside the isolation claim (
   - Real default `USERPROFILE` and `TEMP` were admitted on windows-2022 and
     windows-2025.
   - Every default `TMPDIR` candidate was admitted on macos-15 and ubuntu-24.04.
-- On the previous Bash bytes, run 43158222646 shows the macOS default-environment
-  positives failing.
+- Run 43158222646 concluded success. Its replay of the old Bash bytes (blob `d7f8267d`)
+  produced the EXPECTED failures of the macOS default-environment positives, which is
+  the discriminator showing that B2 is needed.
 - Delta against accepted main `3b0e6141`, from `git diff`:
   - The PowerShell staging and trust functions are textually unchanged.
-  - Bash `trusted_parent` and `verify_root` changed only from here-strings to process
-    substitution.
+  - In Bash `trusted_parent` and `verify_root`, only the field reads changed, from
+    here-strings to process substitution.
+  - The same R0016 change converted the other here-strings and here-documents to pipes or
+    process substitution. That covers the embedded Python in `firefox_status`,
+    `select_asset`, `validate_asset`, `expand_chromium_asset` and `download_preset`, the
+    record reads in `detect_targets`, `download_tablissng_asset` and the selection and
+    dispatch loops, and the two `cat` text blocks.
+  - `discovery_path_output` and `firefox_discovery_python` are new (preview-only), not
+    converted.
+  - This is the Apple Bash 3.2 area. On the final bytes, it is covered natively by the
+    R0016 macOS run 43173749688 suites, as recorded in the R0016 posix report:
+    install-bash 26, entry-bash 25, staging-native 9, staging-parent 23, read-only 6 and
+    preview 46. The R0015 job `posix (macos-15, Darwin)` in 43239081990 was never run.
 - The R0015 suites were re-run on the R0016 installer bytes at head `dfff0f8f`:
   - Run 43239081990 is green on Linux and on windows-2022 and windows-2025, including
     the owner/archive controls, the default-environment gates and the standard-user
@@ -325,8 +360,8 @@ and processes already running as the same user are outside the isolation claim (
   - Both runs are recorded in [R0016](docs/state-contracts/R0016.md), "Successor
     receiving and merge record".
 - `posix (macos-15, Darwin)` in run 43239081990 never acquired a runner, and that run's
-  overall conclusion is failure. The macOS native staging suite was therefore not re-run
-  on these bytes, and it still rests on earlier-byte evidence plus the delta above.
+  overall conclusion is failure. The R0015 job's own macOS run is absent. The macOS
+  native staging suites on the final bytes come from the R0016 run 43173749688 instead.
 - The Windows staging parent (`$env:TEMP`) and the compiler parent
   (`[IO.Path]::GetTempPath()`, which prefers `TMP`) are read from different sources.
   Each is admitted independently.
@@ -349,7 +384,8 @@ and processes already running as the same user are outside the isolation claim (
 - Private-child owner term (`$private` / `privateAcl` require owner = user):
   `enforced in code`. R0015 records that no mutant pins it.
 - Refusal-message wording ("not owned by this user"): `unresolved`. It under-describes
-  the admitted owner set (see Open findings).
+  the admitted owner set. This is recorded in R0015's NOT DONE follow-up list
+  ([R0015](docs/state-contracts/R0015.md), "Recorded follow-ups, NOT DONE").
 - The transaction contract's former "self-owned immediate parent" sentence: corrected in
   [the R0015 Windows transactions contract](docs/r0015-artifact-transactions.md) to state
   the current rule; now `documented`.
@@ -393,10 +429,11 @@ for manual use. This machine also governs what cleanup may delete.
 
 | From | Event | Guard | To / effect |
 |---|---|---|---|
-| unset | eligible selection confirmed | trust admitted (ISM-INST-003); Bash requires DRY_RUN=0 and runs once; PS throws if an attempt already exists (~L695) | exclusive creation (Bash `mktemp -d` under umask 077; PS `CreateDirectoryW` with a protected DACL at creation), then identity readback |
+| unset | eligible selection confirmed | trust admitted (ISM-INST-003); Bash requires DRY_RUN=0 and is idempotent (a second call re-verifies both roots, ~L191); only PS throws on re-entry (~L695) | exclusive creation (Bash `mktemp -d` under umask 077; PS `CreateDirectoryW` with a protected DACL at creation), then identity readback |
 | created | identity readback fails | n/a | Bash: initialization fails, cleanup refuses deletion, and the root is retained with a warning. PS: `initialization-failed`, leases disposed, cleanup skipped and retained |
+| PS `active` (inside `Initialize-Staging`) | creating the `downloads`/`presets` subdirectories fails (~L719–722) | n/a | `initialization-failed`. The already verified scratch is then retained, not deleted (safe, but it leaks) |
 | verified | each write | `guard_owned_path` / `Assert-OwnedStagingPath` re-verify root identity and each component | write proceeds, or refusal |
-| active | normal end, failure or INT/TERM | Bash: the EXIT trap fires after INT/TERM is converted to an exit; PS: `finally` | scratch is deleted only if the root identity matches (Bash: `verify_root` then `rm -rf`; PS: every descendant private, plus identity, then `Directory.Delete`). Otherwise it is retained with a warning. The retained root is always kept |
+| active | normal end or failure (Bash also INT/TERM) | Bash: the EXIT trap fires after INT/TERM is converted to an exit; PS: `finally` on normal end or a thrown error | scratch is deleted only if the root identity matches (Bash: `verify_root` then `rm -rf`; PS: every descendant private, plus identity, then `Directory.Delete`). Otherwise it is retained with a warning. The retained root is always kept |
 | non-zero exit with a bundle | `finish_installer` | n/a | "Partial bundle retained; manual actions remain pending" |
 | closed | cleanup invoked again | PS: the `closed` status returns early (~L730) | no-op |
 | any | SIGKILL, host or window termination | no handler can run | scratch (and possibly partial candidates) remain in the temporary parent |
@@ -431,12 +468,17 @@ for manual use. This machine also governs what cleanup may delete.
   is untested.
 - Bash probably runs the EXIT trap when it is terminated by an untrapped SIGHUP (a closed
   terminal). This is not covered by a cited test.
+- PowerShell Ctrl+C probably still runs the `finally` (pipeline stop), so scratch cleanup
+  would follow. No cited test covers it. A TERM-style process kill or a closed window
+  runs no `finally` (see Unknowns).
 
 **Unknowns.**
 - Leakage after SIGKILL or a closed console. A kill cannot run cleanup. Leaked scratch is
   never adopted by a later run, because names are fresh, but nothing reports or removes
   it. This registry found no NOT DONE record for it in the R0015 ledger.
 - Behaviour when INT arrives during the EXIT trap itself (re-entrancy during `rm -rf`).
+- PowerShell interruption: no cited test exercises Ctrl+C, process termination or a
+  closed console during an active attempt.
 
 **Hardening status.**
 - Freshness, confinement and identity-checked cleanup: `enforced and covered by tests`
@@ -592,6 +634,15 @@ ZIP/XPI, the unpacked Chromium tree and the configured preset.
   transaction and owner/archive suites green on windows-2022 and windows-2025, and the
   Linux posix job green. The macOS posix job was not acquired, so Bash admission on Apple
   hosts was not re-run on these bytes.
+- PowerShell shares state through `$script:` variables: `LatestRelease` (release
+  metadata, fetched once per run), `WorkRoot`, `DownloadRoot` and `PresetRoot` (set by
+  `Initialize-Staging`), and `StagingAttempt`. `StagingAttempt` and `LatestRelease` are
+  reset to `$null` at the start of each run (~L52, ~L1140). Under `irm | iex` the
+  variables live in the caller's session between runs (see ISM-INST-005).
+- Bash `expand_chromium_asset` returns the directory of `sorted(manifests)[0]`, so a
+  nested `a/manifest.json` sorts before a root `manifest.json`. PowerShell refuses an
+  archive with more than one `manifest.json` and returns the validated manifest's
+  directory.
 - Bash has no declared-digest or size check and does not require an `https://` download
   URL. The R0015 Windows contract states that it does not certify the original Bash
   obligations.
@@ -657,6 +708,7 @@ copying, page opening, acknowledgement and the retained bundle's lifetime.
 | `ask` with an invalid choice | refused, exit 1 (~L738) | any input other than `2` selects GitHub (~L1544) |
 | `store` | open or print the store URL, then ask for Enter | same |
 | GitHub download or validation failure | fall back to the store page and acknowledgement | the same, inside the `try` (~L1596–1600) |
+| Chromium extraction failure | `expand_chromium_asset` fails, so `install_tablissng` returns 1 and the run exits 1 (~L761, ~L934); partial bundle retained | `Expand-ChromiumAsset` throws inside the same `try` (~L1563), so it falls back to the store page (~L1596–1600) and the run continues |
 | Artifact admitted | print the path, try the clipboard, open the manager page, ask for Enter; `ASSET_STAGED=1` | admission re-checked; record set to `handed-off` after the clipboard attempt, then the page opened |
 | Acknowledgement input ends | `read_answer` fails, exit 1, partial bundle retained | `Read-Host` behaviour depends on the host (see Hypotheses) |
 | Summary with nothing staged | "No files were staged…", exit 1 (~L950) | prints the retained bundle path and exits 0 |
@@ -735,7 +787,7 @@ verified, no change needed; (c) material, but implementation or verification inc
 | Bash publishes with a rename after validating the partial, without a post-rename readback. Same inode in the private root; issue 21 row 21-07 requires validation before publication | 006 |
 | Transport timeouts and redirect policy (recorded NOT DONE in R0015) | 006 |
 | PS non-interactive acknowledgement can trigger a store fallback after a hand-off; PS exits 0 when nothing was staged (Bash exits 1); empty preset URL differs between hosts | 007 |
-| README sentence "Preview creates, overwrites and deletes no files or directories" is stronger than the host-level evidence. It was not changed, because `tools/qualification/installer_preview_docs.cjs` pins the README SHA256 and that exact phrase | 001 |
+| README sentence "Preview creates, overwrites and deletes no files or directories" is stronger than the host-level evidence. Two examples are the PowerShell host's own start-up profile writes, and Bash discovery running `python3` from PATH, whose start-up the installer does not control. A wording change would need a new R0016 documentation receipt, because `tools/qualification/installer_preview_docs.cjs` pins the README SHA256 and that sentence. It therefore ties to rows 22-14 and R0016-A06 | 001 |
 
 ### Final focused sweep (2026-11-12, merged main `e4dbf91b`)
 
