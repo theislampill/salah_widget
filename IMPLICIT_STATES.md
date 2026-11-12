@@ -10,8 +10,10 @@ the source already relies on.
 
 Scope: this registry covers only the installer workflows examined for R0015 (issue 21:
 artifact transactions and staging trust) and R0016 (issue 22: dry-run as an offline,
-effect-free preview), as of commit `dfff0f8f3921b9f114f6922fd07174500b8e0b9d`
-(installer SHA256: `install.sh` `27442c0e…`, `install.ps1` `07671cb9…`). Absence of
+effect-free preview), as of merged main `e4dbf91be91f7539b36297e030f86e2a0e99f54d`
+(the PR 86 merge; its tree is identical to the candidate `dfff0f8f`). The installer
+blobs are `install.sh` `e2e2640e` (SHA256 `27442c0e…`) and `install.ps1` `28cfdae7`
+(SHA256 `07671cb9…`). Absence of
 an entry is not a claim that no other implicit machine exists.
 
 Authority rule. The state model describes allowed transitions. Execution records
@@ -142,6 +144,14 @@ PowerShell's `Clear-OwnedScratch` sits in a `finally` that only begins after the
     profile and TEMP activity. Only the held source windows are equal.
   - On Mac, a direct-transport mutant added 41 Python-cache entries, preserved as an
     adverse delta.
+- The independent security review of the exact tree is recorded in
+  [R0016](docs/state-contracts/R0016.md), "Successor receiving and merge record". It
+  reports that sandboxed dry-run before/after snapshots were identical and that no stub
+  was invoked.
+- The same review observed host-level start-up effects in a no-op baseline too. Those
+  effects come from the shell, the PowerShell host or a started interpreter, and fall
+  outside the installer's no-effect statements. The review assessed macOS Python
+  resolution by reasoning only and did not run Apple Bash 3.2.
 
 **Hypotheses.**
 - The unequal Windows full-lifecycle comparisons are attributed to host startup and
@@ -303,12 +313,20 @@ and processes already running as the same user are outside the isolation claim (
   - Every default `TMPDIR` candidate was admitted on macos-15 and ubuntu-24.04.
 - On the previous Bash bytes, run 43158222646 shows the macOS default-environment
   positives failing.
-- Candidate delta, from `git diff` against accepted main `3b0e6141`:
+- Delta against accepted main `3b0e6141`, from `git diff`:
   - The PowerShell staging and trust functions are textually unchanged.
   - Bash `trusted_parent` and `verify_root` changed only from here-strings to process
     substitution.
-  - The R0015 runs therefore bind earlier bytes, and current Bash staging relies on
-    R0016's Mac and Linux receipts.
+- The R0015 suites were re-run on the R0016 installer bytes at head `dfff0f8f`:
+  - Run 43239081990 is green on Linux and on windows-2022 and windows-2025, including
+    the owner/archive controls, the default-environment gates and the standard-user
+    observation. `environment-posix (macos-15)` was green on attempt 3.
+  - Run 43239087955 passed the staging-parent suite on ubuntu-24.04 and macos-15.
+  - Both runs are recorded in [R0016](docs/state-contracts/R0016.md), "Successor
+    receiving and merge record".
+- `posix (macos-15, Darwin)` in run 43239081990 never acquired a runner, and that run's
+  overall conclusion is failure. The macOS native staging suite was therefore not re-run
+  on these bytes, and it still rests on earlier-byte evidence plus the delta above.
 - The Windows staging parent (`$env:TEMP`) and the compiler parent
   (`[IO.Path]::GetTempPath()`, which prefers `TMP`) are read from different sources.
   Each is admitted independently.
@@ -324,13 +342,17 @@ and processes already running as the same user are outside the isolation claim (
 
 **Hardening status.**
 - B1/B2 final-parent rules: `independently verified` for bytes `288d8ba1`/`4d1818f8`
-  (run 43162309006; independent reviews of `852d026c` recorded in R0015). Candidate
-  bytes are associated by the textual delta above, not by re-execution of that suite.
+  (run 43162309006; independent reviews of `852d026c` recorded in R0015).
+- Same rules on the merged bytes: `enforced and covered by tests`. Re-run in 43239081990
+  (Windows owner controls; default environments on Linux, Windows and macos-15) and
+  43239087955. The macOS native staging suite was not re-run.
 - Private-child owner term (`$private` / `privateAcl` require owner = user):
   `enforced in code`. R0015 records that no mutant pins it.
-- Refusal-message wording ("not owned by this user") and the transaction contract's
-  "self-owned immediate parent" sentence: `unresolved`. Both under-describe the admitted
-  owner set (see Open findings).
+- Refusal-message wording ("not owned by this user"): `unresolved`. It under-describes
+  the admitted owner set (see Open findings).
+- The transaction contract's former "self-owned immediate parent" sentence: corrected in
+  [the R0015 Windows transactions contract](docs/r0015-artifact-transactions.md) to state
+  the current rule; now `documented`.
 
 ---
 
@@ -395,6 +417,10 @@ for manual use. This machine also governs what cleanup may delete.
 - R0015 records that native Apple staging passed nine controls, including INT/TERM
   cleanup (on earlier Bash bytes).
 - In run 43162309006, Windows transactions passed 28/28 and staging custody 8/8 per host.
+- The R0015 suites were re-run on the R0016 bytes in run 43239081990 (attempt 3): the
+  Linux posix job and both Windows jobs were green. The `posix (macos-15, Darwin)` job,
+  which carries the Apple native staging and lifetime suite, never acquired a runner. The
+  Apple INT/TERM evidence therefore still binds earlier Bash bytes.
 - `trap` covers EXIT, INT and TERM only (~L221–223).
 
 **Hypotheses.**
@@ -562,6 +588,10 @@ ZIP/XPI, the unpacked Chromium tree and the configured preset.
   (backslash guard, digest, declared size, CRC); transaction mutations 22/22.
 - R0015's native6 reviews (run 43028305607) cover 13 prerequisites and nine mutant pairs
   per host.
+- On the R0016 installer bytes (head `dfff0f8f`), run 43239081990 re-ran the Windows
+  transaction and owner/archive suites green on windows-2022 and windows-2025, and the
+  Linux posix job green. The macOS posix job was not acquired, so Bash admission on Apple
+  hosts was not re-run on these bytes.
 - Bash has no declared-digest or size check and does not require an `https://` download
   URL. The R0015 Windows contract states that it does not certify the original Bash
   obligations.
@@ -672,23 +702,66 @@ Classification: (a) material acceptance blocker requiring correction; (b) docume
 verified, no change needed; (c) material, but implementation or verification incomplete;
 (d) non-blocking, or out of scope for later work.
 
-| Finding | Entry | Class |
-|---|---|---|
-| Preview guards and the whole-entry early return on both hosts | 001 | (b), within R0016's recorded scope |
-| Host-wide zero effects and transport absence in preview are not established (no hard containment; null telemetry; Windows startup and profile effects) | 001 | (c) |
-| Eligibility gating before staging and at dispatch | 002 | (b) |
-| PowerShell drops malformed or unknown selection tokens instead of refusing them (Bash refuses) | 002 | (d) |
-| B1/B2 staging-parent rules | 003 | (b), for the qualified bytes; candidate bytes associated by delta |
-| No mutant pins the private-child owner term; the refusal text, and the transaction contract's "self-owned immediate parent" sentence, under-describe the admitted owner set | 003 | (d), recorded NOT DONE in R0015 |
-| Newline check only on the supplied spelling | 003 | (d), recorded as theoretical in R0015 |
-| Identity-checked scratch cleanup and retained bundles through exit, failure, INT and TERM | 004 | (b) |
-| Kill-time or closed-console scratch leakage, and the interrupt window before a root is recorded | 004 | (d); found no prior NOT DONE record |
-| Session-persistent `StageNative` reuse under `irm \| iex` (possibly stale predicates) | 005 | (c) |
-| Windows artifact admission and publication | 006 | (b) |
-| Bash preset rewrite replaces `local=1` across the whole text, does not validate `SALAH_WIDGET_HASH` and normalises line endings | 006 | (d); outside the Windows transaction contract |
-| Transport timeouts and redirect policy | 006 | (d), recorded NOT DONE in R0015 |
-| PS non-interactive acknowledgement can trigger a store fallback after a hand-off; PS exits 0 when nothing was staged (Bash exits 1); empty preset URL differs between hosts | 007 | (d) |
+**(a) Blockers.** None.
 
-No finding in this registry is classified (a). No transition was traced end to end that
-violates an accepted staging, ownership, transactional-publication or preview no-effect
-guarantee on the candidate bytes.
+**(b) Documented and verified, no change needed.**
+
+| Finding | Entry |
+|---|---|
+| Preview guards and the whole-entry early return on both hosts, within R0016's recorded scope | 001 |
+| Eligibility gating before staging and at dispatch | 002 |
+| B1/B2 staging-parent rules; re-run on the merged bytes except the macOS native staging suite | 003 |
+| Identity-checked scratch cleanup, and retained bundles through exit, failure, INT and TERM | 004 |
+| Windows artifact admission and publication with readback | 006 |
+| Transaction contract's final-parent owner rule, now corrected | 003 |
+
+**(c) Material, but implementation or verification incomplete.**
+
+| Finding | Entry |
+|---|---|
+| Host-wide zero effects and transport absence in preview are not established: no hard containment, null telemetry, and host start-up effects outside the installer's statements | 001 |
+| Session-persistent `StageNative` reuse under `irm \| iex` (possibly stale predicates) | 005 |
+| `posix (macos-15, Darwin)` not acquired in run 43239081990, so Apple native staging, lifetime and admission were not re-run on the merged bytes | 003, 004, 006 |
+
+**(d) Non-blocking, or out of scope for later work.**
+
+| Finding | Entry |
+|---|---|
+| PowerShell drops malformed or unknown selection tokens instead of refusing them (Bash refuses) | 002 |
+| No mutant pins the private-child owner term; the refusal text under-describes the admitted owner set (recorded NOT DONE in R0015) | 003 |
+| Newline check only on the supplied spelling (recorded as theoretical in R0015) | 003 |
+| Kill-time or closed-console scratch leakage, and the interrupt window before a root is recorded (no prior NOT DONE record found) | 004 |
+| Bash preset rewrite replaces `local=1` across the whole text, does not validate `SALAH_WIDGET_HASH` and normalises line endings; outside the Windows transaction contract | 006 |
+| Bash publishes with a rename after validating the partial, without a post-rename readback. Same inode in the private root; issue 21 row 21-07 requires validation before publication | 006 |
+| Transport timeouts and redirect policy (recorded NOT DONE in R0015) | 006 |
+| PS non-interactive acknowledgement can trigger a store fallback after a hand-off; PS exits 0 when nothing was staged (Bash exits 1); empty preset URL differs between hosts | 007 |
+| README sentence "Preview creates, overwrites and deletes no files or directories" is stronger than the host-level evidence. It was not changed, because `tools/qualification/installer_preview_docs.cjs` pins the README SHA256 and that exact phrase | 001 |
+
+### Final focused sweep (2026-11-12, merged main `e4dbf91b`)
+
+The merged `install.sh` and `install.ps1` were re-read for five transition classes.
+
+1. A refused, held or unknown target reaching staging or download. Not found. Staging
+   needs at least one eligible selected target (Bash ~L910–911; PS ~L1695–1700). Each
+   dispatch re-derives eligibility and skips held and refused targets before any
+   install or preset call (Bash ~L922–931; PS ~L1707–1719).
+2. Cleanup acting on a path whose identity was not verified. Not found.
+   - Bash `cleanup_staging` deletes only after `verify_root` matches the recorded
+     identity (~L210). Bash does not identity-check descendants, but `rm -rf` follows no
+     links inside the 0700 root.
+   - PS `Clear-OwnedScratch` (~L733–740) and `Clear-StagingCompilerContext` (~L234–252)
+     verify the root and every descendant first.
+3. A preview path reaching staging, network, clipboard or open. Not found. Both
+   installers exit at the preview branch (Bash ~L871; PS ~L1666) before terminal
+   acquisition or staging, and every effectful helper is guarded.
+4. An artifact used before its admission completed. Not found.
+   - Bash consumers receive a path only after validation and rename.
+   - PS hand-off re-checks with `Get-AdmittedArtifact` (~L1509, ~L1560, ~L1564).
+5. Publication without readback. Not found against an accepted guarantee.
+   - PS `Publish-OwnedFile` reads back both the copy and the published file (~L1209,
+     ~L1213).
+   - Bash validates the partial and renames it without a post-rename readback, which
+     is classified (d) above.
+
+No transition was traced end to end that violates an accepted staging, ownership,
+transactional-publication or preview no-effect guarantee on the merged bytes.
