@@ -1,0 +1,78 @@
+name: R0016 Linux ownership discriminator and original normal pair
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - tools/qualification/installer_preview_linux_normal_ownership.py
+      - .github/workflows/installer-preview-linux-normal-ownership.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-linux-normal-ownership-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /tests/install-preview.py
+            /tests/install-entry-bash.py
+            /tools/qualification/installer_preview_linux_namespace_successor.py
+            /tools/qualification/installer_preview_linux22_prerequisites.py
+            /tools/qualification/installer_preview_linux_normal_ownership.py
+      - name: Reuse signed jammy containment preparation
+        shell: bash
+        run: |
+          /usr/bin/python3 tools/qualification/installer_preview_linux22_prerequisites.py --output "$RUNNER_TEMP/installer-linux-normal-preparation"
+      - name: Measure ownership and containment, then execute only the original normal pair
+        shell: bash
+        run: |
+          /usr/bin/python3 tools/qualification/installer_preview_linux_normal_ownership.py --output "$RUNNER_TEMP/installer-linux-normal-ownership" --source-commit "${{ github.sha }}" --run-normal-pair
+      - name: Preserve raw preparation records and the complete diagnostic root
+        if: always()
+        shell: bash
+        run: |
+          /usr/bin/python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          parent = Path(os.environ['RUNNER_TEMP'])
+          root = parent / 'installer-linux-normal-ownership'
+          root.mkdir(mode=0o700, exist_ok=True)
+          preparation = parent / 'installer-linux-normal-preparation'
+          if preparation.is_dir() and not preparation.is_symlink():
+              retained = root / 'runner-preparation'
+              retained.mkdir(mode=0o700)
+              inventory = []
+              for path in sorted(preparation.iterdir()):
+                  if path.is_file() and not path.is_symlink():
+                      raw = path.read_bytes()
+                      (retained / path.name).write_bytes(raw)
+                      inventory.append({'name': path.name, 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest(), 'retained': True})
+                  elif path.is_dir() and not path.is_symlink() and path.name in ('apt-lists', 'apt-cache', 'empty-config-parts'):
+                      inventory.append({'name': path.name, 'retained': False, 'reason': 'Existing reviewed preparation policy: disposable APT index/cache/empty directory. Exact configuration and raw streams retained; no diagnostic fixture, event, snapshot or raw capture is excluded.'})
+                  else:
+                      raise RuntimeError('Unexpected preparation entry type: ' + path.name)
+              (retained / 'archive-inventory.json').write_text(json.dumps(inventory, indent=2) + '\n')
+          PY
+          /usr/bin/python3 tools/qualification/installer_preview_linux_normal_ownership.py --output "$RUNNER_TEMP/installer-linux-normal-ownership" --archive "$RUNNER_TEMP/installer-linux-normal-ownership.tar.gz"
+      - name: Retain original Linux ownership and normal-pair evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-linux-normal-ownership-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-linux-normal-ownership.tar.gz
+          if-no-files-found: error
+          retention-days: 30
