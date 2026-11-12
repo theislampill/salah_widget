@@ -1,0 +1,199 @@
+{
+  "schema": "r0013-integration-hosted-windows-receipts.v1",
+  "workflow": ".github/workflows/r0013-integration-qualification.yml",
+  "runId": 43145016304,
+  "retained": "small JSON/text receipts only; full artifact tarballs are not committed and are identified by sha256",
+  "attempts": {
+    "1": {
+      "Windows": {
+        "collectorStatus": "FAIL",
+        "commit": "ab5bc2d4a176ac48b6410609a0da2d5a07c4b41d",
+        "tree": "d0be24f4a07732497008b5cac72357065fb2d8ca",
+        "image": "20261101.353.1",
+        "ps51": "5.1.20348.5773",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": false
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": 1,
+            "passed": false
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-diagnostic.v1",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-wildcard-cmdlets",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-explicit-cmdlets",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-no-cmdlets",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          }
+        ],
+        "installEntryNative": {
+          "cases": 13,
+          "passed": 12,
+          "failing": [
+            {
+              "host": "ps51",
+              "case": "github",
+              "classification": "BOOTSTRAP_BLOCKED",
+              "interceptionLoaded": false
+            }
+          ]
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "3837208f4bc1a7b35eb00c5f23a49ba8b583ffa6dd0bbc50f52853d5ae8d9fa9"
+      },
+      "Windows-windows-2025": {
+        "collectorStatus": "FAIL",
+        "commit": "ab5bc2d4a176ac48b6410609a0da2d5a07c4b41d",
+        "tree": "d0be24f4a07732497008b5cac72357065fb2d8ca",
+        "image": "20261103.298.1",
+        "ps51": "5.1.26100.33648",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": false
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": null,
+            "passed": false
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-diagnostic.v1",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-wildcard-cmdlets",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-explicit-cmdlets",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-no-cmdlets",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          }
+        ],
+        "installEntryNative": {
+          "receipt": "none (collector subprocess timeout after 240 s; no per-case data)"
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "9d1adfa6559f16f2793cf36eeff4b4afb9b0a4d774877f78667f24259d122597"
+      }
+    }
+  }
+}
