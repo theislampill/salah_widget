@@ -19,7 +19,15 @@
 #   - triggers: push to `claude/r0013-integration-*` and workflow_dispatch;
 #   - `--phase r0013` is literal instead of being derived from the ref name;
 #   - the concurrency group name is distinct;
-#   - the path filter adds this file itself.
+#   - the path filter adds this file itself;
+#   - an additional `windows-json-lexer` job (below) qualifies the merged
+#     JSON-lexer correction (8dfe944f) on Windows PowerShell 5.1 and the
+#     digest-pinned PowerShell 7.6.6 and 7.6.9. It mirrors how the installer
+#     executor's own carrier workflow (`r0013-json-lexer.yml` on
+#     pro/r0013-json-lexer-linear-20261112) invokes the suites and pins the
+#     runtimes, but runs the suites directly and fails on any suite exit code.
+#     The original validator for the old-code comparison is read with
+#     `git show 8013b440:install.ps1` and identity-checked before use.
 # The original `installer-native.yml` is untouched.
 name: R0013 integration qualification
 
@@ -135,5 +143,134 @@ jobs:
         with:
           name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  windows-json-lexer:
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ['5.1', '7.6.6', '7.6.9']
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.ps1
+            /tests/install-json-lexer*
+            /tests/install-discovery*
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 8013b4404b55f21b43b7e62456fd24e15881b7fd
+          path: r0013-original
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: /install.ps1
+      - name: Extract the original R0013 validator source with git show
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/r0013-lexer-reports"
+          mkdir -p "$out"
+          echo "R0013_LEXER_OUT=$out" >> "$GITHUB_ENV"
+          echo "R0013_BASELINE=$RUNNER_TEMP/r0013-original-install.ps1" >> "$GITHUB_ENV"
+          python - "$RUNNER_TEMP/r0013-original-install.ps1" <<'PY'
+          import hashlib, subprocess, sys
+          data = subprocess.check_output(['git', '-C', 'r0013-original', 'show', '8013b4404b55f21b43b7e62456fd24e15881b7fd:install.ps1'])
+          blob = hashlib.sha1(b'blob %d\0' % len(data) + data).hexdigest()
+          sha256 = hashlib.sha256(data).hexdigest()
+          print('original install.ps1 blob', blob, 'sha256', sha256)
+          if blob != '1764c72d41178b405d955c442d4411f563f5da0e' or sha256 != '56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471':
+              raise SystemExit('Original R0013 installer identity mismatch')
+          open(sys.argv[1], 'xb').write(data)
+          PY
+      - name: Select exact native runtime
+        shell: powershell
+        run: |
+          $version = '${{ matrix.version }}'
+          if ($version -eq '5.1') {
+            $exe = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
+          } else {
+            $digests = @{
+              '7.6.6' = '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860'
+              '7.6.9' = 'ce7484804c0f0ad4dda10c958e71acdaf7eebfb22505c1b480f89e0e9f1da94d'
+            }
+            $archive = Join-Path $env:RUNNER_TEMP ('PowerShell-'+$version+'-win-x64.zip')
+            Invoke-WebRequest -UseBasicParsing -Uri ('https://github.com/PowerShell/PowerShell/releases/download/v'+$version+'/PowerShell-'+$version+'-win-x64.zip') -OutFile $archive
+            if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -cne $digests[$version]) { throw 'Native runtime digest mismatch' }
+            $runtime = Join-Path $env:RUNNER_TEMP ('r0013-pwsh-'+$version)
+            Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+            $exe = Join-Path $runtime 'pwsh.exe'
+          }
+          $observed = & $exe -NoLogo -NoProfile -NonInteractive -Command '$PSVersionTable.PSVersion.ToString()'
+          if ($LASTEXITCODE -ne 0) { throw 'Native runtime identity probe failed' }
+          $ok = if ($version -eq '5.1') { $observed.StartsWith('5.1.') } else { $observed -ceq $version }
+          if (-not $ok) { throw ('Wrong native PowerShell host: ' + $observed) }
+          Write-Host ('Native PowerShell ' + $observed + ' at ' + $exe)
+          "R0013_LEXER_PS=$exe" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: JSON lexer equivalence and performance against the original validator
+        shell: bash
+        timeout-minutes: 10
+        run: |
+          unset PSModulePath
+          set +e
+          "$R0013_LEXER_PS" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/install-json-lexer.ps1 -SourceFile install.ps1 -BaselineFile "$R0013_BASELINE" -Suite All -ReportPath "$R0013_LEXER_OUT/json-lexer-report.json" > "$R0013_LEXER_OUT/json-lexer.stdout.txt" 2> "$R0013_LEXER_OUT/json-lexer.stderr.txt"
+          rc=$?
+          cat "$R0013_LEXER_OUT/json-lexer.stdout.txt"; cat "$R0013_LEXER_OUT/json-lexer.stderr.txt" >&2
+          echo "json-lexer exit $rc"
+          exit $rc
+      - name: Firefox discovery suite
+        if: success() || failure()
+        shell: bash
+        timeout-minutes: 10
+        run: |
+          unset PSModulePath
+          set +e
+          "$R0013_LEXER_PS" -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File tests/install-discovery.ps1 -SourceFile install.ps1 > "$R0013_LEXER_OUT/discovery.stdout.txt" 2> "$R0013_LEXER_OUT/discovery.stderr.txt"
+          rc=$?
+          cat "$R0013_LEXER_OUT/discovery.stdout.txt"; cat "$R0013_LEXER_OUT/discovery.stderr.txt" >&2
+          echo "discovery exit $rc"
+          exit $rc
+      - name: JSON lexer mutation controls
+        if: success() || failure()
+        shell: bash
+        timeout-minutes: 10
+        run: |
+          set +e
+          python -B tests/install-json-lexer-mutations.py install.ps1 "$R0013_LEXER_PS" --baseline "$R0013_BASELINE" > "$R0013_LEXER_OUT/json-lexer-mutations.stdout.txt" 2> "$R0013_LEXER_OUT/json-lexer-mutations.stderr.txt"
+          rc=$?
+          cat "$R0013_LEXER_OUT/json-lexer-mutations.stdout.txt"; cat "$R0013_LEXER_OUT/json-lexer-mutations.stderr.txt" >&2
+          echo "json-lexer-mutations exit $rc"
+          exit $rc
+      - name: Firefox discovery mutation controls
+        if: success() || failure()
+        shell: bash
+        timeout-minutes: 15
+        run: |
+          set +e
+          python -B tests/install-discovery-mutations.py install.ps1 "$R0013_LEXER_PS" > "$R0013_LEXER_OUT/discovery-mutations.stdout.txt" 2> "$R0013_LEXER_OUT/discovery-mutations.stderr.txt"
+          rc=$?
+          cat "$R0013_LEXER_OUT/discovery-mutations.stdout.txt"; cat "$R0013_LEXER_OUT/discovery-mutations.stderr.txt" >&2
+          echo "discovery-mutations exit $rc"
+          exit $rc
+      - name: Package JSON lexer and discovery reports
+        if: always()
+        shell: bash
+        run: |
+          python -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'r0013-lexer-reports'; assert root.is_dir(), 'No lexer report directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='r0013-lexer-reports'); archive.close()"
+      - name: Retain JSON lexer and discovery reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0013-json-lexer-${{ matrix.version }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r0013-lexer-reports.tar.gz
           if-no-files-found: error
           retention-days: 30
