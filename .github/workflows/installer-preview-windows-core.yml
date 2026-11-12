@@ -1,9 +1,9 @@
-name: R0016 Windows core and native normal qualification
+name: R0016 PS7 normal-companion retry
 
 on:
   push:
     branches:
-      - pro/r0016-effect-free-preview-20261111
+      - pro/r0016-windows-normal-retry-20261112
     paths:
       - .github/workflows/installer-preview-windows-core.yml
       - tools/qualification/installer_preview_windows_core.py
@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [ps51, ps766]
+        host: [ps766]
     runs-on: windows-2022
     timeout-minutes: 140
     env:
