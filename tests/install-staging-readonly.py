@@ -129,7 +129,7 @@ def main():
         row = run('here-string-'+str(number), changed, command, '/tmp')
         record('single-site here-string '+str(number)+' is killed',
                not admission_ok(row) and row['exit'] not in (None, 0) and not row['timedOut']
-               and row['unchanged'] and 'here-document' in row['stderr'], 'here-string-'+str(number))
+               and row['unchanged'] and 'cannot create temp file for here document:' in row['stderr'], 'here-string-'+str(number))
     record('supplied source bytes remain unchanged', source.read_bytes() == raw, str(source))
     report = dict(schema='r0016-staging-readonly.apple-bash.v1', source=str(source),
                   source_sha256=sha(raw), test_sha256=sha(Path(__file__).read_bytes()),

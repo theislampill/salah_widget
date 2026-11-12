@@ -11,7 +11,7 @@ import re, secrets, shutil, signal, stat, subprocess, sys, tarfile, time
 
 sys.dont_write_bytecode=True
 INPUTS={
-    'install.sh':'d19ed5d90e1faf0d9ac66415814a3a68e28c6ae61730acd4eaef1b9588830cc5',
+    'install.sh':'27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f',
     'tests/install-preview.py':'6be6f8109ce0e219b1bbc124aecde8c59190fffbb5c9e490d8beffa1ecce415e',
     'tests/install-entry-bash.py':'d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093',
     'tools/qualification/installer_preview_linux_namespace_successor.py':'8051d53a6dfdd64a86171c8e1c0cedb0b8da1b843cf30066af99c39e194c7328',
