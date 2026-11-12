@@ -399,8 +399,8 @@ jobs:
   windows-standard-user:
     # Observation only (does not gate): a temporary non-administrator local
     # account runs the unchanged observation script under Windows PowerShell
-    # 5.1 with its own profile loaded (scheduled task, password logon). The
-    # account, its task and its profile are removed afterwards.
+    # 5.1 with its own profile loaded (Start-Process -Credential -LoadUserProfile).
+    # The account and its profile are removed afterwards.
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -441,15 +441,12 @@ jobs:
           "@
             $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($inner))
             $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
-            $action = New-ScheduledTaskAction -Execute $exe -Argument ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand ' + $encoded)
-            $null = Register-ScheduledTask -TaskName $user -Action $action -User $user -Password $secret -RunLevel Limited -Force
-            Start-ScheduledTask -TaskName $user
-            $deadline = (Get-Date).AddMinutes(15)
-            while (-not (Test-Path (Join-Path $dir 'done.txt')) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 10 }
-            $info = Get-ScheduledTaskInfo -TaskName $user
-            "task last result: $($info.LastTaskResult); done marker: $(Test-Path (Join-Path $dir 'done.txt'))"
+            # Interactive-type logon (Users hold that right) with the account's profile loaded.
+            $cred = New-Object Management.Automation.PSCredential($user, (ConvertTo-SecureString $secret -AsPlainText -Force))
+            $p = Start-Process -FilePath $exe -ArgumentList ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand ' + $encoded) -Credential $cred -LoadUserProfile -WorkingDirectory $dir -PassThru
+            if (-not $p.WaitForExit(900000)) { try { $p.Kill() } catch {}; 'standard-user child timed out' }
+            "child exit: $($p.ExitCode); done marker: $(Test-Path (Join-Path $dir 'done.txt'))"
           } finally {
-            try { Unregister-ScheduledTask -TaskName $user -Confirm:$false } catch {}
             $sid = $null; try { $sid = (New-Object Security.Principal.NTAccount($user)).Translate([Security.Principal.SecurityIdentifier]).Value } catch {}
             $null = & net.exe user $user /delete
             if ($sid) { Get-CimInstance Win32_UserProfile | Where-Object { $_.SID -eq $sid } | ForEach-Object { try { Remove-CimInstance -InputObject $_ } catch { "profile removal failed: $($_.Exception.Message)" } } }
