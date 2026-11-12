@@ -336,19 +336,54 @@ def diagnostic_queries(root):
 
 
 def record_probe_file_binding(value,label,journal_path,journal,reason='Unbound actual read module/assembly file'):
-    """Retain both observations before applying the unchanged exact equality."""
+    """Bind raw spelling to one stable, canonically resolved native file."""
     row=dict(label=label,childFact=value,parentFact=None,matches=False,
-             differingFields=[],differences={},error=None)
+             differingFields=[],differences={},nativeFileIdentity=None,error=None)
     failure=None
+    def observed(path):
+        c.require(path.is_absolute(),'Native file identity requires an absolute path')
+        for component in [path]+list(path.parents):
+            info=component.lstat()
+            c.require(not component.is_symlink() and not (getattr(info,'st_file_attributes',0)&0x400),
+                'Native file identity refuses links/reparse ancestors')
+        info=path.lstat()
+        c.require(stat.S_ISREG(info.st_mode) and type(info.st_dev) is int
+            and type(info.st_ino) is int and info.st_ino>0,'Native file identity requires an identifiable regular file')
+        return dict(device=info.st_dev,inode=info.st_ino,mode=info.st_mode,bytes=info.st_size,
+            mtimeNs=info.st_mtime_ns,ctimeNs=info.st_ctime_ns,
+            attributes=getattr(info,'st_file_attributes',None),links=info.st_nlink)
     try:
-        c.require(type(value) is dict,reason)
-        parent=c.fact(value['path'])
+        c.require(type(value) is dict and set(value)=={'path','bytes','sha256'}
+            and type(value['path']) is str and type(value['bytes']) is int and value['bytes']>=0
+            and type(value['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}',value['sha256']),reason)
+        raw=Path(value['path'])
+        identity=dict(rawPath=value['path'],canonicalPath=None,observations={},
+            resolutionMatches=False,sameFile=False,stable=False,contentMatches=False)
+        row['nativeFileIdentity']=identity
+        identity['observations']['rawBefore']=observed(raw)
+        parent=c.fact(raw)
         row['parentFact']=parent
         row['differingFields']=sorted(key for key in set(value)|set(parent)
                                     if key not in value or key not in parent or value[key]!=parent[key])
         row['differences']={key:dict(childPresent=key in value,parentPresent=key in parent,
                                    child=value.get(key),parent=parent.get(key)) for key in row['differingFields']}
-        row['matches']=parent==value
+        canonical=Path(parent['path'])
+        identity['canonicalPath']=parent['path']
+        identity['resolvedRawPath']=str(raw.resolve(strict=True))
+        identity['resolvedCanonicalPath']=str(canonical.resolve(strict=True))
+        identity['resolutionMatches']=identity['resolvedRawPath']==identity['resolvedCanonicalPath']==parent['path']
+        identity['observations']['canonicalBefore']=observed(canonical)
+        identity['rawReadbackFact']=c.fact(raw)
+        identity['canonicalReadbackFact']=c.fact(canonical)
+        identity['observations']['rawAfter']=observed(raw)
+        identity['observations']['canonicalAfter']=observed(canonical)
+        observations=list(identity['observations'].values())
+        identity['sameFile']=all((item['device'],item['inode'])==
+            (observations[0]['device'],observations[0]['inode']) for item in observations)
+        identity['stable']=all(item==observations[0] for item in observations)
+        identity['contentMatches']=identity['rawReadbackFact']==identity['canonicalReadbackFact']==parent \
+            and all(value[key]==parent[key] for key in ('bytes','sha256'))
+        row['matches']=all(identity[key] is True for key in ('resolutionMatches','sameFile','stable','contentMatches'))
         c.require(row['matches'],reason)
     except Exception as error:
         failure=error
