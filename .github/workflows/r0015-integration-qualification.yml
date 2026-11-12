@@ -256,17 +256,18 @@ jobs:
       - name: Owner and archive controls on both hosts
         shell: powershell
         run: |
+          # Fixtures live under the real TEMP: RUNNER_TEMP's ancestry is not an admissible staging chain.
           $ErrorActionPreference = 'Continue'
           $out = Join-Path $env:RUNNER_TEMP 'owner-archive'
           [void][IO.Directory]::CreateDirectory($out)
           $hosts = @(@('ps51', (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe')), @('ps7', $env:INSTALL_TEST_PS7))
           $failed = @()
           foreach ($h in $hosts) {
-            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-staging-owner.ps1 -SourceFile (Resolve-Path install.ps1).Path -FixtureParent $env:RUNNER_TEMP -RealCompile -ReportPath (Join-Path $out ('owner-' + $h[0] + '.json')) > (Join-Path $out ('owner-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('owner-' + $h[0] + '.stderr.txt'))
+            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-staging-owner.ps1 -SourceFile (Resolve-Path install.ps1).Path -FixtureParent $env:TEMP -RealCompile -ReportPath (Join-Path $out ('owner-' + $h[0] + '.json')) > (Join-Path $out ('owner-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('owner-' + $h[0] + '.stderr.txt'))
             "owner $($h[0]) exit $LASTEXITCODE"; if ($LASTEXITCODE -ne 0) { $failed += 'owner-' + $h[0] }
-            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-staging-owner.ps1 -SourceFile (Join-Path $env:RUNNER_TEMP 'pre-correction-install.ps1') -FixtureParent $env:RUNNER_TEMP -RealCompile -NoMutations -ReportPath (Join-Path $out ('owner-pre-correction-' + $h[0] + '.json')) > (Join-Path $out ('owner-pre-correction-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('owner-pre-correction-' + $h[0] + '.stderr.txt'))
+            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-staging-owner.ps1 -SourceFile (Join-Path $env:RUNNER_TEMP 'pre-correction-install.ps1') -FixtureParent $env:TEMP -RealCompile -NoMutations -ReportPath (Join-Path $out ('owner-pre-correction-' + $h[0] + '.json')) > (Join-Path $out ('owner-pre-correction-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('owner-pre-correction-' + $h[0] + '.stderr.txt'))
             "owner pre-correction $($h[0]) exit $LASTEXITCODE (expected nonzero)"
-            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-archive-controls.ps1 -SourceFile (Resolve-Path install.ps1).Path -FixtureParent $env:RUNNER_TEMP -ReportPath (Join-Path $out ('archive-' + $h[0] + '.json')) > (Join-Path $out ('archive-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('archive-' + $h[0] + '.stderr.txt'))
+            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-archive-controls.ps1 -SourceFile (Resolve-Path install.ps1).Path -FixtureParent $env:TEMP -ReportPath (Join-Path $out ('archive-' + $h[0] + '.json')) > (Join-Path $out ('archive-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('archive-' + $h[0] + '.stderr.txt'))
             "archive $($h[0]) exit $LASTEXITCODE"; if ($LASTEXITCODE -ne 0) { $failed += 'archive-' + $h[0] }
           }
           python tools/qualification/environment-observation/assert_defaults.py --owner-new (Join-Path $out 'owner-ps51.json') --owner-old (Join-Path $out 'owner-pre-correction-ps51.json') --owner-new (Join-Path $out 'owner-ps7.json') --owner-old (Join-Path $out 'owner-pre-correction-ps7.json') --output (Join-Path $out 'owner-gate.json')
