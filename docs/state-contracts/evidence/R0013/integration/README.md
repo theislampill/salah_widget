@@ -15,6 +15,13 @@ completion certificate. It does not approve a merge and does not close the issue
 | Conflicts | none |
 | Diff vs main | 275 files, +50,641/-145. 255 of them are under `evidence/R0013/`; 20 are non-evidence files |
 
+The README PowerShell review-first pin was later re-pinned from `f2161ed6` to
+`8dfe944f` (`install.ps1` `cf353a7f`). The Bash pin stays at `f2161ed6`
+(`install.sh` `d7f8267d`, unchanged). The re-pin makes `README.md` the only
+path that conflicts in `git merge-tree` against R0015 `bf566111`. That
+documentation-only conflict is expected and is resolved in the R0015
+integration merge. The paragraph below describes the first merge.
+
 The only file whose bytes differ from both parents is `README.md`. Its merged blob
 is `30cd9c14c7ba889355714f8298ce47458c02c8aa` (sha256
 `2fc5ceb2f818ab79d2f2c6e16348bcb591e5fff8252835f5954c67a6291f0eed`). Main's

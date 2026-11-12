@@ -88,8 +88,9 @@ inspect the exact file before allowing normal setup actions.
 These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
-Both examples below use installer source commit
-`f2161ed6a1fe2e0647ee541487ab1ac792d4d3df`. On macOS or Linux, keep the downloaded
+The Bash example below uses installer source commit
+`f2161ed6a1fe2e0647ee541487ab1ac792d4d3df`; the PowerShell example uses
+`8dfe944f843548603df260b78ccd1df4aa228a8e`. On macOS or Linux, keep the downloaded
 file for both the preview and normal run:
 
 ```bash
@@ -112,7 +113,7 @@ with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/f2161ed6a1fe2e0647ee541487ab1ac792d4d3df/install.ps1" -OutFile ".\install.ps1"
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/8dfe944f843548603df260b78ccd1df4aa228a8e/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
 powershell.exe -NoProfile -File ".\install.ps1"
