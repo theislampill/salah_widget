@@ -86,5 +86,52 @@ limits apply:
   locally by design.
 - The PS5.1 root-array-only mutant survives, as it did before. It gets no credit.
 
-Hosted qualification receipts are added under `hosted-<run id>/` by a follow-up
-commit, bound to the run id and head SHA they were produced on.
+## Hosted run 43120878720
+
+Receipts are in `hosted-43120878720/`. They include the three artifact tarballs as
+downloaded, each OS's `result.json`, the two failing Windows receipts and
+`summary.json`.
+
+The run was a push of head `302c4ec0a340fd2c07789598838f35acf5652194` (tree
+`9169e944`). Its overall conclusion is **failure**.
+
+| Job | Conclusion | Suites |
+|---|---|---|
+| posix (ubuntu-24.04, Linux), Bash 5.2.21 | success | install-bash 26/26, entry-bash 25/25, discovery 76/76, detectors 10/10, discovery-mutations 13/13, original-mutations 8/8, **install-builder 4/4** |
+| posix (macos-15, Darwin), Apple Bash 3.2.57 | success | 26/26, 25/25, 76/76, detectors 12/12, 13/13, 8/8, **install-builder 4/4** |
+| windows (PS 5.1.20348.5773 + 7.6.6) | **failure** | 9 PASS, 2 FAIL. The rows follow |
+
+Windows rows:
+
+- PS5.1: components 18/18, guards 10/10, discovery 78/78. Mutations: paired
+  control plus 13 mutants detected; the root-array-only mutant gets no credit.
+- PS7: bootstrap 4/4, components 18/18, guards 10/10, discovery 78/78.
+  Mutations: paired control plus 14 mutants detected.
+- **`ps51-install-host-bootstrap` FAIL (exit 0), 0/4.** This is the same retained
+  failure as reference run 42981543351. It is the no-installer PS5.1 startup
+  diagnostic: `BOOTSTRAP_BLOCKED_TIMEOUT` after phase `join-path-begin`, with
+  `installerExecuted=false`.
+- **`install-entry-native` FAIL (exit 1).**
+  - PS7: 12/12 PASS.
+  - PS5.1 case `github`: FAIL. The literal error is "timed out after 25 seconds",
+    classified `BOOTSTRAP_BLOCKED`.
+  - The host never loaded the interception module and reached no installer
+    phase. The snapshot was unchanged and there were no effects.
+  - The driver stops after a blocked host bootstrap (`break`, by design), so the
+    other 11 PS5.1 entry cases were not acquired in this run.
+  - The reference run passed this suite 24/24.
+
+Diagnosis:
+
+- **Not a workflow-copy defect.** The step is identical apart from the literal
+  `--phase r0013`.
+- **Not a regression against main's builder or config.** `install-builder` passes
+  4/4 on both POSIX hosts. `install.ps1` and the entry tests are byte-identical to
+  `f2161ed6`, and this suite reads neither builder nor config.
+- **Most likely cause: hosted PS5.1 host-startup timing**, the same
+  `BOOTSTRAP_BLOCKED` class as the retained diagnostic. A Windows entry timeout of
+  the same kind was also recorded in `native-attempt-2` on the same runner image
+  `20261101.353.1`.
+- This is a diagnosis, not a PASS. PS5.1 full-file entries are **not**
+  re-acquired at the integration tree. They remain credited only by byte identity
+  to run 42981543351.

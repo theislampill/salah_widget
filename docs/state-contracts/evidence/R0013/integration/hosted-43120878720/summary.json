@@ -1,0 +1,64 @@
+{
+  "schema": "r0013-integration-hosted-summary.v1",
+  "workflow": "R0013 integration qualification (.github/workflows/r0013-integration-qualification.yml)",
+  "runId": 43120878720,
+  "runAttempt": 1,
+  "event": "push",
+  "headSha": "302c4ec0a340fd2c07789598838f35acf5652194",
+  "headTree": "9169e944b52694c512f0739660d5730958e8c5b1",
+  "conclusion": "failure",
+  "referenceRun": {"runId": 42981543351, "headSha": "f2161ed6a1fe2e0647ee541487ab1ac792d4d3df", "conclusion": "failure"},
+  "sourceHashes": {
+    "install.sh": "609ecb0bb692 (sha256 prefix; blob d7f8267d)",
+    "install.ps1": "56d91d484643 (sha256 prefix; blob 1764c72d)"
+  },
+  "artifacts": {
+    "Linux/installer-evidence.tar.gz": "8710070d62748960d38c77cf764697c37e5d3e4f528c3f095e71536d6569c904",
+    "Darwin/installer-evidence.tar.gz": "b54e9cfadfc30b9a163a2a62054e590e0876cfe6c32a25a527d17908f7168340",
+    "Windows/installer-evidence.tar.gz": "5167710fd5c82a8d025c434510dfc5e4b89ba3e733e70722c8960ce9f1079bf9"
+  },
+  "jobs": [
+    {
+      "name": "posix (ubuntu-24.04, Linux)", "jobId": 130860719870, "conclusion": "success",
+      "host": "GNU bash 5.2.21; image 20261101.360.1", "collectorStatus": "PASS",
+      "suites": {"install-bash": "PASS 26/26", "install-entry-bash": "PASS 25/25", "install-discovery": "PASS 76/76",
+                 "install-detectors": "PASS 10/10", "install-discovery-mutations": "PASS 13/13",
+                 "install-original-mutations": "PASS 8/8", "install-builder": "PASS 4/4"},
+      "referenceRun": "same suites PASS"
+    },
+    {
+      "name": "posix (macos-15, Darwin)", "jobId": 130860719748, "conclusion": "success",
+      "host": "Apple /bin/bash 3.2.57 arm64; macOS 15.8.2; image 20261104.0514.1", "collectorStatus": "PASS",
+      "suites": {"install-bash": "PASS 26/26", "install-entry-bash": "PASS 25/25", "install-discovery": "PASS 76/76",
+                 "install-detectors": "PASS 12/12", "install-discovery-mutations": "PASS 13/13",
+                 "install-original-mutations": "PASS 8/8", "install-builder": "PASS 4/4"},
+      "referenceRun": "same suites PASS"
+    },
+    {
+      "name": "windows", "jobId": 130860719475, "conclusion": "failure",
+      "failedStep": "Execute both native PowerShell hosts",
+      "host": "Windows Server 2022 10.0.20348; PS 5.1.20348.5773; PS 7.6.6; image 20261101.353.1", "collectorStatus": "FAIL",
+      "suites": {
+        "ps51-install-host-bootstrap": "FAIL (exit 0) 0/4: no-installer diagnostic; native-only stalled after phase join-path-begin, BOOTSTRAP_BLOCKED_TIMEOUT, installerExecuted=false",
+        "ps51-install-powershell": "PASS 18/18",
+        "ps51-install-powershell-guards": "PASS 10/10",
+        "ps51-install-discovery": "PASS 78/78",
+        "ps51-discovery-mutations": "PASS (paired control + 13 mutants detected; root-array-only mutant non-discriminating on PS5.1, no credit)",
+        "ps7-install-host-bootstrap": "PASS 4/4",
+        "ps7-install-powershell": "PASS 18/18",
+        "ps7-install-powershell-guards": "PASS 10/10",
+        "ps7-install-discovery": "PASS 78/78",
+        "ps7-discovery-mutations": "PASS (paired control + 14 mutants detected)",
+        "install-entry-native": "FAIL (exit 1): ps7 12/12 PASS; ps51 case 'github' FAIL, classification BOOTSTRAP_BLOCKED, 'timed out after 25 seconds', interceptionLoaded=false, bootstrapPhases=[], snapshotUnchanged=true, effects=[]; the driver does not continue after BOOTSTRAP_BLOCKED, so the other 11 ps51 entry cases were not acquired in this run"
+      },
+      "referenceRun": "ps51-install-host-bootstrap FAIL (retained); every other suite PASS, including install-entry-native 24/24 (12 per host)"
+    }
+  ],
+  "diagnosis": {
+    "workflowDefect": "none found: the failing step text is identical to installer-native.yml apart from the literal --phase r0013; Linux/Darwin cells and 10 of 11 Windows commands behave as in the reference run",
+    "ps51-install-host-bootstrap": "same retained failure as reference run 42981543351 (the no-installer PS5.1 startup diagnostic)",
+    "install-entry-native": "NEW FAIL relative to the reference run. PS5.1 never reached the interception module or any installer phase within 25 s; zero effects. install.ps1, tests/install-entry-native.py and tests/install-entry.ps1 are byte-identical to f2161ed6, and this suite does not read builder/config or README. Same BOOTSTRAP_BLOCKED timeout class as the retained diagnostic and as the earlier native-attempt-2 Windows entry timeout on the same runner image. Classified here as a hosted PS5.1 host-startup timing failure, not an R0013 product regression; that classification is a diagnosis, not a PASS",
+    "regressionAgainstMainBuilderConfig": "none: install-builder PASS 4/4 on Linux and Apple Bash 3.2"
+  },
+  "authority": "integration receipt only; not a completion certificate, review, approval or merge authorisation"
+}
