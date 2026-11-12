@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""NEW outer acquisition for the pinned C2 source-free entry-driver diagnostic.
+"""NEW outer acquisition for the pinned C3 source-free entry-driver diagnostic.
 
 Only the fixed diagnostic CLI runs. The published Job helper controls process
 lifetime; it is not filesystem/network containment or installer qualification.
@@ -27,7 +27,7 @@ from types import SimpleNamespace
 
 sys.dont_write_bytecode=True
 HELPER_SHA='6776bc7b3d4e88d04f1dd811f5b7df0ea1553a7b8824f1f3e921c649c1aae9df'
-C2_MANIFEST_SHA='5cf40d9285deca5b8e2d2a82e07abc01078dd448e3bfe4f4a629f9355fc8138d'
+INPUT_MANIFEST_SHA='3276ed3207c014350e0eec77df29a0d32ae69acc57f666d7526d597bd93f026b'
 ROOT_PREFIX='r16-entry-'
 VERSION_SECONDS=60
 CHILD_SECONDS=60
@@ -40,10 +40,10 @@ OUTER_SECONDS=(HELD_CASES+DIRECT_CASES)*(CHILD_SECONDS+CLEANUP_SECONDS)+2*LOOPBA
 JSON_LIMIT=64*1024*1024
 PS7_EXE_SHA='bfb46af89433268872ddb43d1ca7a3f433452ee91ed356a9786940f90118e285'
 INPUTS={
-    'install-entry-driver-diagnostic.py':(47331,'e192018d2379792cdd1fd73e566b0d50057600b1d25e70430458fee56bbe9d76'),
+    'install-entry-driver-diagnostic.py':(49138,'c5f0d9cf62f4557ef8f838a08dc4c402f791076842b0c69e84bfb773020e458c'),
     'install-entry-composition-support.py':(37442,'4600bac181dcac5fe7f72467c6018800666284d7087cf98f8b9bf5a449910821'),
     'install-entry-coverage-support.py':(14701,'52a268b0de8c6055f8265faa7bdef115a78ba29fba2b4f008aba43be6b793c4a'),
-    'install-entry-held.ps1':(7729,'a3ccac853a6108a2ed860a66f6e8bd6547efd3cc06c3626283959b3126997ae6'),
+    'install-entry-held.ps1':(8262,'742b42edd3828ec98dc25f717fdbacbd3e68ed877139c90e358d43f7c5142ca2'),
     'install-entry-input-probe.ps1':(12493,'f4c871734c72a71c04423a3fcfc1c4c9a2286da7683d09a1eb6ffeefb73c2bf0'),
     'install-entry-diagnostic-shadow.psm1':(5710,'5bc1cb8b88c6c873a295f664304968d7a859c0f322223b8b6bb8b15798f67663'),
     'install-preview.ps1':(57909,'e5db234866df5fa41862dbb1d67fed4594b77b882823bfd631a9c5bf98525916'),
@@ -185,7 +185,7 @@ def validate_input_roles(values,launched,fixture,owner):
     for row in values:
         require(set(row)=={'name','original','retained'},'Wrong input role shape')
         name=row['name'];expected=launched[name];length,digest=INPUTS[name]
-        require((expected['bytes'],expected['sha256'])==(length,digest),'Launched input differs from fixed C2 bytes')
+        require((expected['bytes'],expected['sha256'])==(length,digest),'Launched input differs from fixed C3 bytes')
         require(row['original']==expected,'Original input was not the actual launched copy')
         facts.append(verify_fact(row['original'],Path(expected['path']),owner))
         fact=verify_fact(row['retained'],retained/name,fixture)
@@ -248,7 +248,7 @@ def validate_report(process,command,capture,outputs,owner,python,executable,host
     module=verify_fact(report.get('moduleFact'),fixture/'control/shadow-module.psm1',fixture)
     require((module['bytes'],module['sha256'])==INPUTS['install-entry-diagnostic-shadow.psm1'],'Shadow module differs')
     facts.append(module)
-    diagnostic=load_exact(Path(launched['install-entry-driver-diagnostic.py']['path']),INPUTS['install-entry-driver-diagnostic.py'][1],'r16_entry_c2_receivers')
+    diagnostic=load_exact(Path(launched['install-entry-driver-diagnostic.py']['path']),INPUTS['install-entry-driver-diagnostic.py'][1],'r16_entry_c3_receivers')
     require(tuple(diagnostic.CASES)==CASES and report.get('expectedCases')==list(CASES),'Changed expected case sequence')
     rows=report.get('results')
     require(type(rows) is list and len(rows)==10 and [row.get('case') if type(row) is dict else None for row in rows]==list(CASES),'Missing/duplicated/reordered diagnostic cases')
@@ -273,7 +273,7 @@ def validate_report(process,command,capture,outputs,owner,python,executable,host
             value=row.get('loopback');require(type(value) is dict and value.get('address')=='127.0.0.1','Missing owned loopback observation')
             loop=SimpleNamespace(port=value.get('port'),closed=value.get('closed'),accepted=value.get('accepted'))
         regenerated=diagnostic.evaluate(label,pair,receipt,loop)
-        require(row==regenerated,'Case report differs from the exact C2 receiver over retained raw files')
+        require(row==regenerated,'Case report differs from the exact C3 receiver over retained raw files')
         facts.extend(file_fact(path,fixture) for path in (pair['specPath'],pair['caseControl']/'association.json',receipt_path))
     require(all(type(value) is str and re.fullmatch(r'[0-9a-f]{32}',value) for value in nonces)
         and len(set(nonces))==20,'Missing/replayed direct or held case nonce')
@@ -291,7 +291,7 @@ def validate_report(process,command,capture,outputs,owner,python,executable,host
     return dict(report=report_fact,fixture=str(fixture),expectedHost=host,commandHost=str(executable),
         cases=list(CASES),explicitDiagnosticExecutions=11,observedPids=pids,custodyFiles=facts,
         installerExecuted=False,productQualification=False,
-        scope='Exact C2 source-free diagnostic receipts only. No installer inputs or product acceptance.')
+        scope='Exact C3 source-free diagnostic receipts only. No installer inputs or product acceptance.')
 
 
 def owned_environment(helper,state,host):
@@ -393,7 +393,7 @@ def main():
         version_command=[str(executable),'-NoProfile','-NonInteractive','-Command',VERSION_CODE]
         command=build_command(launched,python,host,executable,outputs)
         plan=dict(schema='r0016-source-free-entry-driver-plan.v1',sourceCommit=args.source_commit,preparedUtc=utc(),root=str(root),
-            c2ManifestSha256=C2_MANIFEST_SHA,expectedHost=host,host=file_fact(executable),python=file_fact(python),originals=originals,
+            inputManifestSha256=INPUT_MANIFEST_SHA,expectedHost=host,host=file_fact(executable),python=file_fact(python),originals=originals,
             copiedInputs=copied,launchedInputs=launched,noGatherOverride=False,
             version=dict(command=version_command,environment=version_env,timeoutSeconds=VERSION_SECONDS),
             diagnostic=dict(command=command,environment=environment,timeoutSeconds=OUTER_SECONDS,outputs=str(outputs)),
