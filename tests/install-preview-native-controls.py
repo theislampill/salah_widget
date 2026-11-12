@@ -11,6 +11,7 @@ import ast
 import datetime as dt
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -113,7 +114,164 @@ def mutation_candidates(base, name):
     return [base[:point.start(1)] + replacement + base[point.end(1):] for replacement in replacements]
 
 
-def verify_case_files(row, core_root, expected_hash, expected_mode):
+def require_absolute_host(value):
+    require(isinstance(value, str) and bool(value) and Path(value).is_absolute(), "Producer executable must be an absolute path")
+    return value
+
+
+def verify_embedded_driver(preview_harness, core_root):
+    """Bind the frozen child to the verified producer's unique literal driver."""
+    source = Path(preview_harness).read_bytes().decode("utf-8-sig")
+    starts = list(re.finditer(r"(?m)^\$DriverText=@'\r?\n", source))
+    ends = list(re.finditer(r"\r?\n'@\r?\nWrite-FixtureText \$Driver \$DriverText(?:\r?\n|$)", source))
+    require(len(starts) == len(ends) == 1 and starts[0].end() < ends[0].start(), "Producer embedded driver is missing or ambiguous")
+    require(source.count("$Driver=Join-Path $FixtureRoot 'preview-child.ps1'") == 1, "Producer driver path contract differs")
+    expected = source[starts[0].end():ends[0].start()].encode("utf-8")
+    driver = owned_file(core_root / "preview-child.ps1", core_root)
+    require(driver.read_bytes() == expected, "Frozen child differs from the exact maintained embedded driver")
+    return file_fact(driver)
+
+
+def verify_driver_launch(process, launch, expected_driver):
+    require(isinstance(expected_driver, dict) and set(expected_driver) == {"path", "sha256", "bytes"}, "Expected producer driver custody is missing")
+    path = expected_driver.get("path")
+    require(isinstance(path, str) and Path(path).is_absolute() and type(expected_driver.get("bytes")) is int,
+            "Expected producer driver path or fact is invalid")
+    require(file_fact(path) == expected_driver, "Expected producer driver bytes changed")
+    require(isinstance(process.get("nativeFile"), str) and Path(process["nativeFile"]).is_absolute() and process["nativeFile"] == path,
+            "Process did not use the exact bound absolute driver")
+    require(launch.get("nativeFile") == path, "Raw launch did not use the exact bound driver")
+    arguments = '-NoProfile -File "' + path.replace('"', '\\"') + '"'
+    require(launch.get("arguments") == arguments, "Raw launch arguments differ from the exact maintained command")
+
+
+def verify_drains(process, legacy=False):
+    # Only the separately dispatched historical v1 branch permits omitted fields.
+    if legacy:
+        complete = process.get("stdoutDrainCompleted", True) is True and process.get("stderrDrainCompleted", True) is True
+    else:
+        complete = process.get("stdoutDrainCompleted") is True and process.get("stderrDrainCompleted") is True
+    require(complete, "Prior output drain was missing or incomplete")
+
+
+def consistent_producer_host(rows, held_windows):
+    executables = set()
+    for name in RECIPES:
+        matches = [row for row in rows if row.get("case") == "mutant-discriminator-" + name]
+        require(len(matches) == 1, "Prior preview discriminator is missing or ambiguous: " + name)
+        for label in ("healthy", "mutant"):
+            value = matches[0].get(label, {}).get("commandHost")
+            require(isinstance(value, str) and bool(value), "Producer executable is missing")
+            if held_windows:
+                require_absolute_host(value)
+            executables.add(value)
+    require(len(executables) == 1, "Producer preview mixed native executables")
+    return next(iter(executables))
+
+
+def verify_guard_launch(control, core_root, expected_host, expected_driver=None):
+    require_absolute_host(expected_host)
+    process = control.get("process", {})
+    fixture = Path(process.get("fixture", "")).resolve(strict=True)
+    require(within(fixture, core_root) and fixture.is_dir(), "Guard-control fixture escaped producer root")
+    launch_path = owned_file(fixture / "guard-control.launch.json", fixture)
+    launch = load_json(launch_path)
+    require(launch.get("host") == expected_host, "Guard-control launch host differs from the producer executable")
+    verify_driver_launch(process, launch, expected_driver)
+    pid = process.get("processId")
+    require(type(pid) is int and pid > 0 and launch.get("processId") == pid, "Guard-control launch PID differs")
+    require(launch.get("nativeFile") == process.get("nativeFile") and isinstance(process.get("nativeFile"), str), "Guard-control launch driver differs")
+    owned_file(launch["nativeFile"], core_root)
+    budget = process.get("budgetSeconds")
+    require(type(budget) is int and 30 <= budget <= 180 and launch.get("budgetSeconds") == budget, "Guard-control launch budget differs")
+    require(isinstance(launch.get("nonce"), str) and re.fullmatch(r"[0-9a-f]{32}", launch["nonce"]), "Guard-control launch nonce is invalid")
+    require(launch.get("startedUtc") == process.get("startedUtc") and launch.get("createdUtc") == process.get("createdUtc"), "Guard-control launch timing identity differs")
+    require(process.get("killGraceExpired") is False, "Guard-control child termination was incomplete")
+    elapsed = process.get("processExitObservedElapsedMs")
+    require(type(elapsed) in (int, float) and math.isfinite(elapsed) and 0 <= elapsed < budget * 1000, "Guard-control terminal was first observed at/after its deadline")
+    verify_drains(process)
+    return file_fact(launch_path)
+
+
+def verify_invocation_window(process, fixture, expected_hash, spec, spec_path, label, allow_source_stop=False, native_windows=False, expected_host=None, expected_driver=None):
+    """Read and bind both raw held snapshots; never reinterpret the full lifecycle."""
+    window = process.get("invocationWindow", {})
+    require(window.get("schema") == "r0016-held-invocation-window.v1", "Held invocation receipt missing or unsupported")
+    subject = (fixture / "subject").resolve(strict=True)
+    require(subject.is_dir() and spec.get("subject") == str(subject), "Case subject differs from the declared fixture subject")
+    require(window.get("subject") == str(subject) and process.get("subject") == str(subject), "Held invocation subject differs")
+    require(window.get("label") == label and process.get("label") == label and process.get("fixture") == str(fixture), "Held invocation label or fixture differs")
+    require(window.get("source") == spec.get("source") and window.get("sourceSha256") == spec.get("sourceSha256") == expected_hash and window.get("processId") == process.get("processId"), "Held invocation source/PID differs")
+    require(file_fact(spec["source"])["sha256"] == expected_hash, "Held invocation source bytes changed")
+    require(window.get("started") is True and window.get("error") is None, "Held invocation did not acquire its initial boundary")
+    pid, actual_nonce = window.get("processId"), window.get("nonce")
+    require(type(pid) is int and pid > 0 and isinstance(actual_nonce, str) and re.fullmatch(r"[0-9a-f]{32}", actual_nonce), "Invalid held invocation identity")
+    require(actual_nonce == spec.get("nonce"), "Held invocation nonce differs from case")
+    require(process.get("killGraceExpired") is False, "Held invocation child termination was incomplete")
+    budget, terminal_ms = process.get("budgetSeconds"), process.get("terminalObservedElapsedMs")
+    require(type(budget) is int and 30 <= budget <= 180 and type(terminal_ms) in (int, float) and math.isfinite(terminal_ms) and 0 <= terminal_ms < budget * 1000, "Terminal process was missing or first observed at/after its deadline")
+    paths = []
+
+    def bound_fact(name, expected_path):
+        recorded = window.get(name)
+        require(isinstance(recorded, dict), "Missing held-window evidence: " + name)
+        path = owned_file(recorded.get("path", ""), fixture)
+        require(path == Path(expected_path).resolve(strict=True), "Held-window evidence path differs from its phase: " + name)
+        require(file_fact(path) == recorded, "Held-window evidence digest differs: " + name)
+        paths.append(path)
+        return path
+
+    require(load_json(bound_fact("spec", spec_path)) == spec, "Held invocation spec differs from the retained case")
+    launch = load_json(bound_fact("launch", fixture / (label + ".launch.json")))
+    require_absolute_host(expected_host)
+    require(launch.get("host") == expected_host, "Held invocation launch host differs from the producer executable")
+    verify_driver_launch(process, launch, expected_driver)
+    paths.append(Path(expected_driver["path"]))
+    require(launch.get("processId") == pid and launch.get("nonce") == actual_nonce and launch.get("label") == label and launch.get("subject") == str(subject) and launch.get("sourceSha256") == expected_hash, "Held invocation launch identity differs")
+    require(launch.get("spec") == window["spec"] and launch.get("nativeFile") == process.get("nativeFile") and launch.get("budgetSeconds") == budget, "Held invocation launch spec/driver/budget differs")
+
+    def inventory(name, suffix):
+        value = load_json(bound_fact(name, fixture / (label + "." + suffix + ".json")))
+        require(value.get("root") == str(subject), "Inventory root differs from the declared fixture subject: " + name)
+        require(value.get("schema") == "r0016-preview-double-inventory.v1" and value.get("complete") is True and value.get("passesAgree") is True, "Incomplete held-window inventory: " + name)
+        passes, rows = value.get("passes"), value.get("rows")
+        require(isinstance(passes, list) and len(passes) == 2 and isinstance(rows, list) and rows and passes[0] == passes[1] == rows, "Held-window inventory passes disagree: " + name)
+        required = {"path", "attributes", "hash", "lastWriteUtc", "sddl", "linkTarget", "bytes"}
+        require(all(isinstance(row, dict) and required.issubset(row) for row in rows), "Incomplete subject metadata row")
+        require(all(isinstance(row["path"], str) for row in rows), "Invalid subject path type")
+        require(len({row["path"] for row in rows}) == len(rows) and rows[0]["path"] == "", "Missing root or duplicate subject path")
+        for row in rows:
+            require(not row["path"] or row["path"].startswith("/") and "\\" not in row["path"] and all(part not in ("", ".", "..") for part in row["path"][1:].split("/")), "Invalid relative subject path")
+            require(isinstance(row["attributes"], str) and bool(row["attributes"]) and type(row["lastWriteUtc"]) is int and 0 <= row["lastWriteUtc"] <= 3155378975999999999, "Invalid subject metadata types")
+            attributes = {part.strip() for part in row["attributes"].split(",")}
+            directory, link = "Directory" in attributes, "ReparsePoint" in attributes
+            require(row["path"] != "" or directory and not link, "Subject root is not an ordinary directory")
+            if directory or link:
+                require(row["hash"] is None and row["bytes"] is None, "Directory/link metadata falsely claims regular bytes")
+            else:
+                require(isinstance(row["hash"], str) and re.fullmatch(r"[0-9a-f]{64}", row["hash"]) and type(row["bytes"]) is int and row["bytes"] >= 0, "Regular file hash or byte length missing/invalid")
+            require((isinstance(row["linkTarget"], str) and bool(row["linkTarget"])) if link else row["linkTarget"] is None, "Subject link-target metadata differs from its kind")
+            require(not native_windows or isinstance(row["sddl"], str) and bool(row["sddl"]), "Native subject ACL observation missing")
+        return rows
+
+    host_before, host_after = inventory("hostBefore", "before"), inventory("hostAfter", "after")
+    full_equal = host_before == host_after
+    require(process.get("subjectUnchanged") is full_equal and process.get("fullHostLifecycleUnchanged") is full_equal, "Full host lifecycle result was reinterpreted or changed")
+    require(process.get("before") == host_before and process.get("after") == host_after, "Projected host inventories differ from their complete raw observations")
+    before = inventory("before", "before-invocation")
+    for name in ("beforeSignal", "beforeAck"):
+        require(bound_fact(name, spec[name]).read_text(encoding="utf-8-sig") == f"{pid}\t{actual_nonce}\tbefore-invocation", "Held initial token differs")
+    if window.get("completed") is True:
+        after = inventory("after", "after-invocation")
+        for name in ("afterSignal", "afterAck"):
+            require(bound_fact(name, spec[name]).read_text(encoding="utf-8-sig") == f"{pid}\t{actual_nonce}\tafter-invocation", "Held terminal token differs")
+        require(before == after and window.get("unchanged") is True and process.get("invocationUnchanged") is True, "Prior invocation changed its subject")
+    else:
+        require(allow_source_stop and window.get("completed") is False and window.get("after") is None and window.get("afterSignal") is None and window.get("afterAck") is None and window.get("unchanged") is None and process.get("invocationUnchanged") is None, "Held terminal boundary missing without a proved source stop")
+    return paths
+
+
+def verify_case_files(row, core_root, expected_hash, expected_mode, require_window=False, native_windows=False, expected_host=None, expected_driver=None):
     fixture = Path(row["fixture"]).resolve(strict=True)
     require(within(fixture, core_root) and fixture.is_dir(), "Prior case fixture is outside its core fixture")
     spec_path = owned_file(fixture / "host-control" / "case.json", fixture)
@@ -124,16 +282,46 @@ def verify_case_files(row, core_root, expected_hash, expected_mode):
     require(isinstance(nonce, str) and len(nonce) >= 16 and ready_path.read_text(encoding="utf-8-sig") == nonce, "Prior pre-source readiness is missing or mismatched")
     process = row.get("process", {})
     require(process.get("timedOut") is False and process.get("preparation") == "COMPLETED", "Prior preview was a preparation failure")
-    require(process.get("stdoutDrainCompleted", True) is True and process.get("stderrDrainCompleted", True) is True, "Prior output drain was incomplete")
+    verify_drains(process, legacy=not require_window)
     baseline = row.get("baseline", {})
     require(baseline.get("exit") == 0 and baseline.get("timedOut") is False and baseline.get("preparation") == "COMPLETED", "Prior host baseline did not complete normally")
-    require(baseline.get("stdoutDrainCompleted", True) is True and baseline.get("stderrDrainCompleted", True) is True, "Prior baseline output drain was incomplete")
-    require(process.get("subjectUnchanged") is True, "Prior preview changed its subject")
+    verify_drains(baseline, legacy=not require_window)
     events_path = owned_file(spec["events"], fixture)
     events = [json.loads(line) for line in events_path.read_text(encoding="utf-8-sig").splitlines() if line.strip()]
     require(events == row.get("attempts", []), "Prior attempt list differs from its retained raw event file")
     observation = row.get("observation")
     proof_paths = [spec_path, ready_path, events_path]
+    if require_window:
+        row_host = require_absolute_host(row.get("commandHost"))
+        if expected_host is not None:
+            require(row_host == require_absolute_host(expected_host), "Prior case executable differs from the producer executable")
+        require(spec.get("windowSchema") == "r0016-held-invocation-window.v1", "Case lacks the versioned held-window contract")
+        source_path = owned_file(spec["source"], core_root)
+        require(file_fact(source_path)["sha256"] == expected_hash, "Prior actual source bytes changed")
+        source_stop = observation is None and row.get("classification") == "PRODUCT_ASSERTION_FAILED" and any(event.get("kind") == "source-call" for event in events)
+        proof_paths.extend(verify_invocation_window(process, fixture, expected_hash, spec, spec_path, "preview", source_stop, native_windows, expected_host=row_host, expected_driver=expected_driver))
+        baseline_root = fixture / "host-control" / "host-baseline"
+        baseline_spec_path = owned_file(baseline_root / "case.json", fixture)
+        require(row.get("evidencePaths", {}).get("baselineSpec") == str(baseline_spec_path), "Baseline spec reference differs")
+        baseline_spec = load_json(baseline_spec_path)
+        require(set(baseline_spec) == set(spec) and baseline_spec.get("mode") == "baseline" and baseline_spec.get("nonce") != nonce, "Baseline did not use a separate source-free spec/nonce")
+        distinct = {"mode", "nonce", "readiness", "result", "events", "beforeSignal", "beforeAck", "afterSignal", "afterAck"}
+        require(all(baseline_spec[key] == value for key, value in spec.items() if key not in distinct), "Baseline source/scenario differs from its actual case")
+        for key in distinct - {"mode", "nonce"}:
+            baseline_path = owned_file(baseline_spec[key], baseline_root)
+            require(baseline_path != Path(spec[key]).resolve(), "Baseline reused an actual evidence path")
+            proof_paths.append(baseline_path)
+        baseline_ready = Path(baseline_spec["readiness"]).read_text(encoding="utf-8-sig")
+        require(baseline_ready == baseline_spec["nonce"] and not Path(baseline_spec["events"]).read_text(encoding="utf-8-sig").strip(), "Baseline readiness or source-free event record differs")
+        nested = owned_file(baseline_spec["baselineInvocation"], core_root)
+        require(nested.read_bytes() == b"param([object]$Value) $null = $Value", "Baseline nested file is not the declared inert invocation")
+        baseline_result = load_json(baseline_spec["result"])
+        require(baseline_result.get("baseline") is True and baseline_result.get("installerExecuted") is False and baseline_result.get("invocation") == file_fact(nested), "Baseline raw result does not bind its source-free file")
+        proof_paths.extend([baseline_spec_path, nested])
+        proof_paths.extend(verify_invocation_window(baseline, fixture, expected_hash, baseline_spec, baseline_spec_path, "host-baseline", native_windows=native_windows, expected_host=row_host, expected_driver=expected_driver))
+    else:
+        require(spec.get("windowSchema") is None and "invocationWindow" not in process and "invocationWindow" not in baseline, "Legacy producer cannot opt into held-window semantics through a case field")
+        require(process.get("subjectUnchanged") is True, "Prior preview changed its subject")
     if observation is not None:
         require(process.get("exit") == 0, "Completed prior preview child exited abnormally")
         result_path = owned_file(spec["result"], fixture)
@@ -171,7 +359,8 @@ def preflight(args):
         require(isinstance(incoming, dict), "Input must be a core receipt or retained mutant manifest")
         core_path, core = input_path, incoming
         variants = core.get("mutants")
-    require(core.get("schema") == "r0016-preview-powershell-core.v1", "Unrecognized core receipt schema")
+    require(core.get("schema") in ("r0016-preview-powershell-core.v1", "r0016-preview-powershell-core.v2"), "Unrecognized core receipt schema")
+    held_windows = core["schema"] == "r0016-preview-powershell-core.v2"
     require(core.get("sourceUnchanged") is True and core.get("testUnchanged") is True and core.get("fixtureLibraryUnchanged") is True, "Producer source/test/library custody was not stable")
     require(file_fact(args.preview_harness)["sha256"] == core.get("testSha256"), "Supplied preview fixture differs from the producer test hash")
     base_fact = file_fact(args.source)
@@ -180,11 +369,60 @@ def preflight(args):
     core_root = Path(core["fixture"]).resolve(strict=True)
     frozen_source = owned_file(core["frozenSource"], core_root)
     require(file_fact(frozen_source)["sha256"] == base_fact["sha256"], "Frozen preview base bytes differ")
+    window_library = None
+    producer_driver = None
+    if held_windows:
+        producer_driver = verify_embedded_driver(args.preview_harness, core_root)
+        require(core.get("windowLibraryUnchanged") is True, "Producer held-window support changed")
+        window_library = owned_file(core.get("windowLibrary", ""), core_root)
+        require(file_fact(window_library)["sha256"] == core.get("windowLibrarySha256"), "Held-window support custody differs")
+        baseline_invocation = owned_file(core.get("baselineInvocation", ""), core_root)
+        require(file_fact(baseline_invocation)["sha256"] == core.get("baselineInvocationSha256"), "Source-free baseline invocation changed")
     require(isinstance(variants, list) and len(variants) == len(RECIPES), "The complete current retained mutation inventory is required")
     names = [variant.get("name") for variant in variants]
     require(len(set(names)) == len(names) and set(names) == set(RECIPES), "Retained mutation inventory differs")
     rows = core.get("results")
     require(isinstance(rows, list), "Core result rows are missing")
+    producer_executable = consistent_producer_host(rows, held_windows)
+    carrier_evidence = []
+    if held_windows:
+        for name, completion, exit_code in (("fallthrough", "fallthrough", 0), ("exit-zero", "exit-code-observed", 0), ("exit-nonzero", "exit-code-observed", 17), ("throw", "terminating-exception", 1), ("finally-exit", "exit-code-observed", 17), ("parameter-failure", "terminating-exception", 1)):
+            matches = [row for row in rows if row.get("case") == "carrier-control-" + name]
+            require(len(matches) == 1 and matches[0].get("pass") is True, "Source-free invocation carrier control is missing or failed: " + name)
+            control = matches[0]
+            fixture = Path(control["fixture"]).resolve(strict=True)
+            require(within(fixture, core_root), "Carrier-control fixture escaped producer root")
+            control_source = owned_file(control["source"], fixture)
+            require(file_fact(control_source)["sha256"] == control.get("sourceSha256"), "Carrier-control source changed")
+            control_spec_path = owned_file(control.get("spec", ""), fixture)
+            require(control_spec_path == fixture / "host-control" / "case.json", "Carrier-control spec path differs")
+            control_spec = load_json(control_spec_path)
+            require(control_spec.get("mode") == "wrapper" and control_spec.get("source") == str(control_source) and control_spec.get("sourceSha256") == control["sourceSha256"], "Carrier-control spec source/scope differs")
+            control_ready = owned_file(control_spec["readiness"], fixture)
+            control_events = owned_file(control_spec["events"], fixture)
+            require(control_ready.read_text(encoding="utf-8-sig") == control_spec.get("nonce") and not control_events.read_text(encoding="utf-8-sig").strip(), "Carrier-control readiness/events differ")
+            header = "param([switch]$DryRun,[string]$PresetUrl,[string]$WidgetHash,[string]$InstallSource,[switch]$NoOpen)"
+            bodies = {"fallthrough": "$null = 1", "exit-zero": "exit 0", "exit-nonzero": "exit 17", "throw": 'throw "source-free carrier refusal"', "finally-exit": 'try { exit 17 } finally { Write-Host "source-free finally completed" }', "parameter-failure": 'Write-Host "source-free forbidden body"'}
+            if name == "parameter-failure":
+                header = header.replace("[string]$InstallSource", "[ValidateSet('source-free-only')][string]$InstallSource")
+            require(control_source.read_bytes() in [(header + newline + bodies[name]).encode("ascii") for newline in ("\n", "\r\n")], "Carrier-control source is not its declared inert semantic probe")
+            process = control.get("process", {})
+            require(process.get("preparation") == "COMPLETED" and process.get("exit") == 0 and process.get("timedOut") is False and process.get("stdoutDrainCompleted") is True and process.get("stderrDrainCompleted") is True, "Carrier-control capture or process was incomplete")
+            control_paths = verify_invocation_window(process, fixture, control["sourceSha256"], control_spec, control_spec_path, "carrier-control", native_windows=core.get("nativeWindows") is True, expected_host=producer_executable, expected_driver=producer_driver)
+            result_path = owned_file(control["result"], fixture)
+            require(result_path == Path(control_spec["result"]).resolve(strict=True), "Carrier-control result path differs from its spec")
+            observation = load_json(result_path)
+            require(observation == control.get("observation") and observation.get("guardEstablished") is True and not observation.get("preparationError") and observation.get("events") == [], "Carrier-control raw result differs or has effects")
+            require(observation.get("sourceCompletion") == completion and observation.get("entryExit") == exit_code, "Carrier-control semantic result differs")
+            if completion == "exit-code-observed":
+                require(observation.get("sourceExitCode") == exit_code, "Carrier-control lost explicit source exit")
+            if name == "throw":
+                require(observation.get("sourceException") == "source-free carrier refusal", "Carrier-control lost source exception")
+            if name == "finally-exit":
+                require(observation.get("messages", []).count("source-free finally completed") == 1, "Carrier-control did not complete source finally")
+            if name == "parameter-failure":
+                require("InstallSource" in str(observation.get("sourceException")) and "source-free forbidden body" not in observation.get("messages", []), "Carrier-control did not retain source parameter rejection")
+            carrier_evidence.extend(file_fact(path) for path in control_paths + [control_source, control_ready, control_events, result_path])
     for kind in ("outside-subject-method-write", "direct-loopback-transport"):
         for denied in (False, True):
             matches = [row for row in rows if row.get("case") == f"control-{kind}-{denied}"]
@@ -193,11 +431,12 @@ def preflight(args):
             require(control.get("pass") is True and control.get("readiness") is True and control.get("denied") is denied and control.get("effectExecuted") is (not denied), "Independent producer control failed")
             control_process = control.get("process", {})
             require(control_process.get("timedOut") is False and control_process.get("preparation") == "COMPLETED", "Independent producer control did not complete")
-            require(control_process.get("stdoutDrainCompleted", True) is True and control_process.get("stderrDrainCompleted", True) is True, "Independent producer control output drain was incomplete")
+            verify_drains(control_process, legacy=not held_windows)
+            if held_windows:
+                carrier_evidence.append(verify_guard_launch(control, core_root, producer_executable, expected_driver=producer_driver))
             if not denied:
                 require(control_process.get("exit") == 0, "Allowed producer control exited abnormally")
     accepted = []
-    producer_executables = set()
     for variant in variants:
         name = variant["name"]
         kind, function, mode, discriminator = RECIPES[name]
@@ -215,8 +454,11 @@ def preflight(args):
         require(healthy.get("pass") is True and healthy.get("classification") == "PASS" and healthy.get("sourceSha256") == base_fact["sha256"], "Matched healthy preview failed: " + name)
         require(mutant.get("pass") is False and mutant.get("classification") == "PRODUCT_ASSERTION_FAILED" and mutant.get("sourceSha256") == fact["sha256"], "Mutation was not rejected by a real source assertion: " + name)
         require(discriminator in str(mutant.get("error", "")), "Wrong prior assertion discriminator: " + name)
-        healthy_proof = verify_case_files(healthy, core_root, base_fact["sha256"], mode)
-        mutant_proof = verify_case_files(mutant, core_root, fact["sha256"], mode)
+        healthy_proof = verify_case_files(healthy, core_root, base_fact["sha256"], mode, held_windows, core.get("nativeWindows") is True, expected_host=producer_executable, expected_driver=producer_driver)
+        mutant_proof = verify_case_files(mutant, core_root, fact["sha256"], mode, held_windows, core.get("nativeWindows") is True, expected_host=producer_executable, expected_driver=producer_driver)
+        if held_windows:
+            for proof in (healthy_proof, mutant_proof):
+                require(Path(proof["spec"]["windowSupport"]).resolve(strict=True) == window_library and Path(proof["spec"]["baselineInvocation"]).resolve(strict=True) == baseline_invocation, "Case support/baseline differs from its producer binding")
         require(healthy.get("process", {}).get("exit") == 0 and healthy.get("observation") is not None,
                 "Matched healthy preview did not complete with a normal child result: " + name)
         require(Path(mutant_proof["spec"]["source"]).resolve(strict=True) == source, "Prior caller used different mutant source")
@@ -232,11 +474,7 @@ def preflight(args):
                 require(value.get("returned") == [True], "Copy-success mutation did not produce true")
             else:
                 require(value.get("returned") == [False] and value.get("nullReturnCount", 0) > 0, "Null-plus-false copy discriminator is absent")
-        for row in (healthy, mutant):
-            require(isinstance(row.get("commandHost"), str) and row["commandHost"], "Producer executable is missing")
-            producer_executables.add(row["commandHost"])
         accepted.append({"name": name, "source": str(source), "sha256": fact["sha256"], "kind": kind, "priorAssertion": mutant["error"], "priorEvidence": healthy_proof["files"] + mutant_proof["files"]})
-    require(len(producer_executables) == 1, "Producer preview mixed native executables")
     host_version = core.get("host", "")
     host_matches = (args.host == "ps51" and host_version.startswith("5.1.")) or (args.host == "ps7" and host_version == "7.6.6")
     plan = {
@@ -245,11 +483,17 @@ def preflight(args):
         "previewHarness": file_fact(args.preview_harness), "producerLibrarySha256": core.get("fixtureLibrarySha256"),
         "entryHarness": file_fact(args.entry_harness), "entryInterface": inspect_entry_interface(args.entry_harness),
         "producerHost": host_version, "producerNativeWindows": core.get("nativeWindows") is True,
-        "producerExecutable": next(iter(producer_executables)), "requestedHostMatchesProducer": host_matches,
+        "producerExecutable": producer_executable, "requestedHostMatchesProducer": host_matches,
+        "producerDriver": producer_driver,
         "variants": accepted,
     }
     custody = [plan[key] for key in ("input", "coreReceipt", "source", "preset", "previewHarness", "entryHarness")]
     custody.append(file_fact(frozen_source))
+    if window_library is not None:
+        custody.append(producer_driver)
+        custody.append(file_fact(window_library))
+        custody.append(file_fact(baseline_invocation))
+        custody.extend(carrier_evidence)
     for variant in accepted:
         custody.append(file_fact(variant["source"]))
         custody.extend(variant["priorEvidence"])
