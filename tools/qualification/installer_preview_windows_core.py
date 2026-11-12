@@ -29,7 +29,7 @@ RECEIVER_SHA = 'c0f1dccae4a0e7f73867a6aa8c8d2ef8a76cd59e27e4edfcb6f4499d317e7978
 CORE_SECONDS = 4200
 COMPANION_SECONDS = 3300
 ENTRY_SECONDS = 300
-ROOT_PREFIX = 'r0016-windows-core-'
+ROOT_PREFIX = 'r16-core-'
 PINNED_INPUTS = {
     'install.ps1': '7fbe213b8e299d30ccd73f824a5a5d5766ac220ffdd778422cd018d3bc5c8ef4',
     'presets/salah-widget.tablissng.json': '9197c9bcfaf34ff06505963862e4e9280d3ad521e1ed287183f5d71cbce6b95f',
@@ -442,7 +442,7 @@ def main(argv=None):
     host = 'ps7' if args.host == 'ps766' else 'ps51'
     executable = checked_path(args.powershell); python = checked_path(Path(sys.executable).resolve())
     parent = checked_path(args.output_parent, directory=True)
-    root = parent / (ROOT_PREFIX + secrets.token_hex(16)); root.mkdir()
+    root = parent / (ROOT_PREFIX + secrets.token_hex(8)); root.mkdir()
     result = dict(schema='r0016-windows-core-acquisition.v1', status='ACQUISITION_INCOMPLETE', fixture=str(root),
         sourceCommit=args.source_commit, expectedHost=host, nativeCoreAccepted=False, normalVariantsAccepted=False,
         independentHardContainment='NOT_ACQUIRED', phases={}, scope='All75 helper/wrapper/mutation core and 18 normal/NoOpen entries; no direct-preview qualification')
