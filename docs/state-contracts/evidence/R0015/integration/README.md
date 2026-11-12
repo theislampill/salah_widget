@@ -127,3 +127,21 @@ PS5.1 timings from the receipts:
 Both measurements confirm that R0013's 15 s and 25 s caps were below this hosted
 host's PS5.1 first-command cost. Under R0015's 60 s instruments, everything
 completes.
+
+## Installer corrections round: hosted run 43162309006
+
+Head `336a2392b0f7dcf3aa482583a852b9562cea978c` (tree `a9684f3a`); conclusion
+**success**. `hosted-43162309006/` keeps the small receipts only:
+
+- `installer-*/result.json` for the four original jobs and `summary.json`;
+- `owner-archive-windows-{2022,2025}/`: owner and archive control reports per
+  host, the pre-correction replay on `65fed184`, and `owner-gate.json`;
+- `environment-*/`: the unchanged observation outputs and `default-gate.json`
+  (plus `staging-parent.json` on POSIX);
+- `standard-user-windows-{2022,2025}/`: identity and observation of the
+  temporary non-administrator account;
+- `b2-staging-parent-43158222646/`: the B2 branch suite on this blob (`*-tree`)
+  and on `d7f8267d` (`*-old`).
+
+The corrections, counts, old-bytes evidence and the open rows are recorded in
+`docs/state-contracts/R0015.md` ("Installer corrections round").

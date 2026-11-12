@@ -1,0 +1,44 @@
+{
+  "schema": "staging-parent-default-gate.v1",
+  "pass": true,
+  "checks": [
+    {
+      "check": "/home/runner/work/_temp/environment-observation/posix-ubuntu-24.04.json: tree install.sh evaluated",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "/home/runner/work/_temp/environment-observation/posix-ubuntu-24.04.json: trusted_parent /tmp",
+      "pass": true,
+      "detail": {
+        "path": "/tmp",
+        "stderr": ""
+      }
+    },
+    {
+      "check": "/home/runner/work/_temp/environment-observation/posix-ubuntu-24.04.json: initialize_staging /tmp",
+      "pass": true,
+      "detail": {
+        "TMPDIR": "/tmp",
+        "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.tFIkTuVE\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.tFIkTuVE\n"
+      }
+    },
+    {
+      "check": "/home/runner/work/_temp/environment-observation/posix-ubuntu-24.04.json: initialize_staging TMPDIR unset (installer default /tmp)",
+      "pass": true,
+      "detail": {
+        "TMPDIR": null,
+        "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.TGSQmCh3\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.TGSQmCh3\n"
+      }
+    },
+    {
+      "check": "/home/runner/work/_temp/environment-observation/posix-ubuntu-24.04.json: staging-native suite with TMPDIR unset",
+      "pass": true,
+      "detail": {
+        "rows": 9,
+        "passing": 9,
+        "failing": []
+      }
+    }
+  ]
+}

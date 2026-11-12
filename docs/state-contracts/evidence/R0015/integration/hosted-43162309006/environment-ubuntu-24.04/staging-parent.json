@@ -1,0 +1,338 @@
+{
+  "schema": "staging-parent-defaults.posix.v1",
+  "source": "/home/runner/work/salah_widget/salah_widget/install.sh",
+  "sourceSha256": "4d1818f89e8db936d8365b30b31a085835c5c8dfa60c036dfec504782dbcecab",
+  "system": "Linux",
+  "bash": [
+    "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)"
+  ],
+  "providedTMPDIR": null,
+  "sudo": true,
+  "fixtureRemoved": true,
+  "results": [
+    {
+      "case": "TMPDIR unset (default /tmp)",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "TMPDIR": null,
+        "trusted_parent": {
+          "rc": 0,
+          "stdout": "/tmp\n",
+          "stderr": "",
+          "home": "/tmp/salah-parent-dmfrnzog/home-29yclbcj"
+        },
+        "round_trip": {
+          "rc": 0,
+          "stdout": "WORK=/tmp/salah-widget-download.dZaUShji\nBUNDLE=/tmp/salah-parent-dmfrnzog/home-2b0aubc6/salah-widget-install.521MwSUP\nWORK_REMOVED\nBUNDLE_RETAINED\n",
+          "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.dZaUShji\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.dZaUShji",
+          "home": "/tmp/salah-parent-dmfrnzog/home-2b0aubc6"
+        }
+      }
+    },
+    {
+      "case": "/tmp",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "TMPDIR": "/tmp",
+        "trusted_parent": {
+          "rc": 0,
+          "stdout": "/tmp\n",
+          "stderr": "",
+          "home": "/tmp/salah-parent-dmfrnzog/home-rd6yrhiw"
+        },
+        "round_trip": {
+          "rc": 0,
+          "stdout": "WORK=/tmp/salah-widget-download.VA2ibYSP\nBUNDLE=/tmp/salah-parent-dmfrnzog/home-372xru4g/salah-widget-install.sgtmJSqX\nWORK_REMOVED\nBUNDLE_RETAINED\n",
+          "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.VA2ibYSP\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.VA2ibYSP",
+          "home": "/tmp/salah-parent-dmfrnzog/home-372xru4g"
+        }
+      }
+    },
+    {
+      "case": "relative path",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "tmp",
+        "kind": "temp",
+        "expect": "absolute path",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Staging parent must be an absolute path: tmp",
+          "home": "/tmp/salah-parent-dmfrnzog/home-r3kmbury"
+        }
+      }
+    },
+    {
+      "case": "newline in path",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/owned\nx",
+        "kind": "temp",
+        "expect": "newline",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Staging parent contains an unsupported newline.",
+          "home": "/tmp/salah-parent-dmfrnzog/home-43k3fwq5"
+        }
+      }
+    },
+    {
+      "case": "dot component",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/./owned",
+        "kind": "temp",
+        "expect": "Noncanonical",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Noncanonical staging parent: /tmp/salah-parent-dmfrnzog/./owned",
+          "home": "/tmp/salah-parent-dmfrnzog/home-n054w5ur"
+        }
+      }
+    },
+    {
+      "case": "dot-dot component",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/owned/../owned",
+        "kind": "temp",
+        "expect": "Noncanonical",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Noncanonical staging parent: /tmp/salah-parent-dmfrnzog/owned/../owned",
+          "home": "/tmp/salah-parent-dmfrnzog/home-f0jde6qm"
+        }
+      }
+    },
+    {
+      "case": "user-owned symlink in the spelling",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/user-link",
+        "kind": "temp",
+        "expect": "Untrusted staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /tmp/salah-parent-dmfrnzog/user-link",
+          "home": "/tmp/salah-parent-dmfrnzog/home-rt60ftt5"
+        }
+      }
+    },
+    {
+      "case": "root-owned symlink in a user-owned directory",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/user-writable/root-link",
+        "kind": "temp",
+        "expect": "Untrusted staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /tmp/salah-parent-dmfrnzog/user-writable/root-link",
+          "home": "/tmp/salah-parent-dmfrnzog/home-4scgzh52"
+        }
+      }
+    },
+    {
+      "case": "root-owned symlink in a sticky world-writable directory",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/root-sticky/root-link",
+        "kind": "temp",
+        "expect": "Untrusted staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /tmp/salah-parent-dmfrnzog/root-sticky/root-link",
+          "home": "/tmp/salah-parent-dmfrnzog/home-jm5kcuxb"
+        }
+      }
+    },
+    {
+      "case": "root-owned symlink in a root-owned 0755 directory resolves to its physical target",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "rc": 0,
+        "stdout": "/tmp/salah-parent-dmfrnzog/owned\n",
+        "stderr": "",
+        "home": "/tmp/salah-parent-dmfrnzog/home-htxoqswq"
+      }
+    },
+    {
+      "case": "symlink swapped after resolution",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "rc": 0,
+        "stdout": "WORK=/tmp/salah-parent-dmfrnzog/owned/salah-widget-download.Sg5IsZlr\nBUNDLE=/tmp/salah-parent-dmfrnzog/home-_n33pif6/salah-widget-install.q1iMgANr\nWORK_REMAINS\nBUNDLE_RETAINED\nROOT_STILL_VERIFIED\nROOT_ON_ORIGINAL\nSWAPPED_ENTRIES=0\n",
+        "stderr": "[ERROR] Writable staging ancestor: /tmp/salah-parent-dmfrnzog/swapped-target\n[ERROR] Private staging root is unavailable or changed: /tmp/salah-parent-dmfrnzog/owned/salah-widget-download.Sg5IsZlr\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-parent-dmfrnzog/owned/salah-widget-download.Sg5IsZlr",
+        "home": "/tmp/salah-parent-dmfrnzog/home-_n33pif6"
+      }
+    },
+    {
+      "case": "world-writable non-sticky ancestor",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/world-writable/child",
+        "kind": "temp",
+        "expect": "Writable staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /tmp/salah-parent-dmfrnzog/world-writable",
+          "home": "/tmp/salah-parent-dmfrnzog/home-l9y28345"
+        }
+      }
+    },
+    {
+      "case": "group-writable non-sticky ancestor",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/group-writable/child",
+        "kind": "temp",
+        "expect": "Writable staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /tmp/salah-parent-dmfrnzog/group-writable",
+          "home": "/tmp/salah-parent-dmfrnzog/home-bfu80p05"
+        }
+      }
+    },
+    {
+      "case": "sticky world-writable ancestor not owned by root",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/user-sticky/child",
+        "kind": "temp",
+        "expect": "Writable staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /tmp/salah-parent-dmfrnzog/user-sticky",
+          "home": "/tmp/salah-parent-dmfrnzog/home-hs8efjsi"
+        }
+      }
+    },
+    {
+      "case": "foreign-owned ancestor",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/foreign/child",
+        "kind": "temp",
+        "expect": "Untrusted ancestor owner",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted ancestor owner: /tmp/salah-parent-dmfrnzog/foreign",
+          "home": "/tmp/salah-parent-dmfrnzog/home-5ifmoa82"
+        }
+      }
+    },
+    {
+      "case": "final directory not owned by the user",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/root-final",
+        "kind": "temp",
+        "expect": "private, owned staging parent",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Use a private, owned staging parent (or root-owned sticky /tmp for scratch): /tmp/salah-parent-dmfrnzog/root-final",
+          "home": "/tmp/salah-parent-dmfrnzog/home-3f76gp50"
+        }
+      }
+    },
+    {
+      "case": "HOME not owned by the user",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/foreign-home",
+        "kind": "home",
+        "expect": null,
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Staging parent cannot be resolved: /tmp/salah-parent-dmfrnzog/foreign-home",
+          "home": "/tmp/salah-parent-dmfrnzog/home-ih1moax4"
+        }
+      }
+    },
+    {
+      "case": "HOME with group write",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/home-group",
+        "kind": "home",
+        "expect": [
+          "Writable staging ancestor",
+          "private, owned staging parent"
+        ],
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /tmp/salah-parent-dmfrnzog/home-group",
+          "home": "/tmp/salah-parent-dmfrnzog/home-juy512fc"
+        }
+      }
+    },
+    {
+      "case": "HOME with other write",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/home-other",
+        "kind": "home",
+        "expect": [
+          "Writable staging ancestor",
+          "private, owned staging parent"
+        ],
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /tmp/salah-parent-dmfrnzog/home-other",
+          "home": "/tmp/salah-parent-dmfrnzog/home-lkur4m7u"
+        }
+      }
+    },
+    {
+      "case": "missing staging parent",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/tmp/salah-parent-dmfrnzog/does-not-exist",
+        "kind": "temp",
+        "expect": null,
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Staging parent cannot be resolved: /tmp/salah-parent-dmfrnzog/does-not-exist",
+          "home": "/tmp/salah-parent-dmfrnzog/home-tsltcinf"
+        }
+      }
+    }
+  ]
+}

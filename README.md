@@ -88,12 +88,13 @@ inspect the exact file before allowing normal setup actions.
 These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
-Both examples below use installer source commit
-`d96f87825f02077da7f6afe742d30aecfd1fc005`. On macOS or Linux, keep the downloaded
+The Bash example below uses installer source commit
+`dc4c251d81ccb0796e70ff0516661204277232cb`; the PowerShell example uses
+`81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb`. On macOS or Linux, keep the downloaded
 file for both the preview and normal run:
 
 ```bash
-INSTALL_COMMIT='d96f87825f02077da7f6afe742d30aecfd1fc005'
+INSTALL_COMMIT='dc4c251d81ccb0796e70ff0516661204277232cb'
 curl -fsSL "https://raw.githubusercontent.com/theislampill/salah_widget/$INSTALL_COMMIT/install.sh" -o install.sh
 less ./install.sh
 DRY_RUN=1 bash ./install.sh
@@ -112,7 +113,7 @@ with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-$InstallCommit = 'd96f87825f02077da7f6afe742d30aecfd1fc005'
+$InstallCommit = '81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb'
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/$InstallCommit/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
