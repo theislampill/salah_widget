@@ -89,11 +89,11 @@ These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
 Both examples below use installer source commit
-`d96f87825f02077da7f6afe742d30aecfd1fc005`. On macOS or Linux, keep the downloaded
+`f8d3db2d6d6d84f63bf8d79cf52c6977558cb105`. On macOS or Linux, keep the downloaded
 file for both the preview and normal run:
 
 ```bash
-INSTALL_COMMIT='d96f87825f02077da7f6afe742d30aecfd1fc005'
+INSTALL_COMMIT='f8d3db2d6d6d84f63bf8d79cf52c6977558cb105'
 curl -fsSL "https://raw.githubusercontent.com/theislampill/salah_widget/$INSTALL_COMMIT/install.sh" -o install.sh
 less ./install.sh
 DRY_RUN=1 bash ./install.sh
@@ -112,7 +112,7 @@ with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-$InstallCommit = 'd96f87825f02077da7f6afe742d30aecfd1fc005'
+$InstallCommit = 'f8d3db2d6d6d84f63bf8d79cf52c6977558cb105'
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/$InstallCommit/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
@@ -482,7 +482,7 @@ Click or tap either CE or AH date, or Tab to it and press Enter or Space, to ope
 | `builder.html` | Interactive embed-code generator (portable **and** self-configuring snippets). |
 | `config.js`    | Shared `WidgetConfig` module (`window.SalahConfig`) — parse / validate / serialize / load-save local config / coarse auto-detect. Loaded by both `index.html` and `builder.html` so config logic can't fork. |
 | `install.sh` / `install.ps1` | Optional setup wizard (macOS-Linux / Windows): detects the browser, downloads the TablissNG extension asset, and stages the preset for manual import. No silent installs. |
-| `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer imports. |
+| `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer stages for manual import. |
 
 ### Deterministic smoke test
 

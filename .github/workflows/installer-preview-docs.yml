@@ -1,0 +1,62 @@
+name: R0016 rendered README and builder context
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - .github/workflows/installer-preview-docs.yml
+      - tools/qualification/installer_preview_docs.cjs
+      - README.md
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0016-doc-context-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /README.md
+            /src/native/builder.html
+            /src/native/config.js
+            /tools/qualification/installer_preview_docs.cjs
+      - name: Acquire private pinned renderer and browser before observation
+        shell: bash
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/r0016-doc-browsers
+        run: |
+          set -euo pipefail
+          mkdir "$RUNNER_TEMP/r0016-doc-evidence"
+          node --version > "$RUNNER_TEMP/r0016-doc-evidence/node-version.txt"
+          npm --version > "$RUNNER_TEMP/r0016-doc-evidence/npm-version.txt"
+          npm install --prefix "$RUNNER_TEMP/r0016-doc-deps" --ignore-scripts --no-audit --no-fund playwright@1.62.1 marked@17.0.5 > "$RUNNER_TEMP/r0016-doc-evidence/dependencies.log" 2>&1
+          cp "$RUNNER_TEMP/r0016-doc-deps/package-lock.json" "$RUNNER_TEMP/r0016-doc-evidence/package-lock.json"
+          node "$RUNNER_TEMP/r0016-doc-deps/node_modules/playwright/cli.js" install chromium > "$RUNNER_TEMP/r0016-doc-evidence/browser-setup.log" 2>&1
+      - name: Render source-bound documentation with external page requests denied
+        shell: bash
+        timeout-minutes: 3
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ runner.temp }}/r0016-doc-browsers
+        run: |
+          set -euo pipefail
+          node tools/qualification/installer_preview_docs.cjs "$GITHUB_WORKSPACE" "$RUNNER_TEMP/r0016-doc-evidence/render" "$RUNNER_TEMP/r0016-doc-deps/node_modules" > "$RUNNER_TEMP/r0016-doc-evidence/render.stdout" 2> "$RUNNER_TEMP/r0016-doc-evidence/render.stderr"
+      - name: Retain original setup, rendered text and screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-doc-context-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/r0016-doc-evidence/
+          if-no-files-found: error
+          retention-days: 30
