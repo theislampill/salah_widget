@@ -98,7 +98,17 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   windows:
-    runs-on: windows-2022
+    # windows-2022 is the original image (artifact name unchanged); windows-2025
+    # is an additional disclosed image leg, not a replacement.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-2022
+            artifact_suffix: ''
+          - runner: windows-2025
+            artifact_suffix: '-windows-2025'
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 25
     env:
       GIT_CONFIG_COUNT: '1'
@@ -126,6 +136,32 @@ jobs:
           $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
           Expand-Archive -LiteralPath $archive -DestinationPath $runtime
           "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      # HOSTED-ENVIRONMENT WARM-UP (disclosed; no test or installer change).
+      # Unwarmed, the PS5.1 bootstrap diagnostic (tests/install-host-bootstrap.ps1)
+      # timed out at its 15 s WaitForExit with the child stalled after
+      # 'join-path-begin' (first cmdlet), before any installer code: all four
+      # variants in runs 43120878720 attempts 1-2, and 'native-only' in run
+      # 43143993057. That cold-start failure is preserved in those runs. This
+      # step only pre-starts Windows PowerShell 5.1 and prints every elapsed time,
+      # the first (cold) one included, to the log and job summary.
+      - name: Warm up Windows PowerShell 5.1 first-cmdlet start (disclosed hosted-image workaround; cold timings recorded)
+        shell: pwsh
+        run: |
+          $ps51 = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
+          $rows = @()
+          # Let the 5.1 child compute its own default module path.
+          Remove-Item Env:PSModulePath -ErrorAction SilentlyContinue
+          foreach ($i in 1..3) {
+            $clock = [Diagnostics.Stopwatch]::StartNew()
+            & $ps51 -NoLogo -NoProfile -NonInteractive -Command "`$null = Join-Path `$env:TEMP 'r0013-warmup'; Write-Output 'warm-up ok'" | Out-Null
+            $code = $LASTEXITCODE
+            $clock.Stop()
+            $label = if ($i -eq 1) { 'cold (first start on this runner)' } else { 'warm' }
+            $line = 'PS5.1 -NoProfile -Command Join-Path run {0} [{1}] on ${{ matrix.runner }}: {2:N3} s, exit {3}' -f $i, $label, $clock.Elapsed.TotalSeconds, $code
+            Write-Host $line
+            $rows += '- ' + $line
+          }
+          @('### PS5.1 warm-up timings (${{ matrix.runner }})', '', 'The unwarmed bootstrap diagnostic failure is preserved in runs 43120878720 (attempts 1-2) and 43143993057.', '') + $rows | Out-File -LiteralPath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
       - name: Execute both native PowerShell hosts
         shell: powershell
         run: |
@@ -141,7 +177,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
+          name: installer-Windows${{ matrix.artifact_suffix }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/installer-evidence.tar.gz
           if-no-files-found: error
           retention-days: 30
