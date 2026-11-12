@@ -3,7 +3,16 @@
 This folder holds the integration receipts for R0015 (issue #21). It is not a
 completion certificate. It does not approve a merge and does not close the issue.
 
-## What was merged
+## What was merged (earlier round, history)
+
+This section and the next two describe the first integration round. **Current
+facts:** `install.sh` is blob `7e02cfa6` (sha256
+`4d1818f89e8db936d8365b30b31a085835c5c8dfa60c036dfec504782dbcecab`), `install.ps1` is
+blob `43c1c4a7` (sha256
+`288d8ba16961e95690c6afd2fb148f67d1cba078507430e76a9eb9e18e9718bc`), and the README
+pins are `dc4c251d` (Bash) and `81c698be` (PowerShell). The byte-identity
+carry-over below no longer holds for the installers; the rows rest on
+re-execution in run 43162309006 on this tree's bytes (see the last section).
 
 | Item | Value |
 |---|---|
@@ -23,7 +32,7 @@ is `db9c0ddd` (sha256 `42cfc52c…`). It contains:
 - R0015's retained-bundle lifetime text;
 - main's R0026/R000D paragraphs.
 
-## What carries over by byte identity
+## What carried over by byte identity (earlier round)
 
 The native qualification run is 43028305607 at `d96f8782`, tree `5911c099`.
 Between `d96f8782` and `bf566111`, the non-evidence changes are only
@@ -38,7 +47,7 @@ and `R0015.md`.
 - `.github/workflows/installer-native.yml` (blob `456f88c8`) and
   `installer-diagnostic.yml` (blob `789197ca`)
 
-Installer blobs at the merge:
+Installer blobs at that merge (earlier round):
 
 | Path | Blob | Same as |
 |---|---|---|
