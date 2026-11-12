@@ -1,0 +1,83 @@
+name: R0016 Windows normal profile attribution
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - .github/workflows/installer-preview-windows-normal-profile.yml
+      - tools/qualification/installer_preview_windows_normal_profile_diagnostic.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-windows-normal-profile-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ps51, ps766]
+    runs-on: windows-2022
+    timeout-minutes: 30
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qualification/installer_preview_windows_full_entry.py
+            /tools/qualification/installer_preview_windows_normal_profile_diagnostic.py
+            /tools/qualification/installer_preview_host_probe.py
+            /install.ps1
+            /presets/salah-widget.tablissng.json
+            /tests/install-entry-native-composition.py
+            /tests/install-entry-product-support.py
+            /tests/install-entry-driver-diagnostic.py
+            /tests/install-entry-composition-support.py
+            /tests/install-entry-coverage-support.py
+            /tests/install-entry-held.ps1
+            /tests/install-entry-input-probe.ps1
+            /tests/install-entry-diagnostic-shadow.psm1
+            /tests/install-preview.ps1
+            /tests/install-preview-window.ps1
+      - name: Select the fresh C profile parent before any selected PowerShell
+        shell: cmd
+        run: |
+          python -c "import os,pathlib,struct; assert struct.calcsize('P')==8,'64-bit Python required'; parent=pathlib.Path(os.environ['USERPROFILE']).resolve(strict=True); assert parent.is_dir() and parent.drive.lower()=='c:','Native C profile required'; assert not any(c in str(parent) for c in (chr(13),chr(10))),'Malformed profile path'; evidence=parent/'normal-profile-diagnostic.tar.gz'; assert not evidence.exists(),'Evidence destination already exists'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('R0016_ENTRY_PARENT='+str(parent)+'\nR0016_ENTRY_EVIDENCE='+str(evidence)+'\n'); stream.close()"
+          exit /b %ERRORLEVEL%
+      - name: Acquire exact PowerShell 7 archive using Python only
+        if: matrix.host == 'ps766'
+        shell: cmd
+        run: |
+          python -c "import hashlib,os,pathlib,shutil,urllib.request,zipfile; parent=pathlib.Path(os.environ['RUNNER_TEMP']); archive=parent/'PowerShell-7.6.6-win-x64.zip'; response=urllib.request.urlopen('https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip',timeout=60); target=archive.open('xb'); shutil.copyfileobj(response,target); target.close(); response.close(); assert hashlib.sha256(archive.read_bytes()).hexdigest()=='02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860','PowerShell archive digest mismatch'; runtime=parent/'r0016-full-entry-pwsh7'; runtime.mkdir(exist_ok=False); zipfile.ZipFile(archive).extractall(runtime); assert (runtime/'pwsh.exe').is_file(),'PowerShell executable missing'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('R0016_ENTRY_PS7='+str(runtime/'pwsh.exe')+'\n'); stream.close()"
+          exit /b %ERRORLEVEL%
+      - name: Observe six normal entries across both hosts without qualification credit
+        shell: cmd
+        run: |
+          if "${{ matrix.host }}"=="ps51" (set "R0016_ENTRY_PS=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe") else (set "R0016_ENTRY_PS=%R0016_ENTRY_PS7%")
+          python -B tools/qualification/installer_preview_windows_normal_profile_diagnostic.py --host ${{ matrix.host }} --powershell "%R0016_ENTRY_PS%" --output-parent "%R0016_ENTRY_PARENT%" --source-commit ${{ github.sha }}
+          exit /b %ERRORLEVEL%
+      - name: Preserve the entire owned root without following links
+        if: always()
+        shell: cmd
+        run: |
+          python -B tools/qualification/installer_preview_windows_normal_profile_diagnostic.py --archive-only --output-parent "%R0016_ENTRY_PARENT%" --archive "%R0016_ENTRY_EVIDENCE%"
+          exit /b %ERRORLEVEL%
+      - name: Retain complete normal-profile diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-normal-profile-Windows-${{ matrix.host }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.R0016_ENTRY_EVIDENCE }}
+          if-no-files-found: error
+          retention-days: 30

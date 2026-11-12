@@ -1,0 +1,87 @@
+{
+  "scope": "Exact independent synthetic witnesses and bounded readiness-edge mutations; no native/process/network execution.",
+  "stage": "green",
+  "reviewerScriptSha256": "3ad7695646f517a8b73425331a5230d3a25284e498701c90e6b181e65e878474",
+  "actualRunnerSha256": "0dbaa611c5c178983f79f24cdf25b1a5e33dee66f13201025d571baa5e42cb77",
+  "completeOriginalFailureStillReceived": true,
+  "exactReviewerWitnesses": [
+    {
+      "case": "missing product stdout raw despite retained fact",
+      "receiverAccepted": false,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r0016-third-20261111/work/normal_profile_diagnostic_corrected/replays/green/synthetic-mode/f/e0123456789abcdef/c10/entry-profile-window/stdout.raw'"
+    },
+    {
+      "case": "changed warmup stderr raw despite retained zero-byte fact",
+      "receiverAccepted": false,
+      "error": "Rejected: File path/size/SHA differs"
+    },
+    {
+      "case": "product receipt nonce differs from observation and actual ready token",
+      "receiverAccepted": false,
+      "error": "ValueError: Nested readiness nonce differs"
+    },
+    {
+      "case": "product receipt fullReady absent while phase inventory remains",
+      "receiverAccepted": false,
+      "error": "ValueError: Product full-ready receipt differs"
+    }
+  ],
+  "allAssociationMutations": [
+    {
+      "case": "missing product stdout raw despite retained fact",
+      "receiverAccepted": false,
+      "error": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/r0016-third-20261111/work/normal_profile_diagnostic_corrected/replays/green/synthetic-mode/f/e0123456789abcdef/c10/entry-profile-window/stdout.raw'"
+    },
+    {
+      "case": "changed warmup stderr raw despite retained zero-byte fact",
+      "receiverAccepted": false,
+      "error": "Rejected: File path/size/SHA differs"
+    },
+    {
+      "case": "product receipt nonce differs from observation and actual ready token",
+      "receiverAccepted": false,
+      "error": "ValueError: Nested readiness nonce differs"
+    },
+    {
+      "case": "product receipt fullReady absent while phase inventory remains",
+      "receiverAccepted": false,
+      "error": "ValueError: Product full-ready receipt differs"
+    },
+    {
+      "case": "product PID detached from unchanged ready token",
+      "receiverAccepted": false,
+      "error": "ValueError: Nested PID/nonce token differs"
+    },
+    {
+      "case": "product environment nonce detached from receipt nonce",
+      "receiverAccepted": false,
+      "error": "ValueError: Actual direct launch environment differs"
+    },
+    {
+      "case": "product observation nonce detached from receipt",
+      "receiverAccepted": false,
+      "error": "ValueError: Nested readiness nonce differs"
+    },
+    {
+      "case": "ready file bytes disagree despite refreshed valid fact",
+      "receiverAccepted": false,
+      "error": "ValueError: Nested ready/ACK bytes differ from PID/nonce"
+    },
+    {
+      "case": "ACK file bytes disagree despite refreshed valid fact",
+      "receiverAccepted": false,
+      "error": "ValueError: Nested ready/ACK bytes differ from PID/nonce"
+    },
+    {
+      "case": "ready fact points to ACK rather than declared ready path",
+      "receiverAccepted": false,
+      "error": "Rejected: File path/size/SHA differs"
+    },
+    {
+      "case": "warmup reuses product nonce with internally consistent token/files",
+      "receiverAccepted": false,
+      "error": "ValueError: Replayed product or warmup nonce"
+    }
+  ],
+  "allRefused": true
+}
