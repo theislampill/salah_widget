@@ -7,16 +7,158 @@ The launcher retains original streams, exact sources, deadline and cleanup facts
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import platform
-import shutil
 import subprocess
+import statistics
 import time
 
 
 def digest(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def validate_direct(report, expected, source_sha, fixture_sha, host):
+    budget = 30 if host['version'].startswith('5.1.') else 5
+    if (report.get('schema') != 'r0013-json-lexer-v2' or report.get('source') != source_sha
+            or report.get('fixture') != fixture_sha or expected['fixtureSha256'] != fixture_sha
+            or report.get('functionSha256') != expected['functionSha256']
+            or report.get('baselineFunctionSha256') != expected['baselineFunctionSha256']
+            or report.get('host') != host['version'] or report.get('edition') != host['edition']
+            or report.get('platform') != 'Win32NT' or report.get('runtime') != host['runtime']
+            or report.get('suite') != 'All' or report.get('performanceBudgetSeconds') != budget):
+        raise RuntimeError('Candidate report source, fixture, function or native association differs')
+    rows = report.get('results', [])
+    names = [r.get('case') for r in rows]
+    required = {r['case']: r['observation'] for r in expected['directCases']}
+    performance = 'linear metadata lexer budgets and scaling'
+    if (len(names) != 52 or len(set(names)) != 52 or set(names) != set(required) | {performance}
+            or not all(r.get('pass') is True for r in rows)):
+        raise RuntimeError('Candidate direct case partition differs')
+    for row in rows:
+        if row['case'] in required:
+            observation = row.get('observation', {})
+            if (observation != required[row['case']]
+                    or any(type(observation.get(k)) is not bool for k in ['expected', 'actual', 'baseline'])):
+                raise RuntimeError('Candidate direct input or Boolean evidence differs: ' + row['case'])
+    samples = report.get('samples', [])
+    slots = [(s.get('round'), s.get('kilobytes')) for s in samples]
+    wanted = {(r, k) for r in [1, 2, 3] for k in [200, 400, 512, 1024]}
+    if len(slots) != 12 or len(set(slots)) != 12 or set(slots) != wanted:
+        raise RuntimeError('Candidate performance sample partition differs')
+    for sample in samples:
+        target = expected['performanceInputs'][str(sample['kilobytes'])]
+        seconds = sample.get('seconds')
+        if (type(sample.get('round')) is not int or type(sample.get('kilobytes')) is not int
+                or sample.get('characters') != target['characters']
+                or sample.get('inputSha256') != target['inputSha256'] or sample.get('valid') is not True
+                or type(seconds) not in [int, float] or not math.isfinite(seconds) or not 0 < seconds <= budget):
+            raise RuntimeError('Candidate actual performance sample differs')
+    medians = {k: statistics.median(s['seconds'] for s in samples if s['kilobytes'] == k)
+               for k in [200, 400, 512, 1024]}
+    expected_performance = {'budgetSeconds': budget, 'maximumRatio': 3.0,
+                            'ratio400over200': medians[400] / medians[200],
+                            'ratio1024over512': medians[1024] / medians[512],
+                            **{'median' + str(k): v for k, v in medians.items()}}
+    actual = next(r['observation'] for r in rows if r['case'] == performance)
+    if (expected_performance['ratio400over200'] > 3 or expected_performance['ratio1024over512'] > 3
+            or set(actual) != set(expected_performance)
+            or any(type(actual[k]) not in [int, float] or not math.isfinite(actual[k])
+                   or not math.isclose(actual[k], v, rel_tol=1e-10, abs_tol=1e-12)
+                   for k, v in expected_performance.items())):
+        raise RuntimeError('Candidate timing medians or scaling differ from original samples')
+
+
+def validate_lexer_mutations(value, host, expected):
+    rows = value.get('results', [])
+    applicability = value.get('applicability', [])
+    if (value.get('nativeHost') != host['version'] or value.get('platform') != 'Win32NT'
+            or value.get('runtime') != host['runtime']
+            or [r.get('case') for r in rows] != ['exact-source direct healthy corpus', 'missing-final-coverage', 'skip-contiguous-coverage']
+            or not all(r.get('pass') is True for r in rows)):
+        raise RuntimeError('Direct lexer mutation identity or healthy corpus differs')
+    required = {
+        'missing-final-coverage': ['strict lexer trailing garbage after root', 'strict lexer trailing garbage after space'],
+        'skip-contiguous-coverage': ['strict lexer gap before first token', 'strict lexer gap between tokens',
+                                     'strict lexer gap between array values', 'strict lexer trailing garbage after root'],
+    }
+    negative_names = {r['case'] for r in expected['directCases'] if r['observation']['expected'] is False}
+    for row in rows[1:]:
+        failed = row.get('actualFailures', [])
+        if (row.get('detected') is not True or row.get('positiveControlsPassed') is not True
+                or type(row.get('fixtureExit')) is not int or row['fixtureExit'] != 1
+                or row.get('requiredFailures') != required[row['case']]
+                or not failed or len(failed) != len(set(failed))
+                or not set(required[row['case']]) <= set(failed) <= negative_names):
+            raise RuntimeError('Direct lexer mutation lacks the named actual failure: ' + row['case'])
+    if (len(applicability) != 1 or applicability[0].get('case') != 'redundant-index-check-only'
+            or applicability[0].get('survived') is not True
+            or type(applicability[0].get('fixtureExit')) is not int or applicability[0]['fixtureExit'] != 0):
+        raise RuntimeError('Redundant Index-only control lacks a complete surviving exit')
+
+
+DISCOVERY_MUTATIONS = {
+    'catch-to-absence': ['actual parser malformed', 'actual unknown only refuses before staging'],
+    'wildcard-profile-probe': ['literal bracketed Firefox profile name'],
+    'singleton-root-array-admitted': ['unsupported shape root-singleton-empty', 'unsupported shape root-singleton-new', 'actual singleton root array held with known peer'],
+    'drop-builder-knowledge': ['actual target builder keeps states source and safe peers'],
+    'default-all-admits-unknown': ['actual all mixed selection keeps known peer', 'actual unknown only refuses before staging'],
+    'known-both-becomes-safe-new': ['actual parser both', 'actual both refuses before staging'],
+    'held-summary-erased': ['actual all mixed selection keeps known peer'],
+    'diagnostic-on-object-stream': ['actual parser malformed'],
+    'insufficient-identity-proves-absence': ['insufficient identity empty-object', 'actual insufficient identity held with known peer'],
+    'addons-key-case-folded': ['unsupported shape addons-key-case', 'actual wrong-case addons cannot certify absence'],
+    'identity-key-case-folded': ['unsupported shape id-key-case', 'unsupported shape name-key-case', 'unsupported shape locale-key-case', 'actual wrong-case identity held with known peer'],
+    'locale-name-case-folded': ['unsupported shape locale-name-key-case'],
+    'strict-json-guard-bypassed': ['strict JSON trailing-comma', 'strict JSON trailing-comment', 'strict JSON single-quotes', 'strict JSON bare-key', 'actual duplicate keys cannot hide legacy from selection'],
+    'duplicate-json-keys-admitted': ['strict JSON duplicate-addons', 'strict JSON escaped-duplicate-name', 'actual duplicate keys cannot hide legacy from selection'],
+    'trailing-separators-admitted': ['actual strict validator object-trailing-comma', 'actual strict validator array-trailing-comma', 'strict JSON trailing-comma', 'strict JSON array-trailing-comma'],
+}
+
+
+def validate_discovery_mutations(value, native_version):
+    rows = value.get('results', [])
+    applicability = value.get('applicability', [])
+    facts = value.get('hostParserCapabilities', {})
+    capabilities = facts.get('accepts', {})
+    if (facts.get('version') != native_version
+            or type(facts.get('singletonIsArray')) is not bool
+            or any(type(capabilities.get(k)) is not bool for k in
+                   ['trailing-comma', 'array-trailing-comma', 'trailing-comment', 'single-quotes', 'bare-key'])):
+        raise RuntimeError('Missing actual native parser capabilities')
+    healthy_name = 'exact-source paired controls and assertions'
+    names = [r.get('case') for r in rows + applicability]
+    if (len(names) != 16 or len(set(names)) != 16
+            or set(names) != set(DISCOVERY_MUTATIONS) | {healthy_name}):
+        raise RuntimeError('Discovery mutation case partition differs')
+    healthy = next(r for r in rows if r.get('case') == healthy_name)
+    if healthy.get('pass_') is not True or type(healthy.get('fixtureExit')) is not int or healthy['fixtureExit'] != 0:
+        raise RuntimeError('Discovery mutation healthy control failed')
+    survivor = native_version.startswith('5.1.') and facts['singletonIsArray'] is True
+    if [r.get('case') for r in applicability] != (['singleton-root-array-admitted'] if survivor else []):
+        raise RuntimeError('Native applicability partition differs')
+    for row in applicability:
+        if (row.get('executed') is not True or row.get('detected') is not False
+                or type(row.get('syntaxExit')) is not int or row['syntaxExit'] != 0
+                or type(row.get('fixtureExit')) is not int or row['fixtureExit'] != 0
+                or row.get('pairedControlsPass') is not True or row.get('failedCases') != []):
+            raise RuntimeError('Singleton survivor lacks complete actual non-detection evidence')
+    for row in rows:
+        if row['case'] == healthy_name:
+            continue
+        required = DISCOVERY_MUTATIONS[row['case']]
+        if row['case'] in ['strict-json-guard-bypassed', 'trailing-separators-admitted']:
+            required = [name for name in required if not name.startswith('strict JSON ')
+                        or capabilities[name[len('strict JSON '):]]]
+        protected = [name for name in DISCOVERY_MUTATIONS[row['case']] if name not in required]
+        if (not required or row.get('detected') is not True or row.get('pairedControlsPass') is not True
+                or type(row.get('syntaxExit')) is not int or row['syntaxExit'] != 0
+                or type(row.get('fixtureExit')) is not int or row['fixtureExit'] != 1
+                or row.get('failedCases') != required or row.get('requiredFailedCases') != required
+                or row.get('downstreamProtectedCases') != protected):
+            raise RuntimeError('Discovery mutation evidence differs: ' + row['case'])
 
 
 def main():
@@ -46,6 +188,10 @@ def main():
         'fixture': repo / 'tests/install-json-lexer.ps1',
         'reproducer': repo / 'tests/install-json-lexer-repro.ps1',
         'launcher': Path(__file__).resolve(),
+        'lexerMutations': repo / 'tests/install-json-lexer-mutations.py',
+        'discovery': repo / 'tests/install-discovery.ps1',
+        'discoveryMutations': repo / 'tests/install-discovery-mutations.py',
+        'expected': repo / 'tests/install-json-lexer-native-expected.json',
     }
     records = []
     facts = {'schema': 'r0013-lexer-native-v1', 'host': platform.platform(),
@@ -66,6 +212,9 @@ def main():
         raise RuntimeError('Original R0013 installer identity mismatch')
     if digest(sources['reproducer']) != '37e3081d92337fb1f799a7cabd423b36876c778d217eaadcdb844ed4676e2c7e':
         raise RuntimeError('Exact handoff reproducer identity mismatch')
+    expected = json.loads(sources['expected'].read_text(encoding='utf-8'))
+    if expected['discoveryFixtureSha256'] != digest(sources['discovery']):
+        raise RuntimeError('Discovery expected-case fixture identity mismatch')
 
     def save():
         (out / 'receipt.json').write_text(json.dumps(facts, indent=2) + '\n', encoding='utf-8')
@@ -135,12 +284,33 @@ def main():
             if current['exitCode'] != 0 or current['timedOut']:
                 raise RuntimeError('Candidate regression fixture did not pass')
             report = json.loads((out / 'candidate-report.json').read_text(encoding='utf-8-sig'))
-            if (report['source'] != digest(sources['installer']) or report['fixture'] != digest(sources['fixture'])
-                    or report['host'] != host['version'] or report['suite'] != 'All'
-                    or len(report['results']) != 52 or not all(r['pass'] is True for r in report['results'])
-                    or len(report['samples']) != 12):
-                raise RuntimeError('Candidate report association or completeness failure')
-            facts['disposition'] = 'candidate direct lexer semantics and performance passed; integration suites separate'
+            validate_direct(report, expected, digest(sources['installer']), digest(sources['fixture']), host)
+            checks = [
+                ('lexer-mutations', [os.sys.executable, '-B', str(sources['lexerMutations']),
+                                    str(sources['installer']), str(exe), '--baseline', str(baseline)], 90),
+                ('discovery', prefix + ['-File', str(sources['discovery']), '-SourceFile', str(sources['installer'])], 180),
+                ('discovery-mutations', [os.sys.executable, '-B', str(sources['discoveryMutations']),
+                                        str(sources['installer']), str(exe)], 300),
+            ]
+            for name, command, deadline in checks:
+                observed = run(name, command, deadline)
+                if observed['exitCode'] != 0 or observed['timedOut']:
+                    raise RuntimeError('Candidate integration control failed: ' + name)
+                value = json.loads((out / (name + '.stdout.txt')).read_text(encoding='utf-8-sig'))
+                if value.get('source') != digest(sources['installer']):
+                    raise RuntimeError('Integration source association differs: ' + name)
+                rows = value.get('results', [])
+                if name == 'lexer-mutations':
+                    validate_lexer_mutations(value, host, expected)
+                elif name == 'discovery':
+                    if (len(rows) != 79 or len({r.get('case') for r in rows}) != 79
+                            or {r.get('case') for r in rows} != set(expected['discoveryCases'])
+                            or not all(r.get('pass') is True for r in rows) or value.get('host') != host['version']
+                            or value.get('platform') != 'Win32NT'):
+                        raise RuntimeError('Original discovery receipt incomplete')
+                else:
+                    validate_discovery_mutations(value, host['version'])
+            facts['disposition'] = 'candidate direct lexer, performance, discovery and mutation controls passed; wider integration separate'
         if any(r['cleanupError'] or (r['cleanup'] and r['cleanup']['exitCode'] != 0) for r in records):
             raise RuntimeError('Unresolved timeout cleanup outcome')
         if original_repro['exitCode'] != 0 and not original_repro['timedOut']:

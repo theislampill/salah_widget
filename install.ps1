@@ -241,8 +241,9 @@ function Test-StrictJson([string]$Json) {
     $frames = New-Object 'System.Collections.Generic.List[object]'
     $position=0; $rootComplete=$false
     try {
-        while ($position -lt $Json.Length) {
-            $tokenMatch=$lexer.Match($Json,$position)
+        # Continue one match sequence instead of passing the whole document to
+        # a fresh Match call for every token. Keep contiguous, complete coverage.
+        for ($tokenMatch=$lexer.Match($Json); $tokenMatch.Success; $tokenMatch=$tokenMatch.NextMatch()) {
             if (-not $tokenMatch.Success -or $tokenMatch.Index -ne $position) { return $false }
             $position += $tokenMatch.Length
             if ($tokenMatch.Groups['space'].Success) { continue }
@@ -303,7 +304,7 @@ function Test-StrictJson([string]$Json) {
                 return $false
             }
         }
-        return ($rootComplete -and $frames.Count -eq 0)
+        return ($position -eq $Json.Length -and $rootComplete -and $frames.Count -eq 0)
     } catch { return $false }
 }
 
