@@ -439,11 +439,13 @@ jobs:
           & (Join-Path `$o 'windows_observation.ps1') -SourceFile (Join-Path `$o 'install.ps1') -OutputFile (Join-Path `$o 'functions-standard-user.json') -FixtureParent `$env:TEMP *> (Join-Path `$o 'observation.log')
           'done' | Set-Content -LiteralPath (Join-Path `$o 'done.txt')
           "@
-            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($inner))
+            # CreateProcessWithLogonW limits the command line to 1024 characters: pass a file.
+            $innerFile = Join-Path $dir 'standard-user-observe.ps1'
+            [IO.File]::WriteAllText($innerFile, $inner, (New-Object Text.UTF8Encoding $true))
             $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
             # Interactive-type logon (Users hold that right) with the account's profile loaded.
             $cred = New-Object Management.Automation.PSCredential($user, (ConvertTo-SecureString $secret -AsPlainText -Force))
-            $p = Start-Process -FilePath $exe -ArgumentList ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand ' + $encoded) -Credential $cred -LoadUserProfile -WorkingDirectory $dir -PassThru
+            $p = Start-Process -FilePath $exe -ArgumentList ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + $innerFile + '"') -Credential $cred -LoadUserProfile -WorkingDirectory $dir -PassThru
             if (-not $p.WaitForExit(900000)) { try { $p.Kill() } catch {}; 'standard-user child timed out' }
             "child exit: $($p.ExitCode); done marker: $(Test-Path (Join-Path $dir 'done.txt'))"
           } finally {
