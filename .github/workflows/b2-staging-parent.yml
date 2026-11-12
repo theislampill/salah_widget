@@ -1,0 +1,82 @@
+# Staging-parent admission on real default temporary directories (install.sh).
+#
+# Runs tests/install-staging-parent.py on ubuntu-24.04 and macos-15 (Apple
+# /bin/bash 3.2) against this tree's install.sh, and again against the
+# previous install.sh blob d7f8267d so the default-environment positives are
+# shown to fail on the old bytes (macOS). The existing Bash staging suites run
+# unchanged against this tree. Passwordless sudo on the hosted runner creates
+# the root-owned fixtures inside a private directory; no network is used by
+# the tests themselves.
+name: B2 staging parent
+
+on:
+  push:
+    branches:
+      - claude/b2-staging-parent-*
+    paths:
+      - install.sh
+      - tests/install-staging-parent.py
+      - .github/workflows/b2-staging-parent.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  posix:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    env:
+      SALAH_TEST_BASH: /bin/bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Staging-parent defaults and negatives on this tree
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/b2"; mkdir -p "$out"
+          /bin/bash --version | head -1
+          echo "TMPDIR as provided: ${TMPDIR-<unset>}"
+          echo "tree install.sh blob $(git rev-parse HEAD:install.sh)"
+          python3 tests/install-staging-parent.py install.sh --report "$out/tree.json" > /dev/null
+      - name: Same suite on the previous install.sh blob d7f8267d
+        if: always()
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/b2"; mkdir -p "$out"
+          git cat-file blob d7f8267d2b426da79d8875f9599eeeed2696ffc8 > "$RUNNER_TEMP/old-install.sh"
+          set +e; python3 tests/install-staging-parent.py "$RUNNER_TEMP/old-install.sh" --report "$out/old.json" > /dev/null; echo "old-bytes exit $?"; set -e
+          python3 - "$out/old.json" "$out/tree.json" "${{ runner.os }}" <<'PY'
+          import json, sys
+          old = {r['case']: r['status'] for r in json.load(open(sys.argv[1]))['results']}
+          new = {r['case']: r['status'] for r in json.load(open(sys.argv[2]))['results']}
+          for case in new:
+              print('%-80s tree=%-18s old=%s' % (case, new[case], old.get(case)))
+          positives = [c for c in new if c.startswith(('TMPDIR', '/tmp', '/private/tmp'))]
+          assert all(new[c] == 'PASS' for c in positives), 'a default-environment positive failed on this tree'
+          if sys.argv[3] == 'macOS':
+              assert all(old.get(c) == 'FAIL' for c in positives), 'a macOS positive did not fail on the old bytes'
+          PY
+      - name: Existing Bash staging suites on this tree
+        if: always()
+        shell: bash
+        run: |
+          rc=0; python3 tests/install-bash.py install.sh > "$RUNNER_TEMP/b2/install-bash.txt" 2>&1 || rc=$?
+          tail -5 "$RUNNER_TEMP/b2/install-bash.txt"; echo "install-bash exit $rc"; test $rc -eq 0
+          rc=0; python3 tests/install-mutations.py install.sh > "$RUNNER_TEMP/b2/install-mutations.txt" 2>&1 || rc=$?
+          tail -5 "$RUNNER_TEMP/b2/install-mutations.txt"; echo "install-mutations exit $rc"; test $rc -eq 0
+      - name: Retain reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: b2-staging-parent-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/b2
+          if-no-files-found: error
+          retention-days: 30
