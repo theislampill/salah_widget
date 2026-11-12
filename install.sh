@@ -283,6 +283,52 @@ firefox_profiles() {
   done < <(find "$profiles_root" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null) | sort
 }
 
+discovery_path_output() {
+  local value status
+  # Retain the command's output delimiter until after validation: ordinary
+  # command substitution strips every trailing newline, including path bytes.
+  value="$("$@"; status=$?; printf '\001'; exit "$status")" || return 1
+  value="${value%$'\001'}"
+  [[ "$value" = *$'\n' ]] || return 1
+  value="${value%$'\n'}"
+  case "$value" in ''|*$'\n'*|*$'\r'*) return 1 ;; esac
+  printf '%s\n' "$value"
+}
+
+firefox_discovery_python() {
+  local found developer python parent link hops=0
+  found="$(command -v python3)" || return 1
+  if [ "$DRY_RUN" != 1 ] || [ "$PLATFORM" != mac ] || [[ ! "$found" -ef /usr/bin/python3 ]]; then
+    printf '%s\n' python3
+    return 0
+  fi
+
+  # Apple's system Python is a developer-tool shim which can create xcrun
+  # cache files even for a read-only program. Resolve the selected toolchain's
+  # physical interpreter without invoking that shim or changing PATH.
+  developer="$(discovery_path_output /usr/bin/xcode-select --print-path 2>/dev/null)" || return 1
+  case "$developer" in /*) ;; *) return 1 ;; esac
+  case "$developer" in *$'\n'*|*$'\r'*) return 1 ;; esac
+  developer="$(CDPATH= cd -P -- "$developer" 2>/dev/null && discovery_path_output pwd -P)" || return 1
+  case "$developer" in *$'\n'*|*$'\r'*) return 1 ;; esac
+  [ "$developer" != / ] || return 1
+  python="$developer/usr/bin/python3"
+  while :; do
+    case "$python" in *$'\n'*|*$'\r'*) return 1 ;; esac
+    parent="$(CDPATH= cd -P -- "${python%/*}" 2>/dev/null && discovery_path_output pwd -P)" || return 1
+    python="$parent/${python##*/}"
+    case "$python" in *$'\n'*|*$'\r'*) return 1 ;; esac
+    [[ -L "$python" ]] || break
+    hops=$((hops + 1))
+    [ "$hops" -le 40 ] || return 1
+    link="$(discovery_path_output /usr/bin/readlink "$python")" || return 1
+    case "$link" in /*) python="$link" ;; *) python="$parent/$link" ;; esac
+  done
+  case "$python" in "$developer"/*) ;; *) return 1 ;; esac
+  [[ -f "$python" && -x "$python" && ! "$python" -ef /usr/bin/python3 ]] || return 1
+  printf '%s\n' "$python"
+}
+
 firefox_status() {
   local profile="$1"
   local file="$profile/extensions.json"
@@ -300,8 +346,12 @@ firefox_status() {
     return 0
   fi
 
-  if command -v python3 >/dev/null 2>&1; then
-    python3 - "$file" < <(printf '%s\n' 'import json, re, sys
+  local python
+  local -a python_command
+  if python="$(firefox_discovery_python)"; then
+    python_command=("$python")
+    [ "$DRY_RUN" != 1 ] || python_command+=(-B)
+    "${python_command[@]}" - "$file" < <(printf '%s\n' 'import json, re, sys
 path = sys.argv[1]
 has_new = False
 has_old = False

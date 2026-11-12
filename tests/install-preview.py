@@ -133,6 +133,40 @@ def require(condition, message):
         raise AssertionError(message)
 
 
+def no_profile_refusal(stdout, stderr):
+    """Accept either real absence or an all-held application-only refusal."""
+    text = stdout + stderr
+    if re.search(r"\bWould\b|Install source unresolved:|Preview only; no changes made|\[OK\]", text, re.I):
+        return False
+    lines = stdout.splitlines()
+    if lines.count("== Detecting browsers ==") != 1:
+        return False
+    # Inspect the complete discovery/preview tail. Selectively collecting only
+    # recognizable rows could silently discard malformed or extra targets.
+    tail = [line for line in lines[lines.index("== Detecting browsers ==") + 1:] if line]
+    diagnostics = [line for line in stderr.splitlines() if line]
+    if diagnostics == ["[ERROR] No supported browser profiles or installs were detected."]:
+        return not tail
+    if len(tail) < 3 or tail[-2] != "== Offline preview ==":
+        return False
+    rows, summary = tail[:-2], tail[-1]
+    matches = [re.fullmatch(
+        r"\[(\d+)\] (.+) / \(no profile detected\) — discovery unknown: HELD \(no-profile\)", row)
+        for row in rows]
+    if not all(matches) or [int(match[1]) for match in matches] != list(range(1, len(rows) + 1)):
+        return False
+    labels = [match[2] for match in matches]
+    if len(set(labels)) != len(labels):
+        return False
+    expected_diagnostics = [
+        "[WARN] Held " + label + " / (no profile detected): no-profile. "
+        "Review metadata manually; no automatic actions." for label in labels]
+    expected_diagnostics += ["[WARN] Importing the preset replaces your current TablissNG dashboard.",
+                             "[ERROR] No eligible target; preview made no changes."]
+    return (summary == "Preview targets: 0 eligible, %d held, 0 refused." % len(rows)
+            and diagnostics == expected_diagnostics)
+
+
 def snapshot(root, held_readers=None):
     rows = []
     for path in sorted(root.rglob("*")):
@@ -649,9 +683,26 @@ raise SystemExit(0 if allowed else 2)
 
 def preview(name, source=FROZEN, population="known", route="github", expected_failure=False,
             missing_preset=False, invalid=False, malformed_boolean=False, arguments=None,
-            pipe=False, no_open=False):
+            pipe=False, no_open=False, literal_absence=False):
     root, subject, env = fixture(name, population, route)
     env["NO_OPEN"] = "1" if no_open else "0"
+    # The product must suppress interpreter bytecode writes itself. Keep the
+    # observer's own Python configuration separate from the installer process.
+    env.pop("PYTHONDONTWRITEBYTECODE", None)
+    if literal_absence:
+        require(population == "none", "BOOTSTRAP: literal absence requires an empty profile population")
+        bootstrap = pathlib.Path(env["BASH_ENV"])
+        text = bootstrap.read_text()
+        anchor = '    case "$2" in\n'
+        require(text.count(anchor) == 1, "BOOTSTRAP: browser lookup anchor drift")
+        browser_paths = ('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+                         '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+                         '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
+                         '/Applications/Chromium.app/Contents/MacOS/Chromium',
+                         '/Applications/Firefox.app/Contents/MacOS/firefox',
+                         '/Applications/LibreWolf.app/Contents/MacOS/librewolf')
+        denied = '      ' + '|'.join('"' + path + '"' for path in browser_paths) + ') return 1 ;;\n'
+        bootstrap.write_text(text.replace(anchor, anchor + denied, 1))
     if missing_preset:
         env["SALAH_WIDGET_PRESET_URL"] = ""
     if invalid:
@@ -718,6 +769,8 @@ def preview(name, source=FROZEN, population="known", route="github", expected_fa
     (root / "observation.json").write_text(json.dumps(observed, indent=2))
     no_effects(observed)
     text = run.stdout + run.stderr
+    require(not re.search(r"xcrun.*(?:cache|failed)|xcrun_db|couldn.t create cache file", run.stderr, re.I),
+            "Preview attempted an Apple developer-tool cache write: " + run.stderr)
     require((run.returncode != 0) == expected_failure, "Wrong preview/refusal exit: " + text)
     require(not re.search(r"Press Enter|Select target numbers|Choose \[1/2\]", text), "Preview requested terminal input")
     require(not re.search(r"\[OK\].*Copied|Validated manual-install files retained|Staging directory:", text),
@@ -729,11 +782,17 @@ def preview(name, source=FROZEN, population="known", route="github", expected_fa
             require("source unresolved" in text.lower(), "Preview silently resolved ask source")
         if route == "github" and population != "installed":
             require("unresolved" in text.lower(), "Preview silently resolved release/path")
+        if population == "known":
+            require(re.search(r"Would prepare Firefox / r0016-known", text),
+                    "Usable Firefox metadata did not produce its eligible preview")
     else:
         require("Preview only; no changes made" not in text, "Refused preview claimed successful plan")
         if population == "none":
-            require("No supported browser profiles or installs were detected." in text,
-                    "No-target case failed before its actual discovery refusal")
+            require(no_profile_refusal(run.stdout, run.stderr),
+                    "No-profile case failed before its actual absence or all-held refusal")
+            if literal_absence:
+                require("[ERROR] No supported browser profiles or installs were detected." in run.stderr,
+                        "Literal absence did not execute the zero-target refusal")
         elif population == "legacy":
             require("Legacy Tabliss: refusing" in text and "No eligible target; preview made no changes." in text,
                     "Legacy-only case failed before its actual eligibility refusal")
@@ -926,6 +985,10 @@ else:
         for population in ("none", "legacy", "unknown-only", "malformed-only", "missing-metadata"):
             check("whole-entry refusal " + population, "interface" if "only" in population or population == "missing-metadata" else "entry",
                   lambda p=population: preview("entry-" + p, population=p, expected_failure=True))
+        if HOST == "Darwin":
+            check("whole-entry literal zero-target refusal", "entry",
+                  lambda: preview("entry-literal-absence", population="none", expected_failure=True,
+                                  literal_absence=True))
         check("whole-entry missing preset", "entry", lambda: preview("entry-missing-preset", missing_preset=True))
         check("whole-entry invalid source", "entry", lambda: preview("entry-invalid-source", invalid=True, expected_failure=True))
         check("whole-entry invalid boolean", "entry", lambda: preview("entry-invalid-boolean", malformed_boolean=True, expected_failure=True))
