@@ -39,7 +39,10 @@
 #     observation scripts (tools/qualification/environment-observation/, from
 #     claude/installer-env-diagnostics-20261112) run unchanged, then
 #     assert_defaults.py FAILS the job unless the runner's real default
-#     environment is admitted.
+#     environment is admitted; environment-posix also runs
+#     tests/install-staging-parent.py (B2 defaults and refusals);
+#   - `windows-standard-user` (observation, non-gating): a temporary standard
+#     user runs the observation script with its own profile loaded.
 # `installer-native.yml` and `r0013-integration-qualification.yml` are untouched.
 name: R0015 integration qualification
 
@@ -361,6 +364,7 @@ jobs:
           sparse-checkout: |
             /install.sh
             /tests/install-staging-native.py
+            /tests/install-staging-parent.py
             /tools/qualification/environment-observation/
       - name: Observe the real default environment for this tree's and main's install.sh
         shell: bash
@@ -378,6 +382,12 @@ jobs:
         run: |
           out="$RUNNER_TEMP/environment-observation"
           python3 tools/qualification/environment-observation/assert_defaults.py --posix "$out/posix-${{ matrix.runner }}.json" --output "$out/default-gate.json"
+      - name: Staging-parent defaults and refusals (tests/install-staging-parent.py)
+        shell: bash
+        env:
+          SALAH_TEST_BASH: /bin/bash
+        run: |
+          python3 tests/install-staging-parent.py install.sh --report "$RUNNER_TEMP/environment-observation/staging-parent.json" > /dev/null
       - name: Retain observations
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -385,4 +395,81 @@ jobs:
           name: environment-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/environment-observation
           if-no-files-found: error
+          retention-days: 30
+  windows-standard-user:
+    # Observation only (does not gate): a temporary non-administrator local
+    # account runs the unchanged observation script under Windows PowerShell
+    # 5.1 with its own profile loaded (scheduled task, password logon). The
+    # account, its task and its profile are removed afterwards.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.ps1
+            /tools/qualification/environment-observation/
+      - name: Observe staging parents as a temporary standard user
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $user = 'r15std' + (Get-Random -Minimum 1000 -Maximum 9999)
+          $chars = [char[]]((48..57) + (65..90) + (97..122))
+          $secret = (-join (1..24 | ForEach-Object { $chars | Get-Random })) + '!a7Z'
+          $dir = Join-Path $env:RUNNER_TEMP 'standard-user'
+          [void][IO.Directory]::CreateDirectory($dir)
+          Copy-Item install.ps1, tools/qualification/environment-observation/windows_observation.ps1 -Destination $dir
+          $null = & net.exe user $user $secret /add /Y
+          if ($LASTEXITCODE -ne 0) { throw 'temporary user creation failed' }
+          try {
+            $null = & icacls.exe $dir /grant ($user + ':(OI)(CI)M') /Q
+            $inner = @"
+          `$o = '$dir'
+          `$facts = foreach (`$p in @(`$env:USERPROFILE, `$env:TEMP)) { `$a = Get-Acl -LiteralPath `$p; [pscustomobject]@{ variable = `$(if (`$p -eq `$env:USERPROFILE) { 'USERPROFILE' } else { 'TEMP' }); ownerSid = `$a.GetOwner([Security.Principal.SecurityIdentifier]).Value } }
+          [pscustomobject]@{ userSid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value; elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); ps = `$PSVersionTable.PSVersion.ToString(); owners = @(`$facts) } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path `$o 'identity.json') -Encoding UTF8
+          & (Join-Path `$o 'windows_observation.ps1') -SourceFile (Join-Path `$o 'install.ps1') -OutputFile (Join-Path `$o 'functions-standard-user.json') -FixtureParent `$env:TEMP *> (Join-Path `$o 'observation.log')
+          'done' | Set-Content -LiteralPath (Join-Path `$o 'done.txt')
+          "@
+            $encoded = [Convert]::ToBase64String([Text.Encoding]::Unicode.GetBytes($inner))
+            $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+            $action = New-ScheduledTaskAction -Execute $exe -Argument ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -EncodedCommand ' + $encoded)
+            $null = Register-ScheduledTask -TaskName $user -Action $action -User $user -Password $secret -RunLevel Limited -Force
+            Start-ScheduledTask -TaskName $user
+            $deadline = (Get-Date).AddMinutes(15)
+            while (-not (Test-Path (Join-Path $dir 'done.txt')) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 10 }
+            $info = Get-ScheduledTaskInfo -TaskName $user
+            "task last result: $($info.LastTaskResult); done marker: $(Test-Path (Join-Path $dir 'done.txt'))"
+          } finally {
+            try { Unregister-ScheduledTask -TaskName $user -Confirm:$false } catch {}
+            $sid = $null; try { $sid = (New-Object Security.Principal.NTAccount($user)).Translate([Security.Principal.SecurityIdentifier]).Value } catch {}
+            $null = & net.exe user $user /delete
+            if ($sid) { Get-CimInstance Win32_UserProfile | Where-Object { $_.SID -eq $sid } | ForEach-Object { try { Remove-CimInstance -InputObject $_ } catch { "profile removal failed: $($_.Exception.Message)" } } }
+            "temporary user removed: $(-not (Get-LocalUser -Name $user -ErrorAction SilentlyContinue))"
+          }
+          if (Test-Path (Join-Path $dir 'identity.json')) { Get-Content -Raw (Join-Path $dir 'identity.json') }
+          $report = Join-Path $dir 'functions-standard-user.json'
+          if (Test-Path $report) {
+            $j = Get-Content -Raw $report | ConvertFrom-Json
+            "host elevated=$($j.host.elevated) tokenOwner=$($j.host.tokenOwnerClass) compile=$($j.compile.result) $($j.compile.message)"
+            foreach ($a in $j.admission) { "$($a.label): $($a.result) $($a.message) owner=$($a.inspect.ownerClass)" }
+            "staging: $($j.staging.result) $($j.staging.message)"
+          } else { 'no observation report'; exit 1 }
+      - name: Retain standard-user observation
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: standard-user-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/standard-user/*.json
+            ${{ runner.temp }}/standard-user/*.log
+          if-no-files-found: warn
           retention-days: 30
