@@ -73,8 +73,10 @@ identifier is not guaranteed unique on ReFS. Other filesystem names and unknown
 names are therefore refused rather than treated as qualified NTFS identities.
 See [Microsoft's structure documentation](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/ns-fileapi-by_handle_file_information).
 
-`Get-TrustedStagingParent` requires a self-owned immediate parent with no
-untrusted write grant and checks every physical ancestor without accepting
+`Get-TrustedStagingParent` requires an immediate (final) parent owned by the
+current user, System or Administrators, with a non-null DACL that grants write
+access to no other principal (the unchanged DACL gate); the private child it
+creates is owned by the current user. It checks every physical ancestor without accepting
 reparse points. Earlier ancestors may be owned by the current user, System,
 Administrators, or the locally resolved TrustedInstaller servicing principal.
 They must not grant a foreign principal replacement, attribute, ACL or ownership
