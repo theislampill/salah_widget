@@ -1,0 +1,202 @@
+# R0015 integration requalification (integration-owned, additive).
+#
+# Why this file exists: `installer-native.yml` (R0015 version, blob 456f88c8)
+# triggers only on pushes to three named `pro/...` engineering branches and
+# derives `--phase` from the branch name, so it cannot run on the R0015
+# integration branch. Editing it is outside integration custody (R0016 also
+# changes it).
+#
+# This workflow COPIES that file's jobs with the phase fixed to `r0015`. It
+# keeps the same runner images (ubuntu-24.04, macos-15 with Apple /bin/bash
+# 3.2, windows-2022 with Windows PowerShell 5.1 and the digest-pinned
+# PowerShell 7.6.6), the same pinned action SHAs, sparse checkouts and timeouts
+# (60 min Windows), the same Windows env (telemetry and update-check opt-outs,
+# autocrlf off), the same collector invocation
+# (`tools/qualification/installer_native.py --phase r0015`) and the same
+# artifact packaging, upload and names. The collector sets
+# SALAH_TEST_BASH=/bin/bash on POSIX hosts.
+#
+# The only deliberate differences are:
+#   - the triggers: push to `claude/r0015-integration-*`, and workflow_dispatch;
+#   - `--phase r0015` is a literal instead of being derived from the ref name;
+#   - the concurrency group name;
+#   - the path filter adds this file itself;
+#   - one extra job, `windows-r0013-phase`. It is a byte-for-byte copy of the
+#     `windows` job with `--phase r0013` and its own artifact name. With R0015's
+#     collector, phase r0015 runs only the positive/no-open entry scenarios
+#     (R0016 owns the preview replay). Phase r0013 runs R0013's full
+#     twelve-scenario PS5.1/PS7 entry set and the bootstrap diagnostic under
+#     R0015's corrected 60 s instruments. That is how the R0013 Windows rows
+#     (ES13-13) are evaluated on the stacked tree. The original workflow runs
+#     the same collector phase for the R0013 branch.
+# `installer-native.yml` and `r0013-integration-qualification.yml` are untouched.
+name: R0015 integration qualification
+
+on:
+  push:
+    branches:
+      - claude/r0015-integration-*
+    paths:
+      - install.sh
+      - install.ps1
+      - tests/install*
+      - src/native/builder.html
+      - src/native/config.js
+      - tools/qualification/installer_native.py
+      - .github/workflows/installer-native.yml
+      - .github/workflows/r0015-integration-qualification.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0015-integration-qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  posix:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            native: Linux
+          - runner: macos-15
+            native: Darwin
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /src/native/builder.html
+            /src/native/config.js
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Execute native disposable installer fixtures
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_native.py --expected-os '${{ matrix.native }}' --phase r0015 --output "$RUNNER_TEMP/installer-evidence"
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: bash
+        run: |
+          python3 -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-${{ matrix.native }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      POWERSHELL_UPDATECHECK: 'Off'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Execute both native PowerShell hosts
+        shell: powershell
+        run: |
+          python tools/qualification/installer_native.py --expected-os Windows --phase r0015 --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+          exit $LASTEXITCODE
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: powershell
+        run: |
+          python -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+          exit $LASTEXITCODE
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  windows-r0013-phase:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      POWERSHELL_UPDATECHECK: 'Off'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Execute both native PowerShell hosts
+        shell: powershell
+        run: |
+          python tools/qualification/installer_native.py --expected-os Windows --phase r0013 --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+          exit $LASTEXITCODE
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: powershell
+        run: |
+          python -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+          exit $LASTEXITCODE
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-Windows-r0013-phase-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
