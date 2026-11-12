@@ -1,0 +1,56 @@
+{
+  "schema": "r0015-final-integration-manifest-v1",
+  "recorded": "2026-11-12",
+  "purpose": "Final-tree identity for the R0015 integration packet (row ES15-18 readback input). Not a certificate; no completion, approval or closure is asserted.",
+  "supersedesForDelivery": [
+    {
+      "path": "docs/state-contracts/evidence/R0015/engineering-manifest.json",
+      "note": "Early engineering candidate manifest (initial native qualification). Retained unchanged as history; superseded for delivery by the identities below."
+    },
+    {
+      "round": "R0015 merge (main 3b0e6141)",
+      "installSh": {"blob": "7e02cfa65fe71a3f7ce7f6081f7423aa35941f23", "sha256": "4d1818f89e8db936d8365b30b31a085835c5c8dfa60c036dfec504782dbcecab"},
+      "installPs1": {"blob": "43c1c4a7e0aad2b504240780eb3db189abba6742", "sha256": "288d8ba16961e95690c6afd2fb148f67d1cba078507430e76a9eb9e18e9718bc"},
+      "readmePins": {"installSh": "dc4c251d", "installPs1": "81c698be"}
+    }
+  ],
+  "final": {
+    "main": "e4dbf91be91f7539b36297e030f86e2a0e99f54d",
+    "tree": "e8c7605ca07b29a674bdcd6b679cb59ee26bf196",
+    "installSh": {"blob": "e2e2640eb85adf302c87305cd68d642743785bb1", "sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f"},
+    "installPs1": {"blob": "28cfdae73305a2a2e5a58e30878bffea7b5142b8", "sha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a"},
+    "readmePin": {"commit": "a4c617ebeedfb507c0cb7a472683cce47ad62522", "installerBlobsEqualMain": true}
+  },
+  "mergeChain": [
+    {"merge": "a1072ae1", "workOrder": "R0013", "pr": 84, "firstParent": "546d8828", "secondParent": "8d4da528"},
+    {"merge": "3b0e614114ef066de40db117d0e85c0031cf3e30", "workOrder": "R0015", "pr": 85, "firstParent": "a1072ae1", "secondParent": "509cd77cfd963c811d5f5f1f90ec7fb360ba2de5"},
+    {"merge": "e4dbf91be91f7539b36297e030f86e2a0e99f54d", "workOrder": "R0016", "pr": 86, "firstParent": "3b0e6141", "secondParent": "dfff0f8f3921b9f114f6922fd07174500b8e0b9d"}
+  ],
+  "unchangedR0015FunctionText": {
+    "method": "sha256 of UTF-8 text from 'function <name>' to the next top-level 'function' (C#: the nativeSource here-string), compared at 3b0e6141 and e4dbf91b; first 16 hex shown",
+    "Test-StrictJson": "7aa989f52cbc1dcb",
+    "Read-CompilerPathFacts": "35c45efa827996af",
+    "Get-TrustedStagingParent": "c9671491ce5a0c42",
+    "Initialize-Staging": "3117f3eb05cb6d53",
+    "Clear-OwnedScratch": "ed5e7f29c5bda59c",
+    "StageNative-CSharp": "9956a778e2e237e3"
+  },
+  "runsOnFinalInstallerBytes": [
+    {"run": 43173749688, "head": "8a360f549a7d9ff291b91d2e62e848c72b78d38d", "conclusion": "success", "scope": "macOS Apple bash 3.2.57; 11 suites / 248 rows as recorded in R0016 posix report"},
+    {"run": 43173749709, "head": "8a360f549a7d9ff291b91d2e62e848c72b78d38d", "conclusion": "success", "scope": "Linux 45 rows / 61 phases; 8 normal invocations"},
+    {"run": 43171927589, "head": "a4c617ebeedfb507c0cb7a472683cce47ad62522", "conclusion": "success", "scope": "Windows PS5.1 + PS7.6.6: 75 core + 18 normal/NoOpen per host"},
+    {"run": 43171927350, "head": "a4c617ebeedfb507c0cb7a472683cce47ad62522", "conclusion": "success", "scope": "Windows 8 caller routes per host"},
+    {"run": 43220592915, "head": "a89bbb3ddac639cc787ba08d030e8b2539057387", "conclusion": "success (attempt 2)", "scope": "Windows full entry 20/20 PS7 attempt 1 and PS5.1 attempt 2; PS5.1 attempt 1 zero credit, cause unresolved"},
+    {"run": 43239081990, "head": "dfff0f8f3921b9f114f6922fd07174500b8e0b9d", "conclusion": "failure (attempt 3)", "scope": "R0015 qualification re-run: Linux, Windows owner/archive, default environments incl. macos-15, standard-user green; posix (macos-15, Darwin) never acquired a runner - not evidence"},
+    {"run": 43239087955, "head": "dfff0f8f3921b9f114f6922fd07174500b8e0b9d", "conclusion": "success", "scope": "staging-parent suite ubuntu-24.04 and macos-15"}
+  ],
+  "rowDispositions": {
+    "source": "independent review on merged main e4dbf91b (not self-certified)",
+    "21-13": "met with stated limits",
+    "ES15-14": "met with stated limits",
+    "ES15-18": "undecided; pending independent readback of this packet after publication",
+    "rootGates": {"G15-ORDER": "satisfied (ancestry)", "G15-REVIEW": "recorded", "G15-APPROVAL": "recorded (PR 85, PR 86)", "G15-STATE": "open", "G15-DELIVERY": "open", "G15-CERTIFICATE": "open", "G15-LIFECYCLE": "open"}
+  },
+  "rollbackExecuted": false,
+  "wholeContractComplete": false
+}
