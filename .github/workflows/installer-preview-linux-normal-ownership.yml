@@ -1,4 +1,4 @@
-name: R0016 Linux ownership discriminator and original normal pair
+name: R0016 Linux original45 in received owned scaffold
 
 on:
   push:
@@ -18,7 +18,7 @@ concurrency:
 jobs:
   linux:
     runs-on: ubuntu-22.04
-    timeout-minutes: 12
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -37,11 +37,11 @@ jobs:
         shell: bash
         run: |
           /usr/bin/python3 tools/qualification/installer_preview_linux22_prerequisites.py --output "$RUNNER_TEMP/installer-linux-normal-preparation"
-      - name: Measure ownership and containment, then execute only the original normal pair
+      - name: Execute the unchanged original45 with its fail-closed bootstrap
         shell: bash
         run: |
-          /usr/bin/python3 tools/qualification/installer_preview_linux_normal_ownership.py --output "$RUNNER_TEMP/installer-linux-normal-ownership" --source-commit "${{ github.sha }}" --run-normal-pair
-      - name: Preserve raw preparation records and the complete diagnostic root
+          /usr/bin/python3 tools/qualification/installer_preview_linux_normal_ownership.py --output "$RUNNER_TEMP/installer-linux-normal-ownership" --source-commit "${{ github.sha }}" --run-full-fixture
+      - name: Preserve raw preparation records and the complete original45 root
         if: always()
         shell: bash
         run: |
@@ -68,11 +68,11 @@ jobs:
               (retained / 'archive-inventory.json').write_text(json.dumps(inventory, indent=2) + '\n')
           PY
           /usr/bin/python3 tools/qualification/installer_preview_linux_normal_ownership.py --output "$RUNNER_TEMP/installer-linux-normal-ownership" --archive "$RUNNER_TEMP/installer-linux-normal-ownership.tar.gz"
-      - name: Retain original Linux ownership and normal-pair evidence
+      - name: Retain original Linux45 evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: r0016-linux-normal-ownership-${{ github.run_id }}-${{ github.run_attempt }}
+          name: r0016-linux-owned-full45-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/installer-linux-normal-ownership.tar.gz
           if-no-files-found: error
           retention-days: 30

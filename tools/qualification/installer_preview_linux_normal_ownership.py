@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Owned Linux root-view discriminator, followed only by the original normal pair.
+"""Owned Linux scaffold qualification: original normal pair or original45.
 
-The first two cases execute no installer code. Their guard interpretation is a
-source-bound predicate over actual ownership observations. Product guard results
-come only from the optional unchanged original normal/NoOpen entries.
+Full-fixture mode preserves the exact original fixture oracles and complete
+45-row runner through the received contained launch boundary. The historical
+ownership discriminator and zero-only normal-pair mode remain available.
 """
 import argparse, ast, hashlib, importlib.util, json, os, platform
 from pathlib import Path
@@ -24,6 +24,9 @@ NORMAL_SECONDS=60
 CLEANUP_SECONDS=5
 CAPTURE_BYTES=4*1024*1024
 CANCELLED=False
+FULL_ROWS = (('pre-entry independent containment', 'bootstrap'), ('direct helper initialize', 'helper'), ('direct helper metadata', 'helper'), ('direct helper cached-download', 'helper'), ('direct helper validate', 'helper'), ('direct helper cached-extract', 'helper'), ('direct helper retain', 'helper'), ('direct helper cached-preset', 'helper'), ('direct helper copy-false', 'helper'), ('direct helper open', 'helper'), ('direct helper install-ask', 'helper'), ('direct helper import', 'helper'), ('direct helper cleanup', 'helper'), ('whole-entry github', 'entry'), ('whole-entry store', 'entry'), ('whole-entry ask', 'entry'), ('whole-entry NoOpen github', 'entry'), ('whole-entry NoOpen store', 'entry'), ('whole-entry advertised pipe', 'entry'), ('whole-entry installed', 'entry'), ('whole-entry mixed-legacy', 'entry'), ('whole-entry mixed-unknown', 'interface'), ('whole-entry refusal none', 'entry'), ('whole-entry refusal legacy', 'entry'), ('whole-entry refusal unknown-only', 'interface'), ('whole-entry refusal malformed-only', 'interface'), ('whole-entry refusal missing-metadata', 'interface'), ('whole-entry missing preset', 'entry'), ('whole-entry invalid source', 'entry'), ('whole-entry invalid boolean', 'entry'), ('whole-entry invalid argument', 'entry'), ('whole-entry unreadable-only', 'interface'), ('whole-entry no-parser-only', 'interface'), ('whole-entry mixed-no-parser', 'interface'), ('whole-entry post-trap failure', 'entry'), ('whole-entry post-trap INT', 'entry'), ('whole-entry post-trap TERM', 'entry'), ('normal actual caller', 'normal'), ('NoOpen retains normal effects', 'normal'), ('mutant eager initialization', 'mutation'), ('mutant preview cleanup', 'mutation'), ('mutant cached path return', 'mutation'), ('mutant suppressed copy success', 'mutation'), ('mutant clipboard attempt during preview', 'mutation'), ('mutant swallowed direct transport', 'mutation'))
+FULL_PHASE_CASES = ('containment-control/host-acquisition', 'containment-control/kernel-probe', 'containment-control/command-probe', 'readiness-missing', 'readiness-wrong', 'helper-initialize', 'helper-metadata', 'helper-cached-download', 'helper-validate', 'helper-cached-extract', 'helper-retain', 'helper-cached-preset', 'helper-copy-false', 'helper-open', 'helper-install-ask', 'helper-import', 'helper-cleanup', 'entry-github', 'entry-store', 'entry-ask', 'entry-noopen-github', 'entry-noopen-store', 'entry-pipe', 'entry-installed', 'entry-mixed-legacy', 'entry-mixed-unknown', 'entry-none', 'entry-legacy', 'entry-unknown-only', 'entry-malformed-only', 'entry-missing-metadata', 'entry-missing-preset', 'entry-invalid-source', 'entry-invalid-boolean', 'entry-invalid-argument', 'entry-unreadable-only', 'entry-no-parser-only', 'entry-mixed-no-parser', 'entry-post-trap-failure', 'entry-post-trap-INT', 'entry-post-trap-TERM', 'normal', 'no-open', 'syntax-mutant-eager', 'mutant-eager', 'mutant-positive-eager', 'syntax-mutant-cleanup', 'mutant-cleanup', 'mutant-positive-cleanup', 'syntax-mutant-cached-path', 'helper-mutant-cached-path', 'mutant-positive-cached-path', 'syntax-mutant-copy-success', 'helper-mutant-copy-success', 'mutant-positive-copy-success', 'syntax-mutant-copy-effect', 'helper-mutant-copy-effect', 'mutant-positive-copy-effect', 'syntax-mutant-direct-transport', 'mutant-direct-transport', 'mutant-positive-direct-transport')
+FULL_MUTANTS = ('mutant-eager.sh', 'mutant-cleanup.sh', 'mutant-cached-path.sh', 'mutant-copy-success.sh', 'mutant-copy-effect.sh', 'mutant-direct-transport.sh')
 
 CONTROL=r'''import ctypes, errno, hashlib, json, os, stat, subprocess, sys, time
 from pathlib import Path
@@ -203,7 +206,10 @@ def capability_bootstrap(path):
     require(sys.flags.isolated==1 and sys.flags.no_site==1 and sys.dont_write_bytecode,'Isolated no-site bootstrap required')
     source=Path(__file__).resolve();inputs=source.parents[2];spec=strict_json(Path(path).read_bytes());case=Path(spec['case'])
     require(spec.get('schema')=='r0016-linux-capability-bootstrap-spec.v1' and re.fullmatch('[0-9a-f]{32}',spec['nonce']),'Wrong capability specification')
-    require(case.parent==inputs.parent/'fixture' and case.name in ('host-root','owned-scaffold','normal','no-open') and
+    mode=spec.get('qualificationMode');fixture=inputs.parent/'fixture'
+    require(mode in (None,'original45'),'Unknown bootstrap qualification mode')
+    valid_case=(case.is_relative_to(fixture) and case.relative_to(fixture).as_posix() in FULL_PHASE_CASES) if mode=='original45' else (case.parent==fixture and case.name in ('host-root','owned-scaffold','normal','no-open'))
+    require(valid_case and case.resolve()==case and not case.is_symlink() and
         Path(path)==inputs/(case.name+'.capability-spec.json'),'Wrong owned bootstrap boundary')
     require(spec['command'][:3]==['/usr/bin/python3',str(inputs/'tests/install-preview.py'),'--sandbox-child'],'Wrong original seccomp entry')
     require(regular(source)==spec['route'] and regular(inputs/'tests/install-preview.py')==spec['harness'],'Bootstrap input identity differs')
@@ -225,17 +231,21 @@ def capability_bootstrap(path):
         execute=lambda command:os.execve(command[0],command,dict(os.environ)))
     return run_capability_bootstrap(spec,backend,lambda value:save(case/'capability-bootstrap.json',value))
 
-def prepare_bootstrap(inputs,case,host,harness,command,fixed):
+def prepare_bootstrap(inputs,case,host,harness,command,fixed,full_fixture=False):
     specification=inputs/(case.name+'.capability-spec.json');require(not specification.exists(),'Bootstrap specification already exists')
     spec=dict(schema='r0016-linux-capability-bootstrap-spec.v1',nonce=secrets.token_hex(16),case=str(case),
         host={k:host[k] for k in ('uid','gid','namespaces')},command=['/usr/bin/python3',str(harness),'--sandbox-child']+list(command),
         route=regular(inputs/'tools/qualification/installer_preview_linux_normal_ownership.py'),harness=regular(harness))
+    if full_fixture:
+        require(case.relative_to(inputs.parent/'fixture').as_posix() in FULL_PHASE_CASES,'Unknown original full-fixture phase')
+        spec['qualificationMode']='original45'
     save(specification,spec);fixed.append(regular(specification));return spec
 
-def cleanup_owned(N,process,deadline):
+def cleanup_owned(N,process,deadline,expected_exit=0):
     """Reap natural direct-child zombies before unchanged forced cleanup."""
     reaped=[];errors=[]
     try:
+        require(type(expected_exit) is int and 0<=expected_exit<=255,'Invalid natural exit association')
         require(time.monotonic()<deadline,'Owned cleanup deadline reached before natural reap')
         process.poll()  # Only Popen may reap its own direct process.
         for pid in N.children(os.getpid()):
@@ -247,11 +257,15 @@ def cleanup_owned(N,process,deadline):
             done,status=os.waitpid(pid,os.WNOHANG)
             require(type(done) is int and done==pid and type(status) is int,'Nonblocking natural reap did not return the exact child')
             reaped.append(dict(identity=identity,pid=done,waitStatus=status))
-            require(os.WIFEXITED(status) and os.WEXITSTATUS(status)==0,'Adopted child did not exit naturally with status zero')
+            require(os.WIFEXITED(status),'Adopted child did not exit naturally')
+            code=os.WEXITSTATUS(status)
+            associated_bwrap=(code==expected_exit and expected_exit!=0 and process.returncode==expected_exit and
+                identity.get('pgid')==identity.get('sid')==process.pid and re.fullmatch(r'\d+ \(bwrap\) .*',identity.get('statRaw','').strip()) is not None)
+            require(code==0 or associated_bwrap,'Adopted child exit is not zero or the associated natural bwrap terminal')
     except BaseException as error:errors.append(type(error).__name__+': '+str(error))
     try:record=N.cleanup(process,deadline)
     except BaseException as error:record=dict(complete=False,signals=[],errors=[type(error).__name__+': '+str(error)])
-    record['preSignalReaps']=reaped;record.setdefault('errors',[]).extend(errors)
+    record['preSignalReaps']=reaped;record['expectedNaturalExit']=expected_exit;record.setdefault('errors',[]).extend(errors)
     record['complete']=record.get('complete') is True and not record['errors']
     return record
 
@@ -336,7 +350,7 @@ def observe_ready(N,path,nonce,process,expected_child):
     chain.append(cursor)
     return dict(subject=ready,hostPid=matches[0]['pid'],parentReadAncestry=chain)
 
-def run_phase(N,command,env,case,capture,fixture,seconds,expected_child=None,nonce=None):
+def run_phase(N,command,env,case,capture,fixture,seconds,expected_child=None,nonce=None,fixture_exit=False):
     capture.mkdir(mode=0o700);require(not N.children(os.getpid()),'Prior owned descendants remain')
     before=N.inventory(fixture);save(capture/'fixture.before.json',before);require(before['complete'],'Incomplete prelaunch fixture inventory')
     start_ns=time.monotonic_ns();deadline_ns=start_ns+seconds*10**9;start=start_ns/1e9;deadline=deadline_ns/1e9
@@ -362,7 +376,9 @@ def run_phase(N,command,env,case,capture,fixture,seconds,expected_child=None,non
         except BaseException as error:record.update(error=dict(type=type(error).__name__,message=str(error)),executionOutcome='CONTROLLER_ERROR')
         finally:
             if process is not None:
-                try:record['cleanup']=cleanup_owned(N,process,min(time.monotonic()+CLEANUP_SECONDS,deadline+CLEANUP_SECONDS))
+                try:
+                    expected_exit=process.returncode if fixture_exit and record['executionOutcome']=='TERMINAL_EXIT' and type(process.returncode) is int and 0<=process.returncode<=255 else 0
+                    record['cleanup']=cleanup_owned(N,process,min(time.monotonic()+CLEANUP_SECONDS,deadline+CLEANUP_SECONDS),expected_exit)
                 except BaseException as error:record['cleanup']=dict(complete=False,signals=[],errors=[type(error).__name__+': '+str(error)])
                 record['returncode']=process.returncode
             else:record['cleanup']=dict(complete=not N.children(os.getpid()),signals=[],notLaunched=True)
@@ -376,8 +392,8 @@ def run_phase(N,command,env,case,capture,fixture,seconds,expected_child=None,non
     if CANCELLED:raise InterruptedError('Owned phase interrupted; raw capture and cleanup result retained')
     return record
 
-def check_terminal(record,command,seconds):
-    require(record.get('command')==command and type(record.get('returncode')) is int and record['returncode']==0,'Wrong command or integer terminal')
+def check_terminal(record,command,seconds,expected_exit=0):
+    require(type(expected_exit) is int and 0<=expected_exit<=255 and record.get('command')==command and type(record.get('returncode')) is int and record['returncode']==expected_exit,'Wrong command or integer terminal')
     require(record.get('executionOutcome')=='TERMINAL_EXIT' and 'error' not in record and type(record.get('timeoutSeconds')) is int and record['timeoutSeconds']==seconds,'Incomplete or late terminal')
     require(all(type(record.get(k)) is int for k in ('startedMonotonicNs','deadlineMonotonicNs','terminalObservedMonotonicNs')) and
         record['deadlineMonotonicNs']-record['startedMonotonicNs']==seconds*10**9 and
@@ -433,6 +449,196 @@ def assess_control(value,record,spec,host,transport):
     else:require(all(v['accepted'] for v in interpretations.values()),'Owned scaffold does not satisfy the unchanged ownership/mode predicate')
     return dict(status='OBSERVED',guardPredicate=interpretations,guardExecution='NOT_EXECUTED; source-bound interpretation only',installerExecuted=False)
 
+def full_fixture_parts(raw):
+    require(sha(raw)==INPUTS['tests/install-preview.py'],'Original full fixture identity differs')
+    tree=ast.parse(raw);functions=[n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name!='sandbox_run']
+    tables=[n for n in tree.body if isinstance(n,ast.Assign) and len(n.targets)==1 and
+        isinstance(n.targets[0],ast.Name) and n.targets[0].id in ('DENIALS','READINESS_LINE','HELPERS')]
+    starts=[i for i,n in enumerate(tree.body) if isinstance(n,ast.Try)]
+    require(len(functions)==20 and len(tables)==3 and len(starts)==1,'Original full fixture composition differs')
+    definitions=[n for n in tree.body if isinstance(n,(ast.Import,ast.ImportFrom)) or n in functions or n in tables]
+    tail=tree.body[starts[0]:]
+    require(len(tail)==7 and isinstance(tail[-1],ast.Raise),'Original full fixture report tail differs')
+    return dict(definitions=definitions,functions=functions,tables=tables,tail=tail)
+
+def full_fixture_inventory(root,held_readers=None):
+    """Full two-pass inventory; the original mode000 inode is never omitted."""
+    import fcntl
+    held_readers=held_readers or {}
+    def once():
+        rows=[];errors=[];pending=[root]
+        try:
+            while pending:
+                path=pending.pop();before=path.lstat()
+                row=dict(name=str(path.relative_to(root)),mode=before.st_mode,uid=before.st_uid,gid=before.st_gid,
+                    device=before.st_dev,inode=before.st_ino,nlink=before.st_nlink,mtimeNs=before.st_mtime_ns,
+                    ctimeNs=before.st_ctime_ns,size=before.st_size)
+                if stat.S_ISDIR(before.st_mode):
+                    row['kind']='directory';pending.extend(sorted(path.iterdir(),reverse=True))
+                elif stat.S_ISLNK(before.st_mode):row.update(kind='link',target=os.readlink(path))
+                elif stat.S_ISREG(before.st_mode):
+                    row['kind']='regular';reader=held_readers.get(path)
+                    if reader is None:
+                        require(before.st_mode&0o444,'Unreadable inode has no original held reader')
+                        row['sha256']=sha(path.read_bytes())
+                    else:
+                        held=os.fstat(reader)
+                        require(stat.S_ISREG(held.st_mode) and (before.st_dev,before.st_ino)==(held.st_dev,held.st_ino),
+                            'Held reader does not identify the current inode')
+                        require(fcntl.fcntl(reader,fcntl.F_GETFL)&os.O_ACCMODE==os.O_RDONLY,'Held reader must be read-only')
+                        value=hashlib.sha256();offset=0
+                        while True:
+                            block=os.pread(reader,65536,offset)
+                            if not block:break
+                            value.update(block);offset+=len(block)
+                        require(offset==before.st_size,'Held reader byte count differs')
+                        row.update(sha256=value.hexdigest(),reader='original-parent-held-readonly')
+                else:raise ValueError('Unexpected full fixture entry type')
+                after=path.lstat();stable=('st_mode','st_uid','st_gid','st_dev','st_ino','st_nlink','st_mtime_ns','st_ctime_ns','st_size')
+                require(all(getattr(before,k)==getattr(after,k) for k in stable),'Entry changed during full fixture inventory')
+                rows.append(row)
+        except (OSError,ValueError) as error:errors.append(type(error).__name__+': '+str(error))
+        return dict(rows=sorted(rows,key=lambda r:r['name']),errors=errors)
+    passes=[once(),once()]
+    return dict(scope='two-pass-bounded-stability-not-atomic; all entries retained',passes=passes,
+        complete=not any(p['errors'] for p in passes) and passes[0]['rows']==passes[1]['rows'])
+
+def full_fixture_reader(path):
+    """Find only the fixture's already-held read-only inode; never open its path."""
+    import fcntl
+    path=Path(path);before=path.lstat();matches=[]
+    require(stat.S_ISREG(before.st_mode) and stat.S_IMODE(before.st_mode)==0,'Original unreadable inode mode differs')
+    for item in Path('/proc/self/fd').iterdir():
+        try:
+            fd=int(item.name);held=os.fstat(fd)
+            if (held.st_dev,held.st_ino)==(before.st_dev,before.st_ino) and fcntl.fcntl(fd,fcntl.F_GETFL)&os.O_ACCMODE==os.O_RDONLY:matches.append(fd)
+        except OSError:continue
+    require(len(matches)==1,'Original unreadable inode lacks one parent-held read-only descriptor')
+    return {path:matches[0]}
+
+def assess_full_fixture_report(value,source,fixture):
+    require(value.get('schema')=='r0016-preview-bash.v1' and value.get('source')==str(source) and
+        value.get('sourceSha256')==INPUTS['install.sh'] and value.get('testSha256')==INPUTS['tests/install-preview.py'] and
+        value.get('sourceUnchanged') is True and value.get('fixture')==str(fixture),'Full fixture source/path association differs')
+    require(value.get('host',{}).get('system')=='Linux' and value['host'].get('bash')=='/bin/bash','Full fixture native host differs')
+    rows=value.get('results');require(type(rows) is list and len(rows)==45,'Original45 denominator incomplete')
+    require([(r.get('case'),r.get('kind')) for r in rows]==list(FULL_ROWS),'Original45 row order/identity differs')
+    require(all(type(r.get('pass_')) is bool and r['pass_'] and r.get('classification')=='PASS' for r in rows),
+        'An original fixture assertion did not pass')
+    require(value.get('pass_') is True and value.get('classification')=='PASS' and
+        type(value.get('counts')) is dict and all(type(v) is int for v in value['counts'].values()) and
+        value['counts']==dict(PASS=45,PRODUCT_ASSERTION_FAILED=0,BOOTSTRAP_BLOCKED=0),'Original45 summary contradicts its rows')
+    return dict(rows=45,classification='PASS',scope='Original unchanged fixture oracles through the declared contained launch adaptor')
+
+def full_fixture_acquisition(operation,boundary,errors,persist):
+    """Keep acquisition failures in the unchanged fixture's bootstrap class."""
+    try:return operation()
+    except Exception as cause:
+        row=dict(boundary=boundary,causeType=type(cause).__name__,causeMessage=str(cause))
+        errors.append(row)
+        try:persist()
+        except Exception as retention:row['retentionError']=dict(type=type(retention).__name__,message=str(retention))
+        raise RuntimeError('BOOTSTRAP: '+boundary+': '+row['causeType']+': '+row['causeMessage']) from cause
+
+def execute_full_fixture(N,inputs,fixture,scaffold,outside,output,host,fixed,result):
+    import contextlib, io, tempfile
+    from types import SimpleNamespace
+    harness=inputs/'tests/install-preview.py';source=inputs/'install.sh';parts=full_fixture_parts(harness.read_bytes())
+    frozen=fixture/'source.sh';frozen.write_bytes(source.read_bytes());fixed.append(regular(frozen))
+    namespace=dict(__file__=str(harness),__name__='r0016_original_full_fixture',ROOT=fixture,FROZEN=frozen,HARNESS=inputs/'tests/install-entry-bash.py',
+        ORIGINAL=source,SOURCE_BYTES=source.read_bytes(),SOURCE_SHA=INPUTS['install.sh'],HOST='Linux',ARGS=argparse.Namespace(bash='/bin/bash',suites='all'),
+        RESULTS=[],ACQUISITION={})
+    exec(compile(ast.Module(body=parts['definitions'],type_ignores=[]),str(harness),'exec'),namespace)
+    captures=output/'full-fixture-captures';captures.mkdir(mode=0o700)
+    phases=[];outside_allocations=[];seen=set();source_reads=[];acquisition_errors=[]
+    result.update(qualificationMode='original45',fullFixtureRowsQualified=0,fullFixturePhases=phases,
+        fullFixtureComposition=dict(harness=regular(harness),unchangedFunctionCount=len(parts['functions']),
+            definitionsAstSha256=sha(ast.dump(ast.Module(body=parts['definitions'],type_ignores=[]),include_attributes=False).encode()),
+            completeOriginalTailAstSha256=sha(ast.dump(ast.Module(body=parts['tail'],type_ignores=[]),include_attributes=False).encode()),
+            replacements=['sandbox_run: reviewed owned scaffold and lifecycle','tempfile.mkdtemp: original outside-control beneath readonly outside',
+                'subprocess.run: bounded contained original Bash version and mutant syntax commands']),
+        originalOutsideAllocations=outside_allocations,sourceReadAcquisitions=source_reads,fullFixtureAcquisitionErrors=acquisition_errors)
+    def owned_mkdtemp(*args,**kwargs):
+        require(not args and kwargs==dict(prefix='r0016-outside-control-',dir=fixture.parent) and not outside_allocations,
+            'Unexpected original outside-control allocation')
+        path=Path(tempfile.mkdtemp(prefix=kwargs['prefix'],dir=outside)).resolve();outside_allocations.append(str(path));return str(path)
+    def acquire_phase(command,case,env,timeout=30):
+        case=Path(case);relative=case.relative_to(fixture).as_posix()
+        require(not CANCELLED and relative in FULL_PHASE_CASES and relative not in seen,'Unexpected, repeated or cancelled original phase')
+        require(type(timeout) is int and timeout in (10,30,60),'Original phase time budget differs')
+        require(case.resolve()==case and not case.is_symlink() and all(env.get(k)==v for k,v in [('USER','root'),('LOGNAME','root'),('SHELL','/bin/bash')]),
+            'Original phase path or native shell identity differs')
+        require(type(command) is list and command and all(type(v) is str and '\x00' not in v for v in command) and
+            command[0] in ('/bin/bash','/usr/bin/python3'),'Original phase command differs')
+        seen.add(relative)
+        if command[:3]==['/usr/bin/python3',str(harness),'--positive-child']:result['normalHarnessInvocationsAttempted']+=1
+        for item in [env.get('BASH_ENV'),*(arg for arg in command[1:] if arg.startswith(str(fixture)+'/') and arg.endswith('.sh'))]:
+            if item:
+                fact=regular(item)
+                if not any(f['path']==fact['path'] for f in fixed):fixed.append(fact)
+                else:require(any(f==fact for f in fixed),'Original executable input changed before launch')
+        held=full_fixture_reader(env['R0016_UNREADABLE_FILE']) if env.get('R0016_UNREADABLE_FILE') else {}
+        fullN=SimpleNamespace(**vars(N));fullN.inventory=lambda root:full_fixture_inventory(root,held)
+        capture=captures/('%02d-'%len(phases)+relative.replace('/','--'))
+        external_before={name:N.inventory(path) for name,path in [('outside',outside),('scaffold',scaffold)]}
+        require(all(v['complete'] for v in external_before.values()),'Readonly prelaunch observation incomplete')
+        bootstrap_spec=prepare_bootstrap(inputs,case,host,harness,command,fixed,full_fixture=True)
+        launch=build_command('owned-scaffold',fixture,scaffold,inputs,outside,case,env,harness,command)
+        row=dict(case=relative,originalCommand=command,originalTimeoutSeconds=timeout,capture=str(capture),readonlyBefore=external_before)
+        phases.append(row);save(output/'result.json',result)
+        try:
+            record=run_phase(fullN,launch,env,case,capture,fixture,timeout,fixture_exit=True);row['record']=record
+            rawout=(capture/'stdout.raw').read_bytes();rawerr=(capture/'stderr.raw').read_bytes()
+            (case/'stdout.txt').write_bytes(rawout);(case/'stderr.txt').write_bytes(rawerr)
+            row['readonlyAfter']={name:N.inventory(path) for name,path in [('outside',outside),('scaffold',scaffold)]}
+            check_terminal(record,launch,timeout,expected_exit=record.get('returncode'))
+            record['capabilityAssessment']=assess_bootstrap(record['capabilityBootstrap'],bootstrap_spec,record)
+            require(row['readonlyAfter']==external_before,'Readonly outside/scaffold changed during original phase')
+            row['admitted']=True
+            return subprocess.CompletedProcess(command,record['returncode'],rawout.decode('utf-8'),rawerr.decode('utf-8'))
+        except BaseException as error:
+            row.update(admitted=False,error=dict(type=type(error).__name__,message=str(error)));raise
+        finally:save(output/'result.json',result)
+    def sandbox_run(command,case,env,timeout=30):
+        return full_fixture_acquisition(lambda:acquire_phase(command,case,env,timeout),'contained original phase',
+            acquisition_errors,lambda:save(output/'result.json',result))
+    def acquire_source_read(command,**kwargs):
+        require(kwargs.get('capture_output') is True and kwargs.get('text') is True,'Original source-read capture differs')
+        if command==['/bin/bash','--version']:
+            require(set(kwargs)=={'env','capture_output','text','timeout'} and kwargs['timeout']==10,'Original version invocation differs')
+            case=fixture/'containment-control/host-acquisition';env=kwargs['env']
+        else:
+            require(len(command)==3 and command[:2]==['/bin/bash','-n'] and set(kwargs)=={'capture_output','text'},'Unexpected uncontained original subprocess')
+            path=Path(command[2]);require(path.parent==fixture and path.name in FULL_MUTANTS,'Unexpected mutant syntax input')
+            case=fixture/('syntax-'+path.stem);case.mkdir(mode=0o700);env=common_environment(case)
+        source_reads.append(dict(command=command,originalKeywordNames=sorted(kwargs),case=str(case)))
+        return sandbox_run(command,case,env,timeout=10)
+    def source_read(command,**kwargs):
+        return full_fixture_acquisition(lambda:acquire_source_read(command,**kwargs),'original bounded source-read',
+            acquisition_errors,lambda:save(output/'result.json',result))
+    namespace.update(sandbox_run=sandbox_run,tempfile=SimpleNamespace(mkdtemp=owned_mkdtemp),
+        subprocess=SimpleNamespace(run=source_read,TimeoutExpired=subprocess.TimeoutExpired))
+    transcript=io.StringIO();original_exit=None
+    try:
+        with contextlib.redirect_stdout(transcript):exec(compile(ast.Module(body=parts['tail'],type_ignores=[]),str(harness),'exec'),namespace)
+    except SystemExit as terminal:original_exit=terminal.code
+    finally:
+        (output/'original-fixture.stdout.txt').write_text(transcript.getvalue())
+        result['originalFixtureExit']=original_exit
+        result['originalFixtureReport']=regular(fixture/'results.json') if (fixture/'results.json').exists() else None
+        save(output/'result.json',result)
+    require(type(original_exit) is int and original_exit==0,'Original full fixture did not exit successfully')
+    report=strict_json((fixture/'results.json').read_bytes())
+    result['fullFixtureAssessment']=assess_full_fixture_report(report,source,fixture)
+    require(len(phases)==len(FULL_PHASE_CASES) and seen==set(FULL_PHASE_CASES) and all(r.get('admitted') is True for r in phases),
+        'Original full fixture lacks complete admitted native phases')
+    require(not acquisition_errors,'Original full fixture retained acquisition failures')
+    require(len(outside_allocations)==1 and len(source_reads)==7 and result['normalHarnessInvocationsAttempted']==8,
+        'Original outside/source-read/normal-companion coverage differs')
+    result.update(fullFixtureRowsQualified=45,normalRowsQualified=2,status='ORIGINAL_LINUX45_PASSED',
+        outsideSetupScope='Initial/final full observations retained; original bootstrap adds its one outside directory/sentinel. Every native phase requires complete equal outside/scaffold observations.')
+
+
 def controller(args):
     require(platform.system()=='Linux' and platform.machine()=='x86_64' and os.getuid()!=0 and os.geteuid()==os.getuid(),'Unprivileged native Linux x86_64 required')
     require(sys.executable=='/usr/bin/python3','Run the pinned system Python entry')
@@ -468,7 +674,7 @@ def controller(args):
             before=N.inventory(root);require(before['complete'],'Incomplete read-only control inventory');save(output/(name+'.before.json'),before)
         save(output/'input-bindings.json',fixed)
         scaffold_before=N.inventory(scaffold);outside_before=N.inventory(outside)
-        for view in ('host-root','owned-scaffold'):
+        for view in (() if args.run_full_fixture else ('host-root','owned-scaffold')):
             case=fixture/view;case.mkdir(mode=0o700);env=common_environment(case);nonce=secrets.token_hex(16)
             sentinel=str(scaffold/'r0016-readonly-sentinel') if view=='host-root' else '/r0016-readonly-sentinel'
             probes=[dict(path=sentinel,expected='EROFS'),dict(path=str(outside/'sentinel'),expected='EROFS'),
@@ -499,6 +705,8 @@ def controller(args):
             result['sourceFreeControls'].append(dict(view=view,spec=regular(specification),record=record,control=value,assessment=assessment))
             save(output/'result.json',result)
         result['status']='OWNERSHIP_AND_CONTAINMENT_DISCRIMINATOR_OBSERVED'
+        if args.run_full_fixture:
+            execute_full_fixture(N,inputs,fixture,scaffold,outside,output,host,fixed,result)
         if args.run_normal_pair:
             harness=inputs/'tests/install-preview.py';tree=ast.parse(harness.read_bytes())
             names={'digest','require','fixture','normal','transport_attempts'}
@@ -533,7 +741,8 @@ def controller(args):
                 except Exception as error:row=dict(case=name,pass_=False,error=type(error).__name__+': '+str(error))
                 result['normalResults'].append(row);save(output/'result.json',result)
             result['status']='ORIGINAL_NORMAL_PAIR_PASSED' if len(result['normalResults'])==2 and all(r['pass_'] for r in result['normalResults']) else 'ORIGINAL_NORMAL_PAIR_FAILED'
-        require(N.inventory(scaffold)==scaffold_before and N.inventory(outside)==outside_before,'Read-only state changed during original pair')
+        require(N.inventory(scaffold)==scaffold_before,'Read-only scaffold changed')
+        if not args.run_full_fixture:require(N.inventory(outside)==outside_before,'Read-only outside state changed during original pair')
     except BaseException as error:result.update(status='ACQUISITION_OR_ASSERTION_FAILED',error=dict(type=type(error).__name__,message=str(error)))
     finally:
         custody=[]
@@ -556,7 +765,7 @@ def controller(args):
             result['finalObservationErrors']=observation_errors
             if observation_errors:result['status']='FINAL_OBSERVATION_FAILED'
         save(output/'result.json',result)
-    print(json.dumps(result,indent=2));return 0 if result['status'] in ('OWNERSHIP_AND_CONTAINMENT_DISCRIMINATOR_OBSERVED','ORIGINAL_NORMAL_PAIR_PASSED') else 2
+    print(json.dumps(result,indent=2));return 0 if result['status'] in ('OWNERSHIP_AND_CONTAINMENT_DISCRIMINATOR_OBSERVED','ORIGINAL_NORMAL_PAIR_PASSED','ORIGINAL_LINUX45_PASSED') else 2
 
 def archive(output,destination):
     require(output.is_absolute() and output.is_dir() and not output.is_symlink() and destination.parent==output.parent and not destination.exists(),'Invalid exclusive archive boundary')
@@ -571,10 +780,11 @@ def archive(output,destination):
 def main():
     if len(sys.argv)==3 and sys.argv[1]=='--capability-bootstrap':return capability_bootstrap(Path(sys.argv[2]))
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--output',required=True,type=Path)
-    parser.add_argument('--source-commit');parser.add_argument('--run-normal-pair',action='store_true');parser.add_argument('--archive',type=Path)
+    parser.add_argument('--source-commit');parser.add_argument('--run-normal-pair',action='store_true');parser.add_argument('--run-full-fixture',action='store_true');parser.add_argument('--archive',type=Path)
     args=parser.parse_args()
+    require(not (args.run_normal_pair and args.run_full_fixture),'Select one qualification scope')
     if args.archive:
-        require(not args.run_normal_pair and args.source_commit is None,'Archive is a separate action');archive(args.output.absolute(),args.archive.absolute());return 0
+        require(not args.run_normal_pair and not args.run_full_fixture and args.source_commit is None,'Archive is a separate action');archive(args.output.absolute(),args.archive.absolute());return 0
     require(isinstance(args.source_commit,str) and re.fullmatch('[0-9a-f]{40}',args.source_commit),'Exact source commit required')
     def interrupted(signum,frame):
         global CANCELLED
