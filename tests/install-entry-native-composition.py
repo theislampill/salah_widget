@@ -121,6 +121,194 @@ while(-not ([IO.File]::Exists($env:INSTALL_PROFILE_ACK) -and [IO.File]::ReadAllT
 def require(value, reason):
     if not value: raise AssertionError(reason)
 
+def digest(raw):return hashlib.sha256(raw).hexdigest()
+
+def warm_control_body(mode):
+    body="$ErrorActionPreference='Stop'\nWrite-Host 'R0016 independent host startup control'\n"
+    if mode=='warm-json':
+        body+=r'''
+$command=Get-Command -Name ConvertFrom-Json -CommandType Cmdlet -ErrorAction Stop
+if(@($command).Count -ne 1){throw 'Ambiguous native JSON command'}
+$parsed=& $command -InputObject '{"r0016Probe":"source-free","value":16}'
+if($parsed.r0016Probe -cne 'source-free' -or $parsed.value -ne 16){throw 'Native JSON warm-up failed'}
+$assemblyPath=$command.ImplementingType.Assembly.Location
+$assemblyBytes=[IO.File]::ReadAllBytes($assemblyPath)
+$hasher=[Security.Cryptography.SHA256]::Create()
+try{$assemblySha=([BitConverter]::ToString($hasher.ComputeHash($assemblyBytes))).Replace('-','').ToLowerInvariant()}finally{$hasher.Dispose()}
+$context=[ordered]@{schema='r0016-source-free-json-context.v1';pid=$PID;nonce=$env:INSTALL_READY_NONCE;normal=$env:INSTALL_FIXTURE_NORMAL;command=$command.Name;commandType=[string]$command.CommandType;module=$command.ModuleName;nativeUtility=$env:INSTALL_NATIVE_UTILITY;analysisCachePath=$env:PSModuleAnalysisCachePath;parsedMarker=$parsed.r0016Probe;parsedValue=$parsed.value;assemblyPath=$assemblyPath;assemblyBytes=$assemblyBytes.Length;assemblySha256=$assemblySha;moduleSearchPath=$env:PSModulePath}
+[Console]::WriteLine('R0016_WARM_JSON_CONTEXT '+($context|ConvertTo-Json -Depth 4 -Compress))
+'''
+    if mode in ('warm20','warm-json'):body+='[Threading.Thread]::Sleep(20000)\n'
+    return body+'exit 0\n'
+
+def receive_cache_bytes(raw,rows):
+    require(type(rows) is list and all(type(row) is dict for row in rows),'Invalid cache inventory')
+    matches=[row for row in rows if row.get('role')=='analysisCache']
+    require(len(matches)==1 and matches[0].get('path')=='.','Missing or duplicate cache root')
+    row=matches[0]
+    if row.get('kind')=='absent':
+        require(raw is None,'Absent cache has an invented byte capture')
+    else:
+        require(row.get('kind')=='file' and type(raw) is bytes and type(row.get('bytes')) is int
+            and row['bytes']>=0 and len(raw)==row['bytes'] and digest(raw)==row.get('sha256'),
+            'Cache capture differs from its full-input observation')
+    return row
+
+def parse_warm_context(raw):
+    require(type(raw) is bytes,'Warm context is not original raw bytes')
+    lines=[line[len('R0016_WARM_JSON_CONTEXT '):] for line in raw.decode('utf-8-sig').splitlines()
+        if line.startswith('R0016_WARM_JSON_CONTEXT ')]
+    require(len(lines)==1,'Missing or duplicate source-free JSON context')
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            require(key not in result,'Duplicate warm-context key')
+            result[key]=value
+        return result
+    context=json.loads(lines[0],object_pairs_hook=unique)
+    require(type(context) is dict,'Invalid source-free JSON context')
+    return context
+
+def receive_native_assembly(driver,context,journal_path):
+    journal=dict(schema='r0016-warm-json-native-file-binding.v1',comparisons=[])
+    child=dict(path=context.get('assemblyPath'),bytes=context.get('assemblyBytes'),
+        sha256=context.get('assemblySha256'))
+    driver.record_probe_file_binding(child,'warm-json/assembly',journal_path,journal)
+    require(len(journal['comparisons'])==1,'Missing native JSON assembly binding')
+    return journal['comparisons'][0]
+
+def receive_warm_context(raw,receipt,assembly_binding):
+    context=parse_warm_context(raw);env=receipt.get('environment',{})
+    require(context.get('schema')=='r0016-source-free-json-context.v1'
+        and type(context.get('pid')) is int and context['pid']==receipt.get('pid')
+        and context.get('nonce')==receipt.get('nonce')
+        and context.get('normal')==env.get('INSTALL_FIXTURE_NORMAL')=='0',
+        'Source-free JSON context has the wrong process')
+    require(context.get('command')=='ConvertFrom-Json' and context.get('commandType')=='Cmdlet'
+        and context.get('module')=='Microsoft.PowerShell.Utility'
+        and context.get('nativeUtility')==env.get('INSTALL_NATIVE_UTILITY')
+        and context.get('analysisCachePath')==env.get('PSModuleAnalysisCachePath'),
+        'Source-free JSON command/cache binding differs')
+    require(context.get('parsedMarker')=='source-free' and type(context.get('parsedValue')) is int
+        and context['parsedValue']==16 and type(context.get('moduleSearchPath')) is str
+        and context['moduleSearchPath'],'Source-free native JSON result missing')
+    child=dict(path=context.get('assemblyPath'),bytes=context.get('assemblyBytes'),
+        sha256=context.get('assemblySha256'))
+    require(type(child['path']) is str and type(child['bytes']) is int and child['bytes']>0
+        and type(child['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}',child['sha256'])
+        and assembly_binding.get('childFact')==child and assembly_binding.get('matches') is True
+        and assembly_binding.get('error') is None,'Native JSON assembly binding missing or differs')
+    identity=assembly_binding.get('nativeFileIdentity',{});parent=assembly_binding.get('parentFact',{})
+    require(all(identity.get(field) is True for field in
+        ('resolutionMatches','sameFile','stable','contentMatches'))
+        and identity.get('rawPath')==child['path'] and type(parent.get('path')) is str
+        and all(identity.get(field)==parent['path'] for field in
+            ('canonicalPath','resolvedRawPath','resolvedCanonicalPath'))
+        and identity.get('rawReadbackFact')==identity.get('canonicalReadbackFact')==parent
+        and all(child[field]==parent.get(field) for field in ('bytes','sha256')),
+        'Native JSON assembly lacks canonical identity/content proof')
+    observations=identity.get('observations',{})
+    require(set(observations)=={'rawBefore','canonicalBefore','rawAfter','canonicalAfter'},
+        'Incomplete native JSON assembly observations')
+    first=observations['rawBefore']
+    require(type(first) is dict and type(first.get('device')) is int
+        and type(first.get('inode')) is int and first['inode']>0
+        and first.get('bytes')==child['bytes']
+        and all(value==first for value in observations.values()),
+        'Native JSON assembly identity or metadata changed')
+    return context
+
+def require_scoped_preparation_environment(host, scenario, environments):
+    require(host in ('ps51','ps7') and scenario in SCENARIOS,'Unknown normal preparation host/case')
+    require(type(environments) is list and len(environments)==3
+        and all(type(env) is dict for env in environments),'Missing actual preparation environments')
+    for env in environments:
+        flags={key:value for key,value in env.items() if key.upper()=='COMPLUS_MULTICOREJITNOPROFILEGATHER'}
+        require(len(flags)==(1 if host=='ps7' and scenario in ('positive','no-open') else 0)
+            and all(value=='1' for value in flags.values()),'Wrong scoped prelaunch gather environment')
+
+
+def capture_preparation_cache(path, inventory, destination):
+    raw=path.read_bytes() if path.is_file() else None
+    row=receive_cache_bytes(raw,inventory['rows'])
+    capture=None
+    if raw is not None:
+        destination.write_bytes(raw);capture=composition.fact(destination)
+    return dict(inventoryRow=row,capture=capture)
+
+
+def require_normal_preparation(observation, host, scenario, script, phases, cache_raw, warm_raw, assembly_binding):
+    require(scenario in ('positive','no-open') and host in ('ps51','ps7'),'Wrong normal preparation host/case')
+    preparation=observation.get('normalPreparation')
+    require(type(preparation) is dict and set(preparation)=={'schema','mode','holdSeconds','script',
+        'phaseFacts','cacheCaptures','warmJsonContext'},'Missing complete normal preparation')
+    mode='warm-json' if host=='ps51' else 'no-gather'
+    require(preparation['schema']=='r0016-normal-preparation.v1' and preparation['mode']==mode
+        and type(preparation['holdSeconds']) is int and preparation['holdSeconds']==(20 if host=='ps51' else 0),
+        'Wrong host-specific normal preparation mode/hold')
+    require(type(script) is bytes and script.replace(b'\r\n',b'\n')==warm_control_body(mode).encode('ascii'),
+        'Source-free normal preparation body differs')
+    warm=observation['hostOnlyBaseline'];product=observation['profileWindow'];launch=observation['directLaunchInputs']
+    require(launch.get('environment')==product.get('environment'),'Actual normal product launch environment differs')
+    require_scoped_preparation_environment(host,scenario,[launch.get('environment'),warm.get('environment'),product.get('environment')])
+    require(warm['environment'].get('INSTALL_FIXTURE_NORMAL')=='0'
+        and product['environment'].get('INSTALL_FIXTURE_NORMAL')=='1','Wrong source-free/product effect environment')
+    shared=('PSModulePath','PSModuleAnalysisCachePath','INSTALL_NATIVE_UTILITY','USERPROFILE','HOME',
+        'INSTALL_SUBJECT_ROOT','INSTALL_ASSET_ZIP','INSTALL_PRESET_FIXTURE','INSTALL_FIXTURE_PF','INSTALL_FIXTURE_PF86')
+    require(all(type(warm['environment'].get(key)) is str and warm['environment'][key]==product['environment'].get(key)
+        for key in shared),'Preparation used different fixture/native inputs')
+    require(warm.get('nonce')==warm['environment'].get('INSTALL_READY_NONCE')
+        and product.get('nonce')==product['environment'].get('INSTALL_READY_NONCE')==observation.get('readinessNonce')
+        and warm['nonce']!=product['nonce'] and warm.get('pid')!=product.get('pid'),
+        'Preparation PID/nonce is missing or replayed')
+    require(warm.get('ready') is True and product.get('ready') is True
+        and type(warm.get('entryExit')) is int and warm['entryExit']==0
+        and type(warm.get('terminalObservedElapsedSeconds')) in (int,float)
+        and warm['terminalObservedElapsedSeconds']>=preparation['holdSeconds']
+        and not any(step.get('step')=='kill-owned-process' for step in warm.get('cleanup',{}).get('steps',[])),
+        'Source-free preparation did not naturally complete its bounded hold')
+    names={'warmBefore','warmReady','warmAfter','productBefore','productReady','productAfter'}
+    require(type(phases) is dict and set(phases)==names
+        and type(preparation['phaseFacts']) is dict and set(preparation['phaseFacts'])==names,
+        'Missing normal preparation inventory phase')
+    for inventory in phases.values():
+        require(type(inventory) is dict and inventory.get('schema')=='r0016-entry-full-input-inventory.v1'
+            and inventory.get('root')==observation['fixture'] and inventory.get('complete') is True
+            and type(inventory.get('rows')) is list and inventory.get('passes')==[inventory['rows'],inventory['rows']],
+            'Incomplete normal preparation double inventory')
+        composition.validate_rows(inventory['rows'])
+    require(phases['warmReady']==warm.get('fullReady') and phases['productReady']==product.get('fullReady')
+        and phases['productBefore']==observation.get('fullInputsBefore')
+        and phases['productReady']==observation.get('fullInputsAtReady')
+        and phases['productAfter']==observation.get('fullInputsAfter'),
+        'Normal preparation phase differs from actual receipt')
+    require(phases['warmAfter']['rows']==phases['productBefore']['rows'],
+        'Normal inputs changed between completed preparation and product baseline')
+    cache_names={'warmBefore','warmAfter','productBefore','productAfter'}
+    require(type(cache_raw) is dict and set(cache_raw)==cache_names
+        and type(preparation['cacheCaptures']) is dict and set(preparation['cacheCaptures'])==cache_names,
+        'Missing normal raw cache phase')
+    for name in cache_names:
+        row=receive_cache_bytes(cache_raw[name],phases[name]['rows'])
+        entry=preparation['cacheCaptures'][name]
+        require(type(entry) is dict and set(entry)=={'inventoryRow','capture'} and entry['inventoryRow']==row,
+            'Normal raw cache inventory binding differs')
+        capture=entry['capture'];raw=cache_raw[name]
+        require((raw is None and capture is None) or (type(raw) is bytes and type(capture) is dict
+            and capture.get('bytes')==len(raw) and capture.get('sha256')==digest(raw)),
+            'Normal raw cache fact differs')
+    if host=='ps51':
+        context=receive_warm_context(warm_raw,warm,assembly_binding)
+        expected=preparation['warmJsonContext']
+        require(type(expected) is dict and set(expected)=={'context','assemblyBinding','bindingFact'}
+            and expected['context']==context and expected['assemblyBinding']==assembly_binding,
+            'Native JSON preparation proof differs')
+    else:
+        require(assembly_binding is None and preparation['warmJsonContext'] is None,
+            'PS7 normal preparation contains an invented native JSON proof')
+    return preparation
+
+
 def snapshot(root):
     rows=[]
     for p in sorted(root.rglob('*')):
@@ -523,6 +711,8 @@ def _case_impl(host_name, host, native_modules, scenario):
                INSTALL_PRESET_FIXTURE=str(preset_fixture),
                INSTALL_FIXTURE_PF=str(subject/'pf'), INSTALL_FIXTURE_PF86=str(subject/'pf86'),
                SALAH_INSTALL_SOURCE='github', SALAH_WIDGET_HASH='lat=24.47&lon=39.61&method=4')
+    if normal and host_name=='ps7':
+        env['COMPlus_MultiCoreJitNoProfileGather']='1'
     route = 'store' if scenario in ('store','valid-env-store','preview-noopen-store','explicit-source-override') else 'ask' if scenario == 'ask' else 'invalid' if scenario == 'bad-option' else 'github'
     env['SALAH_INSTALL_SOURCE'] = 'invalid' if scenario in ('invalid-env-source','explicit-source-override') else route
     if scenario == 'env-source-default': del env['SALAH_INSTALL_SOURCE']
@@ -535,15 +725,33 @@ def _case_impl(host_name, host, native_modules, scenario):
     # observed path becomes an exclusion: actual entry comparisons remain exact.
     startup = root/'host-only-control'; startup.mkdir()
     host_control = startup/'host-only.ps1'
-    host_control.write_text("$ErrorActionPreference='Stop'\nWrite-Host 'R0016 independent host startup control'\nexit 0\n",encoding='ascii')
+    # This is a measured source-free calibration workload, not a unique causal repair.
+    # Historical warm20 variation remains unresolved; product cache changes still fail.
+    preparation_mode='warm-json' if normal and host_name=='ps51' else 'no-gather' if normal else 'default'
+    host_control.write_text(warm_control_body(preparation_mode),encoding='ascii')
+    preparation_phases={};preparation_cache={}
+    if normal:
+        preparation_phases['warmBefore']=composition.double_inventory(root,support,startup/'full-before-launch.json',LOCKS)
+        preparation_cache['warmBefore']=capture_preparation_cache(root/'analysis-cache',preparation_phases['warmBefore'],startup/'cache-before.raw')
     startup_env=dict(env, INSTALL_READY_FILE=str(startup/'ready'), INSTALL_PROFILE_ACK=str(startup/'ack'),
                      INSTALL_EFFECT_LOG=str(startup/'effects'), INSTALL_BOOTSTRAP_LOG=str(startup/'phases'),
                      INSTALL_READY_NONCE=secrets.token_hex(16), INSTALL_FIXTURE_NORMAL='0')
     startup_env.pop('INSTALL_UNREADABLE_FILE',None)
     try:
-        startup_run,startup_window=invoke_with_profile_boundary([host,'-NoProfile','-File',str(host_control)],startup_env,startup,host_home,ENTRY_TIMEOUT_SECONDS)
+        startup_run,startup_window=invoke_with_profile_boundary([host,'-NoProfile','-File',str(host_control)],startup_env,startup,host_home,ENTRY_TIMEOUT_SECONDS,root if normal else None)
+        if normal:
+            preparation_phases['warmReady']=startup_window.get('fullReady')
+            preparation_phases['warmAfter']=composition.double_inventory(root,support,startup/'full-after-exit.json',LOCKS)
+            preparation_cache['warmAfter']=capture_preparation_cache(root/'analysis-cache',preparation_phases['warmAfter'],startup/'cache-after.raw')
         require(startup_run.returncode==0 and startup_window['ready'],'Independent host-only baseline failed')
         require(not (startup/'effects').exists() or not (startup/'effects').read_bytes(),'Host-only control reached an installer effect spy')
+        warm_json=None
+        if normal and host_name=='ps51':
+            warm_raw=(startup/'stdout.raw').read_bytes()
+            binding_path=root/'warm-json-assembly-binding.json'
+            assembly_binding=receive_native_assembly(composition.diagnostic,parse_warm_context(warm_raw),binding_path)
+            warm_json=dict(context=receive_warm_context(warm_raw,startup_window,assembly_binding),
+                assemblyBinding=assembly_binding,bindingFact=composition.fact(binding_path))
     except (AssertionError,OSError,subprocess.TimeoutExpired) as error:
         RESULTS.append(dict(host=host_name,case=scenario,pass_=False,classification='PROFILE_BASELINE_BLOCKED',error=str(error),observation=dict(fixture=str(root),installerExecuted=False,baseline=str(startup/'profile-window.json'))))
         return False
@@ -568,6 +776,9 @@ def _case_impl(host_name, host, native_modules, scenario):
         support.save(root/'unreadable-held-before.json',held.initial)
         require(held.initial['sha256']==metadata_sha,'Metadata bytes changed before exclusive fixture acquisition')
     direct_inputs_before=composition.double_inventory(root,support,root/'direct-full-before-launch.json',LOCKS)
+    if normal:
+        preparation_phases['productBefore']=direct_inputs_before
+        preparation_cache['productBefore']=capture_preparation_cache(root/'analysis-cache',direct_inputs_before,root/'cache-product-before.raw')
     source_inventory_before=support.profile_snapshot(SOURCE)
     direct_launch=dict(command=command,environment=dict(env),cwd=str(pathlib.Path.cwd().resolve()),sourceInventory=source_inventory_before)
     support.save(root/'direct-launch-inputs.json',direct_launch)
@@ -604,6 +815,9 @@ def _case_impl(host_name, host, native_modules, scenario):
     after=snapshot(subject)
     (root/'subject-after.json').write_text(json.dumps(after,indent=2),encoding='utf-8')
     direct_inputs_after=composition.double_inventory(root,support,root/'direct-full-after-exit.json',LOCKS)
+    if normal:
+        preparation_phases['productAfter']=direct_inputs_after
+        preparation_cache['productAfter']=capture_preparation_cache(root/'analysis-cache',direct_inputs_after,root/'cache-product-after.raw')
     require(support.profile_snapshot(SOURCE)==source_inventory_before,'Source bytes or metadata changed during direct entry')
     unchanged = before == after
     observation = dict(command=command,fixture=str(root),entryExit=run.returncode,interceptionLoaded=ready(root,env),readinessNonce=env['INSTALL_READY_NONCE'],snapshotUnchanged=unchanged,effects=effects,hostStartupState=snapshot(host_home),stdout=str(root/'stdout.txt'),stderr=str(root/'stderr.txt'),commandStartedUtc=command_started,elapsedSeconds=time.monotonic()-command_clock,timeoutSeconds=ENTRY_TIMEOUT_SECONDS)
@@ -613,7 +827,21 @@ def _case_impl(host_name, host, native_modules, scenario):
                        directLaunchInputs=direct_launch,
                        legacyLifecycleChecks=dict(startupQuiescent=profile_window['before']==profile_window['atReady'],fullProfileUnchanged=profile_window['before']==profile_window['after']),
                        compositionScope='Direct -File semantics and paired held complete-file effects are separate observations; lifecycle deltas are retained, never subtracted.')
+    if normal:
+        preparation_phases['productReady']=profile_window.get('fullReady')
+        phase_paths=dict(warmBefore=startup/'full-before-launch.json',warmReady=startup/'full-at-ready.json',
+            warmAfter=startup/'full-after-exit.json',productBefore=root/'direct-full-before-launch.json',
+            productReady=root/'entry-profile-window/full-at-ready.json',productAfter=root/'direct-full-after-exit.json')
+        observation['normalPreparation']=dict(schema='r0016-normal-preparation.v1',mode=preparation_mode,
+            holdSeconds=20 if host_name=='ps51' else 0,script=composition.fact(host_control),
+            phaseFacts={name:composition.fact(path) for name,path in phase_paths.items()},
+            cacheCaptures=preparation_cache,warmJsonContext=warm_json)
     try:
+        if normal:
+            raw_cache={name:pathlib.Path(value['capture']['path']).read_bytes() if value['capture'] else None
+                for name,value in preparation_cache.items()}
+            require_normal_preparation(observation,host_name,scenario,host_control.read_bytes(),preparation_phases,
+                raw_cache,(startup/'stdout.raw').read_bytes(),warm_json['assemblyBinding'] if warm_json else None)
         if scenario not in ('bad-option','invalid-env-source'):
             require(ready(root,env),'BOOTSTRAP_BLOCKED: final startup interception nonce missing or wrong')
             if normal:

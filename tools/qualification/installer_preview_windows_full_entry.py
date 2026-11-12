@@ -18,7 +18,7 @@ CHILD_SECONDS=60
 JSON_LIMIT=64*1024*1024
 PS7_EXE_SHA='bfb46af89433268872ddb43d1ca7a3f433452ee91ed356a9786940f90118e285'
 VERSION_CODE="[Console]::Write(('{0}|{1}|{2}|{3}|{4}' -f $PSVersionTable.PSVersion,$PSVersionTable.PSEdition,[Environment]::OSVersion.Platform,[Environment]::Is64BitProcess,[Diagnostics.Process]::GetCurrentProcess().MainModule.FileName))"
-INPUTS={'install.ps1': (111249, '07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a'), 'presets/salah-widget.tablissng.json': (1341, '9197c9bcfaf34ff06505963862e4e9280d3ad521e1ed287183f5d71cbce6b95f'), 'tests/install-entry-native-composition.py': (56398, 'a453230b3527bdc5a81dcf7279d9af2aad14b32c07756a4700c97eab2ce24646'), 'tests/install-entry-product-support.py': (44780, '70a6ce6193206d757783a3fb4ba2bc32462677d1980818c75a1e60e6bbb56a99'), 'tests/install-entry-composition-support.py': (37442, '4600bac181dcac5fe7f72467c6018800666284d7087cf98f8b9bf5a449910821'), 'tests/install-entry-coverage-support.py': (14701, '52a268b0de8c6055f8265faa7bdef115a78ba29fba2b4f008aba43be6b793c4a'), 'tests/install-entry-held.ps1': (8262, '742b42edd3828ec98dc25f717fdbacbd3e68ed877139c90e358d43f7c5142ca2'), 'tests/install-entry-input-probe.ps1': (12493, 'f4c871734c72a71c04423a3fcfc1c4c9a2286da7683d09a1eb6ffeefb73c2bf0'), 'tests/install-entry-driver-diagnostic.py': (57115, '08ddd40bbdafe82cdc25bb074ee2da6b9e9ef78004d744c3daf00ea8ca06cbd5'), 'tests/install-entry-diagnostic-shadow.psm1': (5710, '5bc1cb8b88c6c873a295f664304968d7a859c0f322223b8b6bb8b15798f67663'), 'tests/install-preview.ps1': (57909, 'e5db234866df5fa41862dbb1d67fed4594b77b882823bfd631a9c5bf98525916'), 'tests/install-preview-window.ps1': (13117, '05318962698c269fb1d8b873e31b80b3ffe526739e21a49b5cf0459d523dcb83')}
+INPUTS={'install.ps1': (111249, '07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a'), 'presets/salah-widget.tablissng.json': (1341, '9197c9bcfaf34ff06505963862e4e9280d3ad521e1ed287183f5d71cbce6b95f'), 'tests/install-entry-native-composition.py': (72501, '0b787803e3536393c4963eb9884c81eddc1a1198508877a600d7b51e4c64f85f'), 'tests/install-entry-product-support.py': (44780, '70a6ce6193206d757783a3fb4ba2bc32462677d1980818c75a1e60e6bbb56a99'), 'tests/install-entry-composition-support.py': (37442, '4600bac181dcac5fe7f72467c6018800666284d7087cf98f8b9bf5a449910821'), 'tests/install-entry-coverage-support.py': (14701, '52a268b0de8c6055f8265faa7bdef115a78ba29fba2b4f008aba43be6b793c4a'), 'tests/install-entry-held.ps1': (8262, '742b42edd3828ec98dc25f717fdbacbd3e68ed877139c90e358d43f7c5142ca2'), 'tests/install-entry-input-probe.ps1': (12493, 'f4c871734c72a71c04423a3fcfc1c4c9a2286da7683d09a1eb6ffeefb73c2bf0'), 'tests/install-entry-driver-diagnostic.py': (57115, '08ddd40bbdafe82cdc25bb074ee2da6b9e9ef78004d744c3daf00ea8ca06cbd5'), 'tests/install-entry-diagnostic-shadow.psm1': (5710, '5bc1cb8b88c6c873a295f664304968d7a859c0f322223b8b6bb8b15798f67663'), 'tests/install-preview.ps1': (57909, 'e5db234866df5fa41862dbb1d67fed4594b77b882823bfd631a9c5bf98525916'), 'tests/install-preview-window.ps1': (13117, '05318962698c269fb1d8b873e31b80b3ffe526739e21a49b5cf0459d523dcb83')}
 CASES=('github', 'cached', 'store', 'ask', 'installed', 'mixed', 'legacy', 'none', 'missing-preset', 'bad-option', 'positive', 'no-open', 'readable', 'unreadable', 'invalid-env-source', 'valid-env-store', 'preview-noopen-github', 'preview-noopen-store', 'env-source-default', 'explicit-source-override')
 FAILURE_CASES=('legacy', 'none', 'bad-option', 'unreadable', 'invalid-env-source')
 BUDGET={'aclSetupMaximum': 38, 'aclSecondsEach': 60, 'directAndBaselineMaximum': 40, 'directSecondsEach': 60, 'directCleanupSecondsEach': 10, 'heldMaximum': 18, 'heldSecondsEach': 60, 'heldCleanupSecondsEach': 5, 'finalObservationSeconds': 300, 'total': 6550}
@@ -365,13 +365,105 @@ def validate_source_relation(observation,case,scenario,host,source,composition,p
     return facts
 
 
-def validate_case_headers(rows,fixture,host,executable,source,direct_receiver,rows_receiver,normal_receiver,composition,product_receivers):
+def bind_preparation_receipt(receipt, case, capture, facts):
+    environment=receipt.get('environment');nonce=receipt.get('nonce');pid=receipt.get('pid')
+    require(type(environment) is dict and type(nonce) is str and re.fullmatch(r'[0-9a-f]{32}',nonce)
+        and type(pid) is int and pid>0 and environment.get('INSTALL_READY_NONCE')==nonce,
+        'Missing actual native preparation identity')
+    token=str(pid)+'\t'+nonce
+    if capture.name=='host-only-control':
+        require(receipt.get('ready') is True,'Source-free preparation readiness is missing')
+    # Early option refusals intentionally need no direct readiness; the source-free leg always does.
+    if receipt.get('ready') is True:
+        require(receipt.get('readyToken')==token,'Actual native PID/nonce token differs')
+        for key,variable,filename in (('readyFact','INSTALL_READY_FILE','ready'),('ackFact','INSTALL_PROFILE_ACK',
+            'ack' if capture.name=='host-only-control' else 'profile-ack')):
+            expected=(capture/filename) if capture.name=='host-only-control' else case/filename
+            path=checked_path(environment.get(variable),case)
+            require(path==expected,'Native preparation readiness path differs')
+            facts.append(verify_fact(receipt.get(key),path,case))
+            require(path.read_bytes().decode('utf-8-sig')==token,'Native readiness raw bytes differ')
+    for stream in ('stdout','stderr'):
+        facts.append(verify_fact(receipt.get(stream),capture/(stream+'.raw'),case))
+    for field,filename in (('before','profile-before-launch.json'),('after','profile-after-exit.json')):
+        require(receipt.get(field)==read_json_array(capture/filename,case),'Original native profile inventory differs')
+        facts.append(file_fact(capture/filename,case))
+    if receipt.get('ready') is True:
+        require(receipt.get('atReady')==read_json_array(capture/'profile-at-ready.json',case),
+            'Original native ready profile inventory differs')
+        facts.append(file_fact(capture/'profile-at-ready.json',case))
+    return nonce
+
+
+def read_json_array(path, owner):
+    path=checked_path(path,owner)
+    require(path.stat().st_size<=JSON_LIMIT,'Profile evidence exceeds bounded size')
+    # Reuse the duplicate-member/nonfinite-aware object receiver for an array root.
+    value=parse_json(b'{"rows":'+path.read_bytes()+b'}')['rows']
+    require(type(value) is list,'Missing original profile inventory array')
+    return value
+
+
+def validate_normal_preparation(observation, case, host, scenario, composition, receivers):
+    preparation=observation.get('normalPreparation')
+    require(type(preparation) is dict,'Missing original normal preparation evidence')
+    startup=case/'host-only-control';facts=[];phases={}
+    locations=dict(warmBefore=startup/'full-before-launch.json',warmReady=startup/'full-at-ready.json',
+        warmAfter=startup/'full-after-exit.json',productBefore=case/'direct-full-before-launch.json',
+        productReady=case/'entry-profile-window/full-at-ready.json',productAfter=case/'direct-full-after-exit.json')
+    require(type(preparation.get('phaseFacts')) is dict and set(preparation['phaseFacts'])==set(locations),
+        'Missing raw normal preparation phase facts')
+    for name,path in locations.items():
+        facts.append(verify_fact(preparation['phaseFacts'][name],path,case))
+        phases[name]=read_json(path,case)
+    script=startup/'host-only.ps1'
+    facts.append(verify_fact(preparation.get('script'),script,case))
+    caches={}
+    cache_locations=dict(warmBefore=startup/'cache-before.raw',warmAfter=startup/'cache-after.raw',
+        productBefore=case/'cache-product-before.raw',productAfter=case/'cache-product-after.raw')
+    require(type(preparation.get('cacheCaptures')) is dict and set(preparation['cacheCaptures'])==set(cache_locations),
+        'Missing raw normal cache facts')
+    for name,path in cache_locations.items():
+        entry=preparation['cacheCaptures'][name]
+        require(type(entry) is dict,'Malformed raw normal cache binding')
+        capture=entry.get('capture')
+        if capture is None:
+            require(not path.exists(),'Unreported normal cache byte capture')
+            caches[name]=None
+        else:
+            facts.append(verify_fact(capture,path,case));caches[name]=path.read_bytes()
+    effect=startup/'effects'
+    require(not effect.exists() or not effect.read_bytes(),'Normal preparation reached an installer effect spy')
+    if effect.exists():facts.append(file_fact(effect,case))
+    binding=None
+    if host=='ps51':
+        context=preparation.get('warmJsonContext')
+        require(type(context) is dict,'Missing native JSON preparation context')
+        binding_path=case/'warm-json-assembly-binding.json'
+        facts.append(verify_fact(context.get('bindingFact'),binding_path,case))
+        journal=read_json(binding_path,case)
+        require(journal.get('schema')=='r0016-warm-json-native-file-binding.v1'
+            and journal.get('comparisons')==[context.get('assemblyBinding')],
+            'Original native JSON binding journal differs')
+        binding=context['assemblyBinding']
+        # Only the pinned native binding helper may associate raw spelling with canonical identity.
+        received_path=case/'warm-json-assembly-received.json'
+        received=dict(schema='r0016-warm-json-native-file-binding.v1',comparisons=[])
+        receivers['record_probe_file_binding'](binding.get('childFact'),'warm-json/assembly',received_path,received)
+        require(received['comparisons']==[binding],'Native JSON file identity changed after preparation')
+        facts.append(file_fact(received_path,case))
+    receivers['require_normal_preparation'](observation,host,scenario,script.read_bytes(),phases,caches,
+        (startup/'stdout.raw').read_bytes(),binding)
+    return facts
+
+
+def validate_case_headers(rows,fixture,host,executable,source,direct_receiver,rows_receiver,normal_receiver,composition,product_receivers,preparation_receivers):
     require(callable(normal_receiver) and composition is not None and type(product_receivers) is dict
         and set(product_receivers)=={'read_query_contract','bind_source_read_rows','normalized_read_context'},
         'Full product receiving predicates are mandatory')
     require(type(rows) is list and len(rows)==len(CASES),'Incomplete full20 denominator')
     require([r.get('case') if type(r) is dict else None for r in rows]==list(CASES),'Missing, duplicate or reordered product case')
-    facts=[];pids=[];nonces=[]
+    facts=[];pids=[];nonces=[];preparation_nonces=[]
     for number,(scenario,row) in enumerate(zip(CASES,rows)):
         require(row.get('host')==host and row.get('pass_') is True and 'error' not in row and 'restorationError' not in row,'Failed or wrong-host product case')
         observation=row.get('observation');require(type(observation) is dict,'Missing actual entry observation')
@@ -393,6 +485,19 @@ def validate_case_headers(rows,fixture,host,executable,source,direct_receiver,ro
             pids.append(receipt['pid'])
         require(observation['profileWindow']['entryExit']==observation['entryExit'],'Direct exit/receipt mismatch')
         require(type(observation['hostOnlyBaseline'].get('entryExit')) is int and observation['hostOnlyBaseline']['entryExit']==0,'Host-only baseline failed')
+        launch=read_json(case/'direct-launch-inputs.json',case)
+        require(launch==direct and launch.get('environment')==observation['profileWindow'].get('environment'),
+            'Stored actual prelaunch environment differs')
+        facts.append(file_fact(case/'direct-launch-inputs.json',case))
+        preparation_receivers['require_scoped_preparation_environment'](host,scenario,[
+            direct.get('environment'),observation['hostOnlyBaseline'].get('environment'),observation['profileWindow'].get('environment')])
+        for name,capture_name in (('profileWindow','entry-profile-window'),('hostOnlyBaseline','host-only-control')):
+            receipt=observation[name];capture_path=case/capture_name
+            require(read_json(capture_path/'profile-window.json',case)==receipt,'Stored actual native receipt differs')
+            facts.append(file_fact(capture_path/'profile-window.json',case))
+            preparation_nonces.append(bind_preparation_receipt(receipt,case,capture_path,facts))
+        if scenario in ('positive','no-open'):
+            facts+=validate_normal_preparation(observation,case,host,scenario,composition,preparation_receivers)
         for name in ('stdout','stderr'):
             require(observation.get(name)==str(case/(name+'.txt')),'Raw stream role redirected')
             facts.append(file_fact(case/(name+'.txt'),fixture))
@@ -406,6 +511,7 @@ def validate_case_headers(rows,fixture,host,executable,source,direct_receiver,ro
             require(type(observation.get('heldComposition')) is dict,'Dry-run lacks separate held full-file evidence')
             facts+=validate_source_relation(observation,case,scenario,host,source,composition,product_receivers)
     require(len(set(nonces))==len(CASES),'Replayed direct case nonce')
+    require(len(set(preparation_nonces))==2*len(CASES),'Replayed direct or preparation nonce')
     return dict(cases=list(CASES),caseCount=len(CASES),observedDirectAndBaselinePids=pids,rawCaptureFacts=facts)
 
 
@@ -441,6 +547,16 @@ def validate_report(process,command,capture,outputs,owner,python,executable,host
     product_receivers={name:selected_pure_receiver(Path(launched['tests/install-entry-product-support.py']['path']),name,INPUTS['tests/install-entry-product-support.py'][1],
         dict(Path=Path,os=os,copy=copy,validate_rows=composition.validate_rows,sha=lambda value:hashlib.sha256(value).hexdigest()))
         for name in ('read_query_contract','bind_source_read_rows','normalized_read_context')}
+    preparation_receivers={}
+    preparation_bindings=dict(SCENARIOS=CASES,hashlib=hashlib,json=json,re=re,composition=composition)
+    for name in ('digest','warm_control_body','receive_cache_bytes','parse_warm_context','receive_warm_context',
+        'require_scoped_preparation_environment','require_normal_preparation'):
+        preparation_receivers[name]=selected_pure_receiver(Path(launched['tests/install-entry-native-composition.py']['path']),
+            name,INPUTS['tests/install-entry-native-composition.py'][1],preparation_bindings)
+        preparation_bindings[name]=preparation_receivers[name]
+    native_driver=load_exact(Path(launched['tests/install-entry-driver-diagnostic.py']['path']),
+        INPUTS['tests/install-entry-driver-diagnostic.py'][1],'r16_full_entry_native_preparation_binding')
+    preparation_receivers['record_probe_file_binding']=native_driver.record_probe_file_binding
     path_budget=report.get('pathBudget');require(type(path_budget) is dict and path_budget==read_json(fixture/'normal-path-budget.json',fixture)
         and path_budget.get('schema')=='r0016-full-entry-path-budget.v1' and path_budget.get('complete') is True
         and path_budget.get('sourceSha256')==INPUTS['install.ps1'][1] and path_budget.get('fixture')==str(fixture)
@@ -453,7 +569,7 @@ def validate_report(process,command,capture,outputs,owner,python,executable,host
             and row['utf16Units']<=240 and Path(row['pathTemplate']).is_relative_to(fixture/('c%02d'%CASES.index(row['scenario']))),
             'Incorrect normal path length or case association')
     require(max(row['utf16Units'] for row in budget_rows)==path_budget['maxUtf16Units'],'Wrong maximum normal path length')
-    cases=validate_case_headers(report.get('results'),fixture,host,executable,Path(launched['install.ps1']['path']),direct_receiver,composition.validate_rows,normal_receiver,composition,product_receivers)
+    cases=validate_case_headers(report.get('results'),fixture,host,executable,Path(launched['install.ps1']['path']),direct_receiver,composition.validate_rows,normal_receiver,composition,product_receivers,preparation_receivers)
     facts+=cases.pop('rawCaptureFacts')
     return dict(report=report_fact,fixture=str(fixture),expectedHost=host,commandHost=str(executable),**cases,
         custodyFiles=facts,sourceFreePrerequisite=SOURCE_FREE_PREREQUISITE,
