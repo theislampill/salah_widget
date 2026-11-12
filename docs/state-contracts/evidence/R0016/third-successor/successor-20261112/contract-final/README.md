@@ -1,0 +1,3 @@
+# Preserved independent final contract review
+
+The final report, original46 dispositions and selected checks are copied byte-for-byte from the independent review of tree0505633b8966aa7b7a892adb512b99bb8d5b650d. The complete47-member final-review-packet.zip retains the initial review, received input copies, provenance disclosure, original failed literal-wording checker result and corrected final checks. Relative links to supporting input copies and scripts resolve within that archive. The initial292-check and separate64-check conclusions were not replayed. This packaging grants no lifecycle authority.
