@@ -473,7 +473,7 @@ the required corrections.
 9. Line references were wrong in places (README L570, not L571; `reconcileCloudPublication()` at
    L3880, not L3881).
 
-**Corrections made in response** (commit {{CORR_COMMIT}}):
+**Corrections made in response** (commit `862343d4`):
 - PRA-F-10 scoped to `ADVANCING`/`_clockPreview`; evidence class restated as "mechanism
   demonstrated; real worker durations unmeasured".
 - R29 / ISM-MOON-013 lowered to *implemented but not fully verified*; crosswalk re-totalled (7 / 38 /
