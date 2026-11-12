@@ -109,8 +109,13 @@ jobs:
           - runner: windows-2025
             artifact_suffix: '-windows-2025'
     runs-on: ${{ matrix.runner }}
-    timeout-minutes: 25
+    # Mirrors installer-native.yml at R0015 bf566111: 60 min job budget and the
+    # telemetry/update-check opt-outs that R0015's collector also sets.
+    timeout-minutes: 60
     env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      POWERSHELL_UPDATECHECK: 'Off'
       GIT_CONFIG_COUNT: '1'
       GIT_CONFIG_KEY_0: core.autocrlf
       GIT_CONFIG_VALUE_0: 'false'
@@ -136,32 +141,6 @@ jobs:
           $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
           Expand-Archive -LiteralPath $archive -DestinationPath $runtime
           "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
-      # HOSTED-ENVIRONMENT WARM-UP (disclosed; no test or installer change).
-      # Unwarmed, the PS5.1 bootstrap diagnostic (tests/install-host-bootstrap.ps1)
-      # timed out at its 15 s WaitForExit with the child stalled after
-      # 'join-path-begin' (first cmdlet), before any installer code: all four
-      # variants in runs 43120878720 attempts 1-2, and 'native-only' in run
-      # 43143993057. That cold-start failure is preserved in those runs. This
-      # step only pre-starts Windows PowerShell 5.1 and prints every elapsed time,
-      # the first (cold) one included, to the log and job summary.
-      - name: Warm up Windows PowerShell 5.1 first-cmdlet start (disclosed hosted-image workaround; cold timings recorded)
-        shell: pwsh
-        run: |
-          $ps51 = Join-Path $env:WINDIR 'System32\WindowsPowerShell\v1.0\powershell.exe'
-          $rows = @()
-          # Let the 5.1 child compute its own default module path.
-          Remove-Item Env:PSModulePath -ErrorAction SilentlyContinue
-          foreach ($i in 1..3) {
-            $clock = [Diagnostics.Stopwatch]::StartNew()
-            & $ps51 -NoLogo -NoProfile -NonInteractive -Command "`$null = Join-Path `$env:TEMP 'r0013-warmup'; Write-Output 'warm-up ok'" | Out-Null
-            $code = $LASTEXITCODE
-            $clock.Stop()
-            $label = if ($i -eq 1) { 'cold (first start on this runner)' } else { 'warm' }
-            $line = 'PS5.1 -NoProfile -Command Join-Path run {0} [{1}] on ${{ matrix.runner }}: {2:N3} s, exit {3}' -f $i, $label, $clock.Elapsed.TotalSeconds, $code
-            Write-Host $line
-            $rows += '- ' + $line
-          }
-          @('### PS5.1 warm-up timings (${{ matrix.runner }})', '', 'The unwarmed bootstrap diagnostic failure is preserved in runs 43120878720 (attempts 1-2) and 43143993057.', '') + $rows | Out-File -LiteralPath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
       - name: Execute both native PowerShell hosts
         shell: powershell
         run: |
