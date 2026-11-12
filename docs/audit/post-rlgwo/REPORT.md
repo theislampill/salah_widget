@@ -40,7 +40,10 @@ merged into one registry entry and one finding; contradictions are resolved in �
 **What "demonstrated" means here.** Traced end to end in source at the baseline *and* reproduced
 by an effect-free probe, an existing test or a recorded native observation. It is never a claim
 of observed production behaviour: no browser and no native host were run in this audit. Where
-the dependency is demonstrated but the trigger is not (PRA-F-01), both are stated.
+the dependency is demonstrated but the trigger is not (PRA-F-01), both are stated. Two sub-labels
+mark demonstrations that are not product observations: *injected fault* (PRA-F-01: a failure was
+forced) and *model-parameterised* (PRA-F-03 poll timing, PRA-F-10 worker durations: the probe uses
+chosen parameters, not measurements).
 
 **IMPLEMENTAUDIT discipline.** Facts, hypotheses and unknowns are kept in separate lists in every
 registry entry; evidence comes before claims; an issue closure, a document assertion or a passing
@@ -146,7 +149,7 @@ Summary:
 
 ## 4. Architecture overview by domain
 
-- **Prayer, time and calendar** (`ISM-PRAY`, 10 entries). One authored file,
+- **Prayer, time and calendar** (`ISM-PRAY`, 11 entries). One authored file,
   `src/native/index.html`, owns the clock, timezone authority, request leases, prayer
   acquisition/rollover, next-event selection (explicit since R0007) and calendar. The live `tz`
   has four writers and many readers, including the sky and Moon identities (ISM-PRAY-009).
@@ -155,9 +158,10 @@ Summary:
 - **Weather and location** (`ISM-WX`, 12). Explicit request/attempt fences (pre-campaign),
   an elapsed retry record (R000D), a cloud publication receipt (R000B), and admission of external
   coordinates before normalisation (R0026). Radar is diagnostic only.
-- **Configuration and builder** (`ISM-CFG`, 10). A frozen effect classifier decides none /
+- **Configuration and builder** (`ISM-CFG`, 11). A frozen effect classifier decides none /
   presentation / broad (R0003); the builder records an issued-preview identity (R000F). Settings
-  Reset, dirty state and persistence outcome remain partly implicit.
+  Reset, dirty state and persistence outcome remain partly implicit. Diagnostic fragment overrides
+  (`sim*`, `debugOptic`, `qa`) are read from any URL (ISM-CFG-011, added after the review).
 - **Sky** (`ISM-SKY`, 31). The native scene identity and commit, the refined worker sky
   (lifecycle, queue, assets, host, preview) and copied `real-sky/core` caches. R0021 made
   construction custody and retirement explicit; R0027 bounded one spectral cache by a
@@ -174,31 +178,32 @@ Summary:
 
 ## 5. Current counts and changes of counting method
 
-The registry holds **110 entries** (85 mapping the 83 original machines — C08…C12 map onto seven
-installer entries — and 25 new). Counts by status value and dimension:
+The registry holds **112 entries** (85 mapping the 83 original machines — C08…C12 map onto seven
+installer entries — and 27 new, two of them added after the independent review). Counts by
+status value and dimension:
 
 | Status value | Code | Documentation | Implementation | Verification |
 |---|---|---|---|---|
-| implicit and materially significant | IMS | 46 | 37 | 12 |
-| partially explicit | PEX | 41 | 43 | 61 |
+| implicit and materially significant | IMS | 47 | 38 | 4 |
+| partially explicit | PEX | 42 | 44 | 55 |
 | explicitly documented but weakly enforced | DWE | 6 | 0 | 0 |
-| explicitly enforced but insufficiently verified | EEV | 0 | 18 | 12 |
+| explicitly enforced but insufficiently verified | EEV | 0 | 18 | 13 |
 | explicit, enforced and independently verified | EIV | 17 | 0 | 12 |
-| historically problematic but demonstrably resolved | HRS | 0 | 11 | 11 |
-| unknown or insufficient evidence | UNK | 0 | 1 | 2 |
-| **Total** | | 110 | 110 | 110 |
+| historically problematic but demonstrably resolved | HRS | 0 | 11 | 10 |
+| unknown or insufficient evidence | UNK | 0 | 1 | 18 |
+| **Total** | | 112 | 112 | 112 |
 
 | Domain | Entries | of which new |
 |---|---|---|
-| Prayer, time and calendar (`ISM-PRAY`) | 10 | 2 |
+| Prayer, time and calendar (`ISM-PRAY`) | 11 | 3 |
 | Weather, radar and location acquisition (`ISM-WX`) | 12 | 6 |
-| Configuration, settings and builder (`ISM-CFG`) | 10 | 2 |
+| Configuration, settings and builder (`ISM-CFG`) | 11 | 3 |
 | Sky, cloud, star and optical rendering (`ISM-SKY`) | 31 | 2 |
 | Moon pipeline (`ISM-MOON`) | 20 | 5 |
 | Build, deployment and qualification (`ISM-BLD`) | 10 | 7 |
 | Frozen v1 compatibility snapshot (`ISM-V1`) | 9 | 0 |
 | Installer workflows (`ISM-INST`) | 8 | 1 |
-| **Total** | 110 | 25 |
+| **Total** | 112 | 27 |
 
 For the 85 entries that map original machines, the implementation dimension reads IMS 25, PEX 37,
 EEV 15, HRS 8 (installer entries included). The original audit reported 46 implicit / 31
@@ -208,15 +213,17 @@ partly explicit / 6 explicit on a single axis. These numbers are **not comparabl
   seven-value vocabulary that separates documentation from enforcement and from verification;
 - C08…C12 (five machines) are represented by seven installer entries whose hardening statuses
   were mapped to the vocabulary, not re-derived;
-- 25 machines were added (new mechanisms introduced by the campaign, such as the cloud receipt
+- 27 machines were added (new mechanisms introduced by the campaign, such as the cloud receipt
   and the retry record, plus build/qualification and installer-delivery machines the original
   scoped out), and several lane entries were merged (NEW-A-02 + NEW-B-01; NEW-B-02 + NEW-D-02;
   NEW-B-06 + NEW-D-01; NEW-D-04 + NEW-E-05; N19 from lanes A, D and E; N21 from lanes B and C);
 - "HRS" (historically problematic but demonstrably resolved) did not exist in the original
-  vocabulary; 11 entries carry it on implementation and verification.
+  vocabulary; 11 entries carry it on implementation and 10 on verification;
+- after the review, verification statuses that had been asserted without a named test were
+  lowered to "unknown or insufficient evidence" (18 entries now carry UNK on verification).
 
-Crosswalk dispositions for the 83 original machines: resolved and independently verified 8,
-implemented but not fully verified 37, partly resolved 11, still implicit or vulnerable 25,
+Crosswalk dispositions for the 83 original machines: resolved and independently verified 7,
+implemented but not fully verified 38, partly resolved 11, still implicit or vulnerable 25,
 superseded 1, no longer applicable 1. Original findings: 13 resolved and independently verified,
 2 partly resolved, 3 still implicit (frozen v1). Original hypotheses: 3 still implicit
 ([CROSSWALK.md](CROSSWALK.md)).
@@ -316,6 +323,15 @@ Corrections and downgrades:
   copy and were not repeated; only the code structure was re-confirmed.
 - **Probe D** embedded an absolute local path; the committed copy takes the repository root as
   an argument and was re-run with identical results.
+- **Review corrections (second commit):** ISM-MOON-013 / R29 lowered from *resolved and
+  independently verified* to *implemented but not fully verified* (no independent review covers
+  the projection-cache protocol; the reason text contradicted the label); PRA-F-10 scoped to
+  `ADVANCING`/`_clockPreview` modes; line references corrected (README L570; S:3880; S:2727;
+  `wxAt` S:1556, `syncWeather` S:1573); PRA-F-03 linked to the R000B certificate that already
+  recorded the quarter-hour gap; carried-forward entries marked and their verification status
+  tied to named test files or lowered to UNK (ISM-SKY-007, 012, 013, 014, 025, 026, 027, 029 and
+  ISM-V1-002…009 now UNK); registry enriched from the lane papers; ISM-CFG-011, ISM-PRAY-011 and
+  PRA-F-38 added; GDOPL O-4 split so that only the committed-bytes growth is "demonstrated".
 - **Lane F FND-F-11** omissions: release metadata/asset selection added as partial entry
   ISM-INST-008; installer-bytes delivery folded into ISM-BLD-006; Bash XPI reuse stays inside
   ISM-INST-006; qualification workflows are ISM-BLD-008.
@@ -331,7 +347,8 @@ No performance was measured; nothing below is a performance claim.
 - The campaign added several currency representations for weather — the decision cache, the
   cloud publication receipt, the effects receipt, the retry record and the refined-sky identity —
   without a single map of which receipt governs which consumer; the refined identity includes
-  weather fields its job never reads (PRA-F-10).
+  weather fields its job never reads, and in `timeScale`/clock-preview modes it churns every
+  simulated second (PRA-F-10).
 - Diagnostics are not pure reads in three places (PRA-F-15).
 - Generation is in-place and unstaged; parity relies on executor discipline and there is no gate
   on main (PRA-F-09, PRA-F-19).
@@ -342,11 +359,23 @@ No performance was measured; nothing below is a performance claim.
 
 ## 10. Remaining risks
 
-In order of materiality: PRA-F-01 (prayer depends on optional Moon not throwing), PRA-F-02
-(invalid zone is permanent), PRA-F-03 (quarter-hour cloud withdrawal), PRA-F-04 (Reset lost),
-PRA-F-05 (method flip), PRA-F-06 (evidence masking), PRA-F-07 (payload growth unmeasured),
-PRA-F-08 (redundant scene teardown on boot), PRA-F-09 (no main gate). See
-[FINDINGS.md](FINDINGS.md) for all 37.
+Ordering rule: a finding with a demonstrated natural trigger and a hard-constraint consequence
+ranks above a conditional structural violation whose trigger has not been found; within each
+group, severity decides.
+
+Demonstrated with a natural or ordinary trigger: PRA-F-02 (an invalid hint zone makes prayer
+permanently unavailable), PRA-F-03 (quarter-hour cloud withdrawal; previously recorded by the
+R000B certificate), PRA-F-04 (Reset lost on a dirty close), PRA-F-05 (method flip from a
+reverse-geocode error body), PRA-F-08 (redundant scene teardown on non-default-zone boots),
+PRA-F-06 (evidence masking by red instruments), PRA-F-07 (committed payload growth; built size
+unmeasured), PRA-F-09 (no gate on main).
+
+Conditional structural violation of a hard constraint: PRA-F-01 — prayer publication depends on
+the optional Moon runtime not throwing; the propagation is demonstrated with an injected fault and
+no natural trigger was found. It is listed first in FINDINGS.md for its severity if triggered, not
+because it has been observed.
+
+See [FINDINGS.md](FINDINGS.md) for all 38.
 
 ## 11. Coverage limits and unknowns
 
@@ -370,11 +399,28 @@ PRA-F-08 (redundant scene teardown on boot), PRA-F-09 (no main gate). See
   context; it was cited, not re-performed.
 - **Work-order inventory**: 14 of 39 rows spot-checked; R0008 and R0025 code carriers were not
   determined by lane F.
+- **Field coverage.** In the registry a missing field means *not assessed*, never *none*. After the
+  review corrections, over the 104 non-installer entries:
+
+| Field | Before review corrections | After (assessed in this audit) | Carried forward from the original catalogue where the field is otherwise missing |
+|---|---|---|---|
+| Transitions | 38 / 102 | 65 / 104 | 34 |
+| Guards | 55 / 102 | 58 / 104 | — |
+| Failure and recovery | 41 / 102 | 46 / 104 | 43 |
+| Invariants | 59 / 102 | 61 / 104 | 32 |
+| Observed facts | 35 / 102 | 51 / 104 | — |
+| Hypotheses | 15 / 102 | 39 / 104 | — |
+| Unknowns | 76 / 102 | 79 / 104 | — |
+
+  Guards remain the least covered field; the original catalogue has no guard field to carry forward.
+- **Acknowledged omissions.** `offline.html`'s own asset-loading path (inline bundles, relative
+  `file-data/` chunks, the `native-data.js` loader) was audited only as a generator output, not as a
+  runtime machine. The user-visible status text owner was added as ISM-PRAY-011 after the review.
 - The registry's absence of an entry is not a claim that no other implicit machine exists.
 
 ## 12. Checks at hand-back
 
-Run by the integrator in the audit worktree after writing the deliverables:
+Run by the integrator in the audit worktree after writing the deliverables, and re-run after the review corrections (results below are from the re-run):
 
 | Check | Result |
 |---|---|
@@ -383,10 +429,70 @@ Run by the integrator in the audit worktree after writing the deliverables:
 | `python tools/verify_v1.py` | `PASS: frozen V1 payload and anchored manifest` |
 | `node --test tests/*.test.cjs tests/*.test.mjs` | 959 tests / 955 pass / 0 fail / 4 todo (same as baseline) |
 | `node tests/rlgwo-docs-contract.cjs` | 64 cases / 50 pass / 14 fail; failing-case set identical to the baseline run |
-| Relative-link check over all new or changed Markdown (files and anchors) | 761 links, 0 broken |
+| Relative-link check over all new or changed Markdown (files and anchors) | 771 links, 0 broken |
 | Hygiene scan of every added line | no local absolute paths, e-mail addresses, credential patterns or closing keywords next to issue numbers |
 
+<a id="independent-review"></a>
 ## 13. Independent review
 
-*Placeholder — to be completed by a separate reviewer after hand-back. Nothing in this section
-has been filled by the integrator.*
+**Reviewer.** A separate model instance with read-only access to the worktree, the scratch inputs
+and GitHub; no authoring, committing or merging role. It reviewed commit `f9177173`. Its record
+was relayed to the integrator by the coordinator; this section restates it without softening.
+
+**What it re-derived.**
+- Probes A, B, C, D, E and G re-run; all reproduced the recorded outputs.
+- 15 registry entries sampled at random (seed recorded by the reviewer; not supplied to the
+  integrator) and checked against the source.
+- Crosswalk identifiers checked against the original catalogue: 83 machines, 18 findings and 3
+  hypotheses, each present exactly once.
+- Registry, crosswalk and findings counts recounted.
+- 14 work-order issues checked.
+- Instruments re-run at the baseline: `r0001` 12/1, `r0009` 21/1, `r0019` 15/1, `r0021` 17/1,
+  `r0022-baseline-balance` 30/7, `r0022-lunar-consumers` 24/2, `rlgwo-docs-contract` 50/14.
+
+**Verdicts by area.** Scope and hygiene: hold. Counts: hold. Crosswalk totals: hold. Instruments:
+hold. Work-order inventory: hold. GDOPL authorization boundary: holds. Overall: publishable after
+the required corrections.
+
+**Adverse findings (preserved as reported).**
+1. Uneven depth: roughly a third to a half of the registry entries were skeletal. Of 102
+   non-installer entries only 38 had transitions, 56 guards, 41 failure/recovery, 36 observed
+   facts and 15 hypotheses.
+2. Carried-forward statuses were asserted rather than re-derived, and some verification statuses
+   named no specific test.
+3. PRA-F-10 was overstated: the identity churn occurs only when `syncWeather` substitutes forecast
+   values (`timeScale` or clock-preview modes), not in default real-time.
+4. PRA-F-01 was mis-ranked: listed as the top remaining risk without saying it is conditional on a
+   throw that has no natural trigger.
+5. PRA-F-03 was understated: the R000B certificate had already recorded the quarter-hour
+   withdrawal on the delivered page as a delivered-behaviour finding for the owner.
+6. R29 / ISM-MOON-013 carried "resolved and independently verified" while its own reason said the
+   cache protocol was not fully verified.
+7. The diagnostic-input override surface (`sim*`, `debugOptic`, `qa`) had no registry entry.
+8. "Independent" reviews recorded in the repository were cited, not re-performed.
+9. Line references were wrong in places (README L570, not L571; `reconcileCloudPublication()` at
+   L3880, not L3881).
+
+**Corrections made in response** (commit {{CORR_COMMIT}}):
+- PRA-F-10 scoped to `ADVANCING`/`_clockPreview`; evidence class restated as "mechanism
+  demonstrated; real worker durations unmeasured".
+- R29 / ISM-MOON-013 lowered to *implemented but not fully verified*; crosswalk re-totalled (7 / 38 /
+  11 / 25 / 1 / 1) and every dependent count updated.
+- §10 reordered by an explicit rule; PRA-F-01 described as a conditional structural violation.
+- Registry enriched from the lane papers (transitions 38 → 65 assessed, observed facts 35 → 51,
+  hypotheses 15 → 39 of 104 non-installer entries); each original-mapped entry now carries the
+  original catalogue's contract in a separate labelled block; carried-forward entries say so
+  explicitly; verification statuses without a named test lowered to UNK; "missing field means not
+  assessed" stated in the registry preamble and §11 with the coverage table.
+- Line references corrected and the other cited lines of the top ten findings re-checked.
+- ISM-CFG-011 (diagnostic overrides) and ISM-PRAY-011 (status-text owner) added; PRA-F-38 added;
+  `offline.html` asset loading recorded as an acknowledged omission.
+- PRA-F-03 linked to the R000B certificate; sub-labels *injected fault* and *model-parameterised*
+  added; per-probe reproducibility notes added; GDOPL O-4 split so that only the committed-bytes
+  growth is "demonstrated".
+- Item 8 is unchanged in substance: independent reviews recorded in the repository remain cited,
+  not re-performed, and are labelled as such (§11).
+
+**What the reviewer could not verify.** The whole registry beyond its sample; runtime differences
+between `index.html` and `offline.html`; lane F's build failure-injection probes; the Python and
+installer suites; any browser, native or provider behaviour.

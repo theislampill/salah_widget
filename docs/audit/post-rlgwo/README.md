@@ -6,10 +6,10 @@ audit at `f71fef6c`. Nothing was remediated and no issue was filed.
 
 | Deliverable | What it is |
 |---|---|
-| [IMPLICIT_STATES.md](../../../IMPLICIT_STATES.md) | Canonical registry: 110 machines by domain (`ISM-PRAY`, `ISM-WX`, `ISM-CFG`, `ISM-SKY`, `ISM-MOON`, `ISM-BLD`, `ISM-V1`, `ISM-INST`), status on three dimensions, index table |
-| [REPORT.md](REPORT.md) | Method, audited identity, work-order inventory, counts, instrument history, second omission pass, verification corrections, coverage limits, checks |
-| [CROSSWALK.md](CROSSWALK.md) | Every original machine (83), finding (18) and hypothesis (3) → current registry ID, work order, evidence, disposition; the 25 new machines |
-| [FINDINGS.md](FINDINGS.md) | 37 documentary findings (`PRA-F-nn`) ordered by materiality, with evidence class, hard constraint, origin and `file:line` trace |
+| [IMPLICIT_STATES.md](../../../IMPLICIT_STATES.md) | Canonical registry: 112 machines by domain (`ISM-PRAY`, `ISM-WX`, `ISM-CFG`, `ISM-SKY`, `ISM-MOON`, `ISM-BLD`, `ISM-V1`, `ISM-INST`), status on three dimensions, index table |
+| [REPORT.md](REPORT.md) | Method, audited identity, work-order inventory, counts, instrument history, second omission pass, verification corrections, coverage limits, checks, and the [independent review](REPORT.md#independent-review) with the corrections made in response |
+| [CROSSWALK.md](CROSSWALK.md) | Every original machine (83), finding (18) and hypothesis (3) → current registry ID, work order, evidence, disposition; the 27 new machines |
+| [FINDINGS.md](FINDINGS.md) | 38 documentary findings (`PRA-F-nn`) ordered by materiality, with evidence class, hard constraint, origin and `file:line` trace |
 | [GDOPL_ASSESSMENT.md](GDOPL_ASSESSMENT.md) | GDOPL Post-RLGWO Assessment: schematic formulation, hard feasibility domain, inner and outer directions, historical comparison, final classification |
 | [lanes/](lanes/) | Lane working papers A–G (superseded by the documents above where they differ) |
 | [probes/](probes/README.md) | Effect-free probe scripts and recorded outputs |

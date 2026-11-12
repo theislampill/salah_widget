@@ -49,7 +49,7 @@ canvas/worker after failed construction; cloud pixels only under a current recei
 |---|---|---|
 | Prayer, date, timezone and countdown correctness | next-event selection explicit and mutation-tested (ISM-PRAY-005, NF01 resolved); admission rejects wrong-day/zone records (ISM-PRAY-003) | PRA-F-02 (invalid hint zone → permanent unavailability; fails closed truthfully but never recovers); PRA-F-05 (builder can flip the calculation method); PRA-F-21 (unreachable stale attribute) |
 | Rejection of unauthorised late results | generation/operation/attempt fences (ISM-PRAY-002), refined lifecycle epoch (ISM-SKY-006), Moon serial (ISM-MOON-003), builder/settings owner checks | PRA-F-04 (a stale form commit after Reset is an authorised but out-of-date intent, not a late provider result) |
-| Truthful weather and location provenance | model estimates labelled; receipt is not freshness; radar grants nothing (ISM-WX-002); external coordinates admitted before normalisation (ISM-WX-010) | PRA-F-03 (truthful withdrawal, continuity cost); PRA-F-17 (unbound elevation, retained caches); PRA-F-04 (OM-04 stale "Saved" label) |
+| Truthful weather and location provenance | model estimates labelled; receipt is not freshness; radar grants nothing (ISM-WX-002); external coordinates admitted before normalisation (ISM-WX-010) | PRA-F-03 (truthful withdrawal, continuity cost); PRA-F-17 (unbound elevation, retained caches); PRA-F-04 (OM-04 stale "Saved" label); PRA-F-38 (diagnostic `sim*` overrides from any URL, SIM marker only in the accessible label) |
 | Separation of accepted from displayed state | refined host keeps accepted vs painted jobs (ISM-SKY-015); Moon host authority vs `.mphoto` (ISM-MOON-003); cloud receipt re-checked at final publication (ISM-WX-005) | PRA-F-04 (runtime ≠ form ≠ storage); PRA-F-08 (displayed scene torn down by a zone write); PRA-F-15 (getters publish) |
 | Optional astronomy never blocks prayer | separate `<script>` elements isolate wrapper and tail failures (lane E) | **PRA-F-01**: a throw from `SalahMoonRuntime.request()` inside `render()` aborts prayer publication and stops the loop (injected-fault probe); no natural trigger found |
 | Instance-owned disposal and cancellation | R0021 custody/unwind for the refined sky and Moon (ISM-SKY-015, ISM-MOON-016); request slots cancelled by generation | PRA-F-22 (healthy preview `dispose` keeps the registry slot; latent) |
@@ -130,9 +130,10 @@ component and each hard constraint; (5) the refined uncertainty.
 
 1. *Concrete.* `retryGate` S:1276 holds the refresh while the record is selected; probe B: no
    eligible record from 06:30:00.001 to the 06:30:20 poll; on expiry `reconcileCloudPublication`
-   withdraws the deck (S:2730–2741), which snaps back (S:3233). Separately, probe D: interpolated
-   preview weather re-keys the refined identity every simulated second and no result is accepted
-   once one render exceeds 1000/rate ms.
+   withdraws the deck (S:2730–2741), which snaps back (S:3233); the R000B certificate recorded the
+   header gap on the delivered page. Separately, probe D: in `ADVANCING`/`_clockPreview` modes only,
+   interpolated preview weather re-keys the refined identity every simulated second and no result is
+   accepted once one render exceeds 1000/rate ms (worker durations are probe parameters).
 2. *Symbolic.* Displayed clouds ⇐ receipt current ⇐ decision available ⇐ `sourceAge ≤ TTL`;
    replacement request ⇐ ¬selected. Refined acceptance ⇐ epoch and identity unchanged during one
    render; identity ⊇ {rh, cloud, code, wind} ⊄ job inputs.
@@ -173,6 +174,7 @@ component and each hard constraint; (5) the refined uncertainty.
 | I-23 | Unit change vs radar/prayer | broad | weather-only path | see I-2 | `CONFIG_EFFECTS` S:707 | plausible improvement requiring verification |
 | I-25 | Chronological next-event selection (NF01) | explicit `selectPrayerEvent` | — (taken) | consistent midnight transitions | before probe at `f71fef6c`; P3 + ES07 mutants | demonstrated improvement |
 | I-26 | Weather expiry vs missing timetable (NF02) | receipt withdrawal in the no-model branch | — (taken) | no stale deck without a timetable | before/after source + tests + hosted Chromium | demonstrated improvement |
+| I-27 | Diagnostic overrides vs truthful provenance (PRA-F-38) | `sim*`/`debugOptic`/`qa` read from any fragment; visible header has no SIM marker | visible SIM marker, or honour overrides only with an explicit debug flag | truthful display / changes documented AGENTS recipes | source trace | plausible improvement requiring verification |
 | I-24 | Write-only legacy retry fields | `lastWxTry`/`lastRadarAt` write-only | remove | less state / harness rebinding | R000D | no-change (retention) recommendation |
 
 ## 6. OUTER GDOPL — project architecture and engineering method
@@ -182,7 +184,9 @@ component and each hard constraint; (5) the refined uncertainty.
 | O-1 | Ownership boundaries: single authored file for prayer, weather, settings, native sky, Moon host | `src/native/index.html` holds all of them; one loop; `tz` multi-writer | domain-owned transition functions with explicit cross-owner contracts (the original projection's architecture choice) | smaller blast radius / large diff across the generated boundary | registry ISM-PRAY-009/010 | plausible improvement requiring verification |
 | O-2 | Authored source vs generated outputs | in-place generation; `assert` guards; no staging; parity by executor discipline (build-twice clean at baseline) | stage outputs and swap after the Moon stage; `raise` instead of `assert`; count-check replacements (original G01) | removes partial states / small builder diff | lane F probes A–D; source | plausible improvement requiring verification (G01 not taken) |
 | O-3 | Qualification process | 32 workflows, 30 on named work-order branches, 6 dispatchable, 1 PR-to-main job locked to PR 62, **none on `push` to main**; merge = deploy | a main/PR gate running the registered suites, build twice with a diff and `verify_v1` | earlier detection / needs an explicit expected-failure manifest; CI minutes | trigger census | plausible improvement requiring verification |
-| O-4 | Evidence volume and verification burden | retained evidence 16,119 files / 1,878.8 MB (85 % of the tree); Pages payload estimate 0.898 → 1.771 → 1.910 GB; `docs/state-contracts/evidence` 133.5 MB added after `f71fef6c` | extend `_config.yml` exclusions to evidence trees, or move evidence off the deployed branch | payload back under the modelled bound / github.io evidence links break | estimate (method in REPORT §2) | **demonstrated regression** against the modelled payload constraint; the remedy is a plausible improvement requiring verification |
+| O-4a | Committed publishable bytes | git-blob sum after the `_config.yml` exclusion: 0.898 GB (PR 62) → 1.771 GB (`f71fef6c`) → 1.910 GB (baseline); retained evidence 16,119 files / 1,878.8 MB (85 % of the tree) | — | — | `git ls-tree` sums at three commits (exactly what is demonstrated: growth of committed blob bytes that Jekyll would publish under the stated exclusion rule) | **demonstrated regression** of the committed-bytes input only |
+| O-4b | Built Pages payload versus the ≤ 1 GB modelled bound | no `_site` was built; GitHub's enforcement unverified | — | — | estimate only | insufficient evidence |
+| O-4c | Evidence off the deployed payload | evidence under deployed `docs/` | extend `_config.yml` exclusions, or move evidence off the deployed branch | smaller payload / github.io evidence links break | estimate | plausible improvement requiring verification |
 | O-5 | Stale instruments | 7 red instruments; 3 regressed by R000B, 1 case by R0007; failing sets compared in prose | per-case expected-failure ledger; retire side-branch-only docs checks | restores signal / risk of hiding real regressions | integrator runs at 10 commits | O-5a EF01 runner repair: demonstrated improvement; O-5b date harnesses: **demonstrated regression** (green at `eebba178`, red from `da126880`); O-5c remainder: insufficient evidence |
 | O-6 | Hash-pinned receipts | exact pins in many receipts; re-pin protocol | bind receipts through one manifest | fewer cascades / weaker locality | R0027 protocol | incomparable alternatives |
 | O-7 | Closure authority | final state in issue certificates; contracts can contradict (R0015) | contract records its own superseding certificate | coherent record / extra commit per closure | PRA-F-27 | plausible improvement requiring verification |
@@ -209,15 +213,15 @@ component and each hard constraint; (5) the refined uncertainty.
 
 ## 8. Final classification of directions
 
-Each direction (I-1…I-26 with I-18 split into a/b; O-1…O-10 with O-5 split into a/b/c) appears exactly once.
+Each direction (I-1…I-27 with I-18 split into a/b; O-1…O-10 with O-4 and O-5 split into a/b/c) appears exactly once.
 
 | Direction | Classification |
 |---|---|
 | I-2, I-5, I-9, I-10, I-16, I-17, I-18a, I-25, I-26, O-5a, O-8 | **demonstrated improvement** |
-| O-4, O-5b | **demonstrated regression** |
-| I-1, I-3, I-4, I-7, I-8, I-11, I-12, I-13, I-23, O-1, O-2, O-3, O-7, O-9 | **plausible improvement requiring verification** |
+| O-4a, O-5b | **demonstrated regression** |
+| I-1, I-3, I-4, I-7, I-8, I-11, I-12, I-13, I-23, I-27, O-1, O-2, O-3, O-4c, O-7, O-9 | **plausible improvement requiring verification** |
 | I-14, O-6 | **incomparable alternatives** |
-| I-6, I-15, I-18b, I-19, O-5c, O-10 | **insufficient evidence** |
+| I-6, I-15, I-18b, I-19, O-4b, O-5c, O-10 | **insufficient evidence** |
 | I-20, I-21, I-22, I-24 | **no-change (retention) recommendation** |
 
 <a id="authorization-boundary"></a>

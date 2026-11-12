@@ -14,11 +14,19 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
   and reproduced by an effect-free probe, an existing test, or a recorded native observation),
   **plausible risk** (the code path exists; the trigger is not demonstrated), **speculative**.
   Where the dependency is demonstrated but the trigger is not, both are stated.
+- **Sub-labels on "demonstrated".** *injected fault* — the consequence was reproduced by forcing a
+  failure that has not been seen to occur naturally (PRA-F-01); *model-parameterised* — the probe
+  models cadence or durations with chosen parameters rather than measured ones (PRA-F-03 poll
+  timing, PRA-F-10 worker durations). Neither sub-label means "observed in the product"; no browser
+  was run in this audit.
 - **Hard constraint**: one of the non-tradeable invariants listed in
   [GDOPL_ASSESSMENT.md](GDOPL_ASSESSMENT.md#hard-feasibility-domain).
 - **Origin**: predates the campaign / introduced during it / unknown, with the commit evidence.
   "Predates" means the cited lines are unchanged in `git diff f71fef6c 363c3e53` and exist at
   `f71fef6c` (the original audit); it does not mean earlier than every RLGWO.
+- **Order.** By severity and materiality. PRA-F-01 is listed first for its severity *if* triggered; it
+  is a conditional structural violation with no natural trigger found. REPORT.md §10 states the
+  ranking rule that puts demonstrated natural triggers (PRA-F-02 onward) ahead of it for remaining risk.
 - Line numbers are approximate baseline anchors in the authored source; `S:` is
   `src/native/index.html`.
 
@@ -26,23 +34,23 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 
 | Evidence class | Count |
 |---|---|
-| demonstrated | 26 |
+| demonstrated | 27 |
 | plausible risk | 7 |
 | speculative | 4 |
-| **Total** | 37 |
+| **Total** | 38 |
 
 | ID | Title | Class | Severity | Hard constraint |
 |---|---|---|---|---|
-| [PRA-F-01](#pra-f-01) | Optional Moon exception aborts prayer publication and strands the render loop | demonstrated (dependency); trigger speculative | high if triggered | optional astronomy never blocks prayer |
+| [PRA-F-01](#pra-f-01) | Optional Moon exception aborts prayer publication and strands the render loop | demonstrated — injected fault (dependency); trigger speculative | high if triggered | optional astronomy never blocks prayer |
 | [PRA-F-02](#pra-f-02) | Invalid timezone hint makes prayer permanently unavailable | demonstrated | medium | prayer/timezone correctness |
-| [PRA-F-03](#pra-f-03) | Quarter-hour weather authority gap withdraws and snaps the cloud deck | demonstrated (gap); visual consequence plausible | medium | truthful weather (holds); continuity gate |
+| [PRA-F-03](#pra-f-03) | Quarter-hour weather authority gap withdraws and snaps the cloud deck (previously recorded by the R000B certificate) | demonstrated — model-parameterised poll; header gap also observed on the delivered page; deck snap plausible | medium | truthful weather (holds); continuity gate |
 | [PRA-F-04](#pra-f-04) | Settings Reset authority lost on a dirty close | demonstrated (VM) | medium-low | accepted vs displayed state; truthful persistence/provenance |
 | [PRA-F-05](#pra-f-05) | Builder reverse geocode adopts error bodies and flips the calculation method | demonstrated (VM) | medium-low | prayer correctness; privacy |
 | [PRA-F-06](#pra-f-06) | Red regression instruments retained as an undeclared known-failure set | demonstrated | medium (evidence) | truthful evidence claims |
 | [PRA-F-07](#pra-f-07) | Pages payload estimate doubled past the qualified bound; verifier inert | demonstrated (estimate) | medium | truthful evidence; deployment safety |
 | [PRA-F-08](#pra-f-08) | Timezone adoption rebuilds the sky/Moon scene on routine boots; builder never emits `tz` | demonstrated (source + probe); visual effect unobserved | medium | accepted vs displayed state |
 | [PRA-F-09](#pra-f-09) | No automated gate on main; merge is deploy | demonstrated | medium (architecture) | truthful evidence; canonical source |
-| [PRA-F-10](#pra-f-10) | Forecast interpolation churns the refined-sky identity; stall unreported | demonstrated (modelled cadence) | medium-low | truthful evidence/status |
+| [PRA-F-10](#pra-f-10) | In `timeScale`/clock-preview modes, forecast interpolation churns the refined-sky identity; stall unreported | demonstrated — model-parameterised: mechanism demonstrated; real worker durations unmeasured | medium-low | truthful evidence/status |
 | [PRA-F-11](#pra-f-11) | Shipped app has no star-scintillation producer; docs and telemetry describe the old one | demonstrated | medium (documentation) | truthful evidence claims |
 | [PRA-F-12](#pra-f-12) | Moon worker failure is terminal for the page; retry unowned; cached 404 | demonstrated | medium | AGENTS gate D (Moon every night) |
 | [PRA-F-13](#pra-f-13) | Empty Moon slot after a wrapper failure; light not bound to the visible surface | demonstrated (injected, native) | medium (fault path) | AGENTS gate D; no faked light |
@@ -70,6 +78,7 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 | [PRA-F-35](#pra-f-35) | R0007 native acceptance rests on cross-run reuse | demonstrated (documentary) | low | truthful evidence |
 | [PRA-F-36](#pra-f-36) | Mask decode has no wall-clock bound (RF04) | plausible risk | low | — |
 | [PRA-F-37](#pra-f-37) | Duplicated renderer-boundary formulas and geometry literals | demonstrated (source) | low | — |
+| [PRA-F-38](#pra-f-38) | Diagnostic `sim*` overrides accepted from any embed URL; visible header carries no SIM marker | demonstrated (source trace); reachability needs a hand-written fragment | low | truthful weather provenance |
 
 ---
 
@@ -77,10 +86,10 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 ## PRA-F-01 — Optional Moon exception aborts prayer publication and strands the render loop
 
 - **Registry:** [ISM-PRAY-010](../../../IMPLICIT_STATES.md#ism-pray-010), [ISM-MOON-002](../../../IMPLICIT_STATES.md#ism-moon-002), [ISM-MOON-004](../../../IMPLICIT_STATES.md#ism-moon-004), [ISM-SKY-005](../../../IMPLICIT_STATES.md#ism-sky-005). Lane IDs merged: A-F06 and NH02 (lane A), D-F03 (lane D), EF-E01 (lane E).
-- **Evidence class:** demonstrated as a dependency (code trace plus an injected-fault probe re-run by the integrator); the trigger is speculative (no natural throw found in `request()`/`poll()`). Lanes A (speculative), D (plausible risk) and E (demonstrated) described the same structure; this entry reconciles them by separating the dependency from the trigger.
+- **Evidence class:** demonstrated — *injected fault* — as a dependency (code trace plus an injected-fault probe re-run by the integrator); the trigger is speculative (no natural throw found in `request()`/`poll()`). Lanes A (speculative), D (plausible risk) and E (demonstrated) described the same structure; this entry reconciles them by separating the dependency from the trigger.
 - **Severity / materiality:** high if triggered — the prayer name, countdown and rows stop updating and the loop stops until a hide/show; materiality is conditional on a throw.
 - **Hard constraint:** "optional astronomy never blocks prayer".
-- **Origin:** predates the campaign: `loop`, `_raf` handling and the `renderMoon` call order are unchanged since `f71fef6c`; R000B added per-frame work (`reconcileCloudPublication`, S:3881) without containment.
+- **Origin:** predates the campaign: `loop`, `_raf` handling and the `renderMoon` call order are unchanged since `f71fef6c`; R000B added per-frame work (`reconcileCloudPublication`, S:3880) without containment.
 - **Trace:** S:3877 `render()` is called from `loop` without `try`; S:3494 `renderMoon()` runs before the prayer DOM writes at S:3499–3518; S:1954 `renderMoonPBR` → `window.SalahMoonRuntime.request()` (`moon/src/moon-native.mjs` ~L261–273, not try-wrapped apart from `initialPresentation` and `capture`); a throw skips S:3888 `_raf=requestAnimationFrame(loop)`, so `_raf` keeps the consumed id and `start()` (S:3890, `if(!_raf)`) is a no-op until `stop()` on hide. `applyTheme` deliberately rethrows (S:3336). Contrast: `real-sky/native-host.mjs` ~L253 catches and always reschedules.
 - **Probe:** [probes/E/moon-throw-blocks-prayer.cjs](probes/E/moon-throw-blocks-prayer.cjs) — control: `.cn`="Isha" and `.times` repopulated; injected `request()` throw: `render()` throws, `.cn` stays "SENTINEL", `.times` empty.
 - **Open questions:** candidate natural throw sites (lane E, unproven): `ImageData` size mismatch in `syncTexture`, a `detail.adopt` RangeError, unwrapped `worker.postMessage`, `toDataURL` under memory pressure. Whether isolation or reordering is wanted is an owner decision.
@@ -101,11 +110,12 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 ## PRA-F-03 — Quarter-hour weather authority gap withdraws and snaps the cloud deck
 
 - **Registry:** [ISM-WX-001](../../../IMPLICIT_STATES.md#ism-wx-001), [ISM-WX-003](../../../IMPLICIT_STATES.md#ism-wx-003), [ISM-WX-005](../../../IMPLICIT_STATES.md#ism-wx-005), [ISM-SKY-003](../../../IMPLICIT_STATES.md#ism-sky-003). Lane ID: BF01.
-- **Evidence class:** demonstrated for the authority gap (probe re-run with a modelled 30 s poll; the R000B certificate independently records a header gap of about 2 s and about 23 s on the delivered page); the visible deck disappearance under cloud is plausible, not observed (the certificate's page was clear-sky).
+- **Previously known:** the repository's own R000B certificate ([issue 11 certificate comment](https://github.com/theislampill/salah_widget/issues/11#issuecomment-6788969371), §3, a root observation) recorded this on the delivered page as a "delivered-behaviour finding for the owner": the widget shows "weather unavailable" at each quarter hour until its next request lands. This audit adds the cloud-deck consequence and the source trace; it is not a new discovery.
+- **Evidence class:** demonstrated — *model-parameterised* (30 s poll modelled) — for the authority gap (probe re-run with a modelled 30 s poll; the R000B certificate independently records a header gap of about 2 s and about 23 s on the delivered page); the visible deck disappearance under cloud is plausible, not observed (the certificate's page was clear-sky).
 - **Severity:** medium. Under cloudy or rainy weather it predicts a deck withdrawal and precipitation stop every 15 minutes with a snap re-establishment.
 - **Hard constraint:** truthful weather provenance holds (the withdrawal is truthful); the AGENTS continuity rule ("no slideshow") is at risk. Extending the TTL would breach the hard constraint and is not a remedy.
 - **Origin:** predates the campaign (at `f71fef6c` `applyCloudState` zeroed coverage on `modelCode==null`); R000B made the withdrawal explicit.
-- **Trace:** eligibility S:1374–1375 (`sourceAge` and `receiptAge` both within 0…900 000 ms); `retryGate` S:1276 returns `fresh-data-satisfied` while the record is selected; poll every ~30 s S:3875; on expiry the next frame's `reconcileCloudPublication` (S:3881) withdraws (S:2730–2741); the first admitted deck snaps (S:3233).
+- **Trace:** eligibility S:1374–1375 (`sourceAge` and `receiptAge` both within 0…900 000 ms); `retryGate` S:1276 returns `fresh-data-satisfied` while the record is selected; poll every ~30 s S:3875; on expiry the next frame's `reconcileCloudPublication` (S:3880) withdraws (S:2730–2741); the first admitted deck snaps (S:3233).
 - **Probe:** [probes/B/wx-quarter-gap-probe.cjs](probes/B/wx-quarter-gap-probe.cjs): no fetch while selected; unselected at 06:30:00.001 and 06:45:00.001; first polls finding nothing eligible at 06:30:20 and 06:45:20.
 - **Open questions:** the provider's real `current.time` cadence; whether the owner accepts the gap as truthful withdrawal.
 
@@ -139,7 +149,7 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 - **Evidence class:** demonstrated (the integrator ran all seven instruments at the baseline and nine historical commits; see [REPORT.md](REPORT.md#registered-instruments-and-their-history)).
 - **Severity:** medium for evidence. Exactly the no-model calendar assertions are lost; a new failure inside an already-red command is masked at command level; no machine-readable expected-failure manifest exists.
 - **Hard constraint:** truthful evidence claims.
-- **Origin:** mixed. The three date harnesses were green after R0017 (`eebba178`, `539c1366`, `dbf3370f`) and became red at the **R000B merge `da126880`** (issue 11): the no-model branch now calls `withdrawWeatherEffects` → `paintLunarOptic` (S:3491 → S:2728 → S:3007 `el.style.getPropertyValue`), which `tests/r0009-calendar-harness.cjs` does not stub; R000B's `d6500a09` patched the r0008 and r0011 harnesses for the same owners but not these. One `r0022-baseline-balance` case ("London shallow night actual solar path/horizon/marker geometry matches baseline") became red at the **R0007 merge `dbf3370f`** (issue 7); the cause within that merge's 29 commits was not isolated. The other six `r0022-baseline-balance` failures, the `r0021-reveal` byte-pin failure, the two `r0022-lunar-consumers` failures and the 14 `rlgwo-docs-contract` failures predate `f71fef6c` (identical failing sets there).
+- **Origin:** mixed. The three date harnesses were green after R0017 (`eebba178`, `539c1366`, `dbf3370f`) and became red at the **R000B merge `da126880`** (issue 11): the no-model branch now calls `withdrawWeatherEffects` → `paintLunarOptic` (S:3491 → S:2727 → S:3007 `el.style.getPropertyValue`), which `tests/r0009-calendar-harness.cjs` does not stub; R000B's `d6500a09` patched the r0008 and r0011 harnesses for the same owners but not these. One `r0022-baseline-balance` case ("London shallow night actual solar path/horizon/marker geometry matches baseline") became red at the **R0007 merge `dbf3370f`** (issue 7); the cause within that merge's 29 commits was not isolated. The other six `r0022-baseline-balance` failures, the `r0021-reveal` byte-pin failure, the two `r0022-lunar-consumers` failures and the 14 `rlgwo-docs-contract` failures predate `f71fef6c` (identical failing sets there).
 - **Trace:** `tools/cp9/run_native_regressions.py` ~L22–29 selects the date harnesses with no residual entry; known-failure prose in `docs/state-contracts/R0003.md` ~L364, `R000F.md` ~L349, `R0021.md` ~L449, `R0026.md` ~L310, `R0027.md` ~L341.
 - **Correction to a lane claim:** R0017's claim of healthy date-harness passes was true when made (green at `eebba178`); R000B later regressed them.
 - **Script:** [probes/integrator/date_instruments.sh](probes/integrator/date_instruments.sh), results [instrument_results.txt](probes/integrator/instrument_results.txt).
@@ -176,14 +186,15 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 - **Trace:** `.github/workflows/*.yml` `on:` blocks.
 
 <a id="pra-f-10"></a>
-## PRA-F-10 — Forecast interpolation churns the refined-sky identity; stall unreported
+## PRA-F-10 — In `timeScale`/clock-preview modes, forecast interpolation churns the refined-sky identity; stall unreported
 
 - **Registry:** [ISM-WX-009](../../../IMPLICIT_STATES.md#ism-wx-009), [ISM-SKY-006](../../../IMPLICIT_STATES.md#ism-sky-006), [ISM-SKY-015](../../../IMPLICIT_STATES.md#ism-sky-015), [ISM-SKY-017](../../../IMPLICIT_STATES.md#ism-sky-017). Lane IDs: D-F01, D-F02.
-- **Evidence class:** demonstrated for the mechanism with the real `NativeSkyLifecycle` module (probe re-run; worker durations are parameters, not measurements): with interpolated weather, 0 accepted results at rate 10 for 300 ms renders, at rates 2 and 10 for 800 ms, at every rate for 1200 ms; constant weather is accepted at every rate; `rate-throughput` is never reported. D-F02 (identity fields `rh`, `cloud`, `code`, `wind` not consumed by `nativeJob`, which reads only `vis`, `temp`, `src`) demonstrated from source.
-- **Severity:** medium-low: optional astronomy only (prayer unaffected); the status shows "refining…" indefinitely and worker work is wasted.
+- **Scope:** only when `syncWeather` substitutes forecast values, i.e. in `ADVANCING` (`timeScale`) or `_clockPreview` (`SalahClock` preview) modes (S:1573–1581; `selectedWeather` S:1380). Default real-time mode never substitutes (S:1579 returns unless `ADVANCING` or `_clockPreview`), so the churn described here does **not** occur in ordinary live use; D-F02's unused identity fields still withdraw the refined frame on each live weather adoption.
+- **Evidence class:** demonstrated — *model-parameterised*: mechanism demonstrated with the real `NativeSkyLifecycle` module (probe re-run); real worker durations unmeasured (probe durations are parameters): with interpolated weather, 0 accepted results at rate 10 for 300 ms renders, at rates 2 and 10 for 800 ms, at every rate for 1200 ms; constant weather is accepted at every rate; `rate-throughput` is never reported. D-F02 (identity fields `rh`, `cloud`, `code`, `wind` not consumed by `nativeJob`, which reads only `vis`, `temp`, `src`) demonstrated from source.
+- **Severity:** medium-low, confined to diagnostic and preview modes: optional astronomy only (prayer unaffected); in those modes the status shows "refining…" indefinitely and worker work is wasted.
 - **Hard constraint:** truthful evidence/status claims.
 - **Origin:** predates the campaign (`native-contract.mjs`, `native-lifecycle.mjs`, `wxAt`, `syncWeather` unchanged since `f71fef6c`). R0021/R0027 native runs used `simWx` or a current-only record, which bypass `syncWeather` (S:1574).
-- **Trace:** `render` S:3485 → `syncWeather` S:1571–1581 → `wxAt` S:1553–1570 (new object each render); `real-sky/native-host-hooks.js` ~L42; `real-sky/native-contract.mjs` ~L8 (identity), ~L10–23 (job); `real-sky/native-lifecycle.mjs` ~L20–27 (rate-throughput only for the same epoch and identity).
+- **Trace:** `render` S:3485 → `syncWeather` S:1573–1581 → `wxAt` S:1556–1570 (new object each render); `real-sky/native-host-hooks.js` ~L42; `real-sky/native-contract.mjs` ~L8 (identity), ~L10–23 (job); `real-sky/native-lifecycle.mjs` ~L20–27 (rate-throughput only for the same epoch and identity).
 - **Probe:** [probes/D/forecast-identity-probe.mjs](probes/D/forecast-identity-probe.mjs).
 
 <a id="pra-f-11"></a>
@@ -254,7 +265,7 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 ## PRA-F-18 — Frozen v1 limitations undocumented; `--check-pages` fails; README V1 snippet 330×534
 
 - **Registry:** [ISM-V1-002](../../../IMPLICIT_STATES.md#ism-v1-002), [ISM-V1-006](../../../IMPLICIT_STATES.md#ism-v1-006), [ISM-BLD-010](../../../IMPLICIT_STATES.md#ism-bld-010), [ISM-CFG-010](../../../IMPLICIT_STATES.md#ism-cfg-010). Lane IDs: F-C09, FND-F-08, F-C03; original CF07–CF09.
-- **Evidence class:** demonstrated: `git diff f71fef6c 363c3e53 -- v1` is empty; v1 is served under the root Pages build and advertised (README ~L556–575); neither `docs/V1_PRESERVATION.md` nor `v1/VERSION.json` records CF07–CF09; `python tools/verify_v1.py --check-pages` prints "FAIL: New Jekyll configuration requires V1 inclusion review" while `docs/V1_PRESERVATION.md` L93 prescribes it (`_config.yml` added in `02ab7a93`, R0017); README L571 has `width:330px;height:534px` and L575 says "For the current version, change only `src`".
+- **Evidence class:** demonstrated: `git diff f71fef6c 363c3e53 -- v1` is empty; v1 is served under the root Pages build and advertised (README ~L556–575); neither `docs/V1_PRESERVATION.md` nor `v1/VERSION.json` records CF07–CF09; `python tools/verify_v1.py --check-pages` prints "FAIL: New Jekyll configuration requires V1 inclusion review" while `docs/V1_PRESERVATION.md` L93 prescribes it (`_config.yml` added in `02ab7a93`, R0017); README L570 has `width:330px;height:534px` and L575 says "For the current version, change only `src`".
 - **Severity:** low-medium. CF08 (v1 Reset claims deletion after removal fails) is a control-truth issue on a live surface; the snippet contradicts the AGENTS 325×530 rule for the current version.
 - **Hard constraint:** truthful evidence claims; the 325×530 embed contract; frozen-v1 authority (any byte change needs owner authority).
 - **Origin:** the v1 limitations predate the campaign; the `--check-pages` failure was introduced during it (R0017, `02ab7a93`); the snippet predates it (since `37084ae7`).
@@ -379,3 +390,15 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 - **Registry:** [ISM-SKY-019](../../../IMPLICIT_STATES.md#ism-sky-019), [ISM-CFG-010](../../../IMPLICIT_STATES.md#ism-cfg-010). Second-pass IDs: OM-06, OM-07.
 - **Evidence class:** demonstrated (source): `real-sky/native-first-paint.mjs` ~L15 uses `Number(params.get(k))` (a blank `#skyAz=` becomes 0) while the native `cameraNumber` makes it `NaN` and `nativeIdentity` throws; `simDate` (not a native parameter) suppresses first paint; reduced-motion and identity formats are re-derived; the 325×530 geometry is a literal in many modules (S:482–554, S:2072, S:2088, S:2986; `real-sky/native-contract.mjs` ~L20 and others) with no shared constant. Values agree at the baseline; impact speculative.
 - **Severity:** low (maintainability; diagnostic parameters).
+
+<a id="pra-f-38"></a>
+## PRA-F-38 — Diagnostic `sim*` overrides accepted from any embed URL; visible header carries no SIM marker
+
+- **Registry:** [ISM-CFG-011](../../../IMPLICIT_STATES.md#ism-cfg-011), [ISM-WX-002](../../../IMPLICIT_STATES.md#ism-wx-002), [ISM-WX-003](../../../IMPLICIT_STATES.md#ism-wx-003). Found by the independent review; derived and traced by the integrator.
+- **Evidence class:** demonstrated by source trace for the mechanism; reachability requires a hand-written fragment (the builder never emits these parameters). Not observed in a browser.
+- **Severity:** low. `AGENTS.md` documents `simWx`, `simTime`, `simMoon*`, `debugOptic` and `qa=1` as intended debugging recipes; the concern is only that nothing confines them to debugging.
+- **Hard constraint:** truthful weather provenance; separation of accepted and displayed state.
+- **Origin:** predates the campaign (the `SIM` object and its consumers exist at `f71fef6c`).
+- **Trace:** `SIM` is read from the fragment of any load (S:769–784); with `simWx` set, `startWeather` installs a synthetic record `src:"sim"` (S:3654–3665), `retryGate` returns `suppressed-by-mode` (S:1273) so no real weather is fetched, and `selectedWeather` returns the record without age checks (S:1380). The header's accessible label reads "SIM weather preview: …" (S:1823), but the visible text is only the icon (`#wi`) and temperature (`#wt`, S:1833); the `.simclock` read-out appears only in explicit clock modes (S:3774). An embed whose `src` carries `#…&simWx=95` would therefore show a thunder condition indefinitely with provenance only in the tooltip/ARIA label.
+- **Open questions:** whether any deployed embed carries these parameters; whether the owner wants them gated (an owner decision; AGENTS.md treats them as features).
+
