@@ -1,0 +1,585 @@
+{
+ "lane": "E-moon",
+ "baseline": "363c3e536c8004935ef80230e43f7712e339e3a5",
+ "historical": "f71fef6ccf7e4efcb57b5a26688d2360461a3253",
+ "machines": [
+  {
+   "id": "N11",
+   "name": "Legacy lunar texture/canvas fallback (dormant generated owner)",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests (VM legacy path)"
+   },
+   "sources": [
+    "src/native/index.html:1892-1960 loadMoonMaps/renderMoonCalendarFallback/renderMoonPBR"
+   ],
+   "originalId": "N11",
+   "disposition": "still implicit or vulnerable"
+  },
+  {
+   "id": "N12",
+   "name": "Native lunar geometry production and consumption receipts",
+   "classification": {
+    "documentation": "comments; R001D certificate",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/index.html:2026-2090 moonGeometryObservation/nativeLunarSnapshot/renderMoon",
+    "src/native/index.html:3326-3338 applyTheme/_lastMoonPaint",
+    "src/native/index.html:4167-4184 SalahMoonHost"
+   ],
+   "originalId": "N12",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "NEW-E-01",
+   "name": "Moon wrapper admission, construction unwind and replay refusal",
+   "classification": {
+    "documentation": "state contract (docs/state-contracts/R0021.md)",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests; mutation; native evidence; independent review"
+   },
+   "sources": [
+    "moon/src/moon-install-guard.mjs:6",
+    "moon/src/moon-native.mjs:8,245-300",
+    "tools/build_moon.py:12"
+   ],
+   "originalId": null,
+   "disposition": "new (R0021)"
+  },
+  {
+   "id": "R19",
+   "name": "Lunar host accepted/pending/waiting-preview/presentation transaction",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-native.mjs:13-144,193-227,261-283",
+    "moon/src/moon-precision.mjs:1-27"
+   ],
+   "originalId": "R19",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R20",
+   "name": "Runtime installation, worker source, bounded retry and deadlines",
+   "classification": {
+    "documentation": "comments; R0021 contract",
+    "implementation": "partly explicit",
+    "verification": "unit tests; native evidence (driver-driven retry)"
+   },
+   "sources": [
+    "moon/src/moon-native.mjs:55-70,182-232,251-260,282,284,291",
+    "tools/build_moon.py:129-131,138"
+   ],
+   "originalId": "R20",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "R21",
+   "name": "One-shot initial-head eligibility and irreversible retirement",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-native.mjs:15,50,92-123,279"
+   ],
+   "originalId": "R21",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R22",
+   "name": "Offline chunk DOM/script transport lease",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-native.mjs:145-181",
+    "tools/build_moon.py:109-116"
+   ],
+   "originalId": "R22",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R23",
+   "name": "Top worker boot, newest-job pump and cancellation",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-worker.mjs:4-75"
+   ],
+   "originalId": "R23",
+   "disposition": "still implicit or vulnerable"
+  },
+  {
+   "id": "R24",
+   "name": "Shard RPC bridge promises and sticky failure",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-pool.mjs:6-27"
+   ],
+   "originalId": "R24",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R25",
+   "name": "Pool row ownership, sparse reuse and join barrier",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-pool.mjs:28-98"
+   ],
+   "originalId": "R25",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R26",
+   "name": "Engine exclusive execution, asset admission and caches",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-engine.mjs:19-52,63-131"
+   ],
+   "originalId": "R26",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R27",
+   "name": "Cooperative MessageChannel yield",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "none (indirect)"
+   },
+   "sources": [
+    "moon/src/moon-engine.mjs:57-62"
+   ],
+   "originalId": "R27",
+   "disposition": "still implicit or vulnerable"
+  },
+  {
+   "id": "R28",
+   "name": "Adaptive refinement and final quality admission",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-quality.mjs:9-45",
+    "moon/src/moon-native.mjs:222"
+   ],
+   "originalId": "R28",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "R29",
+   "name": "Detail adoption, projection cache and DOM visibility owner",
+   "classification": {
+    "documentation": "comments; R0021 contract",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-detail.mjs:43-141",
+    "moon/src/moon-native.mjs:245"
+   ],
+   "originalId": "R29",
+   "disposition": "resolved and independently verified (lifetime); cache implemented but not fully verified"
+  },
+  {
+   "id": "R30",
+   "name": "Admitted initial receiver and canonical render closure",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-initial.mjs:9-69",
+    "moon/src/moon-initial-compact.mjs",
+    "tools/build_moon.py:118"
+   ],
+   "originalId": "R30",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R37",
+   "name": "C/WASM retained kernel state, frame arena and source witness",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon_kernel.c:19-28,77-96,198-318"
+   ],
+   "originalId": "R37",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "NEW-E-02",
+   "name": "Native Moon reveal gate (moon-ready / mask-on)",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "explicit and enforced",
+    "verification": "native evidence (R0021 moon-construction)"
+   },
+   "sources": [
+    "src/native/index.html:178,185,2225-2241"
+   ],
+   "originalId": null,
+   "disposition": "new"
+  },
+  {
+   "id": "NEW-E-03",
+   "name": "Worker asset HTTP acquisition and browser-cache admission (force-cache)",
+   "classification": {
+    "documentation": "R0021 contract note",
+    "implementation": "implicit",
+    "verification": "native evidence (R0021 b20/b21)"
+   },
+   "sources": [
+    "moon/src/moon-worker.mjs:5-10"
+   ],
+   "originalId": null,
+   "disposition": "new"
+  },
+  {
+   "id": "NEW-E-04",
+   "name": "Moon page-lifecycle (visibility) withdrawal and worker lifetime",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "moon/src/moon-native.mjs:129,239,248,287"
+   ],
+   "originalId": null,
+   "disposition": "new"
+  },
+  {
+   "id": "NEW-E-05",
+   "name": "Native physical lunar-light eligibility (surfaceFailed input)",
+   "classification": {
+    "documentation": "comments; R0022 certificate",
+    "implementation": "explicit and enforced (legacy flag only)",
+    "verification": "unit tests (legacy VM path only)"
+   },
+   "sources": [
+    "src/native/index.html:1898,2992-3003,3055-3177"
+   ],
+   "originalId": null,
+   "disposition": "new"
+  }
+ ],
+ "findings": [
+  {
+   "id": "EF-E01",
+   "title": "Optional Moon runtime exception aborts prayer publication and halts the render loop",
+   "machines": [
+    "N12",
+    "R19",
+    "R20"
+   ],
+   "evidenceClass": "demonstrated (propagation, VM probe); trigger speculative",
+   "severity": "high if triggered; conditional",
+   "trace": [
+    "src/native/index.html:3877 loop->render no try",
+    "src/native/index.html:3494 renderMoon before 3499-3516 prayer writes",
+    "src/native/index.html:1954 runtime.request()",
+    "moon/src/moon-native.mjs:261-273",
+    "src/native/index.html:3888 rAF re-arm skipped",
+    "probes/E/moon-throw-blocks-prayer.cjs"
+   ],
+   "openQuestions": [
+    "Should optional Moon calls be isolated or ordered after prayer publication?",
+    "Is there any natural throw site in request()/poll()?"
+   ]
+  },
+  {
+   "id": "EF-E02",
+   "title": "Bounded Moon retry has no product owner; every worker failure is terminal for the page lifetime",
+   "machines": [
+    "R20",
+    "R23",
+    "R24",
+    "R28"
+   ],
+   "evidenceClass": "demonstrated (code trace + grep)",
+   "severity": "medium",
+   "trace": [
+    "moon/src/moon-native.mjs:282 retry() (no product caller)",
+    "moon/src/moon-native.mjs:59-70 failed->closeWorker",
+    "moon/src/moon-native.mjs:258,291 only start() sites"
+   ],
+   "openQuestions": [
+    "Field failure incidence"
+   ]
+  },
+  {
+   "id": "EF-E03",
+   "title": "No Moon disc after Moon-wrapper construction failure (empty slot)",
+   "machines": [
+    "NEW-E-01",
+    "NEW-E-02",
+    "N11"
+   ],
+   "evidenceClass": "demonstrated (native, injected failure; R0021 contract F)",
+   "severity": "medium (fault path)",
+   "trace": [
+    "moon/src/moon-native.mjs:298",
+    "src/native/index.html:2238"
+   ],
+   "openQuestions": [
+    "Owner decision: admit calendar fallback when no runtime?"
+   ]
+  },
+  {
+   "id": "EF-E04",
+   "title": "Unguarded refinement-tail installWorkerSource",
+   "machines": [
+    "R20",
+    "NEW-E-01"
+   ],
+   "evidenceClass": "demonstrated (R0021 contract F)",
+   "severity": "low",
+   "trace": [
+    "tools/build_moon.py:130",
+    "index.html:7690",
+    "offline.html:8174",
+    "moon/moon-host.js:1045",
+    "moon/src/moon-native.mjs:253,255"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "EF-E05",
+   "title": "Lunar-light eligibility not bound to modern surface availability",
+   "machines": [
+    "NEW-E-05",
+    "N11",
+    "NEW-E-02"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low-medium (truthfulness)",
+   "trace": [
+    "src/native/index.html:3003 _pbrFailed input",
+    "src/native/index.html:1898 unreachable in generated app",
+    "src/native/index.html:3069,3141,3176 consumers"
+   ],
+   "openQuestions": [
+    "Visible magnitude of sky/cloud tint without disc"
+   ]
+  },
+  {
+   "id": "EF-E06",
+   "title": "Lunar diagnostic/readiness getters mutate presentation state",
+   "machines": [
+    "R19",
+    "N12"
+   ],
+   "evidenceClass": "demonstrated (code + moon/tests/host.test.cjs:94)",
+   "severity": "low",
+   "trace": [
+    "moon/src/moon-native.mjs:89,275,277,283",
+    "src/native/index.html:3608"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "EF-E07",
+   "title": "Moon wrapper / initial-receiver failure removes the whole-sky first paint",
+   "machines": [
+    "NEW-E-01",
+    "R30"
+   ],
+   "evidenceClass": "demonstrated (trace; R0021 contract F note)",
+   "severity": "low",
+   "trace": [
+    "tools/build_moon.py:120-129",
+    "real-sky/native-first-paint.mjs:34,50",
+    "moon/src/moon-first-paint.mjs:29"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "EF-E08",
+   "title": "Hidden-tab return discards a still-valid refined surface and re-runs full refinement",
+   "machines": [
+    "NEW-E-04",
+    "R19"
+   ],
+   "evidenceClass": "demonstrated (trace + host.test.cjs:289)",
+   "severity": "low (efficiency)",
+   "trace": [
+    "moon/src/moon-native.mjs:239,51-54"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "EF-E09",
+   "title": "Near-continuous refinement at 1x and unpooled 4-shard WASM footprint",
+   "machines": [
+    "R19",
+    "R25",
+    "R37"
+   ],
+   "evidenceClass": "plausible risk (model estimate, unmeasured)",
+   "severity": "low-medium (efficiency)",
+   "trace": [
+    "moon/src/moon-native.mjs:139",
+    "moon/src/moon-precision.mjs:24",
+    "moon/src/moon_kernel.c:25"
+   ],
+   "openQuestions": [
+    "Measured CPU/memory"
+   ]
+  },
+  {
+   "id": "EF-E10",
+   "title": "Transient initial-render exception permanently disables the initial V5 tier",
+   "machines": [
+    "R21",
+    "R30",
+    "NEW-E-02"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low",
+   "trace": [
+    "moon/src/moon-native.mjs:109,122"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "EF-E11",
+   "title": "240 s refinement deadline close to observed 169 s run",
+   "machines": [
+    "R20",
+    "R28"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low-medium",
+   "trace": [
+    "moon/src/moon-native.mjs:143",
+    "moon/tests/host.test.cjs:299"
+   ],
+   "openQuestions": [
+    "Device distribution"
+   ]
+  }
+ ],
+ "gdopl": [
+  {
+   "id": "G1",
+   "interaction": "Moon vs prayer render ordering/isolation",
+   "current": "renderMoon synchronous before prayer writes, no try",
+   "neighbour": "try/catch Moon calls or move after prayer publication",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "EF-E01 probe"
+  },
+  {
+   "id": "G2",
+   "interaction": "Worker failure recovery owner",
+   "current": "terminal; retry() unowned",
+   "neighbour": "bounded automatic retry with backoff / on resume",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "trace; R0021 b8/b19 driver retries"
+  },
+  {
+   "id": "G3",
+   "interaction": "Asset fetch cache admission",
+   "current": "force-cache",
+   "neighbour": "cache default / no-cache retry",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "R0021 b20 vs b21"
+  },
+  {
+   "id": "G4",
+   "interaction": "Wrapper replay vs live runtime (RF01)",
+   "current": "f71fef6c replay disposed successor detail",
+   "neighbour": "pre-effect refusal + captured detail + conditional slot clear",
+   "classification": "demonstrated improvement",
+   "evidence": "diff f71fef6c..363c3e53; native-instance-retirement tests; mutants; native cells"
+  },
+  {
+   "id": "G5",
+   "interaction": "Runtime absent -> Moon reveal",
+   "current": "no disc",
+   "neighbour": "admit native calendar fallback",
+   "classification": "incomparable",
+   "evidence": "R0021 contract F; AGENTS gate D vs no-legacy-substitution"
+  },
+  {
+   "id": "G6",
+   "interaction": "Light eligibility vs visible surface",
+   "current": "surfaceFailed=_pbrFailed",
+   "neighbour": "surfaceFailed=!runtime.surface()",
+   "classification": "insufficient evidence",
+   "evidence": "trace"
+  },
+  {
+   "id": "G7",
+   "interaction": "Diagnostics vs presentation",
+   "current": "getters adopt/publish",
+   "neighbour": "pure-read diagnostics",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "trace + host.test.cjs:94"
+  },
+  {
+   "id": "G8",
+   "interaction": "Hidden tab vs accepted refined",
+   "current": "discard on hide",
+   "neighbour": "retain + recheck on resume",
+   "classification": "retain",
+   "evidence": "trace"
+  },
+  {
+   "id": "G9",
+   "interaction": "Refinement cadence / footprint",
+   "current": "~4-12 min restarts; 4 WASM shards",
+   "neighbour": "fewer shards / longer refresh bound",
+   "classification": "insufficient evidence",
+   "evidence": "model estimate only"
+  },
+  {
+   "id": "G10",
+   "interaction": "Moon wrapper vs sky first paint",
+   "current": "head owner after moon-native in one IIFE",
+   "neighbour": "guard SalahMoonHead absence / split head owner",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "trace + R0021 note"
+  }
+ ],
+ "reconciliation": {
+  "RF01": "resolved and independently verified (refusal policy; R0021 #33 commits dcc8206b, de68e848, 145b7ba9)"
+ },
+ "testsRun": {
+  "moon/tests/*.test.cjs": "133/133 pass",
+  "tests/real-sky lunar subset + tests/moon-fixture-anchors": "31/31 pass",
+  "tests/r0022-lunar-consumers.cjs": "24 pass / 2 fail (star-wash synthetic cases)",
+  "probes/E/moon-throw-blocks-prayer.cjs": "propagation confirmed"
+ }
+}

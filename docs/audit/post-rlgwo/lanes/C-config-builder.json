@@ -1,0 +1,483 @@
+{
+ "lane": "C",
+ "baseline": "363c3e53",
+ "machines": [
+  {
+   "id": "N01",
+   "name": "Accepted-config apply, effect classification and dispatch (configuration-propagation side)",
+   "classification": {
+    "documentation": "state contract (R0003.md) + comments",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests + mutation controls; native on earlier index.html bytes"
+   },
+   "sources": [
+    "src/native/index.html:683-761 bindConfig/CONFIG_EFFECTS/classifyConfigChange",
+    "src/native/index.html:3717-3760 resetForNewLocation/applyConfig",
+    "index.html:4250,7162 (generated)"
+   ],
+   "originalId": "N01",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "C01",
+   "name": "Configuration persistence and mode resolution",
+   "classification": {
+    "documentation": "comments + R0026/R0003 rows",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/config.js:118-249,333-362",
+    "config.js (byte-identical)"
+   ],
+   "originalId": "C01",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "C05",
+   "name": "Builder mode, form, serialization and preview publication (issued identity, invalid draft, refresh)",
+   "classification": {
+    "documentation": "state contract (R000F.md)",
+    "implementation": "explicit and enforced",
+    "verification": "unit + mutation controls + native (headless, identical builder bytes 873e8ded) + independent review"
+   },
+   "sources": [
+    "src/native/builder.html:205-299,425-427,492-495",
+    "builder.html (byte-identical)"
+   ],
+   "originalId": "C05",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "C06",
+   "name": "Builder edit ownership, candidate cycle and automatic fills",
+   "classification": {
+    "documentation": "R000F/R0026 contracts + comments",
+    "implementation": "partly explicit (ownership explicit; reverse transport implicit)",
+    "verification": "unit + mutation controls; reverse error path untested"
+   },
+   "sources": [
+    "src/native/builder.html:303-399,496-527"
+   ],
+   "originalId": "C06",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "C07",
+   "name": "Clipboard attempts, fallback and expiring feedback",
+   "classification": {
+    "documentation": "comments + R0012 certificate",
+    "implementation": "explicit",
+    "verification": "unit + mutation controls"
+   },
+   "sources": [
+    "src/native/builder.html:245-253,450-495"
+   ],
+   "originalId": "C07",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "N20",
+   "name": "Settings disclosure, focus, dirty form and close-save",
+   "classification": {
+    "documentation": "comments + certificates",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/index.html:3947-3951,4008-4018,4044-4104,4145-4164"
+   ],
+   "originalId": "N20",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "N21",
+   "name": "Settings search, GPS, candidate cycling and Reset intent",
+   "classification": {
+    "documentation": "R000F/R0026 contracts",
+    "implementation": "partly explicit",
+    "verification": "unit + mutation controls (reset-then-dirty-close untested)"
+   },
+   "sources": [
+    "src/native/index.html:3944-4003,4079-4144"
+   ],
+   "originalId": "N21",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "N22",
+   "name": "Persistence outcome and persistent warning publication",
+   "classification": {
+    "documentation": "R0011 certificate",
+    "implementation": "explicit",
+    "verification": "unit + mutation controls"
+   },
+   "sources": [
+    "src/native/index.html:3915-3941,3737,4125"
+   ],
+   "originalId": "N22",
+   "disposition": "still partly explicit; unchanged since audit"
+  },
+  {
+   "id": "NEW-C-01",
+   "name": "Document-hash direct reads (seed, SIM/debug) parallel to resolved CONFIG",
+   "classification": {
+    "documentation": "R0003 table row",
+    "implementation": "implicit",
+    "verification": "none beyond table coverage test"
+   },
+   "sources": [
+    "src/native/index.html:677,2190,2759,2772,707,4026"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "NEW-C-02",
+   "name": "Builder-to-widget preview handoff and 325x530 embed contract",
+   "classification": {
+    "documentation": "AGENTS.md + R000F ES0F-15",
+    "implementation": "static contract",
+    "verification": "unit (current snippets only) + native layout cell"
+   },
+   "sources": [
+    "src/native/builder.html:166-167,201,215-218,257-262",
+    "presets/salah-widget.tablissng.json:9",
+    "README.md:37,224,564-575"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "C15",
+   "name": "Frozen v1 one-time root configuration import",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "partly explicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/config.js"
+   ],
+   "originalId": "C15",
+   "disposition": "unchanged/frozen; served"
+  },
+  {
+   "id": "C16",
+   "name": "Frozen v1 apply and boot without generation ownership",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "implicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html:2166ff"
+   ],
+   "originalId": "C16",
+   "disposition": "still implicit or vulnerable (CF07); served"
+  },
+  {
+   "id": "C17",
+   "name": "Frozen v1 prayer cache, retry, tomorrow and rollover",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "partly explicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html:743ff"
+   ],
+   "originalId": "C17",
+   "disposition": "unchanged/frozen; served"
+  },
+  {
+   "id": "C18",
+   "name": "Frozen v1 weather acquisition",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "partly explicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html:771ff"
+   ],
+   "originalId": "C18",
+   "disposition": "unchanged/frozen; served"
+  },
+  {
+   "id": "C19",
+   "name": "Frozen v1 radar acquisition",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "implicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html:816ff"
+   ],
+   "originalId": "C19",
+   "disposition": "unchanged/frozen; served"
+  },
+  {
+   "id": "C20",
+   "name": "Frozen v1 modal editing, lookup, GPS and Reset",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "implicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html:2302-2451"
+   ],
+   "originalId": "C20",
+   "disposition": "still implicit or vulnerable (CF07, CF08); served"
+  },
+  {
+   "id": "C21",
+   "name": "Frozen v1 clock anchor variant",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "partly explicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html"
+   ],
+   "originalId": "C21",
+   "disposition": "unchanged/frozen; served"
+  },
+  {
+   "id": "C22",
+   "name": "Frozen v1 Moon texture readiness",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "implicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html"
+   ],
+   "originalId": "C22",
+   "disposition": "unchanged/frozen; served"
+  },
+  {
+   "id": "C23",
+   "name": "Frozen v1 synthetic star catalogue",
+   "classification": {
+    "documentation": "docs/V1_PRESERVATION.md (provenance only)",
+    "implementation": "implicit",
+    "verification": "tools/verify_v1.py byte verification + tests/v1_storage.cjs; no behavioural CF07-09 tests"
+   },
+   "sources": [
+    "v1/index.html"
+   ],
+   "originalId": "C23",
+   "disposition": "unchanged/frozen; served"
+  }
+ ],
+ "findings": [
+  {
+   "id": "F-C01",
+   "title": "Reset location authority lost on dirty close-save (pre-reset edit or display-name edit during the Reset window)",
+   "machines": [
+    "N20",
+    "N21",
+    "N01",
+    "N22"
+   ],
+   "evidenceClass": "demonstrated (VM fixture probes)",
+   "severity": "medium-low",
+   "trace": [
+    "src/native/index.html:4122-4144",
+    "src/native/index.html:4063-4065",
+    "src/native/index.html:4097-4104,4155-4158",
+    "probes/C/reset-close-probe.json P1",
+    "probes/C/reset-label-probe.json"
+   ],
+   "status": "new; pre-existing since f71fef6c by source diff"
+  },
+  {
+   "id": "F-C02",
+   "title": "Builder reverse geocode adopts any JSON body; missing continentCode switches auto method to 4",
+   "machines": [
+    "C06",
+    "C05"
+   ],
+   "evidenceClass": "demonstrated (VM fixture probe)",
+   "severity": "medium-low",
+   "trace": [
+    "src/native/builder.html:383-398 (L395)",
+    "probes/C/reverse-error-probe.json"
+   ],
+   "status": "new; pre-existing (f71fef6c builder L339)"
+  },
+  {
+   "id": "F-C03",
+   "title": "README V1 snippet 330x534 with 'change only src' for current version contradicts 325x530 contract",
+   "machines": [
+    "NEW-C-02"
+   ],
+   "evidenceClass": "demonstrated (source)",
+   "severity": "low",
+   "trace": [
+    "README.md:564-575",
+    "AGENTS.md forbidden regression (embed size)"
+   ],
+   "status": "pre-existing; recorded in R000F limits, unfixed"
+  },
+  {
+   "id": "F-C04",
+   "title": "Successful Reset then close during detection: runtime keeps old config while storage is cleared; stale 'Detecting' hint",
+   "machines": [
+    "N21",
+    "N22"
+   ],
+   "evidenceClass": "demonstrated (VM fixture probe)",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:4129-4131",
+    "probes/C/reset-close-probe.json P2"
+   ],
+   "status": "new"
+  },
+  {
+   "id": "F-C05",
+   "title": "Local-mode builder still sends dimmed coordinates to BigDataCloud; result can change exported method",
+   "machines": [
+    "C06"
+   ],
+   "evidenceClass": "demonstrated (request, VM); plausible risk (method change)",
+   "severity": "low",
+   "trace": [
+    "src/native/builder.html:399,383-396,212"
+   ],
+   "status": "new"
+  },
+  {
+   "id": "F-C06",
+   "title": "XF01 residual: units/lp/seed/method/school broad; seed dual authority (hash vs CONFIG)",
+   "machines": [
+    "N01",
+    "NEW-C-01"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:707,2190,2759,2772,4026"
+   ],
+   "status": "owner-deferred (R0003 D3/D4)"
+  },
+  {
+   "id": "F-C07",
+   "title": "_commitSettings fires applyConfig without a rejection handler",
+   "machines": [
+    "N20",
+    "N01"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:4103"
+   ],
+   "status": "new"
+  },
+  {
+   "id": "F-C08",
+   "title": "qaState() diagnostic read performs a storage write probe",
+   "machines": [
+    "N22",
+    "C01"
+   ],
+   "evidenceClass": "speculative",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:3587",
+    "src/native/config.js:211-218"
+   ],
+   "status": "new"
+  },
+  {
+   "id": "F-C09",
+   "title": "Frozen v1 CF07/CF08/CF09 remain live on a served URL; limitation not documented",
+   "machines": [
+    "C16",
+    "C20",
+    "C15"
+   ],
+   "evidenceClass": "demonstrated (source)",
+   "severity": "medium (privacy/control truth on compatibility surface)",
+   "trace": [
+    "v1/index.html:2421-2428",
+    "v1/config.js:189ff",
+    "tools/verify_r0017_pages_payload.py:75",
+    "v1/VERSION.json knownLimitations"
+   ],
+   "status": "retained; owner authority required"
+  }
+ ],
+ "gdopl": [
+  {
+   "interaction": "Display-only config change vs prayer/weather/sky work (XF01)",
+   "current": "three-path classifier",
+   "neighbour": "-",
+   "classification": "demonstrated improvement",
+   "evidence": "config-effects-state RED 16/34 -> GREEN 34/34; mutations; native (earlier index bytes)"
+  },
+  {
+   "interaction": "Units-only change",
+   "current": "broad",
+   "neighbour": "weather-only path",
+   "classification": "insufficient evidence (retain; owner-deferred)",
+   "evidence": "none"
+  },
+  {
+   "interaction": "Builder equivalent edits vs preview navigations (CF05)",
+   "current": "issued-identity gate",
+   "neighbour": "-",
+   "classification": "demonstrated improvement",
+   "evidence": "native main control 3 vs candidate 0; ledger 34 -> 14"
+  },
+  {
+   "interaction": "Reset continuation vs dirty close-save (F-C01)",
+   "current": "continuation dropped; stale form committed",
+   "neighbour": "clear/snapshot dirty at dispatch; label edits do not invalidate Reset; close commits only newer prefs",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "VM probes; counterfactual not executed"
+  },
+  {
+   "interaction": "Reverse geocode adoption (F-C02)",
+   "current": "any JSON adopted, no deadline",
+   "neighbour": "HTTP gate + require continentCode + deadline",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "VM probe"
+  },
+  {
+   "interaction": "External coordinate admission feeding builder/settings (R0026)",
+   "current": "admit before normalize",
+   "neighbour": "-",
+   "classification": "demonstrated improvement",
+   "evidence": "location-admission tests; admissionSeam scenario"
+  },
+  {
+   "interaction": "Hash vs CONFIG seed (NEW-C-01)",
+   "current": "two representations",
+   "neighbour": "single authority",
+   "classification": "incomparable / retain",
+   "evidence": "source only"
+  },
+  {
+   "interaction": "Frozen v1 truthfulness (CF07-09)",
+   "current": "frozen bytes served, undocumented",
+   "neighbour": "document limitation (no byte change)",
+   "classification": "plausible improvement requiring verification (owner)",
+   "evidence": "source"
+  },
+  {
+   "interaction": "Embed size documentation (F-C03)",
+   "current": "README V1 330x534",
+   "neighbour": "doc-only correction",
+   "classification": "plausible improvement requiring verification",
+   "evidence": "source"
+  }
+ ]
+}

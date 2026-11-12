@@ -1,0 +1,419 @@
+{
+ "lane": "F",
+ "baseline": "363c3e536c8004935ef80230e43f7712e339e3a5",
+ "machines": [
+  {
+   "id": "C08",
+   "name": "Installer discovery, selection, preview, hand-off (ISM-INST-001/002/007)",
+   "classification": {
+    "documentation": "registry",
+    "implementation": "explicit and enforced",
+    "verification": "native or browser evidence; independent review"
+   },
+   "sources": [
+    "install.sh#discovery_eligibility L470",
+    "install.ps1#Get-DiscoveryEligibility L1091"
+   ],
+   "originalId": "C08",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "C09",
+   "name": "Bash private staging custody and cleanup (ISM-INST-003/004)",
+   "classification": {
+    "documentation": "registry",
+    "implementation": "explicit and enforced",
+    "verification": "native or browser evidence; independent review"
+   },
+   "sources": [
+    "install.sh#trusted_parent L97-150",
+    "install.sh#cleanup_staging L208"
+   ],
+   "originalId": "C09",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "C10",
+   "name": "Bash asset download/validation/extraction (ISM-INST-006)",
+   "classification": {
+    "documentation": "registry",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "install.sh#download_tablissng_asset L593",
+    "install.sh#expand_chromium_asset L654"
+   ],
+   "originalId": "C10",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "C11",
+   "name": "PowerShell shared cache/unpack lifecycle",
+   "classification": {
+    "documentation": "registry",
+    "implementation": "explicit and enforced",
+    "verification": "mutation or negative controls; native or browser evidence"
+   },
+   "sources": [
+    "install.ps1#Initialize-Staging L693",
+    "install.ps1#Get-AdmittedArtifact L671",
+    "install.ps1#Publish-OwnedFile L1195"
+   ],
+   "originalId": "C11",
+   "disposition": "superseded by a different implementation"
+  },
+  {
+   "id": "C12",
+   "name": "Preset acquisition, rewrite, import admission",
+   "classification": {
+    "documentation": "registry",
+    "implementation": "partly explicit",
+    "verification": "mutation or negative controls (PS); unit tests (Bash)"
+   },
+   "sources": [
+    "install.ps1#Download-Preset L1467-1499",
+    "install.sh#download_preset L701"
+   ],
+   "originalId": "C12",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "C13",
+   "name": "Native generation output publication sequence",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests; mutation or negative controls (transforms only)"
+   },
+   "sources": [
+    "tools/build_native.py L1-114",
+    "tools/native_core_horizon.py",
+    "tools/native_core_spectral_cache.py",
+    "tools/native_star_bootstrap.py"
+   ],
+   "originalId": "C13",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "C14",
+   "name": "Moon generation preflight and expansion",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "tools/build_moon.py L57-151",
+    "tools/compact_receivers.py"
+   ],
+   "originalId": "C14",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "NEW-F-01",
+   "name": "Frozen v1 verification",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "explicit and enforced",
+    "verification": "mutation or negative controls"
+   },
+   "sources": [
+    "tools/verify_v1.py L18-92"
+   ],
+   "originalId": null,
+   "disposition": "partly stale (--check-pages fails at baseline)"
+  },
+  {
+   "id": "C24",
+   "name": "R0017 Pages payload qualification (PR62-locked)",
+   "classification": {
+    "documentation": "state contract",
+    "implementation": "explicit and enforced (inert)",
+    "verification": "none since PR62"
+   },
+   "sources": [
+    ".github/workflows/r0017-pages-payload.yml",
+    "tools/verify_r0017_pages_payload.py L11-106"
+   ],
+   "originalId": "C24",
+   "disposition": "no longer applicable"
+  },
+  {
+   "id": "NEW-F-02",
+   "name": "Pages legacy deployment from main",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "native or browser evidence (post-hoc public readback)"
+   },
+   "sources": [
+    "_config.yml",
+    "dynamic/pages/pages-build-deployment"
+   ],
+   "originalId": null,
+   "disposition": "still implicit"
+  },
+  {
+   "id": "NEW-F-03",
+   "name": "RLGWO delivery workflow: candidate, exact-tree review, owner approval, merge, Pages, readback, certificate, closure",
+   "classification": {
+    "documentation": "state contract",
+    "implementation": "implicit",
+    "verification": "independent review"
+   },
+   "sources": [
+    "docs/state-contracts/R0015.md section 7",
+    "issue FINAL-CERTIFICATE comments"
+   ],
+   "originalId": null,
+   "disposition": "still implicit"
+  },
+  {
+   "id": "NEW-F-04",
+   "name": "README review-first pin / installer blob / docs-receipt coupling",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests (docs receipt)"
+   },
+   "sources": [
+    "README.md L92-117",
+    "tools/qualification/installer_preview_docs.cjs L18-20"
+   ],
+   "originalId": null,
+   "disposition": "still implicit"
+  },
+  {
+   "id": "NEW-F-05",
+   "name": "Registered regression suites and known-failure baseline",
+   "classification": {
+    "documentation": "state contract",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "tools/cp9/run_native_regressions.py",
+    "tests/rlgwo-docs-contract.cjs"
+   ],
+   "originalId": "EF01",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "NEW-F-06",
+   "name": "Work-order-branch qualification workflows",
+   "classification": {
+    "documentation": "none",
+    "implementation": "implicit",
+    "verification": "none"
+   },
+   "sources": [
+    ".github/workflows/*.yml on: blocks"
+   ],
+   "originalId": null,
+   "disposition": "no longer applicable (inert leftovers; dispatchable harnesses)"
+  },
+  {
+   "id": "NEW-F-07",
+   "name": "Evidence receipts bound to source hashes and re-pin protocol",
+   "classification": {
+    "documentation": "state contract",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "docs/state-contracts/R0027.md L262-275",
+    "tests/native-script-contract.js",
+    "tests/rlgwo-docs-contract.cjs L270"
+   ],
+   "originalId": null,
+   "disposition": "still implicit"
+  }
+ ],
+ "findings": [
+  {
+   "id": "FND-F-01",
+   "title": "Published Pages payload estimated 1.91 GB exceeds the R0017-qualified 1 GB bound; verifier locked to PR62",
+   "machines": [
+    "C24",
+    "NEW-F-02"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "medium",
+   "trace": [
+    "tools/verify_r0017_pages_payload.py L95-106",
+    ".github/workflows/r0017-pages-payload.yml (if PR 62)",
+    "_config.yml"
+   ]
+  },
+  {
+   "id": "FND-F-02",
+   "title": "No automated gate on main or on PRs to main; a merge is a deploy",
+   "machines": [
+    "NEW-F-02",
+    "NEW-F-03",
+    "NEW-F-06"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "medium",
+   "trace": [
+    ".github/workflows/*.yml"
+   ]
+  },
+  {
+   "id": "FND-F-03",
+   "title": "assert-based build guards vanish under python -O",
+   "machines": [
+    "C13"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low-medium",
+   "trace": [
+    "tools/native_star_bootstrap.py L16, L21, L28",
+    "tools/build_native.py L70"
+   ]
+  },
+  {
+   "id": "FND-F-04",
+   "title": "Moon-stage failure leaves root entries unexpanded with stale Moon outputs",
+   "machines": [
+    "C13",
+    "C14"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low-medium",
+   "trace": [
+    "tools/build_native.py L83, L109, L113",
+    "tools/build_moon.py L86-87"
+   ]
+  },
+  {
+   "id": "FND-F-05",
+   "title": "Unguarded single replacements can silently no-op on anchor drift",
+   "machines": [
+    "C13"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low-medium",
+   "trace": [
+    "tools/build_native.py L72-74, L80, L82"
+   ]
+  },
+  {
+   "id": "FND-F-06",
+   "title": "No registered parity or hand-edit check; stale moon/file-data chunks persist",
+   "machines": [
+    "C13",
+    "C14"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "tools/build_moon.py L109-116"
+   ]
+  },
+  {
+   "id": "FND-F-07",
+   "title": "Red instruments retained as undeclared known-failure set (docs contract 14 of 64 identical since f71fef6c; runner red set)",
+   "machines": [
+    "NEW-F-05",
+    "NEW-F-07"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "medium",
+   "trace": [
+    "tests/rlgwo-docs-contract.cjs L245-500",
+    "docs/state-contracts/R0027.md L271, L341"
+   ]
+  },
+  {
+   "id": "FND-F-08",
+   "title": "verify_v1 --check-pages fails at baseline while the documented recipe requires it",
+   "machines": [
+    "NEW-F-01"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "tools/verify_v1.py L51-53",
+    "docs/V1_PRESERVATION.md L93"
+   ]
+  },
+  {
+   "id": "FND-F-09",
+   "title": "Closure state split between repo contract and issue comments; auto-closure, withdrawal and post-closure correction events",
+   "machines": [
+    "NEW-F-03"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "docs/state-contracts/R0015.md L413, L449"
+   ]
+  },
+  {
+   "id": "FND-F-10",
+   "title": "README pin, installer and docs-receipt hash coupling; piped main route unpinned",
+   "machines": [
+    "NEW-F-04"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "README.md L92-117",
+    "tools/qualification/installer_preview_docs.cjs L18"
+   ]
+  },
+  {
+   "id": "FND-F-11",
+   "title": "IMPLICIT_STATES.md omissions: release-asset selection (R0014), installer-bytes delivery route, qualification workflow lifecycle",
+   "machines": [
+    "C08",
+    "C10"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "IMPLICIT_STATES.md"
+   ]
+  }
+ ],
+ "gdopl": [
+  {
+   "id": "G-F1",
+   "interaction": "evidence volume in deployed tree vs 1 GB payload bound",
+   "neighbour": "exclude or relocate evidence trees",
+   "classification": "demonstrated regression against modelled constraint; fix is plausible improvement requiring verification"
+  },
+  {
+   "id": "G-F2",
+   "interaction": "merge equals deploy without gate",
+   "neighbour": "main/PR workflow: suites, build-twice diff, verify_v1, expected-failure manifest",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G-F3",
+   "interaction": "in-place generation with assert guards",
+   "neighbour": "staged outputs, raise instead of assert, counted replacements (original G01)",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G-F4",
+   "interaction": "stale instruments compared by failing set",
+   "neighbour": "per-case expected-failure ledger or retire side-branch-only checks",
+   "classification": "partial demonstrated improvement (runner durations, extraction); remainder insufficient evidence"
+  },
+  {
+   "id": "G-F5",
+   "interaction": "PS shared cache replaced by transactional admission",
+   "neighbour": "taken by R0015",
+   "classification": "demonstrated improvement"
+  },
+  {
+   "id": "G-F6",
+   "interaction": "exact hash pins in many receipts",
+   "neighbour": "centralised manifest binding",
+   "classification": "incomparable"
+  }
+ ]
+}

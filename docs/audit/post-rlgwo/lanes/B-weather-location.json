@@ -1,0 +1,513 @@
+{
+ "lane": "B",
+ "baseline": "363c3e536c8004935ef80230e43f7712e339e3a5",
+ "machines": [
+  {
+   "id": "N08",
+   "name": "Weather acquisition, current/hourly records and persistent cache",
+   "classification": {
+    "documentation": "state contract (R000B, R000D) + comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests; mutation controls; native (R000D Chromium/Firefox, R000B hosted Chromium)"
+   },
+   "sources": [
+    "src/native/index.html:1262-1476 weather admission/loadWx/wxFetchJson/fetchWeather",
+    "src/native/index.html:3652-3667 startWeather",
+    "src/native/index.html:3717-3726 resetForNewLocation",
+    "index.html (generated; + CP9 elevation hook)"
+   ],
+   "originalId": "N08",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "N09",
+   "name": "Weather truth/decision, information text and header publication",
+   "classification": {
+    "documentation": "state contract (R000B, R0024) + AGENTS.md",
+    "implementation": "partly explicit",
+    "verification": "unit tests; mutation controls; native Chromium withdrawal only"
+   },
+   "sources": [
+    "src/native/index.html:1601-1838",
+    "src/native/index.html:2605-2637 gateWeatherCode/wxClass"
+   ],
+   "originalId": "N09",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "NEW-B-01",
+   "name": "Weather/radar elapsed retry eligibility",
+   "classification": {
+    "documentation": "state contract (R000D)",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests; mutation controls; native Chromium+Firefox; independent review"
+   },
+   "sources": [
+    "src/native/index.html:1264-1286 retryGate/_wxRetry",
+    "src/native/index.html:1453",
+    "src/native/index.html:1526",
+    "src/native/index.html:3875"
+   ],
+   "originalId": null,
+   "disposition": "new discovery (R000D implementation)"
+  },
+  {
+   "id": "N10",
+   "name": "Radar diagnostic transport, image lease and expiry",
+   "classification": {
+    "documentation": "comments + R000D ES0D-14",
+    "implementation": "partly explicit",
+    "verification": "unit tests; native admitted-state only"
+   },
+   "sources": [
+    "src/native/index.html:1477-1552",
+    "src/native/index.html:3554-3559 qaState consumer"
+   ],
+   "originalId": "N10",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "NEW-B-02",
+   "name": "Cloud publication authority receipt (weather to cloud consumer)",
+   "classification": {
+    "documentation": "state contract (R000B)",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests; mutation discriminators; hosted native Chromium; independent review"
+   },
+   "sources": [
+    "src/native/index.html:2685-2752",
+    "src/native/index.html:3222-3241 applyCloudState",
+    "src/native/index.html:3486-3492 render no-model",
+    "src/native/index.html:3880",
+    "real-sky/native-host-hooks.js:13-14"
+   ],
+   "originalId": null,
+   "disposition": "new discovery (R000B implementation; authority part of N15)"
+  },
+  {
+   "id": "NEW-B-03",
+   "name": "Weather target capture and location provenance",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests; mutation controls"
+   },
+   "sources": [
+    "src/native/index.html:1384-1404",
+    "src/native/index.html:1621-1629"
+   ],
+   "originalId": null,
+   "disposition": "new discovery (R0023)"
+  },
+  {
+   "id": "NEW-B-04",
+   "name": "Location evidence normalization and persistence provenance",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/config.js:56-85",
+    "src/native/config.js:219-245",
+    "src/native/config.js:357-362"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "NEW-B-05",
+   "name": "Site elevation dual custody (legacy siteElev vs CP9 bound elevation)",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "legacy implicit; CP9 partly explicit",
+    "verification": "CP9 unit test only; legacy none"
+   },
+   "sources": [
+    "src/native/index.html:1291",
+    "src/native/index.html:1467",
+    "src/native/index.html:3083",
+    "src/native/index.html:3192",
+    "real-sky/native-host-hooks.js:5-9,23",
+    "tools/build_native.py:69-71"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "NEW-B-06",
+   "name": "Forecast-track preview substitution and live return",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/index.html:1553-1581",
+    "src/native/index.html:3766-3777"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "C02",
+   "name": "Coarse location provider cascade and whole-body deadline",
+   "classification": {
+    "documentation": "state contract (R0026)",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests; mutation controls; native stubbed Chromium+Firefox; independent delivery review"
+   },
+   "sources": [
+    "src/native/config.js:251-304",
+    "src/native/config.js:87-115",
+    "src/native/index.html:3792-3809",
+    "src/native/index.html:4130"
+   ],
+   "originalId": "C02",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "C03",
+   "name": "Forward geocoder aggregate completion",
+   "classification": {
+    "documentation": "state contract (R0026)",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests; mutation controls; native stubbed; independent delivery review (Zippopotam not publicly covered)"
+   },
+   "sources": [
+    "src/native/config.js:364-457"
+   ],
+   "originalId": "C03",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "C04",
+   "name": "Browser location and permission request completion",
+   "classification": {
+    "documentation": "state contract (R0026) + comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests; native with stubbed geolocation"
+   },
+   "sources": [
+    "src/native/config.js:306-327",
+    "src/native/config.js:78-82"
+   ],
+   "originalId": "C04",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "N21",
+   "name": "Settings place search, GPS, candidate cycling, reset (location acquisition)",
+   "classification": {
+    "documentation": "state contracts (R000F, R0026, R0003)",
+    "implementation": "partly explicit",
+    "verification": "unit tests; mutation controls; native stubbed (R0026 ES26-13)"
+   },
+   "sources": [
+    "src/native/index.html:3907-4165",
+    "src/native/index.html:3729-3760 applyConfig"
+   ],
+   "originalId": "N21",
+   "disposition": "implemented but not fully verified"
+  }
+ ],
+ "findings": [
+  {
+   "id": "BF01",
+   "title": "Current weather always lapses before a replacement can be requested (quarter-hour authority gap)",
+   "machines": [
+    "N08",
+    "NEW-B-01",
+    "N09",
+    "NEW-B-02"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "medium",
+   "trace": [
+    "src/native/index.html:1374-1375 TTL 900000 ms",
+    "src/native/index.html:1276 fresh-data-satisfied while selected",
+    "src/native/index.html:3875 ~30 s poll",
+    "src/native/index.html:3880 per-frame reconcile",
+    "src/native/index.html:2730-2739 full withdrawal",
+    "src/native/index.html:3233 snap re-establish"
+   ],
+   "evidence": "probes/B/wx-quarter-gap-probe.cjs: no fetch while selected; unselected at 06:30:00.001 and 06:45:00.001; first refreshing polls 06:30:20 and 06:45:20. Issue #11 certificate section 3: delivered-page header unavailable about 2 s and 23 s at quarter-hour boundaries.",
+   "materiality": "Predicted cloud-deck disappearance/pop and precipitation stop every 15 min under cloudy or rainy weather (continuity / no-slideshow gates); visual not observed (clear sky). Pre-existing before the window.",
+   "openQuestions": [
+    "Provider current.time cadence",
+    "Owner acceptance of the gap as truthful withdrawal"
+   ]
+  },
+  {
+   "id": "BF02",
+   "title": "Rejected or unadmittable 200 responses recorded as received in request diagnostics",
+   "machines": [
+    "N08",
+    "N10"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:1428",
+    "src/native/index.html:1458",
+    "src/native/index.html:1462-1473",
+    "src/native/index.html:1531-1533"
+   ],
+   "evidence": "probes/B/wx-outcome-probe.cjs: {error:true}, {} and an invalid current give state received, reason null, nothing admitted; HTTP 503 gives unavailable.",
+   "materiality": "Observability only (qaState().wxTruth.requests); admission is correct.",
+   "openQuestions": []
+  },
+  {
+   "id": "BF03",
+   "title": "Legacy siteElev neither target-bound nor reset on location change",
+   "machines": [
+    "NEW-B-05",
+    "N08"
+   ],
+   "evidenceClass": "demonstrated (source trace)",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:1467 sole writer",
+    "src/native/index.html:3717-3726 no reset",
+    "src/native/index.html:3083",
+    "src/native/index.html:3192",
+    "real-sky/native-host-hooks.js:6-9,23 CP9 fenced copy"
+   ],
+   "evidence": "Source trace; unchanged since f71fef6c.",
+   "materiality": "Previous location's elevation modulates star haze/blur until the new location's weather response arrives (indefinitely if it fails).",
+   "openQuestions": [
+    "Visual magnitude"
+   ]
+  },
+  {
+   "id": "BF04",
+   "title": "Radar acquisition runs with no product consumer; manifest host unvalidated",
+   "machines": [
+    "N10"
+   ],
+   "evidenceClass": "demonstrated (consumers) / plausible risk (host)",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:1482-1488",
+    "src/native/index.html:3554-3559",
+    "src/native/index.html:1520-1552",
+    "src/native/index.html:1530",
+    "src/native/index.html:1541"
+   ],
+   "evidence": "grep: weatherRadar read only by radarEvidence and qaState; R000D ES0D-14; probe dispatched an image to an http:// host; no meta CSP in source.",
+   "materiality": "Periodic third-party requests revealing a zoom-6 tile location with no product benefit; provider-trust boundary.",
+   "openQuestions": [
+    "Owner intent to keep radar for a future decoder"
+   ]
+  },
+  {
+   "id": "BF05",
+   "title": "Without a timetable, fresh weather header shows a precipitation condition while clouds/particles are withheld",
+   "machines": [
+    "N09",
+    "NEW-B-02"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:3488",
+    "src/native/index.html:2703 model()!==null",
+    "src/native/index.html:3491"
+   ],
+   "evidence": "Issue #11 certificate section 5 records a 'Rain 24 deg' header without clouds; status unknown.",
+   "materiality": "Cross-consumer divergence; header remains labelled model estimate.",
+   "openQuestions": [
+    "Is this the intended consumer policy?"
+   ]
+  },
+  {
+   "id": "BF06",
+   "title": "Units change still takes the broad path (prayer and radar restart)",
+   "machines": [
+    "N08",
+    "N10"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:707",
+    "src/native/index.html:3750-3757"
+   ],
+   "evidence": "CONFIG_EFFECTS units path broad; XF01 smallest-safe-change 'separate weather units from radar' not done.",
+   "materiality": "Efficiency; fences correct.",
+   "openQuestions": []
+  },
+  {
+   "id": "BF07",
+   "title": "GPS adoption waits on an unbounded permissions.query",
+   "machines": [
+    "C04",
+    "N21"
+   ],
+   "evidenceClass": "speculative",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:4111",
+    "src/native/index.html:4114",
+    "src/native/config.js:321-327"
+   ],
+   "evidence": "Source only.",
+   "materiality": "A never-settling permission query would drop a valid fix.",
+   "openQuestions": [
+    "Any browser where query does not settle"
+   ]
+  },
+  {
+   "id": "BF08",
+   "title": "Preview forecast substitution has no track age bound",
+   "machines": [
+    "NEW-B-06"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:1557",
+    "src/native/index.html:1580",
+    "src/native/index.html:1683",
+    "src/native/index.html:3875"
+   ],
+   "evidence": "Source trace.",
+   "materiality": "Long fast-forward previews use an arbitrarily old track; output labelled SIM/forecast.",
+   "openQuestions": []
+  },
+  {
+   "id": "BF09",
+   "title": "Nominatim place/boundary preference may be inert (class vs category)",
+   "machines": [
+    "C03"
+   ],
+   "evidenceClass": "speculative",
+   "severity": "low",
+   "trace": [
+    "src/native/config.js:374",
+    "docs/state-contracts/R0026.md:239-240"
+   ],
+   "evidence": "Contract notes unresolved naming; no provider contacted.",
+   "materiality": "Candidate ordering only.",
+   "openQuestions": [
+    "Actual jsonv2 field name"
+   ]
+  }
+ ],
+ "gdopl": [
+  {
+   "id": "G1",
+   "interaction": "wall-clock correction vs retry spacing (XF02)",
+   "current": "elapsed _wxRetry",
+   "constraints": [
+    "freshness rejection must leave a recovery route",
+    "never bless future data"
+   ],
+   "neighbour": null,
+   "evidence": "R000D RED 18 fail -> GREEN 23/23, mutations 12/12, native two engines",
+   "classification": "demonstrated improvement"
+  },
+  {
+   "id": "G2",
+   "interaction": "weather expiry vs missing timetable (NF02)",
+   "current": "reconcile in no-model branch",
+   "constraints": [
+    "no fabricated prayer model",
+    "preserve motion/population"
+   ],
+   "neighbour": null,
+   "evidence": "f71fef6c bypass vs src/native/index.html:3491; withdrawal suites; hosted Chromium",
+   "classification": "demonstrated improvement"
+  },
+  {
+   "id": "G3",
+   "interaction": "source-age TTL vs refresh shortcut (BF01)",
+   "current": "refresh only after expiry",
+   "constraints": [
+    "truthful expiry (hard)",
+    "retry spacing 60 s"
+   ],
+   "neighbour": "open gate when sourceAge >= TTL - margin with all fences retained; rejected alternative: hold deck past TTL (violates F_hard)",
+   "evidence": "probe + certificate observation; counterfactual not executed",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G4",
+   "interaction": "units change vs radar/prayer (XF01 residual)",
+   "current": "broad",
+   "constraints": [
+    "generation and adopted-tz fences"
+   ],
+   "neighbour": "units -> weather-only invalidation path",
+   "evidence": "src/native/index.html:707; original GDOPL_FINAL L54",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G5",
+   "interaction": "radar acquisition vs no consumer (BF04)",
+   "current": "periodic radar",
+   "constraints": [
+    "privacy",
+    "truthful diagnostics"
+   ],
+   "neighbour": "radar only under a diagnostic flag, or host allowlist",
+   "evidence": "consumer grep; R000D ES0D-14",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G6",
+   "interaction": "elevation custody (BF03)",
+   "current": "legacy unbound + CP9 bound",
+   "constraints": [
+    "no cross-location stale data"
+   ],
+   "neighbour": "reset siteElev on location reset or derive it from the CP9 copy",
+   "evidence": "source trace",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G7",
+   "interaction": "external coordinate admission (CF04)",
+   "current": "admit before normalize",
+   "constraints": [
+    "truthful provenance"
+   ],
+   "neighbour": null,
+   "evidence": "config.js f71fef6c:258-264 clamp vs 363c3e53:291-293; tests; delivery review",
+   "classification": "demonstrated improvement"
+  },
+  {
+   "id": "G8",
+   "interaction": "geocoder outcome (CF06)",
+   "current": "detailed status/coverage",
+   "constraints": [
+    "truthful UI"
+   ],
+   "neighbour": null,
+   "evidence": "tests; delivery review",
+   "classification": "demonstrated improvement"
+  },
+  {
+   "id": "G9",
+   "interaction": "attempt diagnostics (BF02)",
+   "current": "received on rejection",
+   "constraints": [
+    "truthful evidence claims"
+   ],
+   "neighbour": "record unavailable + reason on every non-admission return",
+   "evidence": "probe",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G10",
+   "interaction": "overlapping retry representations",
+   "current": "_wxRetry + write-only lastWxTry/lastRadarAt",
+   "constraints": [
+    "compatibility"
+   ],
+   "neighbour": "remove write-only fields",
+   "evidence": "R000D.md L190",
+   "classification": "retain"
+  }
+ ]
+}

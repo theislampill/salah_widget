@@ -1,0 +1,7 @@
+const fs=require("fs"),path=require("path");const R=process.argv[2];
+const a=fs.readFileSync(path.join(R,"src/native/index.html"),"utf8"),b=fs.readFileSync(path.join(R,"index.html"),"utf8");
+const names=["bindConfig","classifyConfigChange","sameConfigEvidence","selectCalendarDisplay","renderCalendarDates","partsInTz","zoneDay","epochForTzTime","initSim","simNow","simulationReady","admitPrayerRecord","beginRequest","beginAttempt","attemptEligible","beginRuntimeGeneration","readPrayerCache","fetchTimings","prayerCivilDay","prayerRecordReady","adoptPrayerBundle","beginPrayerRequest","finishPrayerRequest","prefetchPrayerDay","maintainPrayerDay","retryGate","prayerEventCandidates","selectPrayerEvent","model","requestWebfonts","cnFontSignature","fitCn","withdrawPrayerPresentation","render","loadPrayerData","resetForNewLocation","applyConfig","boot","startRenderLoop"];
+function body(s,n){let i=s.indexOf("\nfunction "+n+"(");if(i<0)i=s.indexOf("\nasync function "+n+"(");if(i<0)return null;const ends=["\nfunction ","\nasync function ","\n// ---- ","\nwindow."].map(t=>s.indexOf(t,i+5)).filter(x=>x>0);return s.slice(i,Math.min(...ends));}
+const res={};for(const n of names){const x=body(a,n),y=body(b,n);res[n]=x==null?"MISSING-src":y==null?"MISSING-gen":x===y?"identical":"DIFFERS";}
+const clk=s=>{const i=s.indexOf("window.SalahClock=");return s.slice(i,s.indexOf("}});",i));};res.SalahClock=clk(a)===clk(b)?"identical":"DIFFERS";
+console.log(JSON.stringify(res,null,1));

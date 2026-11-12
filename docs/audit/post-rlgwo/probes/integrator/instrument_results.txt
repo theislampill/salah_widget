@@ -1,0 +1,28 @@
+# Output of date_instruments.sh at baseline and nine historical first-parent commits (2026-11-12).
+# pass/fail are line counts of PASS/FAIL records in each instrument's own output.
+363c3e53 r0001-date-sinks rc=1 pass=12 fail=1
+363c3e53 r0009-date-selection rc=1 pass=21 fail=1
+363c3e53 r0019-date-disclosure rc=1 pass=15 fail=1
+363c3e53 r0021-reveal rc=1 pass=17 fail=1
+363c3e53 r0022-baseline-balance rc=1 pass=30 fail=7
+363c3e53 r0022-lunar-consumers rc=1 pass=24 fail=2
+363c3e53 rlgwo-docs-contract rc=1 pass=50 fail=14
+f71fef6c r0001-date-sinks rc=1 pass=0 fail=13   (every case: "Expected exactly one native inline runtime 3 !== 1")
+f71fef6c r0009-date-selection rc=1 pass=0 fail=0 (aborts: same assertion)
+f71fef6c r0019-date-disclosure rc=1 pass=0 fail=0 (aborts: same assertion)
+f71fef6c r0021-reveal rc=1 pass=16 fail=2       (extra: "fixture operation did not settle within 64 owned turns")
+f71fef6c r0022-baseline-balance rc=1 pass=31 fail=6
+f71fef6c r0022-lunar-consumers rc=1 pass=24 fail=2
+f71fef6c rlgwo-docs-contract rc=1 pass=50 fail=14
+eebba178 r0001-date-sinks rc=0 pass=13 fail=0
+eebba178 r0009-date-selection rc=0 pass=22 fail=0
+eebba178 r0019-date-disclosure rc=0 pass=16 fail=0
+eebba178 r0021-reveal rc=1 pass=17 fail=1
+eebba178 r0022-baseline-balance rc=1 pass=31 fail=6
+eebba178 r0022-lunar-consumers rc=1 pass=24 fail=2
+eebba178 rlgwo-docs-contract rc=1 pass=50 fail=14
+539c1366 (same as eebba178 for all seven)
+dbf3370f r0001/r0009/r0019 green (13/22/16); r0021-reveal 17/1; r0022-baseline-balance pass=30 fail=7 (new: "London shallow night actual solar path/horizon/marker geometry matches baseline"); r0022-lunar-consumers 24/2; docs 50/14
+da126880 r0001-date-sinks rc=1 pass=12 fail=1; r0009-date-selection 21/1; r0019-date-disclosure 15/1 (all "el.style.getPropertyValue is not a function"); others as dbf3370f
+645b53cc, 294d2d37, 5279958a, 546d8828: identical to 363c3e53 for all seven
+The rlgwo-docs-contract failing-case set is identical (same 14 names) at every commit tested.
