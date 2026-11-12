@@ -67,8 +67,10 @@ $CleanSddl='O:{U}D:P(A;OICI;FA;;;SY)(A;OICI;FA;;;BA)(A;OICI;FA;;;{U})'
 function New-OwnerFixture([string]$Name,[string]$OwnerSid,[string]$Sddl=$CleanSddl,[string]$Parent=$script:fixtureRoot) {
     $path=Join-Path $Parent $Name
     [void][IO.Directory]::CreateDirectory($path)
-    Set-FixtureSddl $path $Sddl
+    # Owner first (while the user still holds full control), then the requested DACL only.
+    Set-FixtureSddl $path 'O:{U}D:P(A;OICI;FA;;;{U})'
     $owned=Set-FixtureOwner $path $OwnerSid
+    [R15OwnerFixture.Acl]::Set($path,$Sddl.Replace('{U}',$script:userSid),4)
     $facts=[R15OwnerFixture.Acl]::Describe($path)
     return [pscustomobject]@{Path=$path;OwnerSet=$owned;RequestedOwner=(Get-SidClass $OwnerSid);ActualOwner=(Get-SidClass $facts.Owner);DaclNull=$facts.DaclNull;Sddl=$facts.Sddl.Replace($script:userSid,'{U}')}
 }
@@ -166,7 +168,7 @@ namespace R15OwnerFixture {
     $script:DryRun=$false
 
     $script:userSid=[Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-    $script:fixtureRoot=Join-Path ([IO.Path]::GetFullPath($FixtureParent)) ('r0015-owner-'+[guid]::NewGuid().ToString('N'))
+    $script:fixtureRoot=Join-Path ([IO.Path]::GetFullPath($FixtureParent)) ('r15o-'+[guid]::NewGuid().ToString('N').Substring(0,8))
     [void][IO.Directory]::CreateDirectory($script:fixtureRoot)
     Set-FixtureSddl $script:fixtureRoot 'O:{U}D:P(A;OICI;FA;;;{U})'
 

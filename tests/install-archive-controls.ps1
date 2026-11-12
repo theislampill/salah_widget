@@ -122,7 +122,7 @@ try {
     function Open-TargetUrl {throw 'Unexpected browser effect in archive control.'}
     function Read-Host {throw 'Unexpected prompt in archive control.'}
     $script:subjectSid=[Security.Principal.WindowsIdentity]::GetCurrent().User
-    $script:fixtureRoot=Join-Path ([IO.Path]::GetFullPath($FixtureParent)) ('r0015-archive-'+[guid]::NewGuid().ToString('N'))
+    $script:fixtureRoot=Join-Path ([IO.Path]::GetFullPath($FixtureParent)) ('r15a-'+[guid]::NewGuid().ToString('N').Substring(0,8))
     [void][IO.Directory]::CreateDirectory($script:fixtureRoot)
 
     $manifest='{"manifest_version":3,"name":"Fixture extension","version":"1.0"}'
