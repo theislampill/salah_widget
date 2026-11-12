@@ -27,7 +27,7 @@ from types import SimpleNamespace
 
 sys.dont_write_bytecode=True
 HELPER_SHA='6776bc7b3d4e88d04f1dd811f5b7df0ea1553a7b8824f1f3e921c649c1aae9df'
-INPUT_MANIFEST_SHA='3276ed3207c014350e0eec77df29a0d32ae69acc57f666d7526d597bd93f026b'
+INPUT_MANIFEST_SHA='577d8331794a2046a87511d4022b113ea70f1bc8dca22a8d7f27503a14c85bb4'
 ROOT_PREFIX='r16-entry-'
 VERSION_SECONDS=60
 CHILD_SECONDS=60
@@ -40,7 +40,7 @@ OUTER_SECONDS=(HELD_CASES+DIRECT_CASES)*(CHILD_SECONDS+CLEANUP_SECONDS)+2*LOOPBA
 JSON_LIMIT=64*1024*1024
 PS7_EXE_SHA='bfb46af89433268872ddb43d1ca7a3f433452ee91ed356a9786940f90118e285'
 INPUTS={
-    'install-entry-driver-diagnostic.py':(49138,'c5f0d9cf62f4557ef8f838a08dc4c402f791076842b0c69e84bfb773020e458c'),
+    'install-entry-driver-diagnostic.py':(54512,'901c97e9cb5f3c7df989a5b645d52d7a8a6c910b292897a2d0b68e0e35e08168'),
     'install-entry-composition-support.py':(37442,'4600bac181dcac5fe7f72467c6018800666284d7087cf98f8b9bf5a449910821'),
     'install-entry-coverage-support.py':(14701,'52a268b0de8c6055f8265faa7bdef115a78ba29fba2b4f008aba43be6b793c4a'),
     'install-entry-held.ps1':(8262,'742b42edd3828ec98dc25f717fdbacbd3e68ed877139c90e358d43f7c5142ca2'),

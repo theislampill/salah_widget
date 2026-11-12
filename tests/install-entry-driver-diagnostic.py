@@ -15,6 +15,7 @@ import re
 import secrets
 import shutil
 import socket
+import stat
 import subprocess
 import sys
 import threading
@@ -58,6 +59,87 @@ def source_body(label):
     return (prefix + body).encode('ascii')
 
 
+def finish_prepared_clone(direct, held, control, frozen_direct):
+    """Restore only planned held directory mtimes, before any child can start."""
+    receipt_path = control / 'directory-preparation.json'
+    receipt = dict(schema='r0016-entry-directory-preparation.v1', complete=False,
+        scope='owned clone preparation only; no diagnostic child started',
+        snapshots={'directBeforeClone': c.fact(control / 'direct-before-clone.json')},
+        plan=[], operations=[], errors=[])
+    left = right = None
+    def failure(phase, error):
+        receipt['errors'].append(dict(phase=phase, type=type(error).__name__, message=str(error)))
+    def observed(path):
+        item = path.lstat()
+        for component in [path] + list(path.parents):
+            info = component.lstat()
+            c.require(stat.S_ISDIR(info.st_mode) and not component.is_symlink()
+                and not (getattr(info, 'st_file_attributes', 0) & 0x400), 'Directory preparation refuses links/reparse or non-directories')
+            if component == held:
+                break
+        else:
+            raise AssertionError('Directory preparation target escaped held root')
+        return dict(mode=item.st_mode, device=item.st_dev, inode=item.st_ino,
+            uid=item.st_uid, gid=item.st_gid, mtimeNs=item.st_mtime_ns,
+            ctimeNs=item.st_ctime_ns, atimeNs=item.st_atime_ns,
+            attributes=getattr(item, 'st_file_attributes', None))
+    try:
+        left = c.double_inventory(direct, s, control / 'direct-prepared.json')
+        receipt['snapshots']['directPrepared'] = c.fact(control / 'direct-prepared.json')
+        c.require(left['rows'] == frozen_direct['rows'], 'Direct inputs changed during clone construction')
+        before = c.double_inventory(held, s, control / 'held-before-directory-restoration.json')
+        receipt['snapshots']['heldBeforeRestoration'] = c.fact(control / 'held-before-directory-restoration.json')
+        source, copied = c.validate_rows(left['rows']), c.validate_rows(before['rows'])
+        c.require(source.keys() == copied.keys(), 'Prepared clone names differ before restoration')
+        for key in sorted(source):
+            original, clone = source[key], copied[key]
+            for field in c.ROW_FIELDS - c.CLONE_FIELDS:
+                if field == 'mtimeNs' and original['kind'] == clone['kind'] == 'directory':
+                    continue  # This field is restored below, then compared without exception.
+                c.require(original[field] == clone[field], 'Prepared clone differs beyond directory mtime: %s/%s:%s' % (*key, field))
+            if original['kind'] == 'directory' and original['mtimeNs'] != clone['mtimeNs']:
+                target = held / c.ROLE_PATHS[key[0]] / key[1]
+                receipt['plan'].append(dict(role=key[0], path=key[1], target=str(target), direct=original, heldBefore=clone))
+        receipt['plan'].sort(key=lambda row: (-len(Path(row['target']).parts), row['role'], row['path']))
+        c.save(receipt_path, receipt)
+        for planned in receipt['plan']:
+            target = Path(planned['target']); prior = observed(target)
+            c.require(all(value == planned['heldBefore'][field] for field, value in prior.items() if field != 'atimeNs'),
+                'Held directory became stale before metadata restoration')
+            operation = dict(role=planned['role'], path=planned['path'], target=str(target), before=prior,
+                requestedMtimeNs=planned['direct']['mtimeNs'], preservedAtimeNs=prior['atimeNs'], status='ATTEMPTED')
+            receipt['operations'].append(operation); c.save(receipt_path, receipt)
+            # Python 3.12 Windows lacks utime(follow_symlinks=False). These are
+            # freshly checked directories in the private, unlaunched held clone.
+            os.utime(target, ns=(prior['atimeNs'], planned['direct']['mtimeNs']))
+            operation.update(after=observed(target), status='RETURNED')
+            c.save(receipt_path, receipt)
+    except BaseException as error:
+        failure('plan-or-restore', error)
+    finally:
+        for name, root, filename in [('directAfter', direct, 'direct-after-directory-restoration.json'),
+                                      ('heldAfter', held, 'held-prepared.json')]:
+            try:
+                snapshot = c.double_inventory(root, s, control / filename)
+                receipt['snapshots'][name] = c.fact(control / filename)
+                if name == 'directAfter':
+                    c.require(snapshot['rows'] == frozen_direct['rows'], 'Frozen direct inputs changed during preparation')
+                    left = snapshot
+                else:
+                    right = snapshot
+            except BaseException as error:
+                failure(name, error)
+        if not receipt['errors']:
+            try:
+                c.map_inputs(left['rows'], right['rows'])  # Original complete strict comparison.
+            except BaseException as error:
+                failure('complete-input-association', error)
+        receipt['complete'] = not receipt['errors']
+        c.save(receipt_path, receipt)
+    c.require(receipt['complete'], 'Prepared directory restoration failed: ' + json.dumps(receipt['errors']))
+    return left, right
+
+
 def make_pair(root, label, host_name, host, inputs, module_bytes, guard, window, helpers):
     case = root / label
     case.mkdir()
@@ -75,6 +157,7 @@ def make_pair(root, label, host_name, host, inputs, module_bytes, guard, window,
     (module / 'Microsoft.PowerShell.Utility.psm1').write_bytes(module_bytes)
     (module / 'Microsoft.PowerShell.Utility.psd1').write_text("@{RootModule='Microsoft.PowerShell.Utility.psm1';ModuleVersion='99.0';GUID='b02389c7-c88e-40c9-a1c1-5c8217d2d593';FunctionsToExport=@('Write-Host','New-Item','Remove-Item','Invoke-RestMethod','Invoke-WebRequest','Expand-Archive','Set-Clipboard','Start-Process','Read-Host');CmdletsToExport='*';AliasesToExport=@()}\n", encoding='ascii')
     shutil.copy2(inputs / 'install-entry-input-probe.ps1', direct / 'control/input-probe.ps1')
+    frozen_direct = c.double_inventory(direct, s, control / 'direct-before-clone.json')
     shutil.copytree(direct, held, copy_function=shutil.copy2)
     source = control / 'source-free-body.ps1'
     source.write_bytes(source_body(label))
@@ -113,13 +196,13 @@ def make_pair(root, label, host_name, host, inputs, module_bytes, guard, window,
         afterSignal=str(held_control/'after.signal'),afterAck=str(held_control/'after.ack'))
     spec_path = held_control/'spec.json';c.save(spec_path,spec)
     held_env['R0016_COMPOSITION_SPEC']=str(spec_path)
-    left=c.double_inventory(direct,s,control/'direct-prepared.json')
-    right=c.double_inventory(held,s,control/'held-prepared.json')
+    left,right=finish_prepared_clone(direct,held,control,frozen_direct)
     association=dict(schema='r0016-source-free-entry-association.v1',directRoot=str(direct),heldRoot=str(held),
         source=c.fact(source),sourceInventory=s.profile_snapshot(source),directCommand=command,
         heldCommand=[host,'-NoProfile','-File',str(driver)],parameters=spec['parameters'],cwd=str(root),
         directEnvironment=env,heldEnvironment=held_env,entries=c.map_inputs(left['rows'],right['rows']))
     c.require(not Path(env['R0016_CONTROL_PROBE']).exists(),'Owned control probe is already occupied')
+    association['directoryPreparation']=c.fact(control/'directory-preparation.json')
     association['ownedControlProbeBefore']=dict(path=env['R0016_CONTROL_PROBE'],exists=False)
     c.save(control/'association.json',association)
     return dict(root=held,control=held_control,env=held_env,spec=spec,specPath=spec_path,
