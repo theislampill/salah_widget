@@ -1,0 +1,11 @@
+# R0016 Windows entry-driver candidate 3 — independent bounded review
+
+PASS for the two-file diagnostic correction and the next source-free native acquisition. This does not qualify the installer or the twenty-case product matrix.
+
+Root independently read the original-data report, complete two-file diff, surrounding receiver and held-driver flow, and the unchanged native workflow. All 202 frozen payloads match manifest 3276ed3207c014350e0eec77df29a0d32ae69acc57f666d7526d597bd93f026b. The only existing Python function changes are validate_probe and validate_terminal; all other function ASTs remain exact. Removing the explicit owned Utility import block reconstructs the held driver exactly. The import occurs after exact input/spec checks and before source guards, without Force. Its actual PowerShell loading behavior remains a native discriminator, not a static PASS claim.
+
+The original PS7 failure remains the missing independent startup handshake, despite naturally successful neutral/held exits. The original PS5.1 failure remains an unidentified exact file-fact mismatch. No path, case, hash or size normalization was introduced. Both sides and every differing field are written before the same equality rejection. Root independently exercised twelve inert acceptance/adverse cases, including path/size/hash discrepancies, extra/missing fields, malformed observations, a parent read error, a journal write error, and combined failure retention. All twelve passed. Both startup and invocation gates and every full inventory comparison remain mandatory.
+
+Diagnostic journal writes belong to the observer and stay outside the held product interval. New held preparation imports are explicit and retained in full lifecycle evidence. No directory/cache snapshot exclusion, effect waiver, timeout extension, installer change or product acceptance was admitted. Existing native route bounds and first-neutral stop remain unchanged. The next PS5.1 run may still fail and must be used to inspect the newly retained actual facts.
+
+Exact proposal: diagnostic49138B/c5f0d9cf62f4557ef8f838a08dc4c402f791076842b0c69e84bfb773020e458c; held8262B/742b42edd3828ec98dc25f717fdbacbd3e68ed877139c90e358d43f7c5142ca2. Original failed artifacts remain in the author packet. Native launch, artifact receiving and all46 acceptance are separate gates.

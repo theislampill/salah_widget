@@ -6,6 +6,9 @@
 #   powershell -ExecutionPolicy Bypass -File .\install.ps1
 #   powershell -ExecutionPolicy Bypass -File .\install.ps1 -PresetUrl "https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json"
 #   powershell -File .\install.ps1 -DryRun  # offline local discovery; no writes, network, clipboard or browser opens
+#   powershell -File .\install.ps1 -NoOpen  # normal setup and clipboard handoff; open browser pages manually
+# Preview creates no artifacts and asks no questions; remote release/path facts and unresolved choices stay unresolved.
+# NoOpen is normal mode: downloads, retained files and manual confirmations still occur.
 #
 # Environment overrides:
 #   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe
@@ -27,6 +30,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+# ValidateSet does not validate a parameter's environment-derived default.
+if ($InstallSource -notin @('ask', 'github', 'store')) {
+    throw 'InstallSource (SALAH_INSTALL_SOURCE) must be ask, github, or store.'
+}
 
 $ChromeTablissNgId = "dlaogejjiafeobgofajdlkkhjlignalk"
 $EdgeTablissNgId   = "mkaphhbkcccpgkfaifhhdfckagnkcmhm"
@@ -1640,12 +1648,16 @@ if ($DryRun) {
         Write-Host "Would prepare $($target.Browser) / $($target.ProfileName)."
         if (-not $target.HasTablissNG) {
             if ($InstallSource -eq "ask") { Write-Host "Install source unresolved: GitHub manual route or official store page." }
-            elseif ($InstallSource -eq "store") { Write-Host "Would open official store: $($target.Config.StoreUrl)" }
+            elseif ($InstallSource -eq "store") {
+                if ($NoOpen) { Write-Host "Would show official store URL for manual opening (NoOpen): $($target.Config.StoreUrl)" }
+                else { Write-Host "Would open official store: $($target.Config.StoreUrl)" }
+            }
             else { Write-Host "Would resolve/download GitHub release; release/version/path unresolved until execution." }
         }
         if ($PresetUrl) { Write-Host "Would stage configured preset and guide manual import; path unresolved until execution." }
         else { Write-Warn "No preset URL configured; preset import cannot be prepared." }
-        Write-Host "Would open the browser's manual installation/import pages and offer clipboard paths."
+        if ($NoOpen) { Write-Host "Would show the browser's manual installation/import URLs and offer clipboard paths (NoOpen); open those pages manually." }
+        else { Write-Host "Would open the browser's manual installation/import pages and offer clipboard paths." }
     }
     Write-Host "Preview targets: $eligibleCount eligible, $heldCount held, $refusedCount refused."
     Write-Warn "Importing the preset replaces your current TablissNG dashboard."

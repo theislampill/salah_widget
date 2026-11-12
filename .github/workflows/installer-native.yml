@@ -5,7 +5,7 @@ on:
     branches:
       - pro/r0013-explicit-discovery-knowledge-20261106
       - pro/r0015-explicit-artifact-transactions-20261106
-      - pro/r0016-effect-free-preview-20261111
+      # R0016 uses focused host workflows while its Windows qualification is pending.
     paths:
       - install.sh
       - install.ps1
@@ -73,8 +73,12 @@ jobs:
           if-no-files-found: error
           retention-days: 30
   windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ps51, ps7]
     runs-on: windows-2022
-    timeout-minutes: 60
+    timeout-minutes: 180
     env:
       POWERSHELL_TELEMETRY_OPTOUT: '1'
       DOTNET_CLI_TELEMETRY_OPTOUT: '1'
@@ -113,7 +117,7 @@ jobs:
             'pro/r0016-*' { 'r0016' }
             default { throw 'Unexpected installer branch' }
           }
-          python tools/qualification/installer_native.py --expected-os Windows --phase $phase --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+          python tools/qualification/installer_native.py --expected-os Windows --phase $phase --host '${{ matrix.host }}' --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
           exit $LASTEXITCODE
       - name: Package original native evidence without changing fixture names
         if: always()
@@ -125,7 +129,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
+          name: installer-Windows-${{ matrix.host }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/installer-evidence.tar.gz
           if-no-files-found: error
           retention-days: 30

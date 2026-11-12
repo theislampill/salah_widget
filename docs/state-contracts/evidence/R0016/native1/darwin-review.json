@@ -1,0 +1,733 @@
+{
+  "schema": "r0016-native1-darwin-independent-receiving.v1",
+  "reviewer": "/root/r0013_review",
+  "observedAt": "2026-11-11T14:24:45.601526+00:00",
+  "candidate": {
+    "commit": "3d091c3515c6258e4983ea71d2426be399881936",
+    "tree": "2e57dcac25c52f3fd968006bfd3ddacb5d7073bb",
+    "run": 43036427882
+  },
+  "artifact": {
+    "id": 13864365018,
+    "zipSha256": "0a18c79f0d3250ecc8f76718f3199732bb7d85d88e61fa1bc5c145191f49fef5",
+    "tarSha256": "25afeccf0d2392702cc9a166e2fb2a40f69002276312a83ac1c817b80a2fd5fe",
+    "members": 1415,
+    "topRegularFilesVerified": 28,
+    "sourceInputBindings": 32
+  },
+  "host": {
+    "system": "Darwin",
+    "platform": "macOS-15.8.2-arm64-arm-64bit-Mach-O",
+    "python": "3.15.2 (main, Oct 25 2026, 16:57:51) [Clang 17.0.0 (clang-1700.6.4.2)]",
+    "image_version": "20261104.0514.1",
+    "bash": "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin24)",
+    "uid": 501,
+    "gid": 20,
+    "groups": [
+      20,
+      12,
+      61,
+      79,
+      80,
+      81,
+      264,
+      701,
+      33,
+      98,
+      100,
+      204,
+      250,
+      395,
+      398,
+      399,
+      400
+    ],
+    "native_tools": {
+      "bash": "/bin/bash",
+      "python3": "/opt/homebrew/bin/python3",
+      "stat": "/usr/bin/stat",
+      "id": "/usr/bin/id",
+      "mktemp": "/usr/bin/mktemp",
+      "find": "/usr/bin/find",
+      "sort": "/usr/bin/sort",
+      "curl": "/usr/bin/curl",
+      "uname": "/usr/bin/uname",
+      "df": "/bin/df",
+      "sandbox-exec": "/usr/bin/sandbox-exec",
+      "log": "/usr/bin/log",
+      "dtruss": "/usr/bin/dtruss"
+    },
+    "parent_identities": [
+      {
+        "path": "/Users/runner/work/salah_widget/salah_widget",
+        "physical": "/Users/runner/work/salah_widget/salah_widget",
+        "device": 16777228,
+        "inode": 3504279,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/Users/runner/work/_temp",
+        "physical": "/Users/runner/work/_temp",
+        "device": 16777228,
+        "inode": 3504269,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "device": 16777228,
+        "inode": 28032,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o700",
+        "symlink": false
+      },
+      {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "device": 16777228,
+        "inode": 28032,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o700",
+        "symlink": false
+      },
+      {
+        "path": "/Users/runner",
+        "physical": "/Users/runner",
+        "device": 16777228,
+        "inode": 27937,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o750",
+        "symlink": false
+      }
+    ],
+    "fixture_parent": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+    "acquisition": {
+      "uname": {
+        "command": [
+          "/usr/bin/uname",
+          "-a"
+        ],
+        "exit": 0,
+        "stdout": "Darwin iad20-gt1017-b49a21e2-ceb9-4c74-98e7-a0395c8b37da-BE4234AD4E78.local 24.6.0 Darwin Kernel Version 24.6.0: Sun Oct 11 23:44:11 PDT 2026; root:xnu-11417.140.69.713.47~2/RELEASE_ARM64_VMAPPLE arm64\n",
+        "stderr": ""
+      },
+      "filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/Users/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem   512-blocks      Used Available Capacity  Mounted on\n/dev/disk2s5  670064640 536686968  96502408    85%    /System/Volumes/Data\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem   512-blocks      Used Available Capacity  Mounted on\n/dev/disk2s5  670064640 536686968  96502408    85%    /System/Volumes/Data\n",
+        "stderr": ""
+      },
+      "sw_vers": {
+        "command": [
+          "/usr/bin/sw_vers"
+        ],
+        "exit": 0,
+        "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t15.8.2\nBuildVersion:\t\t24H232\n",
+        "stderr": ""
+      },
+      "native_stat": {
+        "command": [
+          "/usr/bin/stat",
+          "-f",
+          "%d:%i:%u:%g:%Lp",
+          "/Users/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "16777228:3505267:501:20:755\n",
+        "stderr": ""
+      },
+      "filesystem_volume": {
+        "command": [
+          "/usr/sbin/diskutil",
+          "info",
+          "-plist",
+          "/dev/disk2s5"
+        ],
+        "exit": 0,
+        "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>APFSContainerFree</key>\n\t<integer>49409232896</integer>\n\t<key>APFSContainerReference</key>\n\t<string>disk2</string>\n\t<key>APFSContainerSize</key>\n\t<integer>343073095680</integer>\n\t<key>APFSPhysicalStores</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>APFSPhysicalStore</key>\n\t\t\t<string>disk0s2</string>\n\t\t</dict>\n\t</array>\n\t<key>APFSSnapshot</key>\n\t<false/>\n\t<key>APFSVolumeGroupID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Bootable</key>\n\t<true/>\n\t<key>BooterDeviceIdentifier</key>\n\t<string>disk2s2</string>\n\t<key>BusProtocol</key>\n\t<string></string>\n\t<key>CanBeMadeBootable</key>\n\t<false/>\n\t<key>CanBeMadeBootableRequiresDestroy</key>\n\t<false/>\n\t<key>CapacityInUse</key>\n\t<integer>274783727616</integer>\n\t<key>Content</key>\n\t<string>41504653-0000-11AA-AA11-00306543ECAC</string>\n\t<key>DeviceBlockSize</key>\n\t<integer>4096</integer>\n\t<key>DeviceIdentifier</key>\n\t<string>disk2s5</string>\n\t<key>DeviceNode</key>\n\t<string>/dev/disk2s5</string>\n\t<key>DeviceTreePath</key>\n\t<string>IODeviceTree:/arm-io/pcie@30000000/pci106b,1a00@6/AppleVirtIOStorageDevice</string>\n\t<key>DiskUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Ejectable</key>\n\t<false/>\n\t<key>EjectableMediaAutomaticUnderSoftwareControl</key>\n\t<false/>\n\t<key>EjectableOnly</key>\n\t<false/>\n\t<key>Encryption</key>\n\t<false/>\n\t<key>EncryptionThisVolumeProper</key>\n\t<false/>\n\t<key>FileVault</key>\n\t<false/>\n\t<key>FilesystemName</key>\n\t<string>APFS</string>\n\t<key>FilesystemType</key>\n\t<string>apfs</string>\n\t<key>FilesystemUserVisibleName</key>\n\t<string>APFS</string>\n\t<key>FreeSpace</key>\n\t<integer>0</integer>\n\t<key>Fusion</key>\n\t<false/>\n\t<key>GlobalPermissionsEnabled</key>\n\t<true/>\n\t<key>IOKitSize</key>\n\t<integer>343073095680</integer>\n\t<key>IORegistryEntryName</key>\n\t<string>Data</string>\n\t<key>Internal</key>\n\t<true/>\n\t<key>Locked</key>\n\t<false/>\n\t<key>MediaName</key>\n\t<string></string>\n\t<key>MediaType</key>\n\t<string></string>\n\t<key>MountPoint</key>\n\t<string>/System/Volumes/Data</string>\n\t<key>OSInternalMedia</key>\n\t<false/>\n\t<key>ParentWholeDisk</key>\n\t<string>disk2</string>\n\t<key>PartitionMapPartition</key>\n\t<false/>\n\t<key>RAIDMaster</key>\n\t<false/>\n\t<key>RAIDSlice</key>\n\t<false/>\n\t<key>RecoveryDeviceIdentifier</key>\n\t<string>disk2s3</string>\n\t<key>Removable</key>\n\t<false/>\n\t<key>RemovableMedia</key>\n\t<false/>\n\t<key>RemovableMediaOrExternalDevice</key>\n\t<false/>\n\t<key>SMARTDeviceSpecificKeysMayVaryNotGuaranteed</key>\n\t<dict/>\n\t<key>SMARTStatus</key>\n\t<string>Not Supported</string>\n\t<key>Sealed</key>\n\t<string>No</string>\n\t<key>Size</key>\n\t<integer>343073095680</integer>\n\t<key>SolidState</key>\n\t<true/>\n\t<key>SupportsGlobalPermissionsDisable</key>\n\t<true/>\n\t<key>SystemImage</key>\n\t<false/>\n\t<key>TotalSize</key>\n\t<integer>343073095680</integer>\n\t<key>VolumeAllocationBlockSize</key>\n\t<integer>4096</integer>\n\t<key>VolumeName</key>\n\t<string>Data</string>\n\t<key>VolumeSize</key>\n\t<integer>0</integer>\n\t<key>VolumeUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>WholeDisk</key>\n\t<false/>\n\t<key>Writable</key>\n\t<true/>\n\t<key>WritableMedia</key>\n\t<true/>\n\t<key>WritableVolume</key>\n\t<true/>\n</dict>\n</plist>\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_volume": {
+        "command": [
+          "/usr/sbin/diskutil",
+          "info",
+          "-plist",
+          "/dev/disk2s5"
+        ],
+        "exit": 0,
+        "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>APFSContainerFree</key>\n\t<integer>49409028096</integer>\n\t<key>APFSContainerReference</key>\n\t<string>disk2</string>\n\t<key>APFSContainerSize</key>\n\t<integer>343073095680</integer>\n\t<key>APFSPhysicalStores</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>APFSPhysicalStore</key>\n\t\t\t<string>disk0s2</string>\n\t\t</dict>\n\t</array>\n\t<key>APFSSnapshot</key>\n\t<false/>\n\t<key>APFSVolumeGroupID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Bootable</key>\n\t<true/>\n\t<key>BooterDeviceIdentifier</key>\n\t<string>disk2s2</string>\n\t<key>BusProtocol</key>\n\t<string></string>\n\t<key>CanBeMadeBootable</key>\n\t<false/>\n\t<key>CanBeMadeBootableRequiresDestroy</key>\n\t<false/>\n\t<key>CapacityInUse</key>\n\t<integer>274783932416</integer>\n\t<key>Content</key>\n\t<string>41504653-0000-11AA-AA11-00306543ECAC</string>\n\t<key>DeviceBlockSize</key>\n\t<integer>4096</integer>\n\t<key>DeviceIdentifier</key>\n\t<string>disk2s5</string>\n\t<key>DeviceNode</key>\n\t<string>/dev/disk2s5</string>\n\t<key>DeviceTreePath</key>\n\t<string>IODeviceTree:/arm-io/pcie@30000000/pci106b,1a00@6/AppleVirtIOStorageDevice</string>\n\t<key>DiskUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Ejectable</key>\n\t<false/>\n\t<key>EjectableMediaAutomaticUnderSoftwareControl</key>\n\t<false/>\n\t<key>EjectableOnly</key>\n\t<false/>\n\t<key>Encryption</key>\n\t<false/>\n\t<key>EncryptionThisVolumeProper</key>\n\t<false/>\n\t<key>FileVault</key>\n\t<false/>\n\t<key>FilesystemName</key>\n\t<string>APFS</string>\n\t<key>FilesystemType</key>\n\t<string>apfs</string>\n\t<key>FilesystemUserVisibleName</key>\n\t<string>APFS</string>\n\t<key>FreeSpace</key>\n\t<integer>0</integer>\n\t<key>Fusion</key>\n\t<false/>\n\t<key>GlobalPermissionsEnabled</key>\n\t<true/>\n\t<key>IOKitSize</key>\n\t<integer>343073095680</integer>\n\t<key>IORegistryEntryName</key>\n\t<string>Data</string>\n\t<key>Internal</key>\n\t<true/>\n\t<key>Locked</key>\n\t<false/>\n\t<key>MediaName</key>\n\t<string></string>\n\t<key>MediaType</key>\n\t<string></string>\n\t<key>MountPoint</key>\n\t<string>/System/Volumes/Data</string>\n\t<key>OSInternalMedia</key>\n\t<false/>\n\t<key>ParentWholeDisk</key>\n\t<string>disk2</string>\n\t<key>PartitionMapPartition</key>\n\t<false/>\n\t<key>RAIDMaster</key>\n\t<false/>\n\t<key>RAIDSlice</key>\n\t<false/>\n\t<key>RecoveryDeviceIdentifier</key>\n\t<string>disk2s3</string>\n\t<key>Removable</key>\n\t<false/>\n\t<key>RemovableMedia</key>\n\t<false/>\n\t<key>RemovableMediaOrExternalDevice</key>\n\t<false/>\n\t<key>SMARTDeviceSpecificKeysMayVaryNotGuaranteed</key>\n\t<dict/>\n\t<key>SMARTStatus</key>\n\t<string>Not Supported</string>\n\t<key>Sealed</key>\n\t<string>No</string>\n\t<key>Size</key>\n\t<integer>343073095680</integer>\n\t<key>SolidState</key>\n\t<true/>\n\t<key>SupportsGlobalPermissionsDisable</key>\n\t<true/>\n\t<key>SystemImage</key>\n\t<false/>\n\t<key>TotalSize</key>\n\t<integer>343073095680</integer>\n\t<key>VolumeAllocationBlockSize</key>\n\t<integer>4096</integer>\n\t<key>VolumeName</key>\n\t<string>Data</string>\n\t<key>VolumeSize</key>\n\t<integer>0</integer>\n\t<key>VolumeUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>WholeDisk</key>\n\t<false/>\n\t<key>Writable</key>\n\t<true/>\n\t<key>WritableMedia</key>\n\t<true/>\n\t<key>WritableVolume</key>\n\t<true/>\n</dict>\n</plist>\n",
+        "stderr": ""
+      }
+    }
+  },
+  "disposition": "APPLE_TERMINAL_CAPABILITY_ACQUISITION_BLOCKED; ORIGINAL_FAIL_RETAINED",
+  "preview": {
+    "exit": 2,
+    "classification": "BOOTSTRAP_BLOCKED",
+    "bootstrapRows": 1,
+    "productRowsExecuted": 0,
+    "qualifiedPreviewRows": 0,
+    "qualifiedMutantRows": 0,
+    "sourceSha256": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c",
+    "testSha256": "5a3a39906f0ff40d959cce5f985a368f01eaf92cb4a3cecdd8f39a1941327760",
+    "error": "Command '['/usr/bin/sandbox-exec', '-f', '/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-9587mnaa/containment-control/terminal-probe/sandbox.sb', '/opt/homebrew/opt/python@3.15/bin/python3.15', '-c', '\\nimport json,os,pty\\npid,fd=pty.fork()\\nif pid==0:\\n try:\\n  terminal=os.open(\"/dev/tty\",os.O_RDWR)\\n  os.write(terminal,b\"native terminal control\\\\n\")\\n  os.close(terminal)\\n  os._exit(0)\\n except OSError:\\n  os._exit(77)\\ndone,status=os.waitpid(pid,0)\\nos.close(fd)\\ncode=os.waitstatus_to_exitcode(status)\\nprint(json.dumps({\"controllingTerminalAllowed\":code==0,\"childExit\":code}))\\n']' timed out after 30 seconds"
+  },
+  "kernelControl": {
+    "observation": {
+      "processId": 19405,
+      "outsideWrites": [
+        {
+          "name": "new-file",
+          "denied": true,
+          "errno": 1
+        },
+        {
+          "name": "sentinel",
+          "denied": true,
+          "errno": 1
+        }
+      ],
+      "transports": [
+        {
+          "transport": "TCP",
+          "denied": true,
+          "errno": 1
+        },
+        {
+          "transport": "UDP",
+          "denied": true,
+          "errno": 1
+        }
+      ],
+      "insideWriteAllowed": true
+    },
+    "nativeDenial": {
+      "status": "OBSERVED",
+      "processId": 19405,
+      "matches": [
+        {
+          "timestamp": "2026-11-11 14:15:36.212281+0000",
+          "processID": 0,
+          "processImagePath": "/kernel",
+          "eventMessage": "1 duplicate report for Sandbox: Python(19405) deny(1) network-outbound remote:*:9"
+        }
+      ],
+      "scope": "targeted native denial readback; not a complete process-tree syscall trace",
+      "hostControlRoot": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-9587mnaa/containment-control/kernel-probe/native-log-control",
+      "command": [
+        "/usr/bin/log",
+        "show",
+        "--style",
+        "json",
+        "--last",
+        "10s",
+        "--predicate",
+        "subsystem == \"com.apple.sandbox.reporting\" OR process == \"sandboxd\" OR (eventMessage CONTAINS[c] \"Sandbox:\" AND eventMessage CONTAINS[c] \"network\")"
+      ],
+      "reason": "No attributable network-denial report found within the bounded native readback",
+      "attempts": [
+        {
+          "exit": 0,
+          "stdoutBytes": 3094,
+          "stderr": ""
+        },
+        {
+          "exit": 0,
+          "stdoutBytes": 10778,
+          "stderr": ""
+        }
+      ]
+    },
+    "profileSha256": "1ab91be1726c8c9f9b150c31fbbf58574093be464e598e2ca0752321eac29bc4",
+    "profileBytes": 402,
+    "scope": "Actual preliminary owned-write positive/outside-write+TCP/UDP denial observations. Native denial log is targeted PID attribution, not a complete process-tree syscall trace. Its retained reason text from the first retry is stale despite the second retry recorded OBSERVED/match; actual match is inspected directly."
+  },
+  "terminalControl": {
+    "known": "sandbox-exec invoked the exact Python3.15.2 PTY snippet with this profile and hit30s timeout. The terminal subtree retains only its402-byte profile.",
+    "unknown": [
+      "Whether pty.fork returned in parent or child.",
+      "Whether /dev/tty open/write/close was reached or blocked.",
+      "Whether parent waitpid blocked on a live child.",
+      "Any partial timeout stdout/stderr; absence of files does not mean no bytes were produced.",
+      "Precise blocked call, native denial or child termination status."
+    ],
+    "profileText": "(version 1)\n(allow default)\n(deny network*)\n(deny file-write*)\n(allow file-write* (subpath \"/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-9587mnaa\"))\n(allow file-write-data (literal \"/dev/null\") (literal \"/dev/tty\")\n  (literal \"/dev/ptmx\") (regex #\"^/dev/ttys[0-9]+$\"))\n(deny process-exec (literal \"/usr/bin/open\") (literal \"/usr/bin/pbcopy\")\n  (literal \"/usr/bin/osascript\"))\n",
+    "retainedMembers": [
+      "installer-evidence/install-preview-fixture/containment-control/terminal-probe/sandbox.sb"
+    ]
+  },
+  "inheritedCommands": {
+    "aggregatePassed": 8,
+    "scope": "Original command exits/top receipt bindings, distinct from new preview43 acquisition; no broad causal replay."
+  },
+  "findings": {
+    "Critical": [],
+    "Important": [
+      {
+        "id": "R16-NATIVE1-DARWIN-ACQ-01",
+        "kind": "fixture terminal capability/acquisition failure",
+        "finding": "Native Apple preview bootstrap did not complete its terminal capability probe. The original wrapper saves stdout/stderr only after subprocess.run returns; TimeoutExpired bypassed those writes, so the retained record cannot identify the blocked call.",
+        "effect": "No helper, whole-entry, normal/NoOpen or mutation row from the new43-case preview suite is qualified. No installer product regression is established.",
+        "sourceAnchors": [
+          "tests/install-preview.py:331-365 sandbox_run capture path",
+          "tests/install-preview.py:508-529 controlled terminal probe",
+          "tests/install-preview.py:812-819 bootstrap gating"
+        ]
+      }
+    ],
+    "Minor": []
+  },
+  "focusedDiagnosticRecommendations": [
+    {
+      "step": 1,
+      "purpose": "Acquire the actual blocked phase without changing product or admission policy",
+      "action": "Use the same exact host executable, sandbox profile, environment and owned fixture. Open raw stdout/stderr capture files before launch and preserve every terminal/timeout/OSError path before parsing. Keep the30-second subject budget. Record launch PID, elapsed time, captured bytes, terminal state and bounded process-tree termination/drain outcomes.",
+      "scope": "No successful JSON receipt is required to retain failure evidence; missing output is not zero output."
+    },
+    {
+      "step": 2,
+      "purpose": "Locate progress on both sides of the fork",
+      "action": "Instrument only the small controlled terminal snippet with unbuffered phase records to a dedicated retained channel: parent-start/before-pty-fork, fork-return with actual PID and child PID, child-start, before/after /dev/tty open, write and close, parent before/after waitpid and final exit. Capture actual errno/exception and process identity at each boundary.",
+      "scope": "Use phase observations to distinguish allocation/fork, child attachment/I/O and parent waiting. Do not name a blocked call from the current timeout alone."
+    },
+    {
+      "step": 3,
+      "purpose": "Pair a useful healthy host control",
+      "action": "Run the same bounded owned-only terminal snippet with the same Python/environment outside that sandbox profile and require actual child terminal I/O, observed parent wait and successful exit. Keep all writes limited to the owned fixture/allocated PTY; this is a diagnostic control and never an unsandboxed installer.",
+      "scope": "A differential can establish profile interaction versus a general host/probe issue; it does not identify a particular denied operation without phase/native-error evidence."
+    },
+    {
+      "step": 4,
+      "purpose": "Use a smaller followup only if the phase result warrants it",
+      "action": "Compare a parent-preallocated owned PTY passed into the same sandboxed controlled child with allocation inside the sandbox. Require actual child-side controlling-terminal attachment/readiness and /dev/tty I/O plus paired source/profile binding. Preserve original denied outside-write/network controls for any proposed eventual adapter.",
+      "scope": "Preallocation is a diagnostic discriminator, not automatic proof that the original inside-allocation route works and not permission to relax policy."
+    }
+  ],
+  "prohibitedInferences": [
+    "Do not infer pty.fork itself is the cause.",
+    "Do not weaken the sandbox profile, broaden product admission or raise the timeout merely to obtain PASS.",
+    "Do not convert transportAttempts=null, missing logs or timeout capture absence into zero attempted effects.",
+    "Do not credit Linux or inherited Apple suites as new Apple preview43 qualification."
+  ],
+  "checks": [
+    {
+      "name": "original top file binding: install-bash.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-bash.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-bash.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-builder.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-builder.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-builder.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-detectors.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-detectors.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-detectors.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery-mutations.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery-mutations.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery-mutations.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-discovery.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-entry-bash.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-entry-bash.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-entry-bash.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-original-mutations.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-original-mutations.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-original-mutations.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-preview.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-preview.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-preview.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-staging-native.json",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-staging-native.stderr.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: install-staging-native.stdout.txt",
+      "passed": true
+    },
+    {
+      "name": "original top file binding: result.json",
+      "passed": true
+    },
+    {
+      "name": "raw preview stdout/retained/top receipt agree",
+      "passed": true
+    },
+    {
+      "name": "sole failed bootstrap and no product rows",
+      "passed": true
+    },
+    {
+      "name": "actual terminal probe deadline failure",
+      "passed": true
+    },
+    {
+      "name": "collector preview exit2 and overall FAIL",
+      "passed": true
+    },
+    {
+      "name": "eight inherited commands retain own PASS",
+      "passed": true
+    },
+    {
+      "name": "actual kernel allowed-write positive",
+      "passed": true
+    },
+    {
+      "name": "actual two outside writes denied",
+      "passed": true
+    },
+    {
+      "name": "actual TCP and UDP denied",
+      "passed": true
+    },
+    {
+      "name": "exact native denial PID observed",
+      "passed": true
+    },
+    {
+      "name": "same exact402-byte sandbox profile",
+      "passed": true
+    },
+    {
+      "name": "terminal phase contains profile only; streams not retained",
+      "passed": true
+    },
+    {
+      "name": "retained source is exact published Bash",
+      "passed": true
+    },
+    {
+      "name": "actual harness bytes bound",
+      "passed": true
+    },
+    {
+      "name": "actual native host identity",
+      "passed": true
+    },
+    {
+      "name": "archive count matches original receiving",
+      "passed": true
+    },
+    {
+      "name": "initial top receiver has only expected qualification gaps",
+      "passed": true
+    },
+    {
+      "name": "all32 Git source/fixture bindings valid",
+      "passed": true
+    },
+    {
+      "name": "root artifact/run/head association bound",
+      "passed": true
+    }
+  ],
+  "allReceivingChecksPassed": true,
+  "bindings": [
+    {
+      "member": "installer-evidence/install-bash.json",
+      "bytes": 2355,
+      "sha256": "8fd3a085fe32d2b1075be5f01c1dba20afb04f2fb1bd157dac6a51f2f9987986"
+    },
+    {
+      "member": "installer-evidence/install-bash.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-bash.stdout.txt",
+      "bytes": 2355,
+      "sha256": "8fd3a085fe32d2b1075be5f01c1dba20afb04f2fb1bd157dac6a51f2f9987986"
+    },
+    {
+      "member": "installer-evidence/install-builder.json",
+      "bytes": 623,
+      "sha256": "a7cc9c114f06d9fccc5260eae50d5ebf79e14f614a8f012a6365ca672300e28d"
+    },
+    {
+      "member": "installer-evidence/install-builder.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-builder.stdout.txt",
+      "bytes": 623,
+      "sha256": "a7cc9c114f06d9fccc5260eae50d5ebf79e14f614a8f012a6365ca672300e28d"
+    },
+    {
+      "member": "installer-evidence/install-detectors.json",
+      "bytes": 9870,
+      "sha256": "b050af59e273831e5019ad098f8dd34f0920461067d07302f8491a3f08651fa0"
+    },
+    {
+      "member": "installer-evidence/install-detectors.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-detectors.stdout.txt",
+      "bytes": 9670,
+      "sha256": "a73456bfe52991cf9b36dda11b8c0368de9b94179a4768eb6fe7fc1e3e927ebb"
+    },
+    {
+      "member": "installer-evidence/install-discovery-mutations.json",
+      "bytes": 10208,
+      "sha256": "846d55501e2a25661f2e8083f0b207e5d2bc57bf4cbfa43ebd5c0e4b5951ed05"
+    },
+    {
+      "member": "installer-evidence/install-discovery-mutations.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-discovery-mutations.stdout.txt",
+      "bytes": 10208,
+      "sha256": "846d55501e2a25661f2e8083f0b207e5d2bc57bf4cbfa43ebd5c0e4b5951ed05"
+    },
+    {
+      "member": "installer-evidence/install-discovery.json",
+      "bytes": 68264,
+      "sha256": "8cd9c2fccccc0eda639150d57c7262f245f6ab52b618844bcf5da8ba005029fc"
+    },
+    {
+      "member": "installer-evidence/install-discovery.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-discovery.stdout.txt",
+      "bytes": 68258,
+      "sha256": "938afecf84fa208cc2a6a70609020a19dab5b4368feda77ac7bb97e267fc4c5b"
+    },
+    {
+      "member": "installer-evidence/install-entry-bash.json",
+      "bytes": 63980,
+      "sha256": "64218fa74259b549f9fa414733f2871f04e07d133b5e550af1beb60a90f777da"
+    },
+    {
+      "member": "installer-evidence/install-entry-bash.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-entry-bash.stdout.txt",
+      "bytes": 63980,
+      "sha256": "64218fa74259b549f9fa414733f2871f04e07d133b5e550af1beb60a90f777da"
+    },
+    {
+      "member": "installer-evidence/install-original-mutations.json",
+      "bytes": 5729,
+      "sha256": "5bfc4c5cb3713184d314e1157d887f3552361329cbe591adf98915ef2383b8e9"
+    },
+    {
+      "member": "installer-evidence/install-original-mutations.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-original-mutations.stdout.txt",
+      "bytes": 5729,
+      "sha256": "5bfc4c5cb3713184d314e1157d887f3552361329cbe591adf98915ef2383b8e9"
+    },
+    {
+      "member": "installer-evidence/install-preview.json",
+      "bytes": 3526,
+      "sha256": "b715f018318f4dda50336afdcb548f472fcfb85fb6f9ae412fe6112a3f541ab1"
+    },
+    {
+      "member": "installer-evidence/install-preview.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-preview.stdout.txt",
+      "bytes": 3526,
+      "sha256": "b715f018318f4dda50336afdcb548f472fcfb85fb6f9ae412fe6112a3f541ab1"
+    },
+    {
+      "member": "installer-evidence/install-staging-native.json",
+      "bytes": 14932,
+      "sha256": "1e1991419dd5d2dc92ab487ce5e84ad40cf300984bf01c1de732ce80fa3fcfbe"
+    },
+    {
+      "member": "installer-evidence/install-staging-native.stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "member": "installer-evidence/install-staging-native.stdout.txt",
+      "bytes": 14412,
+      "sha256": "6d36c0a7bc9f10d6cb6d13122b69950fab541c3feed465966ea7cd826519c0d9"
+    },
+    {
+      "member": "installer-evidence/result.json",
+      "bytes": 21623,
+      "sha256": "286436b62e52af36994aaff79d81f7b991872f5db9698671f5c8daf93945e098"
+    },
+    {
+      "member": "installer-evidence/result.json",
+      "bytes": 21623,
+      "sha256": "286436b62e52af36994aaff79d81f7b991872f5db9698671f5c8daf93945e098"
+    },
+    {
+      "member": "installer-evidence/install-preview.json",
+      "bytes": 3526,
+      "sha256": "b715f018318f4dda50336afdcb548f472fcfb85fb6f9ae412fe6112a3f541ab1"
+    },
+    {
+      "member": "installer-evidence/install-preview.stdout.txt",
+      "bytes": 3526,
+      "sha256": "b715f018318f4dda50336afdcb548f472fcfb85fb6f9ae412fe6112a3f541ab1"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/results.json",
+      "bytes": 3526,
+      "sha256": "b715f018318f4dda50336afdcb548f472fcfb85fb6f9ae412fe6112a3f541ab1"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/kernel-probe/stdout.txt",
+      "bytes": 284,
+      "sha256": "3da9a05d8ec76eb17230de35ae2eb65cc24394329c4b6e98580a72cf34c22314"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/kernel-probe/native-denial-readback.json",
+      "bytes": 1097,
+      "sha256": "7d97046f31abf06c55503d6463f2959fe7975073dc443ee3fce99d4d28035104"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/terminal-probe/sandbox.sb",
+      "bytes": 402,
+      "sha256": "1ab91be1726c8c9f9b150c31fbbf58574093be464e598e2ca0752321eac29bc4"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/kernel-probe/sandbox.sb",
+      "bytes": 402,
+      "sha256": "1ab91be1726c8c9f9b150c31fbbf58574093be464e598e2ca0752321eac29bc4"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/host-acquisition/acquisition.json",
+      "bytes": 1210,
+      "sha256": "189f27c220cce2d0e662b7a696938a61037d3dab652b7f026393b84140fdd485"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/containment-control/kernel-probe/allowed-write",
+      "bytes": 21,
+      "sha256": "a06fd7ab3b64ebc426252eaba51df639e78d8713b6bba04997c78b9a6eedd86e"
+    },
+    {
+      "member": "installer-evidence/install-preview-fixture/source.sh",
+      "bytes": 41623,
+      "sha256": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c"
+    }
+  ],
+  "inputReceipts": [
+    {
+      "path": "Darwin-top-receiving.json",
+      "sha256": "1d21f1c1f92d32cd00eb9d307a97ee0115ad3838010847b1781e737a8b5c3f1d"
+    },
+    {
+      "path": "recovery/r0016-native-run1/Darwin-receiving.json",
+      "sha256": "c6649df39bddcdcac282a6ac41a438c4c8d9bc3f211956141b9bf65983c6c1c4"
+    }
+  ],
+  "nativeOrFixtureExecutedByReviewer": false,
+  "archiveFixturesExtracted": false,
+  "sourceSharedRemoteMutation": false,
+  "whole46Complete": false
+}

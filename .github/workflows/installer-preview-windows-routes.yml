@@ -1,0 +1,77 @@
+name: R0016 Windows unchanged eight caller routes
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - .github/workflows/installer-preview-windows-routes.yml
+      - tools/qualification/installer_preview_windows_routes.py
+      - tools/qualification/installer_preview_windows_carrier.py
+      - tools/qualification/installer_preview_host_probe.py
+      - tests/install-powershell-routes.ps1
+      - install.ps1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-windows-routes-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ps51, ps766]
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qualification/installer_preview_windows_routes.py
+            /tools/qualification/installer_preview_windows_carrier.py
+            /tools/qualification/installer_preview_host_probe.py
+            /tests/install-powershell-routes.ps1
+            /install.ps1
+      - name: Select the fresh owned route parent before selected PowerShell starts
+        shell: cmd
+        run: |
+          python -c "import os,pathlib,struct; assert struct.calcsize('P')==8,'64-bit Python required'; parent=pathlib.Path(os.environ['USERPROFILE']).resolve(strict=True); assert parent.is_dir() and parent.drive.lower()=='c:','Native system-volume profile required'; assert not any(c in str(parent) for c in (chr(13),chr(10))),'Malformed parent'; evidence=parent/'installer-eight-routes-evidence.tar.gz'; assert not evidence.exists(),'Evidence already exists'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('R0016_ROUTES_PARENT='+str(parent)+'\nR0016_ROUTES_EVIDENCE='+str(evidence)+'\n'); stream.close()"
+          exit /b %ERRORLEVEL%
+      - name: Acquire exact PowerShell 7 archive with Python
+        if: matrix.host == 'ps766'
+        shell: cmd
+        run: |
+          python -c "import hashlib,os,pathlib,shutil,urllib.request,zipfile; parent=pathlib.Path(os.environ['RUNNER_TEMP']); archive=parent/'PowerShell-7.6.6-win-x64.zip'; response=urllib.request.urlopen('https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip',timeout=60); target=archive.open('xb'); shutil.copyfileobj(response,target); target.close(); response.close(); assert hashlib.sha256(archive.read_bytes()).hexdigest()=='02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860','PowerShell archive digest mismatch'; runtime=parent/'r0016-routes-pwsh7'; runtime.mkdir(exist_ok=False); zipfile.ZipFile(archive).extractall(runtime); assert (runtime/'pwsh.exe').is_file(),'PowerShell executable missing'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('R0016_ROUTES_PS7='+str(runtime/'pwsh.exe')+'\n'); stream.close()"
+          exit /b %ERRORLEVEL%
+      - name: Acquire unchanged eight actual-caller controls
+        shell: cmd
+        run: |
+          if "${{ matrix.host }}"=="ps51" (set "R0016_ROUTES_PS=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe") else (set "R0016_ROUTES_PS=%R0016_ROUTES_PS7%")
+          python -B tools/qualification/installer_preview_windows_routes.py --host ${{ matrix.host }} --powershell "%R0016_ROUTES_PS%" --output-parent "%R0016_ROUTES_PARENT%" --source-commit ${{ github.sha }}
+          exit /b %ERRORLEVEL%
+      - name: Preserve the complete owned route root without following links
+        if: always()
+        shell: cmd
+        run: |
+          python -B tools/qualification/installer_preview_windows_routes.py --archive-only --output-parent "%R0016_ROUTES_PARENT%" --archive "%R0016_ROUTES_EVIDENCE%"
+          exit /b %ERRORLEVEL%
+      - name: Retain original native route evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-eight-routes-Windows-${{ matrix.host }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.R0016_ROUTES_EVIDENCE }}
+          if-no-files-found: error
+          retention-days: 30

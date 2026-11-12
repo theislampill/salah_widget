@@ -113,14 +113,17 @@ def main():
     parser.add_argument("--expected-os", choices=("Linux", "Darwin", "Windows"), required=True)
     parser.add_argument("--phase", choices=("r0013", "r0015", "r0016"), required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--host", action="append", choices=("ps51", "ps7"), help="Select independent Windows host qualification; default both")
     args = parser.parse_args()
+    if args.host and (args.expected_os != "Windows" or len(set(args.host)) != len(args.host)):
+        parser.error("Host selection requires Windows and distinct hosts")
     root = Path(__file__).resolve().parents[2]
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=False)
     env = dict(os.environ)
     env.update(POWERSHELL_TELEMETRY_OPTOUT="1", DOTNET_CLI_TELEMETRY_OPTOUT="1", POWERSHELL_UPDATECHECK="Off")
     report = {"schema": "installer-native-v1", "status": "INCOMPLETE",
-              "phase": args.phase, "host": {"system": platform.system(),
+              "phase": args.phase, "requested_hosts": args.host or (["ps51", "ps7"] if args.expected_os == "Windows" else []), "host": {"system": platform.system(),
               "platform": platform.platform(), "python": sys.version,
               "image_version": env.get("ImageVersion", env.get("IMAGEVERSION"))}, "commands": [], "diagnostics": []}
     report["commit"] = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
@@ -218,6 +221,9 @@ def main():
         run("install-builder", ["node", str(root / "tests/install-builder.cjs")])
         if args.phase in ("r0015", "r0016"):
             run("install-staging-native", [sys.executable, str(root / "tests/install-staging-native.py"), str(root / "install.sh")])
+            run("install-staging-parent", [sys.executable, str(root / "tests/install-staging-parent.py"), str(root / "install.sh")])
+        if args.expected_os == "Darwin" and args.phase == "r0016":
+            run("install-staging-readonly", [sys.executable, str(root / "tests/install-staging-readonly.py"), str(root / "install.sh")])
         if args.expected_os == "Linux" and args.phase in ("r0015", "r0016"):
             run("install-linux-owner", [sys.executable, str(root / "tests/install-linux-owner.py"), str(root / "install.sh")])
         if args.phase == "r0016":
@@ -225,6 +231,8 @@ def main():
     else:
         hosts = [("ps51", str(Path(env["SYSTEMROOT"]) / "System32/WindowsPowerShell/v1.0/powershell.exe")),
                  ("ps7", env["INSTALL_TEST_PS7"])]
+        if args.host:
+            hosts = [(name, executable) for name, executable in hosts if name in args.host]
         for name, executable in hosts:
             version = subprocess.check_output([executable, "-NoProfile", "-Command", "$PSVersionTable.PSVersion.ToString()"], env=env, text=True).strip()
             report["host"][name] = {"executable": executable, "version": version}
@@ -239,7 +247,7 @@ def main():
                 files.append("install-compiler-custody.ps1")
                 files.append("install-volume-policy.ps1")
             if args.phase == "r0016":
-                files.append("install-preview.ps1")
+                files.extend(["install-powershell-routes.ps1", "install-preview.ps1"])
             for test in files:
                 command = [executable, "-NoProfile", "-File", str(root / "tests" / test), "-SourceFile", str(root / "install.ps1")]
                 if test == "install-powershell-transactions.ps1":
@@ -248,12 +256,28 @@ def main():
                     command.extend(["-OutputRoot", tempfile.gettempdir()])
                 if test == "install-compiler-custody.ps1":
                     command.extend(["-FixtureParent", tempfile.gettempdir()])
+                if test == "install-powershell-routes.ps1":
+                    command.append("-RoutesOnly")
+                if test == "install-preview.ps1":
+                    command.extend(["-FixtureLibrary", str(root / "tests/install-preview-acquire-timed.ps1"),
+                                    "-OutputRoot", tempfile.gettempdir(), "-Suite", "All"])
                 # Fourteen cold native compiler children each have a bounded90s
                 # acquisition budget. Preserve every terminal/raw observation.
                 timeout = {"install-compiler-custody.ps1": 1500, "install-host-bootstrap.ps1": 360,
-                           "install-volume-policy.ps1": 180}.get(test, 240)
+                           "install-volume-policy.ps1": 180, "install-preview.ps1": 4200}.get(test, 240)
                 run(name + "-" + test[:-4], command, timeout=timeout,
                     diagnostic=test == "install-host-bootstrap.ps1")
+            if args.phase == "r0016":
+                # Consume the actual same-host receipt and retained mutant bytes.
+                # Nine normal/NoOpen carriers keep the unchanged maintained entry
+                # harness; complete preview windows use the separate coverage entry.
+                companion_root = str(Path(tempfile.gettempdir()) / ("r0016-positive-" + name + "-" + uuid.uuid4().hex))
+                run(name + "-preview-native-controls", [sys.executable, str(root / "tests/install-preview-native-controls.py"),
+                    "--input", str(out / (name + "-install-preview.json")), "--source", str(root / "install.ps1"),
+                    "--preview-harness", str(root / "tests/install-preview.ps1"),
+                    "--entry-harness", str(root / "tests/install-entry-native.py"),
+                    "--preset", str(root / "presets/salah-widget.tablissng.json"),
+                    "--host", name, "--output-root", companion_root, "--entry-budget", "300"], timeout=3300)
             run(name + "-discovery-mutations", [sys.executable, str(root / "tests/install-discovery-mutations.py"), str(root / "install.ps1"), executable])
             if args.phase in ("r0015", "r0016"):
                 volume_root = str(Path(tempfile.gettempdir()) / ("r0015-volume-mutants-" + name + "-" + uuid.uuid4().hex))
@@ -275,12 +299,16 @@ def main():
                         "-Case", "native long-path refusal preserves handed-off predecessor"], timeout=240)
                 run(name + "-first-call-observation", [executable, "-NoProfile", "-NonInteractive", "-File", str(root / "tests/install-staging-first-call.ps1"),
                     "-SourceFile", str(root / "install.ps1"), "-OutputRoot", tempfile.gettempdir()], timeout=360, diagnostic=True)
-        entry_command = [sys.executable, str(root / "tests/install-entry-native.py"), str(root / "install.ps1")]
+        entry_test = "install-entry-native-coverage.py" if args.phase == "r0016" else "install-entry-native.py"
+        entry_command = [sys.executable, str(root / "tests" / entry_test), str(root / "install.ps1")]
+        for name, _ in hosts:
+            entry_command.extend(["--host", name])
         if args.phase == "r0015":
             # The changed lease and fixture ancestry affect normal consumers.
             # R0016 owns the complete offline preview replay on this stack.
             entry_command.extend(["--scenario", "positive", "--scenario", "no-open"])
-        run("install-entry-native", entry_command, timeout=600)
+        run("install-entry-native-coverage" if args.phase == "r0016" else "install-entry-native",
+            entry_command, timeout=1800 if args.phase == "r0016" else 600)
     qualifications_pass = bool(report["commands"]) and all(x["passed"] for x in report["commands"])
     diagnostics_acquired = all(x["acquired"] for x in report["diagnostics"])
     report["qualification_status"] = "PASS" if qualifications_pass else "FAIL"

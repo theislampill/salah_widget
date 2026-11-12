@@ -1,0 +1,74 @@
+name: R0016 Windows original normal path discriminator
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - .github/workflows/installer-preview-windows-normal-path.yml
+      - tools/qualification/installer_preview_windows_normal_probe.py
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-windows-normal-path-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ps51, ps766]
+    runs-on: windows-2022
+    timeout-minutes: 20
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qualification/installer_preview_windows_normal_probe.py
+            /tools/qualification/installer_preview_windows_carrier.py
+            /tools/qualification/installer_preview_host_probe.py
+            /tests/install-entry-native.py
+            /install.ps1
+            /presets/salah-widget.tablissng.json
+      - name: Select the actual system-volume profile parent
+        shell: cmd
+        run: |
+          python -c "import os,pathlib; parent=pathlib.Path(os.environ['USERPROFILE']).resolve(strict=True); assert parent.is_dir() and parent.drive.lower()=='c:','Native system-volume profile required'; assert not any(c in str(parent) for c in (chr(13),chr(10))),'Malformed profile path'; evidence=parent/'installer-normal-path-evidence.tar.gz'; assert not evidence.exists(),'Evidence destination already exists'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('R0016_NORMAL_PARENT='+str(parent)+'\nR0016_NORMAL_EVIDENCE='+str(evidence)+'\n'); stream.close()"
+          exit /b %ERRORLEVEL%
+      - name: Acquire exact PowerShell 7 before selected PowerShell starts
+        if: matrix.host == 'ps766'
+        shell: cmd
+        run: |
+          python -c "import hashlib,os,pathlib,urllib.request,zipfile; parent=pathlib.Path(os.environ['RUNNER_TEMP']); archive=parent/'PowerShell-7.6.6-win-x64.zip'; urllib.request.urlretrieve('https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip',archive); assert hashlib.sha256(archive.read_bytes()).hexdigest()=='02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860','PowerShell runtime digest mismatch'; runtime=parent/'r0016-normal-pwsh7'; runtime.mkdir(exist_ok=False); zipfile.ZipFile(archive).extractall(runtime); assert (runtime/'pwsh.exe').is_file(),'PowerShell executable missing'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('INSTALL_TEST_PS7='+str(runtime/'pwsh.exe')+'\n'); stream.close()"
+          exit /b %ERRORLEVEL%
+      - name: Acquire only the original positive and NoOpen cases
+        shell: cmd
+        run: |
+          if "${{ matrix.host }}"=="ps51" (set "R0016_NORMAL_PS=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe") else (set "R0016_NORMAL_PS=%INSTALL_TEST_PS7%")
+          python -B tools/qualification/installer_preview_windows_normal_probe.py --host ${{ matrix.host }} --powershell "%R0016_NORMAL_PS%" --output-parent "%R0016_NORMAL_PARENT%" --source-commit ${{ github.sha }}
+          exit /b %ERRORLEVEL%
+      - name: Preserve the complete owned root without following links
+        if: always()
+        shell: cmd
+        run: |
+          python -B tools/qualification/installer_preview_windows_normal_probe.py --archive-only --output-parent "%R0016_NORMAL_PARENT%" --archive "%R0016_NORMAL_EVIDENCE%"
+          exit /b %ERRORLEVEL%
+      - name: Retain original normal path evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-normal-path-Windows-${{ matrix.host }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.R0016_NORMAL_EVIDENCE }}
+          if-no-files-found: error
+          retention-days: 30

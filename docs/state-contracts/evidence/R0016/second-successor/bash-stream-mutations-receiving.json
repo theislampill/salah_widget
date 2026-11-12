@@ -1,0 +1,280 @@
+{
+  "source": "87318d40dd4c91b1623ce7a5a9935f449850b8850e01e4b6cc2bc976b5f51bd7",
+  "archiveSha256": "a3c07e6d351a9a8a2dcb8b8f661fbc1180c8a5a353982b5e58400f7e5e3bfd00",
+  "pairs": [
+    {
+      "case": "cached-status-stdout",
+      "requiredAdverse": "cached stdout is one path",
+      "pairedControl": "actual Firefox producer zero/one profiles",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/cached-status-stdout-healthy.txt",
+        "sha256": "4b940d873461466080f124f67347737e251d39cf3543b5d4d337f639dab89145",
+        "cases": [
+          {
+            "case": "cached stdout is one path",
+            "pass_": true
+          },
+          {
+            "case": "actual Firefox producer zero/one profiles",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/cached-status-stdout.txt",
+        "sha256": "f14c6003a326286e3ec769779f1424a6b1a7f2ecd0d62d9f70547ae059f0e5be",
+        "cases": [
+          {
+            "case": "cached stdout is one path",
+            "pass_": false,
+            "error": "{'exit': 1, 'stdout': '', 'stderr': 'Downloading tabliss chromium.zip\\n  file:///tmp/salah-install-tests-m83a8b4f/asset.zip\\n  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\\n                                 Dload  Upload   Total   Spent    Left  Speed\\n\\n  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\\n100   146  100   146    0     0  1178k      0 --:--:-- --:--:-- --:--:--  142k\\n[WARN] Partial bundle retained; manual actions remain pending: /tmp/salah-install-tests-m83a8b4f/home/salah-widget-install.by7DH8c5\\n'}"
+          },
+          {
+            "case": "actual Firefox producer zero/one profiles",
+            "pass_": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "restore-mapfile",
+      "requiredAdverse": "detector supports missing mapfile and Unicode paths",
+      "pairedControl": "actual Firefox producer zero/one profiles",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/restore-mapfile-healthy.txt",
+        "sha256": "5e75fd847ebd68ad1a640269b028789a06abfe4d7adca8dd14ced09b4475fbdb",
+        "cases": [
+          {
+            "case": "detector supports missing mapfile and Unicode paths",
+            "pass_": true
+          },
+          {
+            "case": "actual Firefox producer zero/one profiles",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/restore-mapfile.txt",
+        "sha256": "f3af20e3d28e9ca4e4cdc4fd8d76356527e735d99ab2c372adfd9d839abb484b",
+        "cases": [
+          {
+            "case": "detector supports missing mapfile and Unicode paths",
+            "pass_": false,
+            "error": "{'exit': 127, 'stdout': '', 'stderr': 'environment: line 10: mapfile: command not found\\n'}"
+          },
+          {
+            "case": "actual Firefox producer zero/one profiles",
+            "pass_": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "stdin-human-read",
+      "requiredAdverse": "pipe actual PTY all and later confirmations",
+      "pairedControl": "offline github",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/stdin-human-read-healthy.txt",
+        "sha256": "0342edd4db60c69f4cc1e26ec885f761ce980143775812ba3f4a0fe371db0cc4",
+        "cases": [
+          {
+            "case": "offline github",
+            "pass_": true
+          },
+          {
+            "case": "pipe actual PTY all and later confirmations",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/stdin-human-read.txt",
+        "sha256": "dc57e3555df94b6c80407072b10761463b0f1b3a3df8ba880701352fe1f952f7",
+        "cases": [
+          {
+            "case": "offline github",
+            "pass_": true
+          },
+          {
+            "case": "pipe actual PTY all and later confirmations",
+            "pass_": false,
+            "error": "{'exit': 1, 'effects': [], 'output': '\\r\\nSalah Widget Installer\\r\\n\\r\\nThis wizard can:\\r\\n- detect supported browsers/profiles\\r\\n- check for TablissNG\\r\\n- safely refuse to modify legacy Tabliss profiles\\r\\n- download the right TablissNG build from GitHub latest release when needed\\r\\n- guide the browser-required install step\\r\\n- stage the Salah Widget preset for import\\r\\n\\r\\nIt will not silently force-install extensions or write directly into extension storage.\\r\\n\\r\\n== Detecting browsers ==\\r\\n[1] Google Chrome / Default \u2014 neither extension identified by chromium-extension-directories\\r\\n[2] Firefox / fixture profile \u2014 neither extension identified by firefox-extensions-json\\r\\n\\r\\n[ERROR] Invalid target number: selection=\"${selection:-all}\"\\r\\n'}"
+          }
+        ]
+      }
+    },
+    {
+      "case": "eager-staging",
+      "requiredAdverse": "offline github",
+      "pairedControl": "NO_OPEN retains normal effects",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/eager-staging-healthy.txt",
+        "sha256": "360a482d3e7fdc7f40f58c6bec6e6a0ab5fef3b1a0520e94eee80ae4bae61d16",
+        "cases": [
+          {
+            "case": "offline github",
+            "pass_": true
+          },
+          {
+            "case": "NO_OPEN retains normal effects",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/eager-staging.txt",
+        "sha256": "0dc432d42c4b239dbfb790b45b1bea6badaad492c6cdc2dfdf4d2c13c2516d59",
+        "cases": [
+          {
+            "case": "offline github",
+            "pass_": false,
+            "error": "{'effects': ['mkdir -p /tmp/salah-entry-bash-9h31kbgw/github/subject/tmp/salah-widget-installer'], 'stdout': '\\nSalah Widget Installer\\n\\nThis wizard can:\\n- detect supported browsers/profiles\\n- check for TablissNG\\n- safely refuse to modify legacy Tabliss profiles\\n- download the right TablissNG build from GitHub latest release when needed\\n- guide the browser-required install step\\n- stage the Salah Widget preset for import\\n\\nIt will not silently force-install extensions or write directly into extension storage.\\n\\n== Detecting browsers ==\\n[1] Google Chrome / Default \u2014 neither extension identified by chromium-extension-directories\\n[2] Firefox / fixture profile \u2014 neither extension identified by firefox-extensions-json\\n\\n== Offline preview ==\\nWould prepare Google Chrome / Default.\\nWould resolve/download GitHub release; release/version/path unresolved until execution.\\nWould stage the configured preset and guide manual import; path unresolved until execution.\\nWould offer clipboard paths and open the browser manual installation/import pages.\\nWould prepare Firefox / fixture profile.\\nWould resolve/download GitHub release; release/version/path unresolved until execution.\\nWould stage the configured preset and guide manual import; path unresolved until execution.\\nWould offer clipboard paths and open the browser manual installation/import pages.\\nPreview targets: 2 eligible, 0 held, 0 refused.\\nPreview only; no changes made. No network requests were made.\\n', 'stderr': '[WARN] Importing the preset replaces your current TablissNG dashboard.\\n'}"
+          },
+          {
+            "case": "NO_OPEN retains normal effects",
+            "pass_": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "retained-deletion",
+      "requiredAdverse": "cross-run freshness and retained lifetime",
+      "pairedControl": "actual Firefox producer zero/one profiles",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/retained-deletion-healthy.txt",
+        "sha256": "610c69fe4c6a47d1a0866ec228013d8c6c64d19972a1091c5051449b2fa2a89f",
+        "cases": [
+          {
+            "case": "actual Firefox producer zero/one profiles",
+            "pass_": true
+          },
+          {
+            "case": "cross-run freshness and retained lifetime",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/retained-deletion.txt",
+        "sha256": "96d70a45100235399602eb73ccd9714147f26242b823cd648442f8063ff1c606",
+        "cases": [
+          {
+            "case": "actual Firefox producer zero/one profiles",
+            "pass_": true
+          },
+          {
+            "case": "cross-run freshness and retained lifetime",
+            "pass_": false,
+            "error": "Scratch/retained lifetime wrong"
+          }
+        ]
+      }
+    },
+    {
+      "case": "symlink-admission",
+      "requiredAdverse": "write confinement symlink",
+      "pairedControl": "archive safe",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/symlink-admission-healthy.txt",
+        "sha256": "48049e47edb5b77209fff6de99f0655c7558653307db2e0ace9448ecc785893a",
+        "cases": [
+          {
+            "case": "write confinement symlink",
+            "pass_": true
+          },
+          {
+            "case": "archive safe",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/symlink-admission.txt",
+        "sha256": "155fe8c20d3724721d94a7ac7dbffc37b097eb3f55a199d41a812c82f9d70f2f",
+        "cases": [
+          {
+            "case": "write confinement symlink",
+            "pass_": false,
+            "error": "Unsafe staged path admitted: symlink"
+          },
+          {
+            "case": "archive safe",
+            "pass_": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "archive-parent-member",
+      "requiredAdverse": "archive traversal",
+      "pairedControl": "archive safe",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/archive-parent-member-healthy.txt",
+        "sha256": "65a12895b81fcb6ba6210840ae6a7a3a7effaa80ac8493d72daf63aa5ccf9630",
+        "cases": [
+          {
+            "case": "archive traversal",
+            "pass_": true
+          },
+          {
+            "case": "archive safe",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/archive-parent-member.txt",
+        "sha256": "33fa6d016b03e7b2059231c98aa21371b15d33e5d93867a94a44c1b2e38f9c79",
+        "cases": [
+          {
+            "case": "archive traversal",
+            "pass_": false,
+            "error": "Member written before unsafe-member validation"
+          },
+          {
+            "case": "archive safe",
+            "pass_": true
+          }
+        ]
+      }
+    },
+    {
+      "case": "preview-cleanup",
+      "requiredAdverse": "offline cached",
+      "pairedControl": "NO_OPEN retains normal effects",
+      "healthy": {
+        "member": "salah-install-mutants-9tyh95zf/preview-cleanup-healthy.txt",
+        "sha256": "90ad9ada1101f1950d18896277a8776e60642340598480a2406573b86c49f578",
+        "cases": [
+          {
+            "case": "offline cached",
+            "pass_": true
+          },
+          {
+            "case": "NO_OPEN retains normal effects",
+            "pass_": true
+          }
+        ]
+      },
+      "mutant": {
+        "member": "salah-install-mutants-9tyh95zf/preview-cleanup.txt",
+        "sha256": "f318a8c7cae65aef30511654aff1176e7abb47a765ec9e4c3d23e5ec30549955",
+        "cases": [
+          {
+            "case": "offline cached",
+            "pass_": false,
+            "error": "{'effects': ['remove -rf -- /tmp/salah-entry-bash-_j2cf6hu/cached/subject/tmp/salah-widget-installer'], 'stdout': '\\nSalah Widget Installer\\n\\nThis wizard can:\\n- detect supported browsers/profiles\\n- check for TablissNG\\n- safely refuse to modify legacy Tabliss profiles\\n- download the right TablissNG build from GitHub latest release when needed\\n- guide the browser-required install step\\n- stage the Salah Widget preset for import\\n\\nIt will not silently force-install extensions or write directly into extension storage.\\n\\n== Detecting browsers ==\\n[1] Google Chrome / Default \u2014 neither extension identified by chromium-extension-directories\\n[2] Firefox / fixture profile \u2014 neither extension identified by firefox-extensions-json\\n\\n== Offline preview ==\\nWould prepare Google Chrome / Default.\\nWould resolve/download GitHub release; release/version/path unresolved until execution.\\nWould stage the configured preset and guide manual import; path unresolved until execution.\\nWould offer clipboard paths and open the browser manual installation/import pages.\\nWould prepare Firefox / fixture profile.\\nWould resolve/download GitHub release; release/version/path unresolved until execution.\\nWould stage the configured preset and guide manual import; path unresolved until execution.\\nWould offer clipboard paths and open the browser manual installation/import pages.\\nPreview targets: 2 eligible, 0 held, 0 refused.\\nPreview only; no changes made. No network requests were made.\\n', 'stderr': '[WARN] Importing the preset replaces your current TablissNG dashboard.\\n'}"
+          },
+          {
+            "case": "NO_OPEN retains normal effects",
+            "pass_": true
+          }
+        ]
+      }
+    }
+  ],
+  "actualRawPairsVerified": 8,
+  "newSubjectsExecuted": false
+}

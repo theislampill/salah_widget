@@ -1,0 +1,74 @@
+name: R0016 source-free Windows carrier qualification
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - .github/workflows/installer-preview-windows-carrier.yml
+      - tools/qualification/installer_preview_windows_carrier.py
+      - tools/qualification/installer_preview_host_probe.py
+      - tests/install-preview.ps1
+      - tests/install-preview-acquire-timed.ps1
+      - tests/install-preview-window.ps1
+      - tests/install-preview-carrier-controls.ps1
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-windows-carrier-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        host: [ps51, ps766]
+    runs-on: windows-2022
+    timeout-minutes: 15
+    env:
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qualification/installer_preview_windows_carrier.py
+            /tools/qualification/installer_preview_host_probe.py
+            /tests/install-preview.ps1
+            /tests/install-preview-acquire-timed.ps1
+            /tests/install-preview-window.ps1
+            /tests/install-preview-carrier-controls.ps1
+      - name: Acquire exact PowerShell 7 archive before selected PowerShell starts
+        if: matrix.host == 'ps766'
+        shell: cmd
+        run: |
+          python -c "import hashlib,os,pathlib,urllib.request,zipfile; parent=pathlib.Path(os.environ['RUNNER_TEMP']); archive=parent/'PowerShell-7.6.6-win-x64.zip'; urllib.request.urlretrieve('https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip',archive); assert hashlib.sha256(archive.read_bytes()).hexdigest()=='02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860','PowerShell runtime digest mismatch'; runtime=parent/'r0016-carrier-pwsh7'; runtime.mkdir(exist_ok=False); zipfile.ZipFile(archive).extractall(runtime); assert (runtime/'pwsh.exe').is_file(),'PowerShell executable missing'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('INSTALL_TEST_PS7='+str(runtime/'pwsh.exe')+'\n'); stream.close()"
+          exit /b %ERRORLEVEL%
+      - name: Prepare owned environment in Python and acquire source-free carrier
+        shell: cmd
+        run: |
+          if "${{ matrix.host }}"=="ps51" (set "R0016_CARRIER_PS=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe") else (set "R0016_CARRIER_PS=%INSTALL_TEST_PS7%")
+          python tools/qualification/installer_preview_windows_carrier.py --host ${{ matrix.host }} --powershell "%R0016_CARRIER_PS%" --output-parent "%RUNNER_TEMP%"
+          exit /b %ERRORLEVEL%
+      - name: Preserve complete owned carrier root without following links
+        if: always()
+        shell: cmd
+        run: |
+          python tools/qualification/installer_preview_windows_carrier.py --archive-only --output-parent "%RUNNER_TEMP%" --archive "%RUNNER_TEMP%\installer-carrier-evidence.tar.gz"
+          exit /b %ERRORLEVEL%
+      - name: Retain original source-free carrier evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-carrier-Windows-${{ matrix.host }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-carrier-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30

@@ -89,12 +89,12 @@ These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
 The Bash example below uses installer source commit
-`dc4c251d81ccb0796e70ff0516661204277232cb`; the PowerShell example uses
-`81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb`. On macOS or Linux, keep the downloaded
+`a4c617ebeedfb507c0cb7a472683cce47ad62522`; the PowerShell example uses
+`a4c617ebeedfb507c0cb7a472683cce47ad62522`. On macOS or Linux, keep the downloaded
 file for both the preview and normal run:
 
 ```bash
-INSTALL_COMMIT='dc4c251d81ccb0796e70ff0516661204277232cb'
+INSTALL_COMMIT='a4c617ebeedfb507c0cb7a472683cce47ad62522'
 curl -fsSL "https://raw.githubusercontent.com/theislampill/salah_widget/$INSTALL_COMMIT/install.sh" -o install.sh
 less ./install.sh
 DRY_RUN=1 bash ./install.sh
@@ -113,7 +113,7 @@ with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-$InstallCommit = '81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb'
+$InstallCommit = 'a4c617ebeedfb507c0cb7a472683cce47ad62522'
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/$InstallCommit/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
@@ -124,9 +124,32 @@ For the supported PowerShell 7 host, replace the two `powershell.exe` calls with
 `pwsh.exe -NoProfile -File ".\install.ps1" -DryRun` and
 `pwsh.exe -NoProfile -File ".\install.ps1"`. Run one host's normal command.
 
-With reviewed local files, `DRY_RUN=1` on Bash or `-DryRun` on PowerShell performs offline local discovery and prints
-planned actions. Preview creates no staging or usable artifacts and is neither
-installation nor staged completion.
+#### Offline local preview
+
+With a reviewed local file, `DRY_RUN=1` on Bash or `-DryRun` on PowerShell reads
+local browser/profile metadata and prints an offline preview. The earlier
+download command is a separate preparation step; the preview invocation makes
+no network requests, including release or availability checks. It asks no
+questions and needs no interactive terminal.
+
+Preview creates, overwrites and deletes no files or directories. It changes no
+clipboard, browser profile or extension data, opens no browser pages, and does
+no extraction, preset rewriting or cleanup. Existing caches and retained
+bundles do not become preview outputs. Release versions, artifact paths and
+unanswered install-source choices remain unresolved. No usable artifact path,
+staged result or installed success is promised. Unknown or legacy-refused
+targets stay held or refused. When no target is eligible, the installer exits
+unsuccessfully. Malformed or unsupported mode options are refused with an
+unsuccessful exit.
+
+To perform normal setup while opening browser pages yourself, use
+`NO_OPEN=1 bash ./install.sh` or
+`powershell.exe -NoProfile -File ".\install.ps1" -NoOpen` (use `pwsh.exe` for
+PowerShell 7). This mode still asks for normal confirmations, downloads and
+stages files, and offers clipboard handoffs. Extension installation and preset
+import remain manual. The builder's **Install widget** command starts normal
+mode and uses the published main installer; use the reviewed local-file
+preview above before allowing those normal actions.
 
 #### Discovery and retained files
 
@@ -469,7 +492,7 @@ Click or tap either CE or AH date, or Tab to it and press Enter or Space, to ope
 | `builder.html` | Interactive embed-code generator (portable **and** self-configuring snippets). |
 | `config.js`    | Shared `WidgetConfig` module (`window.SalahConfig`) — parse / validate / serialize / load-save local config / coarse auto-detect. Loaded by both `index.html` and `builder.html` so config logic can't fork. |
 | `install.sh` / `install.ps1` | Optional setup wizard (macOS-Linux / Windows): detects the browser, downloads the TablissNG extension asset, and stages the preset for manual import. No silent installs. |
-| `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer imports. |
+| `presets/salah-widget.tablissng.json` | A ready-made TablissNG dashboard export (this widget in self-configuring mode) that the installer stages for manual import. |
 
 ### Deterministic smoke test
 

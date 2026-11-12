@@ -6,7 +6,10 @@
 # Usage:
 #   bash install.sh
 #   DRY_RUN=1 bash install.sh  # offline local discovery; no terminal, network or writes
+#   NO_OPEN=1 bash install.sh  # normal setup and clipboard handoff; open browser pages manually
 #   SALAH_WIDGET_PRESET_URL="https://raw.githubusercontent.com/YOU/REPO/main/presets/salah-widget.tablissng.json" bash install.sh
+# Preview creates no artifacts and asks no questions; remote release/path facts and unresolved choices stay unresolved.
+# NO_OPEN is normal mode: downloads, retained files and manual confirmations still occur.
 #
 # Environment overrides:
 #   SALAH_WIDGET_HASH        Optional URL-hash config (lat=..&lon=..&method=..) baked into the widget iframe
@@ -77,6 +80,8 @@ read_answer() {
   fi
 }
 
+# Here-documents/strings can create hidden files in Apple Bash 3.2. Feed
+# internal records and embedded programs through pipes, retaining read in this shell.
 # Native stat forms are intentionally explicit; unknown ownership fails closed.
 # Both forms report the permission bits including setuid/setgid/sticky (no file type).
 path_identity() {
@@ -106,10 +111,10 @@ trusted_parent() {
       container="${current%/*}"; [ -n "$container" ] || container=/
       container="$(cd "$container" 2>/dev/null && pwd -P)" || { err "Untrusted staging ancestor: $current"; return 1; }
       fields="$(path_identity "$current")" || return 1
-      IFS=: read -r dev inode owner mode <<< "$fields"
+      IFS=: read -r dev inode owner mode < <(printf '%s\n' "$fields")
       [ "$owner" = 0 ] || { err "Untrusted staging ancestor: $current"; return 1; }
       fields="$(path_identity "$container")" || return 1
-      IFS=: read -r dev inode owner mode <<< "$fields"
+      IFS=: read -r dev inode owner mode < <(printf '%s\n' "$fields")
       case "$mode" in ''|*[!0-7]*) err "Cannot establish permissions: $container"; return 1 ;; esac
       [ "$owner" = 0 ] && (( (8#$mode & 0022) == 0 )) || { err "Untrusted staging ancestor: $current"; return 1; }
     fi
@@ -123,7 +128,7 @@ trusted_parent() {
   while :; do
     [ -d "$current" ] && [ ! -L "$current" ] || { err "Untrusted staging ancestor: $current"; return 1; }
     fields="$(path_identity "$current")" || return 1
-    IFS=: read -r dev inode owner mode <<< "$fields"
+    IFS=: read -r dev inode owner mode < <(printf '%s\n' "$fields")
     case "$mode" in ''|*[!0-7]*) err "Cannot establish permissions: $current"; return 1 ;; esac
     [ "$owner" = 0 ] || [ "$owner" = "$uid" ] || { err "Untrusted ancestor owner: $current"; return 1; }
     if (( (8#$mode & 0022) != 0 )); then
@@ -151,7 +156,7 @@ verify_root() {
   }
   [ "$(cd "$root" && pwd -P)" = "$root" ] || return 1
   fields="$(path_identity "$root")" || return 1
-  IFS=: read -r dev inode owner mode <<< "$fields"
+  IFS=: read -r dev inode owner mode < <(printf '%s\n' "$fields")
   [ "$fields" = "$identity" ] && [ "$owner" = "$(id -u)" ] && [ "$mode" = 700 ] || {
     err "Private staging ownership/mode/identity changed: $root"; return 1;
   }
@@ -307,6 +312,52 @@ firefox_profiles() {
   done < <(find "$profiles_root" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null) | sort
 }
 
+discovery_path_output() {
+  local value status
+  # Retain the command's output delimiter until after validation: ordinary
+  # command substitution strips every trailing newline, including path bytes.
+  value="$("$@"; status=$?; printf '\001'; exit "$status")" || return 1
+  value="${value%$'\001'}"
+  [[ "$value" = *$'\n' ]] || return 1
+  value="${value%$'\n'}"
+  case "$value" in ''|*$'\n'*|*$'\r'*) return 1 ;; esac
+  printf '%s\n' "$value"
+}
+
+firefox_discovery_python() {
+  local found developer python parent link hops=0
+  found="$(command -v python3)" || return 1
+  if [ "$DRY_RUN" != 1 ] || [ "$PLATFORM" != mac ] || [[ ! "$found" -ef /usr/bin/python3 ]]; then
+    printf '%s\n' python3
+    return 0
+  fi
+
+  # Apple's system Python is a developer-tool shim which can create xcrun
+  # cache files even for a read-only program. Resolve the selected toolchain's
+  # physical interpreter without invoking that shim or changing PATH.
+  developer="$(discovery_path_output /usr/bin/xcode-select --print-path 2>/dev/null)" || return 1
+  case "$developer" in /*) ;; *) return 1 ;; esac
+  case "$developer" in *$'\n'*|*$'\r'*) return 1 ;; esac
+  developer="$(CDPATH= cd -P -- "$developer" 2>/dev/null && discovery_path_output pwd -P)" || return 1
+  case "$developer" in *$'\n'*|*$'\r'*) return 1 ;; esac
+  [ "$developer" != / ] || return 1
+  python="$developer/usr/bin/python3"
+  while :; do
+    case "$python" in *$'\n'*|*$'\r'*) return 1 ;; esac
+    parent="$(CDPATH= cd -P -- "${python%/*}" 2>/dev/null && discovery_path_output pwd -P)" || return 1
+    python="$parent/${python##*/}"
+    case "$python" in *$'\n'*|*$'\r'*) return 1 ;; esac
+    [[ -L "$python" ]] || break
+    hops=$((hops + 1))
+    [ "$hops" -le 40 ] || return 1
+    link="$(discovery_path_output /usr/bin/readlink "$python")" || return 1
+    case "$link" in /*) python="$link" ;; *) python="$parent/$link" ;; esac
+  done
+  case "$python" in "$developer"/*) ;; *) return 1 ;; esac
+  [[ -f "$python" && -x "$python" && ! "$python" -ef /usr/bin/python3 ]] || return 1
+  printf '%s\n' "$python"
+}
+
 firefox_status() {
   local profile="$1"
   local file="$profile/extensions.json"
@@ -324,9 +375,12 @@ firefox_status() {
     return 0
   fi
 
-  if command -v python3 >/dev/null 2>&1; then
-    python3 - "$file" <<'PY'
-import json, re, sys
+  local python
+  local -a python_command
+  if python="$(firefox_discovery_python)"; then
+    python_command=("$python")
+    [ "$DRY_RUN" != 1 ] || python_command+=(-B)
+    "${python_command[@]}" - "$file" < <(printf '%s\n' 'import json, re, sys
 path = sys.argv[1]
 has_new = False
 has_old = False
@@ -396,8 +450,7 @@ for addon in data["addons"]:
         has_old = True
         matches.append(hay)
 status = "known-both" if has_new and has_old else "known-legacy" if has_old else "known-new" if has_new else "known-neither"
-emit(status, "supported-metadata")
-PY
+emit(status, "supported-metadata")')
   else
     # Positive text hints cannot establish a complete inventory or safe absence.
     local has_new=0 has_old=0 matches=""
@@ -462,7 +515,7 @@ add_target() {
 detect_targets() {
   local cfg key label family user_data exes newids oldids store manager newtab exe profiles profile_count status has_new has_old matches p pname discovery_status discovery_reason discovery_evidence discovery_source
   for cfg in "${CONFIGS[@]}"; do
-    IFS='|' read -r key label family user_data exes newids oldids store manager newtab <<< "$cfg"
+    IFS='|' read -r key label family user_data exes newids oldids store manager newtab < <(printf '%s\n' "$cfg")
     exe="$(find_exe "$exes" || true)"
 
     if [ "$family" = "chromium" ]; then
@@ -497,7 +550,7 @@ detect_targets() {
           warn "Firefox parser failed; target held without suppressing other profiles."
           status="0|0||unknown|parser-failed|firefox-extensions-json|$p/extensions.json"
         fi
-        IFS='|' read -r has_new has_old matches discovery_status discovery_reason discovery_evidence discovery_source <<< "$status"
+        IFS='|' read -r has_new has_old matches discovery_status discovery_reason discovery_evidence discovery_source < <(printf '%s\n' "$status")
         add_target "$key" "$label" "$family" "$pname" "$p" "$exe" "$has_new" "$has_old" "$matches" "$store" "$manager" "$newtab" "$discovery_status" "$discovery_reason" "$discovery_evidence" "$discovery_source"
       done
     fi
@@ -508,8 +561,7 @@ select_asset() {
   local family="$1"
   [ "$DRY_RUN" = 0 ] || { err "Offline preview leaves release assets unresolved."; return 1; }
   need_cmd python3
-  python3 - "$TABLISSNG_REPO" "$family" <<'PY'
-import json, re, sys, urllib.request
+  python3 - "$TABLISSNG_REPO" "$family" < <(printf '%s\n' 'import json, re, sys, urllib.request
 repo, family = sys.argv[1], sys.argv[2]
 url = f"https://api.github.com/repos/{repo}/releases/latest"
 req = urllib.request.Request(url, headers={
@@ -524,7 +576,7 @@ def pick(cands):
         if a:
             print(data.get("tag_name","latest") + "\t" + a.get("name","asset") + "\t" + a.get("browser_download_url",""))
             return
-    raise SystemExit(f"No safe {family} asset found in latest release {data.get('tag_name')}")
+    raise SystemExit(f"No safe {family} asset found in latest release {data.get('"'"'tag_name'"'"')}")
 if family == "firefox":
     c1 = [a for a in assets if re.search(r"\.xpi$", a.get("name",""), re.I) and re.search(r"signed|firefox", a.get("name",""), re.I) and not re.search(r"unsigned|source", a.get("name",""), re.I)]
     c2 = [a for a in assets if re.search(r"\.xpi$", a.get("name",""), re.I) and not re.search(r"unsigned|source", a.get("name",""), re.I)]
@@ -535,8 +587,7 @@ elif family == "chromium":
     c2 = [a for a in assets if re.search(r"tabliss.*\.zip$", a.get("name",""), re.I) and not re.search(r"firefox|safari|source", a.get("name",""), re.I)]
     pick(c1 + c2)
 else:
-    raise SystemExit(f"Unsupported family: {family}")
-PY
+    raise SystemExit(f"Unsupported family: {family}")')
 }
 
 download_tablissng_asset() {
@@ -545,7 +596,7 @@ download_tablissng_asset() {
   verify_root "$WORK_ROOT" "$WORK_ID" || return 1
   local line tag name url tag_s name_s dest dest_dir partial
   line="$(select_asset "$family")" || return 1
-  IFS=$'\t' read -r tag name url <<< "$line"
+  IFS=$'\t' read -r tag name url < <(printf '%s\n' "$line")
   [ -n "$tag" ] && [ -n "$name" ] && [ -n "$url" ] || { err "Incomplete release asset record."; return 1; }
   tag_s="$(sanitize "$tag")"
   name_s="$(sanitize "$name")"
@@ -574,15 +625,13 @@ download_tablissng_asset() {
 validate_asset() {
   [ "$DRY_RUN" = 0 ] || return 1
   [ -f "$1" ] && [ ! -L "$1" ] && [ -s "$1" ] || return 1
-  python3 - "$1" <<'PY'
-import sys, zipfile
+  python3 - "$1" < <(printf '%s\n' 'import sys, zipfile
 try:
     with zipfile.ZipFile(sys.argv[1]) as archive:
         if not archive.infolist() or archive.testzip() is not None:
             raise ValueError("empty/corrupt archive")
 except (OSError, ValueError, zipfile.BadZipFile) as error:
-    raise SystemExit("Invalid extension archive: " + str(error))
-PY
+    raise SystemExit("Invalid extension archive: " + str(error))')
 }
 
 retain_asset() {
@@ -614,8 +663,7 @@ expand_chromium_asset() {
   guard_owned_path "$BUNDLE_ROOT" "$BUNDLE_ID" "$extract" dir || return 1
   # Inspect every member before extracting anything. Links and ambiguous paths
   # are refused; files are created exclusively in the new private child.
-  python3 - "$zip_path" "$extract" <<'PY'
-import json, os, pathlib, shutil, stat, sys, zipfile
+  python3 - "$zip_path" "$extract" < <(printf '%s\n' 'import json, os, pathlib, shutil, stat, sys, zipfile
 archive_path, destination = sys.argv[1:]
 os.umask(0o077)
 root = pathlib.Path(destination)
@@ -624,13 +672,13 @@ try:
         members = []; seen = set()
         for member in archive.infolist():
             name = member.orig_filename
-            parts = name.rstrip('/').split('/')
+            parts = name.rstrip('"'"'/'"'"').split('"'"'/'"'"')
             mode = member.external_attr >> 16
-            if (not name or '\x00' in name or '\\' in name or name.startswith('/')
-                    or any(p in ('', '.', '..') or ':' in p for p in parts)
+            if (not name or '"'"'\x00'"'"' in name or '"'"'\\'"'"' in name or name.startswith('"'"'/'"'"')
+                    or any(p in ('"'"''"'"', '"'"'.'"'"', '"'"'..'"'"') or '"'"':'"'"' in p for p in parts)
                     or stat.S_IFMT(mode) not in (0, stat.S_IFREG, stat.S_IFDIR)):
                 raise ValueError("unsafe archive member: " + repr(name))
-            key = '/'.join(parts)
+            key = '"'"'/'"'"'.join(parts)
             if key in seen: raise ValueError("duplicate archive member: " + key)
             seen.add(key); members.append((member, parts))
         for member, parts in members:
@@ -638,17 +686,16 @@ try:
             if member.is_dir(): target.mkdir(mode=0o700, parents=True, exist_ok=True)
             else:
                 target.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-                with archive.open(member) as source, target.open('xb') as output:
+                with archive.open(member) as source, target.open('"'"'xb'"'"') as output:
                     shutil.copyfileobj(source, output)
-        manifests = sorted(p for p in root.rglob('manifest.json') if '__MACOSX' not in p.parts)
+        manifests = sorted(p for p in root.rglob('"'"'manifest.json'"'"') if '"'"'__MACOSX'"'"' not in p.parts)
         if not manifests: raise ValueError("missing manifest.json")
-        with manifests[0].open(encoding='utf-8') as source:
+        with manifests[0].open(encoding='"'"'utf-8'"'"') as source:
             manifest = json.load(source)
         if not isinstance(manifest, dict): raise ValueError("invalid manifest.json")
         print(manifests[0].parent)
 except (OSError, ValueError, zipfile.BadZipFile) as error:
-    raise SystemExit("Archive extraction refused; partial bundle retained: " + str(error))
-PY
+    raise SystemExit("Archive extraction refused; partial bundle retained: " + str(error))')
 }
 
 download_preset() {
@@ -668,14 +715,12 @@ download_preset() {
     return 1
   fi
   guard_owned_path "$BUNDLE_ROOT" "$BUNDLE_ID" "$partial" file || return 1
-  python3 - "$partial" "$SALAH_WIDGET_HASH" <<'PY'
-import json, pathlib, sys
+  python3 - "$partial" "$SALAH_WIDGET_HASH" < <(printf '%s\n' 'import json, pathlib, sys
 path = pathlib.Path(sys.argv[1])
-raw = path.read_text(encoding='utf-8')
-if sys.argv[2]: raw = raw.replace('local=1', sys.argv[2])
+raw = path.read_text(encoding='"'"'utf-8'"'"')
+if sys.argv[2]: raw = raw.replace('"'"'local=1'"'"', sys.argv[2])
 json.loads(raw)
-path.write_text(raw, encoding='utf-8')
-PY
+path.write_text(raw, encoding='"'"'utf-8'"'"')')
   [ "$?" -eq 0 ] || { err "Preset JSON/configuration validation failed; partial file retained."; return 1; }
   guard_owned_path "$BUNDLE_ROOT" "$BUNDLE_ID" "$dest" file || return 1
   mv -- "$partial" "$dest" || return 1
@@ -746,8 +791,7 @@ show_import_instructions() {
   else
     warn "Preset file is not available yet."
   fi
-  cat <<'TEXT'
-
+  printf '%s\n' '
 Manual import path:
   1. Open a new tab controlled by TablissNG.
   2. Open TablissNG settings.
@@ -755,15 +799,13 @@ Manual import path:
   4. Select the preset JSON file above.
 
 This wizard does not directly write into browser extension storage.
-That avoids corrupting profiles and avoids touching legacy Tabliss.
-TEXT
+That avoids corrupting profiles and avoids touching legacy Tabliss.'
   warn "Importing the preset replaces your current TablissNG dashboard."
   open_url "$exe" "$newtab"
 }
 
 printf '\nSalah Widget Installer\n\n'
-cat <<'TEXT'
-This wizard can:
+printf '%s\n' 'This wizard can:
 - detect supported browsers/profiles
 - check for TablissNG
 - safely refuse to modify legacy Tabliss profiles
@@ -771,8 +813,7 @@ This wizard can:
 - guide the browser-required install step
 - stage the Salah Widget preset for import
 
-It will not silently force-install extensions or write directly into extension storage.
-TEXT
+It will not silently force-install extensions or write directly into extension storage.'
 
 say_section "Detecting browsers"
 detect_targets
@@ -783,7 +824,7 @@ if [ "$TARGET_COUNT" -eq 0 ]; then
 fi
 
 for t in "${TARGETS[@]}"; do
-  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source < <(printf '%s\n' "$t")
   eligibility="$(discovery_eligibility "$discovery_status" "$has_old")"
   case "$eligibility" in
     legacy-refused) status="legacy Tabliss evidence: REFUSED ($discovery_status)" ;;
@@ -800,7 +841,7 @@ if [ "$DRY_RUN" = 1 ]; then
   say_section "Offline preview"
   eligible_count=0; held_count="$REJECTED_TARGET_COUNT"; refused_count=0
   for t in "${TARGETS[@]}"; do
-    IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+    IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source < <(printf '%s\n' "$t")
     eligibility="$(discovery_eligibility "$discovery_status" "$has_old")"
     case "$eligibility" in
       legacy-refused) refused_count=$((refused_count + 1)); warn "Legacy Tabliss: refusing $label / $profile_name."; continue ;;
@@ -811,13 +852,17 @@ if [ "$DRY_RUN" = 1 ]; then
     if [ "$has_new" != 1 ]; then
       case "$SALAH_INSTALL_SOURCE" in
         ask) printf 'Install source unresolved: GitHub manual route or official store page.\n' ;;
-        store) printf 'Would open official store: %s\n' "$store" ;;
+        store) if [ "$NO_OPEN" = 1 ]; then
+                 printf 'Would show official store URL for manual opening (NO_OPEN=1): %s\n' "$store"
+               else printf 'Would open official store: %s\n' "$store"; fi ;;
         github) printf 'Would resolve/download GitHub release; release/version/path unresolved until execution.\n' ;;
       esac
     fi
     if [ -n "$SALAH_WIDGET_PRESET_URL" ]; then printf 'Would stage the configured preset and guide manual import; path unresolved until execution.\n'
     else warn "No preset URL configured; preset import cannot be prepared."; fi
-    printf 'Would offer clipboard paths and open the browser manual installation/import pages.\n'
+    if [ "$NO_OPEN" = 1 ]; then
+      printf 'Would offer clipboard paths and show the browser manual installation/import URLs (NO_OPEN=1); open those pages manually.\n'
+    else printf 'Would offer clipboard paths and open the browser manual installation/import pages.\n'; fi
   done
   printf 'Preview targets: %s eligible, %s held, %s refused.\n' "$eligible_count" "$held_count" "$refused_count"
   warn "Importing the preset replaces your current TablissNG dashboard."
@@ -835,12 +880,12 @@ selection="${selection//[[:space:]]/}"
 selected_csv=","
 if [ "$selection" != "all" ]; then
   case "$selection" in ''|,*|*,|*,,*) err "Invalid target selection: $selection"; exit 1 ;; esac
-  IFS=',' read -r -a wanted <<< "$selection"
+  IFS=',' read -r -a wanted < <(printf '%s\n' "$selection")
   for token in "${wanted[@]}"; do
     [[ "$token" =~ ^[0-9]+$ ]] || { err "Invalid target number: $token"; exit 1; }
     found=0
     for t in "${TARGETS[@]}"; do
-      IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+      IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source < <(printf '%s\n' "$t")
       [ "$token" != "$idx" ] || found=1
     done
     [ "$found" = 1 ] || { err "Unknown target number: $token"; exit 1; }
@@ -851,7 +896,7 @@ fi
 eligible_count=0; held_count=0; refused_count=0
 [ "$selection" != all ] || held_count="$REJECTED_TARGET_COUNT"
 for t in "${TARGETS[@]}"; do
-  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source < <(printf '%s\n' "$t")
   if [ "$selection" = all ] || [[ "$selected_csv" = *",$idx,"* ]]; then
     eligibility="$(discovery_eligibility "$discovery_status" "$has_old")"
     case "$eligibility" in
@@ -867,7 +912,7 @@ initialize_staging || { err "Automatic staging is unavailable on this ownership 
 preset_file=""; ASSET_STAGED=0
 
 for t in "${TARGETS[@]}"; do
-  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source < <(printf '%s\n' "$t")
   if [ "$selection" != "all" ] && [[ "$selected_csv" != *",$idx,"* ]]; then
     continue
   fi

@@ -1,0 +1,84 @@
+name: R0016 source-free Apple Python discriminator
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - tools/qualification/installer_preview_macos_python_probe.py
+      - .github/workflows/installer-preview-macos-python.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-macos-python-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  python-discriminator:
+    runs-on: macos-15
+    timeout-minutes: 10
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tests/install-preview.py
+            /tools/qualification/installer_preview_macos_python_probe.py
+      - name: Run five contained source-free Python observations
+        shell: bash
+        run: |
+          observer_python="$(command -v python3)"
+          case "$observer_python" in
+            /*) ;;
+            *) printf '%s\n' 'No absolute observer Python path' >&2; exit 2 ;;
+          esac
+          if [ "$observer_python" -ef /usr/bin/python3 ]; then
+            printf '%s\n' 'Observer must already be a physical interpreter, not the Apple shim' >&2
+            exit 2
+          fi
+          probe_sha="$(/usr/bin/shasum -a 256 tools/qualification/installer_preview_macos_python_probe.py)"
+          test "${probe_sha%% *}" = "f24a7020e9d59bcd6e8f632d6ccf9ec41057ee79ebc30a454ca4fa9f1fa6032b"
+          "$observer_python" -B tools/qualification/installer_preview_macos_python_probe.py \
+            --repo "$GITHUB_WORKSPACE" \
+            --harness-sha256 ee209dac5cc2c635315557fa3ab8990bc994a5e6cd33367c565291392c35c306 \
+            --output "$RUNNER_TEMP/installer-python-evidence"
+      - name: Preserve complete diagnostic evidence including outside sentinel
+        if: always()
+        shell: bash
+        run: |
+          observer_python="$(command -v python3)"
+          case "$observer_python" in /*) ;; *) exit 2 ;; esac
+          if [ "$observer_python" -ef /usr/bin/python3 ]; then exit 2; fi
+          "$observer_python" -B - <<'PY'
+          import hashlib, json, os, pathlib, tarfile
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-python-evidence'
+          assert root.is_dir(), 'Diagnostic evidence directory is absent'
+          inventory = []
+          for path in sorted(root.rglob('*')):
+              assert not path.is_symlink(), 'Unexpected evidence symlink: ' + str(path)
+              if path.is_file():
+                  data = path.read_bytes()
+                  inventory.append({'path': str(path.relative_to(root)), 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
+          (root / 'artifact-inventory.json').write_text(json.dumps(inventory, indent=2) + '\n')
+          archive_path = root.with_suffix('.tar.gz')
+          with tarfile.open(archive_path, 'w:gz', dereference=False) as archive:
+              archive.add(root, arcname='installer-python-evidence')
+          data = archive_path.read_bytes()
+          print(json.dumps({'archive': archive_path.name, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest(), 'productRowsExecuted': 0}))
+          PY
+      - name: Retain original Apple discriminator evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: r0016-python-Darwin-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-python-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30

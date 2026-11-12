@@ -1,0 +1,242 @@
+[
+  {
+    "platform": "historical_linux",
+    "case": "offline github",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 0,
+    "effect_kinds": {},
+    "subject_regular_files": [
+      "home/.mozilla/firefox/fixture profile/extensions.json"
+    ],
+    "readiness_processes": [
+      "4101"
+    ],
+    "obligation": "P01",
+    "snapshot_equality_scope": "Exact unchanged fixture oracle reported before==after; original before/after arrays and child stdout were not retained by this entry fixture.",
+    "cache_free_source_basis": "Only the fixture named cached creates cached installer data; github creates clean HOME/TMP with browser metadata and no installer cache."
+  },
+  {
+    "platform": "historical_linux",
+    "case": "pipe source ask and confirmations",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 28,
+    "effect_kinds": {
+      "mktemp": 7,
+      "mkdir": 2,
+      "metadata": 2,
+      "download": 3,
+      "move": 4,
+      "clipboard": 4,
+      "open": 4,
+      "copy": 1,
+      "remove": 1
+    },
+    "subject_regular_files": [
+      "home/.mozilla/firefox/fixture profile/extensions.json",
+      "home/salah-widget-install.kwB7JN0o/presets/salah-widget.tablissng.json",
+      "home/salah-widget-install.kwB7JN0o/tabliss-chromium-unpacked.MAPDPvYC/Nested Folder/manifest.json",
+      "home/salah-widget-install.kwB7JN0o/tabliss-firefox-signed.xpi"
+    ],
+    "readiness_processes": [
+      "5823",
+      "5825"
+    ],
+    "obligation": "N03",
+    "inputs": {
+      "menu": true,
+      "confirmations": 2,
+      "sourceChoices": 2
+    },
+    "entry_output_sha256": "ab19b22451276aa5ea0fa42a8dd2f8101200e48b9f5880c5cc59fe4bd6bf2da4"
+  },
+  {
+    "platform": "historical_linux",
+    "case": "pipe store confirmation input",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 13,
+    "effect_kinds": {
+      "mktemp": 3,
+      "mkdir": 1,
+      "open": 4,
+      "download": 1,
+      "move": 1,
+      "clipboard": 2,
+      "remove": 1
+    },
+    "subject_regular_files": [
+      "home/.mozilla/firefox/fixture profile/extensions.json",
+      "home/salah-widget-install.syqS4xLx/presets/salah-widget.tablissng.json"
+    ],
+    "readiness_processes": [
+      "6188",
+      "6190"
+    ],
+    "obligation": "N03",
+    "inputs": {
+      "menu": true,
+      "confirmations": 2,
+      "sourceChoices": 0
+    },
+    "entry_output_sha256": "ccef5fae078e1c8f66f37929bb8e2d2a3a0a70219900f350d370bccc4a2d0b37"
+  },
+  {
+    "platform": "historical_linux",
+    "case": "pipe metadata-failure fallback input",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 17,
+    "effect_kinds": {
+      "mktemp": 3,
+      "mkdir": 1,
+      "metadata": 2,
+      "DENIED": 2,
+      "open": 4,
+      "download": 1,
+      "move": 1,
+      "clipboard": 2,
+      "remove": 1
+    },
+    "subject_regular_files": [
+      "home/.mozilla/firefox/fixture profile/extensions.json",
+      "home/salah-widget-install.6P1l6rMS/presets/salah-widget.tablissng.json"
+    ],
+    "readiness_processes": [
+      "6370",
+      "6372"
+    ],
+    "obligation": "N03",
+    "inputs": {
+      "menu": true,
+      "confirmations": 2,
+      "sourceChoices": 0
+    },
+    "entry_output_sha256": "2a64754bb8026f7d8313fee7d85f64ae336251a91a466d32856aa3b693e1dc45"
+  },
+  {
+    "platform": "mac",
+    "case": "offline github",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 0,
+    "effect_kinds": {},
+    "subject_regular_files": [
+      "home/Library/Application Support/Firefox/Profiles/fixture profile/extensions.json"
+    ],
+    "readiness_processes": [
+      "6344"
+    ],
+    "obligation": "P01",
+    "snapshot_equality_scope": "Exact unchanged fixture oracle reported before==after; original before/after arrays and child stdout were not retained by this entry fixture.",
+    "cache_free_source_basis": "Only the fixture named cached creates cached installer data; github creates clean HOME/TMP with browser metadata and no installer cache."
+  },
+  {
+    "platform": "mac",
+    "case": "pipe source ask and confirmations",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 28,
+    "effect_kinds": {
+      "mktemp": 7,
+      "mkdir": 2,
+      "metadata": 2,
+      "download": 3,
+      "move": 4,
+      "clipboard": 4,
+      "open": 4,
+      "copy": 1,
+      "remove": 1
+    },
+    "subject_regular_files": [
+      "home/Library/Application Support/Firefox/Profiles/fixture profile/extensions.json",
+      "home/salah-widget-install.hP3JeqvW/presets/salah-widget.tablissng.json",
+      "home/salah-widget-install.hP3JeqvW/tabliss-chromium-unpacked.wsPGmy8m/Nested Folder/manifest.json",
+      "home/salah-widget-install.hP3JeqvW/tabliss-firefox-signed.xpi"
+    ],
+    "readiness_processes": [
+      "8716",
+      "8718"
+    ],
+    "obligation": "N03",
+    "inputs": {
+      "menu": true,
+      "confirmations": 2,
+      "sourceChoices": 2
+    },
+    "entry_output_sha256": "6259453862bfbd498834eeb1de632ec715d144c79d03e04d03ee1409e8896f5b"
+  },
+  {
+    "platform": "mac",
+    "case": "pipe store confirmation input",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 13,
+    "effect_kinds": {
+      "mktemp": 3,
+      "mkdir": 1,
+      "open": 4,
+      "download": 1,
+      "move": 1,
+      "clipboard": 2,
+      "remove": 1
+    },
+    "subject_regular_files": [
+      "home/Library/Application Support/Firefox/Profiles/fixture profile/extensions.json",
+      "home/salah-widget-install.fOwRgQHf/presets/salah-widget.tablissng.json"
+    ],
+    "readiness_processes": [
+      "9233",
+      "9235"
+    ],
+    "obligation": "N03",
+    "inputs": {
+      "menu": true,
+      "confirmations": 2,
+      "sourceChoices": 0
+    },
+    "entry_output_sha256": "b615901b0d75100ff814e78058ce6ae52c9032d2aaba27cf4cd5363cbe884a68"
+  },
+  {
+    "platform": "mac",
+    "case": "pipe metadata-failure fallback input",
+    "source_sha256": "27442c0e6a6dbd6390ba1ea9b8b3efa2bfb2a910037e2c415756f9169a5c7b3f",
+    "entry_fixture_sha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "exit": 0,
+    "effect_count": 17,
+    "effect_kinds": {
+      "mktemp": 3,
+      "mkdir": 1,
+      "metadata": 2,
+      "DENIED": 2,
+      "open": 4,
+      "download": 1,
+      "move": 1,
+      "clipboard": 2,
+      "remove": 1
+    },
+    "subject_regular_files": [
+      "home/Library/Application Support/Firefox/Profiles/fixture profile/extensions.json",
+      "home/salah-widget-install.TG3asXs8/presets/salah-widget.tablissng.json"
+    ],
+    "readiness_processes": [
+      "9494",
+      "9496"
+    ],
+    "obligation": "N03",
+    "inputs": {
+      "menu": true,
+      "confirmations": 2,
+      "sourceChoices": 0
+    },
+    "entry_output_sha256": "67831ebf23bd452a39b688edbf26030456a471a079d6c2dbaa69f44fcda8fe69"
+  }
+]

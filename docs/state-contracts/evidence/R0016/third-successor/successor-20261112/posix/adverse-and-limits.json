@@ -1,0 +1,97 @@
+[
+  {
+    "platform": "linux",
+    "bootstrap_native_denial_readback": {
+      "status": "NOT_APPLICABLE_LINUX"
+    },
+    "declared_limits": [
+      "Helper extraction is separate from actual whole file entry.",
+      "Host startup activity is distinct from installer subject effects.",
+      "No real browser installation/import, signature or reboot-persistence claim.",
+      "Only actual Darwin execution can qualify the native macOS adapter; Linux is not Apple proof.",
+      "Darwin native log readback is a targeted capability probe, not complete process-tree attempt tracing.",
+      "Darwin transportAttempts=null means no independent per-syscall trace, never zero attempted calls."
+    ]
+  },
+  {
+    "platform": "mac",
+    "bootstrap_native_denial_readback": {
+      "status": "ACQUISITION_GAP",
+      "processId": 29828,
+      "matches": [],
+      "scope": "targeted native denial readback; not a complete process-tree syscall trace",
+      "hostControlRoot": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-v1mm8rk2/containment-control/kernel-probe/native-log-control",
+      "command": [
+        "/usr/bin/log",
+        "show",
+        "--style",
+        "json",
+        "--last",
+        "10s",
+        "--predicate",
+        "subsystem == \"com.apple.sandbox.reporting\" OR process == \"sandboxd\" OR (eventMessage CONTAINS[c] \"Sandbox:\" AND eventMessage CONTAINS[c] \"network\")"
+      ],
+      "reason": "No attributable network-denial report found within the bounded native readback",
+      "attempts": [
+        {
+          "exit": 0,
+          "stdoutBytes": 43428,
+          "stderr": "",
+          "streams": {
+            "stdout": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-v1mm8rk2/containment-control/kernel-probe/native-log-control/attempt-1.stdout.txt",
+              "capturedBytes": 43428,
+              "capturedSha256": "55b42999fb3e16e03da00b873e7a0d707e79068fc42df24d1c9f096b06ed0743",
+              "retainedBytes": 43428,
+              "retainedSha256": "55b42999fb3e16e03da00b873e7a0d707e79068fc42df24d1c9f096b06ed0743",
+              "complete": true,
+              "representation": "subprocess text=True decoded stream, re-encoded as UTF-8; not original pipe bytes"
+            },
+            "stderr": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-v1mm8rk2/containment-control/kernel-probe/native-log-control/attempt-1.stderr.txt",
+              "capturedBytes": 0,
+              "capturedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "retainedBytes": 0,
+              "retainedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "complete": true,
+              "representation": "subprocess text=True decoded stream, re-encoded as UTF-8; not original pipe bytes"
+            }
+          }
+        },
+        {
+          "exit": 0,
+          "stdoutBytes": 43428,
+          "stderr": "",
+          "streams": {
+            "stdout": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-v1mm8rk2/containment-control/kernel-probe/native-log-control/attempt-2.stdout.txt",
+              "capturedBytes": 43428,
+              "capturedSha256": "55b42999fb3e16e03da00b873e7a0d707e79068fc42df24d1c9f096b06ed0743",
+              "retainedBytes": 43428,
+              "retainedSha256": "55b42999fb3e16e03da00b873e7a0d707e79068fc42df24d1c9f096b06ed0743",
+              "complete": true,
+              "representation": "subprocess text=True decoded stream, re-encoded as UTF-8; not original pipe bytes"
+            },
+            "stderr": {
+              "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/r0016-preview-v1mm8rk2/containment-control/kernel-probe/native-log-control/attempt-2.stderr.txt",
+              "capturedBytes": 0,
+              "capturedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "retainedBytes": 0,
+              "retainedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "complete": true,
+              "representation": "subprocess text=True decoded stream, re-encoded as UTF-8; not original pipe bytes"
+            }
+          }
+        }
+      ]
+    },
+    "declared_limits": [
+      "Helper extraction is separate from actual whole file entry.",
+      "Host startup activity is distinct from installer subject effects.",
+      "No real browser installation/import, signature or reboot-persistence claim.",
+      "Only actual Darwin execution can qualify the native macOS adapter; Linux is not Apple proof.",
+      "Darwin native log readback is a targeted capability probe, not complete process-tree attempt tracing.",
+      "Darwin transportAttempts=null means no independent per-syscall trace, never zero attempted calls."
+    ]
+  }
+]

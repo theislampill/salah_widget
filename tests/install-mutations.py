@@ -13,6 +13,12 @@ def replace_once(old,new):
     if text.count(old)!=1: raise RuntimeError('Mutant boundary drift: '+old)
     return text.replace(old,new,1)
 
+def replace_embedded_python(old, new):
+    # Product Python is passed as one single-quoted shell literal. Preserve the
+    # original Python mutant while matching that literal's quote encoding.
+    escape = lambda value: value.replace("'", "'\"'\"'")
+    return replace_once(escape(old), escape(new))
+
 if source.suffix=='.sh':
     assertions={
         'cached-status-stdout': ('cached stdout is one path', 'actual Firefox producer zero/one profiles'),
@@ -31,7 +37,7 @@ if source.suffix=='.sh':
         ('eager-staging',replace_once('BUNDLE_ROOT=""; BUNDLE_ID=""; PRESET_ROOT=""; TERMINAL_OPEN=0','BUNDLE_ROOT=""; BUNDLE_ID=""; PRESET_ROOT=""; TERMINAL_OPEN=0\nmkdir -p "${TMPDIR:-/tmp}/salah-widget-installer"'),'install-entry-bash.py'),
         ('retained-deletion',replace_once('cleanup_staging() {\n  [ "$DRY_RUN" = 0 ] && [ -n "$WORK_ROOT" ] || return 0','cleanup_staging() {\n  [ "$DRY_RUN" = 0 ] && [ -n "$WORK_ROOT" ] || return 0\n  if verify_root "$BUNDLE_ROOT" "$BUNDLE_ID"; then rm -rf -- "$BUNDLE_ROOT"; fi'),'install-bash.py'),
         ('symlink-admission',replace_once('    [ ! -L "$current" ] || { err "Symlink in staged path: $current"; return 1; }','    : # mutant admits staged symlink'),'install-bash.py'),
-        ('archive-parent-member',replace_once("or any(p in ('', '.', '..') or ':' in p for p in parts)","or any(p in ('', '.') or ':' in p for p in parts)"),'install-bash.py'),
+        ('archive-parent-member',replace_embedded_python("or any(p in ('', '.', '..') or ':' in p for p in parts)","or any(p in ('', '.') or ':' in p for p in parts)"),'install-bash.py'),
         ('preview-cleanup',replace_once('cleanup_staging() {','cleanup_staging() {\n  rm -rf -- "${TMPDIR:-/tmp}/salah-widget-installer"'),'install-entry-bash.py'),
     ]
     for name,mutant,fixture in cases:

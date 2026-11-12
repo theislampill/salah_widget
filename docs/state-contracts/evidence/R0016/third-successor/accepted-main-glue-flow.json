@@ -1,0 +1,114 @@
+{
+  "schema": "r0016-integration-glue-control-flow.v1",
+  "workflowChecks": [
+    {
+      "path": ".github/workflows/installer-preview-linux22-native.yml",
+      "onlyAddedPathFilters": [
+        "tests/install-staging-parent.py"
+      ],
+      "sparseIncludesAllAdded": true,
+      "jobDispatchUnchanged": true
+    },
+    {
+      "path": ".github/workflows/installer-preview-macos-native.yml",
+      "onlyAddedPathFilters": [
+        "tests/install-staging-parent.py",
+        "tests/install-staging-readonly.py"
+      ],
+      "sparseIncludesAllAdded": true,
+      "jobDispatchUnchanged": true
+    },
+    {
+      "path": ".github/workflows/installer-preview-windows-full-entry.yml",
+      "onlyAddedJobCondition": "${{ !contains(github.event.head_commit.message, '[r0016-acquisition-only]') }}",
+      "matrixAndStepsAndFiltersUnchanged": true,
+      "markerPresent": "JOB_SKIPPED_ZERO_QUALIFICATION_CREDIT",
+      "markerAbsent": "ORDINARY_EXISTING_PATH_FILTERS_APPLY"
+    },
+    {
+      "path": ".github/workflows/installer-preview-docs.yml",
+      "onlyAddedJobCondition": "${{ !contains(github.event.head_commit.message, '[r0016-acquisition-only]') }}",
+      "matrixAndStepsAndFiltersUnchanged": true,
+      "markerPresent": "JOB_SKIPPED_ZERO_QUALIFICATION_CREDIT",
+      "markerAbsent": "ORDINARY_EXISTING_PATH_FILTERS_APPLY"
+    }
+  ],
+  "collectorDispatch": [
+    {
+      "name": "install-staging-parent",
+      "line": 224,
+      "guards": [
+        "args.expected_os in ('Linux', 'Darwin')",
+        "args.phase in ('r0015', 'r0016')"
+      ],
+      "call": "run('install-staging-parent', [sys.executable, str(root / 'tests/install-staging-parent.py'), str(root / 'install.sh')])"
+    },
+    {
+      "name": "install-staging-readonly",
+      "line": 226,
+      "guards": [
+        "args.expected_os in ('Linux', 'Darwin')",
+        "args.expected_os == 'Darwin' and args.phase == 'r0016'"
+      ],
+      "call": "run('install-staging-readonly', [sys.executable, str(root / 'tests/install-staging-readonly.py'), str(root / 'install.sh')])"
+    }
+  ],
+  "commonSourceSha256": "4600bac181dcac5fe7f72467c6018800666284d7087cf98f8b9bf5a449910821",
+  "exportedCommonNames": [
+    "TIMEOUT",
+    "ACK_TIMEOUT",
+    "SCENARIOS",
+    "FAILURE_SCENARIOS",
+    "ROW_FIELDS",
+    "ROLE_PATHS",
+    "CLONE_FIELDS",
+    "require",
+    "sha",
+    "fact",
+    "save",
+    "complete_json",
+    "owned_environment",
+    "direct_parameters",
+    "exact_exit",
+    "validate_rows",
+    "map_inputs",
+    "verify_input_mapping",
+    "inventory",
+    "double_inventory",
+    "extract_instrument",
+    "mapped_environment",
+    "finish_owned_acquisition",
+    "require_positive_confinement"
+  ],
+  "transitivelyReachableCommonFunctions": [
+    "complete_json",
+    "direct_parameters",
+    "double_inventory",
+    "exact_exit",
+    "extract_instrument",
+    "fact",
+    "finish_owned_acquisition",
+    "inventory",
+    "map_inputs",
+    "mapped_environment",
+    "owned_environment",
+    "require",
+    "require_positive_confinement",
+    "save",
+    "sha",
+    "validate_rows",
+    "verify_input_mapping"
+  ],
+  "commonOldPinFunctions": [
+    "prepare_pair"
+  ],
+  "exportedCommonCanReachOldPin": false,
+  "normalReceiverCompositionAttributes": [
+    "PREVIEW_SOURCE_SHA",
+    "ROW_FIELDS",
+    "require_positive_confinement",
+    "validate_rows"
+  ],
+  "correctedAdapterCoversExactAttributeSet": true,
+  "qualifiedNativeRuns": 0
+}

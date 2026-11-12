@@ -1,0 +1,124 @@
+name: Installer preview POSIX acquisition
+
+on:
+  push:
+    branches:
+      - pro/r0016-effect-free-preview-20261111
+    paths:
+      - tools/qualification/installer_preview_posix_probe.py
+      - .github/workflows/installer-preview-posix.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-preview-posix-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /src/native/builder.html
+            /src/native/config.js
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Provision missing containment prerequisite before qualification
+        shell: bash
+        run: |
+          preparation="$RUNNER_TEMP/installer-preview-preparation"
+          mkdir "$preparation"
+          sudo apt-get update > "$preparation/apt-update.stdout.txt" 2> "$preparation/apt-update.stderr.txt"
+          sudo apt-get install -y --no-install-recommends bubblewrap > "$preparation/apt-install.stdout.txt" 2> "$preparation/apt-install.stderr.txt"
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, platform, shutil, subprocess
+          output = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-preview-preparation'
+          facts = {'scope': 'runner preparation before installer fixture effects are measured',
+                   'host': platform.platform(), 'uid': os.getuid(), 'commands': []}
+          for command in (['dpkg-query', '-W', 'bubblewrap'], ['bwrap', '--version'], ['unshare', '--version']):
+              result = subprocess.run(command, capture_output=True, timeout=20)
+              facts['commands'].append({'command': command, 'exit': result.returncode,
+                                        'stdout': result.stdout.decode('utf-8', errors='replace'),
+                                        'stderr': result.stderr.decode('utf-8', errors='replace')})
+          facts['tools'] = {name: {'path': shutil.which(name),
+                                  'sha256': hashlib.sha256(pathlib.Path(shutil.which(name)).read_bytes()).hexdigest()}
+                            for name in ('bwrap', 'unshare')}
+          (output / 'prerequisites.json').write_text(json.dumps(facts, indent=2) + '\n')
+          assert all(row['exit'] == 0 for row in facts['commands']), 'Containment prerequisite acquisition failed'
+          PY
+      - name: Run unchanged actual Linux installer qualification
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_native.py --expected-os Linux --phase r0016 --output "$RUNNER_TEMP/installer-evidence"
+      - name: Preserve original Linux acquisition and fixture bytes
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, shutil, tarfile
+          parent = pathlib.Path(os.environ['RUNNER_TEMP'])
+          root = parent / 'installer-evidence'
+          root.mkdir(exist_ok=True)
+          preparation = parent / 'installer-preview-preparation'
+          if preparation.is_dir():
+              shutil.copytree(preparation, root / 'runner-preparation', symlinks=True)
+          with tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False) as archive:
+              archive.add(root, arcname='installer-evidence')
+          PY
+      - name: Retain original Linux evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-preview-Linux-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  darwin:
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /tests/install-preview.py
+            /tools/qualification/installer_preview_posix_probe.py
+      - name: Acquire bounded native PTY phase evidence
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_preview_posix_probe.py --repo "$GITHUB_WORKSPACE" --output "$RUNNER_TEMP/installer-evidence"
+      - name: Preserve original macOS diagnostic bytes
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, tarfile
+          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'
+          assert root.is_dir(), 'No native diagnostic directory'
+          with tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False) as archive:
+              archive.add(root, arcname='installer-evidence')
+          PY
+      - name: Retain original macOS diagnostic
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-preview-Darwin-diagnostic-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30

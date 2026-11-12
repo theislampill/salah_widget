@@ -1,0 +1,107 @@
+{
+  "schema": "r0016-bash-stream-repair-adjudication.v1",
+  "recordedAt": "2026-11-11T21:26:37.582616+00:00",
+  "currentBash": "87318d40dd4c91b1623ce7a5a9935f449850b8850e01e4b6cc2bc976b5f51bd7",
+  "currentPreview": "27af73e3efb2a473330a9b7fb0dc6d5d2f886c2c1c4665df7341721a7a6a73e3",
+  "nativeMacOriginal": {
+    "run": 43099184164,
+    "artifact": 13890418163,
+    "zipSha256": "a9d616c04d02a029dbfbb2f5230166a25a5e2592afa6944c1d1c451ad1ed25f9",
+    "rawCounts": {
+      "PASS": 18,
+      "PRODUCT_ASSERTION_FAILED": 24,
+      "BOOTSTRAP_BLOCKED": 3
+    },
+    "withheldRawPasses": [
+      "whole-entry refusal none",
+      "whole-entry refusal legacy"
+    ],
+    "acceptedCurrentMac": false
+  },
+  "localLinuxCollector": {
+    "resultSha256": "52fc7dab8b6a19e352d4e3f2c3ea6d20ae5f90b40096fd01db84a09998903ee9",
+    "status": "FAIL",
+    "contextCommit": "d966f71fba43f5cc8790f45b3aba6b1aaf4f0496",
+    "sourceHash": "87318d40dd4c91b1623ce7a5a9935f449850b8850e01e4b6cc2bc976b5f51bd7",
+    "commands": [
+      {
+        "name": "install-bash",
+        "exit": 1,
+        "passed": false
+      },
+      {
+        "name": "install-entry-bash",
+        "exit": 0,
+        "passed": true
+      },
+      {
+        "name": "install-discovery",
+        "exit": 0,
+        "passed": true
+      },
+      {
+        "name": "install-detectors",
+        "exit": 0,
+        "passed": true
+      },
+      {
+        "name": "install-discovery-mutations",
+        "exit": 0,
+        "passed": true
+      },
+      {
+        "name": "install-original-mutations",
+        "exit": 1,
+        "passed": false
+      },
+      {
+        "name": "install-builder",
+        "exit": 0,
+        "passed": true
+      },
+      {
+        "name": "install-staging-native",
+        "exit": 0,
+        "passed": true
+      },
+      {
+        "name": "install-linux-owner",
+        "exit": 2,
+        "passed": false
+      },
+      {
+        "name": "install-preview",
+        "exit": 0,
+        "passed": true
+      }
+    ],
+    "actualUid": 1000,
+    "distinctUidAcquisition": {
+      "privileged_distinct_uid_available": false,
+      "sudo": null,
+      "elevated": false
+    },
+    "qualifiedWholeMatrix": false
+  },
+  "localLimitAdjudication": [
+    "Wrong-owner-home selects /tmp without establishing its owner differs from the subject. Original subject UID was1000; at receiving /tmp is UID1000 mode0755. Exact published and current trusted_parent read-only probes both admit it. The required foreign-owner premise is not established; no ownership credit. Original FAIL retained.",
+    "Native distinctUID fixture explicitly reports BLOCKED_ACQUISITION; no supervisor/capability changes or skip-to-PASS.",
+    "Original mutation campaign failed beforecases on quoted-fragment anchor drift; candidate3 repairs only encoding and rerunsall8 withsamehealthy/adversecontrols."
+  ],
+  "candidate3Mutations": {
+    "testSha256": "51e5af2abd34f6e62ad2ce48ecb5ab07e737bc89bd9449964106505594c04243",
+    "stdoutSha256": "d7efaf25244af68b39c776ef309f19f4f2ab11ab70bfba6cda9bf19b3b44fde2",
+    "all8HealthyAndDetected": true,
+    "archiveSha256": "a3c07e6d351a9a8a2dcb8b8f661fbc1180c8a5a353982b5e58400f7e5e3bfd00"
+  },
+  "acceptance": "Local45preview and8mutation scopes only; originalfullcollectorFAIL preserved; independentrepairreview and freshnativeMac/hostedLinux remainpending.",
+  "supersededDraft": {
+    "path": "adjudication-invalid-uid-draft.json",
+    "sha256": "420c4f315662c3e851dde64ec3ea0e7630cb4f4721752d45cd752fa1040a0087",
+    "reason": "Root incorrectly asserted consumerUID0, contradicted by raw actualUid1000. Original retained; corrected without changing collector result."
+  },
+  "wrongOwnerPremiseReceipt": {
+    "path": "wrong-owner-premise-receiving.json",
+    "sha256": "a5cc877b0225c8661649f723ee60fe9f09f7a78fd5af6070c28e5fd0d79ce1b3"
+  }
+}

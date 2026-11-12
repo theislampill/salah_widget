@@ -1,0 +1,490 @@
+{
+  "schema": "r0016-clipboard-effect-independent-review.v1",
+  "reviewer": "/root/r0013_review",
+  "reviewedUtc": "2026-11-11T10:44:04.004022+00:00",
+  "scope": "Independent bounded review of the clipboard-effect additions to Bash5a3, PowerShella54 and companion4bb against exact f779/e09/87f9 predecessors, plus receiving of actual current targeted/complete receipts. No PowerShell or native installer execution by reviewer; no shared/source/controller/remote edits.",
+  "disposition": "NO_CONCRETE_BLOCKER_IN_REVIEWED_CLIPBOARD_EFFECT_DELTA",
+  "severityCounts": {
+    "Critical": 0,
+    "Important": 0,
+    "Minor": 0
+  },
+  "inputs": {
+    "install.ps1": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-inputs/install.ps1",
+      "sha256": "6808fe2ef870869ffd43a873fab94f27f2f94773e79a712158e73ffa79ec973c"
+    },
+    "install.sh": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-inputs/install.sh",
+      "sha256": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c"
+    },
+    "install-preview.ps1": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-inputs/install-preview.ps1",
+      "sha256": "a54ca7affb0b3c3b770403c5acfc965b5716fc376378f56dbf1b8cc43d297eed"
+    },
+    "install-preview.py": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-inputs/install-preview.py",
+      "sha256": "5a3a39906f0ff40d959cce5f985a368f01eaf92cb4a3cecdd8f39a1941327760"
+    },
+    "install-preview-native-controls.py": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-inputs/install-preview-native-controls.py",
+      "sha256": "4bb3d2e046a626758b991eaf6237aff7fab891434fe33d2ed1ce1799264bbda0"
+    },
+    "install-entry-native.py": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-inputs/install-entry-native.py",
+      "sha256": "223b8ed54b342c23e7d0380bc669072a5fd87f2e42eeadb276b024aa8aa29819"
+    },
+    "install-preview-acquire-timed.ps1": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-inputs/install-preview-acquire-timed.ps1",
+      "sha256": "b7938e602fcf3864462f08b4748a139e894b8c4802d8643840d4439894a0ffd1"
+    }
+  },
+  "priorInputs": {
+    "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/ps-before-copy-effect.ps1": "e09f07e0fa9686f5392248dfe956b3483f011dd73110cd4bdcdf9ace237297b2",
+    "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/bash-before-copy-effect.py": "f779a82db5e5e159969a9da92b6ca40da9578b70c9f2e30b3efe6e6f99758d2c",
+    "/workspace/scratch/b8359a7e27bf/recovery/r0016-compiler-preview/install-preview-native-controls.py": "87f9bf85cc5426ca4f30f5fd4dfdacca8158d276fcdfdd0e6ec7af7aab47ccc0"
+  },
+  "checks": [
+    {
+      "check": "Exact immutable reviewer inputs",
+      "pass_": true,
+      "evidence": {
+        "install.ps1": "6808fe2ef870869ffd43a873fab94f27f2f94773e79a712158e73ffa79ec973c",
+        "install.sh": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c",
+        "install-preview.ps1": "a54ca7affb0b3c3b770403c5acfc965b5716fc376378f56dbf1b8cc43d297eed",
+        "install-preview.py": "5a3a39906f0ff40d959cce5f985a368f01eaf92cb4a3cecdd8f39a1941327760",
+        "install-preview-native-controls.py": "4bb3d2e046a626758b991eaf6237aff7fab891434fe33d2ed1ce1799264bbda0",
+        "install-entry-native.py": "223b8ed54b342c23e7d0380bc669072a5fd87f2e42eeadb276b024aa8aa29819",
+        "install-preview-acquire-timed.ps1": "b7938e602fcf3864462f08b4748a139e894b8c4802d8643840d4439894a0ffd1"
+      }
+    },
+    {
+      "check": "Exact prior comparison fixtures",
+      "pass_": true,
+      "evidence": {
+        "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/ps-before-copy-effect.ps1": "e09f07e0fa9686f5392248dfe956b3483f011dd73110cd4bdcdf9ace237297b2",
+        "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/bash-before-copy-effect.py": "f779a82db5e5e159969a9da92b6ca40da9578b70c9f2e30b3efe6e6f99758d2c",
+        "/workspace/scratch/b8359a7e27bf/recovery/r0016-compiler-preview/install-preview-native-controls.py": "87f9bf85cc5426ca4f30f5fd4dfdacca8158d276fcdfdd0e6ec7af7aab47ccc0"
+      }
+    },
+    {
+      "check": "Bash existing preview and normal oracles preserved",
+      "pass_": true,
+      "evidence": {
+        "changedFunctions": [
+          "mutation"
+        ],
+        "unchangedCriticalFunctions": [
+          "helper",
+          "normal",
+          "evidence",
+          "no_effects"
+        ]
+      }
+    },
+    {
+      "check": "Native normal carrier and host gates unchanged",
+      "pass_": true,
+      "evidence": {
+        "changedFunctions": [
+          "main",
+          "mutation_candidates",
+          "preflight"
+        ],
+        "unchangedCriticalFunctions": [
+          "run_entry",
+          "native_host_identity",
+          "verify_case_files",
+          "inspect_entry_interface",
+          "verify_custody",
+          "allocate_root"
+        ]
+      }
+    },
+    {
+      "check": "Eight-recipe inventory adds only the clipboard effect",
+      "pass_": true,
+      "evidence": {
+        "recipes": {
+          "eager-staging": [
+            "eager",
+            "<entry>",
+            "wrapper",
+            "IO.Directory::CreateDirectory"
+          ],
+          "cleanup-in-preview": [
+            "cleanup",
+            "Clear-OwnedScratch",
+            "helper",
+            "::Dispose owner=Clear-OwnedScratch"
+          ],
+          "cached-path-return": [
+            "cached-path",
+            "Download-Asset",
+            "helper",
+            "usable success-stream value"
+          ],
+          "copy-success-when-suppressed": [
+            "copy-success",
+            "Copy-Text",
+            "helper",
+            "exactly Boolean false"
+          ],
+          "copy-null-array-truthiness": [
+            "copy-array",
+            "Copy-Text",
+            "helper",
+            "exactly Boolean false"
+          ],
+          "clipboard-attempt-during-preview": [
+            "copy-effect",
+            "Copy-Text",
+            "helper",
+            "command Set-Clipboard"
+          ],
+          "native-api-load-before-guard": [
+            "native-load",
+            "Initialize-StagingNative",
+            "helper",
+            "command Add-Type"
+          ],
+          "swallowed-direct-transport": [
+            "transport",
+            "<entry>",
+            "wrapper",
+            "::Connect owner="
+          ]
+        },
+        "scenarios": [
+          "positive",
+          "no-open"
+        ]
+      }
+    },
+    {
+      "check": "Targeted current Bash mutant receipt is bound",
+      "pass_": true,
+      "evidence": {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/bash.stdout.json",
+        "sha256": "d4df6e75b9d55ca460e8648e9482720444b100103f2e07a5cadf9b6b2e8fc0d6",
+        "rows": 7,
+        "scope": "Targeted bootstrap plus six mutant cases; not a complete suite"
+      }
+    },
+    {
+      "check": "Current complete Bash receipt is bound",
+      "pass_": true,
+      "evidence": {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-bash-current/stdout.json",
+        "sha256": "0ac8e844651b26a580a51f10af6c7d0788f3983ec26cd6b68b1cb10e4a0bb69e",
+        "rows": 43,
+        "host": {
+          "system": "Linux",
+          "kernel": "6.18.57",
+          "bash": "/bin/bash"
+        },
+        "nativeMacOSQualification": "NOT_RUN_ON_APPLE",
+        "priorVersion": "Prior f779 complete42 receipts remain prior-version evidence; this exact 5a3 fixture has current43 evidence."
+      }
+    },
+    {
+      "check": "Actual Bash clipboard mutant is exactly the guard omission",
+      "pass_": true,
+      "evidence": {
+        "path": "/tmp/r0016-preview-y0q53mam/mutant-copy-effect.sh",
+        "sha256": "ad98a493806441f43a50f7cdd9caf9e0994f4e309be9b3f0325c139564fc9045"
+      }
+    },
+    {
+      "check": "Bash rejection is actual clipboard attempts despite a failure return",
+      "pass_": true,
+      "evidence": {
+        "path": "/tmp/r0016-preview-y0q53mam/helper-mutant-copy-effect/observation.json",
+        "sha256": "42c026a7eca81005bf5b09e14737b1fa752dcea379fce316cafda8497904edce",
+        "events": [
+          "clipboard\tclipboard",
+          "clipboard\tclipboard -selection clipboard",
+          "clipboard\tclipboard --clipboard --input"
+        ],
+        "helperStatus": 1,
+        "returned": "",
+        "reason": "Installer reached forbidden effects: ['clipboard\\tclipboard', 'clipboard\\tclipboard -selection clipboard', 'clipboard\\tclipboard --clipboard --input']"
+      }
+    },
+    {
+      "check": "Actual Bash mutant normal/NoOpen survives original entry assertions",
+      "pass_": true,
+      "evidence": {
+        "harness": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-entry-bash.py",
+        "harnessSha256": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+        "nativeScope": "Linux contained real pipe/PTY caller",
+        "observation": {
+          "exit": 0,
+          "effects": 24,
+          "inputs": {
+            "menu": true,
+            "confirmations": 2,
+            "sourceChoices": 0
+          },
+          "fixture": "/tmp/r0016-preview-y0q53mam/mutant-positive-copy-effect/normal-work/salah-entry-bash-sy2u_kwa/r0016-no-open",
+          "readiness": {
+            "nonce": "af2ddf3c97163ffc0f6cd2b9875e9208",
+            "processes": [
+              "2600",
+              "2602"
+            ],
+            "loadedBeforeEntry": true,
+            "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+            "acquisition": {
+              "home": {
+                "path": "/tmp/r0016-preview-y0q53mam/mutant-positive-copy-effect/normal-work/salah-entry-bash-sy2u_kwa/r0016-no-open/subject/home",
+                "physical": "/tmp/r0016-preview-y0q53mam/mutant-positive-copy-effect/normal-work/salah-entry-bash-sy2u_kwa/r0016-no-open/subject/home",
+                "uid": 0,
+                "gid": 0,
+                "device": 39,
+                "inode": 181734,
+                "mode": "0o700",
+                "symlink": false
+              },
+              "temporary": {
+                "path": "/tmp/r0016-preview-y0q53mam/mutant-positive-copy-effect/normal-work/salah-entry-bash-sy2u_kwa/r0016-no-open/subject/tmp",
+                "physical": "/tmp/r0016-preview-y0q53mam/mutant-positive-copy-effect/normal-work/salah-entry-bash-sy2u_kwa/r0016-no-open/subject/tmp",
+                "uid": 0,
+                "gid": 0,
+                "device": 39,
+                "inode": 181735,
+                "mode": "0o700",
+                "symlink": false
+              },
+              "fixture": {
+                "path": "/tmp/r0016-preview-y0q53mam/mutant-positive-copy-effect/normal-work/salah-entry-bash-sy2u_kwa/r0016-no-open",
+                "physical": "/tmp/r0016-preview-y0q53mam/mutant-positive-copy-effect/normal-work/salah-entry-bash-sy2u_kwa/r0016-no-open",
+                "uid": 0,
+                "gid": 0,
+                "device": 39,
+                "inode": 181732,
+                "mode": "0o700",
+                "symlink": false
+              },
+              "uid": 0,
+              "gid": 0,
+              "groups": [],
+              "bash": "/bin/bash",
+              "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+            }
+          }
+        },
+        "deniedTransportAttempts": [],
+        "sourceArgument": "normal(\"mutant-positive-\" + name, source=the exact mutant path, no_open=True), unchanged caller"
+      }
+    },
+    {
+      "check": "Current PowerShell All60 receipt and terminal exit are bound",
+      "pass_": true,
+      "evidence": {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-offline-acquisition/mitigated.stdout.json",
+        "sha256": "4d077bec72fc63088998b16b7994bcfab19653e4d01c70ba0e169e8403416c1f",
+        "exitReceipt": "/workspace/scratch/b8359a7e27bf/recovery/r0016-offline-acquisition/mitigated-exit.json",
+        "exitSha256": "2fd02d5972638b0cbe55b9374862ab9a1e67f12f9cd5438347c1943e931e6d06",
+        "rows": 60,
+        "host": "7.6.6",
+        "nativeWindows": false,
+        "independentHardContainment": "NOT_ACQUIRED",
+        "priorVersion": "Prior e09 complete59 receipts are not relabeled as a54 complete60."
+      }
+    },
+    {
+      "check": "Actual PS variant is exactly the conditional source-call insertion",
+      "pass_": true,
+      "evidence": {
+        "path": "/tmp/r0016-optout-all-_mmmufab/output/r0016-preview-ps-62559c7256a54413bc674414ee5ce611/mutants/clipboard-attempt-during-preview/install.ps1",
+        "sha256": "cad136701eec6e17c99cf0aa33ceecb6a457d884600b3a61df4f5565a34571a1",
+        "kind": "copy-effect",
+        "function": "Copy-Text"
+      }
+    },
+    {
+      "check": "PS healthy readiness, capture and original baseline",
+      "pass_": true,
+      "evidence": {
+        "fixture": "/tmp/r0016-optout-all-_mmmufab/output/r0016-preview-ps-62559c7256a54413bc674414ee5ce611/matched-clipboard-attempt-during-preview-unicode-\u0635",
+        "specSha256": "3cfaed94c654806326a8fc657d614b3f7a766832fd977bd8bde61f3490d1a2d5",
+        "readinessSha256": "5f082086bdeff30378eef0c2a4b30a85a5bcd859ec1a1cdc359044c6a4aefefd",
+        "eventsSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "processId": 2135,
+        "exit": 0,
+        "events": [],
+        "summaryReadinessField": false,
+        "readinessMeaning": "The acquisition-library timing field is false for its own different marker; the actual source guard readiness nonce is independently read from the case spec and verified here."
+      }
+    },
+    {
+      "check": "PS mutant readiness, capture and original baseline",
+      "pass_": true,
+      "evidence": {
+        "fixture": "/tmp/r0016-optout-all-_mmmufab/output/r0016-preview-ps-62559c7256a54413bc674414ee5ce611/mutant-clipboard-attempt-during-preview-unicode-\u0635",
+        "specSha256": "f04f69dee3294fecefe905dd577c1e5479de339cbdea224ea7be3ce7b873358e",
+        "readinessSha256": "cecd1f398b7ea4c5118c418ddebb42662b76bb422dafb9e8043c6ce3388b0006",
+        "eventsSha256": "3d787b426975c955281ee4266b6bc75ecbd89806e7aa8d9dd94569c726adbb02",
+        "processId": 2171,
+        "exit": 0,
+        "events": [
+          {
+            "kind": "source-call",
+            "detail": "command Set-Clipboard",
+            "file": "/tmp/r0016-optout-all-_mmmufab/output/r0016-preview-ps-62559c7256a54413bc674414ee5ce611/mutants/clipboard-attempt-during-preview/actual-functions.ps1",
+            "line": 630,
+            "column": 20
+          }
+        ],
+        "summaryReadinessField": false,
+        "readinessMeaning": "The acquisition-library timing field is false for its own different marker; the actual source guard readiness nonce is independently read from the case spec and verified here."
+      }
+    },
+    {
+      "check": "Healthy actual Copy-Text returns exact false without effects",
+      "pass_": true,
+      "evidence": {
+        "result": "/tmp/r0016-optout-all-_mmmufab/output/r0016-preview-ps-62559c7256a54413bc674414ee5ce611/matched-clipboard-attempt-during-preview-unicode-\u0635/host-control/child-result.json",
+        "sha256": "72a0b3b2b8d8dd8f58b339aa540d81085dcca6597b3987040979ecee1b4a6b83",
+        "returned": [
+          false
+        ],
+        "returnCount": 1,
+        "nullReturnCount": 0
+      }
+    },
+    {
+      "check": "Mutant source-call event binds the actual inserted command",
+      "pass_": true,
+      "evidence": {
+        "event": {
+          "kind": "source-call",
+          "detail": "command Set-Clipboard",
+          "file": "/tmp/r0016-optout-all-_mmmufab/output/r0016-preview-ps-62559c7256a54413bc674414ee5ce611/mutants/clipboard-attempt-during-preview/actual-functions.ps1",
+          "line": 630,
+          "column": 20
+        },
+        "rawEventsSha256": "3d787b426975c955281ee4266b6bc75ecbd89806e7aa8d9dd94569c726adbb02",
+        "actualFunctionsSha256": "2ad745210fb49c91454b777a58f4b9b19e51edb08254ff4098094d1a5235ba53",
+        "mutantExit": 0,
+        "terminalObservation": null,
+        "meaning": "A post-readiness actual source-call attempt was denied before clipboard mutation. Exit zero and absent final helper result do not erase the exact raw attempted-effect evidence. This is not a claim that the real clipboard changed."
+      }
+    },
+    {
+      "check": "Actual current companion structural and eighth-variant negative controls",
+      "pass_": true,
+      "evidence": {
+        "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-companion-controls.json",
+        "sha256": "d1c120c977f984006659b19fd952e67cb0424fb50c17280a25cd4c8321b286b3",
+        "results": [
+          {
+            "case": "actual-eight-variant-receipt",
+            "exit": 0,
+            "status": "STRUCTURAL_VALIDATION_ONLY",
+            "error": null,
+            "report": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-companion-controls/actual-eight-variant-receipt/stdout.json",
+            "reportSha256": "11a5e8309534a12a2f8fb8459a0f635646fe8e58a8b0fc3879d85e33d23cb006",
+            "nativeExecution": false,
+            "allRequiredNativeSurvivalEstablished": false,
+            "processLaunches": 0,
+            "pass": true
+          },
+          {
+            "case": "missing-eighth-clipboard-packet",
+            "exit": 2,
+            "status": "PROVENANCE_BLOCKED",
+            "error": "The complete current retained mutation inventory is required",
+            "report": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-companion-controls/missing-eighth-clipboard-packet/stdout.json",
+            "reportSha256": "aab87c49fe1deb6d8f617f51b18b3abb155a721cd1fbeac4ac5b8b0a776f6386",
+            "nativeExecution": false,
+            "allRequiredNativeSurvivalEstablished": false,
+            "processLaunches": 0,
+            "pass": true
+          },
+          {
+            "case": "return-value-recipe-substituted-for-effect",
+            "exit": 2,
+            "status": "PROVENANCE_BLOCKED",
+            "error": "Retained source is not the intended bounded mutation: clipboard-attempt-during-preview",
+            "report": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-companion-controls/return-value-recipe-substituted-for-effect/stdout.json",
+            "reportSha256": "3e8e56ff59ce55f1d30c507e28376b74c46e30aa24f95b6a045d759520b69b9c",
+            "nativeExecution": false,
+            "allRequiredNativeSurvivalEstablished": false,
+            "processLaunches": 0,
+            "pass": true
+          },
+          {
+            "case": "rebased-raw-event-control-before-removal",
+            "exit": 0,
+            "status": "STRUCTURAL_VALIDATION_ONLY",
+            "error": null,
+            "report": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-companion-controls/rebased-raw-event-control-before-removal/stdout.json",
+            "reportSha256": "8729eec3e837fc403856e159dc2307a0eff5fa705a0c699fd13b94f5c588bea7",
+            "nativeExecution": false,
+            "allRequiredNativeSurvivalEstablished": false,
+            "processLaunches": 0,
+            "pass": true
+          },
+          {
+            "case": "clipboard-causal-event-removed-from-raw-and-row",
+            "exit": 2,
+            "status": "PROVENANCE_BLOCKED",
+            "error": "Required raw source-call discriminator is absent: clipboard-attempt-during-preview",
+            "report": "/workspace/scratch/b8359a7e27bf/recovery/r0016-copy-effect/independent-companion-controls/clipboard-causal-event-removed-from-raw-and-row/stdout.json",
+            "reportSha256": "12acaca0d1b1827e7cc8b0188693ce531e82ffe831c436d4d09e09a9e9477026",
+            "nativeExecution": false,
+            "allRequiredNativeSurvivalEstablished": false,
+            "processLaunches": 0,
+            "pass": true,
+            "counterexample": {
+              "originalRawEventSha256": "66b85675f1228707c666b06c05820c57d607189bfb7a88b989f62b6ea40e4c45",
+              "emptyRawEventSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "reportedAttempts": [],
+              "unchangedError": "Installer reached effect/attempt boundary: source-call command Set-Clipboard",
+              "scope": "Only copied raw event and its paired reported attempts were emptied; the error text and PASS aggregate were retained to prove they alone cannot credit the mutant."
+            }
+          }
+        ],
+        "processLaunchAttempts": 0
+      }
+    }
+  ],
+  "checksPassed": 17,
+  "checksTotal": 17,
+  "findings": [],
+  "reviewConclusions": [
+    "Bash removes only the actual copy_text preview guard. The actual helper still returns failure and no value, yet attempts three clipboard boundaries; the new oracle therefore detects an effect that a return-status-only oracle would miss. The exact mutated complete source also survives the maintained normal/NoOpen caller.",
+    "PowerShell inserts an actual Set-Clipboard statement conditioned on DryRun before the original guard. The producer requires the specific PRODUCT_ASSERTION_FAILED diagnosis and a matching raw source-call event. The received event points at the inserted statement in the actual source-derived Copy-Text function; matched healthy preview returns exactly one Boolean false with no null return or source attempt.",
+    "The native companion preserves its actual normal and NoOpen carrier, native-host/provenance gates and healthy baseline requirement. It now requires all eight declared recipes and the exact clipboard-effect mutation bytes and raw event; the native completion flag refers to the complete current recipe set.",
+    "Actual companion validate-only accepted all eight prior discriminators but did not set nativeExecution, pass_ or allRequiredNativeSurvivalEstablished. Missing clipboard inventory, substituting the old return-value mutation, and removing both the copied raw causal event and its reported attempts were rejected. The copied-event baseline passed before removal. Zero process-launch attempts occurred during these five Python controls.",
+    "Current complete Bash43 is separately bound from prior f779/Bash42 and the current targeted7 receipt. Current PowerShell60 is separately bound from e09/59. The originally approval-blocked acquisition remains retained and receives no qualification credit."
+  ],
+  "limitsAndRemainingGates": [
+    "PowerShell All60 is supplemental LinuxPS7.6.6 evidence bound to source6808fe; it does not qualify Windows PS5.1, Windows PS7, or the subsequently advanced f801-derived R16 source.",
+    "Bash43 is LinuxBash5.2 evidence bound to source9e0fac; it does not replace actual Apple Bash3.2 qualification.",
+    "All eight PowerShell variants still require the maintained native normal/NoOpen survival gate on both actual Windows hosts. The structural plan is eighteen actual entries per host: baseline two plus eight variants times two. No native survival is claimed here.",
+    "The mitigated PowerShell acquisition has documented pre-startup opt-outs and a read-only filesystem outside its owned root, but explicitly reports independentHardContainment=NOT_ACQUIRED. This review does not turn known source-call guards into an operating-system network sandbox claim.",
+    "The old scratch verify-compact-companion.py references the historical allSevenNativeSurvivalEstablished field. It remains prior-version evidence for companion87f9; it was not used to qualify4bb. The current five explicit controls exercise4bb directly.",
+    "The newer USERPROFILE/readability full-entry derivative is separate from this companion. The exact original maintained entry223b8ed was used for structural carrier checks. Root owns integration, candidate binding, native receiving and the complete R16 denominator/approval/delivery gates."
+  ],
+  "declinedToJudge": [
+    {
+      "item": "New f801-derived source or native candidate readiness",
+      "reason": "All received PowerShell execution here binds immutable6808fe. Root advanced source after the reviewer snapshot; affected qualification belongs to that new candidate."
+    },
+    {
+      "item": "Whole-contract completion or merge/lifecycle approval",
+      "reason": "This is a bounded engineering review; remaining native, entry-profile, delivery and owner/order gates are not discharged."
+    }
+  ],
+  "relatedMetadataCorrection": {
+    "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-entry-coverage/metadata-correction-v1.json",
+    "sha256": "067d6bca8da9409dfbd10fde743f7304caa340e2d2efc4e657841738d2e3d7cb",
+    "effect": "Corrects the separate frozen handoff baseline field from f801 to immutable7e695 without changing its frozen files or relabeling evidence."
+  },
+  "nativeQualified": false,
+  "wholeContractComplete": false,
+  "writesByReviewer": "Attributed review, copied immutable inputs, and bounded structural counterexample files only under recovery/r0016-copy-effect; separately authorized small metadata correction addendum under recovery/r0016-entry-coverage."
+}

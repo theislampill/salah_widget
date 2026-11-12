@@ -1,0 +1,201 @@
+{
+  "schema": "r0016-compiler-interface-independent-review.v1",
+  "reviewedUtc": "2026-11-11T13:07:38.615102+00:00",
+  "reviewer": "/root/r0015_contract",
+  "continuity": "refs/implementaudit/continuity-receipts/installer-20261111/G0014@d8399248d75438e4e33f76c3485fbd594af4cf89",
+  "scope": "Independent read-only review of the R16-only integration delta over exact R15 dependency b271. The reviewer authored the R15 compiler implementation and explicitly excludes assessment or approval of that implementation. Installer files are checked only for dependency identity, the R16 comment-only delta and helper signature/first-guard compatibility with the R16 fixture.",
+  "disposition": "NO_CONCRETE_BLOCKING_DEFECT_FOUND_IN_REVIEWED_R16_INTEGRATION; CURRENT_RUNTIME_AND_WHOLE_CONTRACT_GATES_OPEN",
+  "authority": "Evidence only; no mutation, publication, readiness, acceptance or closure authority.",
+  "dependency": {
+    "head": "b271861360476de3c261df89d30a07ff59c8bc27",
+    "tree": "7be708b1d6c9fcb292f9eb25e82fe98d8a6e53ac",
+    "r15PS": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+    "r16PS": "b579fb83c91c9f45b7ca461f6e7a1cafbc7af1e2132dee5b1cb333623ac2cc3e"
+  },
+  "criticalInputs": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/install.ps1",
+      "sha256": "b579fb83c91c9f45b7ca461f6e7a1cafbc7af1e2132dee5b1cb333623ac2cc3e",
+      "bytes": 110094
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/install.sh",
+      "sha256": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c",
+      "bytes": 41623
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tests/install-preview.ps1",
+      "sha256": "1cb7eeea0f8e72ffb3ca8ef8492778dabef4d009474f26cfe5601c24f658094b",
+      "bytes": 48257
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/tools/qualification/installer_native.py",
+      "sha256": "9732e7687ced927be21bdca8f9fae08e29c7104d0119fe435ea74dcc86a1a46f",
+      "bytes": 20902
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0016/.github/workflows/installer-native.yml",
+      "sha256": "56a018122625d5dc00da2960971707bcfaeb1ef1c1763395bf67ac99f6db5923",
+      "bytes": 5616
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-dependency-b271/receiving.json",
+      "sha256": "129a34ea430e5f56d76790713b9801e1f4b72e2784ae96bd4ddd8e59df8a3b07",
+      "bytes": 4722
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0016-integration-review.json",
+      "sha256": "aea26b4bd1af0ad043d7e068dfcccc9177d8c690008a1e806fd4db8d561d2651",
+      "bytes": 37381
+    }
+  ],
+  "findings": [
+    {
+      "id": "R16-COMPILER-INTERFACE-01",
+      "classification": "PASS_SCOPED_STATIC_DEPENDENCY_AND_COMMENT_DELTA",
+      "finding": "Current HEAD/tree match b271/7be708. Each incoming installer equals the corresponding exact HEAD blob. Each R16 installer differs from that blob only by three usage-comment insertions. All executable text, including R14 functions and R13/15 interfaces, is byte-identical to the dependency. This does not assess the dependency implementation.",
+      "sources": [
+        "install.ps1:9-11",
+        "install.sh:9,11-12",
+        "recovery/r0016-dependency-b271/receiving.json",
+        "review bindings.json"
+      ]
+    },
+    {
+      "id": "R16-COMPILER-INTERFACE-02",
+      "classification": "PASS_SCOPED_ACTUAL_HELPER_CALL_MAPPING",
+      "finding": "The actual source AST supplies the function definitions. The three new helpers appear in the required effect-helper inventory and each gets a direct DryRun call with the actual positional signature. Calls pass sentinel context/read-handle data and deliberately invalid compiler input; these are suppression controls, not fabricated native admission. Each expects no success-stream value and a preview-suppression reason.",
+      "sources": [
+        "tests/install-preview.ps1:52-76,168-169,184,219-245,388-397,513-556",
+        "install.ps1:86-87,145-146,256-257"
+      ],
+      "newCases": [
+        {
+          "case": "helper-compiler-path-facts",
+          "call": "Read-CompilerPathFacts $null $spec.compiler 'S-1-0-0' ''",
+          "contract": "throw before native read"
+        },
+        {
+          "case": "helper-compiler-output-lease",
+          "call": "Open-CompilerOutputLease $spec.compiler $CompilerContext",
+          "contract": "throw before output admission"
+        },
+        {
+          "case": "helper-compiler-invocation",
+          "call": "Invoke-StagingCompiler 'deliberately invalid preview input' $CompilerContext",
+          "contract": "throw before compiler invocation or code load"
+        }
+      ]
+    },
+    {
+      "id": "R16-COMPILER-INTERFACE-03",
+      "classification": "PASS_SCOPED_SENTINEL_AND_ORACLE_PRESERVATION",
+      "finding": "DefaultOwnerSid, InvocationStarted=false and CompilerExitCode=null are included in the existing serialized compiler context. The existing before/after byte comparison, same-reference assertion, fake-handle disposal counter and compiler-type observations therefore include the new state. The effect inventory instruments every member invocation owned by a listed helper, covering direct process/native/stream methods without executing them during this review. Existing preparation/drain/terminal-schema/effect/return/counter assertions are unchanged.",
+      "sources": [
+        "tests/install-preview.ps1:118-155,209-245,318-397"
+      ],
+      "limit": "The sentinels prove only the fixture can observe state changes. Native identity, compilation, default-owner cleanup and OS isolation are not established here."
+    },
+    {
+      "id": "R16-COMPILER-INTERFACE-04",
+      "classification": "PASS_EXACT_PRIOR_CORE_PROJECTION",
+      "finding": "Removing only the three new inventory names, three context fields and three helper rows reconstructs the independently reviewed a54ca7 core byte for byte. All previous acquisition classifiers, guard controls, full wrapper cases, eight matched preview mutants, snapshot logic, source/test stability checks and receipt fields are unchanged. Static intended All denominator is now63 rows:4 guard controls+37 helper cases+14 wrapper cases+8 mutant discriminators. No current execution is inferred from this count.",
+      "sources": [
+        "tests/install-preview.ps1:64-76,220,513-642",
+        "tests__install-preview.ps1.patch",
+        "bindings.json"
+      ],
+      "priorCoreSha256": "a54ca7affb0b3c3b770403c5acfc965b5716fc376378f56dbf1b8cc43d297eed"
+    },
+    {
+      "id": "R16-COMPILER-INTERFACE-05",
+      "classification": "PASS_EXACT_PRIOR_COLLECTOR_ROUTE_PROJECTION",
+      "finding": "Reversing only the incoming R15 custody-budget/comment adjustment, short mutation-root prefix and explicit PS7 long-path command reconstructs the independently reviewed00fef4 collector byte for byte. R16 retains same-host binding, exact PS7.6.6 and PS5.1 version gates, explicit All/timed library/source/output,4200-second core budget,3300-second nine-carrier normal/NoOpen companion using original223b8ed entry,8 routes, and1800-second full coverage using5f86fd9 entry and adjacent52a268 support.",
+      "sources": [
+        "tools/qualification/installer_native.py:228-308",
+        "tools__qualification__installer_native.py.patch",
+        "recovery/r0016-integration-review.json"
+      ],
+      "limit": "These are acquisition ceilings and planned routes, not native completion evidence or a guarantee that all per-child ceilings fit simultaneously within a job."
+    },
+    {
+      "id": "R16-COMPILER-INTERFACE-06",
+      "classification": "PASS_SCOPED_R15_TEST_CONSUMER_INTEGRATION",
+      "finding": "The inherited1500-second compiler-custody allowance applies independently to each selected Windows host. The shortened r15m-UUID mutation root retains uniqueness. The long-path case remains explicitly selected only for PS7 and outside ordinary28-case/13-prerequisite runs. Collector row admission and independent qualification/diagnostic acquisition labels are unchanged; a capability boundary or failed fixture copy cannot become PASS through this delta. The long-path and volume-adapter mechanisms were independently reviewed in the separate9aca26 report and are not re-executed here.",
+      "sources": [
+        "tools/qualification/installer_native.py:38-51,139-174,261-298,309-317",
+        "recovery/r0015-longpath-integration-review/review.json"
+      ]
+    },
+    {
+      "id": "R16-COMPILER-INTERFACE-07",
+      "classification": "PASS_SCOPED_WORKFLOW_AND_UNCHANGED_COMPANIONS",
+      "finding": "Workflow56a018 remains byte-identical to the prior independent review: separate ps51/ps7 jobs,180-minute job budgets, host-named evidence artifacts and pre-start opt-outs. The timed library, normal-survival companion, original entry, full coverage entry/support and route fixture also retain their previously reviewed exact hashes. No new CLI incompatibility is introduced in this integration delta.",
+      "sources": [
+        ".github/workflows/installer-native.yml:73-142",
+        "bindings.json",
+        "recovery/r0016-integration-review.json"
+      ],
+      "limit": "Pre-start telemetry settings are mitigation, not independent hard-egress denial; current Windows and Apple execution still require actual receipts."
+    },
+    {
+      "id": "R16-COMPILER-INTERFACE-08",
+      "classification": "PASS_DENOMINATOR_PRESERVED_WITH_CONCURRENT_METADATA_REFRESH",
+      "finding": "The same46 unique row IDs remain in their prior order:14 original requirements,6 residual acceptances,15 branches and11 effects. Whole-contract, nativeApple, nativeWindows and finalPublicDelivery flags remain false. During review, root refreshed docs/matrix from the old9eaf/a4 dependency to b271/b579; this is recorded as a concurrent metadata change rather than input stability of the original snapshot. Historical PS60 observations have not been treated as current63-row results.",
+      "sources": [
+        "docs/state-contracts/evidence/R0016/current-acceptance-matrix.json",
+        "attempt-1-concurrent-docs.json",
+        "bindings.json"
+      ],
+      "limit": "This is preservation and dependency-metadata receiving only, not a new full46-row qualification review."
+    }
+  ],
+  "staticEvidence": {
+    "bindingsFile": "/workspace/scratch/b8359a7e27bf/recovery/r0016-compiler-interface-review/bindings.json",
+    "sha256": "40a1d657fbccafef9e7b1c8e6b53036cdb84f08993257372875efe21b011f95e",
+    "assertions": 73,
+    "allChecksTrue": true,
+    "meaning": "Read-only hashes/text projections, not product tests."
+  },
+  "concurrentMetadata": [
+    {
+      "path": "docs/state-contracts/R0016.md",
+      "receivingIntentSha256": "e32fd997939d54247b3350c1abfad93de975d2d2128c590c5db452e1fb36dadb",
+      "currentSha256": "cf710bf941f8000765f1a9ad76950ec660920aae219965f9438eeebfb326adcc",
+      "scope": "Root-owned concurrent metadata refresh; not a fixture or product result."
+    },
+    {
+      "path": "docs/state-contracts/evidence/R0016/current-acceptance-matrix.json",
+      "receivingIntentSha256": "1029a08762e43720440b5371206f04993016e5b8023408e2232e6eb863c737a4",
+      "currentSha256": "36f37797dae63d3767297309305aa34b29264b59dd7cd6cb46346c2cf08a5cad",
+      "scope": "Root-owned concurrent metadata refresh; not a fixture or product result."
+    }
+  ],
+  "metadataDependencyReadback": {
+    "head": "b271861360476de3c261df89d30a07ff59c8bc27",
+    "tree": "7be708b1d6c9fcb292f9eb25e82fe98d8a6e53ac",
+    "r15PS": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+    "candidatePS": "b579fb83c91c9f45b7ca461f6e7a1cafbc7af1e2132dee5b1cb333623ac2cc3e",
+    "candidateBash": "9e0facbed4053dddbf676c58e4a07515371cdd7f35ad4d85164486d2c71fdb9c",
+    "state": "Reviewed engineering prerequisite; R15 native candidate5 pending, not accepted-main integration"
+  },
+  "acquisitionHistory": {
+    "file": "/workspace/scratch/b8359a7e27bf/recovery/r0016-compiler-interface-review/attempt-1-concurrent-docs.json",
+    "result": "First static binding pass stopped at root-owned concurrent doc refresh. Original checker and actual failure retained; source/core/collector unchanged. Corrected checker separates those metadata revisions instead of silently claiming original identity."
+  },
+  "remaining": [
+    "Actual current-source R16 supplemental receiving is separate and pending; no PowerShell execution performed by this reviewer.",
+    "Actual Windows PS5.1/7.6.6 helper/wrapper, complete -File and nine-carrier normal/NoOpen results remain mandatory.",
+    "Actual Apple complete preview/effect/caller results remain mandatory.",
+    "R15 candidate native acceptance is independently owned and is not waived or approved by this review.",
+    "All46 obligations, exact prerequisite reconciliation, whole-candidate independent review, approved integration and actual public delivery remain open.",
+    "Known source-call guards and snapshots do not establish an OS sandbox or arbitrary hostile-code containment."
+  ],
+  "powershellExecuted": false,
+  "nativeExecuted": false,
+  "fixturesExecuted": false,
+  "sourceOrSharedFilesChanged": false,
+  "externalStateChanged": false,
+  "r15OwnSourceIndependentlyReviewed": false,
+  "wholeContractSatisfied": false
+}

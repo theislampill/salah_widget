@@ -1,0 +1,70 @@
+{
+  "schema": "windows-diagnostic-cold-review-oracles.v1",
+  "packet_sha256": "a625ea1b3da15293e768e53782e25d886400458407a0270e59b1c65decff1167",
+  "native_execution": false,
+  "powershell_execution": false,
+  "checks": [
+    {
+      "check": "packet_hash",
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer_preview_host_probe.py",
+      "sha256": "3119ab685aa4ab10a0f0235931d68cc0bd24ade8bb0c96cd955c6b9986cf5855"
+    },
+    {
+      "check": "packet_hash",
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer_preview_host_probe.ps1",
+      "sha256": "5ebc49cb5d5cf19269fe1395ee317c3fd6791aa0a1ca158030006431c01976dc"
+    },
+    {
+      "check": "packet_hash",
+      "path": "/tmp/r0016-successor-20261111/recovery/proposed/installer-preview-windows-host.yml",
+      "sha256": "dd30bc47f33b623a6d7f82db23e0e73bd0f69cc38e3e3a7be8dcd5dbeb542c52"
+    },
+    {
+      "check": "python_ast",
+      "pass": true,
+      "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+    },
+    {
+      "check": "environment_data_and_preparation",
+      "pass": true,
+      "scope": "POSIX data oracle only; no Windows environment/runtime behavior credited"
+    },
+    {
+      "check": "stable_snapshot_oracle",
+      "pass": true,
+      "rows": 9
+    },
+    {
+      "check": "entry_overflow_refuses",
+      "pass": true
+    },
+    {
+      "check": "file_size_overflow_refuses",
+      "pass": true
+    },
+    {
+      "check": "file_mutation_refuses",
+      "pass": true
+    },
+    {
+      "check": "directory_gap_discrimination",
+      "defect_reproduced": true,
+      "snapshot_complete": true,
+      "represented_paths": [
+        ".",
+        "existing.bin"
+      ],
+      "unrepresented_existing_file": "runtime-cache-created-after-directory-list.bin",
+      "scope": "Python algorithm with mocked ACL reader on POSIX. No PowerShell or Windows execution."
+    },
+    {
+      "check": "directory_gap_mixed_state_discrimination",
+      "defect_reproduced": true,
+      "snapshot_complete": true,
+      "unrepresented_file_created_first": "new-cache-before-retained-content.bin",
+      "retained_file_modified_second": "z-later-row.bin",
+      "retained_file_sha256": "e574f626c49ea57f22e975b73bc3f4e6f6b03c423ca1892f35427c0d5a7f6b30",
+      "scope": "No filesystem instant had the retained new content while the omitted new file was absent. POSIX oracle only."
+    }
+  ]
+}
