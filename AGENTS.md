@@ -32,6 +32,16 @@ Read `docs/moon/QUALIFICATION.md` for this candidate's evidence and limitations.
 The CP9 comparison ledger remains PARTIAL/BLOCKED; Moon integration does not
 close N001/N002/N003 or authorize merge/deployment.
 
+## Installer implicit-state registry
+
+`IMPLICIT_STATES.md` lists the installers' implicit state machines (`ISM-INST-*`):
+states, guards, invariants, evidence and open findings for staging trust, artifact
+admission, cleanup, preview and manual hand-off. Consult it before changing that
+behaviour in `install.sh`/`install.ps1` or performing a consequential transition.
+Record materially relevant discoveries there, linking the `docs/state-contracts/`
+contracts rather than duplicating them. It grants no execution authority and proves
+no runtime behaviour.
+
 ## Golden rules
 
 - **Screenshots override metrics.** A passing `qaState()` number does not pass a cycle if the screenshot looks
