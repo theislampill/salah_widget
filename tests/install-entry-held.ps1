@@ -23,6 +23,13 @@ if($spec.scope -cnotin @('product','source-free-diagnostic') -or $spec.guardMode
 if($spec.guardMode -ceq 'allow' -and $spec.scope -cne 'source-free-diagnostic'){throw 'Product invocation cannot disable source guards'}
 . $spec.inputProbe
 
+# Spec decoding can load native Utility without entering the owned wrapper.
+# Load the prepared owned manifest explicitly before installing source guards;
+# its original startup ready/ACK remains separate from both invocation gates.
+$ownedModuleRoot=[IO.DirectoryInfo]::new([IO.Path]::GetFullPath($env:INSTALL_SUBJECT_ROOT)).Parent.FullName
+$ownedUtilityManifest=[IO.Path]::Combine($ownedModuleRoot,'modules','Microsoft.PowerShell.Utility','Microsoft.PowerShell.Utility.psd1')
+Import-Module -Name $ownedUtilityManifest -Scope Local
+
 # Parse the exact recovered driver and import only its named guard definitions.
 # Its top-level suite and hard-coded invocation parameters never execute here.
 $guardNames=@('Add-Effect','Deny-Effect','Write-Host','New-Item','Remove-Item','Copy-Item','Move-Item',

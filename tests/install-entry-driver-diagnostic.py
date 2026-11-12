@@ -252,6 +252,33 @@ def diagnostic_queries(root):
     return rows
 
 
+def record_probe_file_binding(value,label,journal_path,journal,reason='Unbound actual read module/assembly file'):
+    """Retain both observations before applying the unchanged exact equality."""
+    row=dict(label=label,childFact=value,parentFact=None,matches=False,
+             differingFields=[],differences={},error=None)
+    failure=None
+    try:
+        c.require(type(value) is dict,reason)
+        parent=c.fact(value['path'])
+        row['parentFact']=parent
+        row['differingFields']=sorted(key for key in set(value)|set(parent)
+                                    if key not in value or key not in parent or value[key]!=parent[key])
+        row['differences']={key:dict(childPresent=key in value,parentPresent=key in parent,
+                                   child=value.get(key),parent=parent.get(key)) for key in row['differingFields']}
+        row['matches']=parent==value
+        c.require(row['matches'],reason)
+    except Exception as error:
+        failure=error
+        row['error']=dict(type=type(error).__name__,message=str(error))
+    journal['comparisons'].append(row)
+    try:c.save(journal_path,journal)
+    except Exception as error:
+        if failure is not None:
+            raise RuntimeError(type(failure).__name__+': '+str(failure)+'; file-binding evidence save failed: '+type(error).__name__+': '+str(error)) from failure
+        raise
+    if failure is not None:raise failure
+
+
 def validate_probe(proof,pair,phase,pid,nonce):
     spec=pair['spec']
     c.require(proof.get('schema')=='r0016-entry-child-input-proof.v1' and proof.get('complete') is True and proof.get('error') is None,'Incomplete actual-child read proof')
@@ -279,17 +306,20 @@ def validate_probe(proof,pair,phase,pid,nonce):
                 and str(Path(spec['host']).parent/'Modules') in row['value'].split(';'),'Owned/native module search roots missing')
         else:c.require(row.get('value')==(folded.get(key) if present else None),'Wrong actual child environment value: '+row['name'])
     c.require([row['name'] for row in proof.get('commands',[])]==['Test-Path','Get-ChildItem','Get-Content','ConvertFrom-Json'],'Incomplete actual command bindings')
+    file_bindings=dict(schema='r0016-entry-probe-file-bindings.v1',phase=phase,pid=pid,nonce=nonce,
+                       sourceFact=spec['sourceFact'],probeFact=proof.get('probe'),comparisons=[])
+    binding_path=root/'control'/('read-file-bindings-'+phase+'.json')
     for row,kind in zip(proof['commands'],('TestPathCommand','GetChildItemCommand','GetContentCommand','ConvertFromJsonCommand')):
         c.require(row.get('commandType')=='Cmdlet' and row.get('implementingType')=='Microsoft.PowerShell.Commands.'+kind,'Wrong actual read cmdlet type')
         c.require(row.get('source')==('Microsoft.PowerShell.Utility' if row['name']=='ConvertFrom-Json' else 'Microsoft.PowerShell.Management'),'Wrong read cmdlet module')
         c.require(all(type(row.get(key)) is str and row[key] for key in ('definition','moduleVersion')),'Missing actual read cmdlet definition/version')
         for field in ('module','assembly'):
             value=row.get(field)
-            c.require(type(value) is dict and c.fact(value['path'])==value,'Unbound actual read module/assembly file')
+            record_probe_file_binding(value,row['name']+'/'+field,binding_path,file_bindings)
     provider=proof.get('provider',{})
     c.require(provider.get('name')=='FileSystem' and provider.get('implementingType')=='Microsoft.PowerShell.Commands.FileSystemProvider'
         and type(provider.get('capabilities')) is str and provider['capabilities'],'Wrong actual FileSystem provider')
-    c.require(c.fact(provider['assembly']['path'])==provider['assembly'],'Unbound native provider assembly')
+    record_probe_file_binding(provider['assembly'],'FileSystem/provider-assembly',binding_path,file_bindings,'Unbound native provider assembly')
     c.require(type(proof.get('identitySid')) is str and re.fullmatch(r'S-1-[0-9-]+',proof['identitySid'])
         and type(proof.get('defaultCodePage')) is int and proof['defaultCodePage']>0
         and all(type(proof.get(key)) is str for key in ('culture','uiCulture')),'Missing actual identity/decoding context')
@@ -312,6 +342,14 @@ def validate_gate(receipt,spec,phase):
         c.require(path.read_bytes()==token.encode('utf-8') and receipt.get(phase+kind+'Fact')==c.fact(path),'Unbound held signal/ACK bytes')
 
 
+def validate_original_ready(receipt,pair):
+    spec=pair['spec']
+    c.require(receipt.get('originalReadyAcknowledged') is True and receipt.get('originalReadyToken')==str(receipt['pid'])+'\t'+spec['nonce'],'Original Utility ready/ACK was not independently completed')
+    for variable,field in (('INSTALL_READY_FILE','originalReadyFact'),('INSTALL_PROFILE_ACK','originalAckFact')):
+        path=Path(pair['env'][variable])
+        c.require(path.read_bytes()==receipt['originalReadyToken'].encode('utf-8') and c.fact(path)==receipt.get(field),'Unbound original Utility ready/ACK bytes')
+
+
 def validate_terminal(receipt,pair):
     spec=pair['spec']
     association=pair['association'];control=pair['control']
@@ -325,10 +363,7 @@ def validate_terminal(receipt,pair):
     c.require(type(receipt.get('pid')) is int and receipt['pid']>0 and type(receipt.get('exit')) is int and receipt.get('exitObserved') is True and receipt.get('timedOut') is False,'Missing finite terminal observation')
     elapsed=receipt.get('elapsedSeconds')
     c.require(type(elapsed) in (int,float) and 0<=elapsed<60 and receipt.get('timeoutSeconds')==60,'Late or invalid terminal time')
-    c.require(receipt.get('originalReadyAcknowledged') is True and receipt.get('originalReadyToken')==str(receipt['pid'])+'\t'+spec['nonce'],'Original Utility ready/ACK was not independently completed')
-    for variable,field in (('INSTALL_READY_FILE','originalReadyFact'),('INSTALL_PROFILE_ACK','originalAckFact')):
-        path=Path(pair['env'][variable])
-        c.require(path.read_bytes()==receipt['originalReadyToken'].encode('utf-8') and c.fact(path)==receipt.get(field),'Unbound original Utility ready/ACK bytes')
+    validate_original_ready(receipt,pair)
     cleanup=receipt.get('cleanup',{})
     steps=cleanup.get('steps',[])
     c.require(cleanup.get('processStarted') is True and cleanup.get('terminalObserved') is True
