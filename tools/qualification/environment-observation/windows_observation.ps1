@@ -123,7 +123,28 @@ $compile = [ordered]@{ step = 'Initialize-StagingNative (compiles helper under t
 try { Initialize-StagingNative; $compile.result = 'loaded' } catch { $compile.result = 'refused'; $compile.message = $_.Exception.Message }
 $report.compile = $compile
 Save-Report
-if ($compile.result -ne 'loaded') { $report.errors += 'native helper unavailable; admission calls skipped'; Save-Report; exit 0 }
+if ($compile.result -ne 'loaded') {
+    # Second route, recorded separately: compile with TEMP pointed at a new
+    # current-user-owned protected directory under the fixture parent, so the
+    # admission functions can still be observed against the real parents.
+    $compileTemp = Join-Path $FixtureParent ('envobs-compile-' + [guid]::NewGuid().ToString('N'))
+    [void][IO.Directory]::CreateDirectory($compileTemp)
+    $compileAcl = New-Object Security.AccessControl.DirectorySecurity
+    $compileAcl.SetAccessRuleProtection($true, $false)
+    $compileAcl.SetOwner((New-Object Security.Principal.SecurityIdentifier $userSid))
+    $compileAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule((New-Object Security.Principal.SecurityIdentifier $userSid), [Security.AccessControl.FileSystemRights]::FullControl, [Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit', [Security.AccessControl.PropagationFlags]::None, [Security.AccessControl.AccessControlType]::Allow)))
+    Set-Acl -LiteralPath $compileTemp -AclObject $compileAcl
+    $savedTemp = $env:TEMP; $savedTmp = $env:TMP
+    $second = [ordered]@{ step = 'Initialize-StagingNative with TEMP = new current-user-owned fixture directory (compile only)' }
+    try { $env:TEMP = $compileTemp; $env:TMP = $compileTemp; Initialize-StagingNative; $second.result = 'loaded' }
+    catch { $second.result = 'refused'; $second.message = $_.Exception.Message }
+    finally { $env:TEMP = $savedTemp; $env:TMP = $savedTmp }
+    try { [IO.Directory]::Delete($compileTemp, $true); $second.fixtureRemoved = $true } catch { $second.fixtureRemoved = $false; $second.fixtureRemoveError = $_.Exception.Message }
+    $report.compileSecondRoute = $second
+    Save-Report
+    if ($second.result -eq 'loaded') { $compile.result = 'loaded-via-fixture-temp' }
+}
+if ($compile.result -notlike 'loaded*') { $report.errors += 'native helper unavailable; admission calls skipped'; Save-Report; exit 0 }
 
 function New-ObservationAttempt { return [pscustomobject]@{ Id = [guid]::NewGuid().ToString('N'); Sid = (Get-StagingUserSid); Status = 'observation'; Scratch = $null; Retained = $null; Artifacts = (New-Object 'System.Collections.Generic.List[object]'); Leases = (New-Object 'System.Collections.Generic.List[object]') } }
 function Invoke-Admission([string]$Label, [string]$Path, [string]$Expected) {

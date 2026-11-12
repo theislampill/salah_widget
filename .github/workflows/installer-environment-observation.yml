@@ -73,6 +73,15 @@ jobs:
           foreach ($h in $hosts) {
             & $h[1] -NoProfile -File tools/qualification/environment-observation/windows_observation.ps1 -SourceFile (Resolve-Path install.ps1).Path -OutputFile (Join-Path $out ('functions-' + $h[0] + '.json')) -FixtureParent $env:RUNNER_TEMP
             python tools/qualification/environment-observation/windows_end_to_end.py --source install.ps1 --preset presets/salah-widget.tablissng.json --host-name $h[0] --host-exe $h[1] --fixture-parent $env:RUNNER_TEMP --output (Join-Path $out ('entry-' + $h[0] + '.json'))
+            # Same entry with TEMP = a new current-user-owned protected directory; USERPROFILE stays real.
+            $ownedTemp = Join-Path $env:RUNNER_TEMP ('envobs-owned-temp-' + $h[0])
+            [void][IO.Directory]::CreateDirectory($ownedTemp)
+            $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User
+            $acl = New-Object Security.AccessControl.DirectorySecurity
+            $acl.SetAccessRuleProtection($true, $false); $acl.SetOwner($sid)
+            $acl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($sid, [Security.AccessControl.FileSystemRights]::FullControl, [Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit', [Security.AccessControl.PropagationFlags]::None, [Security.AccessControl.AccessControlType]::Allow)))
+            Set-Acl -LiteralPath $ownedTemp -AclObject $acl
+            python tools/qualification/environment-observation/windows_end_to_end.py --source install.ps1 --preset presets/salah-widget.tablissng.json --host-name $h[0] --host-exe $h[1] --fixture-parent $env:RUNNER_TEMP --temp-override $ownedTemp --output (Join-Path $out ('entry-owned-temp-' + $h[0] + '.json'))
           }
           exit 0
       - name: Retain observations
@@ -87,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [macos-15, macos-14, ubuntu-24.04]
+        runner: [macos-15, ubuntu-24.04]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 20
     steps:

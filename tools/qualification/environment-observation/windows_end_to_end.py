@@ -19,6 +19,7 @@ parser.add_argument('--host-name', required=True, choices=('ps51', 'ps7'))
 parser.add_argument('--host-exe', required=True)
 parser.add_argument('--fixture-parent', required=True, type=pathlib.Path)
 parser.add_argument('--output', required=True, type=pathlib.Path)
+parser.add_argument('--temp-override', help='run with TEMP/TMP set to this existing directory; USERPROFILE stays real')
 args = parser.parse_args()
 
 MODULE = r'''
@@ -68,7 +69,8 @@ def listing(parent):
 report = {'schema': 'staging-parent-environment-observation.windows-entry.v1', 'host': args.host_name,
           'sourceSha256': hashlib.sha256(args.source.read_bytes()).hexdigest(),
           'sourceGitBlob': os.environ.get('OBSERVED_INSTALL_PS1_BLOB')}
-real_temp = os.environ['TEMP']
+real_temp = args.temp_override or os.environ['TEMP']
+report['tempOverride'] = bool(args.temp_override)
 real_profile = os.environ['USERPROFILE']
 root = pathlib.Path(tempfile.mkdtemp(prefix='envobs-entry-', dir=str(args.fixture_parent))).resolve()
 subject = root / 'subject'
@@ -101,6 +103,8 @@ env.update(LOCALAPPDATA=str(subject / 'local'), APPDATA=str(subject / 'roam'), P
            OBS_PRESET_FIXTURE=str(args.preset.resolve()), OBS_ASSET_ZIP=str(asset),
            OBS_ALLOWED_PREFIXES='|'.join([str(subject) + os.sep, os.path.join(real_temp, 'SalahWidget'), os.path.join(real_profile, 'SalahWidgetBundle-')]),
            SALAH_INSTALL_SOURCE='github', SALAH_WIDGET_HASH='lat=24.47&lon=39.61&method=4')
+if args.temp_override:
+    env['TEMP'] = env['TMP'] = args.temp_override
 command = [args.host_exe, '-NoProfile', '-File', str(args.source.resolve()), '-PresetUrl', 'https://example.invalid/preset',
            '-InstallSource', 'github', '-WidgetHash', env['SALAH_WIDGET_HASH'], '-NoOpen']
 report['parents'] = {'tempNameClass': 'runner TEMP', 'profileNameClass': 'runner USERPROFILE'}
@@ -123,7 +127,9 @@ report['effects'] = (root / 'effects.txt').read_text(encoding='utf-8-sig').split
 after = {'temp': listing(real_temp), 'profile': listing(real_profile)}
 report['createdAfterRun'] = {k: [n for n in after[k] if n not in before[k]] for k in after}
 out = report['stdout']
-report['classification'] = ('staging-refused' if 'Staging parent is not owned' in out + report['stderr'] or 'Staging ancestor permits' in out + report['stderr']
+text = out + report['stderr']
+report['classification'] = ('staging-refused' if 'Staging parent is not owned' in text or 'Staging ancestor permits' in text
+                            else 'compiler-refused' if 'Compiler parent is not owned' in text or 'Compiler ancestor permits' in text
                             else 'manual-action-pending' if 'Manual browser installation/import remain pending' in out
                             else 'other')
 removed = []
