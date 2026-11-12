@@ -441,8 +441,8 @@ was relayed to the integrator by the coordinator; this section restates it witho
 
 **What it re-derived.**
 - Probes A, B, C, D, E and G re-run; all reproduced the recorded outputs.
-- 15 registry entries sampled at random (seed recorded by the reviewer; not supplied to the
-  integrator) and checked against the source.
+- 15 registry entries sampled at random (`random.seed(20261112)`, `random.sample` over the index
+  order, as reported by the reviewer) and checked against the source.
 - Crosswalk identifiers checked against the original catalogue: 83 machines, 18 findings and 3
   hypotheses, each present exactly once.
 - Registry, crosswalk and findings counts recounted.
