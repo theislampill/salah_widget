@@ -88,7 +88,8 @@ def negative(name, path, kind='temp', expect=None, needs_root=False, blocked=Fal
         record(name, 'BLOCKED_PRIVILEGE', {'path': path})
         return
     r = parent(path, kind)
-    ok = r['rc'] != 0 and r['stdout'] == '' and (expect is None or expect in r['stderr'])
+    expects = [expect] if isinstance(expect, str) else (expect or [])
+    ok = r['rc'] != 0 and r['stdout'] == '' and (not expects or any(e in r['stderr'] for e in expects))
     record(name, 'PASS' if ok else 'FAIL', {'path': path, 'kind': kind, 'expect': expect, 'observed': r})
 
 
@@ -180,8 +181,11 @@ try:
     else:
         for name in ('foreign-owned ancestor', 'final directory not owned by the user', 'HOME not owned by the user'):
             record(name, 'BLOCKED_PRIVILEGE', {})
-    negative('HOME with group write', str(mkdir(BASE / 'home-group', 0o770)), kind='home', expect='private, owned staging parent')
-    negative('HOME with other write', str(mkdir(BASE / 'home-other', 0o707)), kind='home', expect='private, owned staging parent')
+    # A writable HOME is already refused by the component walk (its last component
+    # is walked too), before the final ownership rule; either refusal is correct.
+    home_writable = ['Writable staging ancestor', 'private, owned staging parent']
+    negative('HOME with group write', str(mkdir(BASE / 'home-group', 0o770)), kind='home', expect=home_writable)
+    negative('HOME with other write', str(mkdir(BASE / 'home-other', 0o707)), kind='home', expect=home_writable)
     negative('missing staging parent', str(BASE / 'does-not-exist'))
 except Exception as error:  # setup failures are failures
     record('fixture/bootstrap', 'SETUP_ERROR', {'error': repr(error)})
