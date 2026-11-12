@@ -1,0 +1,211 @@
+{
+  "schema": "r0015-compiler-independent-review.v1",
+  "reviewer": "/root/r0013_review",
+  "recordedUtc": "2026-11-11T12:40:26.191568+00:00",
+  "authority": "Ordinary independent read-only engineering review; scratch reports only. No native, PowerShell, source/shared, governor, branch or remote operations.",
+  "continuityReportedByRoot": "refs/implementaudit/continuity-receipts/installer-20261111/G0013@bd02b9601b2b0b03d9ce393ccd8f3fc1c6aed23c",
+  "scope": "Bounded test integration and frozen compiler-bootstrap delta from f801. Not a repeated whole-contract review or lifecycle verdict.",
+  "bindings": {
+    "source": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/milestone-source-ab2d847.ps1",
+      "sha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+      "bytes": 109775
+    },
+    "sourceOriginalPath": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-repair/install.ps1",
+    "baselineSource": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-repair/install-before-f801.ps1",
+      "sha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+      "bytes": 100271
+    },
+    "sourceFreeze": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-repair/freeze.json",
+      "sha256": "3eb45a13fbcb4bafba218cb850b4a8fcc85d465faae9424973449a510de65aec",
+      "bytes": 2409
+    },
+    "custodyTest": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-custody-5ab137.ps1",
+      "sha256": "5ab137b15410ae3575430f43049fc08e4df263d3148906a08fa0598ab2e568b2",
+      "bytes": 18645
+    },
+    "observerTest": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/reviewed-first-call-0c2ab1.ps1",
+      "sha256": "0c2ab1da45bef3ffa5260912e4e3e035496fa6232286ec222de71ea4cff26b8c",
+      "bytes": 34694
+    },
+    "originalCustody": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-test-integration/original-install-compiler-custody.ps1",
+      "sha256": "a3cb9d99c967c4a43ded623722d250fae91b9a26e38e1ff5cb24abbf54bc8387",
+      "bytes": 18757
+    },
+    "originalObserver": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-test-integration/original-install-staging-first-call.ps1",
+      "sha256": "92fefc522c289663cb247a0c1bfca4440b9c6417a487afbceaeaea12cb15d8d0",
+      "bytes": 34890
+    },
+    "staticChecks": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-independent-review/static-binding-checks.json",
+      "sha256": "18cf38746adcb5dce3185e394928d14e5b661b841ec6349ea6c45de7fe6fe1a2",
+      "bytes": 3746
+    }
+  },
+  "findings": [
+    {
+      "id": "R15-COMPILER-TEST-01",
+      "severity": "Important",
+      "kind": "False-positive qualification/oracle gap",
+      "state": "ACCEPTED_BY_ROOT_CORRECTION_PENDING_REVIEW",
+      "title": "Named invalid-source control can credit a failure before actual compilation",
+      "locations": [
+        {
+          "file": "install-compiler-custody.ps1",
+          "lines": [
+            43,
+            52,
+            87,
+            93
+          ]
+        },
+        {
+          "file": "install-staging-first-call.ps1",
+          "lines": [
+            168,
+            186,
+            368,
+            369
+          ]
+        },
+        {
+          "file": "install.ps1",
+          "lines": [
+            253,
+            306
+          ]
+        }
+      ],
+      "evidence": "Custody increments compilerCalls before delegating; its named failure accepts a nonempty expectedFailure, one wrapper call, absent StageNative, retained private context and retained-files enumeration. Observer similarly accepts any delegated helper exception with failureInjected and retained context. Neither predicate requires actual compiler terminal evidence. Source sets InvocationStarted before exclusive source/diagnostic writes, Process.Start and WaitForExit; that field is not evidence of a started compiler process.",
+      "causalExample": "A source/output CreateNew failure or compiler Process.Start failure in the compile-failure case leaves no StageNative and a retained-compilation-failed context; current assertions can classify that as the intended invalid-C# rejection. This is a static counterexample, not a claimed native reproduction.",
+      "requiredCorrection": "PS5.1 must bind the exact written invalid native.cs bytes and nonempty raw compiler diagnostics to a non-null nonzero CompilerExitCode recorded after actual child termination, with the healthy actual compiler route paired. PS7 must attribute the exception to the real delegated Add-Type compilation for the exact invalid source, not any helper/setup exception. Preserve acquisition failures separately.",
+      "rootResponse": "Root accepted the gap and is adding PS5.1 terminal/raw-source evidence and a real Add-Type error observer on PS7 before native replay."
+    }
+  ],
+  "sourceReview": {
+    "concreteCriticalFindings": 0,
+    "concreteImportantSourceFindings": 0,
+    "disposition": "No additional static source blocker identified in frozen ab2d847 for a bounded native qualification candidate. This does not qualify the correction or authorize delivery/merge.",
+    "checks": [
+      {
+        "area": "Early effect guards",
+        "anchors": "83-86,142-144,253-256",
+        "result": "All three new helpers begin with DryRun refusal. Static comparison and writer received actual guard-only controls agree; no normal/native compiler execution credited."
+      },
+      {
+        "area": "Native metadata extraction",
+        "anchors": "83-139",
+        "result": "Existing native declarations and handle access/share policy are preserved. Reading is separated from directory opening without dropping disk/reparse/physical-path/ACL checks. Length/link fields use the existing BY_HANDLE_FILE_INFORMATION offsets. Directory caller retains directory-only refusal and handle disposal on failure."
+      },
+      {
+        "area": "Full ACL predicate",
+        "anchors": "104-125,499-518",
+        "result": "Both PS and C# retain the full 0x500d0156 write-authority mask, rather than the weaker ancestor mask. Unknown/callback ACEs and null DACL set WriteRestricted false; owner and reparse checks remain separate. Existing ordinary C# projections were byte-identical after mechanically removing only the added WriteRestricted fact."
+      },
+      {
+        "area": "Default-owner scope",
+        "anchors": "158-169,230-236",
+        "result": "User and token default Owner are captured from one disposed identity object. Only same user or Administrators default owner is accepted; the self-owned compiler root still requires Private. Only compiler descendants gain the captured owner alternative. No ordinary artifact owner/admission rule changes."
+      },
+      {
+        "area": "Pre-invocation custody",
+        "anchors": "253-265",
+        "result": "Requires the same script context reference, compiling status, first invocation, live root/ancestor leases, fresh private root identity, exact TEMP/TMP confinement and empty root before source creation. InvocationStarted is attempt state only."
+      },
+      {
+        "area": "Compiler source",
+        "anchors": "268-286",
+        "result": "NativeSource is the existing literal. It is encoded as UTF-8 BOM bytes, exclusively created inside the owned root, read through a native lease denying writes/deletion and byte-hash/length checked before invocation. No shell/PATH compiler selection or external fallback is introduced."
+      },
+      {
+        "area": "Direct compiler launch",
+        "anchors": "287-306",
+        "result": "PS5.1 selects runtime-directory csc, explicit System.dll, noconfig, explicit private output/working/TEMP/TMP paths, raw binary output capture, bounded wait and terminal exit check. Exact Windows behavior remains unexecuted by this reviewer."
+      },
+      {
+        "area": "Generated assembly admission",
+        "anchors": "142-155,308-316",
+        "result": "Output must be an immediate child of the same live context, no alias/reparse, regular single-link with captured owner and full write restriction. DLL bytes are size-bounded, read from a held deny-write/delete handle, identity/length/readback checked and byte-loaded; expected type is required. File-backed LoadFrom is absent."
+      },
+      {
+        "area": "Failure/restore lifetime",
+        "anchors": "317-325,537-547",
+        "result": "Exceptions propagate to unchanged outer environment restoration and failed-context retention. Diagnostic/source/assembly handles are disposed. A termination failure is warned and retained; it is not ready/admitted evidence."
+      },
+      {
+        "area": "Successful cleanup",
+        "anchors": "219-250",
+        "result": "Root remains self-owned/private with original identity; every enumerated descendant must have the supported captured owner and full write restriction, regular files one link, identity reread before deletion. Descendant/root leases are released only for deletion while original ancestor leases remain held. Native adversarial cleanup must still establish this behavior."
+      },
+      {
+        "area": "PS7 and ordinary installer preservation",
+        "anchors": "266; after Get-StagingUserSid",
+        "result": "PS7 retains Add-Type inside the admitted helper. All functions from Get-StagingUserSid onward are byte-identical to f801; only the new C# fact is added to the earlier native payload. Original artifact/discovery/selector/entry behavior is not requalified by this comparison."
+      }
+    ]
+  },
+  "testIntegrationReview": {
+    "sameReferenceDelegation": "Both wrappers capture the actual source helper before replacing the function and call it with the original Context object. Observer New-StagingCompilerContext wrapper returns the original object without a reconstruction. Healthy source is unchanged; only the named compile-failure appends explicit invalid text.",
+    "failureInjection": "Actual source/helper/C# hashes and same-reference observation improve attribution; intended compiler-terminal evidence is the open finding above.",
+    "eventBoundaries": "Readiness and before/after boundaries retain PID, nonce, source hash, cold types and owned-root facts. Before/after barriers drain the watched TEMP events while original custody remains live; postcompiler readback precedes release into the later artifact-parent checks. Watcher error/timeout/snapshot or boundary failure prevents acquisition. No changed event-phase or path-containment classifier found.",
+    "observationLimits": "The watcher observes the verified TEMP/TMP subtree, not global process activity. Asynchronous event drain is an observation boundary. The 25-second observer window does not qualify the source helper 60-second timeout/termination path. OBSERVATIONS_ACQUIRED remains separate from product qualification.",
+    "currentCompatibility": "The tests require new Invoke-StagingCompiler and context fields and match frozen ab2d847 signatures. They cannot qualify unchanged f801. Later test derivatives must be hash-rebound after the oracle repair.",
+    "otherExistingAssertions": "Seven native custody cases, guarded-parent mutant/healthy pair, native refusal paths, root lease rename proof, useful normal staging and retained lifetime remain present. No broad assertion removal was introduced in these diffs."
+  },
+  "evidenceReceived": {
+    "writerFreezeFilesVerified": 13,
+    "pureReceipt": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-repair/pure-controls.stdout.json",
+      "sha256": "652961d484722f6bec2168cf141398c8b5c1e76bc1c94131293e33330eae6abf",
+      "bytes": 6359
+    },
+    "pureRows": 28,
+    "pureRowsPassing": 28,
+    "scope": "Linux PS7 source parsing, actual early guards and extracted scalar predicates only; no native handles, ACL creation, normal compiler or assembly load. Read-only receiving, not reviewer rerun."
+  },
+  "declinedToJudge": [
+    {
+      "item": "Native correctness or final readiness",
+      "reason": "No Windows execution of ab2d847 available in this bounded task; original native failures remain open."
+    },
+    {
+      "item": "New security fixture sufficiency",
+      "reason": "Separate worker is authoring adversarial cleanup/output controls; its frozen packet has not yet been reviewed here."
+    },
+    {
+      "item": "Compiler timeout/start-failure guarantee",
+      "reason": "Static fail-closed retention path inspected; no actual native acquisition of these outcomes. Existing 25-second observer cannot prove the 60-second timeout branch."
+    },
+    {
+      "item": "Global absence of compiler effects",
+      "reason": "TEMP watcher is explicitly scoped; no global system trace or descendant-process containment claim."
+    },
+    {
+      "item": "Whole original/amended R15 denominator, publication and merge",
+      "reason": "This is the commissioned bounded delta review; previously open whole-contract/native/public/delivery/order/owner gates are not superseded."
+    }
+  ],
+  "remainingGates": [
+    "Receive and bounded-review corrected custody/first-call oracle bytes and causal controls, preserving originals.",
+    "Run exact-source native Windows PS5.1 and PS7 cold healthy ASCII/Unicode initialization, compiler source lease and byte-load, ownership readback, useful staging and cleanup.",
+    "Native invalid-source compiler rejection and failed start/missing or unproved output retention with exact cause and healthy companion.",
+    "Native actual default-owner cleanup and foreign full-write mask/hardlink/reparse/identity change refusal with causal mutants and healthy controls.",
+    "Apply exact early guard coverage to the three new helpers in R16; current local parse/guard/scalar evidence is supplemental.",
+    "Rebind all affected native artifact/entry/normal/NoOpen/volume/mutation evidence to immutable publication bytes. Preserve original failures and unrelated long-path acquisition boundary separately.",
+    "Complete outstanding original/amended whole-contract denominator, delivery/docs/public rendering, predecessor order and exact owner approval before any merge claim."
+  ],
+  "execution": {
+    "powerShellLaunched": false,
+    "nativeLaunched": false,
+    "sourceMutated": false,
+    "sharedTestsMutated": false,
+    "remoteMutated": false,
+    "staticPythonOnly": true
+  }
+}

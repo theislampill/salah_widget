@@ -1,0 +1,80 @@
+{
+  "schema": "r0015-independent-volume-mutation-addendum/v1",
+  "reviewer": "/root/r0013_review",
+  "capturedAt": "2026-11-11T09:39:38.475538+00:00",
+  "sourceSha256": "7e6950359b6f28e165e02793e56cb1842db092403fd09abea9f0f9c595ba5114",
+  "priorReview": "/workspace/scratch/b8359a7e27bf/recovery/r0015-review/bootstrap-7e6950/review.json",
+  "priorReviewSha256": "c96bfb146c4cc2d9312830b2797720b0e0082e6438f4153b7b13c8e7821d8e15",
+  "fixtureSha256": "dc671aa0365d6fb318fbf838472a8c8512931ddf371e2c3527433bcb22f41e7d",
+  "aggregateSha256": "b52417bfa34a0ddadd19fdb20fffcfcab2abc423592e8bedfe72d8a50317fb75",
+  "checks": [
+    {
+      "check": "exact aggregate receipt",
+      "pass": true
+    },
+    {
+      "check": "exact source and policy fixture unchanged",
+      "pass": true
+    },
+    {
+      "check": "csharp-missing-ntfs-guard unique exact guard removal",
+      "pass": true
+    },
+    {
+      "check": "csharp-missing-ntfs-guard exact native-scope-limited receipt",
+      "pass": true
+    },
+    {
+      "check": "csharp-missing-ntfs-guard three intended failures and useful controls",
+      "pass": true
+    },
+    {
+      "check": "csharp-missing-ntfs-guard corrected opposite site and all other controls pass",
+      "pass": true
+    },
+    {
+      "check": "powershell-missing-ntfs-guard unique exact guard removal",
+      "pass": true
+    },
+    {
+      "check": "powershell-missing-ntfs-guard exact native-scope-limited receipt",
+      "pass": true
+    },
+    {
+      "check": "powershell-missing-ntfs-guard three intended failures and useful controls",
+      "pass": true
+    },
+    {
+      "check": "powershell-missing-ntfs-guard corrected opposite site and all other controls pass",
+      "pass": true
+    }
+  ],
+  "mutants": [
+    {
+      "mechanism": "csharp-missing-ntfs-guard",
+      "mutantSha256": "3e625e7a04f33485039409a8a3291087d75e6f636aca2ae8a5f2146fd498465b",
+      "receiptSha256": "8bf91bc6f31e6a2554bf37a621c2a1edbcd18e3dff4e9fc60b131f3752d5e897",
+      "intendedFailures": [
+        "C# reported ReFS",
+        "C# reported unknown filesystem",
+        "C# reported unsupported filesystem"
+      ],
+      "otherPolicyRowsPass": 9,
+      "nativeWindows": false
+    },
+    {
+      "mechanism": "powershell-missing-ntfs-guard",
+      "mutantSha256": "508ffaa43653db5d3c6d1bedc4da7480ac935635b12265be6dfd37ca5fe820ac",
+      "receiptSha256": "0b76f8a36eb0aaa0bc1402f046e78eb49050c76b4b286285dd285d71790b6516",
+      "intendedFailures": [
+        "PowerShell reported ReFS",
+        "PowerShell reported unknown filesystem",
+        "PowerShell reported unsupported filesystem"
+      ],
+      "otherPolicyRowsPass": 9,
+      "nativeWindows": false
+    }
+  ],
+  "disposition": "Both single-site guard removals discriminate the actual source volume policies with useful controls and the corrected opposite gate. This supports the narrow NTFS-only source fix; native NTFS/API/identity/compiler execution remains required. No ReFS or other-filesystem execution is claimed.",
+  "mutationStatement": "Read-only source/receipt comparison and attributed report write; no source/test/native execution or remote mutation."
+}

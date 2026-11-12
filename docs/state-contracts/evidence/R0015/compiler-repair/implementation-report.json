@@ -1,0 +1,157 @@
+{
+  "schema": "r0015-compiler-repair.candidate.v1",
+  "status": "SCRATCH_CANDIDATE_FROZEN_FOR_INDEPENDENT_REVIEW_AND_NATIVE_REPLAY",
+  "sourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+  "baselineSha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+  "continuity": "refs/implementaudit/continuity-receipts/installer-20261111/G0013@bd02b9601b2b0b03d9ce393ccd8f3fc1c6aed23c",
+  "scope": "Scratch-only derivative. Root retains sole installer/shared/remote authority. No repository files changed.",
+  "nativeQualification": false,
+  "productQualification": false,
+  "baselineEvidence": {
+    "bindingFile": "baseline-bindings.json",
+    "sha256": "74d908381bea1df13d9f8ceaab004d3969bffdc2f840610146c25ebdbfc223cb",
+    "facts": [
+      "Native diagnostic3 PS5.1 same Framework csc compiled the captured source successfully under both ASCII and Unicode private contexts; diagnostic output DLL was not loaded or admitted.",
+      "Actual PS5.1 User SID differed from token Owner (Administrators), and compiler descendants inherited the subject-only DACL with Administrators ownership; old cleanup retained them.",
+      "CodeDOM Unicode environment reporter exited in ConstrainedLanguage before emitting environment data; actual ANSI-corrupted TEMP/TMP bytes are not established."
+    ],
+    "originalFailureDisposition": "Original native4 and diagnostic3 receipts/archives remain unchanged and open until exact corrected native replay."
+  },
+  "design": [
+    {
+      "area": "Compiler invocation",
+      "decision": "Introduce one Invoke-StagingCompiler(NativeSource, Context) call after existing parent/ancestor admission, exclusive private-root creation and TEMP/TMP verification. The first statement is the DryRun refusal. Verify the live same-process context, strict private root identity, live ancestors, both temporary environment variables and empty root before any compiler output. One invocation per context."
+    },
+    {
+      "area": "PS5.1 transport",
+      "decision": "Invoke the runtime-directory csc.exe with Diagnostics.Process (UseShellExecute=false), explicit TEMP/TMP and private working directory, /noconfig and an absolute System.dll reference. Source uses exclusive CreateNew and a held read lease, with exact written-byte SHA256 verification. No shell or PATH compiler search."
+    },
+    {
+      "area": "Compilation and diagnostic handling",
+      "decision": "Copy raw stdout/stderr pipes asynchronously into exclusively created private-context files. Require child exit zero and completed drains; use a sixty-second wait and bounded termination attempt. On any failure, outer initializer restores TEMP/TMP and retains the failed context. No late fallback to CodeDOM or a generic TEMP root."
+    },
+    {
+      "area": "Generated-code admission",
+      "decision": "Before Assembly.Load(byte[]), open the same-context regular single-link DLL with native read/metadata access, sharing read only; check no reparse/alias, captured safe owner, full foreign-write policy, bounded size, identity and length. Load only bytes read from that held handle and require the expected StageNative type in the returned assembly. File-backed LoadFrom is not used."
+    },
+    {
+      "area": "PS7 behavior",
+      "decision": "Keep the existing Add-Type -TypeDefinition path in the named helper. It remains under the same admitted private-context and early DryRun boundaries."
+    },
+    {
+      "area": "Default owner",
+      "decision": "Capture WindowsIdentity.User and Owner from one disposed token wrapper. Permit default Owner only equal to current user or Administrators, the supported measured case; refuse arbitrary owner groups before directory creation. Context.DefaultOwnerSid never replaces Context.Sid."
+    },
+    {
+      "area": "Cleanup",
+      "decision": "Add independent WriteRestricted facts computed with the full 0x500d0156 mask in PS bootstrap and C# Read. Compiler descendants may be owned by current user or captured default owner, with WriteRestricted and regular-file one-link proof. Root remains self-owned/private with matching identity, reparses remain rejected, descendant identities are reread, original ancestor leases remain through deletion. Ordinary staging owner/private/parent/ancestor policies do not gain accepted owners."
+    }
+  ],
+  "interfaces": [
+    {
+      "name": "Read-CompilerPathFacts",
+      "signature": "Read-CompilerPathFacts($Handle, [string]$Path, [string]$Sid, [string]$TrustedInstallerSid)",
+      "effectBoundary": "Guard before native handle metadata/ACL inspection. Returns facts including Directory, Identity, Owner, Private, TrustedParent, TrustedAncestor, WriteRestricted, Length and Links."
+    },
+    {
+      "name": "Open-CompilerOutputLease",
+      "signature": "Open-CompilerOutputLease([string]$Path, $Context)",
+      "effectBoundary": "Guard before context/path checks or native file opening. Immediate-child regular-file lease; sharing read only. Caller disposes Handle."
+    },
+    {
+      "name": "Invoke-StagingCompiler",
+      "signature": "Invoke-StagingCompiler([string]$NativeSource, $Context)",
+      "effectBoundary": "Guard before all source writes, native inspection, compiler process, Add-Type and generated assembly loading. Success loads the type and returns no ready artifact. Any failure throws."
+    },
+    {
+      "name": "Open-CompilerDirectoryLease",
+      "signature": "Open-CompilerDirectoryLease([string]$Path, [string]$Sid, [string]$TrustedInstallerSid)",
+      "effectBoundary": "Signature, early guard, directory-only check and native access/share are preserved; delegates metadata reading to Read-CompilerPathFacts."
+    }
+  ],
+  "contextFieldsAdded": [
+    "DefaultOwnerSid",
+    "InvocationStarted",
+    "CompilerExitCode"
+  ],
+  "integrationNotes": [
+    "The exact PowerShell and C# NTFS guard statements are unchanged in their original functions, so both volume mutation anchors remain exact.",
+    "New-StagingCompilerContext now captures User/Owner through a single WindowsIdentity variable; supplemental non-Windows fixtures must use a clearly attributed identity-boundary adapter for that block. Native execution must use the actual APIs.",
+    "Wrap and delegate Invoke-StagingCompiler for actual first-call observations and compiler failure injection. Observe custody before helper entry and effects within its admitted root.",
+    "R0016 must cover the early guard of all three new helpers and preservation of compiler context, native type state and leases."
+  ],
+  "verification": {
+    "sourceBoundaries": {
+      "ordinaryNativeReadProjectionUnchanged": true,
+      "allFunctionsAfterCompilerSupportByteIdentical": true,
+      "bothExactVolumeMutationAnchorsUnchanged": true,
+      "sourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+      "baselineSha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+      "allNewHelpersStartWithDryRunGuard": true
+    },
+    "controlsReceipt": {
+      "file": "pure-controls.stdout.json",
+      "sha256": "652961d484722f6bec2168cf141398c8b5c1e76bc1c94131293e33330eae6abf",
+      "cases": 28,
+      "passingCases": 28
+    },
+    "acquisitionReceipt": {
+      "file": "pure-controls-acquisition.json",
+      "sha256": "6e8a05b87a3f3c1357ab7609d49426bc00c75948aec950f133dcb3621a8fd56d",
+      "networkProof": {
+        "parentNetns": "net:[4026532441]",
+        "childNetns": "net:[4026532368]",
+        "interfaces": [
+          "lo"
+        ],
+        "routeRows": 0,
+        "disconnected": true
+      },
+      "prestartFlags": {
+        "POWERSHELL_TELEMETRY_OPTOUT": "1",
+        "DOTNET_CLI_TELEMETRY_OPTOUT": "1",
+        "POWERSHELL_UPDATECHECK": "Off"
+      },
+      "filesystem": "Host tree read-only; only newly owned /tmp fixture writable."
+    },
+    "actualExecution": "Linux PS7.6.6 parsed exact candidate, declared only three actual functions to exercise their early DryRun refusals, and evaluated actual AST scalar predicates. No normal installer, native API, compiler invocation or assembly load was executed.",
+    "pureCoverage": [
+      "Three actual DryRun guards leave sentinel context unchanged.",
+      "Seven cleanup shapes and corresponding seven regular-output admission shapes, including actual old/new default-owner predicate contrast.",
+      "Six foreign write bits, harmless foreign read, current-user full access and three supported/unsupported default-owner shapes."
+    ]
+  },
+  "requiredNativeReplay": [
+    "Actual cold PS5.1 and PS7 full initializer under equally bounded ASCII/Unicode private parents; type loaded from the expected route, initialization useful and normal cleanup closed.",
+    "Before-compile custody and foreign/untrusted/reparse parent refusal with no compiler output outside an admitted private root.",
+    "Nonzero compiler exit, failed start/timeout or incomplete output, and invalid/missing/unproved DLL retain safely, load no usable type and restore both TEMP/TMP.",
+    "Actual default-owner descendant cleanup; foreign WriteData/AppendData, hardlink, reparse/junction and identity changes retain rather than delete; useful healthy pair and named full-write-mask mutant.",
+    "Existing transactions, normal/NoOpen consumers, native lease controls and volume-mutant controls against exact corrected bytes."
+  ],
+  "limits": [
+    "Direct-process successful compilation is measured, but the candidate whole initializer, byte-loading path, native handle sharing and cleanup correction have not run on Windows yet.",
+    "The bounded child timeout and termination attempt do not independently monitor all descendants or establish OS containment. A failed compilation retains its private root.",
+    "The compiler transport diagnosis does not claim observed ANSI-corrupted environment bytes.",
+    "Only self/default Administrators ownership is supported by this correction; ordinary staging ownership is unchanged.",
+    "The historical native failures remain unresolved product gates until new exact-source receipts are acquired."
+  ],
+  "primarySources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.security.principal.windowsidentity.owner?view=netframework-4.8.1",
+      "claim": "Owner is the token default owner SID applied to newly created objects."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.useshellexecute?view=netframework-4.8",
+      "claim": "UseShellExecute=false permits explicit environment/redirection and an explicit compiler executable."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.reflection.assembly.load?view=netframework-4.7.1",
+      "claim": "Assembly.Load(byte[]) loads a managed assembly from its supplied byte array."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-options/miscellaneous",
+      "claim": "/noconfig excludes automatic csc.rsp settings; command-line options are explicit."
+    }
+  ],
+  "authority": "Frozen engineering evidence only; no shared mutation, integration, acceptance, publication or closure authority."
+}

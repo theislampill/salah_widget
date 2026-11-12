@@ -1,0 +1,126 @@
+{
+  "schema": "r0015-compiler-security-controls.static.v1",
+  "execution": "NO_POWERSHELL_OR_NATIVE_OR_COMPILER_EXECUTION",
+  "continuityReceipt": "refs/implementaudit/continuity-receipts/installer-20261111/G0013@bd02b9601b2b0b03d9ce393ccd8f3fc1c6aed23c",
+  "inputBindings": [
+    {
+      "role": "latest root-owned base fixture",
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-compiler-custody.ps1",
+      "sha256": "622d37e1a19f68482d07c3e5d30a6262140a5c0f6ef4646802225de040ebbbc7"
+    },
+    {
+      "role": "actual new source, separate author",
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-repair/install.ps1",
+      "sha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e"
+    },
+    {
+      "role": "immutable published old source",
+      "gitCommit": "97aec3ada9e2dfeea6416ae75497ce1e407243fc",
+      "gitPath": "install.ps1",
+      "sha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140"
+    },
+    {
+      "role": "current shared source read only, root-owned concurrent integration",
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+      "sha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e"
+    }
+  ],
+  "earlierObservedFixtureSha256": "5ab137b15410ae3575430f43049fc08e4df263d3148906a08fa0598ab2e568b2",
+  "earlierFixtureDisposition": "superseded by root622d37; not used as patch base",
+  "preservedRegions": [
+    {
+      "region": "actual compiler/add-type observer",
+      "sha256": "7c827d3611764b4ab46d588fd6db1b71f09d8c84610c1b0432bea7a8f0809187",
+      "byteIdenticalContiguous": true
+    },
+    {
+      "region": "compile-failure case",
+      "sha256": "1217cf83899cb74b55d001890ea4dddf09a8e3fd1f8467c485c7eacc5621ccfd",
+      "byteIdenticalContiguous": true
+    },
+    {
+      "region": "identity failure case",
+      "sha256": "5eb030f2868aebda8a8f86c3f29acadd6c9c4c3682263a1678759f0e822248bf",
+      "byteIdenticalContiguous": true
+    },
+    {
+      "region": "live lease case",
+      "sha256": "e5ed75f5d0b2024ec4757c74f4fcd3e042c74cf69751b3afadef2baa5997c52c",
+      "byteIdenticalContiguous": true
+    },
+    {
+      "region": "existing recorder",
+      "sha256": "ada250d237020980a745737ba6da01d824e9bdb378eccef3cd1f7c15e90c21f9",
+      "byteIdenticalContiguous": true
+    },
+    {
+      "region": "existing terminal-parent pair",
+      "sha256": "3a153fb815f30c8956dd085d50082261b9b2946316ac7bcc432f2e36c537de4c",
+      "byteIdenticalContiguous": true
+    }
+  ],
+  "reverseTransformEqualsExactBase": true,
+  "staticLexicalBalance": true,
+  "powerShellAstParse": "NOT_RUN",
+  "nativeQualification": "NOT_RUN",
+  "baselineCasesBefore": 7,
+  "baselineCasesAfter": 10,
+  "pairedMutationRowsBefore": 1,
+  "pairedMutationRowsAfter": 2,
+  "aggregateRowsBefore": 8,
+  "aggregateRowsAfter": 12,
+  "nativeChildProcessesPerHost": 14,
+  "mutation": {
+    "function": "StageNative.Read",
+    "exactAnchorOccurrences": 1,
+    "oldMask": "0x500d0156u",
+    "mutantMask": "0x500d0150u",
+    "changedLines": 1,
+    "powerShellFullMaskUnchanged": true,
+    "prospectiveMutantSourceSha256": "8c90fd7bae7838e18e5002f809a09cbdc2b4272348a1a9967323245b6cb43ccd",
+    "claim": "unexecuted, no mutation credit"
+  },
+  "outputs": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/cleanup-hook.ps1",
+      "bytes": 7871,
+      "sha256": "0d731497a8f407e7633d9f247024121c760b7f924914dab4444ef8929373c074"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/cleanup-cases.ps1",
+      "bytes": 2956,
+      "sha256": "292b47f2cb9446ab98f8bafc47c65bb71e0d2ed88301c209e39694f71e048f36"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/write-mask-mutant.ps1",
+      "bytes": 2092,
+      "sha256": "e386faab026885509754dee25458ebb3318e32c6126ccb08b74b6ad25514f2f2"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/base-install-compiler-custody.ps1",
+      "bytes": 21307,
+      "sha256": "622d37e1a19f68482d07c3e5d30a6262140a5c0f6ef4646802225de040ebbbc7"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/install-compiler-custody.ps1",
+      "bytes": 34773,
+      "sha256": "b67f38bd46839464d5f6131f18b6457bcc67de197955f1df6140bdc3d94b4b34"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/compiler-security-controls.patch",
+      "bytes": 18006,
+      "sha256": "296042f27c9fe614a17df9482d8a35847bc53c8a878566d054bcf276b16e060d"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-compiler-security-controls/build_patch.py",
+      "bytes": 8719,
+      "sha256": "b48d5221e804c4565f81178ab848fd6a41f041db5343a17e5f7763482d5825d3"
+    }
+  ],
+  "limits": [
+    "No parse/behavior/native claim from lexical checks.",
+    "Each native setup failure remains an uncredited failure under existing recorder semantics.",
+    "PS7 generatedBeforeInjection may be empty; the separate default-owner control file is explicitly test generated.",
+    "No whole TEMP observer or generic recorder changes."
+  ]
+}

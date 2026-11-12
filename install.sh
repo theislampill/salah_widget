@@ -78,17 +78,46 @@ read_answer() {
 }
 
 # Native stat forms are intentionally explicit; unknown ownership fails closed.
+# Both forms report the permission bits including setuid/setgid/sticky (no file type).
 path_identity() {
-  if [ "$PLATFORM" = "mac" ]; then stat -f '%d:%i:%u:%Lp' "$1"
+  local fields bits
+  if [ "$PLATFORM" = "mac" ]; then
+    fields="$(stat -f '%d:%i:%u:%p' "$1")" || return 1
+    bits="${fields##*:}"
+    case "$bits" in ''|*[!0-7]*) return 1 ;; esac
+    printf '%s:%o\n' "${fields%:*}" "$(( 8#$bits & 07777 ))"
   else stat -c '%d:%i:%u:%a' -- "$1"; fi
 }
 
 trusted_parent() {
-  local path="$1" kind="$2" current=/ rest part fields dev inode owner mode uid
+  local path="$1" kind="$2" current=/ rest part fields dev inode owner mode uid container physical
   case "$path" in /*) ;; *) err "Staging parent must be an absolute path: $path"; return 1 ;; esac
   case "$path" in *$'\n'*|*$'\r'*) err "Staging parent contains an unsupported newline."; return 1 ;; esac
   while [ "$path" != / ] && [[ "$path" = */ ]]; do path="${path%/}"; done
   uid="$(id -u)" || return 1
+  # The supplied spelling may pass only through root-owned symlinks that sit in
+  # root-owned directories without group/other write (e.g. macOS /var, /tmp).
+  rest="${path#/}"
+  while [ -n "$rest" ]; do
+    part="${rest%%/*}"
+    case "$part" in ''|.|..) err "Noncanonical staging parent: $path"; return 1 ;; esac
+    if [ "$current" = / ]; then current="/$part"; else current="$current/$part"; fi
+    if [ -L "$current" ]; then
+      container="${current%/*}"; [ -n "$container" ] || container=/
+      container="$(cd "$container" 2>/dev/null && pwd -P)" || { err "Untrusted staging ancestor: $current"; return 1; }
+      fields="$(path_identity "$current")" || return 1
+      IFS=: read -r dev inode owner mode <<< "$fields"
+      [ "$owner" = 0 ] || { err "Untrusted staging ancestor: $current"; return 1; }
+      fields="$(path_identity "$container")" || return 1
+      IFS=: read -r dev inode owner mode <<< "$fields"
+      case "$mode" in ''|*[!0-7]*) err "Cannot establish permissions: $container"; return 1 ;; esac
+      [ "$owner" = 0 ] && (( (8#$mode & 0022) == 0 )) || { err "Untrusted staging ancestor: $current"; return 1; }
+    fi
+    if [[ "$rest" = */* ]]; then rest="${rest#*/}"; else rest=""; fi
+  done
+  # Resolve once; everything below inspects and returns only the physical path.
+  physical="$(cd "$path" 2>/dev/null && pwd -P)" && [ -n "$physical" ] || { err "Staging parent cannot be resolved: $path"; return 1; }
+  path="$physical"; current=/
   rest="${path#/}"
   # Inspect every supplied component, including ancestors that could rename it.
   while :; do

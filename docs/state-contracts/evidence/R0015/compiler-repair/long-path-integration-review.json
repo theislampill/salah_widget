@@ -1,0 +1,122 @@
+{
+  "schema": "r0015-longpath-integration-review.v1",
+  "reviewer": "r0015_contract",
+  "continuity": "G0013@bd02b9601b2b0b03d9ce393ccd8f3fc1c6aed23c",
+  "scope": "Independent read-only review of root-integrated long-path fixture/routing and supplemental identity adapter. Installer source and volume-mutation driver code are excluded because this reviewer authored those changes.",
+  "inputs": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-powershell-transactions.ps1",
+      "sha256": "c6f5734352edfc8240eabc4d0009ec957c289213f7842c1acaef99dc2e4789c0",
+      "bytes": 60721,
+      "snapshot": "current-install-powershell-transactions.ps1",
+      "baselineCommit": "97aec3ada9e2dfeea6416ae75497ce1e407243fc",
+      "baselineSha256": "f79bb0a19ff431b67bb0d34bb0105fcd08760cfb46c06960f74b87299c11a81e"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tools/qualification/installer_native.py",
+      "sha256": "c159e018b922ea2ddf1c14028361fc95253aafef5c4c4667746b0f109ba82918",
+      "bytes": 18657,
+      "snapshot": "concurrent-installer_native.py",
+      "baselineCommit": "97aec3ada9e2dfeea6416ae75497ce1e407243fc",
+      "baselineSha256": "89c39209d6cec8f0fbecb31766697473a2ab228188125abd3e7c748016fdd243"
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-volume-policy.ps1",
+      "sha256": "9537d24479a2f621991c74b3cc3ff87f881c8f6724db4b3db6fc2d9e4eb64798",
+      "bytes": 14978,
+      "snapshot": "current-install-volume-policy.ps1",
+      "baselineCommit": "97aec3ada9e2dfeea6416ae75497ce1e407243fc",
+      "baselineSha256": "dc671aa0365d6fb318fbf838472a8c8512931ddf371e2c3527433bcb22f41e7d"
+    }
+  ],
+  "baseline": {
+    "head": "97aec3ada9e2dfeea6416ae75497ce1e407243fc",
+    "tree": "2e032d65c26ba57da4fce81a4fc5ef6b1bed5305"
+  },
+  "disposition": "NO_CONCRETE_BLOCKING_FINDING_IN_BOUNDED_STATIC_REVIEW",
+  "findings": [],
+  "checks": [
+    {
+      "id": "LP-INTEGRATION-01",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "transactions:672-821; mechanical-checks.json",
+      "conclusion": "Removing only the opt-in insertion restores exact baseline bytes. The author fragment is preserved. Original scope remains20 literal+3 manifest-key+5 preset-key cases; the unchanged13 mutation prerequisites exclude the new case."
+    },
+    {
+      "id": "LP-INTEGRATION-02",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "installer_native.py:225-275; transactions:674,681-684",
+      "conclusion": "Collector invokes only ps7 in the Windows R15/R16 branch, with explicit source/preset and one -Case argument, bounded240seconds. The case itself refuses non-Windows/POSIX-adapter execution. Ordinary runs omit -Case; mutation selection remains unchanged."
+    },
+    {
+      "id": "LP-INTEGRATION-03",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "transactions:275-299,715-779",
+      "conclusion": "Existing recorder delegates the actual private-file creator. Refusal credit requires actual requested path length268, the same private227-character parent identity and native error3 or206. Expected path length, generic exceptions and unrelated earlier failures do not establish the required boundary."
+    },
+    {
+      "id": "LP-INTEGRATION-04",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "transactions:685-710,763-803",
+      "conclusion": "A useful short actual Install-TablissNG handoff precedes refusal. Assertions bind predecessor archive and every bundle file by identity/hash/length, preserve retained roots and Unicode payload, require fresh failed retry/no admitted candidate/no clipboard, verify truthful store fallback and clean only current scratch."
+    },
+    {
+      "id": "LP-INTEGRATION-05",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "transactions:704-712,789-803",
+      "conclusion": "Outside-attempt sentinel is newly fixture-owned and remains checked by identity, owner, bytes and SDDL after cleanup. Both attempt roots are separate. crossUidClaim=false correctly bounds this as outside-attempt preservation, not independent-user isolation."
+    },
+    {
+      "id": "LP-INTEGRATION-06",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "transactions:743-761,804-817; installer_native.py:38-48,139-145",
+      "conclusion": "Long-path acceptance or missing native/layout premise yields pass=false with an explicit capability/acquisition status and no refusal/mutation credit. Later safety failure after acceptance remains FAIL. Refusal credit is added only after the whole case passes. Collector requires all present pass flags exactly true."
+    },
+    {
+      "id": "LP-INTEGRATION-07",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "installer_native.py:263-267",
+      "conclusion": "Only the fresh mutation-root label is shortened; UUID entropy and exclusive-creation driver are unchanged. It removes14 characters for ps7 and15 for ps51. No assertion is weakened or arbitrary long-path success promised."
+    },
+    {
+      "id": "VOLUME-ADAPTER-01",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "install-volume-policy.ps1:118-165",
+      "conclusion": "Only the non-Windows branch substitutes GetCurrent with a declared User/Owner/Dispose stand-in, with exact occurrence-count checks. Native receives original function text. Volume decision and first-lease stop remain unchanged. No Windows identity/ACL/disposal qualification follows from this adapter."
+    },
+    {
+      "id": "COLLECTOR-BUDGET-ADDENDUM",
+      "status": "PASS",
+      "kind": "static review only",
+      "evidence": "installer_native.py:251-254",
+      "conclusion": "Concurrent root edit only raises compiler-custody outer budget900 to1500 and updates its fourteen-child comment. This does not change long-path routing, row classification or assertions. Fourteen90second budgets total1260seconds; actual child inventory/timing is outside this test-integration review."
+    }
+  ],
+  "execution": {
+    "powershellExecuted": false,
+    "nativeTestsExecuted": false,
+    "collectorExecuted": false,
+    "installerExecuted": false,
+    "workPerformed": "Read files/diffs; Python byte and literal-data inspection; read-only git show/rev-parse. No shared/source/remote writes."
+  },
+  "mechanicalChecks": "mechanical-checks.json",
+  "limits": [
+    "Native refusal/capability and preservation observations remain unacquired for this exact integration.",
+    "Shorter root names do not prove every future fixture path fits native limits.",
+    "The sentinel shares the fixture user; there is no cross-user isolation proof.",
+    "The identity adapter does not reproduce native token ownership or disposal.",
+    "Underlying installer/compiler correctness, new compiler-custody cases, volume-driver implementation and full51-row qualification are outside this independent review.",
+    "The literal-count assertion and concurrent-file identity refusal are retained as review/acquisition observations, not product failures."
+  ],
+  "nativeQualification": false,
+  "productQualification": false,
+  "authority": "Evidence input only; no integration, publication, readiness or closure authority."
+}

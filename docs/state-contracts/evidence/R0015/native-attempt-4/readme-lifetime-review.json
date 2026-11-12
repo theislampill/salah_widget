@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/r0013_review",
+  "reviewKind": "Independent bounded source-linked documentation review",
+  "createdAtUtc": "2026-11-11T10:52:50.214562+00:00",
+  "authority": {
+    "parent": "/root",
+    "reportedParentContinuity": "G000E@a6641f3b8199b876140f95fea590e94977252dfb",
+    "reviewerGovernorAuthority": false,
+    "publicationOrMergeAuthority": false
+  },
+  "scope": {
+    "changedSurface": "Only retained-files subsection in R0015 README and identical propagation into R0016 README",
+    "sourceReadOnly": true,
+    "testsExecuted": false,
+    "powerShellExecuted": false,
+    "browserOrRenderedReviewExecuted": false,
+    "externalNetworkRequests": false,
+    "writes": [
+      "recovery/r0015-readme-lifetime/review.json"
+    ]
+  },
+  "inputs": [
+    {
+      "path": "r0015/README.md",
+      "sha256": "9aacbc6cfa69ae54ac2df7661fe4f776804d78500f3ca41be27884631906d3d1"
+    },
+    {
+      "path": "r0016/README.md",
+      "sha256": "25fb788a357a53d80c8d43ffaa1fc905af0bfd4de527b4107df2290c1c789173"
+    },
+    {
+      "path": "r0015/install.sh",
+      "sha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22"
+    },
+    {
+      "path": "r0015/install.ps1",
+      "sha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140"
+    },
+    {
+      "path": "recovery/r0015-readme-lifetime/r0015-before.md",
+      "sha256": "91189f6ff7cad08787c4b0b30c7b5f18392fdeb0937d61697d5c03dcb8f9d79c"
+    },
+    {
+      "path": "recovery/r0015-readme-lifetime/r0016-before.md",
+      "sha256": "2d0d0b3901243c4ce3b62687a9a9022fbb5d71a9d6eca8ae9318f1a6e15887b6"
+    },
+    {
+      "path": "recovery/r0015_contract_matrix.json",
+      "sha256": "49d919d5736b0de4ca27448d6878a8d1a7bb33b3c76833ae4744b827fa4533ad"
+    },
+    {
+      "path": "r0015/docs/r0015-artifact-transactions.md",
+      "sha256": "d2cccaceaa447f96d99b970a9307c683aecd7d13f71d83a4228b04679708087b"
+    },
+    {
+      "path": "r0016/docs/r0015-artifact-transactions.md",
+      "sha256": "d2cccaceaa447f96d99b970a9307c683aecd7d13f71d83a4228b04679708087b"
+    }
+  ],
+  "diffBinding": {
+    "r0015OnlyOneSubsectionReplacement": true,
+    "r0016OnlyIdenticalSubsectionReplacement": true,
+    "r0016OutsideSubsectionIncludingPreviewGuidanceUnchanged": true,
+    "newSubsectionSha256": "beca9904d0005915ad4b402593758a5b02b4b17581bc3c6d89bd1f5470b43d29",
+    "subsectionOccursOncePerREADME": true
+  },
+  "contractBinding": [
+    {
+      "id": "21-15",
+      "requirement": "Disclose retained HOME bundle lifetime, keep-unpacked instructions, optional manual preset/XPI removal, partial retention and retired cross-run cache behavior in README.",
+      "locator": "https://github.com/theislampill/salah_widget/issues/21#issuecomment-6073056099",
+      "reviewDisposition": "All named lifecycle subjects are now present and semantically consistent with the bound Bash/PowerShell source. Delivered-byte/rendered and wider contract gates remain open.",
+      "matrixStatusNotModified": "GAP"
+    },
+    {
+      "id": "R0015-A08",
+      "parent": "21-15",
+      "requirement": "Rendered README truthfully documents precise manual/cache/partial lifecycle",
+      "locator": "https://github.com/theislampill/salah_widget/issues/21#issuecomment-6074575663",
+      "reviewDisposition": "Semantic portion supported at these exact bytes. Rendered/public portion not acquired by this review; do not mark the row fully closed.",
+      "matrixStatusNotModified": "GAP"
+    }
+  ],
+  "claimReview": [
+    {
+      "claim": "Fresh private scratch and separate retained HOME/profile bundle on every staging attempt",
+      "bashEvidence": [
+        "initialize_staging: trusted TMPDIR/HOME; two umask-077 mktemp directories; WORK_ROOT and BUNDLE_ROOT separately recorded",
+        "New retained path pattern is $HOME/salah-widget-install.XXXXXXXX"
+      ],
+      "windowsEvidence": [
+        "Initialize-Staging: unique invocation GUID; private SalahWidgetAttempt-* and SalahWidgetBundle-* roots; retained parent is USERPROFILE",
+        "New-StagingCompilerContext also establishes separate private compiler scratch before compilation"
+      ],
+      "assessment": "SOURCE_MATCH; this describes an attempt that reaches staging, not a promise that early target refusal creates directories"
+    },
+    {
+      "claim": "Validated same-attempt reuse, with Windows explicitly rechecking admitted identity and bytes",
+      "bashEvidence": [
+        "download_tablissng_asset: an existing file under current DOWNLOAD_ROOT is accepted only through validate_asset",
+        "validate_asset: regular non-symlink nonempty archive, nonempty member inventory and archive.testzip validation"
+      ],
+      "windowsEvidence": [
+        "Download-Asset: searches only current StagingAttempt.Artifacts with the same source; calls Get-AdmittedArtifact before returning reuse",
+        "Get-AdmittedArtifact: unique current-attempt ready-state record, current native identity, digest and length; unpacked members also rechecked"
+      ],
+      "assessment": "SOURCE_MATCH; the Windows exact identity/byte guarantee is not attributed to Bash"
+    },
+    {
+      "claim": "Later invocations do not adopt or repair earlier shared caches or retained bundles",
+      "bashEvidence": [
+        "initialize_staging allocates new roots, and download/retain helpers resolve only beneath the current roots"
+      ],
+      "windowsEvidence": [
+        "Initialize-Staging allocates a new attempt and retained root; Download-Asset reuse is invocation-local; current-attempt admission is required"
+      ],
+      "assessment": "SOURCE_MATCH"
+    },
+    {
+      "claim": "Cleanup removes only proven current scratch and reports refusal; manual bundle remains retained through exit, failure or interruption and later attempts",
+      "bashEvidence": [
+        "cleanup_staging verifies WORK_ROOT identity/owner/mode with verify_root before rm -rf; failed verification reports skipped cleanup",
+        "finish_installer and EXIT/INT/TERM handling do not delete BUNDLE_ROOT; failed exit reports retained partial bundle"
+      ],
+      "windowsEvidence": [
+        "Clear-OwnedScratch validates current active scratch root and descendants, keeps ancestor leases through deletion, and reports skipped cleanup on failure",
+        "Only Scratch.Path is deleted; retained root and prior manual bundles are not deletion targets"
+      ],
+      "assessment": "SOURCE_MATCH as installer retention policy; does not claim crash durability or protection against external deletion"
+    },
+    {
+      "claim": "Failed publication or extraction can leave partial retained files, which are not offered ready or adopted next run",
+      "bashEvidence": [
+        "retain_asset creates a retained partial, validates before move and returns only after success",
+        "expand_chromium_asset uses a new retained extraction directory and prints the usable path only after extraction and manifest validation; failure reports partial retention"
+      ],
+      "windowsEvidence": [
+        "Publish-OwnedFile performs private retained-volume copy and byte readback before publication",
+        "Expand-ChromiumAsset records failure and does not return a path before validation/readback; Get-AdmittedArtifact excludes failed/partial state"
+      ],
+      "assessment": "SOURCE_MATCH; can leave partials does not promise every temporary download survives successful scratch cleanup"
+    },
+    {
+      "claim": "Keep unpacked directories while used by the browser, including older directories after replacement; optionally delete unneeded JSON/XPI manually only after success",
+      "bashEvidence": [
+        "Chromium handoff says keep the directory while installed; final instructions make preset/XPI removal optional and manual"
+      ],
+      "windowsEvidence": [
+        "Install-TablissNG says the wizard never deletes an earlier manual bundle",
+        "Final instructions say Enter does not prove installation or release an older folder, and permit manual preset/XPI deletion after verified success"
+      ],
+      "assessment": "SOURCE_MATCH; no automatic browser-success or release inference"
+    },
+    {
+      "claim": "Windows requires the supported local NTFS custody boundary and refuses unprovable staging",
+      "windowsEvidence": [
+        "New-StagingCompilerContext requires successful persistent-ACL filesystem query and NTFS name before private compiler workspace acquisition",
+        "StageNative.RequireLocalAclVolume requires local drive, persistent ACLs and NTFS; Get-TrustedStagingParent and private-root creation fail closed on unprovable boundary"
+      ],
+      "assessment": "SOURCE_MATCH; README links the fuller source-linked boundary instead of asserting native qualification"
+    }
+  ],
+  "linkTargetReview": {
+    "target": "docs/r0015-artifact-transactions.md",
+    "r0015TargetPresent": true,
+    "r0016InitialWorkingCopyTargetAbsent": true,
+    "initialObservation": "First local-path read returned FileNotFoundError. This was reported before a delivered-link conclusion.",
+    "resolution": "Parent reported sparse-checkout omission and materialized the already tracked blob. Reviewer independently read the immutable tree and blob and verified both current local copies. No missing delivered Git blob found.",
+    "r0016Head": "9eaf54cab8560f5fda7c6dd2f49ed4a622e0d6e9",
+    "treeRow": "100644 blob b530b8157d69f7e31745c075240cfa94ef201e97\tdocs/r0015-artifact-transactions.md",
+    "blob": "b530b8157d69f7e31745c075240cfa94ef201e97",
+    "blobSha256": "d2cccaceaa447f96d99b970a9307c683aecd7d13f71d83a4228b04679708087b",
+    "identicalToR0015LinkedContract": true,
+    "r0016WorkingCopyNowIdentical": true,
+    "disposition": "Sparse materialization observation resolved; not an open documentation defect"
+  },
+  "findings": {
+    "Critical": [],
+    "Important": [],
+    "Minor": []
+  },
+  "disposition": "No blocker found in the lifetime subsection or its exact R0016 propagation at the listed hashes. The wording preserves the Bash validation versus Windows admitted-identity/byte distinction and does not claim native qualification, browser success, crash durability or automatic deletion of earlier bundles.",
+  "remainingGates": [
+    "Actual native qualification and adjudication for the affected f801 PowerShell candidate, owned separately by the parent; this prose review creates no runtime credit.",
+    "Rendered README review of the final candidate and its relative contract link.",
+    "Exact public and accepted-main delivered bytes, final pinned examples and copy-command path where required by the campaign.",
+    "Original full R0015 denominator, predecessor ordering, independent owner approval and any required final delivery gates; this bounded review is not whole-contract completion or merge authority."
+  ],
+  "finalInputReadback": {
+    "allDeclaredInputHashesMatch": true,
+    "noSourceOrSharedFileWritesByReviewer": true
+  }
+}

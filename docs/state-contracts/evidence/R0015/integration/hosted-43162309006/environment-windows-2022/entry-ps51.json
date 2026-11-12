@@ -1,0 +1,47 @@
+{
+  "schema": "staging-parent-environment-observation.windows-entry.v1",
+  "host": "ps51",
+  "sourceSha256": "288d8ba16961e95690c6afd2fb148f67d1cba078507430e76a9eb9e18e9718bc",
+  "sourceGitBlob": "43c1c4a7e0aad2b504240780eb3db189abba6742",
+  "tempOverride": false,
+  "parents": {
+    "tempNameClass": "runner TEMP",
+    "profileNameClass": "runner USERPROFILE"
+  },
+  "exit": 0,
+  "stdout": "\r\nSalah Widget Installer\r\n\r\nThis wizard can:\r\n- detect supported browsers/profiles\r\n- check for TablissNG\r\n- safely refuse to modify legacy Tabliss profiles\r\n- download the right TablissNG build from GitHub latest release when needed\r\n- guide the browser-required install step\r\n- stage the Salah Widget preset for import\r\n\r\nIt will not silently force-install extensions or write directly into extension storage.\r\n\r\n== Detecting browsers ==\r\n[1] Google Chrome / Default - neither extension identified by chromium-directory-and-preferences\r\n[2] Firefox / fixture profile - neither extension identified by firefox-extensions-json\r\n\r\nSelected targets: 2 eligible, 0 held, 0 refused.\r\n\r\n== Google Chrome / Default ==\r\n\r\n== Download TablissNG from GitHub latest release for Google Chrome ==\r\nResolving latest TablissNG release from https://api.github.com/repos/BookCatKid/TablissNG/releases/latest\r\n[WARN] Acquisition did not complete; candidate is not ready.\r\n[WARN] Falling back to official store page.\r\nOpen manually: https://chromewebstore.google.com/detail/tablissng/dlaogejjiafeobgofajdlkkhjlignalk\r\n\r\n[WARN] Preset is unavailable; no import path was admitted. Preset acquisition did not complete.\r\n\r\n== Import Salah Widget preset for Google Chrome / Default ==\r\n[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.\r\n[WARN] Importing a preset replaces your current TablissNG dashboard.\r\n\r\n== Firefox / fixture profile ==\r\n\r\n== Download TablissNG from GitHub latest release for Firefox ==\r\n[WARN] Acquisition did not complete; candidate is not ready.\r\n[WARN] Falling back to official store page.\r\nOpen manually: https://addons.mozilla.org/en-US/firefox/addon/tablissng/\r\n\r\n[WARN] Preset is unavailable; no import path was admitted. Preset acquisition did not complete.\r\n\r\n== Import Salah Widget preset for Firefox / fixture profile ==\r\n[WARN] No admitted preset is available. Resolve the download/validation error and run the wizard again before importing.\r\n[WARN] Importing a preset replaces your current TablissNG dashboard.\r\n\r\n== Manual action pending ==\r\nManual browser installation/import remain pending. Retained bundle:\r\n  C:\\Users\\runneradmin\\SalahWidgetBundle-6a4418089fc7434c963446f0f3cbaa05\r\nKeep unpacked extension folders while the browser uses them. Enter does not prove installation or release an older folder.\r\nAfter you verify successful import/install, you may manually delete unneeded preset/XPI files.\r\nFailed candidates remain partial; existing bundles are never adopted as a new-run download cache.\r\n\r\nReview this script before publishing it. The preset URL should point at your real raw JSON file.\r\n",
+  "stderr": "",
+  "elapsedSeconds": 26.4,
+  "interceptionLoaded": true,
+  "effects": [
+    "prompt\tSelect target numbers separated by commas, or 'all' (default all)",
+    "metadata\thttps://api.github.com/repos/BookCatKid/TablissNG/releases/latest",
+    "download\thttps://example.invalid/chromium",
+    "prompt\tPress Enter after TablissNG is installed",
+    "download\thttps://example.invalid/preset",
+    "download\thttps://example.invalid/firefox",
+    "prompt\tPress Enter after TablissNG is installed",
+    "download\thttps://example.invalid/preset"
+  ],
+  "createdAfterRun": {
+    "temp": [],
+    "profile": [
+      "SalahWidgetBundle-6a4418089fc7434c963446f0f3cbaa05"
+    ]
+  },
+  "classification": "manual-action-pending",
+  "observerRemovedRetained": [
+    {
+      "name": "SalahWidgetBundle-6a4418089fc7434c963446f0f3cbaa05",
+      "contents": [
+        "downloads",
+        "presets"
+      ],
+      "removed": true
+    }
+  ],
+  "remainingAfterObserverCleanup": {
+    "temp": [],
+    "profile": []
+  }
+}

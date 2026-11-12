@@ -1,0 +1,67 @@
+{
+  "finding": "R15-NATIVE-01",
+  "classification": "demonstrated same-SID native lease rename failure; no foreign-user exploit claim",
+  "source_sha256": "a2b36da7c4b07f52cb22cff1fdeaa1e9cffd60f5f95188d8b7f65ce9fa4fa8f8",
+  "original_test_sha256": "1a8b76c03c9a60e750d27400302c5a2d4a0119418a4014e6e91062b24ca21623",
+  "native_reds": [
+    {
+      "host": "ps51",
+      "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run1/Windows/receipts/ps51-install-staging-windows.json",
+      "sha256": "067d30d8ef35955bd74b5cc27837e0a3221d20c66849f1725c7fec103988bb62",
+      "sourceSha256": "a2b36da7c4b07f52cb22cff1fdeaa1e9cffd60f5f95188d8b7f65ce9fa4fa8f8",
+      "runtime": "5.1.20348.5773",
+      "row": {
+        "case": "native directory lease prevents live root replacement",
+        "pass_": false,
+        "pass": false,
+        "status": "FAIL",
+        "error": "The held native root lease allowed replacement by rename.",
+        "observations": {
+          "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-bd7d72a6d1274c9c84048a026726b594-\u0635\\live-lease",
+          "rename": {
+            "refused": false,
+            "reason": null
+          }
+        },
+        "messages": []
+      }
+    },
+    {
+      "host": "ps7",
+      "receipt": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run1/Windows/receipts/ps7-install-staging-windows.json",
+      "sha256": "68012c5be6572fa16256a0ef31c596a6500cc5f7a6791d7bae04bdfcf39ba772",
+      "sourceSha256": "a2b36da7c4b07f52cb22cff1fdeaa1e9cffd60f5f95188d8b7f65ce9fa4fa8f8",
+      "runtime": "7.6.6",
+      "row": {
+        "case": "native directory lease prevents live root replacement",
+        "pass_": false,
+        "pass": false,
+        "status": "FAIL",
+        "error": "The held native root lease allowed replacement by rename.",
+        "observations": {
+          "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-8e0cf4f75821462c855b34b31f593350-\u0635\\live-lease",
+          "rename": {
+            "refused": false,
+            "reason": null
+          }
+        },
+        "messages": []
+      }
+    }
+  ],
+  "archive_sha256": "7e4fa4d73e2bef57ea9007838ddda1a437b287aedd9db00c85451f37e869d910",
+  "retained_live_lease_member_names": [
+    "installer-evidence/ps51-install-staging-windows-fixture/live-lease/profile",
+    "installer-evidence/ps51-install-staging-windows-fixture/live-lease/profile/SalahWidgetBundle-425f13c18b1e46ac9c092827ba1af65a",
+    "installer-evidence/ps51-install-staging-windows-fixture/live-lease/profile/SalahWidgetBundle-425f13c18b1e46ac9c092827ba1af65a/downloads",
+    "installer-evidence/ps51-install-staging-windows-fixture/live-lease/profile/SalahWidgetBundle-425f13c18b1e46ac9c092827ba1af65a/presets",
+    "installer-evidence/ps51-install-staging-windows-fixture/live-lease/temp",
+    "installer-evidence/ps51-install-staging-windows-fixture/live-lease/temp/attempt-renamed",
+    "installer-evidence/ps7-install-staging-windows-fixture/live-lease/profile",
+    "installer-evidence/ps7-install-staging-windows-fixture/live-lease/profile/SalahWidgetBundle-088093298da3482dba3e86477f9077bc",
+    "installer-evidence/ps7-install-staging-windows-fixture/live-lease/profile/SalahWidgetBundle-088093298da3482dba3e86477f9077bc/downloads",
+    "installer-evidence/ps7-install-staging-windows-fixture/live-lease/profile/SalahWidgetBundle-088093298da3482dba3e86477f9077bc/presets",
+    "installer-evidence/ps7-install-staging-windows-fixture/live-lease/temp",
+    "installer-evidence/ps7-install-staging-windows-fixture/live-lease/temp/attempt-renamed"
+  ]
+}

@@ -1,0 +1,201 @@
+{
+  "schema": "r0015-powershell-transactions-v1",
+  "source": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/candidate-before-custody-types.ps1",
+  "sourceSha256": "dc6e353c76af0800d544f22243b88eafc69f1b15d6905a3a4b9d2ce35ac5ba97",
+  "testSha256": "2f268f36d0783bb7969e0d86232c0bdb0a8257cf91e94d84866859f239a50e02",
+  "presetSha256": "9197c9bcfaf34ff06505963862e4e9280d3ad521e1ed287183f5d71cbce6b95f",
+  "observedUtc": "2026-11-11T07:22:22.9290491Z",
+  "runtime": "7.6.6",
+  "edition": "Core",
+  "platform": "Unix 6.18.57.0",
+  "processArchitecture": null,
+  "scope": "supplemental POSIX native-boundary adapter; no Windows ACL/NTFS/lease qualification",
+  "nativeBoundaryAdapter": true,
+  "fixtureRoot": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص",
+  "retainedFixture": true,
+  "results": [
+    {
+      "case": "healthy actual download and manual Chromium caller",
+      "pass_": true,
+      "pass": true,
+      "status": "PASS",
+      "error": null,
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/healthy-caller",
+        "archive": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/healthy-caller/profile/SalahWidgetBundle-586081f224f1464ca324ee6c14cd8143/downloads/c873967f4a8a4e7cbd29ce0be3cd5613-tabliss-chromium.zip",
+        "bundle": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/healthy-caller/profile/SalahWidgetBundle-586081f224f1464ca324ee6c14cd8143/unpacked-1b4b867f960a4986a0105248a8983af4/extension"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/healthy-caller/temp/SalahWidgetAttempt-586081f224f1464ca324ee6c14cd8143/download-10b339d870ae423881035e968a42f18f.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "copy",
+          "value": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/healthy-caller/profile/SalahWidgetBundle-586081f224f1464ca324ee6c14cd8143/unpacked-1b4b867f960a4986a0105248a8983af4/extension"
+        },
+        {
+          "effect": "open",
+          "value": "fixture://extensions"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "[OK] Reusing the same admitted asset bytes in this attempt.",
+        "",
+        "Chromium-family install steps:",
+        "  1. Open Extensions.",
+        "  2. Enable Developer mode.",
+        "  3. Click Load unpacked.",
+        "  4. Select this folder:",
+        "     /workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/healthy-caller/profile/SalahWidgetBundle-586081f224f1464ca324ee6c14cd8143/unpacked-1b4b867f960a4986a0105248a8983af4/extension",
+        "[OK] Copied unpacked extension folder path to clipboard.",
+        "[WARN] Keep this unpacked folder while the browser uses it. This wizard never deletes an earlier manual bundle.",
+        "",
+        "Finish the browser's install prompt, then return here."
+      ]
+    },
+    {
+      "case": "boolean canonical widget identity is not import-ready",
+      "pass_": false,
+      "pass": false,
+      "status": "FAIL",
+      "error": "Boolean values impersonating canonical string identity returned a usable-looking path",
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/preset-boolean-identity",
+        "preset": {
+          "items": [
+            "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/preset-boolean-identity/profile/SalahWidgetBundle-4314dd3be2ae45aeb9f7ad60a134548b/presets/12aa79ac3c434d2b8ffffdb1211d8f83-salah-widget.tablissng.json"
+          ],
+          "error": null
+        }
+      },
+      "events": [
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/preset.json",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/preset-boolean-identity/temp/SalahWidgetAttempt-4314dd3be2ae45aeb9f7ad60a134548b/preset-d0c50e1fbbef48499ec2a96a7187e128.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "copy",
+          "value": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/preset-boolean-identity/profile/SalahWidgetBundle-4314dd3be2ae45aeb9f7ad60a134548b/presets/12aa79ac3c434d2b8ffffdb1211d8f83-salah-widget.tablissng.json"
+        },
+        {
+          "effect": "open",
+          "value": "fixture://newtab"
+        }
+      ],
+      "messages": [
+        "[OK] Preset validated and staged for manual import.",
+        "",
+        "== Import Salah Widget preset for Disposable Chromium / Fixture ==",
+        "Preset file:",
+        "  /workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/preset-boolean-identity/profile/SalahWidgetBundle-4314dd3be2ae45aeb9f7ad60a134548b/presets/12aa79ac3c434d2b8ffffdb1211d8f83-salah-widget.tablissng.json",
+        "[OK] Copied the preset file path to clipboard.",
+        "",
+        "Manual import path:",
+        "  1. Open a new tab controlled by TablissNG.",
+        "  2. Open TablissNG settings.",
+        "  3. Use Import/Restore settings.",
+        "  4. Select the preset JSON file above.",
+        "",
+        "This wizard does not directly write into browser extension storage.",
+        "That avoids corrupting profiles and avoids touching legacy Tabliss.",
+        "[WARN] Importing the preset replaces your current TablissNG dashboard."
+      ]
+    },
+    {
+      "case": "string manifest version is refused by actual install caller",
+      "pass_": false,
+      "pass": false,
+      "status": "FAIL",
+      "error": "A string manifest_version reached actual Load unpacked handoff.",
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/manifest-string-version"
+      },
+      "events": [
+        {
+          "effect": "metadata",
+          "uri": "https://api.github.com/repos/fixture/upstream/releases/latest"
+        },
+        {
+          "effect": "download",
+          "uri": "https://fixture.invalid/assets/a/tabliss-chromium.zip",
+          "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/manifest-string-version/temp/SalahWidgetAttempt-46ed9a6fa66845f980bff7464486ecde/download-c65199fb278f4022861f13e9e1714aaf.partial",
+          "ordinal": 0
+        },
+        {
+          "effect": "copy",
+          "value": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/manifest-string-version/profile/SalahWidgetBundle-46ed9a6fa66845f980bff7464486ecde/unpacked-df66dc819e8b45d5beff6977a38f09ab/extension"
+        },
+        {
+          "effect": "open",
+          "value": "fixture://extensions"
+        },
+        {
+          "effect": "prompt",
+          "value": "Press Enter after TablissNG is installed"
+        }
+      ],
+      "messages": [
+        "",
+        "== Download TablissNG from GitHub latest release for Disposable Chromium ==",
+        "Resolving latest TablissNG release from https://api.github.com/repos/fixture/upstream/releases/latest",
+        "",
+        "Chromium-family install steps:",
+        "  1. Open Extensions.",
+        "  2. Enable Developer mode.",
+        "  3. Click Load unpacked.",
+        "  4. Select this folder:",
+        "     /workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/manifest-string-version/profile/SalahWidgetBundle-46ed9a6fa66845f980bff7464486ecde/unpacked-df66dc819e8b45d5beff6977a38f09ab/extension",
+        "[OK] Copied unpacked extension folder path to clipboard.",
+        "[WARN] Keep this unpacked folder while the browser uses it. This wizard never deletes an earlier manual bundle.",
+        "",
+        "Finish the browser's install prompt, then return here."
+      ]
+    },
+    {
+      "case": "scratch cleanup retains ancestor leases until deletion",
+      "pass_": false,
+      "pass": false,
+      "status": "FAIL",
+      "error": "An ancestor or retained lease was released before the scratch deletion boundary.",
+      "observations": {
+        "root": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/cleanup-lease-order",
+        "disposals": [
+          {
+            "Path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/cleanup-lease-order/temp/SalahWidgetAttempt-f9f9640048cc4112b69d41bf43fe9ebf",
+            "ScratchExists": true
+          },
+          {
+            "Path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/cleanup-lease-order/profile/SalahWidgetBundle-f9f9640048cc4112b69d41bf43fe9ebf",
+            "ScratchExists": true
+          },
+          {
+            "Path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/cleanup-lease-order/temp/SalahWidgetAttempt-f9f9640048cc4112b69d41bf43fe9ebf",
+            "ScratchExists": false
+          },
+          {
+            "Path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-tests/r0015-ps-11967c3777e643d2b26108d2b5e1f2ec-ص/cleanup-lease-order/profile/SalahWidgetBundle-f9f9640048cc4112b69d41bf43fe9ebf",
+            "ScratchExists": false
+          }
+        ]
+      },
+      "events": [],
+      "messages": []
+    }
+  ]
+}

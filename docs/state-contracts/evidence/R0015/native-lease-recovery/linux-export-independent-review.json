@@ -1,0 +1,123 @@
+{
+  "schema": "r0015-independent-linux-export-instrument-review-v1",
+  "reviewer": "/root/r0013_review",
+  "sourceInstallerSha256": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff",
+  "exportHelperSha256": "bd43e5675400966b08bb5b29e80ddf9ebb66cf53181991ccc4d2a4f455da9ae5",
+  "collectorSha256": "d1f7aa29919d3b1f747e6a131830b2bf2e0e46d0a42a2a8395e48e5036b746a5",
+  "checks": [
+    {
+      "name": "Frozen export helper bytes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Corrected collector bytes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "All previously reviewed diagnostic and entry collector logic byte unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: digest",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: identity",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: proc_identity",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: mapped",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: command",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: function",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: snapshot",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Original helper unchanged: require",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "All original named UID test assertions retained",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Consumer reads verified archive; no extraction or source-tree copy fallback in special branch",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Copy destination exclusive and readback hashed",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Copied and canonical embedded manifest digests separately named",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "Independent actual local copied archive digest readback",
+      "pass": true,
+      "path": "/tmp/r15-export-manifest-tscbc4jl/install-linux-owner-fixture.tar.gz",
+      "sha256": "2734c5dff5ebe876d4d69703166e283f20a2b0f392e143af2f543b50c7c357e6"
+    },
+    {
+      "name": "Independent actual local copied readable manifest digest readback",
+      "pass": true,
+      "path": "/tmp/r15-export-manifest-tscbc4jl/install-linux-owner-fixture-manifest.json",
+      "sha256": "a2a4317ca9564face9cd573d669dbd8052992b85d3b45413476c6c0fb966d2a8"
+    },
+    {
+      "name": "Embedded canonical manifest exact bytes and distinct readable representation",
+      "pass": true,
+      "sha256": "4699c42d5fc02c101dc5dda1ee7a66fd9a76040815e2eb49150d4c8828715029"
+    }
+  ],
+  "readFindings": [
+    "Descriptor relative O_NOFOLLOW directory/file acquisition is anchored to the supervisor captured root identity and refuses symlinks on traversal; literal source symlinks are recorded only.",
+    "Export child allocation follows original snapshot and exclusion requires exact name plus native dev/inode/uid/gid/mode/type. Original non-root metadata and bytes compare exactly after export; root identity/ownership/mode is stable and the expected metadata change is recorded.",
+    "Files and expanded archives are bounded; special files, multiply linked regular files, cross-volume members, identity drift, duplicate/unmanifested archive members and mismatched raw metadata/content are refused.",
+    "Archive is copied exclusively as regular data; no archive member is extracted. Embedded observations remain bound to actual test receipt, including failures."
+  ],
+  "resolvedFindings": [
+    {
+      "id": "R15-EXPORT-01",
+      "severity": "Minor",
+      "priorEffect": "Named readable source manifest was pretty serialized but paired with canonical embedded manifest SHA.",
+      "disposition": "Corrected before publication: copied file has actual byte SHA; canonical embedded manifest hash is separately named.",
+      "correctionReceipt": "/workspace/scratch/b8359a7e27bf/recovery/r0015-linux-export/collector-manifest-correction.json",
+      "correctionReceiptSha256": "80b0fbc9cbf890ebdc02fdd46e7e5927e879ab721d04bb50427990ca41d8bd86"
+    }
+  ],
+  "limitations": [
+    "Local export/control evidence is supplemental. Actual privileged UID0 producer to distinct native UID1001 collector transfer and raw complete fixture receiving remain gates.",
+    "Original Linux collector FAIL is retained; successful new export cannot retrospectively supply old unarchived private bytes.",
+    "No lifecycle, currentness, owner approval, merge or full-contract acceptance is conferred."
+  ],
+  "engineeringDisposition": "No additional blocker to publication of this bounded qualification instrumentation. Native privileged transfer must still run."
+}

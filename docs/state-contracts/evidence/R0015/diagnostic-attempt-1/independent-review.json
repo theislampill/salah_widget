@@ -1,0 +1,154 @@
+{
+  "schema": "r0015-diagnostic-environment-key-independent-review-v1",
+  "reviewer": "/root/r0015_contract",
+  "observedUtc": "2026-11-11T12:00:42.143980+00:00",
+  "continuityReceipt": "refs/implementaudit/continuity-receipts/installer-20261111/G0011@b2737d507ae8d18eba865d8cdb256cd9c7515393",
+  "scope": "Read-only review of one copied-environment key correction and existing native/supplemental acquisition evidence. No reviewer test, PowerShell, installer or native execution; no shared/source/controller/remote changes.",
+  "qualification": false,
+  "nativeProductGates": false,
+  "inputBindings": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tools/qualification/windows_installer_probe.py",
+      "sha256": "a1a7cf7f606c7a7e3e6365d93d6f5da38456cf75d5a90a233fb3167bcfd48635",
+      "bytes": 6481
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+      "sha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+      "bytes": 100271
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tools/qualification/windows_installer_probe.ps1",
+      "sha256": "736907841a66c5de27b12223d2da5afaadf7a859f80e84b2c63c8c4c1c6b8f39",
+      "bytes": 37223
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/.github/workflows/installer-diagnostic.yml",
+      "sha256": "e804e4874900442eb87da5e15689150bf19748c6026f046d129bf20cead42651",
+      "bytes": 2911
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/job.log",
+      "sha256": "56cfddf637f5375ee6aab35cf789e46295ca0cbeda55c6b365348f31ab969935",
+      "bytes": 24165
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/original.zip",
+      "sha256": "4465bc2ed3d04dfc9118fcda506b8c07ea4d88d4b5016e71e47736eb5c74a9e1",
+      "bytes": 371
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/original.tar.gz",
+      "sha256": "a4873f7c8874e2dfeb1e0b5c7f7313df1193f505ad1aaaf8f625be10c125c6a4",
+      "bytes": 201
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/environment-red.json",
+      "sha256": "3c4cec3785f0f4a9380272183b2292e899eb08b4d76489b5788436bde7c687b4",
+      "bytes": 911
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/environment-green.json",
+      "sha256": "3adf8bcf11ecd7293957bb14c2425f337330368c82bcdfeaa4755c58748e1962",
+      "bytes": 3203
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/environment-green-v2.json",
+      "sha256": "38cd124fbb6974b87aeb8c96493f56d7f9e045407b14becd33ff40fe89f4cc6e",
+      "bytes": 8432
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-env-control.py",
+      "sha256": "61384d069c842440d1c1172e89c8dc7a9b9ecf8c4207a79a6eb8f5cedd922822",
+      "bytes": 2507
+    }
+  ],
+  "exactDelta": {
+    "sourceLine": 64,
+    "before": "env[\"SystemRoot\"]",
+    "after": "env[\"SYSTEMROOT\"]",
+    "baseSha256": "a9d61e7604158bc2d95f95bd3af2325285b1b602741fadcd5366b466da262679",
+    "currentSha256": "a1a7cf7f606c7a7e3e6365d93d6f5da38456cf75d5a90a233fb3167bcfd48635",
+    "bytewiseSingleReplacementVerified": true
+  },
+  "nativeFailure": {
+    "runId": 43015598291,
+    "headSha": "2d2adc0aa96614affbe65952e630157a022cd29f",
+    "headTree": "f7f3ccc5b5e38ad3cc6973dde445bfe8d2f0a8e6",
+    "conclusion": "failure",
+    "jobLogLines": [
+      195,
+      203
+    ],
+    "exception": "KeyError: 'SystemRoot'",
+    "stage": "Host-path construction before initial runner checkpoint and before any subprocess probe launch",
+    "archiveMembers": [
+      {
+        "name": "installer-diagnostic",
+        "type": "5",
+        "size": 0
+      }
+    ],
+    "classification": "ACQUISITION FAILURE ONLY; no compiler, cleanup, long-path or installer observation was produced."
+  },
+  "controlReceiving": {
+    "red": {
+      "sourceSha256": "a9d61e7604158bc2d95f95bd3af2325285b1b602741fadcd5366b466da262679",
+      "expectedObservation": true,
+      "interceptedLaunches": 0,
+      "realProcesses": 0,
+      "result": "Actual old runner raises the same missing copied-dict key; no product receipt."
+    },
+    "initialGreen": {
+      "sourceSha256": "a1a7cf7f606c7a7e3e6365d93d6f5da38456cf75d5a90a233fb3167bcfd48635",
+      "expectedObservation": false,
+      "result": "Preserved fixture error: interception also caught platform.platform() subprocess without an env kwarg; KeyError env. Not a product failure or GREEN."
+    },
+    "correctedGreen": {
+      "sourceSha256": "a1a7cf7f606c7a7e3e6365d93d6f5da38456cf75d5a90a233fb3167bcfd48635",
+      "expectedObservation": true,
+      "interceptedLaunches": 6,
+      "realProcesses": 0,
+      "returnCode": 1,
+      "exactSixHostModePairs": true,
+      "inputsStable": true,
+      "allRowsCapturedIntentionalOSError": true,
+      "allProductReceiptsAbsent": true,
+      "allParentTerminalClaimsFalse": true,
+      "embeddedReceiptMatchesOriginalOnDisk": true,
+      "originalReceiptSha256": "624033c2631dfdc8d7d0881616836df50cbf753b0d4f68263ad87fd230b261e9",
+      "result": "Host construction reaches all six planned actual-runner commands. Each controlled OSError is retained; exit1 correctly reports failed acquisition. This GREEN concerns elimination of the key failure, not a successful child launch."
+    },
+    "driver": {
+      "sha256": "61384d069c842440d1c1172e89c8dc7a9b9ecf8c4207a79a6eb8f5cedd922822",
+      "reviewedLines": [
+        14,
+        39
+      ],
+      "boundary": "Current driver loads actual runner, supplies an uppercase-only environment, substitutes only Windows/platform identity and subprocess.run, verifies all three prestart flags, and raises OSError before any real process. Corrected platform identity interception isolates the fixture error."
+    }
+  },
+  "reasoning": [
+    "Python documents that Windows os.environ keys are uppercased. The runner copies that mapping into an ordinary dictionary, so its subsequent case-sensitive lookup must use SYSTEMROOT.",
+    "Native traceback and uppercase-only supplemental RED agree on the exact failure site. The sole edit supplies the canonical key and leaves executable subpath, PS7 selection, prestart flags, source binding, deadlines, fixture allocation and archive behavior byte-identical.",
+    "The control deliberately blocks process creation; its correct exit1 and absent child receipts cannot be credited as native success. Actual Windows replay is necessary to reach the previously reviewed probe."
+  ],
+  "primarySource": {
+    "url": "https://docs.python.org/3/library/os.html#os.environ",
+    "retrievalRef": "turn369867833view1",
+    "retrievedLines": [
+      81,
+      88
+    ],
+    "supports": "Windows environment keys are normalized to uppercase."
+  },
+  "unchangedPrerequisites": {
+    "installerSha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+    "probeSha256": "736907841a66c5de27b12223d2da5afaadf7a859f80e84b2c63c8c4c1c6b8f39",
+    "workflowSha256": "e804e4874900442eb87da5e15689150bf19748c6026f046d129bf20cead42651",
+    "priorPacketReview": "recovery/r0015-native4-probe-runner/review.json@95ed0c9a5983703db95c008ecbe8333e95211de1dbb842ba250f687c2fb57187"
+  },
+  "disposition": "No concrete blocker found in the exact one-key acquisition correction for a root-controlled focused native retry. The original native failure and failed first control remain preserved. This review confers no publication authorization or native/product acceptance.",
+  "remainingGate": "Receive actual Windows probe observations on the new runner bytes, preserving every acquisition failure and existing f801 production gate. No broad suite replay was required for this isolated review.",
+  "currentRunnerStableAtClose": true
+}

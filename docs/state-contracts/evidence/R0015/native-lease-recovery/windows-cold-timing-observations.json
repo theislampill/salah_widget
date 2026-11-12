@@ -1,0 +1,1760 @@
+{
+  "schema": "r0013-run4-archive-timing.v1",
+  "inputs": {
+    "Windows.zip": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-native-run4/Windows.zip",
+      "sha256": "621fe69db3c1ea5458e9a6c7d0f5470db1f790599ae5bd32f68110cc0cdfbb6c",
+      "bytes": 830755
+    },
+    "Windows.tar.gz": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-native-run4/Windows.tar.gz",
+      "sha256": "0dd1e25539080f226f5567526250a9afb897b4c8eda3b380eed6f3428d8f4a2b",
+      "bytes": 862798
+    },
+    "Windows/result.json": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-native-run4/Windows/result.json",
+      "sha256": "5fae2eee4ec4c971ff4e216ac147232ea8ebe14e985329fd6b449d6bb9321f8b",
+      "bytes": 10358
+    },
+    "Windows/install-entry-native.json": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-native-run4/Windows/install-entry-native.json",
+      "sha256": "2e7fe001b4f138f10719c512c65553ab208b31356d7d7477fa9be6cbae73a399",
+      "bytes": 49162
+    },
+    "Windows/ps51-install-host-bootstrap.json": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-native-run4/Windows/ps51-install-host-bootstrap.json",
+      "sha256": "5078c19df3d7df1b21329cd93d3f52b0f753c12894ebdc003a97299a6d484467",
+      "bytes": 15294
+    },
+    "Windows/ps7-install-host-bootstrap.json": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-native-run4/Windows/ps7-install-host-bootstrap.json",
+      "sha256": "91d4783ea91b546f151ba866f25392051352e90d9c9e27f79ec51c4b8bc02b53",
+      "bytes": 16683
+    }
+  },
+  "embeddedZipTarMatches": true,
+  "nativeHost": {
+    "system": "Windows",
+    "platform": "Windows-2022Server-10.0.20348-SP0",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "image_version": "20261101.353.1",
+    "ps51": {
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "version": "5.1.20348.5773"
+    },
+    "ps7": {
+      "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+      "version": "7.6.6"
+    }
+  },
+  "commit": "f2161ed6a1fe2e0647ee541487ab1ac792d4d3df",
+  "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+  "entryTestSha256": "0fb96137d59d35fa6449f57fe06f7d6211cbe525c9f2578c843c8085828c4a87",
+  "diagnosticTestSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+  "collectorEntryCommand": {
+    "name": "install-entry-native",
+    "command": [
+      "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+      "D:\\a\\salah_widget\\salah_widget\\tests\\install-entry-native.py",
+      "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+    ],
+    "started": "2026-11-11T07:49:17.327891+00:00",
+    "finished": "2026-11-11T07:53:09.880837+00:00",
+    "exit": 0,
+    "passed": true,
+    "archived_fixtures": [
+      {
+        "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-9yckfnw9",
+        "archive_directory": "install-entry-native-fixture"
+      }
+    ]
+  },
+  "collectorEntrySeconds": 232.552946,
+  "currentCollectorLimitSeconds": 240,
+  "remainingCollectorHeadroomSeconds": 7.4470540000000085,
+  "headroomPercentOfLimit": 3.1029391666666704,
+  "hostStats": {
+    "ps51": {
+      "passCount": 12,
+      "total": 12,
+      "readyCount": 11,
+      "beforeToReadyMinSeconds": 19.6150677,
+      "beforeToReadyMedianSeconds": 19.6874496,
+      "beforeToReadyMaxSeconds": 22.7704561,
+      "readyToAfterMinSeconds": 0.0781319,
+      "readyToAfterMaxSeconds": 0.5637109
+    },
+    "ps7": {
+      "passCount": 12,
+      "total": 12,
+      "readyCount": 11,
+      "beforeToReadyMinSeconds": 0.4699371,
+      "beforeToReadyMedianSeconds": 0.4843993,
+      "beforeToReadyMaxSeconds": 0.5626342,
+      "readyToAfterMinSeconds": 0.0937865,
+      "readyToAfterMaxSeconds": 0.5313961
+    }
+  },
+  "entryCases": [
+    {
+      "host": "ps51",
+      "case": "github",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-github/subject-before.json",
+          "mtimeUnixDecimal": "1794383357.437272",
+          "mtimeUtc": "2026-11-11T07:49:17.437272+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-github/ready",
+          "mtimeUnixDecimal": "1794383380.2077281",
+          "mtimeUtc": "2026-11-11T07:49:40.207728+00:00",
+          "bytes": 37,
+          "sha256": "f1af150285d77df94db606556370ce0ad4a0d006db22aaad58f5683a1d96d85b",
+          "text": "4476\td156a7246c9dad80fd2b0253499eabd9"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-github/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383380.198688",
+          "mtimeUtc": "2026-11-11T07:49:40.198688+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-github/stdout.txt",
+          "mtimeUnixDecimal": "1794383380.4110568",
+          "mtimeUtc": "2026-11-11T07:49:40.411057+00:00",
+          "bytes": 1447,
+          "sha256": "cbb073c4f577ccfa9f6afe604751ad24cf6bdc4c3d6f3fa6e5ada1ac8a7f7b38"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-github/subject-after.json",
+          "mtimeUnixDecimal": "1794383380.4110568",
+          "mtimeUtc": "2026-11-11T07:49:40.411057+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 22.7704561,
+      "readyToAfterSeconds": 0.2033287,
+      "beforeToAfterSeconds": 22.9737848,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "cached",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-cached/subject-before.json",
+          "mtimeUnixDecimal": "1794383380.4422991",
+          "mtimeUtc": "2026-11-11T07:49:40.442299+00:00",
+          "bytes": 2065,
+          "sha256": "e7f59d4a33ffd7bf12410dd0b021b3c3c79822231b4efdcd3a71aac2c98c2b69"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-cached/ready",
+          "mtimeUnixDecimal": "1794383400.0573668",
+          "mtimeUtc": "2026-11-11T07:50:00.057367+00:00",
+          "bytes": 37,
+          "sha256": "c977c559ae749889610fa6147a4be3072a992267e53c729613e0fdb6d4549ab2",
+          "text": "7652\t04da52e1da6baf1659d391a03bee7f75"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-cached/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383400.0417507",
+          "mtimeUtc": "2026-11-11T07:50:00.041751+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-cached/stdout.txt",
+          "mtimeUnixDecimal": "1794383400.2459087",
+          "mtimeUtc": "2026-11-11T07:50:00.245909+00:00",
+          "bytes": 1447,
+          "sha256": "cbb073c4f577ccfa9f6afe604751ad24cf6bdc4c3d6f3fa6e5ada1ac8a7f7b38"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-cached/subject-after.json",
+          "mtimeUnixDecimal": "1794383400.2616093",
+          "mtimeUtc": "2026-11-11T07:50:00.261609+00:00",
+          "bytes": 2065,
+          "sha256": "e7f59d4a33ffd7bf12410dd0b021b3c3c79822231b4efdcd3a71aac2c98c2b69"
+        }
+      },
+      "beforeToReadySeconds": 19.6150677,
+      "readyToAfterSeconds": 0.2042425,
+      "beforeToAfterSeconds": 19.8193102,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "store",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-store/subject-before.json",
+          "mtimeUnixDecimal": "1794383400.277295",
+          "mtimeUtc": "2026-11-11T07:50:00.277295+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-store/ready",
+          "mtimeUnixDecimal": "1794383419.967351",
+          "mtimeUtc": "2026-11-11T07:50:19.967351+00:00",
+          "bytes": 37,
+          "sha256": "aff8b640e2ad94d071f79ace79485a2d9a09c449017777df5a197460bedfb5bf",
+          "text": "5504\tf142da6d67fadc4112f2de9598b0ca2a"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-store/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383419.967351",
+          "mtimeUtc": "2026-11-11T07:50:19.967351+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-store/stdout.txt",
+          "mtimeUnixDecimal": "1794383420.1860971",
+          "mtimeUtc": "2026-11-11T07:50:20.186097+00:00",
+          "bytes": 1467,
+          "sha256": "bd7f87613118708d67987ce7d35465704c52a1ae110249071bc3739752066074"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-store/subject-after.json",
+          "mtimeUnixDecimal": "1794383420.1860971",
+          "mtimeUtc": "2026-11-11T07:50:20.186097+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 19.690056,
+      "readyToAfterSeconds": 0.2187461,
+      "beforeToAfterSeconds": 19.9088021,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "ask",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-ask/subject-before.json",
+          "mtimeUnixDecimal": "1794383420.2027924",
+          "mtimeUtc": "2026-11-11T07:50:20.202792+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-ask/ready",
+          "mtimeUnixDecimal": "1794383439.8764434",
+          "mtimeUtc": "2026-11-11T07:50:39.876443+00:00",
+          "bytes": 37,
+          "sha256": "4b5f63307ae33fb615d68093b4642cd964e48a207dee7984e83f7bc2b142d811",
+          "text": "7376\t2464d0e0de2c5ce40576ee65cf285847"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-ask/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383439.8764434",
+          "mtimeUtc": "2026-11-11T07:50:39.876443+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-ask/stdout.txt",
+          "mtimeUnixDecimal": "1794383440.095315",
+          "mtimeUtc": "2026-11-11T07:50:40.095315+00:00",
+          "bytes": 1413,
+          "sha256": "dcaf9db761dadb97e9b284be404fc4ea2ee47580395016d00182dc6ee78f9bb2"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-ask/subject-after.json",
+          "mtimeUnixDecimal": "1794383440.095315",
+          "mtimeUtc": "2026-11-11T07:50:40.095315+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 19.673651,
+      "readyToAfterSeconds": 0.2188716,
+      "beforeToAfterSeconds": 19.8925226,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "installed",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-installed/subject-before.json",
+          "mtimeUnixDecimal": "1794383440.110808",
+          "mtimeUtc": "2026-11-11T07:50:40.110808+00:00",
+          "bytes": 709,
+          "sha256": "026a8c3d9f18ec4666922095d053f5123e88358d0c91e0b71e114a7fb6aaff67"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-installed/ready",
+          "mtimeUnixDecimal": "1794383459.7864294",
+          "mtimeUtc": "2026-11-11T07:50:59.786429+00:00",
+          "bytes": 37,
+          "sha256": "4e90e3f89bf8b881324d4d8015d4f0c55dc2b451eed13e42fef174ae5ac97f16",
+          "text": "6344\t9187b822af7b32d667405588eedbd6a2"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-installed/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383459.7864294",
+          "mtimeUtc": "2026-11-11T07:50:59.786429+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-installed/stdout.txt",
+          "mtimeUnixDecimal": "1794383459.927042",
+          "mtimeUtc": "2026-11-11T07:50:59.927042+00:00",
+          "bytes": 915,
+          "sha256": "b7ea987e7b23f011fcba2144b8b48a10bfd7f31d29148eafe41f32033dfe41fc"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-installed/subject-after.json",
+          "mtimeUnixDecimal": "1794383459.927042",
+          "mtimeUtc": "2026-11-11T07:50:59.927042+00:00",
+          "bytes": 709,
+          "sha256": "026a8c3d9f18ec4666922095d053f5123e88358d0c91e0b71e114a7fb6aaff67"
+        }
+      },
+      "beforeToReadySeconds": 19.6756214,
+      "readyToAfterSeconds": 0.1406126,
+      "beforeToAfterSeconds": 19.816234,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "mixed",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-mixed/subject-before.json",
+          "mtimeUnixDecimal": "1794383459.9426682",
+          "mtimeUtc": "2026-11-11T07:50:59.942668+00:00",
+          "bytes": 1430,
+          "sha256": "d79a497bd873fb01b74309b5298101dd410834b8124dfbdb4e972a72d475f532"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-mixed/ready",
+          "mtimeUnixDecimal": "1794383479.9345932",
+          "mtimeUtc": "2026-11-11T07:51:19.934593+00:00",
+          "bytes": 37,
+          "sha256": "da84c5e335683fef760b64207f237ab8a57411bd1a8c5d6f9a52deccbb0ba6ef",
+          "text": "7780\t2b3eb66077ab9f92935e839ae59f494b"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-mixed/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383479.9345932",
+          "mtimeUtc": "2026-11-11T07:51:19.934593+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-mixed/stdout.txt",
+          "mtimeUnixDecimal": "1794383480.1689591",
+          "mtimeUtc": "2026-11-11T07:51:20.168959+00:00",
+          "bytes": 1586,
+          "sha256": "ce34dee00cbd040a7d252092a390306e7fff6bf68b1c90a2932519917d7821bd"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-mixed/subject-after.json",
+          "mtimeUnixDecimal": "1794383480.1689591",
+          "mtimeUtc": "2026-11-11T07:51:20.168959+00:00",
+          "bytes": 1430,
+          "sha256": "d79a497bd873fb01b74309b5298101dd410834b8124dfbdb4e972a72d475f532"
+        }
+      },
+      "beforeToReadySeconds": 19.991925,
+      "readyToAfterSeconds": 0.2343659,
+      "beforeToAfterSeconds": 20.2262909,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "legacy",
+      "pass": true,
+      "entryExit": 1,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-legacy/subject-before.json",
+          "mtimeUnixDecimal": "1794383480.184576",
+          "mtimeUtc": "2026-11-11T07:51:20.184576+00:00",
+          "bytes": 709,
+          "sha256": "44f7dfdb9abc81e20bd62a0a9fe68b397e4fce3970a2dd8d4c22044b0c520807"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-legacy/ready",
+          "mtimeUnixDecimal": "1794383499.856818",
+          "mtimeUtc": "2026-11-11T07:51:39.856818+00:00",
+          "bytes": 37,
+          "sha256": "551ce1ce2255e6d1f71c394e7247ed2f2eea66a81ba68638a58e7457fb676044",
+          "text": "4648\t49ddb6c0c02329cfaea6ee5b381b8686"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-legacy/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383499.856818",
+          "mtimeUtc": "2026-11-11T07:51:39.856818+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-legacy/stdout.txt",
+          "mtimeUnixDecimal": "1794383499.9818137",
+          "mtimeUtc": "2026-11-11T07:51:39.981814+00:00",
+          "bytes": 778,
+          "sha256": "944e6df844b0da5d7c8e6a82089532724427e9f808eb39e00bde6f89646ec27a"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-legacy/subject-after.json",
+          "mtimeUnixDecimal": "1794383499.9974327",
+          "mtimeUtc": "2026-11-11T07:51:39.997433+00:00",
+          "bytes": 709,
+          "sha256": "44f7dfdb9abc81e20bd62a0a9fe68b397e4fce3970a2dd8d4c22044b0c520807"
+        }
+      },
+      "beforeToReadySeconds": 19.672242,
+      "readyToAfterSeconds": 0.1406147,
+      "beforeToAfterSeconds": 19.8128567,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "none",
+      "pass": true,
+      "entryExit": 1,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-none/subject-before.json",
+          "mtimeUnixDecimal": "1794383499.9974327",
+          "mtimeUtc": "2026-11-11T07:51:39.997433+00:00",
+          "bytes": 222,
+          "sha256": "8faa52d38ddb012c02e4df6c26b8b4a019e086b62dca4cdeaa61e3aadd0fa4cc"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-none/ready",
+          "mtimeUnixDecimal": "1794383520.0331693",
+          "mtimeUtc": "2026-11-11T07:52:00.033169+00:00",
+          "bytes": 37,
+          "sha256": "9ec342e1183f77109325f998fe439045cd753cac59a12368d09619329ab8ea36",
+          "text": "6192\t7a38867aa762555765ca208c24d1e4a5"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-none/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383520.0331693",
+          "mtimeUtc": "2026-11-11T07:52:00.033169+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-none/stdout.txt",
+          "mtimeUnixDecimal": "1794383520.1113012",
+          "mtimeUtc": "2026-11-11T07:52:00.111301+00:00",
+          "bytes": 507,
+          "sha256": "2506fd8887798221c6914bc67d1472ad686b653a342ce70edede92cb4a4cfab6"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-none/subject-after.json",
+          "mtimeUnixDecimal": "1794383520.1113012",
+          "mtimeUtc": "2026-11-11T07:52:00.111301+00:00",
+          "bytes": 222,
+          "sha256": "8faa52d38ddb012c02e4df6c26b8b4a019e086b62dca4cdeaa61e3aadd0fa4cc"
+        }
+      },
+      "beforeToReadySeconds": 20.0357366,
+      "readyToAfterSeconds": 0.0781319,
+      "beforeToAfterSeconds": 20.1138685,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "missing-preset",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-missing-preset/subject-before.json",
+          "mtimeUnixDecimal": "1794383520.127007",
+          "mtimeUtc": "2026-11-11T07:52:00.127007+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-missing-preset/ready",
+          "mtimeUnixDecimal": "1794383539.9001117",
+          "mtimeUtc": "2026-11-11T07:52:19.900112+00:00",
+          "bytes": 37,
+          "sha256": "c6df33226e90897b3fa4ac8f51cd9f26847b6fd384015ef151231fa97c27cf14",
+          "text": "3028\t8c6deee9db0b56fddd19a87acd24016d"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-missing-preset/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383539.9001117",
+          "mtimeUtc": "2026-11-11T07:52:19.900112+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-missing-preset/stdout.txt",
+          "mtimeUnixDecimal": "1794383540.1032405",
+          "mtimeUtc": "2026-11-11T07:52:20.103240+00:00",
+          "bytes": 1405,
+          "sha256": "3dc288788619ec21e2b89f82b43ea7270864c4d7fb6b912cd33657fb8ca61921"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-missing-preset/subject-after.json",
+          "mtimeUnixDecimal": "1794383540.118914",
+          "mtimeUtc": "2026-11-11T07:52:20.118914+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 19.7731047,
+      "readyToAfterSeconds": 0.2188023,
+      "beforeToAfterSeconds": 19.991907,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "bad-option",
+      "pass": true,
+      "entryExit": 1,
+      "ready": false,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-bad-option/subject-before.json",
+          "mtimeUnixDecimal": "1794383540.1344802",
+          "mtimeUtc": "2026-11-11T07:52:20.134480+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": null,
+        "phases": null,
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-bad-option/stdout.txt",
+          "mtimeUnixDecimal": "1794383540.3534424",
+          "mtimeUtc": "2026-11-11T07:52:20.353442+00:00",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-bad-option/subject-after.json",
+          "mtimeUnixDecimal": "1794383540.369062",
+          "mtimeUtc": "2026-11-11T07:52:20.369062+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": null,
+      "readyToAfterSeconds": null,
+      "beforeToAfterSeconds": 0.2345818,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "positive",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-positive/subject-before.json",
+          "mtimeUnixDecimal": "1794383540.384683",
+          "mtimeUtc": "2026-11-11T07:52:20.384683+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-positive/ready",
+          "mtimeUnixDecimal": "1794383560.0721326",
+          "mtimeUtc": "2026-11-11T07:52:40.072133+00:00",
+          "bytes": 37,
+          "sha256": "28d8529903e6f8cc4d3c2438b9d286465a65e4ef135e827d9a0d7c16d60a0f47",
+          "text": "2168\t7ffc65448cfcaff623410cf5324477a1"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-positive/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383560.0721326",
+          "mtimeUtc": "2026-11-11T07:52:40.072133+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-positive/stdout.txt",
+          "mtimeUnixDecimal": "1794383560.6358435",
+          "mtimeUtc": "2026-11-11T07:52:40.635844+00:00",
+          "bytes": 3980,
+          "sha256": "71df3a4a951a4856929612b9cd0f27a88454dfa4709e40c2f2291d56edd4dc80"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-positive/subject-after.json",
+          "mtimeUnixDecimal": "1794383560.6358435",
+          "mtimeUtc": "2026-11-11T07:52:40.635844+00:00",
+          "bytes": 2072,
+          "sha256": "9f993f308cc6ba736aae5427105e72021d380f28a3417e5e6a7e2af7f4eee37c"
+        }
+      },
+      "beforeToReadySeconds": 19.6874496,
+      "readyToAfterSeconds": 0.5637109,
+      "beforeToAfterSeconds": 20.2511605,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "no-open",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-no-open/subject-before.json",
+          "mtimeUnixDecimal": "1794383560.6513853",
+          "mtimeUtc": "2026-11-11T07:52:40.651385+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-no-open/ready",
+          "mtimeUnixDecimal": "1794383580.2672176",
+          "mtimeUtc": "2026-11-11T07:53:00.267218+00:00",
+          "bytes": 37,
+          "sha256": "910cfa852dcdecf5a690b1483a00071e9b3e20eea980e3fc840075fca8c4fc17",
+          "text": "7968\tc91d061babaaaf6f41f0ca9a8920d84d"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-no-open/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383580.2672176",
+          "mtimeUtc": "2026-11-11T07:53:00.267218+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-no-open/stdout.txt",
+          "mtimeUnixDecimal": "1794383580.8147314",
+          "mtimeUtc": "2026-11-11T07:53:00.814731+00:00",
+          "bytes": 4102,
+          "sha256": "4b9d4d9a5a0d5f74e10cc86484e6986e4fb3715bc5abc9f0dfbc6979f909eb2d"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps51-no-open/subject-after.json",
+          "mtimeUnixDecimal": "1794383580.8147314",
+          "mtimeUtc": "2026-11-11T07:53:00.814731+00:00",
+          "bytes": 2072,
+          "sha256": "caabfee48d16a811f889aa979ce26b1b267388656f358216582c1825165bb459"
+        }
+      },
+      "beforeToReadySeconds": 19.6158323,
+      "readyToAfterSeconds": 0.5475138,
+      "beforeToAfterSeconds": 20.1633461,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "github",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-github/subject-before.json",
+          "mtimeUnixDecimal": "1794383580.8303442",
+          "mtimeUtc": "2026-11-11T07:53:00.830344+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-github/ready",
+          "mtimeUnixDecimal": "1794383581.3147435",
+          "mtimeUtc": "2026-11-11T07:53:01.314744+00:00",
+          "bytes": 37,
+          "sha256": "b41252fcbf10d256df0f481c5fb9feba929bbf0a143030aedb169660595b3d50",
+          "text": "2760\t8afdf443695e3a195f32c755f7730091"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-github/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383581.3147435",
+          "mtimeUtc": "2026-11-11T07:53:01.314744+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-github/stdout.txt",
+          "mtimeUnixDecimal": "1794383581.5337405",
+          "mtimeUtc": "2026-11-11T07:53:01.533741+00:00",
+          "bytes": 1447,
+          "sha256": "cbb073c4f577ccfa9f6afe604751ad24cf6bdc4c3d6f3fa6e5ada1ac8a7f7b38"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-github/subject-after.json",
+          "mtimeUnixDecimal": "1794383581.5337405",
+          "mtimeUtc": "2026-11-11T07:53:01.533741+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 0.4843993,
+      "readyToAfterSeconds": 0.218997,
+      "beforeToAfterSeconds": 0.7033963,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "cached",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-cached/subject-before.json",
+          "mtimeUnixDecimal": "1794383581.5493557",
+          "mtimeUtc": "2026-11-11T07:53:01.549356+00:00",
+          "bytes": 2065,
+          "sha256": "cae7f0373507e502ae46dc2d197259af1744b3fbc8cb8ea3b0d323023a8f0e2c"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-cached/ready",
+          "mtimeUnixDecimal": "1794383582.0348444",
+          "mtimeUtc": "2026-11-11T07:53:02.034844+00:00",
+          "bytes": 37,
+          "sha256": "65a9781cc5c52e5d4f0fb3618ef1056feb9483ac4fec556d90d3adf028077f8c",
+          "text": "2616\tb67d932482c10cbbaba66c7e0c128d44"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-cached/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383582.0348444",
+          "mtimeUtc": "2026-11-11T07:53:02.034844+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-cached/stdout.txt",
+          "mtimeUnixDecimal": "1794383582.2379973",
+          "mtimeUtc": "2026-11-11T07:53:02.237997+00:00",
+          "bytes": 1447,
+          "sha256": "cbb073c4f577ccfa9f6afe604751ad24cf6bdc4c3d6f3fa6e5ada1ac8a7f7b38"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-cached/subject-after.json",
+          "mtimeUnixDecimal": "1794383582.2535987",
+          "mtimeUtc": "2026-11-11T07:53:02.253599+00:00",
+          "bytes": 2065,
+          "sha256": "cae7f0373507e502ae46dc2d197259af1744b3fbc8cb8ea3b0d323023a8f0e2c"
+        }
+      },
+      "beforeToReadySeconds": 0.4854887,
+      "readyToAfterSeconds": 0.2187543,
+      "beforeToAfterSeconds": 0.704243,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "store",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-store/subject-before.json",
+          "mtimeUnixDecimal": "1794383582.2692368",
+          "mtimeUtc": "2026-11-11T07:53:02.269237+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-store/ready",
+          "mtimeUnixDecimal": "1794383582.7610347",
+          "mtimeUtc": "2026-11-11T07:53:02.761035+00:00",
+          "bytes": 37,
+          "sha256": "9ca838806c64be832987b554ac5281e3ec165d1d42c171210592fd443fb59df6",
+          "text": "3440\t3951a9eb1c520eb013c7d093501c14a1"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-store/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383582.7559264",
+          "mtimeUtc": "2026-11-11T07:53:02.755926+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-store/stdout.txt",
+          "mtimeUnixDecimal": "1794383582.9591522",
+          "mtimeUtc": "2026-11-11T07:53:02.959152+00:00",
+          "bytes": 1467,
+          "sha256": "bd7f87613118708d67987ce7d35465704c52a1ae110249071bc3739752066074"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-store/subject-after.json",
+          "mtimeUnixDecimal": "1794383582.9747753",
+          "mtimeUtc": "2026-11-11T07:53:02.974775+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 0.4917979,
+      "readyToAfterSeconds": 0.2137406,
+      "beforeToAfterSeconds": 0.7055385,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "ask",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-ask/subject-before.json",
+          "mtimeUnixDecimal": "1794383582.9747753",
+          "mtimeUtc": "2026-11-11T07:53:02.974775+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-ask/ready",
+          "mtimeUnixDecimal": "1794383583.5374095",
+          "mtimeUtc": "2026-11-11T07:53:03.537410+00:00",
+          "bytes": 37,
+          "sha256": "38c4634f2cdc49629b26afc6723c2808b908d8b4f2ea6afca41a528943f76748",
+          "text": "7800\tcffeedb111a6745b599c74c20d589e85"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-ask/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383583.5374095",
+          "mtimeUtc": "2026-11-11T07:53:03.537410+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-ask/stdout.txt",
+          "mtimeUnixDecimal": "1794383583.7406847",
+          "mtimeUtc": "2026-11-11T07:53:03.740685+00:00",
+          "bytes": 1413,
+          "sha256": "dcaf9db761dadb97e9b284be404fc4ea2ee47580395016d00182dc6ee78f9bb2"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-ask/subject-after.json",
+          "mtimeUnixDecimal": "1794383583.7406847",
+          "mtimeUtc": "2026-11-11T07:53:03.740685+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 0.5626342,
+      "readyToAfterSeconds": 0.2032752,
+      "beforeToAfterSeconds": 0.7659094,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "installed",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-installed/subject-before.json",
+          "mtimeUnixDecimal": "1794383583.7614427",
+          "mtimeUtc": "2026-11-11T07:53:03.761443+00:00",
+          "bytes": 709,
+          "sha256": "026a8c3d9f18ec4666922095d053f5123e88358d0c91e0b71e114a7fb6aaff67"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-installed/ready",
+          "mtimeUnixDecimal": "1794383584.2411566",
+          "mtimeUtc": "2026-11-11T07:53:04.241157+00:00",
+          "bytes": 37,
+          "sha256": "a0d58975dec1e93926568460a9feb0af3a81ab7af37b9e0736ffcaa9489decf5",
+          "text": "7256\t2d6d28644f8fde23da5441fc299bfdac"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-installed/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383584.2411566",
+          "mtimeUtc": "2026-11-11T07:53:04.241157+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-installed/stdout.txt",
+          "mtimeUnixDecimal": "1794383584.381887",
+          "mtimeUtc": "2026-11-11T07:53:04.381887+00:00",
+          "bytes": 915,
+          "sha256": "b7ea987e7b23f011fcba2144b8b48a10bfd7f31d29148eafe41f32033dfe41fc"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-installed/subject-after.json",
+          "mtimeUnixDecimal": "1794383584.381887",
+          "mtimeUtc": "2026-11-11T07:53:04.381887+00:00",
+          "bytes": 709,
+          "sha256": "026a8c3d9f18ec4666922095d053f5123e88358d0c91e0b71e114a7fb6aaff67"
+        }
+      },
+      "beforeToReadySeconds": 0.4797139,
+      "readyToAfterSeconds": 0.1407304,
+      "beforeToAfterSeconds": 0.6204443,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "mixed",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-mixed/subject-before.json",
+          "mtimeUnixDecimal": "1794383584.413154",
+          "mtimeUtc": "2026-11-11T07:53:04.413154+00:00",
+          "bytes": 1430,
+          "sha256": "d79a497bd873fb01b74309b5298101dd410834b8124dfbdb4e972a72d475f532"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-mixed/ready",
+          "mtimeUnixDecimal": "1794383584.890411",
+          "mtimeUtc": "2026-11-11T07:53:04.890411+00:00",
+          "bytes": 37,
+          "sha256": "125f86f4fabbc3b1600ffde7c3fa8fe179af921fdf65afaf8486c778dbe4381b",
+          "text": "7568\t90b0784ff047ee6df16cf0b014791ec6"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-mixed/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383584.890411",
+          "mtimeUtc": "2026-11-11T07:53:04.890411+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-mixed/stdout.txt",
+          "mtimeUnixDecimal": "1794383585.1091769",
+          "mtimeUtc": "2026-11-11T07:53:05.109177+00:00",
+          "bytes": 1586,
+          "sha256": "ce34dee00cbd040a7d252092a390306e7fff6bf68b1c90a2932519917d7821bd"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-mixed/subject-after.json",
+          "mtimeUnixDecimal": "1794383585.1248124",
+          "mtimeUtc": "2026-11-11T07:53:05.124812+00:00",
+          "bytes": 1430,
+          "sha256": "d79a497bd873fb01b74309b5298101dd410834b8124dfbdb4e972a72d475f532"
+        }
+      },
+      "beforeToReadySeconds": 0.477257,
+      "readyToAfterSeconds": 0.2344014,
+      "beforeToAfterSeconds": 0.7116584,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "legacy",
+      "pass": true,
+      "entryExit": 1,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-legacy/subject-before.json",
+          "mtimeUnixDecimal": "1794383585.1248124",
+          "mtimeUtc": "2026-11-11T07:53:05.124812+00:00",
+          "bytes": 709,
+          "sha256": "44f7dfdb9abc81e20bd62a0a9fe68b397e4fce3970a2dd8d4c22044b0c520807"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-legacy/ready",
+          "mtimeUnixDecimal": "1794383585.609987",
+          "mtimeUtc": "2026-11-11T07:53:05.609987+00:00",
+          "bytes": 37,
+          "sha256": "08440d7d3c99e138562141da353f83ec8dd2e4b04201d7e8888aa351e07a4825",
+          "text": "2912\tb7b2ba61449612791605e316c70f21ea"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-legacy/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383585.609987",
+          "mtimeUtc": "2026-11-11T07:53:05.609987+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-legacy/stdout.txt",
+          "mtimeUnixDecimal": "1794383585.7507904",
+          "mtimeUtc": "2026-11-11T07:53:05.750790+00:00",
+          "bytes": 778,
+          "sha256": "944e6df844b0da5d7c8e6a82089532724427e9f808eb39e00bde6f89646ec27a"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-legacy/subject-after.json",
+          "mtimeUnixDecimal": "1794383585.7507904",
+          "mtimeUtc": "2026-11-11T07:53:05.750790+00:00",
+          "bytes": 709,
+          "sha256": "44f7dfdb9abc81e20bd62a0a9fe68b397e4fce3970a2dd8d4c22044b0c520807"
+        }
+      },
+      "beforeToReadySeconds": 0.4851746,
+      "readyToAfterSeconds": 0.1408034,
+      "beforeToAfterSeconds": 0.625978,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "none",
+      "pass": true,
+      "entryExit": 1,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-none/subject-before.json",
+          "mtimeUnixDecimal": "1794383585.762348",
+          "mtimeUtc": "2026-11-11T07:53:05.762348+00:00",
+          "bytes": 222,
+          "sha256": "8faa52d38ddb012c02e4df6c26b8b4a019e086b62dca4cdeaa61e3aadd0fa4cc"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-none/ready",
+          "mtimeUnixDecimal": "1794383586.2357538",
+          "mtimeUtc": "2026-11-11T07:53:06.235754+00:00",
+          "bytes": 37,
+          "sha256": "7e34b3342bbab37be48121d7e79900593647c477ad1e3cb860e26de19c1197cf",
+          "text": "7572\t04526b7a95f25ae98a14aae28bc0264b"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-none/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383586.2357538",
+          "mtimeUtc": "2026-11-11T07:53:06.235754+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-none/stdout.txt",
+          "mtimeUnixDecimal": "1794383586.3295403",
+          "mtimeUtc": "2026-11-11T07:53:06.329540+00:00",
+          "bytes": 507,
+          "sha256": "2506fd8887798221c6914bc67d1472ad686b653a342ce70edede92cb4a4cfab6"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-none/subject-after.json",
+          "mtimeUnixDecimal": "1794383586.3295403",
+          "mtimeUtc": "2026-11-11T07:53:06.329540+00:00",
+          "bytes": 222,
+          "sha256": "8faa52d38ddb012c02e4df6c26b8b4a019e086b62dca4cdeaa61e3aadd0fa4cc"
+        }
+      },
+      "beforeToReadySeconds": 0.4734058,
+      "readyToAfterSeconds": 0.0937865,
+      "beforeToAfterSeconds": 0.5671923,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "missing-preset",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-missing-preset/subject-before.json",
+          "mtimeUnixDecimal": "1794383586.3451626",
+          "mtimeUtc": "2026-11-11T07:53:06.345163+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-missing-preset/ready",
+          "mtimeUnixDecimal": "1794383586.8150997",
+          "mtimeUtc": "2026-11-11T07:53:06.815100+00:00",
+          "bytes": 37,
+          "sha256": "93c01afbe45ffd71c3f138cfed00b7bbae735697ec20e1cca2a18c63e6632157",
+          "text": "2060\t2b8b4cea6c4214436034f8bd4be67c72"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-missing-preset/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383586.8030705",
+          "mtimeUtc": "2026-11-11T07:53:06.803071+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-missing-preset/stdout.txt",
+          "mtimeUnixDecimal": "1794383587.0182648",
+          "mtimeUtc": "2026-11-11T07:53:07.018265+00:00",
+          "bytes": 1405,
+          "sha256": "3dc288788619ec21e2b89f82b43ea7270864c4d7fb6b912cd33657fb8ca61921"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-missing-preset/subject-after.json",
+          "mtimeUnixDecimal": "1794383587.0182648",
+          "mtimeUtc": "2026-11-11T07:53:07.018265+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": 0.4699371,
+      "readyToAfterSeconds": 0.2031651,
+      "beforeToAfterSeconds": 0.6731022,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "bad-option",
+      "pass": true,
+      "entryExit": 1,
+      "ready": false,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-bad-option/subject-before.json",
+          "mtimeUnixDecimal": "1794383587.0339055",
+          "mtimeUtc": "2026-11-11T07:53:07.033906+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": null,
+        "phases": null,
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-bad-option/stdout.txt",
+          "mtimeUnixDecimal": "1794383587.675176",
+          "mtimeUtc": "2026-11-11T07:53:07.675176+00:00",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-bad-option/subject-after.json",
+          "mtimeUnixDecimal": "1794383587.6828766",
+          "mtimeUtc": "2026-11-11T07:53:07.682877+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        }
+      },
+      "beforeToReadySeconds": null,
+      "readyToAfterSeconds": null,
+      "beforeToAfterSeconds": 0.6489711,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "positive",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-positive/subject-before.json",
+          "mtimeUnixDecimal": "1794383587.6909132",
+          "mtimeUtc": "2026-11-11T07:53:07.690913+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-positive/ready",
+          "mtimeUnixDecimal": "1794383588.1616454",
+          "mtimeUtc": "2026-11-11T07:53:08.161645+00:00",
+          "bytes": 37,
+          "sha256": "f278969d5dd08c667222c3a2c2be75151c244e4010517bbf1d90a0bfe1999fbb",
+          "text": "4084\t20bad975da8a8a950b4ebaad2749333b"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-positive/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383588.1616454",
+          "mtimeUtc": "2026-11-11T07:53:08.161645+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-positive/stdout.txt",
+          "mtimeUnixDecimal": "1794383588.6925623",
+          "mtimeUtc": "2026-11-11T07:53:08.692562+00:00",
+          "bytes": 3974,
+          "sha256": "2ed03e6fd9567506801c9ecbe8770194173388c9c2411811b7c5957217f3b897"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-positive/subject-after.json",
+          "mtimeUnixDecimal": "1794383588.6925623",
+          "mtimeUtc": "2026-11-11T07:53:08.692562+00:00",
+          "bytes": 2072,
+          "sha256": "b1d8db28e42de314c35a88b9d242bcde53e5af76e8408f430bc2506588894b70"
+        }
+      },
+      "beforeToReadySeconds": 0.4707322,
+      "readyToAfterSeconds": 0.5309169,
+      "beforeToAfterSeconds": 1.0016491,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "no-open",
+      "pass": true,
+      "entryExit": 0,
+      "ready": true,
+      "files": {
+        "before": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-no-open/subject-before.json",
+          "mtimeUnixDecimal": "1794383588.7082028",
+          "mtimeUtc": "2026-11-11T07:53:08.708203+00:00",
+          "bytes": 935,
+          "sha256": "03e59774a76e33779c9f2b50f888ee3c14a84270076cea7b061bafbc79334e0f"
+        },
+        "ready": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-no-open/ready",
+          "mtimeUnixDecimal": "1794383589.192971",
+          "mtimeUtc": "2026-11-11T07:53:09.192971+00:00",
+          "bytes": 37,
+          "sha256": "aa8a5aebebc04d1c0caf2c9b626820a4fd4b3550decbb620687c86d71eec360c",
+          "text": "5836\t41de2c925c6eb522704977429129d13a"
+        },
+        "phases": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-no-open/bootstrap-phases.txt",
+          "mtimeUnixDecimal": "1794383589.192971",
+          "mtimeUtc": "2026-11-11T07:53:09.192971+00:00",
+          "bytes": 118,
+          "sha256": "b2b409e0814d5f94cc6241deee33357f4dcd9cdaba2814163aa37513fe967d2a",
+          "text": "utility-wrapper-entered\r\nnative-utility-imported\r\noutput-encoding-set\r\ndiscovery-environment-set\r\nall-spies-exported\r\n"
+        },
+        "stdout": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-no-open/stdout.txt",
+          "mtimeUnixDecimal": "1794383589.708808",
+          "mtimeUtc": "2026-11-11T07:53:09.708808+00:00",
+          "bytes": 4096,
+          "sha256": "16077d5cb8cbc4d7538f753c17084c8a4711bbffa248e79701b6bff29186c405"
+        },
+        "after": {
+          "member": "installer-evidence/install-entry-native-fixture/ps7-no-open/subject-after.json",
+          "mtimeUnixDecimal": "1794383589.7243671",
+          "mtimeUtc": "2026-11-11T07:53:09.724367+00:00",
+          "bytes": 2072,
+          "sha256": "791120ccaf4837d30ecb183a1d937d5cee986c68c01cf3efaaf6a06c71f0b8de"
+        }
+      },
+      "beforeToReadySeconds": 0.4847682,
+      "readyToAfterSeconds": 0.5313961,
+      "beforeToAfterSeconds": 1.0161643,
+      "timingScope": "Archive-preserved filesystem mtime envelope; after-snapshot is not a recorded process-exit timestamp."
+    }
+  ],
+  "diagnosticCases": [
+    {
+      "host": "ps51",
+      "case": "native-only",
+      "pass": false,
+      "timedOut": true,
+      "readiness": false,
+      "phases": [
+        "script-enter",
+        "join-path-begin"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/native-only/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383216.1096838",
+          "mtimeUtc": "2026-11-11T07:46:56.109684+00:00",
+          "bytes": 31,
+          "sha256": "dd5f4eaa7605ea73978934941fe97f865a655462e07301409a0f11594e08527b",
+          "text": "script-enter\r\njoin-path-begin\r\n"
+        },
+        "cache": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/native-only/host-control/module-analysis-cache",
+          "mtimeUnixDecimal": "1794383229.3027909",
+          "mtimeUtc": "2026-11-11T07:47:09.302791+00:00",
+          "bytes": 8197,
+          "sha256": "bd600c22ee9b1e24ae59a7e5ec7b8973764ee8ad78182fcd0706a22efbc1fe67"
+        },
+        "ready": null,
+        "stdout": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/native-only/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383230.9906833",
+          "mtimeUtc": "2026-11-11T07:47:10.990683+00:00",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/native-only/native-file.before.json",
+          "mtimeUnixDecimal": "1794383231.5862336",
+          "mtimeUtc": "2026-11-11T07:47:11.586234+00:00",
+          "bytes": 821,
+          "sha256": "014d96067a9cf87eda64fd53400e89b6ee09e6aa0bdd5b779cc334ac3697a18e"
+        },
+        "after": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/native-only/native-file.after.json",
+          "mtimeUnixDecimal": "1794383231.5862336",
+          "mtimeUtc": "2026-11-11T07:47:11.586234+00:00",
+          "bytes": 1265,
+          "sha256": "a1ad5cf38a081ba7339afe3df813eef4fb2329a342c16374212cf31dd549b309"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": 13.1931071,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "private-wildcard-cmdlets",
+      "pass": false,
+      "timedOut": true,
+      "readiness": false,
+      "phases": [
+        "script-enter",
+        "join-path-begin"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-wildcard-cmdlets/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383231.774209",
+          "mtimeUtc": "2026-11-11T07:47:11.774209+00:00",
+          "bytes": 31,
+          "sha256": "dd5f4eaa7605ea73978934941fe97f865a655462e07301409a0f11594e08527b",
+          "text": "script-enter\r\njoin-path-begin\r\n"
+        },
+        "cache": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-wildcard-cmdlets/host-control/module-analysis-cache",
+          "mtimeUnixDecimal": "1794383244.88251",
+          "mtimeUtc": "2026-11-11T07:47:24.882510+00:00",
+          "bytes": 8655,
+          "sha256": "503833e0502359d3f7663e8f59bbedc9255226018afc46923b13fbd9bc739722"
+        },
+        "ready": null,
+        "stdout": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-wildcard-cmdlets/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383246.649161",
+          "mtimeUtc": "2026-11-11T07:47:26.649161+00:00",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-wildcard-cmdlets/native-file.before.json",
+          "mtimeUnixDecimal": "1794383246.649161",
+          "mtimeUtc": "2026-11-11T07:47:26.649161+00:00",
+          "bytes": 821,
+          "sha256": "014d96067a9cf87eda64fd53400e89b6ee09e6aa0bdd5b779cc334ac3697a18e"
+        },
+        "after": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-wildcard-cmdlets/native-file.after.json",
+          "mtimeUnixDecimal": "1794383246.649161",
+          "mtimeUtc": "2026-11-11T07:47:26.649161+00:00",
+          "bytes": 1265,
+          "sha256": "a1ad5cf38a081ba7339afe3df813eef4fb2329a342c16374212cf31dd549b309"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": 13.108301,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "private-explicit-cmdlets",
+      "pass": false,
+      "timedOut": true,
+      "readiness": false,
+      "phases": [
+        "script-enter",
+        "join-path-begin"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-explicit-cmdlets/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383246.8054204",
+          "mtimeUtc": "2026-11-11T07:47:26.805420+00:00",
+          "bytes": 31,
+          "sha256": "dd5f4eaa7605ea73978934941fe97f865a655462e07301409a0f11594e08527b",
+          "text": "script-enter\r\njoin-path-begin\r\n"
+        },
+        "cache": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-explicit-cmdlets/host-control/module-analysis-cache",
+          "mtimeUnixDecimal": "1794383259.9254403",
+          "mtimeUtc": "2026-11-11T07:47:39.925440+00:00",
+          "bytes": 8490,
+          "sha256": "3e655108c14831f98329ff59716af3b91e061f3763f05fd072786fd93aed977d"
+        },
+        "ready": null,
+        "stdout": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-explicit-cmdlets/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383261.6925883",
+          "mtimeUtc": "2026-11-11T07:47:41.692588+00:00",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-explicit-cmdlets/native-file.before.json",
+          "mtimeUnixDecimal": "1794383261.6925883",
+          "mtimeUtc": "2026-11-11T07:47:41.692588+00:00",
+          "bytes": 821,
+          "sha256": "014d96067a9cf87eda64fd53400e89b6ee09e6aa0bdd5b779cc334ac3697a18e"
+        },
+        "after": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-explicit-cmdlets/native-file.after.json",
+          "mtimeUnixDecimal": "1794383261.6925883",
+          "mtimeUtc": "2026-11-11T07:47:41.692588+00:00",
+          "bytes": 1265,
+          "sha256": "a1ad5cf38a081ba7339afe3df813eef4fb2329a342c16374212cf31dd549b309"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": 13.1200199,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    },
+    {
+      "host": "ps51",
+      "case": "private-no-cmdlets",
+      "pass": false,
+      "timedOut": true,
+      "readiness": false,
+      "phases": [
+        "script-enter",
+        "join-path-begin"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-no-cmdlets/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383261.8644657",
+          "mtimeUtc": "2026-11-11T07:47:41.864466+00:00",
+          "bytes": 31,
+          "sha256": "dd5f4eaa7605ea73978934941fe97f865a655462e07301409a0f11594e08527b",
+          "text": "script-enter\r\njoin-path-begin\r\n"
+        },
+        "cache": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-no-cmdlets/host-control/module-analysis-cache",
+          "mtimeUnixDecimal": "1794383274.9871671",
+          "mtimeUtc": "2026-11-11T07:47:54.987167+00:00",
+          "bytes": 8420,
+          "sha256": "d20a377ecacfb633f212a0384fee52c623977cbe1c7bd103f23725f08f611b52"
+        },
+        "ready": null,
+        "stdout": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-no-cmdlets/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383276.7702384",
+          "mtimeUtc": "2026-11-11T07:47:56.770238+00:00",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "before": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-no-cmdlets/native-file.before.json",
+          "mtimeUnixDecimal": "1794383276.7702384",
+          "mtimeUtc": "2026-11-11T07:47:56.770238+00:00",
+          "bytes": 821,
+          "sha256": "014d96067a9cf87eda64fd53400e89b6ee09e6aa0bdd5b779cc334ac3697a18e"
+        },
+        "after": {
+          "member": "installer-evidence/ps51-install-host-bootstrap-fixture/private-no-cmdlets/native-file.after.json",
+          "mtimeUnixDecimal": "1794383276.7702384",
+          "mtimeUtc": "2026-11-11T07:47:56.770238+00:00",
+          "bytes": 1265,
+          "sha256": "a1ad5cf38a081ba7339afe3df813eef4fb2329a342c16374212cf31dd549b309"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": 13.1227014,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "native-only",
+      "pass": true,
+      "timedOut": false,
+      "readiness": true,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/native-only/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383315.7574873",
+          "mtimeUtc": "2026-11-11T07:48:35.757487+00:00",
+          "bytes": 108,
+          "sha256": "839d1b1a012132fc25feda449ce74f011716f079ef47d79ca12143c9cc39faee",
+          "text": "script-enter\r\njoin-path-begin\r\njoin-path-returned\r\nwrite-host-begin\r\nwrite-host-returned\r\nscript-completed\r\n"
+        },
+        "cache": null,
+        "ready": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/native-only/host-control/ready.txt",
+          "mtimeUnixDecimal": "1794383315.7574873",
+          "mtimeUtc": "2026-11-11T07:48:35.757487+00:00",
+          "bytes": 32,
+          "sha256": "78d51a579170cb29c7a8b7868357f2d7d9ecebc1ed58159e9798443a75428d9f",
+          "text": "eb50c47321274d1db4b14a1e8da79a90"
+        },
+        "stdout": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/native-only/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383315.80436",
+          "mtimeUtc": "2026-11-11T07:48:35.804360+00:00",
+          "bytes": 48,
+          "sha256": "638ef51646253f729d57fc0eac308de6692dd4157d2c4dc219c886e44ec340af"
+        },
+        "before": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/native-only/native-file.before.json",
+          "mtimeUnixDecimal": "1794383315.8199947",
+          "mtimeUtc": "2026-11-11T07:48:35.819995+00:00",
+          "bytes": 688,
+          "sha256": "bfc1c41833bb7e109bc90bad2a9d9b0f88d56d91384d59a7eb0654c9361a0fbe"
+        },
+        "after": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/native-only/native-file.after.json",
+          "mtimeUnixDecimal": "1794383315.8199947",
+          "mtimeUtc": "2026-11-11T07:48:35.819995+00:00",
+          "bytes": 1164,
+          "sha256": "9ab865380b19858f6fc8b113185f05dc98e680252c82ed3d1cf7d98c78f709a2"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": null,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "private-wildcard-cmdlets",
+      "pass": true,
+      "timedOut": false,
+      "readiness": true,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-wildcard-cmdlets/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383316.3201208",
+          "mtimeUtc": "2026-11-11T07:48:36.320121+00:00",
+          "bytes": 215,
+          "sha256": "75409e64e0a23d5d9482d1c91b6e38fbb0f711dd78e7bcf00ad2f8af6cbcaefd",
+          "text": "script-enter\r\njoin-path-begin\r\njoin-path-returned\r\nwrite-host-begin\r\nutility-wrapper-entered\r\nnative-utility-imported\r\nencoding-constructor-returned\r\nutility-exports-complete\r\nwrite-host-returned\r\nscript-completed\r\n"
+        },
+        "cache": null,
+        "ready": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-wildcard-cmdlets/host-control/ready.txt",
+          "mtimeUnixDecimal": "1794383316.3201208",
+          "mtimeUtc": "2026-11-11T07:48:36.320121+00:00",
+          "bytes": 32,
+          "sha256": "0bd908b72c72a63644e593879e3993f2f71154594db17160339700ace2d61cd6",
+          "text": "f62b421808cd4592b5b8727277f8d517"
+        },
+        "stdout": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-wildcard-cmdlets/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383316.3669927",
+          "mtimeUtc": "2026-11-11T07:48:36.366993+00:00",
+          "bytes": 48,
+          "sha256": "638ef51646253f729d57fc0eac308de6692dd4157d2c4dc219c886e44ec340af"
+        },
+        "before": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-wildcard-cmdlets/native-file.before.json",
+          "mtimeUnixDecimal": "1794383316.3669927",
+          "mtimeUtc": "2026-11-11T07:48:36.366993+00:00",
+          "bytes": 688,
+          "sha256": "bfc1c41833bb7e109bc90bad2a9d9b0f88d56d91384d59a7eb0654c9361a0fbe"
+        },
+        "after": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-wildcard-cmdlets/native-file.after.json",
+          "mtimeUnixDecimal": "1794383316.3669927",
+          "mtimeUtc": "2026-11-11T07:48:36.366993+00:00",
+          "bytes": 1164,
+          "sha256": "2f92746dd12946ab685694147989211af98954c70f5dd961953bf9bc0f2e9bcf"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": null,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "private-explicit-cmdlets",
+      "pass": true,
+      "timedOut": false,
+      "readiness": true,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-explicit-cmdlets/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383316.8051145",
+          "mtimeUtc": "2026-11-11T07:48:36.805115+00:00",
+          "bytes": 215,
+          "sha256": "75409e64e0a23d5d9482d1c91b6e38fbb0f711dd78e7bcf00ad2f8af6cbcaefd",
+          "text": "script-enter\r\njoin-path-begin\r\njoin-path-returned\r\nwrite-host-begin\r\nutility-wrapper-entered\r\nnative-utility-imported\r\nencoding-constructor-returned\r\nutility-exports-complete\r\nwrite-host-returned\r\nscript-completed\r\n"
+        },
+        "cache": null,
+        "ready": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-explicit-cmdlets/host-control/ready.txt",
+          "mtimeUnixDecimal": "1794383316.8051145",
+          "mtimeUtc": "2026-11-11T07:48:36.805115+00:00",
+          "bytes": 32,
+          "sha256": "5a0bfadae42ff818661c4866f3336480b06797f68d4f64e291f209d834f726a8",
+          "text": "47c5a98eafee47e1ab5536519b6b5848"
+        },
+        "stdout": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-explicit-cmdlets/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383316.8519855",
+          "mtimeUtc": "2026-11-11T07:48:36.851985+00:00",
+          "bytes": 48,
+          "sha256": "638ef51646253f729d57fc0eac308de6692dd4157d2c4dc219c886e44ec340af"
+        },
+        "before": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-explicit-cmdlets/native-file.before.json",
+          "mtimeUnixDecimal": "1794383316.8519855",
+          "mtimeUtc": "2026-11-11T07:48:36.851985+00:00",
+          "bytes": 688,
+          "sha256": "bfc1c41833bb7e109bc90bad2a9d9b0f88d56d91384d59a7eb0654c9361a0fbe"
+        },
+        "after": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-explicit-cmdlets/native-file.after.json",
+          "mtimeUnixDecimal": "1794383316.8519855",
+          "mtimeUtc": "2026-11-11T07:48:36.851985+00:00",
+          "bytes": 1164,
+          "sha256": "9e2d0dfc96f11b3618a5d4edb27eadddc4702f0610abaf0aa8f85e58c1e15fa4"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": null,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    },
+    {
+      "host": "ps7",
+      "case": "private-no-cmdlets",
+      "pass": true,
+      "timedOut": false,
+      "readiness": true,
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "sourceSha256": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+      "testSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+      "files": {
+        "phases": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-no-cmdlets/host-control/autoload-phases.txt",
+          "mtimeUnixDecimal": "1794383317.3208673",
+          "mtimeUtc": "2026-11-11T07:48:37.320867+00:00",
+          "bytes": 215,
+          "sha256": "75409e64e0a23d5d9482d1c91b6e38fbb0f711dd78e7bcf00ad2f8af6cbcaefd",
+          "text": "script-enter\r\njoin-path-begin\r\njoin-path-returned\r\nwrite-host-begin\r\nutility-wrapper-entered\r\nnative-utility-imported\r\nencoding-constructor-returned\r\nutility-exports-complete\r\nwrite-host-returned\r\nscript-completed\r\n"
+        },
+        "cache": null,
+        "ready": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-no-cmdlets/host-control/ready.txt",
+          "mtimeUnixDecimal": "1794383317.3208673",
+          "mtimeUtc": "2026-11-11T07:48:37.320867+00:00",
+          "bytes": 32,
+          "sha256": "63a54d3392732515e272bce4e2bf6524acfd2a7295b6a549bea689717d43b2ed",
+          "text": "93d6a90255bb4a088c17d084069bd6bb"
+        },
+        "stdout": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-no-cmdlets/native-file.stdout.txt",
+          "mtimeUnixDecimal": "1794383317.352121",
+          "mtimeUtc": "2026-11-11T07:48:37.352121+00:00",
+          "bytes": 48,
+          "sha256": "638ef51646253f729d57fc0eac308de6692dd4157d2c4dc219c886e44ec340af"
+        },
+        "before": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-no-cmdlets/native-file.before.json",
+          "mtimeUnixDecimal": "1794383317.3677344",
+          "mtimeUtc": "2026-11-11T07:48:37.367734+00:00",
+          "bytes": 688,
+          "sha256": "bfc1c41833bb7e109bc90bad2a9d9b0f88d56d91384d59a7eb0654c9361a0fbe"
+        },
+        "after": {
+          "member": "installer-evidence/ps7-install-host-bootstrap-fixture/private-no-cmdlets/native-file.after.json",
+          "mtimeUnixDecimal": "1794383317.3677344",
+          "mtimeUtc": "2026-11-11T07:48:37.367734+00:00",
+          "bytes": 1164,
+          "sha256": "c2a44e69a4a64b752ec7cd3359d59b1ba2475f1ed8a67f4ebf3ea9972d2ac0ff"
+        }
+      },
+      "lastPhaseToCacheWriteSeconds": null,
+      "timingScope": "Old phase lines have no individual timestamps; phase-file mtime is only the last appended phase. Old diagnostic before.json was written after process exit, so is not a launch timestamp."
+    }
+  ],
+  "conclusions": [
+    {
+      "status": "OBSERVED",
+      "claim": "All24 actual complete-file cases pass; only the deliberate bad-option cases omit readiness."
+    },
+    {
+      "status": "OBSERVED",
+      "claim": "All4 PS5.1 no-installer variants timeout at15seconds after script-enter/join-path-begin, including native-only."
+    },
+    {
+      "status": "SUPPORTED_INFERENCE",
+      "claim": "The15second diagnostic ceiling is shorter than the observed PS5.1 complete-entry preparation envelope; a Utility-export-specific cause is not supported."
+    },
+    {
+      "status": "UNRESOLVED",
+      "claim": "Underlying Windows first-command delay cause and cold/warm reuse benefit are not established by these receipts."
+    },
+    {
+      "status": "LIMIT",
+      "claim": "Filesystem mtimes provide timing envelopes, not per-phase elapsed or exact process-exit timestamps."
+    }
+  ]
+}

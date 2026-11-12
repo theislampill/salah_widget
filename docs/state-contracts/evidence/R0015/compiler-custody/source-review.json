@@ -1,0 +1,673 @@
+{
+  "schema": "r0015-independent-bootstrap-delta-review/v1",
+  "reviewer": "/root/r0013_review",
+  "capturedAt": "2026-11-11T09:38:00.044746+00:00",
+  "baselineCommit": "65410ae4dca07a3305e337c8215173a197abe4de",
+  "baselineSourceSha256": "9e8fd30cdb7c625882f4cb2cfb383328515225d0c180549f876bb7162a4d1cff",
+  "candidateSourceSha256": "7e6950359b6f28e165e02793e56cb1842db092403fd09abea9f0f9c595ba5114",
+  "candidateNativeLiteralSha256": "c738e378b35a298d16e201c9e92daa8325e998bf361d1274198dd1beb4da5a7b",
+  "bindings": {
+    "recovery/r0015-review/bootstrap-7e6950/install.ps1": "7e6950359b6f28e165e02793e56cb1842db092403fd09abea9f0f9c595ba5114",
+    "recovery/r0015-review/bootstrap-358bf1/install.ps1": "358bf1da1bf385b74e0ce2019e81d8018797fedecbe0ece186027872213602e1",
+    "recovery/r0015-review/bootstrap-358bf1/install-powershell-mutations.py": "08a1b3263f6eef4560581b0bf104ee4ef27fe0356cb9721d845740378caa567d",
+    "recovery/r0015-review/bootstrap-7e6950/install-powershell-transactions.ps1": "0432333cec9069298dd630cd3925a89ffd55b5ffe84557019a559446d31dfd89",
+    "recovery/r0015-review/bootstrap-358bf1/install-compiler-custody.ps1": "a3cb9d99c967c4a43ded623722d250fae91b9a26e38e1ff5cb24abbf54bc8387",
+    "recovery/r0015-review/bootstrap-358bf1/install-staging-first-call-compiler.ps1": "92fefc522c289663cb247a0c1bfca4440b9c6417a487afbceaeaea12cb15d8d0",
+    "recovery/r0015-volume-admission/red.stdout.json": "ab4efde203d524c3ec69a73f8fed93319723311d1c7317a49d5e3604a529972f",
+    "recovery/r0015-volume-admission/green.stdout.json": "0e7854be5ba717b9b579bb8aaae02edb5a236a14a2f68245e8d0b66041b85706",
+    "recovery/r0015-volume-admission/install-volume-policy.initial.ps1": "22e9391bc411fd6b304887e5d7d22db5bb567d3ab3fa561653279f855cda8062",
+    "recovery/r0015-review/bootstrap-7e6950/install-volume-policy.ps1": "dc671aa0365d6fb318fbf838472a8c8512931ddf371e2c3527433bcb22f41e7d",
+    "recovery/r0015-review/bootstrap-358bf1/observer-path-controls.json": "d50de614b5c8fb2e57b4cefa5115179c1cbe99f1e0717c90d3b0693f2b576930",
+    "recovery/r0015-review/bootstrap-358bf1/observer-blocked.json": "f4014f9284e38c379fbf029496b684dd813de02f70ed6f462c336a5d1aae80dc"
+  },
+  "checks": [
+    {
+      "check": "exact final source freeze",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "final production source remains ASCII",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "all three complete source files parse",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "bootstrap adds only four named functions",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "original functions unchanged except native initialization",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "bootstrap original C# bytes unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "NTFS followup changes only compiler context and embedded native initialization",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "all C# other than actual volume admission byte-identical",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "new C# literal bound",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "exact UTF8 driver freeze",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "mutation definitions assertions and all other driver logic unchanged",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "original decoder driver preserved byte-for-byte",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "actual old decoder negative and corrected Unicode positive retain intended values",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "raw UTF8 bytes bind corrected parsed receipt",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "invalid UTF8 refused with original bytes retained",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "exact final diagnostic/adapter fixture",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "all existing transaction assertions retained",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "13 useful supplemental controls pass with declared POSIX adapter",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "exact original policy fixture preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "source-exact final policy GREEN acquired",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "all 12 actual policy response rows discriminate with true source/test stability",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "native NTFS explicitly not claimed by local policy tests",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "source defects reproduced before NTFS fix",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "observer derivative frozen",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "original native first-call observer preserved",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "pure observer path controls pass without native credit",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "observer refuses unsupported native host locally",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "entire contract denominator retained",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "sourceReview": [
+    {
+      "boundary": "pre-compiler native metadata",
+      "assessment": "Initialize-CompilerNative guards dry/unsupported host before Run-only transient assembly creation. Its nine exact PInvoke declarations contain no Add-Type/compiler invocation, saved assembly or output path."
+    },
+    {
+      "boundary": "native ABI/layout",
+      "assessment": "BY_HANDLE_FILE_INFORMATION52-byte allocation reads attributes0, volume28, high/low file index44/48. SECURITY_ATTRIBUTES uses12/24 bytes and pointer-aligned descriptor4/8, inherit flag8/16. Imports use Unicode exact entry, Winapi, PreserveSig and last-error capture. These static/layout facts and local metadata do not qualify actual Windows marshaling."
+    },
+    {
+      "boundary": "custody parity",
+      "assessment": "Corrected0x20081 access and share3 keep directory data-access leases without delete sharing. Reparse/non-directory/non-disk and physical alias refusal, CommonAce callback rejection, trusted owner list and terminal/ancestor masks0x500d0156/0x500d0150 match established StageNative rules. Private root requires current owner, protected one-ACE full control."
+    },
+    {
+      "boundary": "supported volume",
+      "assessment": "Two-site NTFS-only followup requests actual filesystem name and keeps persistent ACL/query checks. It resolves the observed source policy that accepted ReFS/unknown names despite a64-bit identity contract. Local actual-body response controls discriminate; native NTFS/API execution remains pending."
+    },
+    {
+      "boundary": "allocation and compiler",
+      "assessment": "Held verified ancestors precede exclusive CreateDirectoryW with the protected descriptor supplied at creation. Root identity/private lease precedes either Add-Type call. TEMP and TMP both point to root; native GetTempPath is checked. PS5.1 receives that exact TempFileCollection with KeepFiles=true and in-memory output, and System.dll reference."
+    },
+    {
+      "boundary": "failure and cleanup",
+      "assessment": "Failed compile retains private output. Both previous environment values are attempted in nested finally, including originally absent values. Success cleanup checks root identity/private access and each descendant owner/trusted access/no reparse/no hard link, holds directory leases during traversal, rechecks identities, and retains original ancestor leases through deletion. Unproved cleanup retains and warns. Same-user/administrator isolation is not claimed."
+    },
+    {
+      "boundary": "instrument fidelity",
+      "assessment": "UTF8 driver changes only invocation transport; named mutation definitions and assertions are unchanged. Binary streams survive strict decode failures. Native-file diagnostic wrapper delegates the actual creation, reads parent facts/SDDL only after failure, records native exception chain/path/length and rethrows the original ErrorRecord. POSIX C# loading remains explicit and cannot qualify native bootstrap."
+    },
+    {
+      "boundary": "new native tests",
+      "assessment": "Writer suitea3cb9d99 covers seven cold normal/adverse cases plus parse-valid terminal-parent guard mutant with useful healthy caller. It uses actual native APIs and compiler calls. Independent observer92fefc22 adds watched whole-TEMP evidence at actual before/after compiler boundaries, forwards CompilerParameters and distinguishes acquisition from qualification. Neither suite is native-run yet."
+    }
+  ],
+  "findings": {
+    "Critical": [],
+    "Important": [
+      {
+        "id": "R15-NATIVE-04",
+        "status": "source correction reviewed; native gate open",
+        "detail": "The previously observed pre-admission compiler writes require actual fresh-process Windows proof on the new source. Static structure/local orchestration do not close the native finding."
+      },
+      {
+        "id": "R15-NATIVE-05",
+        "status": "open acquisition cause",
+        "detail": "Updated error recording and UTF8 transport prepare diagnosis; no new exact PS7 failing Win32 code/path has been received."
+      },
+      {
+        "id": "R15-VOLUME-01",
+        "status": "old source policy defect reproduced; NTFS-only correction reviewed, native qualification pending",
+        "detail": "Microsoft documents that BY_HANDLE_FILE_INFORMATION64-bit identity is not guaranteed unique on ReFS. Prior actual policy accepted ReFS/empty/OtherFS reports; current source rejects these without changing other C# algorithms. Counterfactual responses are not ReFS execution."
+      }
+    ],
+    "Minor": [
+      {
+        "id": "R15-RECEIPT-01",
+        "status": "transport correction reviewed; native readback pending",
+        "detail": "Actual old cp1252 selection produces the retained mojibake RED; corrected binary+strictUTF8 transport retains Unicode and rejects invalid bytes locally. Original native receipts are preserved."
+      }
+    ]
+  },
+  "engineeringDisposition": "No demonstrated source/instrument blocker to publishing exact7e6950 for targeted native qualification. This is not engineering-ready, whole-contract completion or merge approval. Required native observations and parent/owner delivery gates remain.",
+  "denominator": {
+    "original": 17,
+    "residual": 9,
+    "NovemberES": 18,
+    "terminal": 7,
+    "total": 51
+  },
+  "rows": [
+    {
+      "id": "21-01",
+      "family": "original",
+      "requirement": "Create fresh private scratch and a separate retained HOME bundle only after platform, input and eligible-target checks; never admit the predictable old tree.",
+      "reviewDisposition": "Bash source preserved; native preservation evidence is scoped",
+      "evidence": "Bash609ecb is unchanged from the independently received R13 Apple/Linux source. Source guards, original helper/entry controls and actual consumers were read in R13 review. Windows current attempts and candidate/admission chains reviewed separately.",
+      "remainingGate": "Rebind final integrated source and affected gates; do not substitute Windows tests for original Bash/native obligations."
+    },
+    {
+      "id": "21-02",
+      "family": "original",
+      "requirement": "Verify parent and ancestor ownership, modes, symlinks and physical identity using the native stat/id/-O/-L contract; unusual mounts fail closed.",
+      "reviewDisposition": "Bash source preserved; native preservation evidence is scoped",
+      "evidence": "Bash609ecb is unchanged from the independently received R13 Apple/Linux source. Source guards, original helper/entry controls and actual consumers were read in R13 review. Windows current attempts and candidate/admission chains reviewed separately.",
+      "remainingGate": "Rebind final integrated source and affected gates; do not substitute Windows tests for original Bash/native obligations."
+    },
+    {
+      "id": "21-03",
+      "family": "original",
+      "requirement": "Qualify the actual macOS BSD stat/mktemp, Apple Bash 3.2 and filesystem staging branch.",
+      "reviewDisposition": "native Apple original staging proof received",
+      "evidence": "Actual macOS15.8.2 arm64 /bin/bash3.2.57 executes native BSD stat/mktemp/ownership branches and nine original staging controls; raw twelve script/process records, retained bytes and native identity receipts are independently bound.",
+      "remainingGate": "Final integrated Bash source hash must remain identical; no Windows result is substituted."
+    },
+    {
+      "id": "21-04",
+      "family": "original",
+      "requirement": "Confine all outputs and cleanup to verified roots; reject symlink components, nonregular outputs, empty/dot/parent components and prefix lookalikes.",
+      "reviewDisposition": "Bash source preserved; native preservation evidence is scoped",
+      "evidence": "Bash609ecb is unchanged from the independently received R13 Apple/Linux source. Source guards, original helper/entry controls and actual consumers were read in R13 review. Windows current attempts and candidate/admission chains reviewed separately.",
+      "remainingGate": "Rebind final integrated source and affected gates; do not substitute Windows tests for original Bash/native obligations."
+    },
+    {
+      "id": "21-05",
+      "family": "original",
+      "requirement": "Separately discriminate wrong-UID retained-parent admission from writable-mode refusal.",
+      "reviewDisposition": "native distinct-UID proof and complete private export received",
+      "evidence": "UID1000/GID1000 with no supplementary groups/capabilities rejects exact UID0 HOME0755 before mktemp. The same inode/mode/ancestors with HOME UID changed to1000 succeeds; owner-only actual helper mutant admits foreign HOME. Original /tmp mode1777 premise remains confounded and uncredited. Native run2 repeats the actual three controls and transfers all10 original entries through verified privileged export to UID1001 collector; raw private retained-proof, events and TMP metadata are independently received at65410ae.",
+      "remainingGate": "No remaining native UID/archive gap for exact Bash609ecb; final stack/public/approval gates remain. Run1 archival FAIL is preserved."
+    },
+    {
+      "id": "21-06",
+      "family": "original",
+      "requirement": "Preserve the exact hostile old preset symlink and victim while producing valid configured JSON in a fresh owned bundle.",
+      "reviewDisposition": "Bash source preserved; native preservation evidence is scoped",
+      "evidence": "Bash609ecb is unchanged from the independently received R13 Apple/Linux source. Source guards, original helper/entry controls and actual consumers were read in R13 review. Windows current attempts and candidate/admission chains reviewed separately.",
+      "remainingGate": "Rebind final integrated source and affected gates; do not substitute Windows tests for original Bash/native obligations."
+    },
+    {
+      "id": "21-07",
+      "family": "original",
+      "requirement": "Keep the asset/preset write chain closed: owned fresh partial, validation before publication, exact configuration, no usable artifact on malformed input.",
+      "reviewDisposition": "Bash source preserved; native preservation evidence is scoped",
+      "evidence": "Bash609ecb is unchanged from the independently received R13 Apple/Linux source. Source guards, original helper/entry controls and actual consumers were read in R13 review. Windows current attempts and candidate/admission chains reviewed separately.",
+      "remainingGate": "Rebind final integrated source and affected gates; do not substitute Windows tests for original Bash/native obligations."
+    },
+    {
+      "id": "21-08",
+      "family": "original",
+      "requirement": "Preflight all archive members before extraction; reject absolute paths, traversal and links, then extract into a new empty child and return a valid in-root manifest directory.",
+      "reviewDisposition": "Bash source preserved; native preservation evidence is scoped",
+      "evidence": "Bash609ecb is unchanged from the independently received R13 Apple/Linux source. Source guards, original helper/entry controls and actual consumers were read in R13 review. Windows current attempts and candidate/admission chains reviewed separately.",
+      "remainingGate": "Rebind final integrated source and affected gates; do not substitute Windows tests for original Bash/native obligations."
+    },
+    {
+      "id": "21-09",
+      "family": "original",
+      "requirement": "Retain legitimate same-attempt cache reuse but create new private roots on each invocation and retire old shared-cache admission.",
+      "reviewDisposition": "native same-attempt/fresh-attempt proof received",
+      "evidence": "Both native POSIX hosts show identical roots/identities within the attempt and distinct scratch/manual paths across two complete invocations. A coherent predictable-root mutant completes twice while reusing both paths.",
+      "remainingGate": "Final exact source binding and separate Windows admission gates remain."
+    },
+    {
+      "id": "21-10",
+      "family": "original",
+      "requirement": "Retain completed or explicitly partial manual bundles through exit, failure and interrupt; cleanup removes only unchanged owned scratch.",
+      "reviewDisposition": "native POSIX lifetime proof and corrected Windows lease/normal utility received",
+      "evidence": "Both actual POSIX hosts retain manual bytes through exit0, failure1, INT130 and TERM143 with fresh consumers and owned-scratch deletion. Native Windows9e8fd3 now passes held/released root lease pairs, owned cleanup and four complete-file normal/NoOpen consumers; old run1 failures remain preserved.",
+      "remainingGate": "Qualify new compiler-bootstrap custody and affected normal/failure cleanup. Do not convert existing lifetime proof into reboot/browser/future-liveness guarantees."
+    },
+    {
+      "id": "21-11",
+      "family": "original",
+      "requirement": "Prove retained filesystem consumption after source exit and a fresh consumer; keep it distinct from printed paths, later liveness, reboot and browser installation.",
+      "reviewDisposition": "native fresh-consumer retained-byte proof received",
+      "evidence": "Eight POSIX lifetime observations each include exact retained file bytes in the original archive plus fresh consumer exit0/readback after the source process ends. Dedicated UID1000 consumer also reads retained bytes in its original receipt. Native2 Windows custody controls also preserve fresh-consumer retained output, and four full-file callers leave actual retained manifest/preset/XPI bytes in the received archive.",
+      "remainingGate": "No reboot/browser/future-liveness claim; compiler-bootstrap correction, final public delivery and owner authority remain separate."
+    },
+    {
+      "id": "21-12",
+      "family": "original",
+      "requirement": "Support the cross-user boundary with native Linux filesystem semantics, distinct UIDs and reachable positive controls; do not claim same-UID isolation.",
+      "reviewDisposition": "native distinct-UID proof and complete private export received",
+      "evidence": "Actual native supervisorUID0/consumerUID1000/collectorUID1001 are distinguished. Consumer capabilities and supplementary groups are empty; foreign retained parent rejection and matched owned-parent utility are causally discriminated. Native run2 repeats the actual three controls and transfers all10 original entries through verified privileged export to UID1001 collector; raw private retained-proof, events and TMP metadata are independently received at65410ae.",
+      "remainingGate": "No remaining native UID/archive gap for exact Bash609ecb; final stack/public/approval gates remain. Run1 archival FAIL is preserved."
+    },
+    {
+      "id": "21-13",
+      "family": "original",
+      "requirement": "Keep dry-run outside both staging roots and all write, acquisition, extraction and cleanup paths; never return imaginary artifacts.",
+      "reviewDisposition": "Bash source preserved; native preservation evidence is scoped",
+      "evidence": "Bash609ecb is unchanged from the independently received R13 Apple/Linux source. Source guards, original helper/entry controls and actual consumers were read in R13 review. Windows current attempts and candidate/admission chains reviewed separately.",
+      "remainingGate": "Rebind final integrated source and affected gates; do not substitute Windows tests for original Bash/native obligations."
+    },
+    {
+      "id": "21-14",
+      "family": "original",
+      "requirement": "Use predictable-root, symlink-admission and retained-EXIT-deletion mutants to discriminate freshness, confinement and lifetime separately.",
+      "reviewDisposition": "native named staging mutants received",
+      "evidence": "Both hosts bind parse-valid predictable-root, sole symlink-guard removal and retained-EXIT-deletion mutants to exact script bytes and intended actual behavior, paired with healthy freshness/admission/lifetime controls.",
+      "remainingGate": "Final source linkage only; do not infer unrelated mutation mechanisms."
+    },
+    {
+      "id": "21-15",
+      "family": "original",
+      "requirement": "Disclose retained HOME bundle lifetime, keep-unpacked instructions, optional manual preset/XPI removal, partial retention and retired cross-run cache behavior in README.",
+      "reviewDisposition": "Documentation incomplete for final acceptance",
+      "evidence": "New Windows transaction contract describes retained roots, partial states, manual lifetime and retired cross-run admission. Current README retention paragraph covers macOS/Linux and omits required complete Windows/partial/manual cleanup guidance.",
+      "remainingGate": "Finalize and render README with retained HOME/USERPROFILE lifetime, keep-unpacked rule, optional manual preset/XPI removal, partial retention and retired cross-run cache. Re-read source-linked claims."
+    },
+    {
+      "id": "21-16",
+      "family": "original",
+      "requirement": "Preserve exact configuration, manual dashboard warning, card and permission contracts; apply only the supplied outer-wrapper amendment.",
+      "reviewDisposition": "Configuration/manual semantics supported at inspected scope",
+      "evidence": "Native Windows transaction controls preserve targeted canonical iframe fragment, unrelated strings/Unicode, optional JSON, and manual import warning. Review found no change to selector precedence or existing iframe/card/permission contract.",
+      "remainingGate": "Keep original 325x530/permission/title/referrer/approved wrapper semantics and source-exact generated commands through final docs/integration."
+    },
+    {
+      "id": "21-17",
+      "family": "original",
+      "requirement": "Bind the delivered public script/document and generated-command source bytes to the exact reviewed target.",
+      "reviewDisposition": "Public delivery gate open",
+      "evidence": "Engineering candidate is published and exact Git blobs are bound. README still has Bash placeholder and historical Windows pin; root has explicitly deferred final pinning until corrected source readback.",
+      "remainingGate": "Read back approved public script/docs/rendered copy-command bytes and final merge; engineering branch availability is not approved delivery."
+    },
+    {
+      "id": "R0015-A01",
+      "family": "October residual child",
+      "requirement": "Actual Apple root/owner/mode/identity, stable same-attempt/distinct new attempt",
+      "reviewDisposition": "native Apple received",
+      "evidence": "Actual Apple retained root UID501/mode0700/dev/inode and scratch identity are captured; same-attempt identities remain stable and next-attempt paths differ.",
+      "remainingGate": "Rebind final Bash source; no source change needed from this evidence."
+    },
+    {
+      "id": "R0015-A02",
+      "family": "October residual child",
+      "requirement": "Actual Apple confined writes/extraction and unchanged hostile sentinels",
+      "reviewDisposition": "native Apple received at actual fixture boundary",
+      "evidence": "Same run binds all original helper/entry suites and new actual owned-path/symlink controls with outside sentinel bytes unchanged. Complete staging raw scripts and retained directories are received.",
+      "remainingGate": "Final integration/public instructions and Windows gates remain separate."
+    },
+    {
+      "id": "R0015-A03",
+      "family": "October residual child",
+      "requirement": "Apple exit/failure/INT130/TERM143 and fresh retained file consumption",
+      "reviewDisposition": "native Apple received",
+      "evidence": "Exact exit0/failure1/INT130/TERM143 processes, native root identity and four fresh retained consumers are supported by original regular raw files.",
+      "remainingGate": "No browser installation or reboot durability claim."
+    },
+    {
+      "id": "R0015-A04",
+      "family": "October residual child",
+      "requirement": "Apple native guard/lifetime mutants matched with healthy positives",
+      "reviewDisposition": "native Apple received",
+      "evidence": "Three named parse-valid staging mechanisms change their precise original assertion while healthy lifetime, confinement and freshness controls work.",
+      "remainingGate": "No substitute for separate Windows mutation qualification."
+    },
+    {
+      "id": "R0015-A05",
+      "family": "October residual child",
+      "requirement": "UID1000 subject rejects reachable UID0 HOME0755 before any staging effects",
+      "reviewDisposition": "native distinct-UID proof and complete private export received",
+      "evidence": "Actual UID1000 initializer rejects UID0 HOME0755 with empty stdout, exact owner-refusal reason, equal before/after snapshots and no mktemp event. Native run2 repeats the actual three controls and transfers all10 original entries through verified privileged export to UID1001 collector; raw private retained-proof, events and TMP metadata are independently received at65410ae.",
+      "remainingGate": "No remaining native UID/archive gap for exact Bash609ecb; final stack/public/approval gates remain. Run1 archival FAIL is preserved."
+    },
+    {
+      "id": "R0015-A06",
+      "family": "October residual child",
+      "requirement": "Matched self-owned HOME0755 succeeds; native roots0700/scratch cleanup/retained readback",
+      "reviewDisposition": "native distinct-UID proof and complete private export received",
+      "evidence": "Only terminal HOME UID changes on the same inode; mode0755, GID0 and ancestors stay equal. Actual roots are consumer-owned0700, scratch is cleaned and a fresh UID1000 process reads retained bytes. Native run2 repeats the actual three controls and transfers all10 original entries through verified privileged export to UID1001 collector; raw private retained-proof, events and TMP metadata are independently received at65410ae.",
+      "remainingGate": "No remaining native UID/archive gap for exact Bash609ecb; final stack/public/approval gates remain. Run1 archival FAIL is preserved."
+    },
+    {
+      "id": "R0015-A07",
+      "family": "October residual child",
+      "requirement": "Remove only terminal HOME owner guard; actual helper wrongly admits foreign HOME",
+      "reviewDisposition": "native distinct-UID proof and complete private export received",
+      "evidence": "Only final self-owner and -O conjunction is removed; mode/ancestor/physical checks remain. Actual helper returns the foreign HOME wrongly; original refuses; both preserve matched positive utility. Native run2 repeats the actual three controls and transfers all10 original entries through verified privileged export to UID1001 collector; raw private retained-proof, events and TMP metadata are independently received at65410ae.",
+      "remainingGate": "No remaining native UID/archive gap for exact Bash609ecb; final stack/public/approval gates remain. Run1 archival FAIL is preserved."
+    },
+    {
+      "id": "R0015-A08",
+      "family": "October residual child",
+      "requirement": "Rendered README truthfully documents precise manual/cache/partial lifecycle",
+      "reviewDisposition": "Documentation incomplete for final acceptance",
+      "evidence": "New Windows transaction contract describes retained roots, partial states, manual lifetime and retired cross-run admission. Current README retention paragraph covers macOS/Linux and omits required complete Windows/partial/manual cleanup guidance.",
+      "remainingGate": "Finalize and render README with retained HOME/USERPROFILE lifetime, keep-unpacked rule, optional manual preset/XPI removal, partial retention and retired cross-run cache. Re-read source-linked claims."
+    },
+    {
+      "id": "R0015-A09",
+      "family": "October residual child",
+      "requirement": "Affected public docs/scripts bytes and rendering match approved final candidate",
+      "reviewDisposition": "Public delivery gate open",
+      "evidence": "Engineering candidate is published and exact Git blobs are bound. README still has Bash placeholder and historical Windows pin; root has explicitly deferred final pinning until corrected source readback.",
+      "remainingGate": "Read back approved public script/docs/rendered copy-command bytes and final merge; engineering branch availability is not approved delivery."
+    },
+    {
+      "id": "ES15-01",
+      "family": "November amendment",
+      "requirement": "Failed partial download never reused as ready merely because file exists",
+      "reviewDisposition": "exact9e8fd3 native transaction support; PS5.1 native mutation pairs received",
+      "evidence": "Both actual Windows hosts pass all28 transaction cases at exact9e8fd3 without a POSIX adapter. PS5.1 additionally passes the useful13-row prerequisite and all9 applicable named mutation discriminators, independently reconstructed from immutable definitions with exact raw intended failures and healthy companions. PS7 records only3/13 prerequisite passes and executes no mutants. Four native normal/NoOpen callers preserve actual useful output.",
+      "remainingGate": "Diagnose PS7 prerequisite and qualify the applicable named mechanisms there; review/qualify the affected final compiler-bootstrap source and actual consumers. Preserve existing scoped pass evidence without crediting unexecuted mutants."
+    },
+    {
+      "id": "ES15-02",
+      "family": "November amendment",
+      "requirement": "Healthy validated candidate returns one actual owned path, no diagnostic contamination",
+      "reviewDisposition": "exact9e8fd3 native transaction support; PS5.1 native mutation pairs received",
+      "evidence": "Both actual Windows hosts pass all28 transaction cases at exact9e8fd3 without a POSIX adapter. PS5.1 additionally passes the useful13-row prerequisite and all9 applicable named mutation discriminators, independently reconstructed from immutable definitions with exact raw intended failures and healthy companions. PS7 records only3/13 prerequisite passes and executes no mutants. Four native normal/NoOpen callers preserve actual useful output.",
+      "remainingGate": "Diagnose PS7 prerequisite and qualify the applicable named mechanisms there; review/qualify the affected final compiler-bootstrap source and actual consumers. Preserve existing scoped pass evidence without crediting unexecuted mutants."
+    },
+    {
+      "id": "ES15-03",
+      "family": "November amendment",
+      "requirement": "Same-attempt same validated identity reuses exact bytes/path without repeat download",
+      "reviewDisposition": "exact9e8fd3 native transaction support; PS5.1 native mutation pairs received",
+      "evidence": "Both actual Windows hosts pass all28 transaction cases at exact9e8fd3 without a POSIX adapter. PS5.1 additionally passes the useful13-row prerequisite and all9 applicable named mutation discriminators, independently reconstructed from immutable definitions with exact raw intended failures and healthy companions. PS7 records only3/13 prerequisite passes and executes no mutants. Four native normal/NoOpen callers preserve actual useful output.",
+      "remainingGate": "Diagnose PS7 prerequisite and qualify the applicable named mechanisms there; review/qualify the affected final compiler-bootstrap source and actual consumers. Preserve existing scoped pass evidence without crediting unexecuted mutants."
+    },
+    {
+      "id": "ES15-04",
+      "family": "November amendment",
+      "requirement": "Changed/cross-run/unverified artifact cannot inherit readiness by filename",
+      "reviewDisposition": "exact9e8fd3 native transaction support; PS5.1 native mutation pairs received",
+      "evidence": "Both actual Windows hosts pass all28 transaction cases at exact9e8fd3 without a POSIX adapter. PS5.1 additionally passes the useful13-row prerequisite and all9 applicable named mutation discriminators, independently reconstructed from immutable definitions with exact raw intended failures and healthy companions. PS7 records only3/13 prerequisite passes and executes no mutants. Four native normal/NoOpen callers preserve actual useful output.",
+      "remainingGate": "Diagnose PS7 prerequisite and qualify the applicable named mechanisms there; review/qualify the affected final compiler-bootstrap source and actual consumers. Preserve existing scoped pass evidence without crediting unexecuted mutants."
+    },
+    {
+      "id": "ES15-05",
+      "family": "November amendment",
+      "requirement": "Replacement failure leaves old usable sentinel/manifest unchanged",
+      "reviewDisposition": "native PS5.1 publication and mid-output failure stages received; PS7 prerequisite gap",
+      "evidence": "Both hosts pass ordinary replacement controls. Native PS5.1 additionally reaches actual File.Move collision after a complete retained copy, preserves the new partial and collision sentinel plus original archive/manifest/Unicode payload, and fails on the second actual extraction member after writing the first. Original TAR bytes and actual fallback/no-copy events independently corroborate both stages.",
+      "remainingGate": "Close the corresponding PS7 failed prerequisite with exact path/code evidence and final-source native controls. Preserve original native RED and complete partial/predecessor bytes."
+    },
+    {
+      "id": "ES15-06",
+      "family": "November amendment",
+      "requirement": "Replacement success publishes a new admitted path without deleting old manual bundle",
+      "reviewDisposition": "exact9e8fd3 native transaction support; PS5.1 native mutation pairs received",
+      "evidence": "Both actual Windows hosts pass all28 transaction cases at exact9e8fd3 without a POSIX adapter. PS5.1 additionally passes the useful13-row prerequisite and all9 applicable named mutation discriminators, independently reconstructed from immutable definitions with exact raw intended failures and healthy companions. PS7 records only3/13 prerequisite passes and executes no mutants. Four native normal/NoOpen callers preserve actual useful output.",
+      "remainingGate": "Diagnose PS7 prerequisite and qualify the applicable named mechanisms there; review/qualify the affected final compiler-bootstrap source and actual consumers. Preserve existing scoped pass evidence without crediting unexecuted mutants."
+    },
+    {
+      "id": "ES15-07",
+      "family": "November amendment",
+      "requirement": "Malformed/traversal/unsupported archive gives no ready path or outside mutation",
+      "reviewDisposition": "native unsafe archive support and PS5.1 complete-preflight discriminator received",
+      "evidence": "Both native transaction suites refuse unsafe/malformed/unsupported archives. The independent pure-format26-case corpus remains supplemental. Native PS5.1 actual Test-ExtensionArchive rejects the late unsafe member with no delegated member creators; the original TAR retains an empty preflight output directory. No extraction was used during independent receiving.",
+      "remainingGate": "Close the PS7 prerequisite and qualify its late-preflight control on the affected final source. Pure-format tests do not replace native custody proof."
+    },
+    {
+      "id": "ES15-08",
+      "family": "November amendment",
+      "requirement": "Malformed preset is failure, not successful import pathname",
+      "reviewDisposition": "exact9e8fd3 native transaction support; PS5.1 native mutation pairs received",
+      "evidence": "Both actual Windows hosts pass all28 transaction cases at exact9e8fd3 without a POSIX adapter. PS5.1 additionally passes the useful13-row prerequisite and all9 applicable named mutation discriminators, independently reconstructed from immutable definitions with exact raw intended failures and healthy companions. PS7 records only3/13 prerequisite passes and executes no mutants. Four native normal/NoOpen callers preserve actual useful output.",
+      "remainingGate": "Diagnose PS7 prerequisite and qualify the applicable named mechanisms there; review/qualify the affected final compiler-bootstrap source and actual consumers. Preserve existing scoped pass evidence without crediting unexecuted mutants."
+    },
+    {
+      "id": "ES15-09",
+      "family": "November amendment",
+      "requirement": "Intended iframe fragment changes exactly; unrelated JSON fields/text survive",
+      "reviewDisposition": "exact9e8fd3 native transaction support; PS5.1 native mutation pairs received",
+      "evidence": "Both actual Windows hosts pass all28 transaction cases at exact9e8fd3 without a POSIX adapter. PS5.1 additionally passes the useful13-row prerequisite and all9 applicable named mutation discriminators, independently reconstructed from immutable definitions with exact raw intended failures and healthy companions. PS7 records only3/13 prerequisite passes and executes no mutants. Four native normal/NoOpen callers preserve actual useful output.",
+      "remainingGate": "Diagnose PS7 prerequisite and qualify the applicable named mechanisms there; review/qualify the affected final compiler-bootstrap source and actual consumers. Preserve existing scoped pass evidence without crediting unexecuted mutants."
+    },
+    {
+      "id": "ES15-10",
+      "family": "November amendment",
+      "requirement": "Foreign/reparse/escaping destinations refused or safely isolated before effect",
+      "reviewDisposition": "native lease fix received; cold compiler custody finding open; bootstrap/NTFS source delta independently reviewed",
+      "evidence": "Both native hosts refuse live root rename with Win32 sharing violation32; disposal of only that lease permits same-root rename with equal identity/ACL/proof bytes. Fresh PS5.1 first-call also demonstrates compiler TEMP writes before terminal-parent custody; later parent rejection does not undo those effects. Final source7e6950 now obtains compiler custody using transient native metadata, validates NTFS identity support and trusted ancestry, creates/readbacks a private compiler root, scopes TEMP/TMP, and retains failed/unproved outputs. Existing native evidence remains source-scoped; no new native execution is credited.",
+      "remainingGate": "Receive exact updated Windows native compiler-custody, before/after observer, supported-volume controls and useful normal/failure consumers; close PS7 diagnostic prerequisite and affected native mutations, preserve preview joins, then final delivery/order/owner gates."
+    },
+    {
+      "id": "ES15-11",
+      "family": "November amendment",
+      "requirement": "Interrupt/failure cleanup touches owned scratch only",
+      "reviewDisposition": "corrected native lease/cleanup support received; bootstrap cleanup remains open; bootstrap/NTFS source delta independently reviewed",
+      "evidence": "Both native hosts now prove held rename rejection and released same-root success, preserve ancestor leases through scratch cleanup, retain manual roots, and refuse changed identity/junction destinations. PS5.1 native foreign-root cleanup mutation has its specific failure and a passing fresh-consumer companion. PS7 mutation prerequisite stops before this mechanism. Final source7e6950 now obtains compiler custody using transient native metadata, validates NTFS identity support and trusted ancestry, creates/readbacks a private compiler root, scopes TEMP/TMP, and retains failed/unproved outputs. Existing native evidence remains source-scoped; no new native execution is credited.",
+      "remainingGate": "Receive exact updated Windows native compiler-custody, before/after observer, supported-volume controls and useful normal/failure consumers; close PS7 diagnostic prerequisite and affected native mutations, preserve preview joins, then final delivery/order/owner gates."
+    },
+    {
+      "id": "ES15-12",
+      "family": "November amendment",
+      "requirement": "Actual install/import callers require admitted result, not existence/printed success",
+      "reviewDisposition": "actual native normal callers received; bootstrap custody remains open; bootstrap/NTFS source delta independently reviewed",
+      "evidence": "Four complete-file normal/NoOpen callers pass with exact interception nonce, bounded owned-parent ACL repair, no external ancestor change, unchanged browser snapshots, and real configured retained handoff bytes. Final source7e6950 now obtains compiler custody using transient native metadata, validates NTFS identity support and trusted ancestry, creates/readbacks a private compiler root, scopes TEMP/TMP, and retains failed/unproved outputs. Existing native evidence remains source-scoped; no new native execution is credited.",
+      "remainingGate": "Receive exact updated Windows native compiler-custody, before/after observer, supported-volume controls and useful normal/failure consumers; close PS7 diagnostic prerequisite and affected native mutations, preserve preview joins, then final delivery/order/owner gates."
+    },
+    {
+      "id": "ES15-13",
+      "family": "November amendment",
+      "requirement": "Unknown-held/legacy-refused targets cannot reach staging automatically",
+      "reviewDisposition": "Affected merged discovery source and native controls support eligibility join",
+      "evidence": "R13 Get-FirefoxExtensionStatus remains exactly the corrected f216 function. The full9e8fd3 source and all native instruments are Git-blob bound at65410ae; the previous R15 source difference is the reviewed directory-lease access bit. Both native discovery suites pass78/78; PS5.1 has13 discriminating discovery mutants plus its explicit uncredited root-array survivor, and PS7 has14.",
+      "remainingGate": "Preserve prerequisite currentness and whole R13 campaign/order gates; rerun only affected final join risk after source changes."
+    },
+    {
+      "id": "ES15-14",
+      "family": "November amendment",
+      "requirement": "Dry-run zero effects includes creation/cache shortcut/extraction/rewrite/cleanup",
+      "reviewDisposition": "Native preview/helper scope supports zero effects; bootstrap/NTFS source delta independently reviewed",
+      "evidence": "Native9e8fd3 transaction28 covers direct dry helpers refusing warm-cache and other artifact effects; PS5.1 also detects the dry-pretend-ready mutant with useful positive. Previously bound18 full-entry preview rows and two separate bad-option rejections remain source-scoped to unchanged preview guards; native2 selects only four normal/NoOpen entries and supplies no new preview rerun. Final source7e6950 now obtains compiler custody using transient native metadata, validates NTFS identity support and trusted ancestry, creates/readbacks a private compiler root, scopes TEMP/TMP, and retains failed/unproved outputs. Existing native evidence remains source-scoped; no new native execution is credited.",
+      "remainingGate": "Receive exact updated Windows native compiler-custody, before/after observer, supported-volume controls and useful normal/failure consumers; close PS7 diagnostic prerequisite and affected native mutations, preserve preview joins, then final delivery/order/owner gates."
+    },
+    {
+      "id": "ES15-15",
+      "family": "November amendment",
+      "requirement": "Exact source works on actual claimed PS5.1/7 hosts; Unicode data/paths retained",
+      "reviewDisposition": "native host components and normal utility received; source/qualification blockers remain; bootstrap/NTFS source delta independently reviewed",
+      "evidence": "Both native hosts pass transaction28 and custody8 plus affected full-file normal entries. PS5.1 all9 artifact mutants have intended failures plus useful companions. PS7 stops at failing unchanged-source baseline; none of its9 mutations executes. PS5.1 first-call compiler effects precede custody. Final source7e6950 now obtains compiler custody using transient native metadata, validates NTFS identity support and trusted ancestry, creates/readbacks a private compiler root, scopes TEMP/TMP, and retains failed/unproved outputs. Existing native evidence remains source-scoped; no new native execution is credited.",
+      "remainingGate": "Receive exact updated Windows native compiler-custody, before/after observer, supported-volume controls and useful normal/failure consumers; close PS7 diagnostic prerequisite and affected native mutations, preserve preview joins, then final delivery/order/owner gates."
+    },
+    {
+      "id": "ES15-16",
+      "family": "November amendment",
+      "requirement": "Downloaded/staged/handed-off/installed remain distinct in wording/evidence",
+      "reviewDisposition": "Source wording and scoped caller output reviewed",
+      "evidence": "Published/handed-off/retained states are explicit; actual Install acknowledgements remain manual. Invalid preset returns no selectable path; dashboard warning retained. New contract disclaims authenticity/crash atomicity/browser installation.",
+      "remainingGate": "Final README and public rendered/source readback must state partial/manual recovery and preserve truthful wording at actual full-file normal/failure outcomes."
+    },
+    {
+      "id": "ES15-17",
+      "family": "November amendment",
+      "requirement": "Original Bash/private-root/lifetime obligations preserved; unresolved parent rows visible",
+      "reviewDisposition": "Entire original denominator retained, not replaced by ES Windows slice",
+      "evidence": "All17 original,9 residual,18 November and7 terminal rows remain mapped. Exact Bash609ecb is unchanged. Actual Apple original staging/lifetime evidence and Linux distinct-UID controls with complete verified native2 private export have been independently received; native run1 archival failure is retained.",
+      "remainingGate": "Final README/public delivery and whole campaign source/currentness/order remain open. Apply Windows repairs without substituting the Windows slice for original Bash/native obligations."
+    },
+    {
+      "id": "ES15-18",
+      "family": "November amendment",
+      "requirement": "Final-tree review, native scope, manifests, rollback and public instructions agree",
+      "reviewDisposition": "exact native2 evidence retained; candidate not engineering-ready; bootstrap/NTFS source delta independently reviewed",
+      "evidence": "Published65410ae/tree886621 exact Windows archive and source bindings are independently received. Lease and normal fixture repairs work; first-call source defect and PS7 mutation baseline gap are explicit. All51 rows remain. Final source7e6950 now obtains compiler custody using transient native metadata, validates NTFS identity support and trusted ancestry, creates/readbacks a private compiler root, scopes TEMP/TMP, and retains failed/unproved outputs. Existing native evidence remains source-scoped; no new native execution is credited.",
+      "remainingGate": "Receive exact updated Windows native compiler-custody, before/after observer, supported-volume controls and useful normal/failure consumers; close PS7 diagnostic prerequisite and affected native mutations, preserve preview joins, then final delivery/order/owner gates."
+    },
+    {
+      "id": "G15-ORDER",
+      "family": "terminal obligation",
+      "requirement": "Verify R0013 approved merge/delivery/whole closure or actual owner-approved disjoint reordering",
+      "reviewDisposition": "Root/owner gate open in this report",
+      "evidence": "R15 inspected parent is R13 f216 engineering source; source merge dependency is exact. Neither engineering publication nor this review grants campaign reordering or accepted prerequisite closure.",
+      "remainingGate": "R0013 approved merge/delivery/whole closure or actual entitled-owner-approved disjoint reordering."
+    },
+    {
+      "id": "G15-STATE",
+      "family": "terminal obligation",
+      "requirement": "One source-linked state/refactor map and exact source/fixture/evidence manifest",
+      "reviewDisposition": "Source map exists; final revision pending",
+      "evidence": "docs/r0015-artifact-transactions.md and docs/state-contracts/R0015.md map C11/C12 and preserved R13/R14/R16 joins; native failing leases and pending source correction remain explicit.",
+      "remainingGate": "Update final source/test/evidence manifest, source-linked map and rollback/currentness with native outcomes, retaining all REDs."
+    },
+    {
+      "id": "G15-REVIEW",
+      "family": "terminal obligation",
+      "requirement": "Separately attributed exact-candidate security/native/consumer review",
+      "reviewDisposition": "Independent attributed engineering review delivered, not final acceptance",
+      "evidence": "This report, native-run1-windows-review.json and failure-mutation-rereview-a2b.json are attributed and digest-bound. Known native lease remediation is a new candidate requiring bounded rereview.",
+      "remainingGate": "Review the corrected exact commit/tree and all affected native evidence; root decides formal route/currentness."
+    },
+    {
+      "id": "G15-APPROVAL",
+      "family": "terminal obligation",
+      "requirement": "Exact owner-approved head/base/tree before merge",
+      "reviewDisposition": "Owner gate open",
+      "evidence": "No exact approved head/base/tree receipt is asserted here. User commission authorizes engineering/native testing/publication, not arbitrary merge.",
+      "remainingGate": "Obtain the entitled owner's exact candidate approval at the permitted campaign boundary."
+    },
+    {
+      "id": "G15-DELIVERY",
+      "family": "terminal obligation",
+      "requirement": "Approved merge readback and affected public script/docs/copy-command delivery",
+      "reviewDisposition": "Root delivery gate open",
+      "evidence": "No approved merged-tree/public-rendered delivery receipt is asserted here. Engineering branch is not accepted main.",
+      "remainingGate": "Perform only the authorized exact merge, then read back public source/docs/copy commands and final tree."
+    },
+    {
+      "id": "G15-CERTIFICATE",
+      "family": "terminal obligation",
+      "requirement": "Full original+residual+ES certificate posted/read back then deliberate completed issue closure",
+      "reviewDisposition": "Root certificate gate open",
+      "evidence": "All51 rows are retained without slice-only completion. No issue mutation or closure by reviewer.",
+      "remainingGate": "Produce and read back truthful full original/residual/ES certificate after all gates, then deliberate issue closure."
+    },
+    {
+      "id": "G15-LIFECYCLE",
+      "family": "terminal obligation",
+      "requirement": "Formal governor currentness/lifecycle gate honored independently",
+      "reviewDisposition": "Root formal gate; reviewer has no authority",
+      "evidence": "Ordinary engineering review only; no governor mutation, audit-assess envelope or lifecycle verdict.",
+      "remainingGate": "Root must honor independently established formal currentness/authority/lifecycle requirements."
+    }
+  ],
+  "declinedToJudge": [
+    "Actual Windows PS5.1/7 marshaling, CodeDOM output placement/ownership, cleanup success and unknown native filesystem behavior before the new native run.",
+    "Cause of PS7 native mutation baseline failure before requested path/error/parent facts are acquired.",
+    "All-process zero filesystem effects outside the verified TEMP/TMP watcher scope.",
+    "Currentness, owner approval, authorized merge/public delivery and lifecycle decisions owned by root."
+  ],
+  "primaryReferences": [
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/ns-fileapi-by_handle_file_information",
+      "supports": "Field layout and explicit ReFS64-bit identity limitation."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa379560(v=vs.85)",
+      "supports": "Security-attributes fields and creation security descriptor."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.reflection.emit.assemblybuilderaccess",
+      "supports": "Run permits execution without saving the dynamic assembly."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.codedom.compiler.tempfilecollection.keepfiles?view=netframework-4.8.1",
+      "supports": "KeepFiles default/per-file retention behavior; does not establish native output confinement."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/add-type?view=powershell-5.1",
+      "supports": "PS5.1 CompilerParameters forwarding and source compilation."
+    }
+  ],
+  "mutationStatement": "No installer/shared test/index/branch/remote/governor edits. Read immutable snapshots and logged evidence; authored only separate scratch observer, parsing/path-attribution checks and attributed reports. No native suite executed or native acceptance claimed."
+}

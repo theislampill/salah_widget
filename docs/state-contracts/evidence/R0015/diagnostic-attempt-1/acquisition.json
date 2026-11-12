@@ -1,0 +1,62 @@
+{
+  "schema": "r0015-diagnostic-acquisition-failure.v1",
+  "run": 43015598291,
+  "head": "2d2adc0aa96614affbe65952e630157a022cd29f",
+  "tree": "f7f3ccc5b5e38ad3cc6973dde445bfe8d2f0a8e6",
+  "sourceSha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+  "nativeResult": "FAIL",
+  "classification": "transport-infrastructure",
+  "failure": "Actual copied Windows environment dictionary contains uppercase SYSTEMROOT; mixed-case lookup raised KeyError before first probe launch and before receipt initialization.",
+  "nativeProbeLaunches": 0,
+  "nativeQualification": false,
+  "archive": "Original ZIP and TAR retained; TAR has only the empty diagnostic directory.",
+  "correction": "Change one copied-dictionary lookup from SystemRoot to SYSTEMROOT. Installer and PowerShell probe unchanged.",
+  "controls": {
+    "oldActualRunner": "Original uppercase-environment control reproduces KeyError with zero launches.",
+    "initialCorrectedControl": "Preserved fixture error: platform.platform invoked an intercepted subprocess outside the launch-only mock premise.",
+    "correctedControl": "Platform identity intercepted explicitly; six intended fake OSError launches are captured; no real processes.",
+    "nativeGreen": "pending"
+  },
+  "bindings": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/job.log",
+      "sha256": "56cfddf637f5375ee6aab35cf789e46295ca0cbeda55c6b365348f31ab969935",
+      "bytes": 24165
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/terminal-api-readback.json",
+      "sha256": "ac1fc628beb6c57c8da44ded432bd5a4ae1a7b740865c66cfe5eae85f8bf85d7",
+      "bytes": 20466
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/original.zip",
+      "sha256": "4465bc2ed3d04dfc9118fcda506b8c07ea4d88d4b5016e71e47736eb5c74a9e1",
+      "bytes": 371
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/original.tar.gz",
+      "sha256": "a4873f7c8874e2dfeb1e0b5c7f7313df1193f505ad1aaaf8f625be10c125c6a4",
+      "bytes": 201
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/archive-receiving.json",
+      "sha256": "643cae9e9ae2dcfd2f1b356c4e91c498b9db6018ef31ed94d73132446c22685d",
+      "bytes": 276
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/environment-red.json",
+      "sha256": "3c4cec3785f0f4a9380272183b2292e899eb08b4d76489b5788436bde7c687b4",
+      "bytes": 911
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/environment-green.json",
+      "sha256": "3adf8bcf11ecd7293957bb14c2425f337330368c82bcdfeaa4755c58748e1962",
+      "bytes": 3203
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-diagnostic-run1/environment-green-v2.json",
+      "sha256": "38cd124fbb6974b87aeb8c96493f56d7f9e045407b14becd33ff40fe89f4cc6e",
+      "bytes": 8432
+    }
+  ]
+}

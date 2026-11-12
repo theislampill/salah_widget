@@ -1,0 +1,763 @@
+{
+  "schema": "installer-native-v1",
+  "status": "OBSERVATIONS_ACQUIRED",
+  "phase": "r0015",
+  "host": {
+    "system": "Windows",
+    "platform": "Windows-2022Server-10.0.20348-SP0",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "image_version": "20261101.353.1",
+    "ps51": {
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "version": "5.1.20348.5773"
+    },
+    "ps7": {
+      "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+      "version": "7.6.6"
+    }
+  },
+  "commands": [
+    {
+      "name": "ps51-install-powershell",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:39:28.813593+00:00",
+      "finished": "2026-11-12T05:39:30.471293+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": []
+    },
+    {
+      "name": "ps51-install-powershell-guards",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-guards.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:39:30.471293+00:00",
+      "finished": "2026-11-12T05:39:31.081275+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-helper-guards-b4f200f159af429b9ed761b328143280",
+          "archive_directory": "ps51-install-powershell-guards-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-install-discovery",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:39:31.081275+00:00",
+      "finished": "2026-11-12T05:39:44.352689+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-0a9e2a36690a430d87a0fa35e9bb0d26",
+          "archive_directory": "ps51-install-discovery-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-install-powershell-transactions",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-transactions.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-PresetFile",
+        "D:\\a\\salah_widget\\salah_widget\\presets\\salah-widget.tablissng.json"
+      ],
+      "started": "2026-11-12T05:39:44.352689+00:00",
+      "finished": "2026-11-12T05:39:50.613547+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-4046c22f7d0040f8937d526e143dbdf4-\u0635",
+          "archive_directory": "ps51-install-powershell-transactions-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-install-staging-windows",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-staging-windows.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:39:50.613547+00:00",
+      "finished": "2026-11-12T05:39:52.723642+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-fdda4dff95b842f7a15e0fd2661b96f6-\u0635",
+          "archive_directory": "ps51-install-staging-windows-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-install-compiler-custody",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-compiler-custody.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-FixtureParent",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:39:52.723642+00:00",
+      "finished": "2026-11-12T05:45:41.134915+00:00",
+      "exit": 0,
+      "timeout_seconds": 1500,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-compiler-custody-9506e82e775f46be88ef175c2fd89d1b",
+          "archive_directory": "ps51-install-compiler-custody-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-install-volume-policy",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-volume-policy.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-OutputRoot",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:45:41.134915+00:00",
+      "finished": "2026-11-12T05:45:42.635423+00:00",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-volume-policy-4b3144959a1a485fad30fdc6d8d138a5",
+          "archive_directory": "ps51-install-volume-policy-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-discovery-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery-mutations.py",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      ],
+      "started": "2026-11-12T05:45:42.635423+00:00",
+      "finished": "2026-11-12T05:46:13.260495+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-kz6zwwza",
+          "archive_directory": "ps51-discovery-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-volume-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-volume-mutations.py",
+        "--source",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "--fixture",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-volume-policy.ps1",
+        "--pwsh",
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "--output-root",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\r0015-volume-mutants-ps51-033d23313e454a06811b9e32e0f8f4c9",
+        "--timeout-seconds",
+        "180"
+      ],
+      "started": "2026-11-12T05:46:13.260495+00:00",
+      "finished": "2026-11-12T05:46:16.029883+00:00",
+      "exit": 0,
+      "timeout_seconds": 390,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-volume-mutants-ps51-033d23313e454a06811b9e32e0f8f4c9",
+          "archive_directory": "ps51-volume-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-transaction-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-mutations.py",
+        "--source",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "--test",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-transactions.ps1",
+        "--preset",
+        "D:\\a\\salah_widget\\salah_widget\\presets\\salah-widget.tablissng.json",
+        "--native-test",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-staging-windows.ps1",
+        "--pwsh",
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "--out",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\r15m-d15c01ce29e647b4b69cd2c42c2f3a23"
+      ],
+      "started": "2026-11-12T05:46:16.029883+00:00",
+      "finished": "2026-11-12T05:46:51.711526+00:00",
+      "exit": 0,
+      "timeout_seconds": 600,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15m-d15c01ce29e647b4b69cd2c42c2f3a23",
+          "archive_directory": "ps51-transaction-mutations-fixture"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-55a7e4b24ff546ed960fbc5e3c25b0c0-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-1"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-95dfaf3c5a8c42509f5071e4db066540-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-2"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-94cae63bd8b0467fbad67b701675b83c-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-3"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-7a13e30955cb4f96b5adaf5766deb7be-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-4"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-a2b1c16f546d46378d81377f69153b67-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-5"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-5304c7147ece4bbcb8228045cf92a76e-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-6"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-17dfdccdd3ca4c44b5bdcef4de521b70-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-7"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-099a7772dc5a45e28203c37630452920-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-8"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-f6577f24271d498d88e4fc229db5696e-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-9"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-a90b35660d06478fb086bdf7b537dae3-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-10"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-628d910180fa4358aad21d6c798dc8a0-\u0635",
+          "archive_directory": "ps51-transaction-mutations-fixture-11"
+        }
+      ]
+    },
+    {
+      "name": "ps7-install-powershell",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:48:10.321243+00:00",
+      "finished": "2026-11-12T05:48:11.994584+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": []
+    },
+    {
+      "name": "ps7-install-powershell-guards",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-guards.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:48:11.994584+00:00",
+      "finished": "2026-11-12T05:48:12.588880+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-helper-guards-d3b90cb7761d4c1b9d728cbbbbf1c975",
+          "archive_directory": "ps7-install-powershell-guards-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-install-discovery",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:48:12.588880+00:00",
+      "finished": "2026-11-12T05:48:25.621469+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-58a730990d9349218a7e2db9f58043e0",
+          "archive_directory": "ps7-install-discovery-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-install-powershell-transactions",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-transactions.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-PresetFile",
+        "D:\\a\\salah_widget\\salah_widget\\presets\\salah-widget.tablissng.json"
+      ],
+      "started": "2026-11-12T05:48:25.621469+00:00",
+      "finished": "2026-11-12T05:48:31.172201+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-359bafb7564246eaa6cd514bedeff5f2-\u0635",
+          "archive_directory": "ps7-install-powershell-transactions-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-install-staging-windows",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-staging-windows.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-12T05:48:31.172201+00:00",
+      "finished": "2026-11-12T05:48:33.406216+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-7d2aacdb846a49a6a17c97c2d63f16b8-\u0635",
+          "archive_directory": "ps7-install-staging-windows-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-install-compiler-custody",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-compiler-custody.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-FixtureParent",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:48:33.406216+00:00",
+      "finished": "2026-11-12T05:48:54.065603+00:00",
+      "exit": 0,
+      "timeout_seconds": 1500,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-compiler-custody-185b81cf90e54322a5d0e4a2e5bc20f5",
+          "archive_directory": "ps7-install-compiler-custody-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-install-volume-policy",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-volume-policy.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-OutputRoot",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:48:54.065603+00:00",
+      "finished": "2026-11-12T05:48:55.661104+00:00",
+      "exit": 0,
+      "timeout_seconds": 180,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-volume-policy-e4eb19ef3d65458badd44077ac653630",
+          "archive_directory": "ps7-install-volume-policy-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-discovery-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery-mutations.py",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe"
+      ],
+      "started": "2026-11-12T05:48:55.661104+00:00",
+      "finished": "2026-11-12T05:49:29.616821+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah-discovery-mutants-qg1pkdtu",
+          "archive_directory": "ps7-discovery-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-volume-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-volume-mutations.py",
+        "--source",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "--fixture",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-volume-policy.ps1",
+        "--pwsh",
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "--output-root",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\r0015-volume-mutants-ps7-35eaa04948ed453cbe4ae780742bd272",
+        "--timeout-seconds",
+        "180"
+      ],
+      "started": "2026-11-12T05:49:29.616821+00:00",
+      "finished": "2026-11-12T05:49:33.182075+00:00",
+      "exit": 0,
+      "timeout_seconds": 390,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-volume-mutants-ps7-35eaa04948ed453cbe4ae780742bd272",
+          "archive_directory": "ps7-volume-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-transaction-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-mutations.py",
+        "--source",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "--test",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-transactions.ps1",
+        "--preset",
+        "D:\\a\\salah_widget\\salah_widget\\presets\\salah-widget.tablissng.json",
+        "--native-test",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-staging-windows.ps1",
+        "--pwsh",
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "--out",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\r15m-5a0b45a87e3942f9a957c248be54fb01"
+      ],
+      "started": "2026-11-12T05:49:33.182075+00:00",
+      "finished": "2026-11-12T05:50:13.756848+00:00",
+      "exit": 0,
+      "timeout_seconds": 600,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15m-5a0b45a87e3942f9a957c248be54fb01",
+          "archive_directory": "ps7-transaction-mutations-fixture"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-23b0398c936740358fd64eb316017de7-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-1"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-07a9c73bd2f94b478b43c7a3df698184-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-2"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-dd4df8cd628d4543a5b51b081df8a778-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-3"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-6de9bf5fe90845ffa89172122c6b4c4c-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-4"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-8b62a63497764108a285f23e9bd186d5-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-5"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-6e865157c5b3449ea5a8ecf013fa50ed-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-6"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-bdcba59d40a74e8ca719e3565c6cafa6-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-7"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-1f0a89f167804b0d9e7573257324d0d2-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-8"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-native-03456c7403ec40d29946fb6dc137aa33-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-9"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-8dd0a63e23ba487492563c6c67fd54c9-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-10"
+        },
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-19b335db3f65419887bda18ea4f2c42f-\u0635",
+          "archive_directory": "ps7-transaction-mutations-fixture-11"
+        }
+      ]
+    },
+    {
+      "name": "ps7-long-path-refusal",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-transactions.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-PresetFile",
+        "D:\\a\\salah_widget\\salah_widget\\presets\\salah-widget.tablissng.json",
+        "-Case",
+        "native long-path refusal preserves handed-off predecessor"
+      ],
+      "started": "2026-11-12T05:50:13.765085+00:00",
+      "finished": "2026-11-12T05:50:15.868888+00:00",
+      "exit": 0,
+      "timeout_seconds": 240,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-ps-76fcc18e57ab4f109b6703b4b031ad69-\u0635",
+          "archive_directory": "ps7-long-path-refusal-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-entry-native",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-entry-native.py",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "--scenario",
+        "positive",
+        "--scenario",
+        "no-open"
+      ],
+      "started": "2026-11-12T05:50:23.234192+00:00",
+      "finished": "2026-11-12T05:51:21.310091+00:00",
+      "exit": 0,
+      "timeout_seconds": 600,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\salah native entry-psc2r00f",
+          "archive_directory": "install-entry-native-fixture"
+        }
+      ]
+    }
+  ],
+  "diagnostics": [
+    {
+      "name": "ps51-install-host-bootstrap",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-host-bootstrap.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-OutputRoot",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:37:50.107314+00:00",
+      "finished": "2026-11-12T05:39:28.813593+00:00",
+      "exit": 0,
+      "timeout_seconds": 360,
+      "acquired": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-c4f9e34ec3744e1c9a56419a9f1d7440",
+          "archive_directory": "ps51-install-host-bootstrap-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps51-first-call-observation",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-staging-first-call.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-OutputRoot",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:46:51.711526+00:00",
+      "finished": "2026-11-12T05:48:07.303659+00:00",
+      "exit": 0,
+      "timeout_seconds": 360,
+      "acquired": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-first-call-2cbd597ce015442fbc77af6fb1998a38",
+          "archive_directory": "ps51-first-call-observation-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-install-host-bootstrap",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-host-bootstrap.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-OutputRoot",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:48:07.616160+00:00",
+      "finished": "2026-11-12T05:48:10.321243+00:00",
+      "exit": 0,
+      "timeout_seconds": 360,
+      "acquired": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-af3f2fdf68ae4aa39c2784862e04d153",
+          "archive_directory": "ps7-install-host-bootstrap-fixture"
+        }
+      ]
+    },
+    {
+      "name": "ps7-first-call-observation",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-NonInteractive",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-staging-first-call.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "-OutputRoot",
+        "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp"
+      ],
+      "started": "2026-11-12T05:50:15.868888+00:00",
+      "finished": "2026-11-12T05:50:23.234192+00:00",
+      "exit": 0,
+      "timeout_seconds": 360,
+      "acquired": true,
+      "archived_fixtures": [
+        {
+          "original": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0015-first-call-743da00932f14823a2a74acd58a782da",
+          "archive_directory": "ps7-first-call-observation-fixture"
+        }
+      ]
+    }
+  ],
+  "commit": "336a2392b0f7dcf3aa482583a852b9562cea978c",
+  "tree": "a9684f3af4d556d0a21180bfa670e1edfe73e680",
+  "source_hashes": {
+    "install.sh": "4d1818f89e8db936d8365b30b31a085835c5c8dfa60c036dfec504782dbcecab",
+    "install.ps1": "288d8ba16961e95690c6afd2fb148f67d1cba078507430e76a9eb9e18e9718bc",
+    "tests\\install-archive-controls.ps1": "76508f9d167860ff883d4fb71fa6bf260b77e1af2215a40ab6460333d6df86dd",
+    "tests\\install-bash.py": "01115e6145b4001b7fd3fae56f2612894676f79116973017e72943e98bd6a145",
+    "tests\\install-builder.cjs": "4889acc96ac6036368c34cad1a539e5d445f6b3dd1356c6a0ace157cd3f383c1",
+    "tests\\install-compiler-custody.ps1": "b67f38bd46839464d5f6131f18b6457bcc67de197955f1df6140bdc3d94b4b34",
+    "tests\\install-detectors.py": "aafd6b6ea1840a2c8cbebd86f3683d6bf4a89a49264043c60574a5059f9762ab",
+    "tests\\install-discovery-mutations.py": "3e1475b1fd157ff2e6d78da16220819e07c15a1d701b05a3fc3669f9e9ff0eb2",
+    "tests\\install-discovery.ps1": "9e320eb41165baad096873a99c4356b8c817550d1f7232788773408b1c7de608",
+    "tests\\install-discovery.py": "1f648540634cec866fb7e93e1cfd4a9b9279002c0958898b4f76e61fe19d5bb7",
+    "tests\\install-entry-bash.py": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "tests\\install-entry-native.py": "223b8ed54b342c23e7d0380bc669072a5fd87f2e42eeadb276b024aa8aa29819",
+    "tests\\install-entry.ps1": "bf488439bba1cf0db034477d91c325a2077af38598de717b6f2b48641686e6b3",
+    "tests\\install-host-bootstrap.ps1": "a553c9790f04c34ddbe672b469e157ddf6c5d4903484b1f3b17eb82bd2f86510",
+    "tests\\install-json-lexer-mutations.py": "0c0391bcee01840662a645895e28ea45054b9496fffb95eb2aae428d7f3c0b40",
+    "tests\\install-json-lexer-repro.ps1": "37e3081d92337fb1f799a7cabd423b36876c778d217eaadcdb844ed4676e2c7e",
+    "tests\\install-json-lexer.ps1": "ff084a789518c4c46a8a0fd14cc6795148ed6c1572294565108230636f09ebf3",
+    "tests\\install-linux-owner.py": "bd43e5675400966b08bb5b29e80ddf9ebb66cf53181991ccc4d2a4f455da9ae5",
+    "tests\\install-mutations.py": "7638ee1a79edaa472d7f78345436d01fab54358c7540e85f810c260a5558a43b",
+    "tests\\install-native-receipts.py": "c9c5cc6e6ad8e037b232e53167af766948c48bad0fd4e263369989c6475b57c5",
+    "tests\\install-powershell-guards.ps1": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4",
+    "tests\\install-powershell-mutations.py": "732acd9fb371926c28e2d410de2741703b1397f0eb38129384b1cd6e08ac23bc",
+    "tests\\install-powershell-transactions.ps1": "c6f5734352edfc8240eabc4d0009ec957c289213f7842c1acaef99dc2e4789c0",
+    "tests\\install-powershell.ps1": "6f7bd2c6e9e260d199ec99e615bd629076b5d96e1f2ec4f80bfaaed700c68e10",
+    "tests\\install-staging-first-call.ps1": "9ad302faa53b089d5a1a579a457ed9f8b34659a40e10c8a6e8fae701cf7b951f",
+    "tests\\install-staging-native.py": "53f137b41c3726dbc3bbce2f715e1eaa85137376d0126daf0cf3425887839c65",
+    "tests\\install-staging-owner.ps1": "fc07ed91b101d2ed5e9f470ac302a7f10a8e23569cfe847ff4789e2eb5b114bf",
+    "tests\\install-staging-parent.py": "b73b21a0224cbb7ef4e3208abdad283c545cbdb5bbde0f50c7071b47a21b763f",
+    "tests\\install-staging-windows.ps1": "ccd63764db46c58225d3ddd95302b153337bd947e15c7eed585486088ed94eba",
+    "tests\\install-volume-mutations.py": "aee7d4b1cadcc25acd816f825a4a419945760b6f47b7023e4403f3b6ff94685b",
+    "tests\\install-volume-policy.ps1": "9537d24479a2f621991c74b3cc3ff87f881c8f6724db4b3db6fc2d9e4eb64798"
+  },
+  "qualification_status": "PASS",
+  "diagnostic_acquisition_status": "COMPLETE",
+  "diagnostic_scope": "Acquisition is not product acceptance. Independently adjudicate each diagnostic's native observations, including pre-admission effects."
+}

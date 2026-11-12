@@ -1,0 +1,474 @@
+# R0015 integration requalification (integration-owned, additive).
+#
+# Why this file exists: `installer-native.yml` (R0015 version, blob 456f88c8)
+# triggers only on pushes to three named `pro/...` engineering branches and
+# derives `--phase` from the branch name, so it cannot run on the R0015
+# integration branch. Editing it is outside integration custody (R0016 also
+# changes it).
+#
+# This workflow COPIES that file's jobs with the phase fixed to `r0015`. It
+# keeps the same runner images (ubuntu-24.04, macos-15 with Apple /bin/bash
+# 3.2, windows-2022 with Windows PowerShell 5.1 and the digest-pinned
+# PowerShell 7.6.6), the same pinned action SHAs, sparse checkouts and timeouts
+# (60 min Windows), the same Windows env (telemetry and update-check opt-outs,
+# autocrlf off), the same collector invocation
+# (`tools/qualification/installer_native.py --phase r0015`) and the same
+# artifact packaging, upload and names. The collector sets
+# SALAH_TEST_BASH=/bin/bash on POSIX hosts.
+#
+# The only deliberate differences are:
+#   - the triggers: push to `claude/r0015-integration-*`, and workflow_dispatch;
+#   - `--phase r0015` is a literal instead of being derived from the ref name;
+#   - the concurrency group name;
+#   - the path filter adds this file itself;
+#   - one extra job, `windows-r0013-phase`. It is a byte-for-byte copy of the
+#     `windows` job with `--phase r0013` and its own artifact name. With R0015's
+#     collector, phase r0015 runs only the positive/no-open entry scenarios
+#     (R0016 owns the preview replay). Phase r0013 runs R0013's full
+#     twelve-scenario PS5.1/PS7 entry set and the bootstrap diagnostic under
+#     R0015's corrected 60 s instruments. That is how the R0013 Windows rows
+#     (ES13-13) are evaluated on the stacked tree. The original workflow runs
+#     the same collector phase for the R0013 branch.
+# Added by the installer-corrections round (B1 owner set, section B controls):
+#   - `windows-owner-archive`: tests/install-staging-owner.ps1 (with mutants)
+#     and tests/install-archive-controls.ps1 (with mutants) on windows-2022 and
+#     windows-2025 under both hosts, plus the owner controls replayed against
+#     the pre-correction install.ps1 (65fed184) so the positives are shown to
+#     fail on the old bytes;
+#   - `environment-windows` / `environment-posix`: the default-environment
+#     observation scripts (tools/qualification/environment-observation/, from
+#     claude/installer-env-diagnostics-20261112) run unchanged, then
+#     assert_defaults.py FAILS the job unless the runner's real default
+#     environment is admitted; environment-posix also runs
+#     tests/install-staging-parent.py (B2 defaults and refusals);
+#   - `windows-standard-user` (observation, non-gating): a temporary standard
+#     user runs the observation script with its own profile loaded.
+# `installer-native.yml` and `r0013-integration-qualification.yml` are untouched.
+name: R0015 integration qualification
+
+on:
+  push:
+    branches:
+      - claude/r0015-integration-*
+    paths:
+      - install.sh
+      - install.ps1
+      - tests/install*
+      - src/native/builder.html
+      - src/native/config.js
+      - tools/qualification/installer_native.py
+      - .github/workflows/installer-native.yml
+      - .github/workflows/r0015-integration-qualification.yml
+      - tools/qualification/environment-observation/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: r0015-integration-qualification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  posix:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            native: Linux
+          - runner: macos-15
+            native: Darwin
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /src/native/builder.html
+            /src/native/config.js
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Execute native disposable installer fixtures
+        shell: bash
+        run: |
+          python3 tools/qualification/installer_native.py --expected-os '${{ matrix.native }}' --phase r0015 --output "$RUNNER_TEMP/installer-evidence"
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: bash
+        run: |
+          python3 -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-${{ matrix.native }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      POWERSHELL_UPDATECHECK: 'Off'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Execute both native PowerShell hosts
+        shell: powershell
+        run: |
+          python tools/qualification/installer_native.py --expected-os Windows --phase r0015 --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+          exit $LASTEXITCODE
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: powershell
+        run: |
+          python -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+          exit $LASTEXITCODE
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-Windows-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  windows-r0013-phase:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      POWERSHELL_UPDATECHECK: 'Off'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /install.ps1
+            /presets/
+            /tests/install*
+            /tools/qualification/installer_native.py
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Execute both native PowerShell hosts
+        shell: powershell
+        run: |
+          python tools/qualification/installer_native.py --expected-os Windows --phase r0013 --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+          exit $LASTEXITCODE
+      - name: Package original native evidence without changing fixture names
+        if: always()
+        shell: powershell
+        run: |
+          python -c "import os, pathlib, tarfile; root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'installer-evidence'; assert root.is_dir(), 'No native evidence directory'; archive = tarfile.open(root.with_suffix('.tar.gz'), 'w:gz', dereference=False); archive.add(root, arcname='installer-evidence'); archive.close()"
+          exit $LASTEXITCODE
+      - name: Retain original native evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: installer-Windows-r0013-phase-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/installer-evidence.tar.gz
+          if-no-files-found: error
+          retention-days: 30
+  windows-owner-archive:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      POWERSHELL_UPDATECHECK: 'Off'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.ps1
+            /tests/install-staging-owner.ps1
+            /tests/install-archive-controls.ps1
+            /tools/qualification/environment-observation/
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Extract the pre-correction install.ps1 (65fed184) with git show
+        shell: bash
+        run: |
+          git fetch --no-tags --depth=1 origin 65fed1848583121242754e56c85d96f82f567725
+          git show 65fed1848583121242754e56c85d96f82f567725:install.ps1 > "$RUNNER_TEMP/pre-correction-install.ps1"
+          echo "pre-correction blob $(git hash-object "$RUNNER_TEMP/pre-correction-install.ps1"); tree blob $(git rev-parse HEAD:install.ps1)"
+      - name: Owner and archive controls on both hosts
+        shell: powershell
+        run: |
+          # Fixtures live under the real TEMP: RUNNER_TEMP's ancestry is not an admissible staging chain.
+          $ErrorActionPreference = 'Continue'
+          $out = Join-Path $env:RUNNER_TEMP 'owner-archive'
+          [void][IO.Directory]::CreateDirectory($out)
+          $hosts = @(@('ps51', (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe')), @('ps7', $env:INSTALL_TEST_PS7))
+          $failed = @()
+          foreach ($h in $hosts) {
+            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-staging-owner.ps1 -SourceFile (Resolve-Path install.ps1).Path -FixtureParent $env:TEMP -RealCompile -ReportPath (Join-Path $out ('owner-' + $h[0] + '.json')) > (Join-Path $out ('owner-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('owner-' + $h[0] + '.stderr.txt'))
+            "owner $($h[0]) exit $LASTEXITCODE"; if ($LASTEXITCODE -ne 0) { $failed += 'owner-' + $h[0] }
+            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-staging-owner.ps1 -SourceFile (Join-Path $env:RUNNER_TEMP 'pre-correction-install.ps1') -FixtureParent $env:TEMP -RealCompile -NoMutations -ReportPath (Join-Path $out ('owner-pre-correction-' + $h[0] + '.json')) > (Join-Path $out ('owner-pre-correction-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('owner-pre-correction-' + $h[0] + '.stderr.txt'))
+            "owner pre-correction $($h[0]) exit $LASTEXITCODE (expected nonzero)"
+            & $h[1] -NoLogo -NoProfile -NonInteractive -File tests/install-archive-controls.ps1 -SourceFile (Resolve-Path install.ps1).Path -FixtureParent $env:TEMP -ReportPath (Join-Path $out ('archive-' + $h[0] + '.json')) > (Join-Path $out ('archive-' + $h[0] + '.stdout.txt')) 2> (Join-Path $out ('archive-' + $h[0] + '.stderr.txt'))
+            "archive $($h[0]) exit $LASTEXITCODE"; if ($LASTEXITCODE -ne 0) { $failed += 'archive-' + $h[0] }
+          }
+          python tools/qualification/environment-observation/assert_defaults.py --owner-new (Join-Path $out 'owner-ps51.json') --owner-old (Join-Path $out 'owner-pre-correction-ps51.json') --owner-new (Join-Path $out 'owner-ps7.json') --owner-old (Join-Path $out 'owner-pre-correction-ps7.json') --output (Join-Path $out 'owner-gate.json')
+          if ($LASTEXITCODE -ne 0) { $failed += 'owner-gate' }
+          if ($failed.Count) { "FAILED: $($failed -join ', ')"; exit 1 }
+          exit 0
+      - name: Retain owner and archive control reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owner-archive-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/owner-archive
+          if-no-files-found: error
+          retention-days: 30
+  environment-windows:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    env:
+      POWERSHELL_TELEMETRY_OPTOUT: '1'
+      DOTNET_CLI_TELEMETRY_OPTOUT: '1'
+      POWERSHELL_UPDATECHECK: 'Off'
+      GIT_CONFIG_COUNT: '1'
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.ps1
+            /presets/
+            /tools/qualification/environment-observation/
+      - name: Acquire exact supported PowerShell 7 bytes
+        shell: powershell
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP 'PowerShell-7.6.6-win-x64.zip'
+          Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip' -OutFile $archive
+          if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne '02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860') { throw 'PowerShell runtime digest mismatch' }
+          $runtime = Join-Path $env:RUNNER_TEMP 'installer-pwsh7'
+          Expand-Archive -LiteralPath $archive -DestinationPath $runtime
+          "INSTALL_TEST_PS7=$(Join-Path $runtime 'pwsh.exe')" | Out-File -LiteralPath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Observe the real default environment on both hosts
+        shell: powershell
+        run: |
+          # Same calls as installer-environment-observation.yml with the real TEMP and USERPROFILE.
+          $ErrorActionPreference = 'Continue'
+          $out = Join-Path $env:RUNNER_TEMP 'environment-observation'
+          [void][IO.Directory]::CreateDirectory($out)
+          $env:OBSERVED_INSTALL_PS1_BLOB = (git rev-parse HEAD:install.ps1)
+          $hosts = @(@('ps51', (Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe')), @('ps7', $env:INSTALL_TEST_PS7))
+          foreach ($h in $hosts) {
+            & $h[1] -NoProfile -File tools/qualification/environment-observation/windows_observation.ps1 -SourceFile (Resolve-Path install.ps1).Path -OutputFile (Join-Path $out ('functions-' + $h[0] + '.json')) -FixtureParent $env:RUNNER_TEMP
+            python tools/qualification/environment-observation/windows_end_to_end.py --source install.ps1 --preset presets/salah-widget.tablissng.json --host-name $h[0] --host-exe $h[1] --fixture-parent $env:RUNNER_TEMP --output (Join-Path $out ('entry-' + $h[0] + '.json'))
+          }
+          exit 0
+      - name: Require the real default environment to be admitted
+        shell: powershell
+        run: |
+          $out = Join-Path $env:RUNNER_TEMP 'environment-observation'
+          python tools/qualification/environment-observation/assert_defaults.py --windows-functions (Join-Path $out 'functions-ps51.json') --windows-functions (Join-Path $out 'functions-ps7.json') --windows-entry (Join-Path $out 'entry-ps51.json') --windows-entry (Join-Path $out 'entry-ps7.json') --output (Join-Path $out 'default-gate.json')
+          exit $LASTEXITCODE
+      - name: Retain observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: environment-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/environment-observation
+          if-no-files-found: error
+          retention-days: 30
+  environment-posix:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [macos-15, ubuntu-24.04]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.sh
+            /tests/install-staging-native.py
+            /tests/install-staging-parent.py
+            /tools/qualification/environment-observation/
+      - name: Observe the real default environment for this tree's and main's install.sh
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/environment-observation"
+          mkdir -p "$out"
+          git fetch --no-tags --depth=1 origin +refs/heads/main:refs/remotes/origin/main
+          git show origin/main:install.sh > "$RUNNER_TEMP/main-install.sh"
+          printf 'main_commit=%s\nmain_install_sh_blob=%s\ntree_commit=%s\ntree_install_sh_blob=%s\n' "$(git rev-parse origin/main)" "$(git rev-parse origin/main:install.sh)" "$(git rev-parse HEAD)" "$(git rev-parse HEAD:install.sh)" > "$out/sources.txt"
+          python3 tools/qualification/environment-observation/posix_observation.py \
+            --source tree=install.sh --source "main=$RUNNER_TEMP/main-install.sh" \
+            --repo-root . --fixture-parent "$RUNNER_TEMP" --output "$out/posix-${{ matrix.runner }}.json"
+      - name: Require the real default environment to be admitted
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/environment-observation"
+          python3 tools/qualification/environment-observation/assert_defaults.py --posix "$out/posix-${{ matrix.runner }}.json" --output "$out/default-gate.json"
+      - name: Staging-parent defaults and refusals (tests/install-staging-parent.py)
+        shell: bash
+        env:
+          SALAH_TEST_BASH: /bin/bash
+        run: |
+          python3 tests/install-staging-parent.py install.sh --report "$RUNNER_TEMP/environment-observation/staging-parent.json" > /dev/null
+      - name: Retain observations
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: environment-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/environment-observation
+          if-no-files-found: error
+          retention-days: 30
+  windows-standard-user:
+    # Observation only (does not gate): a temporary non-administrator local
+    # account runs the unchanged observation script under Windows PowerShell
+    # 5.1 with its own profile loaded (Start-Process -Credential -LoadUserProfile).
+    # The account and its profile are removed afterwards.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [windows-2022, windows-2025]
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /install.ps1
+            /tools/qualification/environment-observation/
+      - name: Observe staging parents as a temporary standard user
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $user = 'r15std' + (Get-Random -Minimum 1000 -Maximum 9999)
+          $chars = [char[]]((48..57) + (65..90) + (97..122))
+          $secret = (-join (1..24 | ForEach-Object { $chars | Get-Random })) + '!a7Z'
+          $dir = Join-Path $env:RUNNER_TEMP 'standard-user'
+          [void][IO.Directory]::CreateDirectory($dir)
+          Copy-Item install.ps1, tools/qualification/environment-observation/windows_observation.ps1 -Destination $dir
+          $null = & net.exe user $user $secret /add /Y
+          if ($LASTEXITCODE -ne 0) { throw 'temporary user creation failed' }
+          try {
+            $null = & icacls.exe $dir /grant ($user + ':(OI)(CI)M') /Q
+            $inner = @"
+          `$o = '$dir'
+          `$facts = foreach (`$p in @(`$env:USERPROFILE, `$env:TEMP)) { `$a = Get-Acl -LiteralPath `$p; [pscustomobject]@{ variable = `$(if (`$p -eq `$env:USERPROFILE) { 'USERPROFILE' } else { 'TEMP' }); ownerSid = `$a.GetOwner([Security.Principal.SecurityIdentifier]).Value } }
+          [pscustomobject]@{ userSid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value; elevated = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator); ps = `$PSVersionTable.PSVersion.ToString(); owners = @(`$facts) } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path `$o 'identity.json') -Encoding UTF8
+          & (Join-Path `$o 'windows_observation.ps1') -SourceFile (Join-Path `$o 'install.ps1') -OutputFile (Join-Path `$o 'functions-standard-user.json') -FixtureParent `$env:TEMP *> (Join-Path `$o 'observation.log')
+          'done' | Set-Content -LiteralPath (Join-Path `$o 'done.txt')
+          "@
+            # CreateProcessWithLogonW limits the command line to 1024 characters: pass a file.
+            $innerFile = Join-Path $dir 'standard-user-observe.ps1'
+            [IO.File]::WriteAllText($innerFile, $inner, (New-Object Text.UTF8Encoding $true))
+            $exe = Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe'
+            # Interactive-type logon (Users hold that right) with the account's profile loaded.
+            $cred = New-Object Management.Automation.PSCredential($user, (ConvertTo-SecureString $secret -AsPlainText -Force))
+            $p = Start-Process -FilePath $exe -ArgumentList ('-NoProfile -NonInteractive -ExecutionPolicy Bypass -File "' + $innerFile + '"') -Credential $cred -LoadUserProfile -WorkingDirectory $dir -PassThru
+            if (-not $p.WaitForExit(900000)) { try { $p.Kill() } catch {}; 'standard-user child timed out' }
+            "child exit: $($p.ExitCode); done marker: $(Test-Path (Join-Path $dir 'done.txt'))"
+          } finally {
+            $sid = $null; try { $sid = (New-Object Security.Principal.NTAccount($user)).Translate([Security.Principal.SecurityIdentifier]).Value } catch {}
+            $null = & net.exe user $user /delete
+            if ($sid) { Get-CimInstance Win32_UserProfile | Where-Object { $_.SID -eq $sid } | ForEach-Object { try { Remove-CimInstance -InputObject $_ } catch { "profile removal failed: $($_.Exception.Message)" } } }
+            "temporary user removed: $(-not (Get-LocalUser -Name $user -ErrorAction SilentlyContinue))"
+          }
+          if (Test-Path (Join-Path $dir 'identity.json')) { Get-Content -Raw (Join-Path $dir 'identity.json') }
+          $report = Join-Path $dir 'functions-standard-user.json'
+          if (Test-Path $report) {
+            $j = Get-Content -Raw $report | ConvertFrom-Json
+            "host elevated=$($j.host.elevated) tokenOwner=$($j.host.tokenOwnerClass) compile=$($j.compile.result) $($j.compile.message)"
+            foreach ($a in $j.admission) { "$($a.label): $($a.result) $($a.message) owner=$($a.inspect.ownerClass)" }
+            "staging: $($j.staging.result) $($j.staging.message)"
+          } else { 'no observation report'; exit 1 }
+      - name: Retain standard-user observation
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: standard-user-${{ matrix.runner }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/standard-user/*.json
+            ${{ runner.temp }}/standard-user/*.log
+          if-no-files-found: warn
+          retention-days: 30

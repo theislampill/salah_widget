@@ -1,0 +1,59 @@
+--- a/install.ps1
++++ b/install.ps1
+@@ -730,27 +730,18 @@
+         return $result
+     }
+     # ConvertFrom-Json can unwrap a singleton root array into one object.
+-    if ($raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $null -eq $data.PSObject.Properties['addons'] -or $data.PSObject.Properties['addons'].Name -cne 'addons' -or -not ($data.addons -is [array])) {
++    if ($raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or $null -eq $data.PSObject.Properties['addons'] -or -not ($data.addons -is [array])) {
+         $result.Reason='metadata-unsupported'
+         return $result
+     }
+     $supported=$true
+     foreach ($addon in $data.addons) {
+         if (-not ($addon -is [pscustomobject])) { $supported=$false; break }
+-        # PowerShell member lookup ignores case; Firefox JSON field names do not.
+-        foreach ($key in 'id','name','defaultLocale') {
+-            $property=$addon.PSObject.Properties[$key]
+-            if ($null -ne $property -and $property.Name -cne $key) { $supported=$false }
+-        }
+         foreach ($key in 'id','name') {
+             if ($null -ne $addon.$key -and -not ($addon.$key -is [string])) { $supported=$false }
+         }
+         $locale=$addon.defaultLocale
+         if ($null -ne $locale -and (-not ($locale -is [pscustomobject]) -or ($null -ne $locale.name -and -not ($locale.name -is [string])))) { $supported=$false }
+-        if ($locale -is [pscustomobject]) {
+-            $localeName=$locale.PSObject.Properties['name']
+-            if ($null -ne $localeName -and $localeName.Name -cne 'name') { $supported=$false }
+-        }
+         if (-not $supported) { break }
+         $parts = @()
+         if ($addon.id) { $parts += $addon.id }
+@@ -920,14 +911,7 @@
+ 
+ function Assert-ExtensionManifest([string]$Raw) {
+     $data=ConvertFrom-SupportedJson $Raw
+-    if ($Raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject])) { throw 'Unsupported extension manifest shape.' }
+-    $required=@{}
+-    foreach ($name in @('manifest_version','name','version')) {
+-        $property=@($data.PSObject.Properties | Where-Object {$_.Name -ceq $name})
+-        if ($property.Count -ne 1) { throw 'Required extension manifest key is missing or has the wrong case.' }
+-        $required[$name]=$property[0].Value
+-    }
+-    if (-not ($required.manifest_version -is [int] -or $required.manifest_version -is [long]) -or $required.manifest_version -notin @(2,3) -or -not ($required.name -is [string]) -or [string]::IsNullOrWhiteSpace($required.name) -or -not ($required.version -is [string]) -or [string]::IsNullOrWhiteSpace($required.version)) { throw 'Unsupported extension manifest shape.' }
++    if ($Raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject]) -or -not ($data.manifest_version -is [int] -or $data.manifest_version -is [long]) -or $data.manifest_version -notin @(2,3) -or -not ($data.name -is [string]) -or [string]::IsNullOrWhiteSpace($data.name) -or -not ($data.version -is [string]) -or [string]::IsNullOrWhiteSpace($data.version)) { throw 'Unsupported extension manifest shape.' }
+ }
+ 
+ function Test-ExtensionArchive([string]$Path, [string]$ExtractRoot) {
+@@ -1116,10 +1100,7 @@
+     if ($Raw -notmatch '^\s*\{' -or -not ($data -is [pscustomobject])) { throw 'Preset must be a supported JSON object.' }
+     $widget=@($data.PSObject.Properties | Where-Object {$_.Name -ceq 'widget/orpul7IDXSSP'})
+     $payload=@($data.PSObject.Properties | Where-Object {$_.Name -ceq 'data/orpul7IDXSSP'})
+-    if ($widget.Count -ne 1 -or $payload.Count -ne 1 -or -not ($widget[0].Value -is [pscustomobject]) -or -not ($payload[0].Value -is [pscustomobject])) { throw 'Preset lacks the canonical widget identity.' }
+-    $id=@($widget[0].Value.PSObject.Properties | Where-Object {$_.Name -ceq 'id'})
+-    $key=@($widget[0].Value.PSObject.Properties | Where-Object {$_.Name -ceq 'key'})
+-    if ($id.Count -ne 1 -or $key.Count -ne 1 -or -not ($id[0].Value -is [string]) -or -not ($key[0].Value -is [string]) -or $id[0].Value -cne 'orpul7IDXSSP' -or $key[0].Value -cne 'widget/html') { throw 'Preset lacks the exact canonical widget identity keys and values.' }
++    if ($widget.Count -ne 1 -or $payload.Count -ne 1 -or -not ($widget[0].Value -is [pscustomobject]) -or -not ($widget[0].Value.id -is [string]) -or -not ($widget[0].Value.key -is [string]) -or $widget[0].Value.id -cne 'orpul7IDXSSP' -or $widget[0].Value.key -cne 'widget/html' -or -not ($payload[0].Value -is [pscustomobject])) { throw 'Preset lacks the canonical widget identity.' }
+     $input=@($payload[0].Value.PSObject.Properties | Where-Object {$_.Name -ceq 'input'})
+     if ($input.Count -ne 1 -or -not ($input[0].Value -is [string])) { throw 'Preset lacks the canonical iframe input.' }
+     $settings=New-Object Xml.XmlReaderSettings

@@ -1,0 +1,187 @@
+{
+  "schema": "r0015-native3-bounded-correction-readonly-review.v1",
+  "reviewedAtUtc": "2026-11-11T10:30:09.277217+00:00",
+  "reviewer": "/root/r0015_contract",
+  "continuity": "refs/implementaudit/continuity-receipts/installer-20261111/G000E@a6641f3b8199b876140f95fea590e94977252dfb",
+  "scope": "Read-only independent review of exact two-operand integer-cast production correction and TEMP/TMP fixture acquisition delta. No test, PowerShell or installer execution. Only this scratch report is written.",
+  "disposition": "PASS_SCOPED_STATIC_REVIEW; NATIVE_GREEN_PENDING",
+  "authority": "No mutation, publication, acceptance or closure authority is conferred.",
+  "inputs": [
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/install-before.ps1",
+      "sha256": "7e6950359b6f28e165e02793e56cb1842db092403fd09abea9f0f9c595ba5114",
+      "bytes": 100261
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+      "sha256": "f801480d0f7ecbf7d5aec6a575036bc6fef7788dca68cde23ed4847ca9974140",
+      "bytes": 100271
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/install-powershell-transactions-before.ps1",
+      "sha256": "0432333cec9069298dd630cd3925a89ffd55b5ffe84557019a559446d31dfd89",
+      "bytes": 46022
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-powershell-transactions.ps1",
+      "sha256": "f79bb0a19ff431b67bb0d34bb0105fcd08760cfb46c06960f74b87299c11a81e",
+      "bytes": 46525
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/install-staging-windows-before.ps1",
+      "sha256": "d11449d18861c2be9890f226c26b116c08c7903845b102191399ddd3720a124d",
+      "bytes": 22500
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-staging-windows.ps1",
+      "sha256": "ccd63764db46c58225d3ddd95302b153337bd947e15c7eed585486088ed94eba",
+      "bytes": 22896
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run3/Windows/ps51-install-volume-policy.stderr.txt",
+      "sha256": "bab991b453dead99606639a21909d724be60e1a4d4aa1279b9ebf349220ab0fa",
+      "bytes": 347
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run3/Windows/ps51-first-call-observation.json",
+      "sha256": "d8dac6d2d61786307858b4166c516afb2130563a4ff98697b5d76ff4f5e2e672",
+      "bytes": 24927
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run3/Windows/install-entry-native.json",
+      "sha256": "a0fc965aad5251a32b06fc4a888fed8fa8ea7af3507566317a652920b2795188",
+      "bytes": 16995
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run3/Windows/ps7-install-powershell-transactions.json",
+      "sha256": "fd699f8f056a97407ab31b280515b8ff2b15865e24dd64804fc87fccd32adfc6",
+      "bytes": 9618
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run3/Windows/ps7-install-staging-windows.json",
+      "sha256": "3c23c64be9b31e5391c039f610bcf0e1d9df74e401b85f9899b4cdd42bf77add",
+      "bytes": 4349
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native-run3/Windows/ps7-transaction-mutations.json",
+      "sha256": "f180faec31ca143f92b881de9dc1fca43ce6bb8f4f06ffaacee36c7ebf8bd1d5",
+      "bytes": 12941
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/red.json",
+      "sha256": "4b889b55103a27d3e18c12d9228e2a3e0d553c0676d2870d6dbd990debae876b",
+      "bytes": 2068
+    },
+    {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/ace.cs",
+      "sha256": "b762e55e7819152fd79370f989e9f43eeb6e4d5ae7a2f9620145e37d6842982b",
+      "bytes": 65791
+    }
+  ],
+  "sourceDelta": {
+    "exactSingleReplacementVerified": true,
+    "function": "Open-CompilerDirectoryLease",
+    "line": 114,
+    "beforeExpression": "($ace.AceFlags -band [Security.AccessControl.AceFlags]::InheritOnly)",
+    "afterExpression": "([int]$ace.AceFlags -band [int][Security.AccessControl.AceFlags]::InheritOnly)",
+    "otherSourceBytesUnchanged": true,
+    "meaning": "Convert both enum operands to Int32 before the same bitwise AND/nonzero comparison; no change to ACL masks, owners, trusted principals, inheritance rule, native lease access/sharing, NTFS restriction, compiler output custody or DryRun behavior."
+  },
+  "fixtureDeltas": [
+    {
+      "before": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/install-powershell-transactions-before.ps1",
+      "after": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-powershell-transactions.ps1",
+      "added": 8,
+      "removed": 0,
+      "unifiedDiff": "--- \n+++ \n@@ -27,4 +27,5 @@\n $script:utf8 = New-Object Text.UTF8Encoding $false\n $script:oldTemp = $env:TEMP\n+$script:oldTmp = $env:TMP\n $script:oldUserProfile = $env:USERPROFILE\n \n@@ -125,4 +126,5 @@\n     }\n     $env:TEMP = $tempParent\n+    $env:TMP = $tempParent\n     $env:USERPROFILE = $profileParent\n     $script:DryRun = $false\n@@ -140,4 +142,9 @@\n     $script:releaseFixture = [pscustomobject]@{id=201; tag_name='v-fixture'; assets=@($asset)}\n     Set-DownloadPlan @((New-DownloadStep $Bytes))\n+    if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {\n+        $nativeTemp = [IO.Path]::GetTempPath()\n+        $script:caseNotes.compilerParent = [pscustomobject]@{temp=$env:TEMP;tmp=$env:TMP;native=$nativeTemp}\n+        Assert-Case ([string]::Equals($nativeTemp.TrimEnd('\\'),$tempParent.TrimEnd('\\'),[StringComparison]::OrdinalIgnoreCase)) 'SETUP: native compiler parent escaped the owned fixture.'\n+    }\n     $null = Initialize-Staging\n     Assert-FixturePath $script:WorkRoot\n@@ -689,4 +696,5 @@\n } finally {\n     $env:TEMP = $script:oldTemp\n+    $env:TMP = $script:oldTmp\n     $env:USERPROFILE = $script:oldUserProfile\n }\n"
+    },
+    {
+      "before": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/install-staging-windows-before.ps1",
+      "after": "/workspace/scratch/b8359a7e27bf/r0015/tests/install-staging-windows.ps1",
+      "added": 6,
+      "removed": 2,
+      "unifiedDiff": "--- \n+++ \n@@ -16,4 +16,5 @@\n $script:StagingAttempt=$null\n $script:oldTemp=$env:TEMP\n+$script:oldTmp=$env:TMP\n $script:oldProfile=$env:USERPROFILE\n $script:utf8=New-Object Text.UTF8Encoding $false\n@@ -53,5 +54,8 @@\n     $profileParent=Join-Path $root 'profile'\n     foreach($parent in @($tempParent,$profileParent)) { [void][IO.Directory]::CreateDirectory($parent); Set-FixtureDirectoryAcl $parent }\n-    $env:TEMP=$tempParent; $env:USERPROFILE=$profileParent\n+    $env:TEMP=$tempParent; $env:TMP=$tempParent; $env:USERPROFILE=$profileParent\n+    $nativeTemp=[IO.Path]::GetTempPath()\n+    $script:notes.compilerParent=[pscustomobject]@{temp=$env:TEMP;tmp=$env:TMP;native=$nativeTemp}\n+    Assert-Native ([string]::Equals($nativeTemp.TrimEnd('\\'),$tempParent.TrimEnd('\\'),[StringComparison]::OrdinalIgnoreCase)) 'SETUP: native compiler parent escaped the owned fixture.'\n     $script:DryRun=$false; $script:WorkRoot=$null; $script:DownloadRoot=$null; $script:PresetRoot=$null\n     $script:creates=@()\n@@ -304,5 +308,5 @@\n } finally {\n     if($script:StagingAttempt) { $script:DryRun=$false; Clear-OwnedScratch }\n-    $env:TEMP=$script:oldTemp; $env:USERPROFILE=$script:oldProfile\n+    $env:TEMP=$script:oldTemp; $env:TMP=$script:oldTmp; $env:USERPROFILE=$script:oldProfile\n }\n \n"
+    }
+  ],
+  "originalReceiptDigestsMatch": [
+    {
+      "name": "ps51-install-volume-policy.stderr.txt",
+      "matchesRecordedDigest": true
+    },
+    {
+      "name": "ps51-first-call-observation.json",
+      "matchesRecordedDigest": true
+    },
+    {
+      "name": "install-entry-native.json",
+      "matchesRecordedDigest": true
+    },
+    {
+      "name": "ps7-install-powershell-transactions.json",
+      "matchesRecordedDigest": true
+    },
+    {
+      "name": "ps7-install-staging-windows.json",
+      "matchesRecordedDigest": true
+    },
+    {
+      "name": "ps7-transaction-mutations.json",
+      "matchesRecordedDigest": true
+    }
+  ],
+  "findings": [
+    {
+      "id": "R15-NATIVE3-REVIEW-01",
+      "classification": "PASS_SCOPED_CAUSAL_SOURCE_CORRECTION",
+      "evidence": "Original install-entry-native.json has source7e695 and two failing rows: hostps51/casepositive and hostps51/caseno-open. Both record InvalidCastException at install.ps1:114, the old AceFlags -band expression.",
+      "assessment": "The exact f801 change addresses that observed conversion site with only two explicit integer casts. AceFlags has byte storage in the retained Microsoft .NET Framework reference source; InheritOnly is bit8. Widening these values to Int32 preserves the intended bit test and avoids relying on the failing enum bitwise conversion path.",
+      "qualification": "This is code/receipt reasoning, not observed correction GREEN on PS5.1 or PS7."
+    },
+    {
+      "id": "R15-NATIVE3-REVIEW-02",
+      "classification": "PASS_SCOPED_FIXTURE_PRECONDITION_REPAIR",
+      "evidence": "Transaction fixture changes8 lines added/no deletions; custody fixture changes6 added/2 deleted. Both preserve old TMP, set it to the same freshly controlled tempParent as TEMP, record actual IO.Path.GetTempPath(), assert equality before initialization, and restore TMP alongside existing TEMP/USERPROFILE restoration.",
+      "assessment": "The changes control a previously inherited compiler-parent input and make a parent mismatch an explicit fixture failure before the actual staging initializer. Existing product admission and useful positive/adverse assertions are unchanged. The recorded compilerParent object survives in per-case observations when a later operation fails.",
+      "qualification": "Windows native lookup gives TMP priority over TEMP. The original transaction receipts record the compiler-parent refusal but not the actual GetTempPath input; attribution to inherited TMP remains a supported inference until the new native parent observation and useful caller succeed."
+    },
+    {
+      "id": "R15-NATIVE3-REVIEW-03",
+      "classification": "GAP_NATIVE_REPLAY_REQUIRED",
+      "evidence": "Original PS7 transactions contain28 rows with1 pass and27 compiler-parent refusals; custody has8 rows with0 passes and7 compiler-parent refusals. The native3 PS7 mutation receipt has baselineStatus FAIL_OR_ACQUISITION_GAP, completefalse, and zero mutants executed.",
+      "assessment": "Do not credit any of those original failures as fixed from this static review. Replay the exact corrected source/fixtures on real Windows PS5.1 and PS7.6.6, retaining compilerParent observations, healthy actual initialization and the original adverse controls.",
+      "qualification": "The earlier independent PS7 CreatePrivateFile failure remains open. Removing an earlier compiler-parent acquisition obstruction neither resolves nor waives that later site."
+    }
+  ],
+  "controlsPreservedByExactDiff": [
+    "Production DryRun first guards and all effect/admission interfaces outside line114 are byte-identical.",
+    "Production ACL decision masks, trusted-owner sets, no-delete-share directory leases and NTFS-only volume admission are byte-identical.",
+    "Transaction download/admission/extraction/preset/publication assertions and POSIX-adapter boundary are unchanged.",
+    "Native custody ACL/identity/lease/cleanup controls and failure statuses are unchanged.",
+    "Actual native temp lookup is asserted before Initialize-Staging rather than substituted by a test stub.",
+    "No output is promoted to PASS when the new fixture precondition fails."
+  ],
+  "primarySources": [
+    {
+      "url": "https://raw.githubusercontent.com/microsoft/referencesource/main/mscorlib/system/security/accesscontrol/ace.cs",
+      "localPath": "/workspace/scratch/b8359a7e27bf/recovery/r0015-native3-correction/ace.cs",
+      "sha256": "b762e55e7819152fd79370f989e9f43eeb6e4d5ae7a2f9620145e37d6842982b",
+      "lines": "54-68",
+      "supports": "AceFlags byte underlying type and InheritOnly0x08."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.security.accesscontrol.aceflags?view=netframework-4.8.1",
+      "supports": "Bitwise flag combination and InheritOnly value8."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-gettemppathw",
+      "supports": "TMP precedes TEMP; returned path does not independently prove existence or access."
+    }
+  ],
+  "limits": [
+    "No tests, PowerShell processes, installer invocations or native APIs were executed by this reviewer.",
+    "No native GREEN, whole-contract readiness, or original-failure waiver is asserted.",
+    "Review binds the exact source and two fixture deltas only; separate native compiler observer, collector, full-entry and mutation-driver acquisition remain their owners' scope.",
+    "The safe top-level native receipts were read and matched to the retained RED manifest; this task did not reacquire or bulk-extract native archives."
+  ],
+  "inputsStableAtWrite": true
+}

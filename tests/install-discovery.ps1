@@ -160,10 +160,18 @@ if(@($errors).Count){throw 'Fixture source does not parse'}
 foreach($def in $ast.FindAll({param($n) $n -is [Management.Automation.Language.FunctionDefinitionAst]},$true)){. ([scriptblock]::Create($def.Extent.Text))}
 function Event([string]$Text){[IO.File]::AppendAllText((Join-Path $Fixture 'effects.txt'),$Text+[Environment]::NewLine)}
 function Get-BrowserConfigs {[pscustomobject]@{Key='firefox';Label='Firefox';Family='firefox';UserData=(Join-Path $Fixture 'profiles');Exes=@();StoreUrl='fixture://store';ManagerUrl='about:addons';NewTabUrl='about:newtab'}}
-function Initialize-Staging {Event 'stage'}
+function Initialize-Staging {Event 'stage';$script:StagingAttempt=[pscustomobject]@{Status='fixture-adapter';Retained=[pscustomobject]@{Path=(Join-Path $Fixture 'stage')}}}
+function Clear-OwnedScratch {if(-not $DryRun -and $script:StagingAttempt){Event 'cleanup'}}
 function Get-LatestRelease {[pscustomobject]@{tag_name='v-fixture';assets=@([pscustomobject]@{name='tabliss-firefox-signed.xpi';browser_download_url='https://example.invalid/asset'})}}
 function Download-Asset($Asset){Event 'asset';return (Join-Path $Fixture 'asset.xpi')}
 function Download-Preset {Event 'preset';return (Join-Path $Fixture 'preset.json')}
+# Discovery fixture admission boundary, not an assertion about artifact bytes.
+# Actual R0015 admission/native effects are exercised in their dedicated suite.
+function Get-AdmittedArtifact([string]$Path,[string]$Kind){
+    $expected=if($Kind -eq 'asset'){Join-Path $Fixture 'asset.xpi'}elseif($Kind -eq 'preset'){Join-Path $Fixture 'preset.json'}else{throw 'Unexpected discovery fixture artifact kind'}
+    if($Path -cne $expected){throw 'Actual discovery consumer changed its artifact path'}
+    Event ('admit:'+$Kind);return [pscustomobject]@{State='published'}
+}
 function Copy-Text([string]$Text){Event 'clipboard';return $true}
 function Open-TargetUrl($Target,[string]$Url){Event ('open:'+ $Url)}
 function Read-Host([string]$Prompt){Event 'prompt';if($Prompt -like 'Select target*'){return $Selection};return ''}

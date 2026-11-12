@@ -1,0 +1,247 @@
+{
+  "schema": "r0015-volume-admission-policy.v1",
+  "pass": true,
+  "nativeWindows": false,
+  "source": "/workspace/scratch/b8359a7e27bf/r0015/install.ps1",
+  "sourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+  "sourceUnchanged": true,
+  "testSha256": "9537d24479a2f621991c74b3cc3ff87f881c8f6724db4b3db6fc2d9e4eb64798",
+  "testUnchanged": true,
+  "host": "7.6.6",
+  "fixture": "/tmp/r0015-volume-adapter-irkzg7yy/temp/r0015-volume-policy-6f9e3a5be6264d53af7e7175c080d9d1",
+  "actualCSharpLiteralSha256": "81f1bc97ad33913bf72963246d53088ddcc40ba3b447bdf18f7530d16e9d3819",
+  "actualCSharpVolumePolicySha256": "2bc8f668ea1c038f9246c2cec2acd8372a659173bcdf68ee0d72f185363766c2",
+  "normalizedPolicyEqual": true,
+  "actualCompilerFunctionSha256": "5a3352ec2496be78c9bfd16e65bb3ba81c28a0e886bab5f9d765218467c69749",
+  "healthyControlsPass": true,
+  "unsupportedReportsAccepted": [],
+  "nativeNTFSHealthy": null,
+  "adapters": [
+    {
+      "language": "C#",
+      "kind": "GetVolumeInformationW response boundary",
+      "nativeReadbackDelegated": false,
+      "policyBodyChanged": false
+    },
+    {
+      "language": "C#",
+      "kind": "supplemental native path/drive read",
+      "from": "System.IO.Path.GetPathRoot(path)",
+      "to": "\"C:\\\\\""
+    },
+    {
+      "language": "C#",
+      "kind": "supplemental native path/drive read",
+      "from": "new DriveInfo(root).DriveType",
+      "to": "DriveType.Fixed"
+    },
+    {
+      "language": "PowerShell",
+      "kind": "supplemental native identity/path/drive read",
+      "from": "[Security.Principal.WindowsIdentity]::GetCurrent()",
+      "to": "(New-FixtureIdentity)"
+    },
+    {
+      "language": "PowerShell",
+      "kind": "supplemental native identity/path/drive read",
+      "from": "[IO.Path]::GetTempPath()",
+      "to": "'C:\\fixture'"
+    },
+    {
+      "language": "PowerShell",
+      "kind": "supplemental native identity/path/drive read",
+      "from": "[IO.Path]::GetFullPath($path).TrimEnd([IO.Path]::DirectorySeparatorChar)",
+      "to": "$path"
+    },
+    {
+      "language": "PowerShell",
+      "kind": "supplemental native identity/path/drive read",
+      "from": "[IO.Path]::GetPathRoot($full)",
+      "to": "'C:\\'"
+    },
+    {
+      "language": "PowerShell",
+      "kind": "supplemental native identity/path/drive read",
+      "from": "[IO.DriveInfo]::new($root).DriveType",
+      "to": "[IO.DriveType]::Fixed"
+    },
+    {
+      "language": "PowerShell",
+      "kind": "supplemental Join-Path returns Windows path string; no filesystem call"
+    },
+    {
+      "language": "PowerShell",
+      "kind": "actual compiler initializer receives response-boundary type; first directory lease stops invocation before any allocation"
+    }
+  ],
+  "results": [
+    {
+      "case": "actual NTFS Initialize-Staging positive",
+      "scope": "not executed on Windows",
+      "pass": null,
+      "status": "BLOCKED_NATIVE_HOST"
+    },
+    {
+      "case": "C# reported NTFS",
+      "scope": "actual RequireLocalAclVolume with declared read boundary",
+      "expectedAccepted": true,
+      "accepted": true,
+      "pass": true,
+      "reason": null,
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "NTFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME"
+    },
+    {
+      "case": "C# reported ReFS",
+      "scope": "actual RequireLocalAclVolume with declared read boundary",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Exception calling \"RequireLocalAclVolume\" with \"1\" argument(s): \"Staging requires the supported NTFS filesystem.\"",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "ReFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME"
+    },
+    {
+      "case": "C# reported unknown filesystem",
+      "scope": "actual RequireLocalAclVolume with declared read boundary",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Exception calling \"RequireLocalAclVolume\" with \"1\" argument(s): \"Staging requires the supported NTFS filesystem.\"",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME"
+    },
+    {
+      "case": "C# reported unsupported filesystem",
+      "scope": "actual RequireLocalAclVolume with declared read boundary",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Exception calling \"RequireLocalAclVolume\" with \"1\" argument(s): \"Staging requires the supported NTFS filesystem.\"",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "OtherFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME"
+    },
+    {
+      "case": "C# NTFS without persistent ACLs",
+      "scope": "actual RequireLocalAclVolume with declared read boundary",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Exception calling \"RequireLocalAclVolume\" with \"1\" argument(s): \"Staging volume does not provide persistent access control.\"",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "NTFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME"
+    },
+    {
+      "case": "C# volume query failure",
+      "scope": "actual RequireLocalAclVolume with declared read boundary",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Exception calling \"RequireLocalAclVolume\" with \"1\" argument(s): \"Read staging volume\"",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "NTFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME"
+    },
+    {
+      "case": "PowerShell reported NTFS",
+      "scope": "actual compiler context stops at first lease after volume policy",
+      "expectedAccepted": true,
+      "accepted": true,
+      "pass": true,
+      "reason": "FIXTURE_STOP_AFTER_VOLUME_ADMISSION",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "NTFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME",
+      "contextCreated": false,
+      "contextPath": null
+    },
+    {
+      "case": "PowerShell reported ReFS",
+      "scope": "actual compiler context stops at first lease after volume policy",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Compiler scratch requires the supported NTFS filesystem.",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "ReFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME",
+      "contextCreated": false,
+      "contextPath": null
+    },
+    {
+      "case": "PowerShell reported unknown filesystem",
+      "scope": "actual compiler context stops at first lease after volume policy",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Compiler scratch requires the supported NTFS filesystem.",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME",
+      "contextCreated": false,
+      "contextPath": null
+    },
+    {
+      "case": "PowerShell reported unsupported filesystem",
+      "scope": "actual compiler context stops at first lease after volume policy",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Compiler scratch requires the supported NTFS filesystem.",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "OtherFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME",
+      "contextCreated": false,
+      "contextPath": null
+    },
+    {
+      "case": "PowerShell NTFS without persistent ACLs",
+      "scope": "actual compiler context stops at first lease after volume policy",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Compiler scratch requires persistent local access control.",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "NTFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME",
+      "contextCreated": false,
+      "contextPath": null
+    },
+    {
+      "case": "PowerShell volume query failure",
+      "scope": "actual compiler context stops at first lease after volume policy",
+      "expectedAccepted": false,
+      "accepted": false,
+      "pass": true,
+      "reason": "Compiler scratch requires persistent local access control.",
+      "volumeCalls": 1,
+      "filesystemBufferRequested": true,
+      "reportedFilesystem": "NTFS",
+      "actualNativeFilesystem": "NO_NATIVE_VOLUME",
+      "contextCreated": false,
+      "contextPath": null
+    }
+  ],
+  "limits": [
+    "Counterfactual reported-volume responses are not execution on ReFS or an unsupported filesystem.",
+    "Actual source decision logic is preserved; local path/identity adapters are declared separately.",
+    "No unsupported volume is created, mounted or modified. No real profile is used.",
+    "Supplemental Linux policy evidence cannot qualify Windows ACL, identity, private creation, leases or native NTFS."
+  ]
+}

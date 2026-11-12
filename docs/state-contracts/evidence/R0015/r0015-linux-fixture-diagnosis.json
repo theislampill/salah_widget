@@ -1,0 +1,54 @@
+{
+  "schema": "r0015-owner-fixture-diagnosis/v1",
+  "baseline_receipt": "recovery/baseline-install-bash.json",
+  "baseline_source_sha256": "9c3fd523bbd77f3080097ddbd142b7e966795befd008daa36fbfb9f8f1ca1cee",
+  "baseline_nonpass": [
+    {
+      "case": "parent refuses wrong-owner-home",
+      "pass_": false,
+      "error": "Unsafe home admitted: wrong-owner-home"
+    }
+  ],
+  "classification": "FIXTURE_PREMISE_INVALID_NOT_PRODUCT_REGRESSION",
+  "root_cause": "tests/install-bash.py:136 selects /tmp as wrong-owner HOME, but current /tmp is subject-owned UID1000/mode0755 and satisfies production trusted_parent contract.",
+  "observed": {
+    "subject_uid": 1000,
+    "tmp_uid": 1000,
+    "tmp_mode": "0o755"
+  },
+  "countermeasure": "Use newly owned disposable native foreign-UID0 HOME0755 and same path/inode/GID/mode positive changed only to consumer UID; separately exercise terminal self-owner-only mutant at helper return. No production guard change.",
+  "scoped_existing_fixture_recommendation": "Validate the wrong-owner premise before execution; use an explicitly supplied freshly-created/chowned foreign fixture from a privileged supervisor. If acquisition unavailable, record non-PASS/incomplete; never chmod/chown global /tmp or a real home and never count skipped control as PASS. Keep the standalone A05-A07 proof distinct from old peer-DAC evidence.",
+  "new_fixture": "recovery/r0015-linux-owner-proof.py",
+  "new_fixture_sha256": "d67b7d7fd7a2e9e62a0a4fb57ec970dc02efe092210ac89493eabadfcde6c29c",
+  "local_receipt": "recovery/r0015-local-owner-proof.json",
+  "local_exit": 2,
+  "local_status": "BLOCKED_ACQUISITION",
+  "current_capability": {
+    "uid": 1000,
+    "euid": 1000,
+    "gid": 1000,
+    "groups": [],
+    "proc_status": {
+      "Uid": "1000\t1000\t1000\t1000",
+      "Gid": "1000\t1000\t1000\t1000",
+      "Groups": "",
+      "CapInh": "0000000000000000",
+      "CapPrm": "0000000000000000",
+      "CapEff": "0000000000000000",
+      "CapBnd": "0000000000000000",
+      "NoNewPrivs": "1"
+    },
+    "uid_map": "      1000          0          1\n",
+    "gid_map": "      1000          0          1\n"
+  },
+  "namespace_probe": {
+    "command": "unshare --user --map-root-user python3 (identity and setuid1000 only)",
+    "created_root_namespace": true,
+    "uid_map": "0 1000 1",
+    "distinct_uid_setuid1000_errno": 22,
+    "meaning": "Root in one-UID namespace cannot supply native distinct-UID matched pair."
+  },
+  "product_source_changed": false,
+  "real_home_or_account_changed": false,
+  "next_owner": "root: execute fixture on authorized privileged ubuntu-24.04 native runner"
+}

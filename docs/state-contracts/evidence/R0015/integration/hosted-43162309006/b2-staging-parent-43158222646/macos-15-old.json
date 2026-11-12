@@ -1,0 +1,398 @@
+{
+  "schema": "staging-parent-defaults.posix.v1",
+  "source": "/Users/runner/work/_temp/old-install.sh",
+  "sourceSha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+  "system": "Darwin",
+  "bash": [
+    "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin24)"
+  ],
+  "providedTMPDIR": "/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/",
+  "sudo": true,
+  "fixtureRemoved": true,
+  "results": [
+    {
+      "case": "TMPDIR exactly as provided",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "TMPDIR": "/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/",
+        "trusted_parent": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /var",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-ayujiq4m"
+        },
+        "round_trip": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /var",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-icb1uty2"
+        }
+      }
+    },
+    {
+      "case": "TMPDIR unset (default /tmp)",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "TMPDIR": null,
+        "trusted_parent": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /tmp",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-x07dw6_c"
+        },
+        "round_trip": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /tmp",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-dmy7eg_z"
+        }
+      }
+    },
+    {
+      "case": "/tmp",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "TMPDIR": "/tmp",
+        "trusted_parent": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /tmp",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-gvl4du7l"
+        },
+        "round_trip": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /tmp",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-9e_tx8ng"
+        }
+      }
+    },
+    {
+      "case": "/private/tmp",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "TMPDIR": "/private/tmp",
+        "trusted_parent": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/tmp",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-bo0ay0_l"
+        },
+        "round_trip": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/tmp",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-t0niuno9"
+        }
+      }
+    },
+    {
+      "case": "TMPDIR as provided without trailing slash",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "TMPDIR": "/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "trusted_parent": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /var",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-ne7max4v"
+        },
+        "round_trip": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /var",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-uhyt2ll0"
+        }
+      }
+    },
+    {
+      "case": "relative path",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "tmp",
+        "kind": "temp",
+        "expect": "absolute path",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Staging parent must be an absolute path: tmp",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-umy5wx6e"
+        }
+      }
+    },
+    {
+      "case": "newline in path",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/owned\nx",
+        "kind": "temp",
+        "expect": "newline",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Staging parent contains an unsupported newline.",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-cly6bynr"
+        }
+      }
+    },
+    {
+      "case": "dot component",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/./owned",
+        "kind": "temp",
+        "expect": "Noncanonical",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Noncanonical staging parent: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/./owned",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-l4qh93vt"
+        }
+      }
+    },
+    {
+      "case": "dot-dot component",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/owned/../owned",
+        "kind": "temp",
+        "expect": "Noncanonical",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Noncanonical staging parent: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/owned/../owned",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-8kn2d7bo"
+        }
+      }
+    },
+    {
+      "case": "user-owned symlink in the spelling",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/user-link",
+        "kind": "temp",
+        "expect": "Untrusted staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/user-link",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-8a1w3acj"
+        }
+      }
+    },
+    {
+      "case": "root-owned symlink in a user-owned directory",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/user-writable/root-link",
+        "kind": "temp",
+        "expect": "Untrusted staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/user-writable/root-link",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-sruwy5g8"
+        }
+      }
+    },
+    {
+      "case": "root-owned symlink in a sticky world-writable directory",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/root-sticky/root-link",
+        "kind": "temp",
+        "expect": "Untrusted staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/root-sticky",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-nebi1jg9"
+        }
+      }
+    },
+    {
+      "case": "root-owned symlink in a root-owned 0755 directory resolves to its physical target",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "rc": 1,
+        "stdout": "",
+        "stderr": "[ERROR] Untrusted staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/root-locked/root-link",
+        "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-t9hh9ax2"
+      }
+    },
+    {
+      "case": "symlink swapped after resolution",
+      "status": "FAIL",
+      "pass": false,
+      "detail": {
+        "rc": 1,
+        "stdout": "",
+        "stderr": "[ERROR] Untrusted staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/root-locked/root-link",
+        "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-46qvkl3m"
+      }
+    },
+    {
+      "case": "world-writable non-sticky ancestor",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/world-writable/child",
+        "kind": "temp",
+        "expect": "Writable staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/world-writable",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-c0pj2oib"
+        }
+      }
+    },
+    {
+      "case": "group-writable non-sticky ancestor",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/group-writable/child",
+        "kind": "temp",
+        "expect": "Writable staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/group-writable",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-j8tv1cc6"
+        }
+      }
+    },
+    {
+      "case": "sticky world-writable ancestor not owned by root",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/user-sticky/child",
+        "kind": "temp",
+        "expect": "Writable staging ancestor",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/user-sticky",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-kexjjwqv"
+        }
+      }
+    },
+    {
+      "case": "foreign-owned ancestor",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/foreign/child",
+        "kind": "temp",
+        "expect": "Untrusted ancestor owner",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted ancestor owner: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/foreign",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-8dfzibo4"
+        }
+      }
+    },
+    {
+      "case": "final directory not owned by the user",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/root-final",
+        "kind": "temp",
+        "expect": "private, owned staging parent",
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Use a private, owned staging parent (or root-owned sticky /tmp for scratch): /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/root-final",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-op4_7kgt"
+        }
+      }
+    },
+    {
+      "case": "HOME not owned by the user",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/foreign-home",
+        "kind": "home",
+        "expect": null,
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Use a private, owned staging parent (or root-owned sticky /tmp for scratch): /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/foreign-home",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-c181czlf"
+        }
+      }
+    },
+    {
+      "case": "HOME with group write",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-group",
+        "kind": "home",
+        "expect": [
+          "Writable staging ancestor",
+          "private, owned staging parent"
+        ],
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-group",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-2qow8o6l"
+        }
+      }
+    },
+    {
+      "case": "HOME with other write",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-other",
+        "kind": "home",
+        "expect": [
+          "Writable staging ancestor",
+          "private, owned staging parent"
+        ],
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Writable staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-other",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-gh6suo39"
+        }
+      }
+    },
+    {
+      "case": "missing staging parent",
+      "status": "PASS",
+      "pass": true,
+      "detail": {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/does-not-exist",
+        "kind": "temp",
+        "expect": null,
+        "observed": {
+          "rc": 1,
+          "stdout": "",
+          "stderr": "[ERROR] Untrusted staging ancestor: /private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/does-not-exist",
+          "home": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-parent-yfzycqpv/home-j8u8emis"
+        }
+      }
+    }
+  ]
+}
