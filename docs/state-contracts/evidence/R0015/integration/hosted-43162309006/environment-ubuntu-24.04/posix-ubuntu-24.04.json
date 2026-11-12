@@ -1,0 +1,145 @@
+{
+  "schema": "staging-parent-environment-observation.posix.v1",
+  "system": "Linux",
+  "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "bash": [
+    "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)"
+  ],
+  "uid": 1001,
+  "imageVersion": "20261101.360.1",
+  "environment": {
+    "TMPDIR": null,
+    "TMPDIR_set": false,
+    "HOME": "/home/runner",
+    "RUNNER_TEMP": "/home/runner/work/_temp"
+  },
+  "facts": {
+    "ls_ld": {
+      "rc": 2,
+      "stdout": "drwxrwxrwt 13 root root 4096 Nov 12 05:35 /tmp\ndrwxr-xr-x 14 root root 4096 Nov  1 21:40 /var\n",
+      "stderr": "/bin/ls: cannot access '/private/var': No such file or directory\n/bin/ls: cannot access '/private/tmp': No such file or directory\n"
+    },
+    "candidates": [
+      {
+        "label": "/tmp",
+        "path": "/tmp",
+        "physical": "/tmp",
+        "ancestors": [
+          {
+            "path": "/",
+            "uid": 0,
+            "gid": 0,
+            "mode": "0o755",
+            "symlink": false,
+            "directory": true
+          },
+          {
+            "path": "/tmp",
+            "uid": 0,
+            "gid": 0,
+            "mode": "0o1777",
+            "symlink": false,
+            "directory": true
+          }
+        ]
+      }
+    ]
+  },
+  "versions": [
+    {
+      "label": "tree",
+      "sha256": "4d1818f89e8db936d8365b30b31a085835c5c8dfa60c036dfec504782dbcecab",
+      "gitBlob": "7e02cfa65fe71a3f7ce7f6081f7423aa35941f23",
+      "boundaryCount": 1,
+      "trustedParent": [
+        {
+          "candidate": "/tmp",
+          "path": "/tmp",
+          "result": "accepted",
+          "rc": 0,
+          "stdout": "/tmp\n",
+          "stderr": ""
+        }
+      ],
+      "initializeStaging": [
+        {
+          "candidate": "/tmp",
+          "TMPDIR": "/tmp",
+          "result": "initialized",
+          "bundleEntriesInFixtureHome": [
+            "salah-widget-install.bpslaR9v"
+          ],
+          "rc": 0,
+          "stdout": "WORK=/tmp/salah-widget-download.tFIkTuVE\nBUNDLE=/home/runner/work/_temp/envobs-posix-wg8bx5_c/home-init-tree-0/salah-widget-install.bpslaR9v\nWORK_REMOVED\n",
+          "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.tFIkTuVE\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.tFIkTuVE\n"
+        },
+        {
+          "candidate": "TMPDIR unset (installer default /tmp)",
+          "TMPDIR": null,
+          "result": "initialized",
+          "bundleEntriesInFixtureHome": [
+            "salah-widget-install.MBfQkx0v"
+          ],
+          "rc": 0,
+          "stdout": "WORK=/tmp/salah-widget-download.TGSQmCh3\nBUNDLE=/home/runner/work/_temp/envobs-posix-wg8bx5_c/home-init-tree-1/salah-widget-install.MBfQkx0v\nWORK_REMOVED\n",
+          "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.TGSQmCh3\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.TGSQmCh3\n"
+        }
+      ]
+    },
+    {
+      "label": "main",
+      "sha256": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+      "gitBlob": "d7f8267d2b426da79d8875f9599eeeed2696ffc8",
+      "boundaryCount": 1,
+      "trustedParent": [
+        {
+          "candidate": "/tmp",
+          "path": "/tmp",
+          "result": "accepted",
+          "rc": 0,
+          "stdout": "/tmp\n",
+          "stderr": ""
+        }
+      ],
+      "initializeStaging": [
+        {
+          "candidate": "/tmp",
+          "TMPDIR": "/tmp",
+          "result": "initialized",
+          "bundleEntriesInFixtureHome": [
+            "salah-widget-install.1ZEJm0IC"
+          ],
+          "rc": 0,
+          "stdout": "WORK=/tmp/salah-widget-download.V9MTszWZ\nBUNDLE=/home/runner/work/_temp/envobs-posix-wg8bx5_c/home-init-main-0/salah-widget-install.1ZEJm0IC\nWORK_REMOVED\n",
+          "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.V9MTszWZ\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.V9MTszWZ\n"
+        },
+        {
+          "candidate": "TMPDIR unset (installer default /tmp)",
+          "TMPDIR": null,
+          "result": "initialized",
+          "bundleEntriesInFixtureHome": [
+            "salah-widget-install.SYHQ9IoV"
+          ],
+          "rc": 0,
+          "stdout": "WORK=/tmp/salah-widget-download.ud7oDKWj\nBUNDLE=/home/runner/work/_temp/envobs-posix-wg8bx5_c/home-init-main-1/salah-widget-install.SYHQ9IoV\nWORK_REMOVED\n",
+          "stderr": "[ERROR] Private staging root is unavailable or changed: /tmp/salah-widget-download.ud7oDKWj\n[WARN] Scratch cleanup skipped; inspect this changed path manually: /tmp/salah-widget-download.ud7oDKWj\n"
+        }
+      ]
+    }
+  ],
+  "stagingNative": [
+    {
+      "run": "TMPDIR unset",
+      "TMPDIR": null,
+      "rc": 0,
+      "summary": {
+        "rows": 9,
+        "passing": 9,
+        "failing": []
+      },
+      "stderrTail": ""
+    }
+  ],
+  "fixtureRemoved": true
+}

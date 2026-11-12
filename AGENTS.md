@@ -15,6 +15,11 @@ generated root entries, bundles, worker, data, CSS or copied `real-sky/core`.
 The requested bottom-border fix is authored in `tools/native_core_horizon.py`;
 the builder applies that one digest-guarded horizon-predicate correction while
 copying the core. Keep its boundary and drift regression tests with the change.
+R0027 adds one more, retention-only, digest-guarded core transform:
+`tools/native_core_spectral_cache.py` bounds the inner exact-B-V fit cache of
+`src/spectral.mjs` (12,000, FIFO); spectral numbers stay bit-identical. It is
+not blanket authority and does not widen the horizon exception; see
+`docs/state-contracts/R0027.md` and its tests.
 Run its builders/tests in a disposable copy. Historical PASS does not qualify
 this candidate. The existing gates below remain requirements, not blanket PASS.
 

@@ -146,7 +146,7 @@ function loadPrayerPipeline(r) {
   Object.assign(r.context, {lat:24,lon:39,label:'Fixture',method:'2',school:'0',units:'f',LPOLL:0,
     _cacheTz:r.context.tz,CONFIG:null,lastDate:null,_loopStarted:false,_storageErr:null,
     fetchingTomorrow:false,_prayerStale:false,_rolloverBusy:false,_rolloverNextTry:0,_ROLLOVER_RETRY_MS:60000,
-    wxBusy:false,radarBusy:false,AbortController,
+    wxBusy:false,radarBusy:false,_wxRetry:{weather:null,radar:null},AbortController,
     setTimeout(callback,ms=0){const id=++serial;timers.set(id,{at:r.clock.mono+Number(ms),callback});return id;},
     clearTimeout(id){timers.delete(id);},
     localStorage:{getItem:key=>storage.get(key)??null,setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)},

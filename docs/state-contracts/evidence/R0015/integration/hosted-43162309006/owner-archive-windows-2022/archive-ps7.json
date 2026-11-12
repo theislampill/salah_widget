@@ -1,0 +1,417 @@
+{
+  "schema": "r0015-archive-controls.v1",
+  "sourceSha256": "288d8ba16961e95690c6afd2fb148f67d1cba078507430e76a9eb9e18e9718bc",
+  "testSha256": "76508f9d167860ff883d4fb71fa6bf260b77e1af2215a40ab6460333d6df86dd",
+  "runtime": "7.6.6",
+  "edition": "Core",
+  "platform": "Microsoft Windows NT 10.0.20348.0",
+  "fixtureRemoved": true,
+  "results": [
+    {
+      "case": "healthy archive downloads and unpacks",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "observation": {
+          "refused": false,
+          "message": null,
+          "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\healthy\\profile\\SalahWidgetBundle-94c08d66d1ea47bea4c6573c8581dfb9\\downloads\\8068091d1037482f93a309ce7e8cb27a-tabliss-chromium.zip",
+          "bundle": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\healthy\\profile\\SalahWidgetBundle-94c08d66d1ea47bea4c6573c8581dfb9\\unpacked-0321f9adb0f844caa07e37e4d39cf522\\extension",
+          "outside": [],
+          "published": [
+            "8068091d1037482f93a309ce7e8cb27a-tabliss-chromium.zip"
+          ],
+          "unpackedFiles": [
+            "\\profile\\SalahWidgetBundle-94c08d66d1ea47bea4c6573c8581dfb9\\unpacked-0321f9adb0f844caa07e37e4d39cf522\\extension\\data.txt",
+            "\\profile\\SalahWidgetBundle-94c08d66d1ea47bea4c6573c8581dfb9\\unpacked-0321f9adb0f844caa07e37e4d39cf522\\extension\\manifest.json"
+          ],
+          "downloads": 1,
+          "recordStates": [
+            "asset:published",
+            "unpacked:published"
+          ]
+        }
+      }
+    },
+    {
+      "case": "backslash member is refused before any write outside the private roots",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "markerExists": false,
+        "observation": {
+          "refused": true,
+          "message": "Unsafe archive member path.",
+          "archive": null,
+          "bundle": null,
+          "outside": [],
+          "published": [],
+          "unpackedFiles": [],
+          "downloads": 1,
+          "recordStates": [
+            "asset:validation-failed"
+          ]
+        }
+      }
+    },
+    {
+      "case": "declared digest mismatch publishes nothing",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "observation": {
+          "refused": true,
+          "message": "Candidate identity, expected size or declared digest differs.",
+          "archive": null,
+          "bundle": null,
+          "outside": [],
+          "published": [],
+          "unpackedFiles": [],
+          "downloads": 1,
+          "recordStates": [
+            "asset:validation-failed"
+          ]
+        }
+      }
+    },
+    {
+      "case": "declared size mismatch publishes nothing",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "observation": {
+          "refused": true,
+          "message": "Candidate identity, expected size or declared digest differs.",
+          "archive": null,
+          "bundle": null,
+          "outside": [],
+          "published": [],
+          "unpackedFiles": [],
+          "downloads": 1,
+          "recordStates": [
+            "asset:validation-failed"
+          ]
+        }
+      }
+    },
+    {
+      "case": "member CRC mismatch is refused before any member is written",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "dataFiles": 0,
+        "observation": {
+          "refused": true,
+          "message": "Archive member CRC or declared length differs.",
+          "archive": null,
+          "bundle": null,
+          "outside": [],
+          "published": [],
+          "unpackedFiles": [],
+          "downloads": 1,
+          "recordStates": [
+            "asset:validation-failed"
+          ]
+        }
+      }
+    },
+    {
+      "case": "mutant archive-backslash-guard-removed is detected",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "mutant": "archive-backslash-guard-removed",
+        "target": "backslash member is refused before any write outside the private roots",
+        "positive": "healthy archive downloads and unpacks",
+        "mutantSha256": "d407218ee79c354b54ceb4e7125e809ff88c1dc5e83c040b157a43231ab03424",
+        "baseline": "PASS",
+        "mutantTarget": "FAIL",
+        "mutantPositive": "PASS",
+        "mutantObservation": {
+          "ok": false,
+          "markerExists": true,
+          "observation": {
+            "refused": true,
+            "message": "Path is outside this staging attempt.",
+            "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-1094ae87\\backslash\\profile\\SalahWidgetBundle-1d6d6441af9f49f28bba4cc9f7570d9a\\downloads\\cbdf46b65b8d4295b98d5faa5d5f6ae4-tabliss-chromium.zip",
+            "bundle": null,
+            "outside": [
+              "\\profile\\r15-archive-marker"
+            ],
+            "published": [
+              "cbdf46b65b8d4295b98d5faa5d5f6ae4-tabliss-chromium.zip"
+            ],
+            "unpackedFiles": [
+              "\\profile\\SalahWidgetBundle-1d6d6441af9f49f28bba4cc9f7570d9a\\unpacked-9e05840f4643421cbfcb81d5c1a9be01\\extension\\manifest.json"
+            ],
+            "downloads": 1,
+            "recordStates": [
+              "asset:published",
+              "unpacked:extraction-failed"
+            ]
+          }
+        },
+        "status": "KILLED"
+      }
+    },
+    {
+      "case": "mutant asset-digest-check-removed is detected",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "mutant": "asset-digest-check-removed",
+        "target": "declared digest mismatch publishes nothing",
+        "positive": "healthy archive downloads and unpacks",
+        "mutantSha256": "ca0949b8220efeaa8ddcf2a8ec30648094cba511eea1c20c22e1ba2fa369b924",
+        "baseline": "PASS",
+        "mutantTarget": "FAIL",
+        "mutantPositive": "PASS",
+        "mutantObservation": {
+          "ok": false,
+          "observation": {
+            "refused": false,
+            "message": null,
+            "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-bdd16ad7\\digest\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\downloads\\73c8f97ac81d410aa3a238e1fcaf9575-tabliss-chromium.zip",
+            "bundle": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-bdd16ad7\\digest\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\unpacked-e8f7e710ed1d478b830bcf8edbf94e2c\\extension",
+            "outside": [],
+            "published": [
+              "73c8f97ac81d410aa3a238e1fcaf9575-tabliss-chromium.zip"
+            ],
+            "unpackedFiles": [
+              "\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\unpacked-e8f7e710ed1d478b830bcf8edbf94e2c\\extension\\data.txt",
+              "\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\unpacked-e8f7e710ed1d478b830bcf8edbf94e2c\\extension\\manifest.json"
+            ],
+            "downloads": 1,
+            "recordStates": [
+              "asset:published",
+              "unpacked:published"
+            ]
+          }
+        },
+        "status": "KILLED"
+      }
+    },
+    {
+      "case": "mutant asset-size-check-removed is detected",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "mutant": "asset-size-check-removed",
+        "target": "declared size mismatch publishes nothing",
+        "positive": "healthy archive downloads and unpacks",
+        "mutantSha256": "d89cb92fa4063b808d5d690850ede4001ae9b8544dbd7d08314ad9ee69d99751",
+        "baseline": "PASS",
+        "mutantTarget": "FAIL",
+        "mutantPositive": "PASS",
+        "mutantObservation": {
+          "ok": false,
+          "observation": {
+            "refused": false,
+            "message": null,
+            "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-c94056cf\\size\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\downloads\\4d7a87507f9b4922a32ebe288a613b3f-tabliss-chromium.zip",
+            "bundle": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-c94056cf\\size\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\unpacked-6d2ec715ba784901b3cfe7932450f463\\extension",
+            "outside": [],
+            "published": [
+              "4d7a87507f9b4922a32ebe288a613b3f-tabliss-chromium.zip"
+            ],
+            "unpackedFiles": [
+              "\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\unpacked-6d2ec715ba784901b3cfe7932450f463\\extension\\data.txt",
+              "\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\unpacked-6d2ec715ba784901b3cfe7932450f463\\extension\\manifest.json"
+            ],
+            "downloads": 1,
+            "recordStates": [
+              "asset:published",
+              "unpacked:published"
+            ]
+          }
+        },
+        "status": "KILLED"
+      }
+    },
+    {
+      "case": "mutant archive-crc-check-removed is detected",
+      "pass": true,
+      "pass_": true,
+      "status": "PASS",
+      "detail": {
+        "mutant": "archive-crc-check-removed",
+        "target": "member CRC mismatch is refused before any member is written",
+        "positive": "healthy archive downloads and unpacks",
+        "mutantSha256": "5fb04c951581550274143dd8639f2184e188005304303cbef6296475b574fb1e",
+        "baseline": "PASS",
+        "mutantTarget": "FAIL",
+        "mutantPositive": "PASS",
+        "mutantObservation": {
+          "ok": false,
+          "dataFiles": 1,
+          "observation": {
+            "refused": true,
+            "message": "Extraction bytes differ from preflight.",
+            "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-0acf9757\\crc\\profile\\SalahWidgetBundle-56c5468751e54b3bba82eb1c5eab1e7a\\downloads\\5017c3930dc14e5499e407ec42877675-tabliss-chromium.zip",
+            "bundle": null,
+            "outside": [],
+            "published": [
+              "5017c3930dc14e5499e407ec42877675-tabliss-chromium.zip"
+            ],
+            "unpackedFiles": [
+              "\\profile\\SalahWidgetBundle-56c5468751e54b3bba82eb1c5eab1e7a\\unpacked-f60568706c6d4be1b11f125a6d4b7c7b\\extension\\data.txt",
+              "\\profile\\SalahWidgetBundle-56c5468751e54b3bba82eb1c5eab1e7a\\unpacked-f60568706c6d4be1b11f125a6d4b7c7b\\extension\\manifest.json"
+            ],
+            "downloads": 1,
+            "recordStates": [
+              "asset:published",
+              "unpacked:extraction-failed"
+            ]
+          }
+        },
+        "status": "KILLED"
+      }
+    }
+  ],
+  "mutations": [
+    {
+      "mutant": "archive-backslash-guard-removed",
+      "target": "backslash member is refused before any write outside the private roots",
+      "positive": "healthy archive downloads and unpacks",
+      "mutantSha256": "d407218ee79c354b54ceb4e7125e809ff88c1dc5e83c040b157a43231ab03424",
+      "baseline": "PASS",
+      "mutantTarget": "FAIL",
+      "mutantPositive": "PASS",
+      "mutantObservation": {
+        "ok": false,
+        "markerExists": true,
+        "observation": {
+          "refused": true,
+          "message": "Path is outside this staging attempt.",
+          "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-1094ae87\\backslash\\profile\\SalahWidgetBundle-1d6d6441af9f49f28bba4cc9f7570d9a\\downloads\\cbdf46b65b8d4295b98d5faa5d5f6ae4-tabliss-chromium.zip",
+          "bundle": null,
+          "outside": [
+            "\\profile\\r15-archive-marker"
+          ],
+          "published": [
+            "cbdf46b65b8d4295b98d5faa5d5f6ae4-tabliss-chromium.zip"
+          ],
+          "unpackedFiles": [
+            "\\profile\\SalahWidgetBundle-1d6d6441af9f49f28bba4cc9f7570d9a\\unpacked-9e05840f4643421cbfcb81d5c1a9be01\\extension\\manifest.json"
+          ],
+          "downloads": 1,
+          "recordStates": [
+            "asset:published",
+            "unpacked:extraction-failed"
+          ]
+        }
+      },
+      "status": "KILLED"
+    },
+    {
+      "mutant": "asset-digest-check-removed",
+      "target": "declared digest mismatch publishes nothing",
+      "positive": "healthy archive downloads and unpacks",
+      "mutantSha256": "ca0949b8220efeaa8ddcf2a8ec30648094cba511eea1c20c22e1ba2fa369b924",
+      "baseline": "PASS",
+      "mutantTarget": "FAIL",
+      "mutantPositive": "PASS",
+      "mutantObservation": {
+        "ok": false,
+        "observation": {
+          "refused": false,
+          "message": null,
+          "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-bdd16ad7\\digest\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\downloads\\73c8f97ac81d410aa3a238e1fcaf9575-tabliss-chromium.zip",
+          "bundle": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-bdd16ad7\\digest\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\unpacked-e8f7e710ed1d478b830bcf8edbf94e2c\\extension",
+          "outside": [],
+          "published": [
+            "73c8f97ac81d410aa3a238e1fcaf9575-tabliss-chromium.zip"
+          ],
+          "unpackedFiles": [
+            "\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\unpacked-e8f7e710ed1d478b830bcf8edbf94e2c\\extension\\data.txt",
+            "\\profile\\SalahWidgetBundle-d43c44522208410dbf341e2c81434ab5\\unpacked-e8f7e710ed1d478b830bcf8edbf94e2c\\extension\\manifest.json"
+          ],
+          "downloads": 1,
+          "recordStates": [
+            "asset:published",
+            "unpacked:published"
+          ]
+        }
+      },
+      "status": "KILLED"
+    },
+    {
+      "mutant": "asset-size-check-removed",
+      "target": "declared size mismatch publishes nothing",
+      "positive": "healthy archive downloads and unpacks",
+      "mutantSha256": "d89cb92fa4063b808d5d690850ede4001ae9b8544dbd7d08314ad9ee69d99751",
+      "baseline": "PASS",
+      "mutantTarget": "FAIL",
+      "mutantPositive": "PASS",
+      "mutantObservation": {
+        "ok": false,
+        "observation": {
+          "refused": false,
+          "message": null,
+          "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-c94056cf\\size\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\downloads\\4d7a87507f9b4922a32ebe288a613b3f-tabliss-chromium.zip",
+          "bundle": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-c94056cf\\size\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\unpacked-6d2ec715ba784901b3cfe7932450f463\\extension",
+          "outside": [],
+          "published": [
+            "4d7a87507f9b4922a32ebe288a613b3f-tabliss-chromium.zip"
+          ],
+          "unpackedFiles": [
+            "\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\unpacked-6d2ec715ba784901b3cfe7932450f463\\extension\\data.txt",
+            "\\profile\\SalahWidgetBundle-677c268eb6da41ed81a17f6258c3728e\\unpacked-6d2ec715ba784901b3cfe7932450f463\\extension\\manifest.json"
+          ],
+          "downloads": 1,
+          "recordStates": [
+            "asset:published",
+            "unpacked:published"
+          ]
+        }
+      },
+      "status": "KILLED"
+    },
+    {
+      "mutant": "archive-crc-check-removed",
+      "target": "member CRC mismatch is refused before any member is written",
+      "positive": "healthy archive downloads and unpacks",
+      "mutantSha256": "5fb04c951581550274143dd8639f2184e188005304303cbef6296475b574fb1e",
+      "baseline": "PASS",
+      "mutantTarget": "FAIL",
+      "mutantPositive": "PASS",
+      "mutantObservation": {
+        "ok": false,
+        "dataFiles": 1,
+        "observation": {
+          "refused": true,
+          "message": "Extraction bytes differ from preflight.",
+          "archive": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r15a-506451f1\\r15a-0acf9757\\crc\\profile\\SalahWidgetBundle-56c5468751e54b3bba82eb1c5eab1e7a\\downloads\\5017c3930dc14e5499e407ec42877675-tabliss-chromium.zip",
+          "bundle": null,
+          "outside": [],
+          "published": [
+            "5017c3930dc14e5499e407ec42877675-tabliss-chromium.zip"
+          ],
+          "unpackedFiles": [
+            "\\profile\\SalahWidgetBundle-56c5468751e54b3bba82eb1c5eab1e7a\\unpacked-f60568706c6d4be1b11f125a6d4b7c7b\\extension\\data.txt",
+            "\\profile\\SalahWidgetBundle-56c5468751e54b3bba82eb1c5eab1e7a\\unpacked-f60568706c6d4be1b11f125a6d4b7c7b\\extension\\manifest.json"
+          ],
+          "downloads": 1,
+          "recordStates": [
+            "asset:published",
+            "unpacked:extraction-failed"
+          ]
+        }
+      },
+      "status": "KILLED"
+    }
+  ]
+}

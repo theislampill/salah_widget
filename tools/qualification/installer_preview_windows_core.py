@@ -31,7 +31,7 @@ COMPANION_SECONDS = 3300
 ENTRY_SECONDS = 300
 ROOT_PREFIX = 'r16-core-'
 PINNED_INPUTS = {
-    'install.ps1': '7fbe213b8e299d30ccd73f824a5a5d5766ac220ffdd778422cd018d3bc5c8ef4',
+    'install.ps1': '07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a',
     'presets/salah-widget.tablissng.json': '9197c9bcfaf34ff06505963862e4e9280d3ad521e1ed287183f5d71cbce6b95f',
     'tests/install-preview.ps1': 'e5db234866df5fa41862dbb1d67fed4594b77b882823bfd631a9c5bf98525916',
     'tests/install-preview-acquire-timed.ps1': 'b7938e602fcf3864462f08b4748a139e894b8c4802d8643840d4439894a0ffd1',
@@ -244,19 +244,52 @@ def validate_companion_header(value, host, output_parent):
     return fixture, rows
 
 
+def preflight_identity(plan):
+    """Ignore enumeration order only in the nine admitted file-fact arrays."""
+    require(type(plan) is dict and type(plan.get('variants')) is list,
+            'Malformed companion preflight')
+    variants = plan['variants']
+    require(len(variants) == len(MUTATIONS) and all(type(row) is dict for row in variants) and
+            len({row.get('name') for row in variants}) == len(MUTATIONS) and
+            {row.get('name') for row in variants} == set(MUTATIONS),
+            'Companion preflight variant inventory differs')
+
+    def file_multiset(records):
+        require(type(records) is list, 'Preflight file facts are not an array')
+        for record in records:
+            require(type(record) is dict and set(record) == {'path', 'bytes', 'sha256'} and
+                    type(record['path']) is str and bool(record['path']) and
+                    type(record['bytes']) is int and record['bytes'] >= 0 and
+                    type(record['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}', record['sha256']),
+                    'Malformed complete preflight file fact')
+        # Sorting canonical full records retains every duplicate occurrence.
+        return sorted(json.dumps(record, sort_keys=True, separators=(',', ':'), allow_nan=False)
+                      for record in records)
+
+    normalized = dict(plan)
+    normalized['custodyFiles'] = file_multiset(plan.get('custodyFiles'))
+    normalized['variants'] = []
+    for variant in variants:
+        row = dict(variant)
+        row['priorEvidence'] = file_multiset(variant.get('priorEvidence'))
+        normalized['variants'].append(row)
+    # Every other value, scalar type, field and array order remains significant.
+    return json.dumps(normalized, sort_keys=True, separators=(',', ':'), allow_nan=False)
+
+
 def validate_companion_report(value, inputs, core, executable, python, output_parent, owner):
     host = core['expectedHost']
     fixture, rows = validate_companion_header(value, host, output_parent)
     result_path = checked_path(fixture / 'results.json', fixture)
     require(strict_json(result_path) == value, 'Companion raw report differs from captured stdout')
     require(value.get('test') == inputs['tests/install-preview-native-controls.py'], 'Companion receiver input identity differs')
-    require(value.get('preflight') == core['receiverPlan'], 'Companion preflight differs from the admitted same-host core')
+    require(preflight_identity(value.get('preflight')) == preflight_identity(core['receiverPlan']), 'Companion preflight differs from the admitted same-host core')
     identity = value.get('nativeHost', {})
     require(identity.get('installerExecuted') is False and identity.get('version') == core['host'], 'Companion host acquisition differs')
     verify_fact(identity.get('executable'), executable)
     require(identity.get('command') == [str(executable), '-NoProfile', '-NonInteractive', '-Command',
             '[Console]::Write($PSVersionTable.PSVersion.ToString())'], 'Companion host query command differs')
-    expected_custody = core['receiverPlan']['custodyFiles']
+    expected_custody = value['preflight']['custodyFiles']
     copies = value.get('retainedCustodyFiles')
     require(isinstance(copies, list) and len(copies) == len(expected_custody), 'Companion retained custody inventory differs')
     facts = [file_fact(result_path, owner)]
@@ -463,12 +496,12 @@ def main(argv=None):
         fixed_facts = originals + list(copied.values()) + [file_fact(executable), file_fact(python)]
         helper = load_helper(Path(copied['tools/qualification/installer_preview_host_probe.py']['path']))
         receiver = load_exact_python(copied['tests/install-preview-native-controls.py']['path'], RECEIVER_SHA, 'r0016_core2_receiver')
-        core_stage, companion_stage = root / 'core', root / 'companion'
+        core_stage, companion_stage = root / 'core', root / 'n'
         core_stage.mkdir(); companion_stage.mkdir()
         core_env = prepare_stage_environment(helper, core_stage / 'state', executable, os.environ, host)
         companion_env = prepare_stage_environment(helper, companion_stage / 'state', executable, os.environ, host)
         core_output = core_stage / 'fixtures'; core_output.mkdir()
-        companion_output = Path(companion_env['TEMP']) / 'companion-output'; companion_output.mkdir()
+        companion_output = Path(companion_env['TEMP'])
         # The exact core report path is obtained only after its complete owned
         # fixture is acquired; no earlier receipt or guessed path is accepted.
         initial_command = build_commands(copied, executable, python, host, core_output, core_output / 'not-yet-acquired.json', companion_output)['core']

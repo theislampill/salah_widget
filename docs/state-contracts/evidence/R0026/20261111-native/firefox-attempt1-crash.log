@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "<worktree>\tools\qa\run_r0026_native.py", line 216, in <module>
+    sys.exit(0 if run(o.engine, Path(o.root), out, o.headed, o.tag or o.engine) else 1)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<worktree>\tools\qa\run_r0026_native.py", line 137, in run
+    before = form(); settled = search(q, '^(?!Searching)'); t, f, ti = tip(), form(), tipinfo()
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<worktree>\tools\qa\run_r0026_native.py", line 130, in search
+    page.fill('#label', q); page.press('#label', 'Enter')
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>\r0007\independent-ci\venv\Lib\site-packages\playwright\sync_api\_generated.py", line 12518, in press
+    self._sync(
+  File "<scratch>\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_sync_base.py", line 115, in _sync
+    return task.result()
+           ^^^^^^^^^^^^^
+  File "<scratch>\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_page.py", line 1113, in press
+    return await self._main_frame.press(**locals_to_params(locals()))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_frame.py", line 895, in press
+    await self._channel.send("press", self._timeout, locals_to_params(locals()))
+  File "<scratch>\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_connection.py", line 76, in send
+    return await self._connection.wrap_api_call(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<scratch>\r0007\independent-ci\venv\Lib\site-packages\playwright\_impl\_connection.py", line 632, in wrap_api_call
+    raise rewrite_error(error, f"{parsed_st['apiName']}: {error}") from None
+playwright._impl._errors.Error: Page.press: Target crashed 
+Call log:
+  - waiting for locator("#label")
+    - locator resolved to <input id="label" value="Madinah" placeholder="city, postcode, or place name"/>
+  - elementHandle.press("Enter")
+

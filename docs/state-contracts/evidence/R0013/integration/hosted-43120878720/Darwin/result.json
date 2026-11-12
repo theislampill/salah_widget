@@ -1,0 +1,319 @@
+{
+  "schema": "installer-native-v1",
+  "status": "PASS",
+  "phase": "r0013",
+  "host": {
+    "system": "Darwin",
+    "platform": "macOS-15.8.2-arm64-arm-64bit-Mach-O",
+    "python": "3.15.2 (main, Oct 25 2026, 16:57:51) [Clang 17.0.0 (clang-1700.6.4.2)]",
+    "image_version": "20261104.0514.1",
+    "bash": "GNU bash, version 3.2.57(1)-release (arm64-apple-darwin24)",
+    "uid": 501,
+    "gid": 20,
+    "groups": [
+      20,
+      12,
+      61,
+      79,
+      80,
+      81,
+      264,
+      701,
+      33,
+      98,
+      100,
+      204,
+      250,
+      395,
+      398,
+      399,
+      400
+    ],
+    "native_tools": {
+      "bash": "/bin/bash",
+      "python3": "/opt/homebrew/bin/python3",
+      "stat": "/usr/bin/stat",
+      "id": "/usr/bin/id",
+      "mktemp": "/usr/bin/mktemp",
+      "find": "/usr/bin/find",
+      "sort": "/usr/bin/sort",
+      "curl": "/usr/bin/curl",
+      "uname": "/usr/bin/uname",
+      "df": "/bin/df",
+      "sandbox-exec": "/usr/bin/sandbox-exec",
+      "log": "/usr/bin/log",
+      "dtruss": "/usr/bin/dtruss"
+    },
+    "parent_identities": [
+      {
+        "path": "/Users/runner/work/salah_widget/salah_widget",
+        "physical": "/Users/runner/work/salah_widget/salah_widget",
+        "device": 16777229,
+        "inode": 3504845,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/Users/runner/work/_temp",
+        "physical": "/Users/runner/work/_temp",
+        "device": 16777229,
+        "inode": 3504835,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "device": 16777229,
+        "inode": 28032,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o700",
+        "symlink": false
+      },
+      {
+        "path": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "physical": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+        "device": 16777229,
+        "inode": 28032,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o700",
+        "symlink": false
+      },
+      {
+        "path": "/Users/runner",
+        "physical": "/Users/runner",
+        "device": 16777229,
+        "inode": 27937,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o750",
+        "symlink": false
+      }
+    ],
+    "fixture_parent": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T",
+    "acquisition": {
+      "uname": {
+        "command": [
+          "/usr/bin/uname",
+          "-a"
+        ],
+        "exit": 0,
+        "stdout": "Darwin sjc22-bm204-7b1b8005-e03b-415d-ba21-c4f3668da03f-DE4589F8C263.local 24.6.0 Darwin Kernel Version 24.6.0: Sun Oct 11 23:44:11 PDT 2026; root:xnu-11417.140.69.713.47~2/RELEASE_ARM64_VMAPPLE arm64\n",
+        "stderr": ""
+      },
+      "filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/Users/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem   512-blocks      Used Available Capacity  Mounted on\n/dev/disk2s5  670064640 536684096  96505280    85%    /System/Volumes/Data\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem   512-blocks      Used Available Capacity  Mounted on\n/dev/disk2s5  670064640 536684096  96505280    85%    /System/Volumes/Data\n",
+        "stderr": ""
+      },
+      "sw_vers": {
+        "command": [
+          "/usr/bin/sw_vers"
+        ],
+        "exit": 0,
+        "stdout": "ProductName:\t\tmacOS\nProductVersion:\t\t15.8.2\nBuildVersion:\t\t24H232\n",
+        "stderr": ""
+      },
+      "native_stat": {
+        "command": [
+          "/usr/bin/stat",
+          "-f",
+          "%d:%i:%u:%g:%Lp",
+          "/Users/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "16777229:3505741:501:20:755\n",
+        "stderr": ""
+      },
+      "filesystem_volume": {
+        "command": [
+          "/usr/sbin/diskutil",
+          "info",
+          "-plist",
+          "/dev/disk2s5"
+        ],
+        "exit": 0,
+        "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>APFSContainerFree</key>\n\t<integer>49410719744</integer>\n\t<key>APFSContainerReference</key>\n\t<string>disk2</string>\n\t<key>APFSContainerSize</key>\n\t<integer>343073095680</integer>\n\t<key>APFSPhysicalStores</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>APFSPhysicalStore</key>\n\t\t\t<string>disk0s2</string>\n\t\t</dict>\n\t</array>\n\t<key>APFSSnapshot</key>\n\t<false/>\n\t<key>APFSVolumeGroupID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Bootable</key>\n\t<true/>\n\t<key>BooterDeviceIdentifier</key>\n\t<string>disk2s2</string>\n\t<key>BusProtocol</key>\n\t<string></string>\n\t<key>CanBeMadeBootable</key>\n\t<false/>\n\t<key>CanBeMadeBootableRequiresDestroy</key>\n\t<false/>\n\t<key>CapacityInUse</key>\n\t<integer>274782240768</integer>\n\t<key>Content</key>\n\t<string>41504653-0000-11AA-AA11-00306543ECAC</string>\n\t<key>DeviceBlockSize</key>\n\t<integer>4096</integer>\n\t<key>DeviceIdentifier</key>\n\t<string>disk2s5</string>\n\t<key>DeviceNode</key>\n\t<string>/dev/disk2s5</string>\n\t<key>DeviceTreePath</key>\n\t<string>IODeviceTree:/arm-io/pcie@30000000/pci106b,1a00@6/AppleVirtIOStorageDevice</string>\n\t<key>DiskUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Ejectable</key>\n\t<false/>\n\t<key>EjectableMediaAutomaticUnderSoftwareControl</key>\n\t<false/>\n\t<key>EjectableOnly</key>\n\t<false/>\n\t<key>Encryption</key>\n\t<false/>\n\t<key>EncryptionThisVolumeProper</key>\n\t<false/>\n\t<key>FileVault</key>\n\t<false/>\n\t<key>FilesystemName</key>\n\t<string>APFS</string>\n\t<key>FilesystemType</key>\n\t<string>apfs</string>\n\t<key>FilesystemUserVisibleName</key>\n\t<string>APFS</string>\n\t<key>FreeSpace</key>\n\t<integer>0</integer>\n\t<key>Fusion</key>\n\t<false/>\n\t<key>GlobalPermissionsEnabled</key>\n\t<true/>\n\t<key>IOKitSize</key>\n\t<integer>343073095680</integer>\n\t<key>IORegistryEntryName</key>\n\t<string>Data</string>\n\t<key>Internal</key>\n\t<true/>\n\t<key>Locked</key>\n\t<false/>\n\t<key>MediaName</key>\n\t<string></string>\n\t<key>MediaType</key>\n\t<string></string>\n\t<key>MountPoint</key>\n\t<string>/System/Volumes/Data</string>\n\t<key>OSInternalMedia</key>\n\t<false/>\n\t<key>ParentWholeDisk</key>\n\t<string>disk2</string>\n\t<key>PartitionMapPartition</key>\n\t<false/>\n\t<key>RAIDMaster</key>\n\t<false/>\n\t<key>RAIDSlice</key>\n\t<false/>\n\t<key>RecoveryDeviceIdentifier</key>\n\t<string>disk2s3</string>\n\t<key>Removable</key>\n\t<false/>\n\t<key>RemovableMedia</key>\n\t<false/>\n\t<key>RemovableMediaOrExternalDevice</key>\n\t<false/>\n\t<key>SMARTDeviceSpecificKeysMayVaryNotGuaranteed</key>\n\t<dict/>\n\t<key>SMARTStatus</key>\n\t<string>Not Supported</string>\n\t<key>Sealed</key>\n\t<string>No</string>\n\t<key>Size</key>\n\t<integer>343073095680</integer>\n\t<key>SolidState</key>\n\t<true/>\n\t<key>SupportsGlobalPermissionsDisable</key>\n\t<true/>\n\t<key>SystemImage</key>\n\t<false/>\n\t<key>TotalSize</key>\n\t<integer>343073095680</integer>\n\t<key>VolumeAllocationBlockSize</key>\n\t<integer>4096</integer>\n\t<key>VolumeName</key>\n\t<string>Data</string>\n\t<key>VolumeSize</key>\n\t<integer>0</integer>\n\t<key>VolumeUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>WholeDisk</key>\n\t<false/>\n\t<key>Writable</key>\n\t<true/>\n\t<key>WritableMedia</key>\n\t<true/>\n\t<key>WritableVolume</key>\n\t<true/>\n</dict>\n</plist>\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_volume": {
+        "command": [
+          "/usr/sbin/diskutil",
+          "info",
+          "-plist",
+          "/dev/disk2s5"
+        ],
+        "exit": 0,
+        "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>APFSContainerFree</key>\n\t<integer>49410719744</integer>\n\t<key>APFSContainerReference</key>\n\t<string>disk2</string>\n\t<key>APFSContainerSize</key>\n\t<integer>343073095680</integer>\n\t<key>APFSPhysicalStores</key>\n\t<array>\n\t\t<dict>\n\t\t\t<key>APFSPhysicalStore</key>\n\t\t\t<string>disk0s2</string>\n\t\t</dict>\n\t</array>\n\t<key>APFSSnapshot</key>\n\t<false/>\n\t<key>APFSVolumeGroupID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Bootable</key>\n\t<true/>\n\t<key>BooterDeviceIdentifier</key>\n\t<string>disk2s2</string>\n\t<key>BusProtocol</key>\n\t<string></string>\n\t<key>CanBeMadeBootable</key>\n\t<false/>\n\t<key>CanBeMadeBootableRequiresDestroy</key>\n\t<false/>\n\t<key>CapacityInUse</key>\n\t<integer>274782240768</integer>\n\t<key>Content</key>\n\t<string>41504653-0000-11AA-AA11-00306543ECAC</string>\n\t<key>DeviceBlockSize</key>\n\t<integer>4096</integer>\n\t<key>DeviceIdentifier</key>\n\t<string>disk2s5</string>\n\t<key>DeviceNode</key>\n\t<string>/dev/disk2s5</string>\n\t<key>DeviceTreePath</key>\n\t<string>IODeviceTree:/arm-io/pcie@30000000/pci106b,1a00@6/AppleVirtIOStorageDevice</string>\n\t<key>DiskUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>Ejectable</key>\n\t<false/>\n\t<key>EjectableMediaAutomaticUnderSoftwareControl</key>\n\t<false/>\n\t<key>EjectableOnly</key>\n\t<false/>\n\t<key>Encryption</key>\n\t<false/>\n\t<key>EncryptionThisVolumeProper</key>\n\t<false/>\n\t<key>FileVault</key>\n\t<false/>\n\t<key>FilesystemName</key>\n\t<string>APFS</string>\n\t<key>FilesystemType</key>\n\t<string>apfs</string>\n\t<key>FilesystemUserVisibleName</key>\n\t<string>APFS</string>\n\t<key>FreeSpace</key>\n\t<integer>0</integer>\n\t<key>Fusion</key>\n\t<false/>\n\t<key>GlobalPermissionsEnabled</key>\n\t<true/>\n\t<key>IOKitSize</key>\n\t<integer>343073095680</integer>\n\t<key>IORegistryEntryName</key>\n\t<string>Data</string>\n\t<key>Internal</key>\n\t<true/>\n\t<key>Locked</key>\n\t<false/>\n\t<key>MediaName</key>\n\t<string></string>\n\t<key>MediaType</key>\n\t<string></string>\n\t<key>MountPoint</key>\n\t<string>/System/Volumes/Data</string>\n\t<key>OSInternalMedia</key>\n\t<false/>\n\t<key>ParentWholeDisk</key>\n\t<string>disk2</string>\n\t<key>PartitionMapPartition</key>\n\t<false/>\n\t<key>RAIDMaster</key>\n\t<false/>\n\t<key>RAIDSlice</key>\n\t<false/>\n\t<key>RecoveryDeviceIdentifier</key>\n\t<string>disk2s3</string>\n\t<key>Removable</key>\n\t<false/>\n\t<key>RemovableMedia</key>\n\t<false/>\n\t<key>RemovableMediaOrExternalDevice</key>\n\t<false/>\n\t<key>SMARTDeviceSpecificKeysMayVaryNotGuaranteed</key>\n\t<dict/>\n\t<key>SMARTStatus</key>\n\t<string>Not Supported</string>\n\t<key>Sealed</key>\n\t<string>No</string>\n\t<key>Size</key>\n\t<integer>343073095680</integer>\n\t<key>SolidState</key>\n\t<true/>\n\t<key>SupportsGlobalPermissionsDisable</key>\n\t<true/>\n\t<key>SystemImage</key>\n\t<false/>\n\t<key>TotalSize</key>\n\t<integer>343073095680</integer>\n\t<key>VolumeAllocationBlockSize</key>\n\t<integer>4096</integer>\n\t<key>VolumeName</key>\n\t<string>Data</string>\n\t<key>VolumeSize</key>\n\t<integer>0</integer>\n\t<key>VolumeUUID</key>\n\t<string>7367B1B5-A657-419E-8D57-2ED0A905A876</string>\n\t<key>WholeDisk</key>\n\t<false/>\n\t<key>Writable</key>\n\t<true/>\n\t<key>WritableMedia</key>\n\t<true/>\n\t<key>WritableVolume</key>\n\t<true/>\n</dict>\n</plist>\n",
+        "stderr": ""
+      }
+    }
+  },
+  "commands": [
+    {
+      "name": "install-bash",
+      "command": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "/Users/runner/work/salah_widget/salah_widget/tests/install-bash.py",
+        "/Users/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:45.466017+00:00",
+      "finished": "2026-11-11T23:34:50.437949+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-install-tests-rsau0c2g",
+          "archive_directory": "install-bash-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-entry-bash",
+      "command": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "/Users/runner/work/salah_widget/salah_widget/tests/install-entry-bash.py",
+        "/Users/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:50.438175+00:00",
+      "finished": "2026-11-11T23:34:56.554568+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-du35uzv4",
+          "archive_directory": "install-entry-bash-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-discovery",
+      "command": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "/Users/runner/work/salah_widget/salah_widget/tests/install-discovery.py",
+        "/Users/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:56.554802+00:00",
+      "finished": "2026-11-11T23:35:03.818646+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-gq05f6yo",
+          "archive_directory": "install-discovery-fixture"
+        },
+        {
+          "original": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-entry-bash-20nxu8ss",
+          "archive_directory": "install-discovery-fixture-1"
+        }
+      ]
+    },
+    {
+      "name": "install-detectors",
+      "command": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "/Users/runner/work/salah_widget/salah_widget/tests/install-detectors.py",
+        "/Users/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:35:03.818957+00:00",
+      "finished": "2026-11-11T23:35:05.093125+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-detectors-2ygyrosj",
+          "archive_directory": "install-detectors-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-discovery-mutations",
+      "command": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "/Users/runner/work/salah_widget/salah_widget/tests/install-discovery-mutations.py",
+        "/Users/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:35:05.093384+00:00",
+      "finished": "2026-11-11T23:35:15.267759+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-discovery-mutants-mdymy88b",
+          "archive_directory": "install-discovery-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-original-mutations",
+      "command": [
+        "/opt/homebrew/opt/python@3.15/bin/python3.15",
+        "/Users/runner/work/salah_widget/salah_widget/tests/install-mutations.py",
+        "/Users/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:35:15.268042+00:00",
+      "finished": "2026-11-11T23:35:24.095485+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/private/var/folders/2s/vty41l455yv698g4xkgfv7z00000gn/T/salah-install-mutants-dwagwq8h",
+          "archive_directory": "install-original-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-builder",
+      "command": [
+        "node",
+        "/Users/runner/work/salah_widget/salah_widget/tests/install-builder.cjs"
+      ],
+      "started": "2026-11-11T23:35:24.095740+00:00",
+      "finished": "2026-11-11T23:35:24.336867+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": []
+    }
+  ],
+  "commit": "302c4ec0a340fd2c07789598838f35acf5652194",
+  "tree": "9169e944b52694c512f0739660d5730958e8c5b1",
+  "source_hashes": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+    "tests/install-bash.py": "01115e6145b4001b7fd3fae56f2612894676f79116973017e72943e98bd6a145",
+    "tests/install-builder.cjs": "4889acc96ac6036368c34cad1a539e5d445f6b3dd1356c6a0ace157cd3f383c1",
+    "tests/install-detectors.py": "aafd6b6ea1840a2c8cbebd86f3683d6bf4a89a49264043c60574a5059f9762ab",
+    "tests/install-discovery-mutations.py": "390130f05c14e79aed586a6cd5e7161b4f820e5d816fa7816f1662988111cd0b",
+    "tests/install-discovery.ps1": "66f7e4246e92a31099ea4b5a8e7e6d92fe64b9a6fd5044f72cd88331c85d287c",
+    "tests/install-discovery.py": "1f648540634cec866fb7e93e1cfd4a9b9279002c0958898b4f76e61fe19d5bb7",
+    "tests/install-entry-bash.py": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "tests/install-entry-native.py": "0fb96137d59d35fa6449f57fe06f7d6211cbe525c9f2578c843c8085828c4a87",
+    "tests/install-entry.ps1": "bf488439bba1cf0db034477d91c325a2077af38598de717b6f2b48641686e6b3",
+    "tests/install-host-bootstrap.ps1": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+    "tests/install-mutations.py": "7638ee1a79edaa472d7f78345436d01fab54358c7540e85f810c260a5558a43b",
+    "tests/install-native-receipts.py": "c9c5cc6e6ad8e037b232e53167af766948c48bad0fd4e263369989c6475b57c5",
+    "tests/install-powershell-guards.ps1": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4",
+    "tests/install-powershell.ps1": "e2fbfcff900af9087ff758177b20dd7e7a172671d67464d1a9ec77de3cfc61ba"
+  }
+}

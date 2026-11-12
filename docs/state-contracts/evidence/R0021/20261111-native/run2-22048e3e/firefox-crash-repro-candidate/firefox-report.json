@@ -1,0 +1,121 @@
+{
+  "schema": "r0021-native/2",
+  "engine": "firefox",
+  "headed": false,
+  "out": "firefox-crash-repro-candidate",
+  "complete": false,
+  "evidenceLevel": "page-level only (no CDP request log in this engine)",
+  "root": "repository",
+  "policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'",
+  "policyDelivery": "response header on index.html",
+  "served": {
+    "index.html": "70b8ca1f4c340603b5b685ab7515fc77d5fb03083a8107f0391418654515297a",
+    "real-sky/native-sky.js": "255565ed8d56c5ca23aca0e0b76aac20d7e58b891c0590e9a283e8a6b402d3bd",
+    "real-sky/native-worker.js": "30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745",
+    "real-sky/native-data.js": "649d7ecc4fae05d655c934c4b2e69467427b9d215e0f1e6ae95701364e29167f",
+    "moon/moon-host.js": "70fcc2f640e1437f2082289154db0c535b4998cf3836f8792a197bcc166d0326",
+    "moon/moon-worker.js": "62b8753d518d8047e268c86d378de76c70d4b4e33b4467283feab06e3f3bb42e",
+    "config.js": "91a37863cd85e232e9a63bba9db533b82699e63140086ba4b78fcf9c0581ec81"
+  },
+  "options": {
+    "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1",
+    "cells": [
+      "first-boot",
+      "cycles"
+    ],
+    "cyclesWaitMs": 200,
+    "cyclesSettleMs": 0,
+    "cyclesFreshPage": false,
+    "composedWaitMs": 60000
+  },
+  "cells": {
+    "first-boot": {
+      "pass": true,
+      "moonDisposedField": "exposed",
+      "sky": 1,
+      "preview": 1,
+      "detail": 1,
+      "workersLive": 2,
+      "urlsLive": 2,
+      "vis": 2,
+      "assets": "ready",
+      "skyStatus": "pending",
+      "previewStatus": "ready",
+      "previewDraws": 3,
+      "moonRuntime": true,
+      "moonDisposed": false,
+      "moonDetail": true
+    },
+    "cycles": {
+      "pass": false,
+      "status": "crashed",
+      "error": "TargetClosedError: Page.wait_for_timeout: Page crashed",
+      "phase": "cycles-1-pagehide",
+      "start": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "urlsLive": 2,
+        "vis": 3,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 16,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "cycles": [
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "urlsLive": 2,
+          "vis": 3,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 19,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        }
+      ],
+      "freshPage": false,
+      "waitMs": 200
+    }
+  },
+  "console": [
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked a style (style-src-elem) at https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap from being applied because it violates the following directive: “style-src 'self"
+    ],
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ],
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ],
+    [
+      "main",
+      "error",
+      "[JavaScript Error: \"Content-Security-Policy: The page’s settings blocked the loading of a resource (connect-src) at https://api.aladhan.com/v1/timings/11-11-2026?latitude=24.47&longitude=39.61&method=4&school=0 because it violates the following directive: “connect-src 'self'”\" {file: \"debugger eval "
+    ]
+  ],
+  "cdp": [],
+  "crashes": [
+    {
+      "page": "main",
+      "phase": "cycles-1-pagehide"
+    }
+  ],
+  "browserVersion": "153.0",
+  "pass": false
+}

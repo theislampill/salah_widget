@@ -490,7 +490,7 @@ def _case_impl(host_name, host, native_modules, scenario):
     (host_home/'existing-profile-sentinel.bin').write_bytes(b'preserve owned USERPROFILE bytes\n')
     if scenario in ('readable','unreadable'):
         firefox = subject/'roam/Mozilla/Firefox/Profiles/fixture profile'; firefox.mkdir(parents=True)
-        (firefox/'extensions.json').write_text('{"addons":[]}\n',encoding='utf-8')
+        (firefox/'extensions.json').write_bytes(b'{"addons":[]}\n')
         (firefox/'readable-peer.json').write_bytes((firefox/'extensions.json').read_bytes())
     elif scenario != 'none':
         chrome = subject/'local/Google/Chrome/User Data/Default'; chrome.mkdir(parents=True)
@@ -498,7 +498,7 @@ def _case_impl(host_name, host, native_modules, scenario):
         elif scenario == 'installed': (chrome/'Extensions/dlaogejjiafeobgofajdlkkhjlignalk').mkdir(parents=True)
         else:
             firefox = subject/'roam/Mozilla/Firefox/Profiles/fixture profile'; firefox.mkdir(parents=True)
-            (firefox/'extensions.json').write_text('{"addons":[]}\n',encoding='utf-8')
+            (firefox/'extensions.json').write_bytes(b'{"addons":[]}\n')
         if scenario == 'mixed': (subject/'local/Microsoft/Edge/User Data/Default/Extensions/lklaendlmlfkaabeleddanafeinnenih').mkdir(parents=True)
     asset = root/'fixture.zip'
     with zipfile.ZipFile(asset,'w') as archive: archive.writestr('manifest.json','{"manifest_version":3,"name":"Fixture","version":"1.0"}')

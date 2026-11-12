@@ -38,7 +38,20 @@ const legacySource=legacyHostCount===0
 const sourceProfiles={actual:{scriptCount:actualScripts.length,firstPaint:!!firstPaint,legacyHostCount},
   legacyMoon:{input:legacyHostCount===0?"source-derived structural fixture":"actual source",
     sourceSha256:crypto.createHash("sha256").update(legacySource).digest("hex"),runtimeQualified:false,
-    parentCommit:'d5ede8b9f9a03953dba58eb3525e86c3d1653084',parentSha256:'dc2af3801a4314d062ed904c7c95610a0f6afd37166e1e7ef88cf1d5bd97dc82',
+    // Rebind history (owner decision 10.7, retained and attributed): R000D ba0851ae28520c0b402dcbd876e3135f502500df,
+    // parent e41ba4341cb22741f97719dc08bccfad895f8fe5f11bc67288ad70663913f1f5, structural 7a83847286468bd9f2443e36b2709ba555e89bf79a9523d8e19b28eb6a2b7a9d;
+    // R0021 dcc8206b0e466fefc4827872e7d784b99ff56c63, parent c6e0e2e089d53a00626c3014f1db040162af8849a35973d8b453b1c19b00a2ff, structural 20d1a5b0 (unchanged at de68e848:
+    // the transform removes the Moon initial tag, the only bytes de68e848 changed); R0021 de68e8486959cc58fcc284f4cbe28201349a278f,
+    // parent 70b8ca1f4c340603b5b685ab7515fc77d5fb03083a8107f0391418654515297a, structural 20d1a5b0 (unchanged again at 145b7ba9).
+    // R0021 145b7ba9cb3164fc94545e29d6d37cc4d5b2248b, parent fc2aa8d199ef8a60bfb9b7292195c29cee85954ad625ff7bad4cd1f873641127, structural 20d1a5b0.
+    // R0003 reconciliation onto main 7f2e8d16 (merge 64258c86). Previous parents, retained with their structural
+    // digests in native-script-contract.js RETAINED_INPUTS: ff7b042d/987125da (R0026), a06957c6/598287a4 (R0003).
+    // R0003 64258c865846aa27b70681ae33038dae017f864c, parent 9f2fb30b19aa103c2511418970291bba84dbe3bf3acaca536f4410a8669498d5, structural 5269f97a.
+    // R0021 stacked on R000F 2aa3bd11 by merge 65f7c75a (both sides' entries kept; structural 4af7e86f).
+    // R0027 on main 645b53cc: 77014952203f373d3646cef7ea291a2196833aa6, parent df1c6e9daf008247d9c6377275a6a905039ff58e2d4c21694d8824590022b37f, structural 902f326d (retained).
+    // R0021 65f7c75a89bbc9f737dc72d8cbf79a213fc76a73, parent 0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb, structural 4af7e86f (retained).
+    // R0027 stacked on R0021 68891b4f by merge 5dd7c558 (spectral transform only; both sides' entries kept; structural 1a5c5031).
+    parentCommit:'5dd7c558207d76aa022f0bda73354918cc3bfc46',parentSha256:'e3a3dedbfaaf5e5d604add26fa071852da109d72773a077b444fdd376f771185',
     transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.'}};
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
@@ -207,7 +220,7 @@ async function main(){
   });
   await check("legacy Moon structural branch admits its exact positive source before parser stop",async()=>{
     assert.equal(legacySource.split('src="moon/moon-host.js"').length-1,1,"legacy host is absent or ambiguous");
-    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'240178afe7e01d8cbe64ce3aa4de5ccdab41713188ee292e7813f26d4909eb98','retained structural input must be explicitly rebound on source change');
+    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'1a5c50314e0d4c86dd2a7222211843a154e899addc44bffc944fa74777125fc8','retained structural input must be explicitly rebound on source change');
     const h=await setup('healthy',{source:legacySource});assert.match(h.report.error,/Controlled parser stop/);
     assert.equal(h.report.storageIsolated,true);assert.equal(h.realStorageCalls,0);
     assert.equal(h.report.sourceSha256,sourceProfiles.legacyMoon.sourceSha256);

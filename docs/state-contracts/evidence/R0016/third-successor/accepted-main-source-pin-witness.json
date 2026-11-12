@@ -1,0 +1,44 @@
+{
+  "schema": "r0016-outer-source-pin-inert-review.v1",
+  "scope": "Executes exact source-pin guard AST and exact outer binding AST only; all non-pin functions are identity sentinels and never called; no installer/native execution",
+  "originalOuterSha256": "6167f9f672a1349fa790f726f55a984fe9a4ffb8da546eabedf2422dd9febfa9",
+  "correctedOuterSha256": "652848809fc581452e4bf48e2895786cd3c780e60e0a2c3091e2969d7b856616",
+  "commonSha256": "4600bac181dcac5fe7f72467c6018800666284d7087cf98f8b9bf5a449910821",
+  "receiverGuard": "require(SOURCE_HASH_BEFORE == composition.PREVIEW_SOURCE_SHA, 'Normal input postcondition requires the reviewed complete source')",
+  "checks": [
+    {
+      "case": "original-6167-rejects-new-source",
+      "gateAccepted": false,
+      "expected": false,
+      "reason": "Normal input postcondition requires the reviewed complete source",
+      "sourceHash": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "boundPin": "7fbe213b8e299d30ccd73f824a5a5d5766ac220ffdd778422cd018d3bc5c8ef4"
+    },
+    {
+      "case": "corrected-6528-accepts-new-source-pin",
+      "gateAccepted": true,
+      "expected": true,
+      "reason": null,
+      "sourceHash": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "boundPin": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a"
+    },
+    {
+      "case": "corrected-rejects-old-source",
+      "gateAccepted": false,
+      "expected": false,
+      "reason": "Normal input postcondition requires the reviewed complete source",
+      "sourceHash": "7fbe213b8e299d30ccd73f824a5a5d5766ac220ffdd778422cd018d3bc5c8ef4",
+      "boundPin": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a"
+    },
+    {
+      "case": "corrected-rejects-unrelated-source",
+      "gateAccepted": false,
+      "expected": false,
+      "reason": "Normal input postcondition requires the reviewed complete source",
+      "sourceHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "boundPin": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a"
+    }
+  ],
+  "helpersPreservedByIdentity": true,
+  "commonUnmodified": true
+}

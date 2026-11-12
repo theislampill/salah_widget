@@ -1,0 +1,1007 @@
+{
+  "schema": "r0013-native-bootstrap-timing.v2",
+  "parentProbeSha256": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+  "pass": true,
+  "variantSet": "Minimal",
+  "budgets": {
+    "childSeconds": 60,
+    "scheduledChildren": 4,
+    "killGraceSeconds": 5,
+    "pipeDrainSecondsEach": 2,
+    "recommendedCollectorMinimumSeconds": 306
+  },
+  "derivedFrom": "install-preview-acquire.ps1",
+  "derivedFromSha256": "ed07186c3d3ba5c3ccaf641a26297c03efec7512ea3a414c858959f6a6690e68",
+  "derivation": "Versioned run4 correction: retain owned no-installer source/flags, use bounded60s child budget by default, timestamp each phase, compare fresh cold and same-profile/cache warm processes; preserve prior failed15s receipts.",
+  "host": "5.1.20348.5773",
+  "nativeWindows": true,
+  "hostExecutable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "installerExecuted": false,
+  "installerQualified": false,
+  "source": "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+  "sourceSha256": "ab2d8470367a539a9c6605717a11edc1bf019681d7ec5a65ef0a54e83a67f88e",
+  "sourceUnchanged": true,
+  "testSha256": "a553c9790f04c34ddbe672b469e157ddf6c5d4903484b1f3b17eb82bd2f86510",
+  "testUnchanged": true,
+  "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a",
+  "results": [
+    {
+      "case": "native-only-cold",
+      "variant": "native-only",
+      "iteration": "cold",
+      "pass": true,
+      "scope": "R0013 no-installer cold/warm native -File first-command timing only",
+      "classification": "ACQUISITION_COMPLETED",
+      "profileAndModuleCacheReused": false,
+      "priorColdCompleted": null,
+      "reuseInterpretation": "new owned profile/cache",
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "phaseRecords": [
+        {
+          "utc": "2026-11-12T00:28:18.9162518Z",
+          "counterTicks": 4456272431,
+          "counterFrequency": 10000000,
+          "processId": 7052,
+          "nonce": "d5cf7c22f76e4e9a8f87a1af8eccd8ca",
+          "phase": "script-enter",
+          "elapsedSinceScriptEnterMs": 0
+        },
+        {
+          "utc": "2026-11-12T00:28:18.9318874Z",
+          "counterTicks": 4456370343,
+          "counterFrequency": 10000000,
+          "processId": 7052,
+          "nonce": "d5cf7c22f76e4e9a8f87a1af8eccd8ca",
+          "phase": "join-path-begin",
+          "elapsedSinceScriptEnterMs": 9.7912
+        },
+        {
+          "utc": "2026-11-12T00:28:35.2951018Z",
+          "counterTicks": 4620097415,
+          "counterFrequency": 10000000,
+          "processId": 7052,
+          "nonce": "d5cf7c22f76e4e9a8f87a1af8eccd8ca",
+          "phase": "join-path-returned",
+          "elapsedSinceScriptEnterMs": 16382.4984
+        },
+        {
+          "utc": "2026-11-12T00:28:35.3107301Z",
+          "counterTicks": 4620118774,
+          "counterFrequency": 10000000,
+          "processId": 7052,
+          "nonce": "d5cf7c22f76e4e9a8f87a1af8eccd8ca",
+          "phase": "write-host-begin",
+          "elapsedSinceScriptEnterMs": 16384.6343
+        },
+        {
+          "utc": "2026-11-12T00:28:35.3263529Z",
+          "counterTicks": 4620411598,
+          "counterFrequency": 10000000,
+          "processId": 7052,
+          "nonce": "d5cf7c22f76e4e9a8f87a1af8eccd8ca",
+          "phase": "write-host-returned",
+          "elapsedSinceScriptEnterMs": 16413.9167
+        },
+        {
+          "utc": "2026-11-12T00:28:35.3419803Z",
+          "counterTicks": 4620448232,
+          "counterFrequency": 10000000,
+          "processId": 7052,
+          "nonce": "d5cf7c22f76e4e9a8f87a1af8eccd8ca",
+          "phase": "script-completed",
+          "elapsedSinceScriptEnterMs": 16417.5801
+        }
+      ],
+      "phaseProtocolValid": true,
+      "phaseError": null,
+      "phaseSequenceMatchesExpected": true,
+      "expectedPhaseSequence": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "observation": {
+        "exit": 0,
+        "processId": 7052,
+        "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\native-only",
+        "nativeFile": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\phase-only-no-installer.ps1",
+        "startedUtc": "2026-11-12T00:28:18.8224962Z",
+        "createdUtc": "2026-11-12T00:28:18.8224962Z",
+        "processExitObservedUtc": "2026-11-12T00:28:35.3576061Z",
+        "processCreationElapsedMs": 6.018000000000001,
+        "processExitObservedElapsedMs": 16538.634700000002,
+        "readinessObservedElapsedMs": 16538.5893,
+        "readinessFileUtc": "2026-11-12T00:28:35.3419803Z",
+        "budgetSeconds": 60,
+        "killGraceSeconds": 5,
+        "pipeDrainSecondsEach": 2,
+        "killGraceExpired": false,
+        "killError": null,
+        "stdoutDrainCompleted": true,
+        "stderrDrainCompleted": true,
+        "moduleCacheBeforeExists": false,
+        "moduleCacheAfterExists": true,
+        "moduleCacheAfterUtc": "2026-11-12T00:28:32.1143466Z",
+        "timedOut": false,
+        "preparation": "COMPLETED",
+        "readiness": true,
+        "subjectUnchanged": false,
+        "before": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "after": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell\\StartupProfileData-NonInteractive",
+            "attributes": "Archive",
+            "hash": "a7de5177c68a64bd48b36d49e2853799f4ebcfa8e4761f7cc472f333dc5f65cf"
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "stdout": "R0013 bootstrap probe; no installer invocation\n",
+        "stderr": ""
+      },
+      "moduleManifest": null
+    },
+    {
+      "case": "native-only-warm",
+      "variant": "native-only",
+      "iteration": "warm",
+      "pass": true,
+      "scope": "R0013 no-installer cold/warm native -File first-command timing only",
+      "classification": "ACQUISITION_COMPLETED",
+      "profileAndModuleCacheReused": true,
+      "priorColdCompleted": true,
+      "reuseInterpretation": "fresh process reusing completed cold profile/cache",
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "phaseRecords": [
+        {
+          "utc": "2026-11-12T00:28:35.4982434Z",
+          "counterTicks": 4622155004,
+          "counterFrequency": 10000000,
+          "processId": 2884,
+          "nonce": "8b5208cc7b2645cd9b96641c1219e464",
+          "phase": "script-enter",
+          "elapsedSinceScriptEnterMs": 0
+        },
+        {
+          "utc": "2026-11-12T00:28:35.5138602Z",
+          "counterTicks": 4622214846,
+          "counterFrequency": 10000000,
+          "processId": 2884,
+          "nonce": "8b5208cc7b2645cd9b96641c1219e464",
+          "phase": "join-path-begin",
+          "elapsedSinceScriptEnterMs": 5.9842
+        },
+        {
+          "utc": "2026-11-12T00:28:46.7968290Z",
+          "counterTicks": 4734989887,
+          "counterFrequency": 10000000,
+          "processId": 2884,
+          "nonce": "8b5208cc7b2645cd9b96641c1219e464",
+          "phase": "join-path-returned",
+          "elapsedSinceScriptEnterMs": 11283.4883
+        },
+        {
+          "utc": "2026-11-12T00:28:46.7968290Z",
+          "counterTicks": 4735011660,
+          "counterFrequency": 10000000,
+          "processId": 2884,
+          "nonce": "8b5208cc7b2645cd9b96641c1219e464",
+          "phase": "write-host-begin",
+          "elapsedSinceScriptEnterMs": 11285.6656
+        },
+        {
+          "utc": "2026-11-12T00:28:46.8280819Z",
+          "counterTicks": 4735379786,
+          "counterFrequency": 10000000,
+          "processId": 2884,
+          "nonce": "8b5208cc7b2645cd9b96641c1219e464",
+          "phase": "write-host-returned",
+          "elapsedSinceScriptEnterMs": 11322.4782
+        },
+        {
+          "utc": "2026-11-12T00:28:46.8280819Z",
+          "counterTicks": 4735394919,
+          "counterFrequency": 10000000,
+          "processId": 2884,
+          "nonce": "8b5208cc7b2645cd9b96641c1219e464",
+          "phase": "script-completed",
+          "elapsedSinceScriptEnterMs": 11323.9915
+        }
+      ],
+      "phaseProtocolValid": true,
+      "phaseError": null,
+      "phaseSequenceMatchesExpected": true,
+      "expectedPhaseSequence": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "observation": {
+        "exit": 0,
+        "processId": 2884,
+        "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\native-only",
+        "nativeFile": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\phase-only-no-installer.ps1",
+        "startedUtc": "2026-11-12T00:28:35.4044961Z",
+        "createdUtc": "2026-11-12T00:28:35.4044961Z",
+        "processExitObservedUtc": "2026-11-12T00:28:46.8436903Z",
+        "processCreationElapsedMs": 1.1319000000000001,
+        "processExitObservedElapsedMs": 11440.9989,
+        "readinessObservedElapsedMs": 11427.714600000001,
+        "readinessFileUtc": "2026-11-12T00:28:46.8280819Z",
+        "budgetSeconds": 60,
+        "killGraceSeconds": 5,
+        "pipeDrainSecondsEach": 2,
+        "killGraceExpired": false,
+        "killError": null,
+        "stdoutDrainCompleted": true,
+        "stderrDrainCompleted": true,
+        "moduleCacheBeforeExists": true,
+        "moduleCacheAfterExists": true,
+        "moduleCacheAfterUtc": "2026-11-12T00:28:32.1143466Z",
+        "timedOut": false,
+        "preparation": "COMPLETED",
+        "readiness": true,
+        "subjectUnchanged": true,
+        "before": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell\\StartupProfileData-NonInteractive",
+            "attributes": "Archive",
+            "hash": "a7de5177c68a64bd48b36d49e2853799f4ebcfa8e4761f7cc472f333dc5f65cf"
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "after": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell\\StartupProfileData-NonInteractive",
+            "attributes": "Archive",
+            "hash": "a7de5177c68a64bd48b36d49e2853799f4ebcfa8e4761f7cc472f333dc5f65cf"
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "stdout": "R0013 bootstrap probe; no installer invocation\n",
+        "stderr": ""
+      },
+      "moduleManifest": null
+    },
+    {
+      "case": "private-wildcard-cmdlets-cold",
+      "variant": "private-wildcard-cmdlets",
+      "iteration": "cold",
+      "pass": true,
+      "scope": "R0013 no-installer cold/warm native -File first-command timing only",
+      "classification": "ACQUISITION_COMPLETED",
+      "profileAndModuleCacheReused": false,
+      "priorColdCompleted": null,
+      "reuseInterpretation": "new owned profile/cache",
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "phaseRecords": [
+        {
+          "utc": "2026-11-12T00:28:46.9692090Z",
+          "counterTicks": 4736754840,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "script-enter",
+          "elapsedSinceScriptEnterMs": 0
+        },
+        {
+          "utc": "2026-11-12T00:28:46.9692090Z",
+          "counterTicks": 4736813187,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "join-path-begin",
+          "elapsedSinceScriptEnterMs": 5.8347
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5064256Z",
+          "counterTicks": 4852213352,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "join-path-returned",
+          "elapsedSinceScriptEnterMs": 11545.8512
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5220575Z",
+          "counterTicks": 4852236318,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "write-host-begin",
+          "elapsedSinceScriptEnterMs": 11548.1478
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5220575Z",
+          "counterTicks": 4852304549,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "utility-wrapper-entered",
+          "elapsedSinceScriptEnterMs": 11554.9709
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5376763Z",
+          "counterTicks": 4852453806,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "native-utility-imported",
+          "elapsedSinceScriptEnterMs": 11569.8966
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5376763Z",
+          "counterTicks": 4852504288,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "encoding-constructor-returned",
+          "elapsedSinceScriptEnterMs": 11574.9448
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5376763Z",
+          "counterTicks": 4852513231,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "utility-exports-complete",
+          "elapsedSinceScriptEnterMs": 11575.8391
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5533049Z",
+          "counterTicks": 4852542335,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "write-host-returned",
+          "elapsedSinceScriptEnterMs": 11578.7495
+        },
+        {
+          "utc": "2026-11-12T00:28:58.5533049Z",
+          "counterTicks": 4852554858,
+          "counterFrequency": 10000000,
+          "processId": 1984,
+          "nonce": "5dc15b60fc2242cc93c1f1474a1be88c",
+          "phase": "script-completed",
+          "elapsedSinceScriptEnterMs": 11580.0018
+        }
+      ],
+      "phaseProtocolValid": true,
+      "phaseError": null,
+      "phaseSequenceMatchesExpected": true,
+      "expectedPhaseSequence": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "observation": {
+        "exit": 0,
+        "processId": 1984,
+        "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\private-wildcard-cmdlets",
+        "nativeFile": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\phase-only-no-installer.ps1",
+        "startedUtc": "2026-11-12T00:28:46.8749401Z",
+        "createdUtc": "2026-11-12T00:28:46.8749401Z",
+        "processExitObservedUtc": "2026-11-12T00:28:58.5689127Z",
+        "processCreationElapsedMs": 1.0574000000000001,
+        "processExitObservedElapsedMs": 11689.2867,
+        "readinessObservedElapsedMs": 11689.253700000001,
+        "readinessFileUtc": "2026-11-12T00:28:58.5533049Z",
+        "budgetSeconds": 60,
+        "killGraceSeconds": 5,
+        "pipeDrainSecondsEach": 2,
+        "killGraceExpired": false,
+        "killError": null,
+        "stdoutDrainCompleted": true,
+        "stderrDrainCompleted": true,
+        "moduleCacheBeforeExists": false,
+        "moduleCacheAfterExists": false,
+        "moduleCacheAfterUtc": null,
+        "timedOut": false,
+        "preparation": "COMPLETED",
+        "readiness": true,
+        "subjectUnchanged": false,
+        "before": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "after": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell\\StartupProfileData-NonInteractive",
+            "attributes": "Archive",
+            "hash": "a7de5177c68a64bd48b36d49e2853799f4ebcfa8e4761f7cc472f333dc5f65cf"
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "stdout": "R0013 bootstrap probe; no installer invocation\r\n",
+        "stderr": ""
+      },
+      "moduleManifest": "@{RootModule='Microsoft.PowerShell.Utility.psm1';ModuleVersion='99.0';GUID='71364fa3-4674-4018-8cd0-e606d351ce41';FunctionsToExport=@('Write-Host');CmdletsToExport='*';AliasesToExport=@()}"
+    },
+    {
+      "case": "private-wildcard-cmdlets-warm",
+      "variant": "private-wildcard-cmdlets",
+      "iteration": "warm",
+      "pass": true,
+      "scope": "R0013 no-installer cold/warm native -File first-command timing only",
+      "classification": "ACQUISITION_COMPLETED",
+      "profileAndModuleCacheReused": true,
+      "priorColdCompleted": true,
+      "reuseInterpretation": "fresh process reusing completed cold profile/cache",
+      "phases": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "phaseRecords": [
+        {
+          "utc": "2026-11-12T00:28:58.6626631Z",
+          "counterTicks": 4853759350,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "script-enter",
+          "elapsedSinceScriptEnterMs": 0
+        },
+        {
+          "utc": "2026-11-12T00:28:58.6783056Z",
+          "counterTicks": 4853843183,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "join-path-begin",
+          "elapsedSinceScriptEnterMs": 8.3833
+        },
+        {
+          "utc": "2026-11-12T00:29:09.8626588Z",
+          "counterTicks": 4965783776,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "join-path-returned",
+          "elapsedSinceScriptEnterMs": 11202.4426
+        },
+        {
+          "utc": "2026-11-12T00:29:09.8782862Z",
+          "counterTicks": 4965806901,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "write-host-begin",
+          "elapsedSinceScriptEnterMs": 11204.7551
+        },
+        {
+          "utc": "2026-11-12T00:29:09.8782862Z",
+          "counterTicks": 4965876012,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "utility-wrapper-entered",
+          "elapsedSinceScriptEnterMs": 11211.6662
+        },
+        {
+          "utc": "2026-11-12T00:29:09.8939146Z",
+          "counterTicks": 4966047660,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "native-utility-imported",
+          "elapsedSinceScriptEnterMs": 11228.831
+        },
+        {
+          "utc": "2026-11-12T00:29:09.8939146Z",
+          "counterTicks": 4966100545,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "encoding-constructor-returned",
+          "elapsedSinceScriptEnterMs": 11234.1195
+        },
+        {
+          "utc": "2026-11-12T00:29:09.9095443Z",
+          "counterTicks": 4966110137,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "utility-exports-complete",
+          "elapsedSinceScriptEnterMs": 11235.0787
+        },
+        {
+          "utc": "2026-11-12T00:29:09.9095443Z",
+          "counterTicks": 4966140539,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "write-host-returned",
+          "elapsedSinceScriptEnterMs": 11238.1189
+        },
+        {
+          "utc": "2026-11-12T00:29:09.9095443Z",
+          "counterTicks": 4966153489,
+          "counterFrequency": 10000000,
+          "processId": 6544,
+          "nonce": "871d5e9bbc294e3dbf34ff019e0f2e9b",
+          "phase": "script-completed",
+          "elapsedSinceScriptEnterMs": 11239.4139
+        }
+      ],
+      "phaseProtocolValid": true,
+      "phaseError": null,
+      "phaseSequenceMatchesExpected": true,
+      "expectedPhaseSequence": [
+        "script-enter",
+        "join-path-begin",
+        "join-path-returned",
+        "write-host-begin",
+        "utility-wrapper-entered",
+        "native-utility-imported",
+        "encoding-constructor-returned",
+        "utility-exports-complete",
+        "write-host-returned",
+        "script-completed"
+      ],
+      "observation": {
+        "exit": 0,
+        "processId": 6544,
+        "fixture": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\private-wildcard-cmdlets",
+        "nativeFile": "C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0013-native-bootstrap-timing-be8183911a234c22bc3cb2656d6ddb1a\\phase-only-no-installer.ps1",
+        "startedUtc": "2026-11-12T00:28:58.5689127Z",
+        "createdUtc": "2026-11-12T00:28:58.5689127Z",
+        "processExitObservedUtc": "2026-11-12T00:29:09.9251438Z",
+        "processCreationElapsedMs": 1.0952,
+        "processExitObservedElapsedMs": 11352.0382,
+        "readinessObservedElapsedMs": 11352.005000000001,
+        "readinessFileUtc": "2026-11-12T00:29:09.9095443Z",
+        "budgetSeconds": 60,
+        "killGraceSeconds": 5,
+        "pipeDrainSecondsEach": 2,
+        "killGraceExpired": false,
+        "killError": null,
+        "stdoutDrainCompleted": true,
+        "stderrDrainCompleted": true,
+        "moduleCacheBeforeExists": false,
+        "moduleCacheAfterExists": false,
+        "moduleCacheAfterUtc": null,
+        "timedOut": false,
+        "preparation": "COMPLETED",
+        "readiness": true,
+        "subjectUnchanged": true,
+        "before": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell\\StartupProfileData-NonInteractive",
+            "attributes": "Archive",
+            "hash": "a7de5177c68a64bd48b36d49e2853799f4ebcfa8e4761f7cc472f333dc5f65cf"
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "after": [
+          {
+            "path": "\\program-files",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\program-files-x86",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\temp",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell",
+            "attributes": "Directory",
+            "hash": null
+          },
+          {
+            "path": "\\user-profile\\AppData\\Local\\Microsoft\\Windows\\PowerShell\\StartupProfileData-NonInteractive",
+            "attributes": "Archive",
+            "hash": "a7de5177c68a64bd48b36d49e2853799f4ebcfa8e4761f7cc472f333dc5f65cf"
+          },
+          {
+            "path": "\\user-profile\\AppData\\Roaming",
+            "attributes": "Directory",
+            "hash": null
+          }
+        ],
+        "stdout": "R0013 bootstrap probe; no installer invocation\r\n",
+        "stderr": ""
+      },
+      "moduleManifest": "@{RootModule='Microsoft.PowerShell.Utility.psm1';ModuleVersion='99.0';GUID='71364fa3-4674-4018-8cd0-e606d351ce41';FunctionsToExport=@('Write-Host');CmdletsToExport='*';AliasesToExport=@()}"
+    }
+  ],
+  "limitations": [
+    "No installer or unchanged product suite is rerun.",
+    "Underlying Windows delay cause is unresolved.",
+    "Warm reuse after an incomplete cold child is labeled separately.",
+    "Parent elapsed Stopwatch and child within-process monotonic phase deltas are recorded separately from wall-clock timestamps.",
+    "This cannot qualify installer behavior.",
+    "The private modules are diagnostic derivatives, not changes to shared tests.",
+    "Timeout and missing phases are preparation evidence.",
+    "No network calls, tracing, firewall/audit changes, or AppContainer setup are performed."
+  ]
+}

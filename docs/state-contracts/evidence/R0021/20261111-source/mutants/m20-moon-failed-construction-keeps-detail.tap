@@ -1,0 +1,134 @@
+TAP version 13
+# Subtest: ES21-06 first boot installs one runtime with its own detail and starts one worker
+ok 1 - ES21-06 first boot installs one runtime with its own detail and starts one worker
+  ---
+  duration_ms: 20.6498
+  type: 'test'
+  ...
+# Subtest: ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
+ok 2 - ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
+  ---
+  duration_ms: 1.2525
+  type: 'test'
+  ...
+# Subtest: ES21-05 full-wrapper replay over a live runtime is refused before any mutation
+ok 3 - ES21-05 full-wrapper replay over a live runtime is refused before any mutation
+  ---
+  duration_ms: 2.2197
+  type: 'test'
+  ...
+# Subtest: ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
+ok 4 - ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
+  ---
+  duration_ms: 1.2661
+  type: 'test'
+  ...
+# Subtest: ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
+ok 5 - ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
+  ---
+  duration_ms: 0.8343
+  type: 'test'
+  ...
+# Subtest: ES21-07 detail disposal is idempotent and adoption after disposal is refused
+ok 6 - ES21-07 detail disposal is idempotent and adoption after disposal is refused
+  ---
+  duration_ms: 0.8637
+  type: 'test'
+  ...
+# Subtest: ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
+ok 7 - ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
+  ---
+  duration_ms: 0.865
+  type: 'test'
+  ...
+# Subtest: ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
+ok 8 - ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
+  ---
+  duration_ms: 696.5065
+  type: 'test'
+  ...
+# Subtest: ES21-05 replay is refused for a live runtime even when the detail slot is empty
+ok 9 - ES21-05 replay is refused for a live runtime even when the detail slot is empty
+  ---
+  duration_ms: 1.3751
+  type: 'test'
+  ...
+# Subtest: ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
+ok 10 - ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
+  ---
+  duration_ms: 1.1881
+  type: 'test'
+  ...
+# Subtest: ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
+not ok 11 - ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
+  ---
+  duration_ms: 1.3902
+  type: 'test'
+  location: '<worktree>\\moon\\tests\\native-instance-retirement.test.cjs:125:47'
+  failureType: 'testCodeFailure'
+  error: |-
+    no orphan registered detail
+    + actual - expected
+    
+    + {
+    +   adopt: [Function: adopt],
+    +   available: [Getter: false],
+    +   clear: [Function: clear],
+    +   compose: [Function: compose],
+    +   dispose: [Function: dispose],
+    +   state: [Getter] {
+    +     dpr: 0,
+    +     maxMs: 0,
+    +     mode: 'local-device-resolution; inherited physics grid unchanged',
+    +     pixels: 0,
+    +     renders: 0,
+    +     skips: 0,
+    +     totalMs: 0,
+    +     visible: false
+    +   }
+    + }
+    - null
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
+not ok 12 - ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
+  ---
+  duration_ms: 1.0974
+  type: 'test'
+  location: '<worktree>\\moon\\tests\\native-instance-retirement.test.cjs:125:47'
+  failureType: 'testCodeFailure'
+  error: |-
+    no orphan registered detail
+    + actual - expected
+    
+    + {
+    +   adopt: [Function: adopt],
+    +   available: [Getter: false],
+    +   clear: [Function: clear],
+    +   compose: [Function: compose],
+    +   dispose: [Function: dispose],
+    +   state: [Getter] {
+    +     dpr: 0,
+    +     maxMs: 0,
+    +     mode: 'local-device-resolution; inherited physics grid unchanged',
+    +     pixels: 0,
+    +     renders: 0,
+    +     skips: 0,
+    +     totalMs: 0,
+    +     visible: false
+    +   }
+    + }
+    - null
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 10
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 792.5328

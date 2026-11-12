@@ -1,0 +1,96 @@
+TAP version 13
+# Subtest: ES21-06 first boot installs one runtime with its own detail and starts one worker
+ok 1 - ES21-06 first boot installs one runtime with its own detail and starts one worker
+  ---
+  duration_ms: 22.5994
+  type: 'test'
+  ...
+# Subtest: ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
+ok 2 - ES21-06 worker-source refinement and bounded retry remain distinct from wrapper replay
+  ---
+  duration_ms: 1.2985
+  type: 'test'
+  ...
+# Subtest: ES21-05 full-wrapper replay over a live runtime is refused before any mutation
+ok 3 - ES21-05 full-wrapper replay over a live runtime is refused before any mutation
+  ---
+  duration_ms: 2.1175
+  type: 'test'
+  ...
+# Subtest: ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
+ok 4 - ES21-04 retirement uses captured resources: an old runtime never disposes its successor detail
+  ---
+  duration_ms: 1.1991
+  type: 'test'
+  ...
+# Subtest: ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
+not ok 5 - ES21-04 conditional registry cleanup: retiring never clears a slot another owner holds
+  ---
+  duration_ms: 1.3263
+  type: 'test'
+  location: '<worktree>\\moon\\tests\\native-instance-retirement.test.cjs:84:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + null
+    - {
+    -   available: false,
+    -   clear: [Function: clear],
+    -   dispose: [Function: dispose]
+    - }
+    
+  code: 'ERR_TEST_FAILURE'
+  ...
+# Subtest: ES21-07 detail disposal is idempotent and adoption after disposal is refused
+ok 6 - ES21-07 detail disposal is idempotent and adoption after disposal is refused
+  ---
+  duration_ms: 0.7937
+  type: 'test'
+  ...
+# Subtest: ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
+ok 7 - ES21-07 runtime disposal is idempotent and releases its timers, listener, worker and URL once
+  ---
+  duration_ms: 0.844
+  type: 'test'
+  ...
+# Subtest: ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
+ok 8 - ES21-05 generated moon-host.js: first install works and a live replay is refused before any mutation
+  ---
+  duration_ms: 719.4739
+  type: 'test'
+  ...
+# Subtest: ES21-05 replay is refused for a live runtime even when the detail slot is empty
+ok 9 - ES21-05 replay is refused for a live runtime even when the detail slot is empty
+  ---
+  duration_ms: 1.2294
+  type: 'test'
+  ...
+# Subtest: ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
+ok 10 - ES21-02 Moon wrapper failure at url releases its detail, slot, listener and timers
+  ---
+  duration_ms: 1.1322
+  type: 'test'
+  ...
+# Subtest: ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
+ok 11 - ES21-02 Moon wrapper failure at interval releases its detail, slot, listener and timers
+  ---
+  duration_ms: 0.8777
+  type: 'test'
+  ...
+# Subtest: ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
+ok 12 - ES21-02 Moon wrapper failure at frame releases its detail, slot, listener and timers
+  ---
+  duration_ms: 0.8324
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 11
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 815.9263

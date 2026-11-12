@@ -18,6 +18,8 @@ concurrency:
 
 jobs:
   render:
+    # Source integration checkpoints receive their actual source pin in the next docs commit.
+    if: ${{ !contains(github.event.head_commit.message, '[r0016-acquisition-only]') }}
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:

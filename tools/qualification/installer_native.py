@@ -221,6 +221,9 @@ def main():
         run("install-builder", ["node", str(root / "tests/install-builder.cjs")])
         if args.phase in ("r0015", "r0016"):
             run("install-staging-native", [sys.executable, str(root / "tests/install-staging-native.py"), str(root / "install.sh")])
+            run("install-staging-parent", [sys.executable, str(root / "tests/install-staging-parent.py"), str(root / "install.sh")])
+        if args.expected_os == "Darwin" and args.phase == "r0016":
+            run("install-staging-readonly", [sys.executable, str(root / "tests/install-staging-readonly.py"), str(root / "install.sh")])
         if args.expected_os == "Linux" and args.phase in ("r0015", "r0016"):
             run("install-linux-owner", [sys.executable, str(root / "tests/install-linux-owner.py"), str(root / "install.sh")])
         if args.phase == "r0016":

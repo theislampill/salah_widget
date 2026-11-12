@@ -183,6 +183,13 @@ for(const terminal of ['clear','dispose'])test('real refined publication retains
   s.lifecycle=new NativeSkyLifecycle({capture:()=>({}),execute:async()=>{},onInvalidate:reason=>s.clear(reason)});
   Object.assign(s,{request(){},timer:1,animationId:2,clearInterval(){},cancelAnimationFrame(){},document:{removeEventListener(){}},visibility(){},client:{dispose(){}},workerUrl:null,badge:{remove(){}}});
   s.canvas.remove=()=>{};
+  // R0021: disposal runs the constructor's acquisition-time releases through the
+  // real `release` unwinder. Register this fixture's resources in the product's
+  // acquisition order (canvas, badge, publication, client, queue, interval, rAF,
+  // listener); the disposal chain itself is still the actual exported owner.
+  const unwinder=source.split('\n').find(line=>line.startsWith(' function release('));
+  assert(unwinder);vm.runInContext(unwinder,s);
+  s.owned=[()=>s.canvas.remove(),()=>s.badge.remove(),()=>s.solarPublication?.dispose(),()=>s.client.dispose(),()=>{s.lifecycle.hooks.onInvalidate=()=>{};s.lifecycle.dispose();},()=>s.clearInterval(s.timer),()=>s.cancelAnimationFrame(s.animationId),()=>s.document.removeEventListener('visibilitychange',s.visibility)];
   const exported=source.split('\n').find(line=>line.startsWith(' window.SalahRealSky='));
   assert(exported);vm.runInContext(exported+'\nwindow.SalahRealSky.dispose();',s);
   assert.equal(s.lifecycle.state.disposed,true);assert.equal(publication.disposed,true);assert.equal(roots().size,0);

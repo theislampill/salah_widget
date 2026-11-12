@@ -1,0 +1,186 @@
+{
+  "schema": "staging-parent-default-gate.v1",
+  "pass": true,
+  "checks": [
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps51.json: real USERPROFILE accepted",
+      "pass": true,
+      "detail": {
+        "result": "accepted",
+        "message": null,
+        "inspect": {
+          "ownerClass": "SYSTEM",
+          "trustedParent": true,
+          "trustedAncestor": true,
+          "writeRestricted": true,
+          "private": false,
+          "directory": true
+        }
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps51.json: real TEMP accepted",
+      "pass": true,
+      "detail": {
+        "result": "accepted",
+        "message": null,
+        "inspect": {
+          "ownerClass": "Administrators",
+          "trustedParent": true,
+          "trustedAncestor": true,
+          "writeRestricted": true,
+          "private": false,
+          "directory": true
+        }
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps51.json: helper compiles under the real TEMP",
+      "pass": true,
+      "detail": {
+        "step": "Initialize-StagingNative (compiles helper under the real temporary directory)",
+        "result": "loaded"
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps51.json: real staging initialisation",
+      "pass": true,
+      "detail": {
+        "step": "Initialize-Staging with real TEMP and USERPROFILE, then Clear-OwnedScratch",
+        "result": "initialized",
+        "scratchCreated": true,
+        "retainedCreated": true,
+        "cleanup": "Clear-OwnedScratch returned",
+        "tempNewAfterCleanup": [],
+        "profileNewAfterCleanup": [
+          "SalahWidgetBundle-5f082a1d51c84e3b8242f3682def331c"
+        ],
+        "retainedRemovedByObserver": true,
+        "messages": []
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps51.json: no observation load errors",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps7.json: real USERPROFILE accepted",
+      "pass": true,
+      "detail": {
+        "result": "accepted",
+        "message": null,
+        "inspect": {
+          "ownerClass": "SYSTEM",
+          "trustedParent": true,
+          "trustedAncestor": true,
+          "writeRestricted": true,
+          "private": false,
+          "directory": true
+        }
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps7.json: real TEMP accepted",
+      "pass": true,
+      "detail": {
+        "result": "accepted",
+        "message": null,
+        "inspect": {
+          "ownerClass": "Administrators",
+          "trustedParent": true,
+          "trustedAncestor": true,
+          "writeRestricted": true,
+          "private": false,
+          "directory": true
+        }
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps7.json: helper compiles under the real TEMP",
+      "pass": true,
+      "detail": {
+        "step": "Initialize-StagingNative (compiles helper under the real temporary directory)",
+        "result": "loaded"
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps7.json: real staging initialisation",
+      "pass": true,
+      "detail": {
+        "step": "Initialize-Staging with real TEMP and USERPROFILE, then Clear-OwnedScratch",
+        "result": "initialized",
+        "scratchCreated": true,
+        "retainedCreated": true,
+        "cleanup": "Clear-OwnedScratch returned",
+        "tempNewAfterCleanup": [],
+        "profileNewAfterCleanup": [
+          "SalahWidgetBundle-c1b70ae1fa3b4d92b34ee5ef519cbbb3"
+        ],
+        "retainedRemovedByObserver": true,
+        "messages": []
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\functions-ps7.json: no observation load errors",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\entry-ps51.json: interception loaded",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\entry-ps51.json: normal mode reaches the manual browser step",
+      "pass": true,
+      "detail": {
+        "exit": 0,
+        "classification": "manual-action-pending",
+        "createdAfterRun": {
+          "temp": [],
+          "profile": [
+            "SalahWidgetBundle-6a4418089fc7434c963446f0f3cbaa05"
+          ]
+        },
+        "stderrTail": ""
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\entry-ps51.json: nothing left behind",
+      "pass": true,
+      "detail": {
+        "temp": [],
+        "profile": []
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\entry-ps7.json: interception loaded",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\entry-ps7.json: normal mode reaches the manual browser step",
+      "pass": true,
+      "detail": {
+        "exit": 0,
+        "classification": "manual-action-pending",
+        "createdAfterRun": {
+          "temp": [],
+          "profile": [
+            "SalahWidgetBundle-38cde7c0a16e4eca8f5e5c8ed499bf4f"
+          ]
+        },
+        "stderrTail": ""
+      }
+    },
+    {
+      "check": "D:\\a\\_temp\\environment-observation\\entry-ps7.json: nothing left behind",
+      "pass": true,
+      "detail": {
+        "temp": [],
+        "profile": []
+      }
+    }
+  ]
+}

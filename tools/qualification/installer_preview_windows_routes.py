@@ -29,7 +29,7 @@ ROOT_PREFIX = 'r16-routes-'
 SECONDS = 240
 JSON_LIMIT = 4 * 1024 * 1024
 INPUTS = {
-    'install.ps1': '7fbe213b8e299d30ccd73f824a5a5d5766ac220ffdd778422cd018d3bc5c8ef4',
+    'install.ps1': '07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a',
     'tests/install-powershell-routes.ps1': '2f5aea77b909b0a1b735616a25e305f1df65e4f0565e0fea99e09e5a81e9f4fc',
     'tools/qualification/installer_preview_host_probe.py': HELPER_SHA,
     'tools/qualification/installer_preview_windows_carrier.py': SUPPORT_SHA,

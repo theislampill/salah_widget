@@ -1,0 +1,62 @@
+{
+  "schema": "r0016-input-publication-inert.v1",
+  "scope": "Exact fixture AST slices; explicit Windows newline translation and deterministic reader interleaving. No native execution or native sharing-mode proof.",
+  "mainSha256": "a453230b3527bdc5a81dcf7279d9af2aad14b32c07756a4700c97eab2ce24646",
+  "supportSha256": "70a6ce6193206d757783a3fb4ba2bc32462677d1980818c75a1e60e6bbb56a99",
+  "checks": [
+    {
+      "name": "metadata-0-exact-canonical-bytes",
+      "passed": true,
+      "detail": {
+        "bytes": 14,
+        "sha256": "36e7474f7b586d7618c714f0a77266ec7495d3672268ac55fc8e8762e80506de"
+      }
+    },
+    {
+      "name": "metadata-0-same-json-value",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "metadata-1-exact-canonical-bytes",
+      "passed": true,
+      "detail": {
+        "bytes": 14,
+        "sha256": "36e7474f7b586d7618c714f0a77266ec7495d3672268ac55fc8e8762e80506de"
+      }
+    },
+    {
+      "name": "metadata-1-same-json-value",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ack-invisible-until-writer-closes",
+      "passed": true,
+      "detail": [
+        {
+          "stage": "during-write",
+          "ackVisible": false,
+          "ackBytes": null
+        },
+        {
+          "stage": "before-close",
+          "ackVisible": false,
+          "ackBytes": null
+        }
+      ]
+    },
+    {
+      "name": "ack-final-exact-token",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ack-no-leftover-partial",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "passed": 7,
+  "failed": 0
+}

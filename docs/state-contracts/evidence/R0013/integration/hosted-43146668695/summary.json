@@ -1,0 +1,493 @@
+{
+  "schema": "r0013-integration-hosted-windows-receipts.v1",
+  "workflow": ".github/workflows/r0013-integration-qualification.yml",
+  "runId": 43146668695,
+  "retained": "small JSON/text receipts only; full artifact tarballs are not committed and are identified by sha256",
+  "attempts": {
+    "1": {
+      "Windows": {
+        "collectorStatus": "FAIL",
+        "commit": "ddfb872a6c1e72ea8b2ed5839f660efcbac2046b",
+        "tree": "dc1c743a555f21d531513ed7112bcf2447cf175c",
+        "image": "20261101.353.1",
+        "ps51": "5.1.20348.5773",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": null,
+            "passed": false
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-timing.v2",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 28121
+          },
+          {
+            "case": "native-only-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22890
+          },
+          {
+            "case": "private-wildcard-cmdlets-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22779
+          },
+          {
+            "case": "private-wildcard-cmdlets-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22968
+          }
+        ],
+        "installEntryNative": {
+          "receipt": "none (collector subprocess timeout after 240 s; no per-case data)"
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "9217d06af84981cc24bf1374f7bd1c4f33137e7054a1576085e11abbbf450aa3"
+      },
+      "Windows-windows-2025": {
+        "collectorStatus": "FAIL",
+        "commit": "ddfb872a6c1e72ea8b2ed5839f660efcbac2046b",
+        "tree": "dc1c743a555f21d531513ed7112bcf2447cf175c",
+        "image": "20261103.298.1",
+        "ps51": "5.1.26100.33648",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": 1,
+            "passed": false
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-timing.v2",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 33973
+          },
+          {
+            "case": "native-only-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22977
+          },
+          {
+            "case": "private-wildcard-cmdlets-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22375
+          },
+          {
+            "case": "private-wildcard-cmdlets-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22526
+          }
+        ],
+        "installEntryNative": {
+          "cases": 21,
+          "passed": 20,
+          "failing": [
+            {
+              "host": "ps51",
+              "case": "missing-preset",
+              "classification": "BOOTSTRAP_BLOCKED",
+              "interceptionLoaded": false
+            }
+          ]
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "ed9c26e0fadeafc053404ec6eebfceb9ea1df44bcf765efe56dae94df83c220c"
+      }
+    },
+    "2": {
+      "Windows": {
+        "collectorStatus": "PASS",
+        "commit": "ddfb872a6c1e72ea8b2ed5839f660efcbac2046b",
+        "tree": "dc1c743a555f21d531513ed7112bcf2447cf175c",
+        "image": "20261101.353.1",
+        "ps51": "5.1.20348.5773",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": 0,
+            "passed": true
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-timing.v2",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 17776
+          },
+          {
+            "case": "native-only-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 11849
+          },
+          {
+            "case": "private-wildcard-cmdlets-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 11687
+          },
+          {
+            "case": "private-wildcard-cmdlets-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 11968
+          }
+        ],
+        "installEntryNative": {
+          "cases": 24,
+          "passed": 24,
+          "failing": []
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "f8225bb1a23704122ea284bc0d23d646b1670c9fc016f46cebe93827194944bc"
+      },
+      "Windows-windows-2025": {
+        "collectorStatus": "FAIL",
+        "commit": "ddfb872a6c1e72ea8b2ed5839f660efcbac2046b",
+        "tree": "dc1c743a555f21d531513ed7112bcf2447cf175c",
+        "image": "20261103.298.1",
+        "ps51": "5.1.26100.33648",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": null,
+            "passed": false
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-timing.v2",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 27944
+          },
+          {
+            "case": "native-only-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22582
+          },
+          {
+            "case": "private-wildcard-cmdlets-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22384
+          },
+          {
+            "case": "private-wildcard-cmdlets-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22611
+          }
+        ],
+        "installEntryNative": {
+          "receipt": "none (collector subprocess timeout after 240 s; no per-case data)"
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "d59bb80109fa8fbc9fb0c7fdaad978464363e8124b3b6537eae298a9c0df0fe2"
+      }
+    },
+    "3": {
+      "Windows-windows-2025": {
+        "collectorStatus": "FAIL",
+        "commit": "ddfb872a6c1e72ea8b2ed5839f660efcbac2046b",
+        "tree": "dc1c743a555f21d531513ed7112bcf2447cf175c",
+        "image": "20261103.298.1",
+        "ps51": "5.1.26100.33648",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": null,
+            "passed": false
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-timing.v2",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 27240
+          },
+          {
+            "case": "native-only-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22418
+          },
+          {
+            "case": "private-wildcard-cmdlets-cold",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22225
+          },
+          {
+            "case": "private-wildcard-cmdlets-warm",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": 22452
+          }
+        ],
+        "installEntryNative": {
+          "receipt": "none (collector subprocess timeout after 240 s; no per-case data)"
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "c698f6e088196ba4e20b2178da401541575afde049d94e8e2dc3c68f71c43df0"
+      }
+    }
+  },
+  "note": "Attempts 2 and 3 were `rerun --failed`. Attempt 3 re-ran only the windows-2025 leg; the windows-2022 result for attempts 2-3 is the attempt-2 job.",
+  "jsonLexerJobsAttempt1": {
+    "5.1": {
+      "conclusion": "success",
+      "archive": "json-lexer-5.1/r0013-lexer-reports.tar.gz",
+      "sha256": "3f544611e6f0a5079c2eef714faf7446a249d5385b4bc0d2a678a0fb646faa8d"
+    },
+    "7.6.6": {
+      "conclusion": "success",
+      "archive": "json-lexer-7.6.6/r0013-lexer-reports.tar.gz",
+      "sha256": "ed3328ceae20eb515abe2b220b12b5ffd779c73e1bd8176372d97aa9e75e1c94"
+    },
+    "7.6.9": {
+      "conclusion": "success",
+      "archive": "json-lexer-7.6.9/r0013-lexer-reports.tar.gz",
+      "sha256": "aba9a4d5f3a757aaa438bbcdb9dad0a9bc228ab8f00ccfa5527eb0248a5e06ab"
+    }
+  }
+}

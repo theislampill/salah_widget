@@ -21,6 +21,8 @@ sys.dont_write_bytecode=True
 HERE=Path(__file__).resolve().parent
 CORE_PATH=HERE/'install-entry-composition-support.py'
 DIAGNOSTIC_PATH=HERE/'install-entry-driver-diagnostic.py'
+# Product candidate pin is independent of the immutable source-free instrument.
+PREVIEW_SOURCE_SHA='07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a'
 CORE_SHA='4600bac181dcac5fe7f72467c6018800666284d7087cf98f8b9bf5a449910821'
 DIAGNOSTIC_SHA='08ddd40bbdafe82cdc25bb074ee2da6b9e9ef78004d744c3daf00ea8ca06cbd5'
 
@@ -36,7 +38,7 @@ def load_exact(name,path,expected):
 core=load_exact('r0016_product_common',CORE_PATH,CORE_SHA)
 diagnostic=load_exact('r0016_product_diagnostic',DIAGNOSTIC_PATH,DIAGNOSTIC_SHA)
 # These exact reusable functions/constants retain their original implementation.
-for name in ('PREVIEW_SOURCE_SHA','TIMEOUT','ACK_TIMEOUT','SCENARIOS','FAILURE_SCENARIOS','ROW_FIELDS','ROLE_PATHS','CLONE_FIELDS',
+for name in ('TIMEOUT','ACK_TIMEOUT','SCENARIOS','FAILURE_SCENARIOS','ROW_FIELDS','ROLE_PATHS','CLONE_FIELDS',
     'require','sha','fact','save','complete_json','owned_environment','direct_parameters','exact_exit',
     'validate_rows','map_inputs','verify_input_mapping','inventory','double_inventory','extract_instrument',
     'mapped_environment','finish_owned_acquisition','require_positive_confinement'):
@@ -513,7 +515,9 @@ def invoke_pair(pair, support, direct_observation):
                     receipt['originalReady'] = double_inventory(root, support, control / 'full-at-original-ready.json', locks)
                     require(process.poll() is None and time.monotonic() - started < TIMEOUT
                             and time.monotonic() - ready_clock < 10, 'Original Utility ready observation exceeded its ACK deadline')
-                    ack.write_text(token, encoding='utf-8')
+                    temporary = ack.with_name(ack.name + '.partial')
+                    temporary.write_text(token, encoding='utf-8')
+                    temporary.replace(ack)
                     receipt['originalReadyToken'] = token
                     receipt['originalReadyFact'], receipt['originalAckFact'] = fact(ready), fact(ack)
                     receipt['originalReadyAcknowledged'] = True

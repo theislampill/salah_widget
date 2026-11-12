@@ -1,0 +1,322 @@
+# R000F RED at 750bfbb74b393e87bdec1cc0955ab2f47735b85c (main 645b53cc + r0011 harness repair + R000F doc); builder.html sha256 66f1cd86cfb3d1e53b75c8840057564ccfa514a46cf1f13b6863673b0d83279e
+# command: node --test tests/builder-preview-publication.test.cjs
+✖ R000F publication: ES0F-01 one initial navigation; equal-coordinate coarse result adds none (6.6869ms)
+✖ R000F publication: ES0F-01 equivalent input/change pairs issue no navigation or revision (2.2129ms)
+✖ R000F publication: ES0F-02 each actual change issues exactly one navigation with correct output (1.1753ms)
+✖ R000F publication: ES0F-05 canonically equivalent raw spellings do not restart (1.5263ms)
+✖ R000F publication: ES0F-03 mode switches publish once; local-mode location edits and active re-click do not (1.8665ms)
+✖ R000F publication: rapid typing navigates only for distinct outputs, in order, ending at the draft (1.7542ms)
+✖ R000F publication: ES0F-04/11/14 issued record equals what the iframe received; no cachebuster or readiness (1.2124ms)
+✖ R000F publication: ES0F-06 D1 invalid draft keeps preview and export; Copy/Install/Open refuse (1.0964ms)
+✖ R000F publication: ES0F-05 D2 provenance-only change updates draft without navigation (2.9855ms)
+✖ R000F publication: ES0F-13 D3 Refresh re-issues the last issued preview once, never the invalid draft (1.3863ms)
+✖ R000F publication: ES0F-14 throwing src assignment is not recorded; export current; retry navigates (1.3748ms)
+✖ R000F publication: ES0F-07/08 stale and A-B-A lookups cannot publish even when equal-valued (1.0753ms)
+✖ R000F publication: ES0F-09 candidate cycling retained; identical-identity candidate adds no navigation (2.6614ms)
+✖ R000F publication: ES0F-12 pending copy recovery keeps captured bytes; later success copies current output (1.3411ms)
+✔ R000F publication: ES0F-15 325x530 wrapper, local-only geolocation, focus preserved (1.7568ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 1
+ℹ fail 14
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 100.3381
+
+✖ failing tests:
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-01 one initial navigation; equal-coordinate coarse result adds none (6.6869ms)
+  AssertionError [ERR_ASSERTION]: equal-coordinate coarse result issues no navigation
+  
+  2 !== 1
+  
+      at S.initial (<worktree>\tests\builder-preview-publication-fixture.cjs:54:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-01 equivalent input/change pairs issue no navigation or revision (2.2129ms)
+  AssertionError [ERR_ASSERTION]: equivalent input/change pairs issue no navigation
+  
+  17 !== 1
+  
+      at S.inputChangePair (<worktree>\tests\builder-preview-publication-fixture.cjs:60:10)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 17,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-02 each actual change issues exactly one navigation with correct output (1.1753ms)
+  AssertionError [ERR_ASSERTION]: method change issues exactly one navigation
+  
+  3 !== 2
+  
+      at S.changedOnce (<worktree>\tests\builder-preview-publication-fixture.cjs:71:12)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-05 canonically equivalent raw spellings do not restart (1.5263ms)
+  AssertionError [ERR_ASSERTION]: equivalent raw values issue no navigation
+  
+  11 !== 1
+  
+      at S.equivalentSpellings (<worktree>\tests\builder-preview-publication-fixture.cjs:80:10)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 11,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-03 mode switches publish once; local-mode location edits and active re-click do not (1.8665ms)
+  AssertionError [ERR_ASSERTION]: local-mode location edits issue no navigation
+  
+  8 !== 2
+  
+      at S.localMode (<worktree>\tests\builder-preview-publication-fixture.cjs:89:10)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 8,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: rapid typing navigates only for distinct outputs, in order, ending at the draft (1.7542ms)
+  AssertionError [ERR_ASSERTION]: one navigation per distinct output
+  + actual - expected
+  
+    [
+      '2',
+      '21',
+  +   '21',
+      '21.5',
+  +   '21.5'
+    ]
+  
+      at S.rapid (<worktree>\tests\builder-preview-publication-fixture.cjs:101:10)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ '2', '21', '21', '21.5', '21.5' ],
+    expected: [ '2', '21', '21.5' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-04/11/14 issued record equals what the iframe received; no cachebuster or readiness (1.2124ms)
+  AssertionError [ERR_ASSERTION]: an issued-preview record exists
+      at S.issuedIdentity (<worktree>\tests\builder-preview-publication-fixture.cjs:109:10)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-06 D1 invalid draft keeps preview and export; Copy/Install/Open refuse (1.0964ms)
+  AssertionError [ERR_ASSERTION]: invalid draft issues no navigation ("")
+  
+  3 !== 1
+  
+      at S.invalidDraft (<worktree>\tests\builder-preview-publication-fixture.cjs:123:12)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-05 D2 provenance-only change updates draft without navigation (2.9855ms)
+  AssertionError [ERR_ASSERTION]: provenance-only change issues no navigation
+  
+  2 !== 1
+  
+      at S.provenance (<worktree>\tests\builder-preview-publication-fixture.cjs:159:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-13 D3 Refresh re-issues the last issued preview once, never the invalid draft (1.3863ms)
+  AssertionError [ERR_ASSERTION]: Refresh issues exactly one navigation
+  
+  4 !== 3
+  
+      at S.refresh (<worktree>\tests\builder-preview-publication-fixture.cjs:167:29)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 4,
+    expected: 3,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-14 throwing src assignment is not recorded; export current; retry navigates (1.3748ms)
+  AssertionError [ERR_ASSERTION]: an issued-preview record exists
+      at S.assignmentFailure (<worktree>\tests\builder-preview-publication-fixture.cjs:183:10)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: null,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-07/08 stale and A-B-A lookups cannot publish even when equal-valued (1.0753ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at S.staleLookup (<worktree>\tests\builder-preview-publication-fixture.cjs:191:30)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-09 candidate cycling retained; identical-identity candidate adds no navigation (2.6614ms)
+  AssertionError [ERR_ASSERTION]: identical-identity candidate issues no navigation
+  
+  5 !== 4
+  
+      at S.cycling (<worktree>\tests\builder-preview-publication-fixture.cjs:209:10)
+      at async Test.run (node:internal/test_runner/test:1125:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 4,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests\builder-preview-publication.test.cjs:25:30
+✖ R000F publication: ES0F-12 pending copy recovery keeps captured bytes; later success copies current output (1.3411ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  5 !== 2
+  
+      at S.pendingCopy (<worktree>\tests\builder-preview-publication-fixture.cjs:218:54)
+      at TestContext.<anonymous> (<worktree>\tests\builder-preview-publication.test.cjs:25:72)
+      at Test.runInAsyncScope (node:async_hooks:228:14)
+      at Test.run (node:internal/test_runner/test:1118:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:787:18)
+      at Test.postRun (node:internal/test_runner/test:1247:19)
+      at Test.run (node:internal/test_runner/test:1175:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:787:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 5,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+# exit 1

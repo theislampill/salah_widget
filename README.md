@@ -88,12 +88,13 @@ inspect the exact file before allowing normal setup actions.
 These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
-Both examples below use installer source commit
-`f8d3db2d6d6d84f63bf8d79cf52c6977558cb105`. On macOS or Linux, keep the downloaded
+The Bash example below uses installer source commit
+`dc4c251d81ccb0796e70ff0516661204277232cb`; the PowerShell example uses
+`81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb`. On macOS or Linux, keep the downloaded
 file for both the preview and normal run:
 
 ```bash
-INSTALL_COMMIT='f8d3db2d6d6d84f63bf8d79cf52c6977558cb105'
+INSTALL_COMMIT='dc4c251d81ccb0796e70ff0516661204277232cb'
 curl -fsSL "https://raw.githubusercontent.com/theislampill/salah_widget/$INSTALL_COMMIT/install.sh" -o install.sh
 less ./install.sh
 DRY_RUN=1 bash ./install.sh
@@ -112,7 +113,7 @@ with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-$InstallCommit = 'f8d3db2d6d6d84f63bf8d79cf52c6977558cb105'
+$InstallCommit = '81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb'
 Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/$InstallCommit/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
@@ -233,7 +234,12 @@ the location field identifies an estimated area, browser/saved browser position,
 selected site. Its title reports available accuracy in metres and original fix age; tap it
 to request a browser position.
 Type a place name to **search** (Enter cycles multiple matches; **Shift+Enter** keeps a custom
-display name without moving the coordinates). Changes **save automatically** when you close the
+display name without moving the coordinates). Search feedback distinguishes "no matching place"
+("Couldn’t find" in Settings: every provider answered with no match) from "Search unavailable" (a
+provider failed, so no match can be concluded); "Partial results, a provider failed" marks usable
+matches found while another source failed. In the builder the full guidance is in the tip's tooltip. Coordinates
+from providers or the browser are used only when they are finite and inside ±90°/±180° — they are
+never clamped into range — while coordinates you type keep the existing clamping. Changes **save automatically** when you close the
 panel. If persistence fails, changes apply for this session and Settings retains a warning. The **↺** icon removes only saved widget configuration and then re-detects if removal succeeds; prayer/weather caches and provider-held data are unaffected.
 
 ### Modes & precedence
@@ -429,7 +435,11 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   20 seconds while JavaScript is runnable; this is not a hard wall-time recovery
   guarantee during blocked/suspended execution or scheduling delays.
   Weather retry is eligible after 60 seconds and radar after 10 minutes from
-  their respective last attempt starts, using the existing client wall clock.
+  their respective last attempt starts, measured on the page's elapsed clock
+  (`performance.now()`), so a wall-clock correction neither delays nor hastens
+  a replacement; source and receipt ages stay UTC. A host without
+  `performance.now()` falls back to `Date.now()`, a degraded wall-clock spacing
+  that `qaState().wxTruth.retry.clock` reports as `wall-fallback`.
   An eligible current record plus a retained hourly track can skip weather
   refetch for less than 15 minutes after the last accepted current receipt.
   Valid coordinates and free request ownership still matter. The ordinary

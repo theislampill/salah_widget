@@ -1,0 +1,301 @@
+{
+  "schema": "installer-native-v1",
+  "status": "PASS",
+  "phase": "r0013",
+  "host": {
+    "system": "Linux",
+    "platform": "Linux-7.0.0-1017-azure-x86_64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "image_version": "20261101.360.1",
+    "bash": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)",
+    "uid": 1001,
+    "gid": 1001,
+    "groups": [
+      4,
+      100,
+      118,
+      999,
+      1001
+    ],
+    "native_tools": {
+      "bash": "/usr/bin/bash",
+      "python3": "/usr/bin/python3",
+      "stat": "/usr/bin/stat",
+      "id": "/usr/bin/id",
+      "mktemp": "/usr/bin/mktemp",
+      "find": "/usr/bin/find",
+      "sort": "/usr/bin/sort",
+      "curl": "/usr/bin/curl",
+      "uname": "/usr/bin/uname",
+      "df": "/usr/bin/df",
+      "sandbox-exec": null,
+      "log": null,
+      "dtruss": null
+    },
+    "parent_identities": [
+      {
+        "path": "/home/runner/work/salah_widget/salah_widget",
+        "physical": "/home/runner/work/salah_widget/salah_widget",
+        "device": 2049,
+        "inode": 9175656,
+        "uid": 1001,
+        "gid": 1001,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/home/runner/work/_temp",
+        "physical": "/home/runner/work/_temp",
+        "device": 2049,
+        "inode": 9175646,
+        "uid": 1001,
+        "gid": 1001,
+        "mode": "0o755",
+        "symlink": false
+      },
+      {
+        "path": "/tmp",
+        "physical": "/tmp",
+        "device": 2049,
+        "inode": 1700,
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o1777",
+        "symlink": false
+      },
+      {
+        "path": "/tmp",
+        "physical": "/tmp",
+        "device": 2049,
+        "inode": 1700,
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o1777",
+        "symlink": false
+      },
+      {
+        "path": "/home/runner",
+        "physical": "/home/runner",
+        "device": 2049,
+        "inode": 283495,
+        "uid": 1001,
+        "gid": 1001,
+        "mode": "0o750",
+        "symlink": false
+      }
+    ],
+    "fixture_parent": "/tmp",
+    "acquisition": {
+      "uname": {
+        "command": [
+          "/usr/bin/uname",
+          "-a"
+        ],
+        "exit": 0,
+        "stdout": "Linux runnervm7aw5e 7.0.0-1017-azure #17~24.04.1-Ubuntu SMP PREEMPT Thu Sep 24 18:46:57 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux\n",
+        "stderr": ""
+      },
+      "filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/home/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem     1024-blocks     Used Available Capacity Mounted on\n/dev/root        151263856 61275976  89971496      41% /\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_mount": {
+        "command": [
+          "df",
+          "-P",
+          "/tmp"
+        ],
+        "exit": 0,
+        "stdout": "Filesystem     1024-blocks     Used Available Capacity Mounted on\n/dev/root        151263856 61275976  89971496      41% /\n",
+        "stderr": ""
+      },
+      "native_stat": {
+        "command": [
+          "stat",
+          "-c",
+          "%d:%i:%u:%g:%a",
+          "/home/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "2049:9175748:1001:1001:755\n",
+        "stderr": ""
+      },
+      "filesystem_volume": {
+        "command": [
+          "stat",
+          "-f",
+          "-c",
+          "%T",
+          "/home/runner/work/_temp/installer-evidence"
+        ],
+        "exit": 0,
+        "stdout": "ext2/ext3\n",
+        "stderr": ""
+      },
+      "fixture_filesystem_volume": {
+        "command": [
+          "stat",
+          "-f",
+          "-c",
+          "%T",
+          "/tmp"
+        ],
+        "exit": 0,
+        "stdout": "ext2/ext3\n",
+        "stderr": ""
+      }
+    }
+  },
+  "commands": [
+    {
+      "name": "install-bash",
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/salah_widget/salah_widget/tests/install-bash.py",
+        "/home/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:44.309242+00:00",
+      "finished": "2026-11-11T23:34:46.180911+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/tmp/salah-install-tests-5zat4a6r",
+          "archive_directory": "install-bash-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-entry-bash",
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/salah_widget/salah_widget/tests/install-entry-bash.py",
+        "/home/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:46.181195+00:00",
+      "finished": "2026-11-11T23:34:49.903565+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/tmp/salah-entry-bash-juc5apr0",
+          "archive_directory": "install-entry-bash-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-discovery",
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/salah_widget/salah_widget/tests/install-discovery.py",
+        "/home/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:49.904316+00:00",
+      "finished": "2026-11-11T23:34:54.968039+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/tmp/salah-discovery-u495ypkf",
+          "archive_directory": "install-discovery-fixture"
+        },
+        {
+          "original": "/tmp/salah-entry-bash-tg42v512",
+          "archive_directory": "install-discovery-fixture-1"
+        }
+      ]
+    },
+    {
+      "name": "install-detectors",
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/salah_widget/salah_widget/tests/install-detectors.py",
+        "/home/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:54.968753+00:00",
+      "finished": "2026-11-11T23:34:55.745108+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/tmp/salah-detectors-9ibq9bwt",
+          "archive_directory": "install-detectors-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-discovery-mutations",
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/salah_widget/salah_widget/tests/install-discovery-mutations.py",
+        "/home/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:34:55.745813+00:00",
+      "finished": "2026-11-11T23:35:02.364081+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/tmp/salah-discovery-mutants-87bw6ybb",
+          "archive_directory": "install-discovery-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-original-mutations",
+      "command": [
+        "/usr/bin/python3",
+        "/home/runner/work/salah_widget/salah_widget/tests/install-mutations.py",
+        "/home/runner/work/salah_widget/salah_widget/install.sh"
+      ],
+      "started": "2026-11-11T23:35:02.364595+00:00",
+      "finished": "2026-11-11T23:35:07.170082+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": [
+        {
+          "original": "/tmp/salah-install-mutants-0foi6mn2",
+          "archive_directory": "install-original-mutations-fixture"
+        }
+      ]
+    },
+    {
+      "name": "install-builder",
+      "command": [
+        "node",
+        "/home/runner/work/salah_widget/salah_widget/tests/install-builder.cjs"
+      ],
+      "started": "2026-11-11T23:35:07.170576+00:00",
+      "finished": "2026-11-11T23:35:07.356203+00:00",
+      "exit": 0,
+      "passed": true,
+      "archived_fixtures": []
+    }
+  ],
+  "commit": "302c4ec0a340fd2c07789598838f35acf5652194",
+  "tree": "9169e944b52694c512f0739660d5730958e8c5b1",
+  "source_hashes": {
+    "install.sh": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+    "install.ps1": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+    "tests/install-bash.py": "01115e6145b4001b7fd3fae56f2612894676f79116973017e72943e98bd6a145",
+    "tests/install-builder.cjs": "4889acc96ac6036368c34cad1a539e5d445f6b3dd1356c6a0ace157cd3f383c1",
+    "tests/install-detectors.py": "aafd6b6ea1840a2c8cbebd86f3683d6bf4a89a49264043c60574a5059f9762ab",
+    "tests/install-discovery-mutations.py": "390130f05c14e79aed586a6cd5e7161b4f820e5d816fa7816f1662988111cd0b",
+    "tests/install-discovery.ps1": "66f7e4246e92a31099ea4b5a8e7e6d92fe64b9a6fd5044f72cd88331c85d287c",
+    "tests/install-discovery.py": "1f648540634cec866fb7e93e1cfd4a9b9279002c0958898b4f76e61fe19d5bb7",
+    "tests/install-entry-bash.py": "d46dfc53b61406d18883a08cd77a0788ed2b46131904329c7dded865e214b093",
+    "tests/install-entry-native.py": "0fb96137d59d35fa6449f57fe06f7d6211cbe525c9f2578c843c8085828c4a87",
+    "tests/install-entry.ps1": "bf488439bba1cf0db034477d91c325a2077af38598de717b6f2b48641686e6b3",
+    "tests/install-host-bootstrap.ps1": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+    "tests/install-mutations.py": "7638ee1a79edaa472d7f78345436d01fab54358c7540e85f810c260a5558a43b",
+    "tests/install-native-receipts.py": "c9c5cc6e6ad8e037b232e53167af766948c48bad0fd4e263369989c6475b57c5",
+    "tests/install-powershell-guards.ps1": "4d860ad39c048d2a3d8ae193a665e02826dc28f4892fa4f51020347d2cb628f4",
+    "tests/install-powershell.ps1": "e2fbfcff900af9087ff758177b20dd7e7a172671d67464d1a9ec77de3cfc61ba"
+  }
+}

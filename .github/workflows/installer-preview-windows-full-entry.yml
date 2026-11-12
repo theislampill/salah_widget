@@ -30,6 +30,9 @@ concurrency:
 
 jobs:
   windows:
+    # Acquisition-only checkpoints retain open failures without repeating full20.
+    # A later ordinary source/fixture publication runs the unchanged full matrix.
+    if: ${{ !contains(github.event.head_commit.message, '[r0016-acquisition-only]') }}
     strategy:
       fail-fast: false
       matrix:

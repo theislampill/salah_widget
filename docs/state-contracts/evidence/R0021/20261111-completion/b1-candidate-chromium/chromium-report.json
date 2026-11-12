@@ -1,0 +1,4970 @@
+{
+  "schema": "r0021-native/3",
+  "engine": "chromium",
+  "headed": false,
+  "out": "b1-candidate-chromium",
+  "complete": true,
+  "evidenceLevel": "request-level (CDP) and page-level",
+  "root": "repository",
+  "policy": "default-src 'none'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; font-src 'none'; base-uri 'self'; form-action 'none'",
+  "policyDelivery": "response header on index.html",
+  "served": {
+    "index.html": "0f765e335ffb348d4f3cd35f2c379dfd13e8998b3f7df5e7496583561c4925fb",
+    "real-sky/native-sky.js": "d5780cbf840d35231c6c7202e1abd93796f9a4633a4eed648f237b70c8d172f8",
+    "real-sky/native-worker.js": "30d3ca5b05cdf11ad5065551cb2d16e8b46ff1a82192fbc5a3337d12e108b745",
+    "real-sky/native-data.js": "649d7ecc4fae05d655c934c4b2e69467427b9d215e0f1e6ae95701364e29167f",
+    "moon/moon-host.js": "fee33628b4a0173f973af34a10181f657b74114d2b1e0df7fa373c5833819b20",
+    "moon/moon-worker.js": "62b8753d518d8047e268c86d378de76c70d4b4e33b4467283feab06e3f3bb42e",
+    "config.js": "719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80"
+  },
+  "options": {
+    "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4",
+    "cells": [
+      "first-boot",
+      "live-handoff",
+      "retirement-synthetic",
+      "construction",
+      "census",
+      "cycles",
+      "moon-replay",
+      "recovery-visual",
+      "night",
+      "retirement-bfcache",
+      "navigation",
+      "moon-construction",
+      "presentation"
+    ],
+    "cyclesWaitMs": 200,
+    "cyclesSettleMs": 500,
+    "cyclesFreshPage": false,
+    "composedWaitMs": 60000,
+    "inPagePrayer": true,
+    "enableBfcache": false,
+    "reducedMotion": false
+  },
+  "bfcache": "Playwright default (--disable-back-forward-cache)",
+  "cells": {
+    "first-boot": {
+      "pass": true,
+      "moonDisposedField": "exposed",
+      "sky": 1,
+      "preview": 1,
+      "detail": 1,
+      "workersLive": 2,
+      "skyWorkersLive": 1,
+      "urlsLive": 2,
+      "skyUrlsLive": 1,
+      "vis": 3,
+      "moonVis": 1,
+      "pendingDecodes": 0,
+      "assets": "ready",
+      "skyStatus": "pending",
+      "previewStatus": "ready",
+      "previewDraws": 4,
+      "moonRuntime": true,
+      "moonDisposed": false,
+      "moonDetail": true
+    },
+    "live-handoff": {
+      "pass": true,
+      "invalidationHandoff": true,
+      "retryHandoff": true,
+      "after": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 19,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "retirement-synthetic": {
+      "pass": false,
+      "acceptance": false,
+      "role": "diagnostic: synthetic pagehide into a visible, fully active document (unsupported lifecycle); never counted as pass",
+      "cleanRetirement": false,
+      "maskChangingAtPagehide": true,
+      "maskPrefixes": [
+        "url(\"data:image/png;base64,iVBORw0KGgoAA",
+        "url(\"data:image/png;base64,iVBORw0KGgoAA"
+      ],
+      "refinedComposedBeforePagehide": true,
+      "documentVisibilityAfterPagehide": "visible",
+      "rafCallbacksWhileRetiring": 59,
+      "retiringImages": [
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3060:8)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6119.300000011921,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6250.4000000059605,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6364.600000023842,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6481.300000011921,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6597.800000011921,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6715.4000000059605,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6830.700000017881,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 6947.700000017881,
+          "doc": "5osou4b2"
+        },
+        {
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "scheme": "data",
+          "stack": "    at Image.set [as src] (<anonymous>:20:98)\n    at NativeSolarMaskPublication.publish (http://127.0.0.1:61109/index.html:2605:13)\n    at paint (http://127.0.0.1:61109/index.html:3016:21)\n    at update (http://127.0.0.1:61109/index.html:3062:7)\n    at present (http://127.0.0.1:61109/index.html:3065:259)\n    at Object.present (http://127.0.0.1:61109/index.html:3071:66)\n    at loop (http://127.0.0.1:61109/index.html:7318:29)\n    at <anonymous>:41:213",
+          "phase": "retiring",
+          "t": 7063.700000017881,
+          "doc": "5osou4b2"
+        }
+      ],
+      "initiators": {
+        "retirementInitiated": 0,
+        "renderLoop": 9,
+        "other": 0,
+        "cdpRetiringRequests": 8
+      },
+      "retiringViolations": [],
+      "retiringCdp": [
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        },
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        },
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        },
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        },
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        },
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        },
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        },
+        {
+          "page": "main",
+          "phase": "retiring",
+          "type": "Image",
+          "prefix": "data:image/png;base64,iVBORw0K",
+          "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+          "initiator": "{\"type\": \"other\"}"
+        }
+      ],
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 33,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "afterPagehide": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "skyWorkersLive": 0,
+        "urlsLive": 1,
+        "skyUrlsLive": 0,
+        "vis": 2,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "suspended",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 42,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "resumed": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 43,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "requestLevel": true
+    },
+    "construction": {
+      "pass": true,
+      "baseline": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 43,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "nativeLoopStarted": true,
+      "contextRefusal1": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "skyWorkersLive": 0,
+        "urlsLive": 1,
+        "skyUrlsLive": 0,
+        "vis": 2,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 48,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "contextRefusal2": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "skyWorkersLive": 0,
+        "urlsLive": 1,
+        "skyUrlsLive": 0,
+        "vis": 2,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 53,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true,
+        "prayerUi": {
+          "fajr": true,
+          "time": true,
+          "unavailable": false
+        }
+      },
+      "intervalFailure": {
+        "sky": 0,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 1,
+        "skyWorkersLive": 0,
+        "urlsLive": 1,
+        "skyUrlsLive": 0,
+        "vis": 2,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "unavailable",
+        "skyStatus": null,
+        "previewStatus": "ready",
+        "previewDraws": 59,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "recovered": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 60,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "census": {
+      "pass": true,
+      "perInstanceBound": {
+        "refinedCanvas": 1,
+        "refinedWorker": 1,
+        "refinedBlobUrl": 1,
+        "previewCanvas": 1,
+        "moonDetailCanvas": 1
+      },
+      "baseline": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 60,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "peak": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 1
+      },
+      "final": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 89,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "temporaryOverlap": {
+        "sky": 0,
+        "preview": 0,
+        "detail": 0,
+        "workersLive": 0,
+        "skyWorkersLive": 0,
+        "urlsLive": 0,
+        "skyUrlsLive": 0,
+        "vis": 0,
+        "moonVis": 0,
+        "pendingDecodes": 1
+      },
+      "steps": [
+        {
+          "step": "active-retry-0",
+          "ready": true,
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 66,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "step": "active-retry-1",
+          "ready": true,
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 72,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "step": "active-retry-2",
+          "ready": true,
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 78,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "step": "live-invalidation-0",
+          "handoff": true,
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 82,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "step": "live-invalidation-1",
+          "handoff": true,
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 85,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "step": "live-invalidation-2",
+          "handoff": true,
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 89,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        }
+      ],
+      "note": "pendingDecodes and all overlaps are reported, not judged; TA3 decode bounds stay source-asserted"
+    },
+    "cycles": {
+      "nativeLoopStarted": true,
+      "visibilityListenerLog": [
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at http://127.0.0.1:61109/index.html:4131:11 |     at http://127.0.0.1:61109/index.html:4184:3 |     at http://127.0.0.1:61109/index.html:4194:3",
+          "phase": "load",
+          "t": 324.5,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at startRenderLoop (http://127.0.0.1:61109/index.html:7324:12) |     at boot (http://127.0.0.1:61109/index.html:7279:3)",
+          "phase": "load",
+          "t": 596.7000000178814,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at startNativeSky (http://127.0.0.1:61109/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:61109/real-sky/native-sky.js:2310:95)",
+          "phase": "load",
+          "t": 765,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:29:215) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:61109/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:61109/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 12566.40000000596,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at startNativeSky (http://127.0.0.1:61109/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:61109/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 12823.600000023842,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:29:215) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:61109/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:61109/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 13408.100000023842,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at startNativeSky (http://127.0.0.1:61109/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:61109/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 13698.200000017881,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:29:215) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:61109/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:61109/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 14265.300000011921,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at startNativeSky (http://127.0.0.1:61109/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:61109/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 14562.5,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:29:215) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:61109/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:61109/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 15137.90000000596,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at startNativeSky (http://127.0.0.1:61109/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:61109/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 15414.40000000596,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "remove",
+          "stack": "    at EventTarget.removeEventListener (<anonymous>:29:215) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2581:111 |     at release (http://127.0.0.1:61109/real-sky/native-sky.js:2397:73) |     at Object.dispose (http://127.0.0.1:61109/real-sky/native-sky.js:2589:509)",
+          "phase": "cycles",
+          "t": 15983.600000023842,
+          "doc": "5osou4b2"
+        },
+        {
+          "op": "add",
+          "stack": "    at EventTarget.addEventListener (<anonymous>:28:207) |     at startNativeSky (http://127.0.0.1:61109/real-sky/native-sky.js:2581:46) |     at http://127.0.0.1:61109/real-sky/native-sky.js:2600:28 |     at NativeAssetLoader.start (http://127.0.0.1:61109/real-sky/native-sky.js:2310:95)",
+          "phase": "cycles",
+          "t": 16265.100000023842,
+          "doc": "5osou4b2"
+        }
+      ],
+      "pass": true,
+      "start": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 89,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "cycles": [
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 96,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 104,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 111,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 118,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        },
+        {
+          "sky": 1,
+          "preview": 1,
+          "detail": 1,
+          "workersLive": 2,
+          "skyWorkersLive": 1,
+          "urlsLive": 2,
+          "skyUrlsLive": 1,
+          "vis": 3,
+          "moonVis": 1,
+          "pendingDecodes": 0,
+          "assets": "ready",
+          "skyStatus": "pending",
+          "previewStatus": "ready",
+          "previewDraws": 125,
+          "moonRuntime": true,
+          "moonDisposed": false,
+          "moonDetail": true
+        }
+      ],
+      "freshPage": false,
+      "waitMs": 200,
+      "settleMs": 500
+    },
+    "moon-replay": {
+      "pass": true,
+      "outcome": {
+        "errors": [
+          "Uncaught Error: Moon wrapper replay refused: a live Moon runtime is installed"
+        ],
+        "same": true,
+        "disposed": false,
+        "runtime": true,
+        "detail": true
+      },
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 125,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "after": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 130,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "recovery-visual": {
+      "pass": true,
+      "changedPixelFraction3s": 0.12199129172714078,
+      "humanReview": [
+        "chromium-3a-motion.png",
+        "chromium-3b-motion.png"
+      ]
+    },
+    "night": {
+      "pass": true,
+      "status": "human-review",
+      "nightMoonCrop": true,
+      "moonTruth": {
+        "phaseFraction": 0.5,
+        "waxing": true,
+        "moonAltitudeDeg": 40,
+        "moonSkyFresh": true,
+        "lastConsumed": {
+          "status": "completed",
+          "stage": "paint",
+          "fresh": true,
+          "observation": {
+            "fresh": true,
+            "produced": {
+              "epochMinute": 29907330,
+              "minute": 1410,
+              "context": "24.47|39.61|UTC"
+            },
+            "expected": {
+              "epochMinute": 29907330,
+              "minute": 1410,
+              "context": "24.47|39.61|UTC"
+            },
+            "phaseFraction": 0.5,
+            "altitudeDeg": 40,
+            "light": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.675,
+              "beam": 0.405,
+              "cloudLight": 0.675,
+              "localStarWash": 0.575,
+              "localGlow": 0.09,
+              "halo": 0.0077142857142857135,
+              "corona": 0,
+              "paraselenae": 0
+            }
+          }
+        },
+        "currentGeometry": {
+          "fresh": true,
+          "produced": {
+            "epochMinute": 29907330,
+            "minute": 1410,
+            "context": "24.47|39.61|UTC"
+          },
+          "expected": {
+            "epochMinute": 29907330,
+            "minute": 1410,
+            "context": "24.47|39.61|UTC"
+          },
+          "phaseFraction": 0.5,
+          "altitudeDeg": 40,
+          "light": {
+            "eligibility": 1,
+            "eligible": true,
+            "reason": "eligible",
+            "illumination": 0.675,
+            "beam": 0.405,
+            "cloudLight": 0.675,
+            "localStarWash": 0.575,
+            "localGlow": 0.09,
+            "halo": 0.0077142857142857135,
+            "corona": 0,
+            "paraselenae": 0
+          }
+        },
+        "lunarLight": {
+          "eligibility": 1,
+          "eligible": true,
+          "reason": "eligible",
+          "illumination": 0.675,
+          "beam": 0.405,
+          "cloudLight": 0.675,
+          "localStarWash": 0.575,
+          "localGlow": 0.09,
+          "halo": 0.0077142857142857135,
+          "corona": 0,
+          "paraselenae": 0
+        },
+        "surface": {
+          "status": "v5-terrain",
+          "quality": "preview",
+          "visibleSource": "terrain-preview",
+          "identity": "743ff58d28e4fb7e6bca6e33dc18c21dddde3abbef513d658cbbad9c8017f1db",
+          "legacyDecoded": false,
+          "legacyVisible": false,
+          "texture": "V5 DEM intersections, terrain shadows and colour"
+        },
+        "physicalMoonVisible": true,
+        "calendarMoonVisible": true,
+        "displayMode": "physical",
+        "moonSkyOpacity": 1,
+        "moonCalendarOpacity": 1,
+        "moonFeatureOpacity": 1,
+        "moonlightOpacity": 0.405,
+        "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+        "reason": null
+      },
+      "nightCounts": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 37,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      }
+    },
+    "retirement-bfcache": {
+      "pass": true,
+      "return": "reload (back/forward cache not used)",
+      "persisted": false,
+      "bfcache": "Playwright default (--disable-back-forward-cache)",
+      "notRestoredReasons": null,
+      "bfcacheNotUsed": [
+        {
+          "page": "bfcache",
+          "phase": "restore",
+          "explanations": [
+            {
+              "type": "Circumstantial",
+              "reason": "BrowsingInstanceNotSwapped"
+            }
+          ],
+          "tree": "{\"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\", \"explanations\": [{\"type\": \"Circumstantial\", \"reason\": \"BrowsingInstanceNotSwapped\"}], \"children\": []}"
+        }
+      ],
+      "cleanRetirement": true,
+      "traceMarker": true,
+      "maskChangingAtNavigation": true,
+      "maskPrefixes": [
+        "url(\"data:image/png;base64,iVBORw0KGgoAA",
+        "url(\"data:image/png;base64,iVBORw0KGgoAA"
+      ],
+      "refinedComposedBeforeNavigation": true,
+      "retiringImages": [],
+      "retiringViolations": [],
+      "retiringImagesInMemory": null,
+      "retiringCdp": [],
+      "rafCallbacksWhileRetiring": 2,
+      "lifecycleEvents": [
+        {
+          "kind": "lifecycle",
+          "type": "pagehide",
+          "persisted": false,
+          "vis": "visible",
+          "trusted": true,
+          "phase": "retiring",
+          "t": 3770.9000000059605,
+          "doc": "x3aq61pw"
+        },
+        {
+          "kind": "lifecycle",
+          "type": "visibilitychange",
+          "persisted": null,
+          "vis": "hidden",
+          "trusted": true,
+          "phase": "retiring",
+          "t": 3771.5,
+          "doc": "x3aq61pw"
+        }
+      ],
+      "initiators": {
+        "retirementInitiated": 0,
+        "other": 0,
+        "cdpRetiringRequests": 0
+      },
+      "before": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 1,
+        "assets": "ready",
+        "skyStatus": "ready",
+        "previewStatus": "ready",
+        "previewDraws": 16,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "afterReturn": {
+        "sky": 1,
+        "preview": 1,
+        "detail": 1,
+        "workersLive": 2,
+        "skyWorkersLive": 1,
+        "urlsLive": 2,
+        "skyUrlsLive": 1,
+        "vis": 3,
+        "moonVis": 1,
+        "pendingDecodes": 0,
+        "assets": "ready",
+        "skyStatus": "pending",
+        "previewStatus": "ready",
+        "previewDraws": 3,
+        "moonRuntime": true,
+        "moonDisposed": false,
+        "moonDetail": true
+      },
+      "readyAfterReturn": true,
+      "requestLevel": true
+    },
+    "navigation": {
+      "pass": true,
+      "maskChangingAtNavigation": true,
+      "maskPrefixes": [
+        "url(\"data:image/png;base64,iVBORw0KGgoAA",
+        "url(\"data:image/png;base64,iVBORw0KGgoAA"
+      ],
+      "refinedComposedBeforeNavigation": true,
+      "navigationDataBlobRequests": 0,
+      "navigationCdp": []
+    },
+    "moon-construction": {
+      "pass": true,
+      "moon-interval": {
+        "pass": true,
+        "unwound": true,
+        "cardFunctional": true,
+        "reinstalled": true,
+        "nativeLoopStarted": true,
+        "afterFailure": {
+          "injections": [
+            "moon-interval"
+          ],
+          "errors": [
+            "Uncaught Error: driver-injected Moon setInterval failure",
+            "Uncaught TypeError: Cannot read properties of null (reading 'installWorkerSource')"
+          ],
+          "runtimeSlot": "null",
+          "detailSlot": "clear",
+          "moonVisListeners": 0,
+          "moonIntervalsLive": 0,
+          "detailCanvases": 0,
+          "nonSkyWorkersLive": 0,
+          "prayerUi": {
+            "fajr": true,
+            "time": true,
+            "unavailable": false
+          },
+          "counts": {
+            "sky": 1,
+            "preview": 1,
+            "detail": 0,
+            "workersLive": 1,
+            "skyWorkersLive": 1,
+            "urlsLive": 1,
+            "skyUrlsLive": 1,
+            "vis": 2,
+            "moonVis": 0,
+            "pendingDecodes": 0,
+            "assets": "ready",
+            "skyStatus": "pending",
+            "previewStatus": "ready",
+            "previewDraws": 13,
+            "moonRuntime": false,
+            "moonDisposed": null,
+            "moonDetail": false
+          }
+        },
+        "reinstall": {
+          "errors": [],
+          "same": false,
+          "disposed": false,
+          "runtime": true,
+          "detail": true
+        },
+        "afterReinstall": {
+          "moonVisListeners": 1,
+          "moonIntervalsLive": 1,
+          "state": "rendering"
+        }
+      },
+      "moon-frame": {
+        "pass": true,
+        "unwound": true,
+        "cardFunctional": true,
+        "reinstalled": true,
+        "nativeLoopStarted": true,
+        "afterFailure": {
+          "injections": [
+            "moon-frame"
+          ],
+          "errors": [
+            "Uncaught Error: driver-injected Moon requestAnimationFrame failure",
+            "Uncaught TypeError: Cannot read properties of null (reading 'installWorkerSource')"
+          ],
+          "runtimeSlot": "null",
+          "detailSlot": "clear",
+          "moonVisListeners": 0,
+          "moonIntervalsLive": 0,
+          "detailCanvases": 0,
+          "nonSkyWorkersLive": 0,
+          "prayerUi": {
+            "fajr": true,
+            "time": true,
+            "unavailable": false
+          },
+          "counts": {
+            "sky": 1,
+            "preview": 1,
+            "detail": 0,
+            "workersLive": 1,
+            "skyWorkersLive": 1,
+            "urlsLive": 1,
+            "skyUrlsLive": 1,
+            "vis": 2,
+            "moonVis": 0,
+            "pendingDecodes": 0,
+            "assets": "ready",
+            "skyStatus": "pending",
+            "previewStatus": "ready",
+            "previewDraws": 13,
+            "moonRuntime": false,
+            "moonDisposed": null,
+            "moonDetail": false
+          }
+        },
+        "reinstall": {
+          "errors": [],
+          "same": false,
+          "disposed": false,
+          "runtime": true,
+          "detail": true
+        },
+        "afterReinstall": {
+          "moonVisListeners": 1,
+          "moonIntervalsLive": 1,
+          "state": "rendering"
+        }
+      }
+    },
+    "presentation": {
+      "pass": true,
+      "status": "captured; verdict by --compare-presentation and human review",
+      "acceptance": false,
+      "role": "diagnostic capture for ES21-13",
+      "fixedUtc": "2026-11-11T12:00:00Z",
+      "reducedMotion": true,
+      "scenes": {
+        "day-broken": {
+          "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=12:30&simWx=2&simCloud=50",
+          "ready": true,
+          "composed": true,
+          "sha256a": "6e63697bb535eb2bbf030d52837a49b7bb47e4e0a2c7ae50a23cfe59f1a7311d",
+          "repeatNoise": {
+            "pixels": 172250,
+            "strictChanged": 0,
+            "strictFraction": 0,
+            "changedFraction6": 0,
+            "maxDelta": 0,
+            "bbox": null
+          },
+          "prayerUi": {
+            "fajr": true,
+            "time": true,
+            "unavailable": false
+          },
+          "moonTruth": {
+            "phaseFraction": 0.029,
+            "waxing": true,
+            "moonAltitudeDeg": 33,
+            "moonSkyFresh": true,
+            "lastConsumed": {
+              "status": "completed",
+              "stage": "paint",
+              "fresh": true,
+              "observation": {
+                "fresh": true,
+                "produced": {
+                  "epochMinute": 29906670,
+                  "minute": 750,
+                  "context": "24.47|39.61|UTC"
+                },
+                "expected": {
+                  "epochMinute": 29906670,
+                  "minute": 750,
+                  "context": "24.47|39.61|UTC"
+                },
+                "phaseFraction": 0.052956999470362365,
+                "altitudeDeg": 33.005007300782246,
+                "light": {
+                  "eligibility": 0,
+                  "eligible": false,
+                  "reason": "daylight",
+                  "illumination": 0,
+                  "beam": 0,
+                  "cloudLight": 0,
+                  "localStarWash": 0,
+                  "localGlow": 0,
+                  "halo": 0,
+                  "corona": 0,
+                  "paraselenae": 0
+                }
+              }
+            },
+            "currentGeometry": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29906670,
+                "minute": 750,
+                "context": "24.47|39.61|UTC"
+              },
+              "expected": {
+                "epochMinute": 29906670,
+                "minute": 750,
+                "context": "24.47|39.61|UTC"
+              },
+              "phaseFraction": 0.052956999470362365,
+              "altitudeDeg": 33.005007300782246,
+              "light": {
+                "eligibility": 0,
+                "eligible": false,
+                "reason": "daylight",
+                "illumination": 0,
+                "beam": 0,
+                "cloudLight": 0,
+                "localStarWash": 0,
+                "localGlow": 0,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            },
+            "lunarLight": {
+              "eligibility": 0,
+              "eligible": false,
+              "reason": "daylight",
+              "illumination": 0,
+              "beam": 0,
+              "cloudLight": 0,
+              "localStarWash": 0,
+              "localGlow": 0,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            },
+            "surface": {
+              "status": "v5-terrain",
+              "quality": "preview",
+              "visibleSource": "terrain-preview",
+              "identity": "44fd36c3f33199e383cd7500aa17ab091a7884d6dc4012422838580cba6af0bf",
+              "legacyDecoded": false,
+              "legacyVisible": false,
+              "texture": "V5 DEM intersections, terrain shadows and colour"
+            },
+            "physicalMoonVisible": false,
+            "calendarMoonVisible": false,
+            "displayMode": "day-suppressed",
+            "moonSkyOpacity": 0,
+            "moonCalendarOpacity": 0,
+            "moonFeatureOpacity": 1,
+            "moonlightOpacity": 0,
+            "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+            "reason": "daytime suppression (calendar chip persists in header/footer)"
+          }
+        },
+        "night-half": {
+          "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=23:30&simMoon=0.5&simWax=1&simMoonAlt=40&simMoonH=180",
+          "ready": true,
+          "composed": true,
+          "sha256a": "d76a4eba0f9d251c0cd9d41a3dd4fd6a26f88894ac3fe1fdb6b12c7a85a61430",
+          "repeatNoise": {
+            "pixels": 172250,
+            "strictChanged": 0,
+            "strictFraction": 0,
+            "changedFraction6": 0,
+            "maxDelta": 0,
+            "bbox": null
+          },
+          "prayerUi": {
+            "fajr": true,
+            "time": true,
+            "unavailable": false
+          },
+          "moonTruth": {
+            "phaseFraction": 0.5,
+            "waxing": true,
+            "moonAltitudeDeg": 40,
+            "moonSkyFresh": true,
+            "lastConsumed": {
+              "status": "completed",
+              "stage": "paint",
+              "fresh": true,
+              "observation": {
+                "fresh": true,
+                "produced": {
+                  "epochMinute": 29907330,
+                  "minute": 1410,
+                  "context": "24.47|39.61|UTC"
+                },
+                "expected": {
+                  "epochMinute": 29907330,
+                  "minute": 1410,
+                  "context": "24.47|39.61|UTC"
+                },
+                "phaseFraction": 0.5,
+                "altitudeDeg": 40,
+                "light": {
+                  "eligibility": 1,
+                  "eligible": true,
+                  "reason": "eligible",
+                  "illumination": 0.675,
+                  "beam": 0.405,
+                  "cloudLight": 0.675,
+                  "localStarWash": 0.575,
+                  "localGlow": 0.09,
+                  "halo": 0.0077142857142857135,
+                  "corona": 0,
+                  "paraselenae": 0
+                }
+              }
+            },
+            "currentGeometry": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29907330,
+                "minute": 1410,
+                "context": "24.47|39.61|UTC"
+              },
+              "expected": {
+                "epochMinute": 29907330,
+                "minute": 1410,
+                "context": "24.47|39.61|UTC"
+              },
+              "phaseFraction": 0.5,
+              "altitudeDeg": 40,
+              "light": {
+                "eligibility": 1,
+                "eligible": true,
+                "reason": "eligible",
+                "illumination": 0.675,
+                "beam": 0.405,
+                "cloudLight": 0.675,
+                "localStarWash": 0.575,
+                "localGlow": 0.09,
+                "halo": 0.0077142857142857135,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            },
+            "lunarLight": {
+              "eligibility": 1,
+              "eligible": true,
+              "reason": "eligible",
+              "illumination": 0.675,
+              "beam": 0.405,
+              "cloudLight": 0.675,
+              "localStarWash": 0.575,
+              "localGlow": 0.09,
+              "halo": 0.0077142857142857135,
+              "corona": 0,
+              "paraselenae": 0
+            },
+            "surface": {
+              "status": "v5-terrain",
+              "quality": "preview",
+              "visibleSource": "terrain-preview",
+              "identity": "743ff58d28e4fb7e6bca6e33dc18c21dddde3abbef513d658cbbad9c8017f1db",
+              "legacyDecoded": false,
+              "legacyVisible": false,
+              "texture": "V5 DEM intersections, terrain shadows and colour"
+            },
+            "physicalMoonVisible": true,
+            "calendarMoonVisible": true,
+            "displayMode": "physical",
+            "moonSkyOpacity": 1,
+            "moonCalendarOpacity": 1,
+            "moonFeatureOpacity": 1,
+            "moonlightOpacity": 0.405,
+            "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+            "reason": null
+          }
+        },
+        "night-new": {
+          "fragment": "#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simTime=23:30&simMoon=0.01&simWax=1&simMoonAlt=40&simMoonH=180",
+          "ready": true,
+          "composed": true,
+          "sha256a": "c30d85327acfc976f53c97fa17d119b89290c7e2e36298d73dde9c13daea4893",
+          "repeatNoise": {
+            "pixels": 172250,
+            "strictChanged": 0,
+            "strictFraction": 0,
+            "changedFraction6": 0,
+            "maxDelta": 0,
+            "bbox": null
+          },
+          "prayerUi": {
+            "fajr": true,
+            "time": true,
+            "unavailable": false
+          },
+          "moonTruth": {
+            "phaseFraction": 0.01,
+            "waxing": true,
+            "moonAltitudeDeg": 40,
+            "moonSkyFresh": true,
+            "lastConsumed": {
+              "status": "completed",
+              "stage": "paint",
+              "fresh": true,
+              "observation": {
+                "fresh": true,
+                "produced": {
+                  "epochMinute": 29907330,
+                  "minute": 1410,
+                  "context": "24.47|39.61|UTC"
+                },
+                "expected": {
+                  "epochMinute": 29907330,
+                  "minute": 1410,
+                  "context": "24.47|39.61|UTC"
+                },
+                "phaseFraction": 0.01,
+                "altitudeDeg": 40,
+                "light": {
+                  "eligibility": 0,
+                  "eligible": false,
+                  "reason": "near-new",
+                  "illumination": 0,
+                  "beam": 0,
+                  "cloudLight": 0,
+                  "localStarWash": 0,
+                  "localGlow": 0,
+                  "halo": 0,
+                  "corona": 0,
+                  "paraselenae": 0
+                }
+              }
+            },
+            "currentGeometry": {
+              "fresh": true,
+              "produced": {
+                "epochMinute": 29907330,
+                "minute": 1410,
+                "context": "24.47|39.61|UTC"
+              },
+              "expected": {
+                "epochMinute": 29907330,
+                "minute": 1410,
+                "context": "24.47|39.61|UTC"
+              },
+              "phaseFraction": 0.01,
+              "altitudeDeg": 40,
+              "light": {
+                "eligibility": 0,
+                "eligible": false,
+                "reason": "near-new",
+                "illumination": 0,
+                "beam": 0,
+                "cloudLight": 0,
+                "localStarWash": 0,
+                "localGlow": 0,
+                "halo": 0,
+                "corona": 0,
+                "paraselenae": 0
+              }
+            },
+            "lunarLight": {
+              "eligibility": 0,
+              "eligible": false,
+              "reason": "near-new",
+              "illumination": 0,
+              "beam": 0,
+              "cloudLight": 0,
+              "localStarWash": 0,
+              "localGlow": 0,
+              "halo": 0,
+              "corona": 0,
+              "paraselenae": 0
+            },
+            "surface": {
+              "status": "v5-terrain",
+              "quality": "preview",
+              "visibleSource": "terrain-preview",
+              "identity": "bb8cff4a85a73989f29f54d8576dc51cdfb517fb681a7efce730952ac1e8a6e1",
+              "legacyDecoded": false,
+              "legacyVisible": false,
+              "texture": "V5 DEM intersections, terrain shadows and colour"
+            },
+            "physicalMoonVisible": false,
+            "calendarMoonVisible": true,
+            "displayMode": "refined-calendar",
+            "moonSkyOpacity": 1,
+            "moonCalendarOpacity": 1,
+            "moonFeatureOpacity": 1,
+            "moonlightOpacity": 0,
+            "earthshine": "Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only",
+            "reason": "near-new / cloud → subordinate calendar presentation"
+          }
+        }
+      }
+    }
+  },
+  "console": [
+    [
+      "main",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "main",
+      "pageerror",
+      "Moon wrapper replay refused: a live Moon runtime is installed"
+    ],
+    [
+      "night",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "bfcache",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "bfcache",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "moon-construction-moon-interval",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "moon-construction-moon-interval",
+      "pageerror",
+      "driver-injected Moon setInterval failure"
+    ],
+    [
+      "moon-construction-moon-interval",
+      "pageerror",
+      "Cannot read properties of null (reading 'installWorkerSource')"
+    ],
+    [
+      "moon-construction-moon-frame",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "moon-construction-moon-frame",
+      "pageerror",
+      "driver-injected Moon requestAnimationFrame failure"
+    ],
+    [
+      "moon-construction-moon-frame",
+      "pageerror",
+      "Cannot read properties of null (reading 'installWorkerSource')"
+    ],
+    [
+      "presentation-day-broken",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "presentation-night-half",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ],
+    [
+      "presentation-night-new",
+      "error",
+      "Loading the stylesheet 'https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600&display=swap' violates the following Content Security Policy directive: \"style-src 'self' 'unsafe-inline'\". Note that 'style-src-elem' was not explicitly set, so 'style-s"
+    ]
+  ],
+  "cdp": [
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/85",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/ca",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/ca",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/ca",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/ca",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "load",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "live-invalidation",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/1b",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "active-retry",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "resume",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/b7",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "resume",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/45",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/a4",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "construction",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/83",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/37",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/4c",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "census",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/62",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-0-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/32",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-1-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-2-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-2-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/83",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-2-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-2-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-2-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-2-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-2-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/46",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-3-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pagehide",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pageshow",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/f3",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "cycles-4-pageshow",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "moon-replay",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "moon-replay",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "moon-replay",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "moon-replay",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "moon-replay",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "moon-replay",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/8d",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/6b",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/6b",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/6b",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/6b",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "recovery-visual",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "retiring",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"parser\", \"url\": \"http://127.0.0.1:61109/index.html\", \"lineNumber\": 7686, \"columnNumber\": 9}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"parser\", \"url\": \"http://127.0.0.1:61109/index.html\", \"lineNumber\": 7686, \"columnNumber\": 9}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"parser\", \"url\": \"http://127.0.0.1:61109/index.html\", \"lineNumber\": 7686, \"columnNumber\": 9}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/21",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/46",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/3f",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/3f",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/3f",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "type": "Script",
+      "prefix": "blob:http://127.0.0.1:61109/3f",
+      "frame": "15D7A156234A13EC19AE8576A968C4FB",
+      "initiator": "{\"type\": \"other\", \"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    },
+    {
+      "page": "main",
+      "phase": "restore",
+      "type": "Image",
+      "prefix": "data:image/png;base64,iVBORw0K",
+      "frame": "02930DD1C6B844B733A23BC88A94DF0C",
+      "initiator": "{\"type\": \"other\"}"
+    }
+  ],
+  "bfcacheNotUsed": [
+    {
+      "page": "bfcache",
+      "phase": "restore",
+      "explanations": [
+        {
+          "type": "Circumstantial",
+          "reason": "BrowsingInstanceNotSwapped"
+        }
+      ],
+      "tree": "{\"url\": \"http://127.0.0.1:61109/index.html#lat=24.47&lon=39.61&tz=UTC&label=Fixture&method=4&qa=1&simWx=3&simCloud=100&timeScale=4\", \"explanations\": [{\"type\": \"Circumstantial\", \"reason\": \"BrowsingInstanceNotSwapped\"}], \"children\": []}"
+    }
+  ],
+  "crashes": [],
+  "browserVersion": "148.0.7778.96",
+  "diagnosticCells": {
+    "retirement-synthetic": false,
+    "presentation": true
+  },
+  "pass": true
+}
