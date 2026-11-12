@@ -84,6 +84,46 @@ UID/GID". This host has no passwordless sudo, which the test requires. Its local
 same-UID positive passes. This is environmental: the hosted ubuntu-24.04 runner
 supplies the supervisor.
 
-Local PowerShell collector results (PS 5.1.26100 and PS 7.6.9, version gate
-relaxed in a disposable scratch copy only) are listed in the hosted receipt
-section, once the local run completes.
+The local PowerShell collector was run in a disposable scratch copy whose PS7
+version gate was relaxed to accept 7.6.9. Hosts were PS 5.1.26100 and PS 7.6.9.
+
+- **Non-transaction suites pass:** components, guards, discovery and discovery
+  mutations on both hosts. The bootstrap probe is `ACQUIRED` on both.
+- **Transaction, staging, compiler, volume and long-path suites fail.** So do the
+  entry cases.
+  - The installer refuses with "Compiler ancestor permits foreign replacement or
+    has an untrusted owner", or the fixture reports "Owned parent ACL setup
+    failed".
+  - On this development host, the user `%TEMP%` carries write access for a local
+    sandbox tooling group and several foreign SIDs.
+  - R0015's fail-closed ancestry check is designed to refuse exactly that.
+- This is an environment property of the host, not product evidence either
+  way. The hosted cells below are the qualification.
+
+## Hosted run 43127269742 (attempt 1)
+
+Receipts are in `hosted-43127269742/`: four artifact tarballs, `result.json` per
+job, the Windows bootstrap and entry receipts, and `summary.json`.
+
+The run was a push of head `6c1b7c0f9adb74179da0fcbd0cfe40a243702e83` (tree
+`56386fbb`). Its conclusion is **success**, with all four jobs successful.
+
+| Job | Result |
+|---|---|
+| Linux, Bash 5.2.21, phase r0015 | PASS. 9/9 commands: install-bash 26, entry-bash 25, discovery 76, detectors 10, discovery-mutations 13, original-mutations 8, builder 4, staging-native 9, linux-owner 3 |
+| Darwin, Apple Bash 3.2.57, phase r0015 | PASS. 8/8 commands, same counts, detectors 12 |
+| windows, phase r0015 | `OBSERVATIONS_ACQUIRED`; qualification `PASS`; diagnostics `COMPLETE`. 22/22 qualification commands pass, including transactions 28/28, staging 8/8, compiler custody 12/12, volume policy 13/13, volume mutations 2/2, transaction mutations 22/22 per host, PS7 long-path refusal 1/1, and entry-native 4/4 (positive/no-open). Diagnostics (bootstrap and first-call, both hosts) are `ACQUIRED` |
+| windows-r0013-phase, phase r0013 | `OBSERVATIONS_ACQUIRED`; qualification `PASS`; diagnostics `COMPLETE`. PS5.1/PS7 components 18, guards 10, discovery 78, mutations control+13 / control+14. **entry-native 24/24.** Bootstrap probe `ACQUIRED` on both hosts |
+
+PS5.1 timings from the receipts:
+
+- Bootstrap: every cold and warm probe reached `script-completed`. The
+  `join-path` interval was 11.2–16.4 s in the `windows` job and 22.7–27.6 s in
+  the `windows-r0013-phase` job.
+- Entry wall time in the r0013-phase job: 23.5–26.0 s. `positive` took 26.0 s
+  and `no-open` 25.1 s, both above R0013's original 25 s cap. `bad-option` took
+  0.3 s.
+
+Both measurements confirm that R0013's 15 s and 25 s caps were below this hosted
+host's PS5.1 first-command cost. Under R0015's 60 s instruments, everything
+completes.
