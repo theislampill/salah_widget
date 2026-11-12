@@ -125,9 +125,10 @@ $report.compile = $compile
 Save-Report
 if ($compile.result -ne 'loaded') {
     # Second route, recorded separately: compile with TEMP pointed at a new
-    # current-user-owned protected directory under the fixture parent, so the
-    # admission functions can still be observed against the real parents.
-    $compileTemp = Join-Path $FixtureParent ('envobs-compile-' + [guid]::NewGuid().ToString('N'))
+    # current-user-owned protected directory inside the real TEMP (the
+    # fixture parent's own ancestry is recorded above), so the admission
+    # functions can still be observed against the real parents.
+    $compileTemp = Join-Path $env:TEMP ('envobs-compile-' + [guid]::NewGuid().ToString('N'))
     [void][IO.Directory]::CreateDirectory($compileTemp)
     $compileAcl = New-Object Security.AccessControl.DirectorySecurity
     $compileAcl.SetAccessRuleProtection($true, $false)
@@ -135,7 +136,7 @@ if ($compile.result -ne 'loaded') {
     $compileAcl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule((New-Object Security.Principal.SecurityIdentifier $userSid), [Security.AccessControl.FileSystemRights]::FullControl, [Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit', [Security.AccessControl.PropagationFlags]::None, [Security.AccessControl.AccessControlType]::Allow)))
     Set-Acl -LiteralPath $compileTemp -AclObject $compileAcl
     $savedTemp = $env:TEMP; $savedTmp = $env:TMP
-    $second = [ordered]@{ step = 'Initialize-StagingNative with TEMP = new current-user-owned fixture directory (compile only)' }
+    $second = [ordered]@{ step = 'Initialize-StagingNative with TEMP = new current-user-owned directory inside the real TEMP (compile only)' }
     try { $env:TEMP = $compileTemp; $env:TMP = $compileTemp; Initialize-StagingNative; $second.result = 'loaded' }
     catch { $second.result = 'refused'; $second.message = $_.Exception.Message }
     finally { $env:TEMP = $savedTemp; $env:TMP = $savedTmp }
