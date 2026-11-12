@@ -60,5 +60,19 @@
     "install-entry-native": "NEW FAIL relative to the reference run. PS5.1 never reached the interception module or any installer phase within 25 s; zero effects. install.ps1, tests/install-entry-native.py and tests/install-entry.ps1 are byte-identical to f2161ed6, and this suite does not read builder/config or README. Same BOOTSTRAP_BLOCKED timeout class as the retained diagnostic and as the earlier native-attempt-2 Windows entry timeout on the same runner image. Classified here as a hosted PS5.1 host-startup timing failure, not an R0013 product regression; that classification is a diagnosis, not a PASS",
     "regressionAgainstMainBuilderConfig": "none: install-builder PASS 4/4 on Linux and Apple Bash 3.2"
   },
+  "attempt2": {
+    "trigger": "gh run rerun --failed (coordinator); same head 302c4ec0 / tree 9169e944; only the windows job re-ran (job 130873963861); posix results carried from attempt 1",
+    "conclusion": "failure",
+    "artifact": {"attempt-2/Windows/installer-evidence.tar.gz": "3cd3958d5a428a07ba2d230fd10a7c7e1b91b3408bcacf1da3b6bc8bdb373ac3"},
+    "suites": {
+      "ps51-install-host-bootstrap": "FAIL (exit 0) 0/4: all four variants BOOTSTRAP_BLOCKED_TIMEOUT at 15 s after join-path-begin",
+      "ps51-install-powershell": "PASS 18/18", "ps51-install-powershell-guards": "PASS 10/10", "ps51-install-discovery": "PASS 78/78",
+      "ps51-discovery-mutations": "PASS (paired control + 13 mutants)",
+      "ps7-install-host-bootstrap": "PASS 4/4", "ps7-install-powershell": "PASS 18/18", "ps7-install-powershell-guards": "PASS 10/10",
+      "ps7-install-discovery": "PASS 78/78", "ps7-discovery-mutations": "PASS (paired control + 14 mutants)",
+      "install-entry-native": "PASS (exit 0) 24/24 (12 per host)"
+    },
+    "ps51EntryWallSeconds": "github 23.2 (first case; cap 25), other ten 18.7-19.4, bad-option 0.2 (fixture file mtimes)"
+  },
   "authority": "integration receipt only; not a completion certificate, review, approval or merge authorisation"
 }

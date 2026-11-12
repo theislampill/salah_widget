@@ -132,6 +132,27 @@ Diagnosis:
   `BOOTSTRAP_BLOCKED` class as the retained diagnostic. A Windows entry timeout of
   the same kind was also recorded in `native-attempt-2` on the same runner image
   `20261101.353.1`.
-- This is a diagnosis, not a PASS. PS5.1 full-file entries are **not**
-  re-acquired at the integration tree. They remain credited only by byte identity
-  to run 42981543351.
+- This is a diagnosis, not a PASS. Attempt 1 did **not** re-acquire the PS5.1
+  full-file entries at the integration tree.
+
+### Attempt 2 (`gh run rerun --failed`, same head, Windows job only)
+
+Receipts are in `hosted-43120878720/attempt-2/Windows/`; the attempt-1 receipts
+are kept unchanged. The conclusion is still **failure**.
+
+- **`install-entry-native` PASS, 24/24** (12 per host). This acquires the PS5.1
+  full-file entries at the integration tree.
+- **`ps51-install-host-bootstrap` FAIL, 0/4.** All four variants hit the 15 s
+  timeout after `join-path-begin`.
+- Every other row passes with the same counts as attempt 1.
+
+PS5.1 entry wall times, from fixture file times:
+
+| Case | Seconds |
+|---|---|
+| `github` (first case; cap 25 s) | 23.2 |
+| the other ten cases | 18.7–19.4 |
+| `bad-option` | 0.2 |
+
+The 25 s entry cap is therefore marginal on this hosted host. Run 42981543351
+measured 23.0 s and 19.8–20.3 s for the same cases.
