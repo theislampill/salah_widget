@@ -473,12 +473,10 @@ def _case_impl(host_name, host, native_modules, scenario):
     replacements = {'TEMP','TMP','LOCALAPPDATA','APPDATA','PROGRAMFILES','PROGRAMFILES(X86)','HOME','USERPROFILE','PSMODULEPATH','PSMODULEANALYSISCACHEPATH'}
     for key in list(env):
         if key.upper() in replacements: del env[key]
-    for key, part in [('TEMP','temp'),('TMP','temp'),('LOCALAPPDATA','local'),('APPDATA','roam'),('PROGRAMFILES','pf'),('PROGRAMFILES(X86)','pf86')]:
-        path = subject/part; path.mkdir(exist_ok=True); env[key] = str(path)
+    (subject/'temp').mkdir()
     # Native CLR/PowerShell startup writes its own home caches. Keep those in
     # a separate owned host boundary, distinct from installer effect targets.
     host_home = root/'host-home'; host_home.mkdir()
-    (host_home/'existing-profile-sentinel.bin').write_bytes(b'preserve owned USERPROFILE bytes\n')
     env['HOME'] = env['USERPROFILE'] = str(host_home)
     if os.name == 'nt':
         try:
@@ -486,6 +484,10 @@ def _case_impl(host_name, host, native_modules, scenario):
         except (AssertionError,OSError,subprocess.TimeoutExpired) as error:
             RESULTS.append(dict(host=host_name,case=scenario,pass_=False,classification='BOOTSTRAP_BLOCKED',error=str(error),observation=dict(fixture=str(root),stage='owned-parent-acl-setup',installerExecuted=False)))
             return False
+    # Establish private ancestry before creating any copied input children.
+    for key, part in [('TEMP','temp'),('TMP','temp'),('LOCALAPPDATA','local'),('APPDATA','roam'),('PROGRAMFILES','pf'),('PROGRAMFILES(X86)','pf86')]:
+        path = subject/part; path.mkdir(exist_ok=True); env[key] = str(path)
+    (host_home/'existing-profile-sentinel.bin').write_bytes(b'preserve owned USERPROFILE bytes\n')
     if scenario in ('readable','unreadable'):
         firefox = subject/'roam/Mozilla/Firefox/Profiles/fixture profile'; firefox.mkdir(parents=True)
         (firefox/'extensions.json').write_text('{"addons":[]}\n',encoding='utf-8')

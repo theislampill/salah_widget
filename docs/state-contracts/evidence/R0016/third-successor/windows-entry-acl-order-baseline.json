@@ -1,0 +1,76 @@
+{
+  "schema": "r0016-fixture-parent-order-check.v1",
+  "sourceSha256": "b235e870a49c12238468e0dcb7e52135ec9db6cbe17cbd7a49f257b35ef86189",
+  "scope": "Real setup-prefix execution with inert protection callback; no native ACL or product credit",
+  "checks": [
+    {
+      "name": "nt-setup-completes",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "nt-sentinel-preserved",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "nt-all-input-parents-present",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "windows-only-required-parents-exist-at-protection",
+      "pass_": false,
+      "detail": [
+        {
+          "extrasAtProtection": [
+            "host-home/existing-profile-sentinel.bin",
+            "subject/local",
+            "subject/pf",
+            "subject/pf86",
+            "subject/roam"
+          ],
+          "paths": [
+            "/tmp/parent-order-s_jl2b99/nt",
+            "/tmp/parent-order-s_jl2b99/nt/c00",
+            "/tmp/parent-order-s_jl2b99/nt/c00/subject",
+            "/tmp/parent-order-s_jl2b99/nt/c00/subject/temp",
+            "/tmp/parent-order-s_jl2b99/nt/c00/host-home"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "posix-setup-completes",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "posix-sentinel-preserved",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "posix-all-input-parents-present",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "posix-no-native-acl-operation",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "protection-refusal-retains-bootstrap-failure",
+      "pass_": true,
+      "detail": null
+    },
+    {
+      "name": "protection-refusal-prevents-input-creation",
+      "pass_": false,
+      "detail": null
+    }
+  ],
+  "passed": 8,
+  "failed": 2
+}
