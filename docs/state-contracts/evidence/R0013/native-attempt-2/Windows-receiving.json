@@ -1,0 +1,153 @@
+{
+  "artifact_id": 13835955680,
+  "zip_sha256": "c959ab0b65b5160062b5fce03defb8757eda1a4660917ac27dc27e6ca5608e3b",
+  "tar_sha256": "ea80f81ded388f23280975ed76df78bfd46f8a70cfbc7275c89524fa44b61340",
+  "head": "eda44916bd107a64c687efd82de4e5c141be4fd1",
+  "tree": "5fb3ea5ab0c08521868a9bad7d7a0c3b992f4302",
+  "native": {
+    "system": "Windows",
+    "platform": "Windows-2022Server-10.0.20348-SP0",
+    "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+    "image_version": "20261101.353.1",
+    "ps51": {
+      "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "version": "5.1.20348.5773"
+    },
+    "ps7": {
+      "executable": "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+      "version": "7.6.6"
+    }
+  },
+  "status": "FAIL",
+  "commands": [
+    {
+      "name": "ps51-install-powershell",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-11T06:59:30.587569+00:00",
+      "finished": "2026-11-11T06:59:32.384998+00:00",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "name": "ps51-install-powershell-guards",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-guards.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-11T06:59:32.400629+00:00",
+      "finished": "2026-11-11T06:59:32.935064+00:00",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "name": "ps51-install-discovery",
+      "command": [
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-11T06:59:32.935064+00:00",
+      "finished": "2026-11-11T06:59:43.446466+00:00",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "name": "ps51-discovery-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery-mutations.py",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+      ],
+      "started": "2026-11-11T06:59:43.525148+00:00",
+      "finished": "2026-11-11T07:00:04.313001+00:00",
+      "exit": 1,
+      "passed": false
+    },
+    {
+      "name": "ps7-install-powershell",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-11T07:00:04.641383+00:00",
+      "finished": "2026-11-11T07:00:05.532838+00:00",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "name": "ps7-install-powershell-guards",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-powershell-guards.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-11T07:00:05.532838+00:00",
+      "finished": "2026-11-11T07:00:06.048461+00:00",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "name": "ps7-install-discovery",
+      "command": [
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe",
+        "-NoProfile",
+        "-File",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery.ps1",
+        "-SourceFile",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-11T07:00:06.064068+00:00",
+      "finished": "2026-11-11T07:00:16.638940+00:00",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "name": "ps7-discovery-mutations",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-discovery-mutations.py",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1",
+        "D:\\a\\_temp\\installer-pwsh7\\pwsh.exe"
+      ],
+      "started": "2026-11-11T07:00:16.701487+00:00",
+      "finished": "2026-11-11T07:00:39.755614+00:00",
+      "exit": 0,
+      "passed": true
+    },
+    {
+      "name": "install-entry-native",
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe",
+        "D:\\a\\salah_widget\\salah_widget\\tests\\install-entry-native.py",
+        "D:\\a\\salah_widget\\salah_widget\\install.ps1"
+      ],
+      "started": "2026-11-11T07:00:39.756136+00:00",
+      "finished": "2026-11-11T07:01:04.932993+00:00",
+      "exit": 1,
+      "passed": false
+    }
+  ],
+  "members": 621
+}

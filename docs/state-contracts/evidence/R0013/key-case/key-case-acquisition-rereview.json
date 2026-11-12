@@ -1,0 +1,143 @@
+{
+  "schema": "salah-r0013-key-case-acquisition-rereview/1",
+  "reviewer": "/root/r0013_review",
+  "capturedAt": "2026-11-11T07:41:00.625656+00:00",
+  "parent": "6aefcd06673fc5d6dc76a33530d47320320b0d4f",
+  "bindings": {
+    "install.ps1": "56d91d484643b82a72e5714c678d2fe8640eb2b66e1d5350dd59889924d62471",
+    "tests/install-discovery.ps1": "66f7e4246e92a31099ea4b5a8e7e6d92fe64b9a6fd5044f72cd88331c85d287c",
+    "tests/install-discovery-mutations.py": "390130f05c14e79aed586a6cd5e7161b4f820e5d816fa7816f1662988111cd0b",
+    "tests/install-discovery.py": "1f648540634cec866fb7e93e1cfd4a9b9279002c0958898b4f76e61fe19d5bb7",
+    "tools/qualification/installer_native.py": "269086d12bb963cfbad87a091a58d9e9b3b02a43b555de28333af15fb283713f",
+    "tests/install-native-receipts.py": "c9c5cc6e6ad8e037b232e53167af766948c48bad0fd4e263369989c6475b57c5",
+    "tests/install-host-bootstrap.ps1": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e"
+  },
+  "sourceScope": "Only Get-FirefoxExtensionStatus differs in installer; all bytes before and after that actual function match prior published source. Exact addons/id/name/defaultLocale/locale.name property-name checks precede status admission. Existing strict JSON, duplicate rejection and downstream eligibility consumers unchanged.",
+  "evidence": {
+    "red.json": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-key-case/red.json",
+      "sha256": "67b253a998d0f1487795b3fb2afd2f695f1140f5ce054a50a9021adb1d340b49"
+    },
+    "green.json": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-key-case/green.json",
+      "sha256": "29a2fdcc3ddc8e602ad4ba63de7dc44ff9af4aea83f858fbcfaab5d38923f594"
+    },
+    "mutations.json": {
+      "path": "/workspace/scratch/b8359a7e27bf/recovery/r0013-key-case/mutations.json",
+      "sha256": "e391782f4e156f3d08675b8c222df35105c2fefd4a34eb690dc1021ac46440a2"
+    }
+  },
+  "localResults": {
+    "host": "7.6.6",
+    "platform": "Unix",
+    "discovery": 78,
+    "discriminatingMutants": 14,
+    "healthyMutationPrerequisite": true,
+    "scope": "Supplemental Linux PowerShell only; no claim of Windows execution at corrected source."
+  },
+  "newMutants": [
+    {
+      "case": "addons-key-case-folded",
+      "syntaxExit": 0,
+      "fixtureExit": 1,
+      "failedCases": [
+        "unsupported shape addons-key-case",
+        "actual wrong-case addons cannot certify absence"
+      ],
+      "pairedControlsPass": true,
+      "mutant": "/tmp/salah-discovery-mutants-gk5gyqm2/addons-key-case-folded.ps1",
+      "sha256": "1f0c940fa429ad69eaa98df4b3b2ee60579641eb5b0f7afc2c6b0e6dc9028711",
+      "receipt": "/tmp/salah-discovery-mutants-gk5gyqm2/addons-key-case-folded.result.json",
+      "detected": true,
+      "requiredFailedCases": [
+        "unsupported shape addons-key-case",
+        "actual wrong-case addons cannot certify absence"
+      ],
+      "downstreamProtectedCases": []
+    },
+    {
+      "case": "identity-key-case-folded",
+      "syntaxExit": 0,
+      "fixtureExit": 1,
+      "failedCases": [
+        "unsupported shape id-key-case",
+        "unsupported shape name-key-case",
+        "unsupported shape locale-key-case",
+        "actual wrong-case identity held with known peer"
+      ],
+      "pairedControlsPass": true,
+      "mutant": "/tmp/salah-discovery-mutants-gk5gyqm2/identity-key-case-folded.ps1",
+      "sha256": "dbe72eaa58ccaf70160e56060d8bb4b6e126a8f0ee1318f89913558b813357ce",
+      "receipt": "/tmp/salah-discovery-mutants-gk5gyqm2/identity-key-case-folded.result.json",
+      "detected": true,
+      "requiredFailedCases": [
+        "unsupported shape id-key-case",
+        "unsupported shape name-key-case",
+        "unsupported shape locale-key-case",
+        "actual wrong-case identity held with known peer"
+      ],
+      "downstreamProtectedCases": []
+    },
+    {
+      "case": "locale-name-case-folded",
+      "syntaxExit": 0,
+      "fixtureExit": 1,
+      "failedCases": [
+        "unsupported shape locale-name-key-case"
+      ],
+      "pairedControlsPass": true,
+      "mutant": "/tmp/salah-discovery-mutants-gk5gyqm2/locale-name-case-folded.ps1",
+      "sha256": "141e3ad9299229bf124b244aafb62e31d93d357f44c5ebafb1ca53acfae29b79",
+      "receipt": "/tmp/salah-discovery-mutants-gk5gyqm2/locale-name-case-folded.result.json",
+      "detected": true,
+      "requiredFailedCases": [
+        "unsupported shape locale-name-key-case"
+      ],
+      "downstreamProtectedCases": []
+    }
+  ],
+  "collectorIndependentControls": [
+    {
+      "case": "root symlink rejected",
+      "pass": true
+    },
+    {
+      "case": "outside parent rejected",
+      "pass": true
+    },
+    {
+      "case": "parent itself rejected",
+      "pass": true
+    },
+    {
+      "case": "auxiliary-only root preserved with child symlink unfollowed",
+      "pass": true
+    }
+  ],
+  "archivalReview": "Bash discovery now declares imported entry.ROOT as auxiliary fixture. Collector retains primary fixture or fixtureRoot and up to 16 explicit auxiliary roots, requires absolute real non-symlink root resolving strictly beneath actual temporary parent, preserves child symlinks, and makes copy OSError/ValueError fail the suite. Four additional owned review controls exercised these boundaries. Windows junction/reparse copying behavior remains native observation scope, not claimed from POSIX controls.",
+  "bootstrapReview": {
+    "hash": "ae274fa5edbd0e9fe950af8ede7503befec1eeea36d9ba5d54c912de00ec307e",
+    "scope": "Preparation-only native child host differential; installer source only hashed, never invoked. Four variants compare native-only and three private Utility module export shapes through Join-Path/Write-Host. Child HOME/TEMP/APPDATA/ProgramFiles and module analysis paths are disposable; asynchronous output drain and 15-second timeout preserve phases/output/snapshots.",
+    "claimBoundary": "Per-variant pass only demonstrates that diagnostic script finished. It does not qualify interception, installer entry or PS5.1 source behavior. Collector must retain failing diagnostic variants and the original full-entry failure.",
+    "readinessLimit": "Diagnostic nonce Contains check is preparation evidence, not the stricter installer per-PID readiness predicate."
+  },
+  "findings": {
+    "Critical": [],
+    "Important": [],
+    "Minor": []
+  },
+  "priorFindingDisposition": {
+    "R13-REV-05": "Engineering correction and actual original RED/healthy/adverse callers plus three causal one-operator mutations now observed locally; native affected-source qualification remains open.",
+    "R13-WIN-02": "Still open; phase-only probe is a bounded diagnostic, not a repair or qualified full-file run."
+  },
+  "documentationDisposition": "Parent explicitly excludes pending README74558 pins from this source/native-qualification publication. Final docs must pin newly published corrected source after public byte readback. The old PS a67ac pin cannot be final accepted delivery for56d91d.",
+  "engineeringPublicationDisposition": "No additional blocking finding for the bounded engineering/native-diagnostic publication of these exact source and test bytes. This is not candidate readiness, native qualification, merge approval or whole-contract completion.",
+  "remainingGates": [
+    "Publish/read back immutable commit/tree and ensure README74558 edit was excluded as stated.",
+    "Execute corrected PS source on actual Windows PS5.1 and PS7; receive updated parser/main/mutation evidence with host-specific uncredited survivor retained.",
+    "Diagnose and repair PS5.1 full-file acquisition using observed phase differences; acquire complete-entry nonce before acceptance.",
+    "Receive raw imported discovery entry fixture subtree in new native archives.",
+    "Publish correct final Bash and Windows pins; verify public raw/rendered/copied output and parent campaign/order/approval/integration gates."
+  ],
+  "mutationStatement": "Only attributed reports/probes under recovery/r0013-review written; no installer/shared test/index/branch/governor/remote edits."
+}

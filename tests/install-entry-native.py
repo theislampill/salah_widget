@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
 """Direct native -File entry with private startup spies; no owner profile is used."""
-import collections, hashlib, json, os, pathlib, subprocess, sys, tempfile, zipfile
+import collections, hashlib, json, os, pathlib, secrets, subprocess, sys, tempfile, zipfile
 
 SOURCE = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[1]/'install.ps1').resolve()
+PS7 = os.environ.get('INSTALL_TEST_PS7', r'C:\Program Files\PowerShell\7\pwsh.exe')
 HOSTS = [('ps51', r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe', r'C:\WINDOWS\System32\WindowsPowerShell\v1.0\Modules'),
-         ('ps7', r'C:\Program Files\PowerShell\7\pwsh.exe', r'C:\Program Files\PowerShell\7\Modules')]
-ROOT = pathlib.Path(tempfile.mkdtemp(prefix='salah native entry-'))
+         ('ps7', PS7, str(pathlib.Path(PS7).parent/'Modules'))]
+ROOT = pathlib.Path(tempfile.mkdtemp(prefix='salah native entry-')).resolve()
 RESULTS = []
 MODULE = r'''
+[IO.File]::AppendAllText($env:INSTALL_BOOTSTRAP_LOG,'utility-wrapper-entered'+[Environment]::NewLine)
 Import-Module $env:INSTALL_NATIVE_UTILITY -Scope Local
+[IO.File]::AppendAllText($env:INSTALL_BOOTSTRAP_LOG,'native-utility-imported'+[Environment]::NewLine)
 [Console]::OutputEncoding=New-Object Text.UTF8Encoding $false
+[IO.File]::AppendAllText($env:INSTALL_BOOTSTRAP_LOG,'output-encoding-set'+[Environment]::NewLine)
 # The native host can restore Windows ProgramFiles locations at startup.
 # Set the discovery roots in this private child session before Get-Targets.
 $env:ProgramFiles=$env:INSTALL_FIXTURE_PF
 ${env:ProgramFiles(x86)}=$env:INSTALL_FIXTURE_PF86
-[IO.File]::WriteAllText($env:INSTALL_READY_FILE,'private startup spies loaded')
+[IO.File]::AppendAllText($env:INSTALL_BOOTSTRAP_LOG,'discovery-environment-set'+[Environment]::NewLine)
 function Record([string]$Kind,[string]$Value) { [IO.File]::AppendAllText($env:INSTALL_EFFECT_LOG,$Kind+"`t"+$Value+[Environment]::NewLine) }
 function In-Fixture([string]$Path) {
     $full=[IO.Path]::GetFullPath($Path)
@@ -52,6 +56,8 @@ function Set-Clipboard { param($Value) Record 'clipboard' $Value }
 function Start-Process { param($FilePath,$ArgumentList) Record 'open' ($FilePath+' '+$ArgumentList) }
 function Read-Host { param($Prompt) Record 'prompt' $Prompt; if($Prompt -like 'Select target*'){return 'all'}; return '' }
 Export-ModuleMember -Function Write-Host,New-Item,Remove-Item,Invoke-RestMethod,Invoke-WebRequest,Expand-Archive,Set-Clipboard,Start-Process,Read-Host -Cmdlet *
+[IO.File]::AppendAllText($env:INSTALL_BOOTSTRAP_LOG,'all-spies-exported'+[Environment]::NewLine)
+[IO.File]::WriteAllText($env:INSTALL_READY_FILE,([string]$PID+"`t"+$env:INSTALL_READY_NONCE))
 '''
 
 def require(value, reason):
@@ -59,6 +65,11 @@ def require(value, reason):
 
 def snapshot(root):
     return [(str(p.relative_to(root)), p.stat().st_mode, hashlib.sha256(p.read_bytes()).hexdigest() if p.is_file() else '') for p in sorted(root.rglob('*'))]
+
+def ready(root, env):
+    path=root/'ready'
+    value=path.read_text(encoding='utf-8-sig').split('\t') if path.is_file() else []
+    return len(value)==2 and value[0].isdigit() and value[1]==env['INSTALL_READY_NONCE']
 
 def case(host_name, host, native_modules, scenario):
     root = ROOT/(host_name+'-'+scenario); root.mkdir()
@@ -77,7 +88,9 @@ def case(host_name, host, native_modules, scenario):
         chrome = subject/'local/Google/Chrome/User Data/Default'; chrome.mkdir(parents=True)
         if scenario == 'legacy': (chrome/'Extensions/hipekcciheckooncpjeljhnekcoolahp').mkdir(parents=True)
         elif scenario == 'installed': (chrome/'Extensions/dlaogejjiafeobgofajdlkkhjlignalk').mkdir(parents=True)
-        else: (subject/'roam/Mozilla/Firefox/Profiles/fixture profile').mkdir(parents=True)
+        else:
+            firefox = subject/'roam/Mozilla/Firefox/Profiles/fixture profile'; firefox.mkdir(parents=True)
+            (firefox/'extensions.json').write_text('{"addons":[]}\n',encoding='utf-8')
         if scenario == 'mixed': (subject/'local/Microsoft/Edge/User Data/Default/Extensions/lklaendlmlfkaabeleddanafeinnenih').mkdir(parents=True)
     asset = root/'fixture.zip'
     with zipfile.ZipFile(asset,'w') as archive: archive.writestr('manifest.json','{"manifest_version":3,"name":"Fixture","version":"1.0"}')
@@ -94,6 +107,8 @@ def case(host_name, host, native_modules, scenario):
     env.update(PSModulePath=str(root/'modules')+';'+native_modules, PSModuleAnalysisCachePath=str(root/'analysis-cache'),
                INSTALL_NATIVE_UTILITY=str(pathlib.Path(native_modules)/'Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1'),
                INSTALL_READY_FILE=str(root/'ready'), INSTALL_EFFECT_LOG=str(root/'effects'), INSTALL_SUBJECT_ROOT=str(subject),
+               INSTALL_BOOTSTRAP_LOG=str(root/'bootstrap-phases.txt'),
+               INSTALL_READY_NONCE=secrets.token_hex(16),
                INSTALL_FIXTURE_NORMAL='1' if normal else '0', INSTALL_ASSET_ZIP=str(asset),
                INSTALL_FIXTURE_PF=str(subject/'pf'), INSTALL_FIXTURE_PF86=str(subject/'pf86'),
                SALAH_INSTALL_SOURCE='github', SALAH_WIDGET_HASH='lat=24.47&lon=39.61&method=4')
@@ -103,15 +118,34 @@ def case(host_name, host, native_modules, scenario):
     if not normal: command += ['-DryRun']
     if scenario == 'no-open': command += ['-NoOpen']
     before = snapshot(subject)
-    run = subprocess.run(command,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=25)
+    (root/'subject-before.json').write_text(json.dumps(before,indent=2),encoding='utf-8')
+    try:
+        run = subprocess.run(command,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=25)
+    except (subprocess.TimeoutExpired, OSError) as error:
+        partial_out=getattr(error,'stdout',None) or b''
+        partial_err=getattr(error,'stderr',None) or b''
+        (root/'stdout.txt').write_bytes(partial_out)
+        (root/'stderr.txt').write_bytes(partial_err)
+        after=snapshot(subject)
+        (root/'subject-after.json').write_text(json.dumps(after,indent=2),encoding='utf-8')
+        effects=(root/'effects').read_text(encoding='utf-8-sig').splitlines() if (root/'effects').exists() else []
+        phases=(root/'bootstrap-phases.txt').read_text(encoding='utf-8-sig').splitlines() if (root/'bootstrap-phases.txt').exists() else []
+        RESULTS.append(dict(host=host_name,case=scenario,pass_=False,error=str(error),
+                            classification='ENTRY_TIMEOUT' if ready(root,env) else 'BOOTSTRAP_BLOCKED',
+                            observation=dict(command=command,fixture=str(root),interceptionLoaded=ready(root,env),
+                            bootstrapPhases=phases,snapshotUnchanged=before==after,effects=effects,
+                            stdout=str(root/'stdout.txt'),stderr=str(root/'stderr.txt'))))
+        return False
     stdout = run.stdout.decode('utf-8',errors='replace'); stderr = run.stderr.decode('utf-8',errors='replace')
     (root/'stdout.txt').write_bytes(run.stdout); (root/'stderr.txt').write_bytes(run.stderr)
     effect_path = root/'effects'
     effects = [tuple(row.split('\t',1)) for row in effect_path.read_text(encoding='utf-8-sig').splitlines()] if effect_path.exists() else []
-    unchanged = before == snapshot(subject)
-    observation = dict(command=command,fixture=str(root),entryExit=run.returncode,interceptionLoaded=(root/'ready').exists(),snapshotUnchanged=unchanged,effects=effects,hostStartupState=snapshot(host_home),stdout=str(root/'stdout.txt'),stderr=str(root/'stderr.txt'))
+    after=snapshot(subject)
+    (root/'subject-after.json').write_text(json.dumps(after,indent=2),encoding='utf-8')
+    unchanged = before == after
+    observation = dict(command=command,fixture=str(root),entryExit=run.returncode,interceptionLoaded=ready(root,env),readinessNonce=env['INSTALL_READY_NONCE'],snapshotUnchanged=unchanged,effects=effects,hostStartupState=snapshot(host_home),stdout=str(root/'stdout.txt'),stderr=str(root/'stderr.txt'))
     try:
-        if scenario != 'bad-option': require((root/'ready').exists(),'Private startup interception did not load')
+        if scenario != 'bad-option': require(ready(root,env),'BOOTSTRAP_BLOCKED: final startup interception nonce missing or wrong')
         if normal:
             require(run.returncode == 0,'Normal direct entry failed: '+stdout+stderr)
             by_kind = collections.defaultdict(list)
@@ -143,9 +177,11 @@ def case(host_name, host, native_modules, scenario):
         RESULTS.append(dict(host=host_name,case=scenario,pass_=True,observation=observation))
     except Exception as error:
         RESULTS.append(dict(host=host_name,case=scenario,pass_=False,error=str(error),observation=observation))
+    return scenario=='bad-option' or ready(root,env)
 
 for host_name, host, native_modules in HOSTS:
     for scenario in ('github','cached','store','ask','installed','mixed','legacy','none','missing-preset','bad-option','positive','no-open'):
-        case(host_name,host,native_modules,scenario)
+        if not case(host_name,host,native_modules,scenario):
+            break  # Retain a terminal receipt; do not repeat a failed host bootstrap.
 print(json.dumps(dict(source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(),fixture=str(ROOT),results=RESULTS),indent=2))
 sys.exit(1 if any(not row['pass_'] for row in RESULTS) else 0)

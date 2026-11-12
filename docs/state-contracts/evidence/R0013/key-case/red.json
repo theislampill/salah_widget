@@ -1,0 +1,57 @@
+{
+  "host": "7.6.6",
+  "platform": "Unix",
+  "source": "a67ac0c6190b3027a4ca31a1703df76b66558582e29b583bd15afe3da17bb7a4",
+  "fixture": "/tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614",
+  "results": [
+    {
+      "case": "retained actual parser positive control",
+      "pass": true,
+      "observation": null
+    },
+    {
+      "case": "actual parser empty",
+      "pass": true,
+      "observation": {
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/parser-empty/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape addons-key-case",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/parser-addons-key-case/extensions.json\"}"
+    },
+    {
+      "case": "unsupported shape id-key-case",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/parser-id-key-case/extensions.json\"}"
+    },
+    {
+      "case": "unsupported shape name-key-case",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":true,\"HasOld\":false,\"NewMatches\":[\"TablissNG\"],\"OldMatches\":[],\"Status\":\"known-new\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/parser-name-key-case/extensions.json\"}"
+    },
+    {
+      "case": "unsupported shape locale-key-case",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":true,\"HasOld\":false,\"NewMatches\":[\"TablissNG\"],\"OldMatches\":[],\"Status\":\"known-new\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/parser-locale-key-case/extensions.json\"}"
+    },
+    {
+      "case": "unsupported shape locale-name-key-case",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":true,\"HasOld\":false,\"NewMatches\":[\"TablissNG\"],\"OldMatches\":[],\"Status\":\"known-new\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/parser-locale-name-key-case/extensions.json\"}"
+    },
+    {
+      "case": "actual wrong-case addons cannot certify absence",
+      "pass": false,
+      "error": "Wrong exit 0: \nSalah Widget Installer\n\nThis wizard can:\n- detect supported browsers/profiles\n- check for TablissNG\n- safely refuse to modify legacy Tabliss profiles\n- download the right TablissNG build from GitHub latest release when needed\n- guide the browser-required install step\n- stage the Salah Widget preset for import\n\nIt will not silently force-install extensions or write directly into extension storage.\n\n== Detecting browsers ==\n[1] Firefox / profile-0 - neither extension identified by firefox-extensions-json\n\nSelected targets: 1 eligible, 0 held, 0 refused.\n\n== Firefox / profile-0 ==\n\n== Download TablissNG from GitHub latest release for Firefox ==\n\nFirefox-family install steps:\n  1. Open Add-ons Manager.\n  2. Click the gear icon.\n  3. Click Install Add-on From File.\n  4. Select this file:\n     /tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/entry-addons-case/asset.xpi\n[OK] Copied XPI path to clipboard.\n\nFinish the browser's install prompt, then return here.\n\n\n== Import Salah Widget preset for Firefox / profile-0 ==\nPreset file:\n  /tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/entry-addons-case/preset.json\n[OK] Copied the preset file path to clipboard.\n\nManual import path:\n  1. Open a new tab controlled by TablissNG.\n  2. Open TablissNG settings.\n  3. Use Import/Restore settings.\n  4. Select the preset JSON file above.\n\nThis wizard does not directly write into browser extension storage.\nThat avoids corrupting profiles and avoids touching legacy Tabliss.\n[WARN] Importing the preset replaces your current TablissNG dashboard.\n\n== Manual action pending ==\nManual browser installation/import remain pending. Staging directory:\n  /tmp/salah-discovery-51f1bf8d3d824748b2864eb5ead1c614/entry-addons-case/stage\n\nReview this script before publishing it. The preset URL should point at your real raw JSON file.\n"
+    },
+    {
+      "case": "actual wrong-case identity held with known peer",
+      "pass": false,
+      "error": "Wrong target reached actual handoff"
+    }
+  ]
+}

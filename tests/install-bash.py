@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Source-bound Linux/Bash probes. All writes belong to a new disposable fixture."""
+"""Source-bound Bash probes. All writes belong to a new disposable fixture."""
 import hashlib, json, os, pathlib, re, subprocess, sys, tempfile, zipfile, stat
 
 SOURCE = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parents[1] / 'install.sh')
 TEXT = SOURCE.read_text(encoding='utf-8')
 LIB = TEXT[:TEXT.index("printf '\\nSalah Widget Installer\\n\\n'")]
-ROOT = pathlib.Path(tempfile.mkdtemp(prefix='salah-install-tests-'))
+BASH = os.environ.get('SALAH_TEST_BASH', '/bin/bash')
+ROOT = pathlib.Path(tempfile.mkdtemp(prefix='salah-install-tests-')).resolve()
 os.chmod(ROOT, 0o700)
 RESULTS = []
 
@@ -21,9 +22,12 @@ def function(name):
 def run(code, extra=None):
     env = dict(os.environ, HOME=str(ROOT/'home'), TMPDIR=str(ROOT/'tmp'))
     env.update(extra or {})
-    return subprocess.run(['bash','--noprofile','--norc','-c','set -Eeuo pipefail\n'+code], text=True, capture_output=True, env=env, timeout=20)
+    return subprocess.run([BASH,'--noprofile','--norc','-c','set -Eeuo pipefail\n'+code], text=True, capture_output=True, env=env, timeout=20)
 
 def check(name, body):
+    requested = json.loads(os.environ.get('SALAH_INSTALL_CASES', '[]'))
+    if requested and name not in requested:
+        return
     try:
         body(); RESULTS.append(dict(case=name, pass_=True))
     except Exception as error:
@@ -60,10 +64,10 @@ CONFIGS=("c|Chrome|chromium|fixture|chrome|new|old|store|manager|newtab" "f|Fire
 find_exe(){ printf fixture; }
 chromium_profiles(){ printf '/fixture/Profile One\n/fixture/مدينة'; }
 firefox_profiles(){ printf '/fixture/fire fox\n'; }
-firefox_status(){ printf '0|0|'; }
+firefox_status(){ printf '0|0||known-neither|supported-metadata|firefox-extensions-json|fixture/extensions.json\n'; }
 has_id_dir(){ return 1; }
 add_target(){ printf '%s\n' "$5"; }
-enable -n mapfile
+enable -n mapfile 2>/dev/null || :
 detect_targets
 '''
     r=run(code)
@@ -229,7 +233,7 @@ def retained_boundary(case):
     code=LIB+'\ninitialize_staging\ndownload_preset\n'
     env=dict(os.environ,HOME=str(home),TMPDIR=str(ROOT/'tmp'),SALAH_WIDGET_PRESET_URL=data.as_uri())
     if case=='interrupt': code+='kill -TERM $$\n'
-    r=subprocess.run(['bash','--noprofile','--norc','-c','set -Eeuo pipefail\n'+code],env=env,text=True,capture_output=True,timeout=20)
+    r=subprocess.run([BASH,'--noprofile','--norc','-c','set -Eeuo pipefail\n'+code],env=env,text=True,capture_output=True,timeout=20)
     if case=='interrupt':
         require(r.returncode==143 and pathlib.Path(r.stdout.strip()).is_file(),'TERM trap deleted retained preset or failed to terminate')
         require('Partial bundle retained' in r.stderr,'Interrupted retained state not reported')
@@ -250,5 +254,5 @@ for case in ('traversal','absolute','backslash','symlink','malformed','no-manife
 check('scratch cleanup refuses changed identity',cleanup_identity)
 check('cross-run freshness and retained lifetime',repeated_roots)
 for case in ('preset-failure','interrupt'): check('retained boundary '+case,lambda case=case:retained_boundary(case))
-print(json.dumps(dict(host=subprocess.check_output(['bash','--version'],text=True).splitlines()[0], uid=os.getuid(), fixture=str(ROOT), source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(), results=RESULTS),ensure_ascii=False,indent=2))
+print(json.dumps(dict(host=subprocess.check_output([BASH,'--version'],text=True).splitlines()[0], uid=os.getuid(), fixture=str(ROOT), source=hashlib.sha256(SOURCE.read_bytes()).hexdigest(), results=RESULTS),ensure_ascii=False,indent=2))
 sys.exit(1 if any(not r['pass_'] for r in RESULTS) else 0)

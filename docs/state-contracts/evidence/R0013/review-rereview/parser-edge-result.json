@@ -1,0 +1,80 @@
+{
+  "reviewer": "/root/r0013_review",
+  "host": "7.6.6",
+  "platform": "Unix",
+  "sourceHash": "8dc322fcccfd311ec4da3cb61ea28e24d992336e3262b844cecda3dacbcf9c36",
+  "results": [
+    {
+      "case": "healthy-empty",
+      "input": "{\"addons\":[]}",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/healthy-empty/extensions.json"
+    },
+    {
+      "case": "trailing-comma",
+      "input": "{\"addons\":[],}",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/trailing-comma/extensions.json"
+    },
+    {
+      "case": "comment-after-root",
+      "input": "{\"addons\":[]} /* trailing comment */",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/comment-after-root/extensions.json"
+    },
+    {
+      "case": "comment-in-root",
+      "input": "{/* comment */ \"addons\":[]}",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/comment-in-root/extensions.json"
+    },
+    {
+      "case": "single-quoted-property",
+      "input": "{'addons':[]}",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/single-quoted-property/extensions.json"
+    },
+    {
+      "case": "unquoted-property",
+      "input": "{addons:[]}",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/unquoted-property/extensions.json"
+    },
+    {
+      "case": "duplicate-inventory",
+      "input": "{\"addons\":[{\"name\":\"Tabliss\"}],\"addons\":[]}",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/duplicate-inventory/extensions.json"
+    },
+    {
+      "case": "root-array-singleton",
+      "input": "[{\"addons\":[]}]",
+      "status": "unknown",
+      "reason": "metadata-unsupported",
+      "eligible": "unknown-held",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/root-array-singleton/extensions.json"
+    },
+    {
+      "case": "unsupported-version",
+      "input": "{\"schemaVersion\":999999,\"addons\":[]}",
+      "status": "known-neither",
+      "reason": "supported-metadata",
+      "eligible": "eligible-known",
+      "source": "/workspace/scratch/b8359a7e27bf/recovery/r0013-review/probe-effects/ps-parsers/unsupported-version/extensions.json"
+    }
+  ]
+}

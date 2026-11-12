@@ -259,22 +259,39 @@ has_id_dir() {
 }
 
 chromium_profiles() {
-  local user_data="$1"
+  local user_data="$1" p
   [ -d "$user_data" ] || return 0
-  find "$user_data" -maxdepth 1 -type d \( -name "Default" -o -name "Profile *" \) 2>/dev/null | sort
+  while IFS= read -r -d '' p; do
+    case "$p" in *$'\n'*|*$'\r'*) warn "Unsupported newline in Chromium profile path; profile excluded before selection." ;;
+      *) printf '%s\n' "$p" ;;
+    esac
+  done < <(find "$user_data" -maxdepth 1 -type d \( -name "Default" -o -name "Profile *" \) -print0 2>/dev/null) | sort
 }
 
 firefox_profiles() {
-  local profiles_root="$1"
+  local profiles_root="$1" p
   [ -d "$profiles_root" ] || return 0
-  find "$profiles_root" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort
+  while IFS= read -r -d '' p; do
+    case "$p" in *$'\n'*|*$'\r'*) warn "Unsupported newline in Firefox profile path; profile excluded before selection." ;;
+      *) printf '%s\n' "$p" ;;
+    esac
+  done < <(find "$profiles_root" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null) | sort
 }
 
 firefox_status() {
   local profile="$1"
   local file="$profile/extensions.json"
-  if [ ! -f "$file" ]; then
-    printf '0|0|'
+  case "$file" in *'|'*|*$'\n'*|*$'\r'*)
+    warn "Unsupported Firefox metadata path; target held."
+    printf '0|0||unknown|profile-path-unsupported|firefox-extensions-json|\n'
+    return 0 ;;
+  esac
+  if [ ! -e "$file" ]; then
+    printf '0|0||unknown|metadata-absent|firefox-extensions-json|%s\n' "$file"
+    return 0
+  fi
+  if [ ! -f "$file" ] || [ ! -r "$file" ]; then
+    printf '0|0||unknown|metadata-unreadable|firefox-extensions-json|%s\n' "$file"
     return 0
   fi
 
@@ -285,38 +302,96 @@ path = sys.argv[1]
 has_new = False
 has_old = False
 matches = []
+
+def field(value):
+    # Keep the local pipe/newline protocol unambiguous and terminal controls inert.
+    return "".join("%%%02X" % ord(c) if c in "%|" or ord(c) < 32 or ord(c) == 127 else c for c in value)
+
+def emit(status, reason):
+    print("|".join(("1" if has_new else "0", "1" if has_old else "0",
+                    field("; ".join(matches)), status, reason,
+                    "firefox-extensions-json", path)))
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("Ambiguous duplicate JSON property")
+        result[key] = value
+    return result
+
+def reject_constant(value):
+    raise ValueError("Unsupported JSON constant")
+
 try:
-    data = json.load(open(path, encoding="utf-8"))
-except Exception:
-    print("0|0|")
+    with open(path, encoding="utf-8-sig") as metadata:
+        data = json.load(metadata, object_pairs_hook=unique_object, parse_constant=reject_constant)
+except FileNotFoundError:
+    emit("unknown", "metadata-absent")
     raise SystemExit
-for addon in data.get("addons", []):
+except OSError:
+    emit("unknown", "metadata-unreadable")
+    raise SystemExit
+except UnicodeError:
+    emit("unknown", "metadata-encoding")
+    raise SystemExit
+except ValueError:
+    emit("unknown", "metadata-malformed")
+    raise SystemExit
+if not isinstance(data, dict) or not isinstance(data.get("addons"), list):
+    emit("unknown", "metadata-unsupported")
+    raise SystemExit
+for addon in data["addons"]:
+    if not isinstance(addon, dict) or any(addon.get(key) is not None and not isinstance(addon[key], str) for key in ("id", "name")):
+        emit("unknown", "metadata-unsupported")
+        raise SystemExit
+    loc = addon.get("defaultLocale")
+    if loc is not None and (not isinstance(loc, dict) or loc.get("name") is not None and not isinstance(loc["name"], str)):
+        emit("unknown", "metadata-unsupported")
+        raise SystemExit
     parts = []
     for key in ("id", "name"):
         if addon.get(key):
-            parts.append(str(addon.get(key)))
-    loc = addon.get("defaultLocale") or {}
+            parts.append(addon[key])
+    loc = loc or {}
     if loc.get("name"):
-        parts.append(str(loc.get("name")))
+        parts.append(loc["name"])
     hay = " ".join(parts)
+    if not hay.strip():
+        emit("unknown", "metadata-unsupported")
+        raise SystemExit
     if re.search(r"\bTablissNG\b|tablissng", hay, re.I):
         has_new = True
         matches.append(hay)
     elif re.search(r"\bTabliss\b", hay, re.I) and not re.search(r"NG|tablissng", hay, re.I):
         has_old = True
         matches.append(hay)
-print(("1" if has_new else "0") + "|" + ("1" if has_old else "0") + "|" + "; ".join(matches))
+status = "known-both" if has_new and has_old else "known-legacy" if has_old else "known-new" if has_new else "known-neither"
+emit(status, "supported-metadata")
 PY
   else
-    # Coarse fallback if python3 is unavailable.
+    # Positive text hints cannot establish a complete inventory or safe absence.
+    local has_new=0 has_old=0 matches=""
     if grep -qi 'TablissNG\|tablissng' "$file"; then
-      printf '1|0|TablissNG'
-    elif grep -qi 'Tabliss' "$file"; then
-      printf '0|1|Tabliss'
-    else
-      printf '0|0|'
+      has_new=1; matches="TablissNG"
     fi
+    if grep -Eqi '(^|[^[:alnum:]_])Tabliss([^[:alnum:]_]|$)' "$file"; then
+      has_old=1; matches="${matches:+$matches; }Tabliss"
+    fi
+    warn "Python parser unavailable; Firefox metadata remains unknown and this target is held."
+    [ "$has_old" != 1 ] || warn "Possible legacy Tabliss found; refusing this target."
+    printf '%s|%s|%s|unknown|parser-unavailable|firefox-text-heuristic|%s\n' "$has_new" "$has_old" "$matches" "$file"
   fi
+}
+
+# Eligibility is derived at every action boundary, never from false/false flags.
+discovery_eligibility() {
+  if [ "${2:-0}" = 1 ]; then printf 'legacy-refused'; return; fi
+  case "${1:-unknown}" in
+    known-new|known-neither) printf 'eligible-known' ;;
+    known-legacy|known-both) printf 'legacy-refused' ;;
+    *) printf 'unknown-held' ;;
+  esac
 }
 
 declare -a CONFIGS=()
@@ -338,16 +413,25 @@ fi
 
 declare -a TARGETS=()
 TARGET_COUNT=0
+REJECTED_TARGET_COUNT=0
 
 add_target() {
   local key="$1" label="$2" family="$3" profile_name="$4" profile_path="$5" exe="$6" has_new="$7" has_old="$8" matches="$9" store="${10}" manager="${11}" newtab="${12}"
+  local discovery_status="${13:-unknown}" discovery_reason="${14:-unclassified}" discovery_evidence="${15:-unverified}" discovery_source="${16:-}" field
+  for field in "$key" "$label" "$family" "$profile_name" "$profile_path" "$exe" "$has_new" "$has_old" "$matches" "$store" "$manager" "$newtab" "$discovery_status" "$discovery_reason" "$discovery_evidence" "$discovery_source"; do
+    case "$field" in *'|'*|*$'\n'*|*$'\r'*)
+      REJECTED_TARGET_COUNT=$(( ${REJECTED_TARGET_COUNT:-0} + 1 ))
+      warn "Unsupported delimiter in target identity or discovery record; target held without staging."
+      return 0 ;;
+    esac
+  done
   TARGET_COUNT=$(( ${TARGET_COUNT:-0} + 1 ))
   local idx="$TARGET_COUNT"
-  TARGETS+=("$idx|$key|$label|$family|$profile_name|$profile_path|$exe|$has_new|$has_old|$matches|$store|$manager|$newtab")
+  TARGETS+=("$idx|$key|$label|$family|$profile_name|$profile_path|$exe|$has_new|$has_old|$matches|$store|$manager|$newtab|$discovery_status|$discovery_reason|$discovery_evidence|$discovery_source")
 }
 
 detect_targets() {
-  local cfg key label family user_data exes newids oldids store manager newtab exe profiles profile_count status has_new has_old matches p pname
+  local cfg key label family user_data exes newids oldids store manager newtab exe profiles profile_count status has_new has_old matches p pname discovery_status discovery_reason discovery_evidence discovery_source
   for cfg in "${CONFIGS[@]}"; do
     IFS='|' read -r key label family user_data exes newids oldids store manager newtab <<< "$cfg"
     exe="$(find_exe "$exes" || true)"
@@ -356,7 +440,7 @@ detect_targets() {
       profiles=(); profile_count=0
       while IFS= read -r p || [ -n "$p" ]; do profiles+=("$p"); profile_count=$((profile_count + 1)); done < <(chromium_profiles "$user_data")
       if [ "$profile_count" -eq 0 ] && { [ -n "$exe" ] || [ -d "$user_data" ]; }; then
-        add_target "$key" "$label" "$family" "(no profile detected)" "" "$exe" "0" "0" "" "$store" "$manager" "$newtab"
+        add_target "$key" "$label" "$family" "(no profile detected)" "" "$exe" "0" "0" "" "$store" "$manager" "$newtab" "unknown" "no-profile" "browser-profile-discovery" "$user_data"
       fi
       [ "$profile_count" -gt 0 ] || continue
       for p in "${profiles[@]}"; do
@@ -364,20 +448,28 @@ detect_targets() {
         has_new=0; has_old=0; matches=""
         if has_id_dir "$p" "$newids"; then has_new=1; matches="${matches}TablissNG-id; "; fi
         if has_id_dir "$p" "$oldids"; then has_old=1; matches="${matches}legacy-Tabliss-id; "; fi
-        add_target "$key" "$label" "$family" "$pname" "$p" "$exe" "$has_new" "$has_old" "$matches" "$store" "$manager" "$newtab"
+        discovery_status=known-neither; discovery_reason=directory-detector
+        if [ "$has_new" = 1 ] && [ "$has_old" = 1 ]; then discovery_status=known-both
+        elif [ "$has_old" = 1 ]; then discovery_status=known-legacy
+        elif [ "$has_new" = 1 ]; then discovery_status=known-new; fi
+        if [ ! -d "$p" ]; then discovery_status=unknown; discovery_reason=profile-unavailable; fi
+        add_target "$key" "$label" "$family" "$pname" "$p" "$exe" "$has_new" "$has_old" "$matches" "$store" "$manager" "$newtab" "$discovery_status" "$discovery_reason" "chromium-extension-directories" "$p/Extensions"
       done
     else
       profiles=(); profile_count=0
       while IFS= read -r p || [ -n "$p" ]; do profiles+=("$p"); profile_count=$((profile_count + 1)); done < <(firefox_profiles "$user_data")
       if [ "$profile_count" -eq 0 ] && { [ -n "$exe" ] || [ -d "$user_data" ]; }; then
-        add_target "$key" "$label" "$family" "(no profile detected)" "" "$exe" "0" "0" "" "$store" "$manager" "$newtab"
+        add_target "$key" "$label" "$family" "(no profile detected)" "" "$exe" "0" "0" "" "$store" "$manager" "$newtab" "unknown" "no-profile" "browser-profile-discovery" "$user_data"
       fi
       [ "$profile_count" -gt 0 ] || continue
       for p in "${profiles[@]}"; do
         pname="$(basename "$p")"
-        status="$(firefox_status "$p")"
-        IFS='|' read -r has_new has_old matches <<< "$status"
-        add_target "$key" "$label" "$family" "$pname" "$p" "$exe" "$has_new" "$has_old" "$matches" "$store" "$manager" "$newtab"
+        if ! status="$(firefox_status "$p")"; then
+          warn "Firefox parser failed; target held without suppressing other profiles."
+          status="0|0||unknown|parser-failed|firefox-extensions-json|$p/extensions.json"
+        fi
+        IFS='|' read -r has_new has_old matches discovery_status discovery_reason discovery_evidence discovery_source <<< "$status"
+        add_target "$key" "$label" "$family" "$pname" "$p" "$exe" "$has_new" "$has_old" "$matches" "$store" "$manager" "$newtab" "$discovery_status" "$discovery_reason" "$discovery_evidence" "$discovery_source"
       done
     fi
   done
@@ -662,14 +754,14 @@ if [ "$TARGET_COUNT" -eq 0 ]; then
 fi
 
 for t in "${TARGETS[@]}"; do
-  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab <<< "$t"
-  if [ "$has_old" = "1" ]; then
-    status="legacy Tabliss detected: SKIP"
-  elif [ "$has_new" = "1" ]; then
-    status="TablissNG detected"
-  else
-    status="TablissNG not detected"
-  fi
+  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+  eligibility="$(discovery_eligibility "$discovery_status" "$has_old")"
+  case "$eligibility" in
+    legacy-refused) status="legacy Tabliss evidence: REFUSED ($discovery_status)" ;;
+    unknown-held) status="discovery unknown: HELD ($discovery_reason)" ;;
+    *) if [ "$discovery_status" = known-new ]; then status="TablissNG detected"
+       else status="neither extension identified by $discovery_evidence"; fi ;;
+  esac
   printf '[%s] %s / %s — %s\n' "$idx" "$label" "$profile_name" "$status"
 done
 
@@ -677,10 +769,14 @@ done
 # that return artifacts. Remote facts and random paths stay unresolved.
 if [ "$DRY_RUN" = 1 ]; then
   say_section "Offline preview"
-  eligible_count=0
+  eligible_count=0; held_count="$REJECTED_TARGET_COUNT"; refused_count=0
   for t in "${TARGETS[@]}"; do
-    IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab <<< "$t"
-    if [ "$has_old" = 1 ]; then warn "Legacy Tabliss: refusing $label / $profile_name."; continue; fi
+    IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+    eligibility="$(discovery_eligibility "$discovery_status" "$has_old")"
+    case "$eligibility" in
+      legacy-refused) refused_count=$((refused_count + 1)); warn "Legacy Tabliss: refusing $label / $profile_name."; continue ;;
+      unknown-held) held_count=$((held_count + 1)); warn "Held $label / $profile_name: $discovery_reason. Review metadata manually; no automatic actions."; continue ;;
+    esac
     eligible_count=$((eligible_count + 1))
     printf 'Would prepare %s / %s.\n' "$label" "$profile_name"
     if [ "$has_new" != 1 ]; then
@@ -694,6 +790,7 @@ if [ "$DRY_RUN" = 1 ]; then
     else warn "No preset URL configured; preset import cannot be prepared."; fi
     printf 'Would offer clipboard paths and open the browser manual installation/import pages.\n'
   done
+  printf 'Preview targets: %s eligible, %s held, %s refused.\n' "$eligible_count" "$held_count" "$refused_count"
   warn "Importing the preset replaces your current TablissNG dashboard."
   [ "$eligible_count" -gt 0 ] || { err "No eligible target; preview made no changes."; exit 1; }
   printf 'Preview only; no changes made. No network requests were made.\n'
@@ -714,7 +811,7 @@ if [ "$selection" != "all" ]; then
     [[ "$token" =~ ^[0-9]+$ ]] || { err "Invalid target number: $token"; exit 1; }
     found=0
     for t in "${TARGETS[@]}"; do
-      IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab <<< "$t"
+      IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
       [ "$token" != "$idx" ] || found=1
     done
     [ "$found" = 1 ] || { err "Unknown target number: $token"; exit 1; }
@@ -722,26 +819,40 @@ if [ "$selection" != "all" ]; then
   done
 fi
 
-eligible_count=0
+eligible_count=0; held_count=0; refused_count=0
+[ "$selection" != all ] || held_count="$REJECTED_TARGET_COUNT"
 for t in "${TARGETS[@]}"; do
-  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab <<< "$t"
-  if { [ "$selection" = all ] || [[ "$selected_csv" = *",$idx,"* ]]; } && [ "$has_old" != 1 ]; then eligible_count=$((eligible_count + 1)); fi
+  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
+  if [ "$selection" = all ] || [[ "$selected_csv" = *",$idx,"* ]]; then
+    eligibility="$(discovery_eligibility "$discovery_status" "$has_old")"
+    case "$eligibility" in
+      eligible-known) eligible_count=$((eligible_count + 1)) ;;
+      legacy-refused) refused_count=$((refused_count + 1)) ;;
+      *) held_count=$((held_count + 1)) ;;
+    esac
+  fi
 done
-[ "$eligible_count" -gt 0 ] || { err "No eligible target selected; legacy Tabliss profiles are refused."; exit 1; }
+printf 'Selected targets: %s eligible, %s held, %s refused.\n' "$eligible_count" "$held_count" "$refused_count"
+[ "$eligible_count" -gt 0 ] || { err "No eligible target selected; unknown targets are held and legacy Tabliss profiles refused. Manual actions remain pending."; exit 1; }
 initialize_staging || { err "Automatic staging is unavailable on this ownership boundary; use the reviewed manual browser-install/import route."; exit 1; }
 preset_file=""; ASSET_STAGED=0
 
 for t in "${TARGETS[@]}"; do
-  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab <<< "$t"
+  IFS='|' read -r idx key label family profile_name profile_path exe has_new has_old matches store manager newtab discovery_status discovery_reason discovery_evidence discovery_source <<< "$t"
   if [ "$selection" != "all" ] && [[ "$selected_csv" != *",$idx,"* ]]; then
     continue
   fi
 
   say_section "$label / $profile_name"
 
-  if [ "$has_old" = "1" ]; then
+  eligibility="$(discovery_eligibility "$discovery_status" "$has_old")"
+  if [ "$eligibility" = "legacy-refused" ]; then
     warn "Legacy Tabliss detected in this profile. Refusing to touch this browser/profile."
     [ -n "$matches" ] && printf 'Matches: %s\n' "$matches"
+    continue
+  fi
+  if [ "$eligibility" != "eligible-known" ]; then
+    warn "Held $label / $profile_name: $discovery_reason. Review metadata manually; no automatic actions."
     continue
   fi
 

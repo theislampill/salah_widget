@@ -1,0 +1,1690 @@
+{
+  "host": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)",
+  "platform": "linux",
+  "uid": 1000,
+  "source": "609ecb0bb6924eccee5c311b77f0d513f0e78c3462c7fa5b15b1fd38694a5b22",
+  "fixture": "/tmp/salah-discovery-mx5jt7sq",
+  "results": [
+    {
+      "case": "retained actual parser positives are useful",
+      "pass_": true,
+      "observation": {
+        "positives": 3
+      }
+    },
+    {
+      "case": "healthy complete entry interception control",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 28,
+        "inputs": {
+          "menu": true,
+          "confirmations": 2,
+          "sourceChoices": 0
+        },
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-healthy-entry-control",
+        "readiness": {
+          "nonce": "7d4db642931a380ac917b2db56ea5189",
+          "processes": [
+            "2442",
+            "2444"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-healthy-entry-control/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-healthy-entry-control/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139075,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-healthy-entry-control/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-healthy-entry-control/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139076,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-healthy-entry-control",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-healthy-entry-control",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139073,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        }
+      }
+    },
+    {
+      "case": "actual parser empty",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-empty/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser malformed",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-malformed/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser missing",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-absent",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-missing/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser unreadable",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unreadable",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-unreadable/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser invalid-encoding",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-encoding",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-invalid-encoding/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser legacy",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-legacy",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-legacy/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser new",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-new",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-new/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "actual parser both",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-both",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-both/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape root-array",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-root-array/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape root-null",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-root-null/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape missing-addons",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-missing-addons/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape addons-object",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-addons-object/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape addons-null",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-addons-null/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape addon-scalar",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-addon-scalar/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape locale-scalar",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-locale-scalar/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "unsupported shape name-object",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-name-object/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity empty-object",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-empty-object/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity unrelated-keys",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-unrelated-keys/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity null-identities",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-null-identities/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity empty-identities",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-empty-identities/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "insufficient identity whitespace-identities",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-whitespace-identities/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "supported identity id-only",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-id-only/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "supported identity name-only",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-name-only/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "supported identity locale-name-only",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-locale-name-only/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "partial metadata preserves conservative legacy hint",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-partial-legacy/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON trailing-comma",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-trailing-comma/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON trailing-comment",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-trailing-comment/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON internal-comment",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-internal-comment/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON single-quotes",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-single-quotes/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON bare-key",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-bare-key/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON duplicate-addons",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-duplicate-addons/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON duplicate-name",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-duplicate-name/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON escaped-duplicate-name",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-escaped-duplicate-name/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON duplicate-locale-name",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-duplicate-locale-name/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON non-json-NaN",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-non-json-NaN/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON non-json-Infinity",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-non-json-Infinity/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON empty-document",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-empty-document/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON array-trailing-comma",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-array-trailing-comma/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON leading-zero",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-leading-zero/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON leading-plus",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-leading-plus/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON leading-dot",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-leading-dot/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON trailing-dot",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-trailing-dot/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON missing-exponent",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-missing-exponent/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON missing-comma",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-missing-comma/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON multiple-roots",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-multiple-roots/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON invalid-string-escape",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-invalid-string-escape/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON short-unicode-escape",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-short-unicode-escape/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "strict JSON complex valid control",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "evidence": "firefox-extensions-json",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-complex-valid/extensions.json",
+        "stderr": ""
+      }
+    },
+    {
+      "case": "no Python empty",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-no-python-empty/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n"
+      }
+    },
+    {
+      "case": "no Python malformed",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-no-python-malformed/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n"
+      }
+    },
+    {
+      "case": "no Python new",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-no-python-new/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n"
+      }
+    },
+    {
+      "case": "no Python legacy",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-no-python-legacy/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n[WARN] Possible legacy Tabliss found; refusing this target.\n"
+      }
+    },
+    {
+      "case": "no Python both",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "status": "unknown",
+        "reason": "parser-unavailable",
+        "evidence": "firefox-text-heuristic",
+        "source": "/tmp/salah-discovery-mx5jt7sq/parser-no-python-both/extensions.json",
+        "stderr": "[WARN] Python parser unavailable; Firefox metadata remains unknown and this target is held.\n[WARN] Possible legacy Tabliss found; refusing this target.\n"
+      }
+    },
+    {
+      "case": "metadata delimiters retain one truthful record",
+      "pass_": true,
+      "observation": {
+        "fields": 7,
+        "status": "known-new"
+      }
+    },
+    {
+      "case": "actual target builder keeps states and source identity",
+      "pass_": true,
+      "observation": {
+        "count": 6,
+        "statuses": [
+          "known-neither",
+          "unknown",
+          "known-legacy",
+          "known-new",
+          "known-both",
+          "unknown"
+        ]
+      }
+    },
+    {
+      "case": "complete native detector matrix chromium",
+      "pass_": true,
+      "observation": {
+        "family": "chromium",
+        "cardinalities": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "backslash": true,
+        "unterminated": true,
+        "reset": true
+      }
+    },
+    {
+      "case": "complete native detector matrix firefox",
+      "pass_": true,
+      "observation": {
+        "family": "firefox",
+        "cardinalities": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "backslash": true,
+        "unterminated": true,
+        "reset": true
+      }
+    },
+    {
+      "case": "delimiter-corrupt profile cannot be selected",
+      "pass_": true,
+      "observation": {
+        "targets": 0,
+        "diagnostic": "[WARN] Unsupported Firefox metadata path; target held.\n[WARN] Unsupported delimiter in target identity or discovery record; target held without staging.\n"
+      }
+    },
+    {
+      "case": "newline profile cannot alias a safe target chromium",
+      "pass_": true,
+      "observation": {
+        "family": "chromium",
+        "targets": 1,
+        "safePath": "/tmp/salah-discovery-mx5jt7sq/newline-chromium/Profile safe"
+      }
+    },
+    {
+      "case": "newline profile cannot alias a safe target firefox",
+      "pass_": true,
+      "observation": {
+        "family": "firefox",
+        "targets": 1,
+        "safePath": "/tmp/salah-discovery-mx5jt7sq/newline-firefox/safe"
+      }
+    },
+    {
+      "case": "actual all mixed selection keeps useful known peer",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 19,
+        "eligible": 1,
+        "held": 1,
+        "refused": 1,
+        "snapshotUnchanged": false,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-mixed-all",
+        "inputs": {
+          "menu": true,
+          "confirmations": 1,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "6ee59fb3aad991b4d90222a5b9d4835f",
+          "processes": [
+            "3124",
+            "3126"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-mixed-all/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-mixed-all/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139251,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-mixed-all/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-mixed-all/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139252,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-mixed-all",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-mixed-all",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139249,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual explicit known target stays useful",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 19,
+        "eligible": 1,
+        "held": 0,
+        "refused": 0,
+        "snapshotUnchanged": false,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-known",
+        "inputs": {
+          "menu": true,
+          "confirmations": 1,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "1d59c4c9c767eccc08d7b3e2f0496da3",
+          "processes": [
+            "3354",
+            "3356"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-known/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-known/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139279,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-known/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-known/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139280,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-known",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-known",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139277,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": "[1] Firefox / profile-0 — neither extension identified by firefox-extensions-json"
+      }
+    },
+    {
+      "case": "actual explicit unknown refuses before staging",
+      "pass_": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-unknown",
+        "inputs": {
+          "menu": true,
+          "confirmations": 0,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "8bf9f1d38674323ffabe2d383518c07a",
+          "processes": [
+            "3580",
+            "3582"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-unknown/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-unknown/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139306,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-unknown/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-unknown/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139307,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-unknown",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-explicit-unknown",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139304,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": "[2] Firefox / profile-1 — discovery unknown: HELD (metadata-malformed)"
+      }
+    },
+    {
+      "case": "actual unknown only refuses before staging",
+      "pass_": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-unknown-only",
+        "inputs": {
+          "menu": true,
+          "confirmations": 0,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "78d431346602a03d83f7f7d3dab850e7",
+          "processes": [
+            "3613",
+            "3615"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-unknown-only/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-unknown-only/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139324,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-unknown-only/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-unknown-only/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139325,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-unknown-only",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-unknown-only",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139322,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual known both refuses before staging",
+      "pass_": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 0,
+        "refused": 1,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-known-both",
+        "inputs": {
+          "menu": true,
+          "confirmations": 0,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "ecfefb90b548067267ae3afc6d161fa2",
+          "processes": [
+            "3638",
+            "3640"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-known-both/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-known-both/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139338,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-known-both/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-known-both/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139339,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-known-both",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-known-both",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139336,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual missing metadata is held",
+      "pass_": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-metadata-absent",
+        "inputs": {
+          "menu": true,
+          "confirmations": 0,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "9bf8be405b594ebaef3365601a5459f9",
+          "processes": [
+            "3663",
+            "3665"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-metadata-absent/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-metadata-absent/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139352,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-metadata-absent/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-metadata-absent/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139353,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-metadata-absent",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-metadata-absent",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139350,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual no profile is held",
+      "pass_": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-no-profile",
+        "inputs": {
+          "menu": true,
+          "confirmations": 0,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "f757adf85fa4006cf242c88cf75c68d9",
+          "processes": [
+            "3687",
+            "3689"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-no-profile/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-no-profile/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139365,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-no-profile/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-no-profile/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139366,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-no-profile",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-no-profile",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139363,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual wrong shape preserves independent peer",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 19,
+        "eligible": 1,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": false,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-wrong-shape-peer",
+        "inputs": {
+          "menu": true,
+          "confirmations": 1,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "bfaf50a7c6013f19bc5937a7da491de4",
+          "processes": [
+            "3709",
+            "3711"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-wrong-shape-peer/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-wrong-shape-peer/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139377,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-wrong-shape-peer/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-wrong-shape-peer/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139378,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-wrong-shape-peer",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-wrong-shape-peer",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139375,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "preview mixed keeps knowledge without effects",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 0,
+        "eligible": 1,
+        "held": 1,
+        "refused": 1,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-mixed",
+        "inputs": {},
+        "readiness": {
+          "nonce": "161a1f8ccce68ca1ca40d57e1e4a2f40",
+          "processes": [
+            "3933"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-mixed/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-mixed/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139402,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-mixed/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-mixed/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139403,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-mixed",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-mixed",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139400,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "preview unknown only has no success or effects",
+      "pass_": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-unknown",
+        "inputs": {},
+        "readiness": {
+          "nonce": "f4fbb8cb7c5a2a4be5086c2624c4807d",
+          "processes": [
+            "3966"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-unknown/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-unknown/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139420,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-unknown/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-unknown/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139421,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-unknown",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-preview-unknown",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139418,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "no Python mixed preview keeps independent Chromium peer",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 0,
+        "eligible": 1,
+        "held": 2,
+        "refused": 1,
+        "snapshotUnchanged": true,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-no-python-peer",
+        "inputs": {},
+        "readiness": {
+          "nonce": "fa8b9f27c35c794235b026fc6bee118b",
+          "processes": [
+            "3989"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-no-python-peer/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-no-python-peer/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139434,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-no-python-peer/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-no-python-peer/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139435,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-no-python-peer",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-no-python-peer",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139432,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual existing new target remains useful with unknown peer",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 9,
+        "eligible": 1,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": false,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-new-unknown-peer",
+        "inputs": {
+          "menu": true,
+          "confirmations": 0,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "abff558e55928e1af92b0f2d73b44fbf",
+          "processes": [
+            "4031",
+            "4033"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-new-unknown-peer/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-new-unknown-peer/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139455,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-new-unknown-peer/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-new-unknown-peer/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139456,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-new-unknown-peer",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-new-unknown-peer",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139453,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual insufficient identity held with known peer",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 19,
+        "eligible": 1,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": false,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-insufficient-peer",
+        "inputs": {
+          "menu": true,
+          "confirmations": 1,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "303c73e5b932857d8d5dd7c4dd66af12",
+          "processes": [
+            "4169",
+            "4171"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-insufficient-peer/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-insufficient-peer/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139477,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-insufficient-peer/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-insufficient-peer/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139478,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-insufficient-peer",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-insufficient-peer",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139475,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    },
+    {
+      "case": "actual duplicate keys cannot hide legacy from selection",
+      "pass_": true,
+      "observation": {
+        "exit": 0,
+        "effects": 19,
+        "eligible": 1,
+        "held": 1,
+        "refused": 0,
+        "snapshotUnchanged": false,
+        "fixture": "/tmp/salah-entry-bash-30nebrnn/r0013-duplicate-peer",
+        "inputs": {
+          "menu": true,
+          "confirmations": 1,
+          "sourceChoices": 0
+        },
+        "readiness": {
+          "nonce": "23ede97c66b1266adf108b95a27363fd",
+          "processes": [
+            "4393",
+            "4395"
+          ],
+          "loadedBeforeEntry": true,
+          "evidence": "BASH_ENV emits nonce only after defining every interception function, before Bash evaluates installer bytes",
+          "acquisition": {
+            "home": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-duplicate-peer/subject/home",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-duplicate-peer/subject/home",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139502,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "temporary": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-duplicate-peer/subject/tmp",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-duplicate-peer/subject/tmp",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139503,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "fixture": {
+              "path": "/tmp/salah-entry-bash-30nebrnn/r0013-duplicate-peer",
+              "physical": "/tmp/salah-entry-bash-30nebrnn/r0013-duplicate-peer",
+              "uid": 1000,
+              "gid": 1000,
+              "device": 39,
+              "inode": 139500,
+              "mode": "0o700",
+              "symlink": false
+            },
+            "uid": 1000,
+            "gid": 1000,
+            "groups": [],
+            "bash": "/bin/bash",
+            "python": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3"
+          }
+        },
+        "selectedIdentity": null
+      }
+    }
+  ]
+}

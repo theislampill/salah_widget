@@ -1,0 +1,102 @@
+{
+  "schema": "r0013-integration-hosted-windows-receipts.v1",
+  "workflow": ".github/workflows/r0013-integration-qualification.yml",
+  "runId": 43143993057,
+  "retained": "small JSON/text receipts only; full artifact tarballs are not committed and are identified by sha256",
+  "attempts": {
+    "1": {
+      "Windows": {
+        "collectorStatus": "FAIL",
+        "commit": "28fd719d8c58f1ed824a1dfef1d3ef9d16ec60fb",
+        "tree": "1c3952c5266fadc29f9b70ac75325754f528eb34",
+        "image": "20261101.353.1",
+        "ps51": "5.1.20348.5773",
+        "ps7": "7.6.6",
+        "commands": {
+          "ps51-install-host-bootstrap": {
+            "exit": 0,
+            "passed": false
+          },
+          "ps51-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps51-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-host-bootstrap": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-powershell-guards": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-install-discovery": {
+            "exit": 0,
+            "passed": true
+          },
+          "ps7-discovery-mutations": {
+            "exit": 0,
+            "passed": true
+          },
+          "install-entry-native": {
+            "exit": 0,
+            "passed": true
+          }
+        },
+        "bootstrapSchema": "r0013-native-bootstrap-diagnostic.v1",
+        "ps51Bootstrap": [
+          {
+            "case": "native-only",
+            "pass": false,
+            "timedOut": true,
+            "lastPhase": "join-path-begin",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-wildcard-cmdlets",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-explicit-cmdlets",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": null
+          },
+          {
+            "case": "private-no-cmdlets",
+            "pass": true,
+            "timedOut": false,
+            "lastPhase": "script-completed",
+            "readinessObservedMs": null
+          }
+        ],
+        "installEntryNative": {
+          "cases": 24,
+          "passed": 24,
+          "failing": []
+        },
+        "installSourceSha256": "ba6c45611cac652122603a2529e1a6d796f606523f55b78df351d1075735599d",
+        "artifactTarballSha256": "14577edce7d9228b72d8838949bceb931b9215120a5ea61f8c71d69d676d8534"
+      }
+    }
+  }
+}

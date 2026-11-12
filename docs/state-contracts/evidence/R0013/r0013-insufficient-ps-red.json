@@ -1,0 +1,335 @@
+{
+  "host": "7.6.6",
+  "platform": "Unix",
+  "source": "ce478b5f4a9460e4eb15f55b142b5e99f758c3d92c851a8df6704fe8877df581",
+  "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902",
+  "results": [
+    {
+      "case": "retained actual parser positive control",
+      "pass": true,
+      "observation": null
+    },
+    {
+      "case": "actual parser empty",
+      "pass": true,
+      "observation": {
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-empty/extensions.json"
+      }
+    },
+    {
+      "case": "actual parser malformed",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-malformed",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-malformed/extensions.json"
+      }
+    },
+    {
+      "case": "actual parser missing",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-absent",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-missing/extensions.json"
+      }
+    },
+    {
+      "case": "actual parser unreadable",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unreadable",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-unreadable/extensions.json"
+      }
+    },
+    {
+      "case": "actual parser legacy",
+      "pass": true,
+      "observation": {
+        "status": "known-legacy",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-legacy/extensions.json"
+      }
+    },
+    {
+      "case": "actual parser new",
+      "pass": true,
+      "observation": {
+        "status": "known-new",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-new/extensions.json"
+      }
+    },
+    {
+      "case": "actual parser both",
+      "pass": true,
+      "observation": {
+        "status": "known-both",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-both/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape root-array",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-root-array/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape root-null",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-root-null/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape missing-addons",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-missing-addons/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape addons-object",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-addons-object/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape addons-null",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-addons-null/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape addon-scalar",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-addon-scalar/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape locale-scalar",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-locale-scalar/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape name-object",
+      "pass": true,
+      "observation": {
+        "status": "unknown",
+        "reason": "metadata-unsupported",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-name-object/extensions.json"
+      }
+    },
+    {
+      "case": "metadata retains exact Unicode and delimiter match object",
+      "pass": true,
+      "observation": null
+    },
+    {
+      "case": "insufficient identity empty-object",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-empty-object/extensions.json\"}"
+    },
+    {
+      "case": "insufficient identity unrelated-keys",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-unrelated-keys/extensions.json\"}"
+    },
+    {
+      "case": "insufficient identity null-identities",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-null-identities/extensions.json\"}"
+    },
+    {
+      "case": "insufficient identity empty-identities",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-empty-identities/extensions.json\"}"
+    },
+    {
+      "case": "insufficient identity whitespace-identities",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-whitespace-identities/extensions.json\"}"
+    },
+    {
+      "case": "supported identity id-only",
+      "pass": true,
+      "observation": {
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-id-only/extensions.json"
+      }
+    },
+    {
+      "case": "supported identity name-only",
+      "pass": true,
+      "observation": {
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-name-only/extensions.json"
+      }
+    },
+    {
+      "case": "supported identity locale-name-only",
+      "pass": true,
+      "observation": {
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-locale-name-only/extensions.json"
+      }
+    },
+    {
+      "case": "partial metadata preserves conservative legacy hint",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":true,\"NewMatches\":[],\"OldMatches\":[\"Tabliss\"],\"Status\":\"known-legacy\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/parser-partial-legacy/extensions.json\"}"
+    },
+    {
+      "case": "actual target builder keeps states source and safe peers",
+      "pass": true,
+      "observation": null
+    },
+    {
+      "case": "actual all mixed selection keeps known peer",
+      "pass": true,
+      "observation": {
+        "exit": 0,
+        "effects": 7,
+        "eligible": 1,
+        "held": 1,
+        "refused": 1,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-mixed"
+      }
+    },
+    {
+      "case": "actual explicit known target stays useful",
+      "pass": true,
+      "observation": {
+        "exit": 0,
+        "effects": 7,
+        "eligible": 1,
+        "held": 0,
+        "refused": 0,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-explicit-known"
+      }
+    },
+    {
+      "case": "actual explicit unknown refuses before staging",
+      "pass": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-explicit-unknown"
+      }
+    },
+    {
+      "case": "actual unknown only refuses before staging",
+      "pass": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-unknown"
+      }
+    },
+    {
+      "case": "actual both refuses before staging",
+      "pass": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 0,
+        "refused": 1,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-both"
+      }
+    },
+    {
+      "case": "actual missing metadata held",
+      "pass": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-missing"
+      }
+    },
+    {
+      "case": "actual no-profile fallback held",
+      "pass": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-no-profile"
+      }
+    },
+    {
+      "case": "actual wrong shape keeps known peer",
+      "pass": true,
+      "observation": {
+        "exit": 0,
+        "effects": 7,
+        "eligible": 1,
+        "held": 1,
+        "refused": 0,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-shape-peer"
+      }
+    },
+    {
+      "case": "preview mixed has zero effects and truthful states",
+      "pass": true,
+      "observation": {
+        "exit": 0,
+        "effects": 0,
+        "eligible": 1,
+        "held": 1,
+        "refused": 1,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-preview-mixed"
+      }
+    },
+    {
+      "case": "preview unknown refuses without effects",
+      "pass": true,
+      "observation": {
+        "exit": 1,
+        "effects": 0,
+        "eligible": 0,
+        "held": 1,
+        "refused": 0,
+        "fixture": "/tmp/salah-discovery-5e6c2aa781594418ab6f45c056657902/entry-preview-unknown"
+      }
+    }
+  ]
+}

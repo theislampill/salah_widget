@@ -1,0 +1,36 @@
+{
+  "host": "7.6.6",
+  "platform": "Unix",
+  "source": "23633abe44c766281cc43f59a40529cef88144d64a9e79081347fffe422589f1",
+  "fixture": "/tmp/salah-discovery-cdb303247f094670b5c03940b2b79363",
+  "results": [
+    {
+      "case": "actual parser empty",
+      "pass": true,
+      "observation": {
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-cdb303247f094670b5c03940b2b79363/parser-empty/extensions.json"
+      }
+    },
+    {
+      "case": "actual parser object-leading-whitespace",
+      "pass": true,
+      "observation": {
+        "status": "known-neither",
+        "reason": "supported-metadata",
+        "source": "/tmp/salah-discovery-cdb303247f094670b5c03940b2b79363/parser-object-leading-whitespace/extensions.json"
+      }
+    },
+    {
+      "case": "unsupported shape root-singleton-empty",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":false,\"HasOld\":false,\"NewMatches\":[],\"OldMatches\":[],\"Status\":\"known-neither\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-cdb303247f094670b5c03940b2b79363/parser-root-singleton-empty/extensions.json\"}"
+    },
+    {
+      "case": "unsupported shape root-singleton-new",
+      "pass": false,
+      "error": "False knowledge: {\"HasNew\":true,\"HasOld\":false,\"NewMatches\":[\"TablissNG\"],\"OldMatches\":[],\"Status\":\"known-new\",\"Reason\":\"supported-metadata\",\"EvidenceClass\":\"firefox-extensions-json\",\"MetadataSource\":\"/tmp/salah-discovery-cdb303247f094670b5c03940b2b79363/parser-root-singleton-new/extensions.json\"}"
+    }
+  ]
+}

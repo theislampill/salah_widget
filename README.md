@@ -80,20 +80,40 @@ it does not silently install extensions or write to browser extension storage.
 widget layout. Precise in-widget location also needs the iframe's
 `allow="geolocation"`; hosts may strip it, while coarse auto-detect still works.
 
-It runs code from this repo, so review-first works too:
-`curl -fsSLO …/install.sh` → `less install.sh` → `bash install.sh`.
+It runs code from this repo. Use the review-first route below when you want to
+inspect the exact file before allowing normal setup actions.
 
 #### Review a pinned file first
 
 These examples download the installer at a pinned source commit. Read it,
 use the optional offline preview, then run normal mode when ready:
 
+The Bash example below uses installer source commit
+`f2161ed6a1fe2e0647ee541487ab1ac792d4d3df`; the PowerShell example uses
+`8dfe944f843548603df260b78ccd1df4aa228a8e`. On macOS or Linux, keep the downloaded
+file for both the preview and normal run:
+
+```bash
+INSTALL_COMMIT='f2161ed6a1fe2e0647ee541487ab1ac792d4d3df'
+curl -fsSL "https://raw.githubusercontent.com/theislampill/salah_widget/$INSTALL_COMMIT/install.sh" -o install.sh
+less ./install.sh
+DRY_RUN=1 bash ./install.sh
+bash ./install.sh
+```
+
+Normal Bash mode requires an interactive terminal for target selection, install
+source questions and later manual-step acknowledgements, including when the
+script arrives through `curl | bash`. A deliberately empty answer selects the
+shown default. An unavailable terminal or end of input is a refusal, not a
+default answer. Use the reviewed local-file route from an interactive terminal
+if a remote command runner cannot provide one.
+
 On Windows, `Invoke-WebRequest -OutFile` keeps the downloaded file bytes. Review
 with `Get-Content -LiteralPath`; do not resave the file through
 `Get-Content`/`Set-Content` or change its encoding. Choose either host below:
 
 ```powershell
-Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/18ff14860ff41c084b1db5f396bb62aa9c22b1be/install.ps1" -OutFile ".\install.ps1"
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/theislampill/salah_widget/8dfe944f843548603df260b78ccd1df4aa228a8e/install.ps1" -OutFile ".\install.ps1"
 Get-Content -LiteralPath ".\install.ps1"
 powershell.exe -NoProfile -File ".\install.ps1" -DryRun
 powershell.exe -NoProfile -File ".\install.ps1"
@@ -103,9 +123,44 @@ For the supported PowerShell 7 host, replace the two `powershell.exe` calls with
 `pwsh.exe -NoProfile -File ".\install.ps1" -DryRun` and
 `pwsh.exe -NoProfile -File ".\install.ps1"`. Run one host's normal command.
 
-With reviewed local files, `-DryRun` performs offline local discovery and prints
+With reviewed local files, `DRY_RUN=1` on Bash or `-DryRun` on PowerShell performs offline local discovery and prints
 planned actions. Preview creates no staging or usable artifacts and is neither
 installation nor staged completion.
+
+#### Discovery and retained files
+
+The target list distinguishes known TablissNG, legacy Tabliss, both extensions,
+a supported inventory containing neither, and unknown discovery. For Firefox,
+missing, unreadable, malformed or insufficient `extensions.json` metadata is
+unknown. A nonempty add-on entry must contain a usable string identifier or
+name. On Bash, a missing Python parser also leaves Firefox discovery unknown;
+text matches are only conservative hints. A browser with no discovered profile
+is held as unknown.
+
+Only known safe targets are eligible for setup. Unknown targets are held for
+manual review, and legacy or both-extension targets are refused. Choosing
+`all` or an explicit target number does not override those decisions. A known
+safe target can still proceed when another profile is held or refused; the
+summary reports each category. If no selected target is eligible, the wizard
+exits unsuccessfully before staging. Inspect the named profile in the browser
+and retry after its metadata is readable, or follow the extension's manual
+installation and preset-import instructions. The wizard does not repair or
+delete browser metadata to force discovery.
+
+Bash profile discovery supports spaces, Unicode and literal backslashes.
+Profile paths containing a newline, carriage return or `|` are unsupported;
+those identities are excluded or refused before setup instead of being treated
+as another profile. Rename or choose a supported profile through the browser's
+own profile management, or use manual setup.
+
+On macOS and Linux, each normal attempt uses a fresh private download directory
+and a separate retained manual-install bundle. A verified download can be
+reused within that attempt; the old shared cache is not automatically reused
+or modified. Temporary downloads are cleaned up, while the printed bundle is
+kept for manual installation and import. Keep an unpacked extension directory
+for as long as the browser uses it. Reaching an acknowledgement prompt or
+receiving a staged path does not verify that extension installation or preset
+import has happened.
 
 ---
 
