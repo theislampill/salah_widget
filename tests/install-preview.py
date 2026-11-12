@@ -359,6 +359,10 @@ def fixture(name, population="known", route="github"):
         "R0016_NONCE": secrets.token_hex(16),
         "R0016_TRANSPORT_LOG": str(root / "network.jsonl"),
     }
+    if HOST == "Linux":
+        # The namespace maps this caller to UID 0. Provide its complete native
+        # shell identity before Bash starts; retain every transport denial.
+        env.update(USER="root", LOGNAME="root", SHELL=ARGS.bash)
     return root, subject, env
 
 
