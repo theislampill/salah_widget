@@ -1,0 +1,869 @@
+{
+ "lane": "D",
+ "baseline": "363c3e536c8004935ef80230e43f7712e339e3a5",
+ "historical": "f71fef6ccf7e4efcb57b5a26688d2360461a3253",
+ "machines": [
+  {
+   "id": "N13",
+   "name": "Sky scene identity, first-document warrant and renderer-surface commit",
+   "classification": {
+    "documentation": "comments + state contract (R0021)",
+    "implementation": "partly explicit",
+    "verification": "unit tests + native evidence (R0021 cells)"
+   },
+   "sources": [
+    "src/native/index.html:2217-2252 skySceneIdentity/beginSkyScene/updateSkySurface/commitSkyScene",
+    "src/native/index.html:3017-3040 paintCelestialWithoutTimetable",
+    "tools/build_native.py:72-73 generated hooks",
+    "gen index.html:5655"
+   ],
+   "originalId": "N13",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "N14",
+   "name": "Star projection/catalogue contract and held appearance",
+   "classification": {
+    "documentation": "comments + QUALIFICATION.md (DESIGN.md stale)",
+    "implementation": "partly explicit",
+    "verification": "unit tests (one retained instrument fails against generated entry)"
+   },
+   "sources": [
+    "src/native/index.html:2102-2214 (source only)",
+    "tools/build_native.py:51-67,84 generated stub",
+    "real-sky/native-contract.mjs:20 scintillation strength 0",
+    "gen index.html:5636"
+   ],
+   "originalId": "N14",
+   "disposition": "still implicit or vulnerable"
+  },
+  {
+   "id": "N15",
+   "name": "Cloud population, motion integration, coverage and paint cache",
+   "classification": {
+    "documentation": "comments + state contract (R000B)",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/index.html:2756-2877 cloudSceneIdentity/advanceCloudMotion/paintClouds",
+    "src/native/index.html:3222-3241 applyCloudState",
+    "src/native/index.html:3880-3883 loop cadence",
+    "gen index.html:6249,6654"
+   ],
+   "originalId": "N15",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "N16",
+   "name": "Precipitation population, cloud-origin gating and lightning",
+   "classification": {
+    "documentation": "comments + DESIGN.md",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/index.html:2255-2268 buildWeather",
+    "src/native/index.html:2882-2894 tieRainToClouds",
+    "src/native/index.html:3460-3475,3528 lightning",
+    "src/native/index.html:2722-2729 withdrawWeatherEffects"
+   ],
+   "originalId": "N16",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "N17",
+   "name": "Atmosphere publication, optical fade state and last-consumed diagnostics",
+   "classification": {
+    "documentation": "comments + issue contracts (R001D, R0022)",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "src/native/index.html:3004-3016 paintLunarOptic",
+    "src/native/index.html:3041-3338 atmosphere/paint/applyTheme",
+    "src/native/index.html:2714-2721 rememberWeatherEffects",
+    "src/native/index.html:3539-3624 qaState"
+   ],
+   "originalId": "N17",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "N19",
+   "name": "Render loop: painting, visibility and motion side",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "none (exception recovery)"
+   },
+   "sources": [
+    "src/native/index.html:3855-3898 startRenderLoop/loop/start/stop/setVis",
+    "gen index.html:7288"
+   ],
+   "originalId": "N19",
+   "disposition": "still implicit or vulnerable"
+  },
+  {
+   "id": "R01",
+   "name": "Native sky snapshot identity, epoch, freshness and throughput admission",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests + native record (R0027 run1 rate-throughput)"
+   },
+   "sources": [
+    "real-sky/native-lifecycle.mjs:8-93",
+    "real-sky/native-contract.mjs:3-25",
+    "real-sky/native-host-hooks.js:20-49",
+    "gen real-sky/native-sky.js:1262,2158"
+   ],
+   "originalId": "R01",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R02",
+   "name": "Latest-only serialized render queue",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/latest-render-queue.mjs:1-31"
+   ],
+   "originalId": "R02",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R03",
+   "name": "Native asset loader generation, timeout, suspension and retry",
+   "classification": {
+    "documentation": "comments + state contract (R0021)",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests + mutation + native evidence + independent review"
+   },
+   "sources": [
+    "real-sky/native-assets.mjs:4-33"
+   ],
+   "originalId": "R03",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "R04",
+   "name": "Native asset script, inline pack and page lifecycle ownership",
+   "classification": {
+    "documentation": "comments + state contract (R0021)",
+    "implementation": "partly explicit",
+    "verification": "unit tests + native evidence (non-persisted navigation only)"
+   },
+   "sources": [
+    "real-sky/native-assets.mjs:38-81"
+   ],
+   "originalId": "R04",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R05",
+   "name": "Reference worker client boot, RPC deadlines and fallback mode",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/reference-worker-client.mjs:1-53",
+    "real-sky/native-worker-policy.mjs:1-7"
+   ],
+   "originalId": "R05",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R06",
+   "name": "Sky worker boot, engine ownership and transferable raster response",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "tools/build_native.py:31-34",
+    "real-sky/native-engine.mjs:7-27",
+    "gen real-sky/native-worker.js (tail)"
+   ],
+   "originalId": "R06",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R07",
+   "name": "Diffuse asset admission, cancellation and content cache",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/diffuse-assets.mjs:14-69"
+   ],
+   "originalId": "R07",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R08",
+   "name": "Sky catalogue replacement generation and last-result authority",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/scene.mjs:11-21"
+   ],
+   "originalId": "R08",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R09",
+   "name": "Engine binding selection, load keys and declared physical fallback",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-engine.mjs:10-14",
+    "real-sky/core/integration/resilient-sky-bridge.mjs:7-18",
+    "real-sky/core/integration/physical-sky-bridge.mjs:5-18"
+   ],
+   "originalId": "R09",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R10",
+   "name": "Refined sky construction, accepted frame, displayed frame and DOM commit",
+   "classification": {
+    "documentation": "comments + state contract (R0021 lifetime map)",
+    "implementation": "partly explicit",
+    "verification": "unit tests + mutation + native evidence + independent review"
+   },
+   "sources": [
+    "real-sky/native-host.mjs:60-272",
+    "gen real-sky/native-sky.js:2388"
+   ],
+   "originalId": "R10",
+   "disposition": "resolved and independently verified (construction/retirement); accepted-vs-displayed implicit"
+  },
+  {
+   "id": "R11",
+   "name": "Solar cloud mask decode-before-publish transaction",
+   "classification": {
+    "documentation": "comments + state contract (R0021 TA3)",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-composition.mjs:36-68"
+   ],
+   "originalId": "R11",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "R12",
+   "name": "Preview base, pending paint, current display and shared DOM handoff",
+   "classification": {
+    "documentation": "comments + state contract (R0021 10.3)",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-preview-host.mjs:10-194",
+    "gen index.html:2911"
+   ],
+   "originalId": "R12",
+   "disposition": "partly resolved"
+  },
+  {
+   "id": "R13",
+   "name": "Asynchronous preview catalogue admission revision",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-preview-host.mjs:173-185",
+    "real-sky/native-star-preview.mjs"
+   ],
+   "originalId": "R13",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R14",
+   "name": "Document head background and initial lunar CSS lease",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-first-paint.mjs:10-48",
+    "real-sky/native-preview-host.mjs:39-46"
+   ],
+   "originalId": "R14",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R15",
+   "name": "Native snapshot adapter and single paint-hook installation",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-host-hooks.js:5-68"
+   ],
+   "originalId": "R15",
+   "disposition": "implemented but not fully verified"
+  },
+  {
+   "id": "R16",
+   "name": "Bounded camera and lunar sampling geometry memoisation",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-preview.mjs:17-31,362-382"
+   ],
+   "originalId": "R16",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R17",
+   "name": "Preview raster private-byte custody and lazy linear fields",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-star-preview.mjs:20,139-178"
+   ],
+   "originalId": "R17",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R18",
+   "name": "Exact immutable encoding-table initialisation",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-host.mjs:11-49",
+    "real-sky/native-encoding.mjs"
+   ],
+   "originalId": "R18",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R31",
+   "name": "Spectral selection and B-V fit retention",
+   "classification": {
+    "documentation": "state contract (R0027) + AGENTS.md",
+    "implementation": "explicit and enforced",
+    "verification": "unit tests + mutation + browser smoke + independent review"
+   },
+   "sources": [
+    "tools/native_core_spectral_cache.py:1-49",
+    "tools/build_native.py:15",
+    "real-sky/core/src/spectral.mjs:9-10,23-26,34-43",
+    "gen index.html:968; real-sky/native-sky.js:299"
+   ],
+   "originalId": "R31",
+   "disposition": "resolved and independently verified"
+  },
+  {
+   "id": "R32",
+   "name": "Bounded legacy photometry spectral memo",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/photometry.mjs:27-35"
+   ],
+   "originalId": "R32",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R33",
+   "name": "Atmosphere validation capability and weak coefficient memo",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/atmosphere.mjs:7",
+    "real-sky/core/src/sky-background.mjs:14,47"
+   ],
+   "originalId": "R33",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R34",
+   "name": "Per-physical-model solar sample grid lifetime",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/sky-background.mjs:72-96"
+   ],
+   "originalId": "R34",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R35",
+   "name": "Native target-elevation acceptance lease",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/native-host-hooks.js:4-9,23",
+    "tools/build_native.py:69-71"
+   ],
+   "originalId": "R35",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "R36",
+   "name": "Catalogue-bound diffuse resource capability and private sampler",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "partly explicit",
+    "verification": "unit tests"
+   },
+   "sources": [
+    "real-sky/core/src/diffuse-binding.mjs:4-18",
+    "real-sky/core/src/registered-starlight.mjs:35-60"
+   ],
+   "originalId": "R36",
+   "disposition": "no change; original disposition stands"
+  },
+  {
+   "id": "NEW-D-01",
+   "name": "Preview-lane forecast synthesis feeding the native sky identity",
+   "classification": {
+    "documentation": "comments",
+    "implementation": "implicit",
+    "verification": "none (lane probe only)"
+   },
+   "sources": [
+    "src/native/index.html:1556-1581 wxAt/syncWeather",
+    "src/native/index.html:1380 selectedWeather",
+    "src/native/index.html:3485 render",
+    "real-sky/native-host-hooks.js:42",
+    "real-sky/native-contract.mjs:8"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "NEW-D-02",
+   "name": "Cloud publication authority receipt (R000B)",
+   "classification": {
+    "documentation": "state contract (R000B)",
+    "implementation": "partly explicit",
+    "verification": "unit tests + mutation + native (R000B certificate)"
+   },
+   "sources": [
+    "src/native/index.html:2685-2752",
+    "src/native/index.html:2230,3239,3491,3880,2818"
+   ],
+   "originalId": null,
+   "disposition": "new discovery (added by R000B)"
+  },
+  {
+   "id": "NEW-D-03",
+   "name": "Page-lifecycle fan-out across sky owners",
+   "classification": {
+    "documentation": "state contract (R0021, retirement only)",
+    "implementation": "implicit",
+    "verification": "unit tests + native (non-persisted only)"
+   },
+   "sources": [
+    "real-sky/native-assets.mjs:70-72",
+    "src/native/index.html:3892-3895",
+    "real-sky/native-host.mjs:255",
+    "real-sky/native-lifecycle.mjs:55",
+    "real-sky/native-preview-host.mjs:166-167"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "NEW-D-04",
+   "name": "Lunar-light eligibility consumption, sky/cloud/star side (R0022)",
+   "classification": {
+    "documentation": "issue contract (#34)",
+    "implementation": "partly explicit",
+    "verification": "unit tests (retained instruments partly failing)"
+   },
+   "sources": [
+    "src/native/index.html:2990-3003,3141,3156,3176-3203,3238",
+    "tools/build_native.py:59"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  },
+  {
+   "id": "NEW-D-05",
+   "name": "Diagnostic telemetry state (debugMotion history, qaState)",
+   "classification": {
+    "documentation": "AGENTS.md/DESIGN.md (describe source implementation)",
+    "implementation": "implicit",
+    "verification": "unit tests (r001d lifecycle)"
+   },
+   "sources": [
+    "src/native/index.html:3629-3646",
+    "src/native/index.html:3539-3624",
+    "real-sky/native-host-hooks.js:58-67"
+   ],
+   "originalId": null,
+   "disposition": "new discovery"
+  }
+ ],
+ "findings": [
+  {
+   "id": "D-F01",
+   "title": "Interpolated preview-lane forecast weather re-keys the refined sky every simulated second; results never accepted once one worker render exceeds 1000/rate ms; not reported as rate-throughput",
+   "machines": [
+    "NEW-D-01",
+    "R01",
+    "R10",
+    "R12"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "medium (optional astronomy; preview remains; misleading status; wasted worker work)",
+   "trace": [
+    "src/native/index.html:3485,1573-1581,1556-1570,1380",
+    "real-sky/native-host-hooks.js:42",
+    "real-sky/native-contract.mjs:8",
+    "real-sky/native-lifecycle.mjs:20-27,54,63,70",
+    "real-sky/native-host.mjs:82-103",
+    "probe probes/D/forecast-identity-probe.mjs"
+   ],
+   "openQuestions": [
+    "native worker durations per device",
+    "owner choice between consumed-field identity and quantised preview weather"
+   ]
+  },
+  {
+   "id": "D-F02",
+   "title": "Native identity includes weather fields the worker job never consumes (rh, cloud, code, wind)",
+   "machines": [
+    "R01",
+    "R10",
+    "R12"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low-medium efficiency; correctness-neutral",
+   "trace": [
+    "real-sky/native-contract.mjs:8,10-17",
+    "src/native/index.html:1469"
+   ],
+   "openQuestions": [
+    "whether any diagnostic relies on weather in the identity"
+   ]
+  },
+  {
+   "id": "D-F03",
+   "title": "Native render loop has no exception containment; a throw strands _raf until hide/show",
+   "machines": [
+    "N19",
+    "N17"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "medium if triggered; trigger unknown",
+   "trace": [
+    "src/native/index.html:3869-3891",
+    "src/native/index.html:3336",
+    "real-sky/native-host.mjs:253 (contrast)"
+   ],
+   "openQuestions": [
+    "a concrete reachable throw (NH02 next evidence)"
+   ]
+  },
+  {
+   "id": "D-F04",
+   "title": "Preview in awaiting-input state clears and reconciles every animation frame for the page lifetime",
+   "machines": [
+    "R12",
+    "NEW-D-03"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low",
+   "trace": [
+    "src/native/index.html:3791,3811",
+    "real-sky/native-preview-host.mjs:47,127,166-167"
+   ],
+   "openQuestions": [
+    "manual-setup path frequency"
+   ]
+  },
+  {
+   "id": "D-F05",
+   "title": "Preview healthy dispose() does not release its registry slot",
+   "machines": [
+    "R12"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low (no shipped caller)",
+   "trace": [
+    "real-sky/native-preview-host.mjs:186-187,189-193",
+    "real-sky/native-host.mjs:263-264"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "D-F06",
+   "title": "Generated app has no star-scintillation producer; DESIGN.md and debugMotion star telemetry describe the replaced CSS implementation",
+   "machines": [
+    "N14",
+    "NEW-D-05"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "medium (documentation/evidence truthfulness); visual impact not observed here",
+   "trace": [
+    "tools/build_native.py:61,84",
+    "real-sky/native-contract.mjs:20",
+    "docs/real-sky/QUALIFICATION.md:130-132",
+    "DESIGN.md:440-449,458,466",
+    "src/native/index.html:3631,3637"
+   ],
+   "openQuestions": [
+    "whether gate I is considered met by other means natively"
+   ]
+  },
+  {
+   "id": "D-F07",
+   "title": "Retained regression instruments fail at baseline (r0021-reveal, r0022-baseline-balance, r0022-lunar-consumers)",
+   "machines": [
+    "N14",
+    "NEW-D-04"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "medium for qualification evidence",
+   "trace": [
+    "tests/r0021-reveal.cjs",
+    "tests/r0022-baseline-balance.cjs",
+    "tests/r0022-lunar-consumers.cjs",
+    "docs/state-contracts/R0021.md:184"
+   ],
+   "openQuestions": [
+    "owner of stale pins/expectations"
+   ]
+  },
+  {
+   "id": "D-F08",
+   "title": "reconcileClouds() used as a capture step by renderer owners has weather/header write effects",
+   "machines": [
+    "R15",
+    "NEW-D-02"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "low (ownership clarity)",
+   "trace": [
+    "src/native/index.html:2730-2747",
+    "real-sky/native-composition.mjs:132",
+    "real-sky/native-host.mjs:85,158",
+    "real-sky/native-preview-host.mjs:47,136"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "D-F09",
+   "title": "Per-compose allocations and PNG mask encode at up to 20 Hz while clouds move",
+   "machines": [
+    "R10",
+    "R11"
+   ],
+   "evidenceClass": "demonstrated",
+   "severity": "optimisation opportunity only (no measurement)",
+   "trace": [
+    "real-sky/native-host.mjs:181,193,253",
+    "real-sky/native-composition.mjs:74,127-128,154-156"
+   ],
+   "openQuestions": []
+  },
+  {
+   "id": "D-F10",
+   "title": "Two lunar-light producers in the generated app can diverge under simMoon diagnostics",
+   "machines": [
+    "NEW-D-04"
+   ],
+   "evidenceClass": "speculative",
+   "severity": "low (diagnostic scenes)",
+   "trace": [
+    "src/native/index.html:2996",
+    "real-sky/core/src/sky-background.mjs:39-45,90",
+    "real-sky/native-contract.mjs:10-23"
+   ],
+   "openQuestions": [
+    "lane E confirmation"
+   ]
+  },
+  {
+   "id": "D-F11",
+   "title": "RF04 mask decode still has no wall-clock settlement bound",
+   "machines": [
+    "R11"
+   ],
+   "evidenceClass": "plausible risk",
+   "severity": "low (owner retained UNVERIFIED)",
+   "trace": [
+    "real-sky/native-composition.mjs:36-68",
+    "docs/state-contracts/R0021.md:27-28"
+   ],
+   "openQuestions": [
+    "browser decode settlement guarantee"
+   ]
+  }
+ ],
+ "gdopl": [
+  {
+   "id": "G1",
+   "interaction": "Preview-lane forecast lerp x sky identity",
+   "current": "identity includes full interpolated weather",
+   "constraints": "g1 frame age; truthful provenance",
+   "neighbours": [
+    "eta1 identity of job-consumed fields only",
+    "eta2 quantise preview weather for sky snapshot",
+    "eta3 distinct identity-churn availability"
+   ],
+   "benefit": "refined sky acceptable at moderate rates; truthful badge",
+   "cost": "eta2 visual lag; eta1 must keep all physics inputs",
+   "evidence": "probe + source",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G2",
+   "interaction": "Live weather refresh x refined frame",
+   "current": "any weather field change withdraws refined and preview",
+   "constraints": "g1, g5",
+   "neighbours": [
+    "eta1"
+   ],
+   "benefit": "fewer withdrawals/recomputes",
+   "cost": "prove clouds stay fenced by receipt",
+   "evidence": "source",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G3",
+   "interaction": "Weather expiry x clouds without timetable (NF02)",
+   "current": "receipt withdrawal in no-model branch",
+   "constraints": "g5",
+   "neighbours": [],
+   "benefit": "stale clouds withdrawn independent of prayer",
+   "cost": "none observed",
+   "evidence": "before/after diff + tests + R000B certificate",
+   "classification": "demonstrated improvement"
+  },
+  {
+   "id": "G4",
+   "interaction": "Failed construction x DOM (RF02)",
+   "current": "custody + unwind",
+   "constraints": "g4",
+   "neighbours": [],
+   "benefit": "no orphans",
+   "cost": "none in presentation trace",
+   "evidence": "before/after diff + tests + native census",
+   "classification": "demonstrated improvement"
+  },
+  {
+   "id": "G5",
+   "interaction": "Spectral fit retention (RF03)",
+   "current": "inner FIFO 12,000",
+   "constraints": "g3",
+   "neighbours": [
+    "eta uncached path for continuous twilight B-V"
+   ],
+   "benefit": "remove near-zero-hit churn",
+   "cost": "bit-identity; vendor provenance",
+   "evidence": "ES27 tests; no timing",
+   "classification": "demonstrated improvement (retention); insufficient evidence (recomputation)"
+  },
+  {
+   "id": "G6",
+   "interaction": "Native loop exceptions (NH02)",
+   "current": "no containment",
+   "constraints": "prayer UI liveness",
+   "neighbours": [
+    "eta reschedule-before-work or try/finally"
+   ],
+   "benefit": "loop survives a fault",
+   "cost": "could mask defects",
+   "evidence": "source only",
+   "classification": "insufficient evidence"
+  },
+  {
+   "id": "G7",
+   "interaction": "Mask decode settlement (RF04)",
+   "current": "no deadline",
+   "constraints": "g2",
+   "neighbours": [
+    "eta wall-clock cancellation"
+   ],
+   "benefit": "liveness under stalled decode",
+   "cost": "owner decided against",
+   "evidence": "none native",
+   "classification": "retain"
+  },
+  {
+   "id": "G8",
+   "interaction": "Page lifecycle across owners",
+   "current": "refined suspended; preview/loop by visibility",
+   "constraints": "instance-owned disposal",
+   "neighbours": [
+    "eta preview participates in suspend/resume"
+   ],
+   "benefit": "consistent lifecycle",
+   "cost": "more state; bfcache untestable headless",
+   "evidence": "R0021 native record",
+   "classification": "insufficient evidence"
+  },
+  {
+   "id": "G9",
+   "interaction": "Overlapping weather-currency representations",
+   "current": "R01 identity + cloud receipt + decision cache + effects receipt",
+   "constraints": "no conflicting authority",
+   "neighbours": [
+    "eta document receipt-to-consumer map"
+   ],
+   "benefit": "review clarity",
+   "cost": "doc only",
+   "evidence": "source",
+   "classification": "plausible improvement requiring verification"
+  },
+  {
+   "id": "G10",
+   "interaction": "Accepted vs displayed refined frame",
+   "current": "frame/job vs paintedFrame/paintedJob",
+   "constraints": "separation of accepted and displayed state",
+   "neighbours": [],
+   "benefit": "none",
+   "cost": "none",
+   "evidence": "R0021 tests",
+   "classification": "retain"
+  }
+ ]
+}

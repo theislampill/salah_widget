@@ -1,0 +1,143 @@
+{
+ "baseline": "363c3e536c8004935ef80230e43f7712e339e3a5",
+ "omissions": [
+  {
+   "id": "OM-01",
+   "type": "c",
+   "name": "Provider timezone adoption re-keys sky/Moon scene identity",
+   "materiality": "medium",
+   "evidence": "demonstrated (source trace + config probe); runtime effect not reproduced",
+   "relates": [
+    "NEW-A-03",
+    "N13",
+    "R01",
+    "R14",
+    "R19",
+    "R21"
+   ],
+   "sources": [
+    "src/native/index.html:2217-2252,3017-3021,3242-3249,3669-3700,3779-3849,686,2026-2037,4168-4176",
+    "real-sky/native-host-hooks.js:20-44",
+    "real-sky/native-contract.mjs:3-10",
+    "real-sky/native-first-paint.mjs:13-18",
+    "moon/src/moon-native.mjs:23-35"
+   ]
+  },
+  {
+   "id": "OM-02",
+   "type": "c",
+   "name": "tz is parse-only: builder serialize never emits it; portable embeds boot on America/New_York hint",
+   "materiality": "low-medium",
+   "evidence": "demonstrated (probe)",
+   "relates": [
+    "N01",
+    "C05",
+    "NEW-A-03",
+    "A-F01"
+   ],
+   "sources": [
+    "src/native/config.js:26-29,126,145,182-206",
+    "src/native/builder.html:212",
+    "src/native/index.html:680,686,1067,1076,1450,3845-3846,4026",
+    "README.md:36"
+   ]
+  },
+  {
+   "id": "OM-03",
+   "type": "b",
+   "name": "Per-location prayer/weather cache namespace: no eviction, survives Reset, shares quota with config",
+   "materiality": "low-medium",
+   "evidence": "demonstrated (source) / speculative (quota)",
+   "relates": [
+    "C01",
+    "N04",
+    "N08",
+    "N22"
+   ],
+   "sources": [
+    "src/native/index.html:1067,1114-1127,1292,1405-1413,1471,4122-4125",
+    "src/native/config.js:233-249",
+    "README.md:281,397-400"
+   ]
+  },
+  {
+   "id": "OM-04",
+   "type": "b",
+   "name": "CONFIG.source localStorage marker survives successful clearLocal; saved-position label",
+   "materiality": "low",
+   "evidence": "demonstrated (source trace)",
+   "relates": [
+    "N22",
+    "N20",
+    "F-C04"
+   ],
+   "sources": [
+    "src/native/index.html:3738,4038,3959-3970,4122-4144"
+   ]
+  },
+  {
+   "id": "OM-05",
+   "type": "b",
+   "name": "Boot-only diagnostic acquisition flags can stick (autoDetectStatus pending; geoLastError)",
+   "materiality": "low",
+   "evidence": "demonstrated (source trace)",
+   "relates": [
+    "C02",
+    "NEW-D-05"
+   ],
+   "sources": [
+    "src/native/index.html:682,3586-3588,3794-3804,4114-4118,4130"
+   ]
+  },
+  {
+   "id": "OM-06",
+   "type": "c",
+   "name": "325x530 renderer geometry duplicated as literals across modules",
+   "materiality": "low",
+   "evidence": "observed (source)",
+   "relates": [
+    "NEW-C-02",
+    "R01",
+    "R10",
+    "R11",
+    "R14"
+   ],
+   "sources": [
+    "src/native/index.html:482,520,2072,2088,2986-2987",
+    "real-sky/native-contract.mjs:20",
+    "real-sky/native-host.mjs:74-191",
+    "real-sky/native-composition.mjs:109-156",
+    "real-sky/native-first-paint.mjs:23,30",
+    "real-sky/native-host-hooks.js:35"
+   ]
+  },
+  {
+   "id": "OM-07",
+   "type": "c",
+   "name": "First paint re-parses fragment with diverging semantics (blank camera, simDate, duplicated identity/reduced-motion)",
+   "materiality": "low",
+   "evidence": "demonstrated (source) / speculative impact",
+   "relates": [
+    "R14",
+    "R01",
+    "R15"
+   ],
+   "sources": [
+    "real-sky/native-first-paint.mjs:11-21",
+    "real-sky/native-host-hooks.js:23,41-42",
+    "real-sky/native-contract.mjs:7",
+    "src/native/index.html:770-802,2219"
+   ]
+  }
+ ],
+ "probes": [
+  "probes/G/tz-hint-probe.cjs",
+  "probes/G/tz-identity-probe.cjs"
+ ],
+ "disagreements": [],
+ "omissionsInFirstPass": [
+  "NEW-A-03 reader list omits skySceneIdentity/moonGeometryObservation/weatherInformation/native+Moon capture",
+  "N13 does not record tz adoption as beginSkyScene trigger",
+  "first-paint tests use default hint zone only"
+ ]
+}
