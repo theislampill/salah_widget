@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        host: [ps51, ps766]
+        host: [ps51]
     runs-on: windows-2022
     timeout-minutes: 30
     env:
@@ -61,7 +61,7 @@ jobs:
         run: |
           python -c "import hashlib,os,pathlib,shutil,urllib.request,zipfile; parent=pathlib.Path(os.environ['RUNNER_TEMP']); archive=parent/'PowerShell-7.6.6-win-x64.zip'; response=urllib.request.urlopen('https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/PowerShell-7.6.6-win-x64.zip',timeout=60); target=archive.open('xb'); shutil.copyfileobj(response,target); target.close(); response.close(); assert hashlib.sha256(archive.read_bytes()).hexdigest()=='02fe458be20493fbdf43f61ea20610b811ee6c738ab1676c61b9cfcd1a33c860','PowerShell archive digest mismatch'; runtime=parent/'r0016-full-entry-pwsh7'; runtime.mkdir(exist_ok=False); zipfile.ZipFile(archive).extractall(runtime); assert (runtime/'pwsh.exe').is_file(),'PowerShell executable missing'; stream=open(os.environ['GITHUB_ENV'],'a',encoding='utf-8'); stream.write('R0016_ENTRY_PS7='+str(runtime/'pwsh.exe')+'\n'); stream.close()"
           exit /b %ERRORLEVEL%
-      - name: Observe six normal entries across both hosts without qualification credit
+      - name: Compare four PS5.1 normal entries after source-free warmups
         shell: cmd
         run: |
           if "${{ matrix.host }}"=="ps51" (set "R0016_ENTRY_PS=%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe") else (set "R0016_ENTRY_PS=%R0016_ENTRY_PS7%")

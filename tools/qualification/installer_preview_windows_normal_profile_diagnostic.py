@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prospective six-entry profile diagnostic. Never grants qualification credit.
+"""Bounded native profile diagnostic. Never grants qualification credit.
 
 Inherited fixtures/comparators are pinned. Each mode runs genuine -File positive
 and no-open entries inside the existing suspended/assigned Job carrier. Complete
@@ -27,12 +27,107 @@ def digest(raw):return hashlib.sha256(raw).hexdigest()
 
 def modes(host):
     if host=='ps7':return [('default',False,0),('no-gather',True,0)]
-    if host=='ps51':return [('warm20',False,20)]
+    if host=='ps51':return [('warm20',False,20),('warm-json',False,20)]
     raise ValueError('Unknown native diagnostic host')
+
+def warm_control_body(mode):
+    body="$ErrorActionPreference='Stop'\nWrite-Host 'R0016 independent host startup control'\n"
+    if mode=='warm-json':
+        body+=r'''
+$command=Get-Command -Name ConvertFrom-Json -CommandType Cmdlet -ErrorAction Stop
+if(@($command).Count -ne 1){throw 'Ambiguous native JSON command'}
+$parsed=& $command -InputObject '{"r0016Probe":"source-free","value":16}'
+if($parsed.r0016Probe -cne 'source-free' -or $parsed.value -ne 16){throw 'Native JSON warm-up failed'}
+$assemblyPath=$command.ImplementingType.Assembly.Location
+$assemblyBytes=[IO.File]::ReadAllBytes($assemblyPath)
+$hasher=[Security.Cryptography.SHA256]::Create()
+try{$assemblySha=([BitConverter]::ToString($hasher.ComputeHash($assemblyBytes))).Replace('-','').ToLowerInvariant()}finally{$hasher.Dispose()}
+$context=[ordered]@{schema='r0016-source-free-json-context.v1';pid=$PID;nonce=$env:INSTALL_READY_NONCE;normal=$env:INSTALL_FIXTURE_NORMAL;command=$command.Name;commandType=[string]$command.CommandType;module=$command.ModuleName;nativeUtility=$env:INSTALL_NATIVE_UTILITY;analysisCachePath=$env:PSModuleAnalysisCachePath;parsedMarker=$parsed.r0016Probe;parsedValue=$parsed.value;assemblyPath=$assemblyPath;assemblyBytes=$assemblyBytes.Length;assemblySha256=$assemblySha;moduleSearchPath=$env:PSModulePath}
+[Console]::WriteLine('R0016_WARM_JSON_CONTEXT '+($context|ConvertTo-Json -Depth 4 -Compress))
+'''
+    if mode in ('warm20','warm-json'):body+='[Threading.Thread]::Sleep(20000)\n'
+    return body+'exit 0\n'
+
+def receive_cache_bytes(raw,rows):
+    require(type(rows) is list and all(type(row) is dict for row in rows),'Invalid cache inventory')
+    matches=[row for row in rows if row.get('role')=='analysisCache']
+    require(len(matches)==1 and matches[0].get('path')=='.','Missing or duplicate cache root')
+    row=matches[0]
+    if row.get('kind')=='absent':
+        require(raw is None,'Absent cache has an invented byte capture')
+    else:
+        require(row.get('kind')=='file' and type(raw) is bytes and type(row.get('bytes')) is int
+            and row['bytes']>=0 and len(raw)==row['bytes'] and digest(raw)==row.get('sha256'),
+            'Cache capture differs from its full-input observation')
+    return row
+
+def parse_warm_context(raw):
+    require(type(raw) is bytes,'Warm context is not original raw bytes')
+    lines=[line[len('R0016_WARM_JSON_CONTEXT '):] for line in raw.decode('utf-8-sig').splitlines()
+        if line.startswith('R0016_WARM_JSON_CONTEXT ')]
+    require(len(lines)==1,'Missing or duplicate source-free JSON context')
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            require(key not in result,'Duplicate warm-context key')
+            result[key]=value
+        return result
+    context=json.loads(lines[0],object_pairs_hook=unique)
+    require(type(context) is dict,'Invalid source-free JSON context')
+    return context
+
+def receive_native_assembly(driver,context,journal_path):
+    journal=dict(schema='r0016-warm-json-native-file-binding.v1',comparisons=[])
+    child=dict(path=context.get('assemblyPath'),bytes=context.get('assemblyBytes'),
+        sha256=context.get('assemblySha256'))
+    driver.record_probe_file_binding(child,'warm-json/assembly',journal_path,journal)
+    require(len(journal['comparisons'])==1,'Missing native JSON assembly binding')
+    return journal['comparisons'][0]
+
+def receive_warm_context(raw,receipt,assembly_binding):
+    context=parse_warm_context(raw);env=receipt.get('environment',{})
+    require(context.get('schema')=='r0016-source-free-json-context.v1'
+        and type(context.get('pid')) is int and context['pid']==receipt.get('pid')
+        and context.get('nonce')==receipt.get('nonce')
+        and context.get('normal')==env.get('INSTALL_FIXTURE_NORMAL')=='0',
+        'Source-free JSON context has the wrong process')
+    require(context.get('command')=='ConvertFrom-Json' and context.get('commandType')=='Cmdlet'
+        and context.get('module')=='Microsoft.PowerShell.Utility'
+        and context.get('nativeUtility')==env.get('INSTALL_NATIVE_UTILITY')
+        and context.get('analysisCachePath')==env.get('PSModuleAnalysisCachePath'),
+        'Source-free JSON command/cache binding differs')
+    require(context.get('parsedMarker')=='source-free' and type(context.get('parsedValue')) is int
+        and context['parsedValue']==16 and type(context.get('moduleSearchPath')) is str
+        and context['moduleSearchPath'],'Source-free native JSON result missing')
+    child=dict(path=context.get('assemblyPath'),bytes=context.get('assemblyBytes'),
+        sha256=context.get('assemblySha256'))
+    require(type(child['path']) is str and type(child['bytes']) is int and child['bytes']>0
+        and type(child['sha256']) is str and re.fullmatch(r'[0-9a-f]{64}',child['sha256'])
+        and assembly_binding.get('childFact')==child and assembly_binding.get('matches') is True
+        and assembly_binding.get('error') is None,'Native JSON assembly binding missing or differs')
+    identity=assembly_binding.get('nativeFileIdentity',{});parent=assembly_binding.get('parentFact',{})
+    require(all(identity.get(field) is True for field in
+        ('resolutionMatches','sameFile','stable','contentMatches'))
+        and identity.get('rawPath')==child['path'] and type(parent.get('path')) is str
+        and all(identity.get(field)==parent['path'] for field in
+            ('canonicalPath','resolvedRawPath','resolvedCanonicalPath'))
+        and identity.get('rawReadbackFact')==identity.get('canonicalReadbackFact')==parent
+        and all(child[field]==parent.get(field) for field in ('bytes','sha256')),
+        'Native JSON assembly lacks canonical identity/content proof')
+    observations=identity.get('observations',{})
+    require(set(observations)=={'rawBefore','canonicalBefore','rawAfter','canonicalAfter'},
+        'Incomplete native JSON assembly observations')
+    first=observations['rawBefore']
+    require(type(first) is dict and type(first.get('device')) is int
+        and type(first.get('inode')) is int and first['inode']>0
+        and first.get('bytes')==child['bytes']
+        and all(value==first for value in observations.values()),
+        'Native JSON assembly identity or metadata changed')
+    return context
 
 def derive_harness(raw,mode):
     require((len(raw),digest(raw))==INPUTS[HARNESS_ROLE],'Inherited harness bytes differ')
-    require(mode in ('default','no-gather','warm20'),'Unknown diagnostic mode')
+    require(mode in ('default','no-gather','warm20','warm-json'),'Unknown diagnostic mode')
     text=raw.decode('utf-8')
     def replace(old,new):
         nonlocal text
@@ -40,13 +135,23 @@ def derive_harness(raw,mode):
         text=text.replace(old,new,1)
     replace("    startup_env=dict(env, INSTALL_READY_FILE=",
         "    composition.double_inventory(root,support,startup/'full-before-launch.json',LOCKS)\n"
+        "    if (root/'analysis-cache').is_file():\n"
+        "        (startup/'cache-before.raw').write_bytes((root/'analysis-cache').read_bytes())\n"
         "    startup_env=dict(env, INSTALL_READY_FILE=")
     replace("startup_env,startup,host_home,ENTRY_TIMEOUT_SECONDS)",
         "startup_env,startup,host_home,ENTRY_TIMEOUT_SECONDS,root)\n"
-        "        composition.double_inventory(root,support,startup/'full-after-exit.json',LOCKS)")
-    if mode=='warm20':
-        replace("Write-Host 'R0016 independent host startup control'\\nexit 0\\n",
-            "Write-Host 'R0016 independent host startup control'\\n[Threading.Thread]::Sleep(20000)\\nexit 0\\n")
+        "        composition.double_inventory(root,support,startup/'full-after-exit.json',LOCKS)\n"
+        "        if (root/'analysis-cache').is_file():\n"
+        "            (startup/'cache-after.raw').write_bytes((root/'analysis-cache').read_bytes())")
+    original_body="$ErrorActionPreference='Stop'\nWrite-Host 'R0016 independent host startup control'\nexit 0\n"
+    replace('host_control.write_text('+json.dumps(original_body)+",encoding='ascii')",
+        'host_control.write_text('+repr(warm_control_body(mode))+",encoding='ascii')")
+    for variable,inventory,capture in (
+        ('direct_inputs_before','direct-full-before-launch.json','cache-product-before.raw'),
+        ('direct_inputs_after','direct-full-after-exit.json','cache-product-after.raw')):
+        anchor="    "+variable+"=composition.double_inventory(root,support,root/"+repr(inventory)+",LOCKS)"
+        replace(anchor,anchor+"\n    if (root/'analysis-cache').is_file():\n"
+            "        (root/"+repr(capture)+").write_bytes((root/'analysis-cache').read_bytes())")
     if mode=='no-gather':
         replace('    env = composition.owned_environment(os.environ)\n',
             "    env = composition.owned_environment(os.environ)\n    env['COMPlus_MultiCoreJitNoProfileGather']='1'\n")
@@ -202,11 +307,9 @@ def receive_mode(outer,common,process,command,capture,outputs,control,host,execu
                 'Actual prelaunch gather variable differs')
         require(warmup['environment']['INSTALL_FIXTURE_NORMAL']=='0','Warmup could exercise normal effect spies')
         body=(case/'host-only-control/host-only.ps1').read_bytes()
-        expected_body=b"$ErrorActionPreference='Stop'\nWrite-Host 'R0016 independent host startup control'\n"
-        if mode=='warm20':expected_body+=b'[Threading.Thread]::Sleep(20000)\n'
-        expected_body+=b'exit 0\n'
+        expected_body=warm_control_body(mode).encode('ascii')
         require(body.replace(b'\r\n',b'\n')==expected_body,'Source-free control body differs')
-        if mode=='warm20':require(warmup['elapsedSeconds']>=20,'Declared source-free hold did not elapse')
+        if mode in ('warm20','warm-json'):require(warmup['elapsedSeconds']>=20,'Declared source-free hold did not elapse')
         effect=case/'host-only-control/effects';require(not effect.exists() or not effect.read_bytes(),'Source-free control reached effect spy')
         phases={name:complete_inventory(outer,common,case/path,case) for name,path in [
             ('warmBefore','host-only-control/full-before-launch.json'),('warmReady','host-only-control/full-at-ready.json'),
@@ -216,8 +319,29 @@ def receive_mode(outer,common,process,command,capture,outputs,control,host,execu
         require(phases['productReady']==profile.get('fullReady'),'Product full-ready receipt differs')
         for field,key in [('fullInputsBefore','productBefore'),('fullInputsAtReady','productReady'),('fullInputsAfter','productAfter')]:
             require(phases[key]==observation.get(field),'Original product inventory differs')
+        cache_captures={}
+        for phase,relative in [('warmBefore','host-only-control/cache-before.raw'),
+            ('warmAfter','host-only-control/cache-after.raw'),('productBefore','cache-product-before.raw'),
+            ('productAfter','cache-product-after.raw')]:
+            path=case/relative;raw=None;fact=None
+            if path.exists():
+                path=outer.checked_path(path,case);raw=path.read_bytes();fact=outer.file_fact(path,case)
+                require(fact['bytes']==len(raw) and fact['sha256']==digest(raw),'Cache capture changed during receiving')
+            cache_row=receive_cache_bytes(raw,phases[phase]['rows'])
+            cache_captures[phase]=dict(inventoryRow=cache_row,capture=fact)
+        warm_context=None
+        if mode=='warm-json':
+            warm_raw=(case/'host-only-control/stdout.raw').read_bytes()
+            preliminary=parse_warm_context(warm_raw)
+            role='tests/install-entry-driver-diagnostic.py'
+            driver=load_pinned(control/role,INPUTS[role],'r16_warm_native_binding')
+            binding_path=case/'warm-json-assembly-binding.json'
+            binding=receive_native_assembly(driver,preliminary,binding_path)
+            warm_context=dict(context=receive_warm_context(warm_raw,warmup,binding),
+                assemblyBinding=binding,bindingFact=outer.file_fact(binding_path,case))
         collected.append(dict(case=scenario,originalResult={k:v for k,v in row.items() if k!='observation'},
             productExit=profile['entryExit'],warmupSeconds=warmup['elapsedSeconds'],
+            cacheCaptures=cache_captures,warmJsonContext=warm_context,
             warmupBeforeReady=delta(phases['warmBefore']['rows'],phases['warmReady']['rows']),
             warmupReadyAfter=delta(phases['warmReady']['rows'],phases['warmAfter']['rows']),
             warmupAfterProductBefore=delta(phases['warmAfter']['rows'],phases['productBefore']['rows']),
