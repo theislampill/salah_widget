@@ -241,10 +241,16 @@ S.invariants=async mk=>{
   assert.match(f.elements.get("code").value,size);
   assert.match(f.sources.page.match(/<iframe id="pv"[^>]*>/)[0],size);
   const readme=fs.readFileSync(path.join(root,"README.md"),"utf8");
-  // Current-version snippets only; the frozen V1 compatibility snippet (src .../v1/) keeps its own historical size.
+  // Current-version snippets only; the frozen V1 compatibility snippet (src .../v1/) keeps its own historical
+  // 330×534 size, its card plus drop-shadow footprint (owner decision, R0037 DG2 / amendment A1).
   const current=(readme.match(/<iframe[\s\S]*?<\/iframe>/g)||[]).filter(x=>!/\/v1\//.test(x));
   assert.ok(current.length>=2,"README current snippets present");
   for(const snippet of current)assert.match(snippet,size,"README current wrapper is 325×530");
+  // The V1 section states the current-version size, so "change src" never carries 330×534 into a current embed.
+  const v1Section=readme.slice(readme.indexOf("## Preserved V1 compatibility URL")).split(/\n## /)[0];
+  assert.match(v1Section,/current version uses a 325×530 wrapper/,"README states the current-version size");
+  assert.match(v1Section,/`width:325px;height:530px`/,"README gives the current-version size literally");
+  assert.ok(!/change only `src`/.test(v1Section),"README no longer says to change only src");
   assert.match(fs.readFileSync(path.join(root,"presets","salah-widget.tablissng.json"),"utf8"),size);
   assert.equal(f.elements.get("pv").allow,""); assert.ok(!/allow=/.test(f.elements.get("code").value));
   f.elements.get("lat").focus(); pair(f,"lat","24.4672"); pair(f,"lat","25"); f.click("reload");

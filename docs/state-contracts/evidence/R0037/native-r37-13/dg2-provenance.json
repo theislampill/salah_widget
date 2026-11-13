@@ -1,0 +1,58 @@
+{
+  "schema": "r0037-dg2-visual-evidence/v1",
+  "purpose": "Basis of the owner's DG2 decision (issue 104 comments 6844606579 and 6844632334): retain 330x534 for the frozen V1 README snippet.",
+  "capture": {
+    "script": "tests/r0037-v1-wrapper-native.cjs with three substitutions: host page background #fff -> #8a8f99 (neutral), screenshot of the page region 345x550 instead of the iframe element, repository path from R0037_REPO",
+    "browser": "chromium 148.0.7778.96",
+    "node": "v24.14.0",
+    "clock": "2026-10-07T09:30:00Z",
+    "timezone": "Asia/Riyadh",
+    "network": "provider requests fixture-fulfilled, fonts aborted for both captures, all other non-local requests aborted; no provider or network contact",
+    "checks": {
+      "canonicalCard325x530": true,
+      "canonicalFooterInside": true,
+      "canonicalNoScroll": true,
+      "canonicalViewport325x530": true,
+      "prayerRows": true,
+      "noPageErrors": true,
+      "noUnplannedRequests": true,
+      "cardRegionPixelExact": false
+    },
+    "comparison": {
+      "region": "x 0-324, y 0-529 of each iframe capture",
+      "historicalSize": [
+        345,
+        550
+      ],
+      "canonicalSize": [
+        345,
+        550
+      ],
+      "changedPixels": 3105,
+      "totalPixels": 172250,
+      "maxChannelDelta": 49,
+      "diffBox": [
+        0,
+        0,
+        324,
+        529
+      ],
+      "pixelExact": false
+    }
+  },
+  "composition": "dg2-compose.cjs (committed here) composes dg2-side-by-side.png (A 330x534 | B 325x530 | difference map, red = differing pixel) and dg2-corners-4x.png from the two neutral captures; same Playwright, no network.",
+  "files": {
+    "dg2-A-330x534-neutral.png": "e52e4271cbb0853d65ef491e54bc42226e6f94d33dba9c105b1a5d998dd92118",
+    "dg2-B-325x530-neutral.png": "cb2d299b80fe8dd296b1cbb86efbd22859ce351306cb63559087080dabf72300",
+    "dg2-capture-result.json": "bdcc13b5850df80477acf86d846d8a83bce3513ec0e41af8c48619b85fdae333",
+    "dg2-compose.cjs": "b292e825ef18c1887fb77130f196f9e62d542a6ddf723ec1dbc7651e55881661",
+    "dg2-corners-4x.png": "66114d8e5df88c83d4c12443a036505b413abd8591631e8554e8458e8b89da6d",
+    "dg2-side-by-side.png": "0367149d23888201d4ba2ee3a4f1dbc09c2fc6ce3c75eeb0e1b44912d5316646"
+  },
+  "notes": [
+    "The side-by-side labels follow the R0037 contract's option letters at the time (B = change to 325x530); the owner chose Option A (keep 330x534).",
+    "Inside the 325x530 card box 3,102-3,105 pixels differ between the two wrappers (iframe-element and neutral-page captures respectively).",
+    "The drop shadow is part of the intended design; 330x534 still clips its outermost part (acknowledged by the owner)."
+  ],
+  "recordedBy": "R0037 engineering worker, 2026-11-13"
+}

@@ -1,0 +1,27 @@
+# R37-01 RED baseline: tools/verify_v1.py at origin/main 5a90cc030a68d92c4486d439d2dcdbccdb14ffec (tree 50b728d8f69c9ea74c8dad581f9a47941f05bd6e)
+# Python 3.11.9; temporary directory redirected to a disposable scratch location; run 2026-11-12 before any R0037 edit.
+$ python tools/verify_v1.py 
+PASS: frozen V1 payload and anchored manifest
+(exit 0)
+$ python tools/verify_v1.py --check-pages
+FAIL: New Jekyll configuration requires V1 inclusion review
+(exit 1)
+$ python tools/verify_v1.py --check-root
+FAIL: Root differs from preserved production: index.html
+FAIL: Root differs from preserved production: config.js
+(exit 1)
+$ python tools/verify_v1.py --negative-control
+PASS: frozen V1 payload and anchored manifest
+PASS: disposable tamper rejected: Frozen payload changed or missing: v1/index.html
+(exit 0)
+$ python tools/verify_v1.py --check-root --check-pages --negative-control
+FAIL: Root differs from preserved production: index.html
+FAIL: Root differs from preserved production: config.js
+FAIL: New Jekyll configuration requires V1 inclusion review
+(exit 1)
+$ python tools/verify_v1.py --check-pages --negative-control
+FAIL: New Jekyll configuration requires V1 inclusion review
+(exit 1)
+$ node tests/v1_storage.cjs
+PASS: storage probe is V1-only
+10 passed; 0 failed

@@ -1,0 +1,105 @@
+{
+  "schema": "r0037-jekyll-config-review/v1",
+  "admittedConfiguration": {
+    "path": "_config.yml",
+    "sha256": "0f846f7efb27c391c66dffc66913f3eb452d5769e13170db64c2d0cd32a3e5c8",
+    "gitBlob": "0700f7480945294e973576b624b5e01254f7f9c4",
+    "introducedBy": "02ab7a9308e0aaa1f4fedee391e4857324268e57"
+  },
+  "evidenceKind": "(i) measured deployed Pages artifact for exactly this configuration (DG3-A)",
+  "evidenceFile": {
+    "path": "deployed-pages-payload.json",
+    "copiedFrom": "d6917f35007c3f796cb74e084fccdf7e414c1295:docs/rlgwo-execution/20261014/R0017_DELIVERY/deployed-pages-payload.json",
+    "sourceRef": "origin/codex/r0017-evidence-20261014",
+    "gitBlob": "666da03e35723e6c1e1192f53d6785799a5ee1a8",
+    "sourceGitBlob": "666da03e35723e6c1e1192f53d6785799a5ee1a8",
+    "sha256": "6ca1e065e29b5e6bcb0198fee5e935e18fa911f2f9a8419ce5ac67896ddb8b02",
+    "copiedByteForByte": true
+  },
+  "crossChecks": {
+    "payloadSourceCommit": "06772824a159cd2bc42a1d9f79a3fb22fa46e49d",
+    "payloadWorkflowRun": 38655290141,
+    "payloadArtifactId": 11936124311,
+    "sourceCommitConfigBlob": "0700f7480945294e973576b624b5e01254f7f9c4",
+    "sourceCommitConfigBlobEqualsAdmitted": true,
+    "sourceCommitIsAncestorOfBase": true,
+    "v1PublicFiles": [
+      {
+        "path": "v1/index.html",
+        "deployed": {
+          "bytes": 267313,
+          "sha256": "99d930297deb2755205930c7850b89584e03f431ced0671638071162732ef766"
+        },
+        "tree": {
+          "bytes": 267313,
+          "sha256": "99d930297deb2755205930c7850b89584e03f431ced0671638071162732ef766"
+        },
+        "equal": true
+      },
+      {
+        "path": "v1/config.js",
+        "deployed": {
+          "bytes": 18281,
+          "sha256": "f169d26ad015d3fcb6b5782fde43a83e0f31275bbbeb80c94c51a6c3bc4aa56d"
+        },
+        "tree": {
+          "bytes": 18281,
+          "sha256": "f169d26ad015d3fcb6b5782fde43a83e0f31275bbbeb80c94c51a6c3bc4aa56d"
+        },
+        "equal": true
+      },
+      {
+        "path": "v1/VERSION.json",
+        "deployed": {
+          "bytes": 5117,
+          "sha256": "dda56a94c56ec6295e8eb9af890e6913878731385cc180c250fff3d532b2d330"
+        },
+        "tree": {
+          "bytes": 5117,
+          "sha256": "dda56a94c56ec6295e8eb9af890e6913878731385cc180c250fff3d532b2d330"
+        },
+        "equal": true
+      },
+      {
+        "path": "v1/MANIFEST.sha256",
+        "deployed": {
+          "bytes": 232,
+          "sha256": "aa4bfcbc54f838e93d8ab41e58845efd753fcea80e8ebef3a784acf304e6a4cb"
+        },
+        "tree": {
+          "bytes": 232,
+          "sha256": "aa4bfcbc54f838e93d8ab41e58845efd753fcea80e8ebef3a784acf304e6a4cb"
+        },
+        "equal": true
+      }
+    ],
+    "allV1PublicFilesPresentAndEqual": true
+  },
+  "supporting": {
+    "postConfigPublicReadback": {
+      "source": "d6917f35:docs/rlgwo-execution/20261014/R0017_DELIVERY/public-source-readback.json",
+      "sourceGitBlob": "243063020a080f598e878be4af3c9795631a261a",
+      "at": "2026-10-14T23:41:14.827350+00:00",
+      "v1Rows": [
+        {
+          "path": "v1/index.html",
+          "url": "https://theislampill.github.io/salah_widget/v1/index.html",
+          "status": 200,
+          "bytes": 267313,
+          "sha256": "99d930297deb2755205930c7850b89584e03f431ced0671638071162732ef766",
+          "expectedSha256": "99d930297deb2755205930c7850b89584e03f431ced0671638071162732ef766"
+        }
+      ],
+      "note": "Only v1/index.html is in this readback's file set; it is supporting evidence, not the review."
+    },
+    "buildEquivalentRun": {
+      "run": 38653904508,
+      "head": "02ab7a9308e0aaa1f4fedee391e4857324268e57",
+      "artifact": "r0017-pages-payload",
+      "note": "Not downloaded by R0037; its verifier (tools/verify_r0017_pages_payload.py) protects every tracked v1/ file. Supporting only."
+    },
+    "staticReasoning": "_config.yml excludes only docs/rlgwo-execution/20261014/R000C/native; V1 files have ordinary names and no front matter. Recorded as reasoning, not as the review."
+  },
+  "limits": "The verifier pins this digest and checks that this evidence file exists; adequacy of the evidence is a reviewer judgement. This proves V1 was in the deployed artifact of merge 06772824 for this configuration; it is not a readback of the currently deployed site.",
+  "recordedBy": "R0037 engineering worker, 2026-11-12; not independently reviewed"
+}

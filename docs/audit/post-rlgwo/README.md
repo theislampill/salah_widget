@@ -2,7 +2,8 @@
 
 Documentation-only, repository-wide audit of main `363c3e536c8004935ef80230e43f7712e339e3a5`
 (tree `647b7159a60ceb7dc650563890a5a5a63af14319`), compared with the original state-machine
-audit at `f71fef6c`. Nothing was remediated and no issue was filed.
+audit at `f71fef6c`. Nothing was remediated and no issue was filed by the audit itself; the work orders later filed from it are indexed in
+[RLGWO_PORTFOLIO.md](RLGWO_PORTFOLIO.md).
 
 | Deliverable | What it is |
 |---|---|
@@ -13,6 +14,7 @@ audit at `f71fef6c`. Nothing was remediated and no issue was filed.
 | [GDOPL_ASSESSMENT.md](GDOPL_ASSESSMENT.md) | GDOPL Post-RLGWO Assessment: schematic formulation, hard feasibility domain, inner and outer directions, historical comparison, final classification |
 | [lanes/](lanes/) | Lane working papers A–G (superseded by the documents above where they differ) |
 | [probes/](probes/README.md) | Effect-free probe scripts and recorded outputs |
+| [RLGWO_PORTFOLIO.md](RLGWO_PORTFOLIO.md) | Added after the audit, under a separate owner commission: the eighteen corrective work orders R0028–R0039 (issues 89–106) filed from these findings, the finding-to-work-order and machine-to-work-order dispositions, the integration order, and corrections to audit statements found while drafting |
 
 How to read them: start with the registry index for a domain, open an entry, follow its finding
 links into FINDINGS.md, and use REPORT.md §8 to see what the integrator changed relative to the
