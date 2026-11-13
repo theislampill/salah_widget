@@ -45,6 +45,16 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R002D (issue 94) timezone authority at ee2f9d12 on accepted main 5b846476: authored source e6cd59af and the
+    // legacy-Moon structural control of its generated index 794bb701. Every entry below, including the main
+    // b09f51ed authored source and 1a5c5031 structural control, remains admitted unchanged.
+    'e6cd59af4d6a187c11003554d8c7b90250397fd430826f86e44d78f43b829536':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'ee2f9d129d3d5debd12abeefaaca071fd01b6100',path:'src/native/index.html',layout:'config,native'}),
+    '9e8f20a6bd19fe2894309cacb49277e05718b81a8463f5398a29b146ff42d30f':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'ee2f9d129d3d5debd12abeefaaca071fd01b6100',path:'index.html',
+      parentSha256:'794bb701a34c69448954a6e835fa1f20ceab1338ac733de9a65984c2bd3992f1',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06) by merge 5dd7c558: legacy-Moon structural control
     // of index e3a3dedb (R0021 generated index plus the R0027 spectral hunks only). The authored source is R0021's,
     // unchanged; every entry below, including R0021's 4af7e86f and R0027's 902f326d, remains admitted unchanged.
