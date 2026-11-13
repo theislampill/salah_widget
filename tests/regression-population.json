@@ -42,6 +42,7 @@
   "tests/r0024-weather.test.cjs",
   "tests/r0028-closure-index.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
+  "tests/timezone-authority-state.test.cjs",
   "tests/v1_limitations.test.cjs",
   "tests/weather-no-timetable-handoff.test.cjs",
   "tests/weather-no-timetable-withdrawal.test.cjs",
@@ -1481,6 +1482,24 @@
      "<directory containing the playwright package>"
     ],
     "protocol": "native capture result.json (docs/state-contracts/evidence/R0037/native-r37-13/result.json)"
+   }
+  },
+  {
+   "path": "tools/qa/run_r002d_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, served generated tree, stubbed prayer provider, mocked clock); not a headless unit instrument",
+   "owner": "R002D",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r002d_native.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engines",
+     "chromium,firefox,webkit"
+    ],
+    "protocol": "per-engine discriminator counts in <out> (R002D D-06/D-13/D-15; docs/state-contracts/R002D.md)"
    }
   },
   {

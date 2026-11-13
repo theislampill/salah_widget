@@ -270,10 +270,11 @@ function mentions(name, tokens) {
       // R0028 re-bind (reviewed): the old pins 5855c29a.../c773af44... are a side-branch snapshot
       // (2e14e1b1) never on main. The force block, lunar helper, clamp and atmosphere call are
       // byte-equal there and now (their own digests above are unchanged); the rest of the native
-      // body differs by later certified work orders. Body = bytes first delivered at 294d2d37
-      // (R0021 FINAL 6809435795); entry = main 546d8828 (R0027 FINAL 6810490146).
-      assert.equal(digest(body),"529c220aaf1382558a09ac397d47bd6cd02fd0fd2dad4cdfc79218eb1f1ef780",'delegated native script changed');
-      assert.equal(digest(source),"e3a3dedbfaaf5e5d604add26fa071852da109d72773a077b444fdd376f771185",'delegated current generated entry changed');
+      // body differs by later certified work orders. Body and entry = the bytes R002D delivered at main
+      // e10da481 (R002D FINAL, issue 94 comment 6845125534); earlier re-bind 529c220a.../e3a3dedb...
+      // (R0021 FINAL 6809435795 / R0027 FINAL 6810490146) superseded by that change.
+      assert.equal(digest(body),"a772c04c7f551456e048b4d9a13d325fa40afd5cd532d510149776598998e785",'delegated native script changed');
+      assert.equal(digest(source),"794bb701a34c69448954a6e835fa1f20ceab1338ac733de9a65984c2bd3992f1",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
