@@ -234,6 +234,21 @@
    "trigger": "a qualification host with the symlink privilege runs it; no retirement needed (condition-gated)"
   },
   {
+   "id": "R28-L17",
+   "status": "active",
+   "kind": "case-not-executed",
+   "command": "native-test-glob",
+   "condition": "symlink-unavailable",
+   "case": "site: a symlink in _site is an instrument error",
+   "messagePrefix": "# SKIP symlink creation not permitted on this host",
+   "firstRed": "host-dependent explicit skip since the test arrived with R002B (merged to main 8960cd7c lineage)",
+   "causeClass": "harness-gap",
+   "evidence": "tests/r002b-pages-payload.test.cjs t.skip when fs.symlinkSync is refused; runner probe symlink-unavailable",
+   "owner": "R002B",
+   "disposition": "host lacks the symlink privilege; condition-gated so it must run and pass where symlinks work",
+   "trigger": "a qualification host with the symlink privilege (R002A CI) runs it; no retirement needed (condition-gated)"
+  },
+  {
    "id": "R28-D01",
    "status": "active",
    "kind": "case-fail",
