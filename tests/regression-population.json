@@ -1815,6 +1815,30 @@
     ],
     "protocol": "one JSON line per engine {status, pass, fail, skip, pageErrors, abortedHosts, rolloverRow} (docs/state-contracts/R002E.md E-05)"
    }
+  },
+  {
+   "path": "tests/r0039-installer-probes.py",
+   "reason": "hosted-only native Windows recipe (needs a host whose TEMP ancestry the installer admits; runs the exact install.ps1 entry against fixtures with real Read-Host); not a headless unit instrument",
+   "owner": "R0039",
+   "recipe": {
+    "argv": [
+     "python",
+     "tests/r0039-installer-probes.py",
+     "--host-name",
+     "ps51|ps7",
+     "--host-exe",
+     "<host exe>",
+     "--source",
+     "install.ps1",
+     "--preset",
+     "presets/salah-widget.tablissng.json",
+     "--fixture-parent",
+     "<fresh dir>",
+     "--output",
+     "<receipt.json>"
+    ],
+    "protocol": "receipt rows R39-07 / R39-08 verdict MET | FINDING | GAP, exit 0 only when both MET (.github/workflows/r0039-installer-probes.yml; docs/state-contracts/R0039.md section 9)"
+   }
   }
  ]
 }
