@@ -277,12 +277,12 @@ test('no assert-based guard remains in either payload verifier (R0029 class)', (
   }
 });
 
-test('hosted receipts (run 43366170074) are mutually consistent and support G-01/G-05/G-06/G-07', () => {
-  const dir = path.join(ROOT, 'docs/state-contracts/evidence/R002B/hosted-43366170074');
+for (const runId of ['43366170074', '43368101308']) test(`hosted receipts (run ${runId}) are mutually consistent and support G-01/G-05/G-06/G-07`, () => {
+  const dir = path.join(ROOT, `docs/state-contracts/evidence/R002B/hosted-${runId}`);
   const read = (n) => JSON.parse(fs.readFileSync(path.join(dir, n), 'utf8'));
   const run = read('RUN.json'), base = read('base-payload.json'), cand = read('candidate-payload.json');
   const diff = read('published-diff.json'), csrc = read('candidate-source.json'), bsrc = read('base-source.json');
-  assert.equal(run.conclusion, 'success');
+  assert.equal(run.conclusion, 'success'); assert.equal(String(run.runId), runId);
   for (const r of [base, cand]) assert.equal(String(r.workflowRunId), String(run.runId));
   assert.equal(base.sourceCommit, run.baseSha); assert.equal(cand.sourceCommit, run.headSha);
   assert.equal(csrc.commit, run.headSha); assert.equal(csrc.tree, run.headTree); assert.equal(bsrc.commit, run.baseSha);
@@ -292,6 +292,23 @@ test('hosted receipts (run 43366170074) are mutually consistent and support G-01
   assert.equal(diff.onlyEvidenceRemoved, true); assert.deepEqual(diff.removedOutsideExcludes, []); // G-07
   assert.deepEqual(diff.protectedRemoved, []); assert.deepEqual(diff.protectedResized, []);
   assert.equal(diff.baseFiles, base.measured.regularFiles); assert.equal(diff.headFiles, cand.measured.regularFiles);
+  if (run.publishedSourceSha256) assert.equal(csrc.publishedSourceSha256, run.publishedSourceSha256);
+});
+
+test('the admitted V1 inclusion evidence reproduces its hosted run protected-consumer set digest', () => {
+  const ev = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json'), 'utf8'));
+  const run = ev.hostedRun;
+  const cand = JSON.parse(fs.readFileSync(path.join(ROOT, `docs/state-contracts/evidence/R002B/hosted-${run.runId}/candidate-payload.json`), 'utf8'));
+  assert.equal(cand.sourceCommit, run.headSha);
+  assert.equal(ev.protectedConsumersSetSha256, cand.protectedConsumers.setSha256);
+  assert.equal(Object.keys(ev.protectedConsumers).length, cand.protectedConsumers.files);
+  const canonical = Object.keys(ev.protectedConsumers).sort().map((k) => `${ev.protectedConsumers[k].sha256}  ${k}\n`).join('');
+  assert.equal(crypto.createHash('sha256').update(canonical).digest('hex'), ev.protectedConsumersSetSha256);
+  for (const f of ['v1/index.html', 'v1/config.js', 'v1/VERSION.json', 'v1/MANIFEST.sha256']) {
+    const bytes = fs.readFileSync(path.join(ROOT, f));
+    assert.equal(ev.protectedConsumers[f].sha256, crypto.createHash('sha256').update(bytes).digest('hex'), f);
+  }
+  assert.equal(ev.configuration.sha256, crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, '_config.yml'))).digest('hex'));
 });
 
 test('the committed Stage-1 receipt states only what the envelope proves', () => {

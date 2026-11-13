@@ -18,8 +18,15 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 VERIFIER = Path(os.environ.get("VERIFY_V1_UNDER_TEST", ROOT / "tools" / "verify_v1.py"))
-CURRENT_DIGEST = "0f846f7efb27c391c66dffc66913f3eb452d5769e13170db64c2d0cd32a3e5c8"
-EVIDENCE = "docs/state-contracts/evidence/R0037/config-0f846f7e/deployed-pages-payload.json"
+# R002B (issue 92) admitted the current configuration through the designed route: one reviewed entry.
+CURRENT_DIGEST = "e11bdd3d0dbe981f1ae6de2537e4353421dbc2e4b79f051e59242f1d01506a24"
+EVIDENCE = "docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json"
+# The R0017 configuration and its R0037 evidence stay listed (inert while the tree carries a newer one).
+R0017_DIGEST = "0f846f7efb27c391c66dffc66913f3eb452d5769e13170db64c2d0cd32a3e5c8"
+R0017_EVIDENCE = "docs/state-contracts/evidence/R0037/config-0f846f7e/deployed-pages-payload.json"
+R0017_CONFIG = (b"# Retained browser recordings/traces, not widget or test dependencies.\n"
+                b"# Immutable access and logical-path resolution: R000C/README.md, Native evidence.\n"
+                b"exclude:\n  - docs/rlgwo-execution/20261014/R000C/native\n")
 
 
 class CheckPages(unittest.TestCase):
@@ -28,8 +35,9 @@ class CheckPages(unittest.TestCase):
         self.repo = Path(self._tmp.name)
         shutil.copytree(ROOT / "v1", self.repo / "v1")
         shutil.copy2(ROOT / "_config.yml", self.repo / "_config.yml")
-        (self.repo / EVIDENCE).parent.mkdir(parents=True)
-        shutil.copy2(ROOT / EVIDENCE, self.repo / EVIDENCE)
+        for evidence in (EVIDENCE, R0017_EVIDENCE):
+            (self.repo / evidence).parent.mkdir(parents=True)
+            shutil.copy2(ROOT / evidence, self.repo / evidence)
 
     def tearDown(self):
         self._tmp.cleanup()
@@ -155,6 +163,39 @@ class CheckPages(unittest.TestCase):
         target = self.repo / "v1" / "config.js"
         target.write_bytes(b"---\n---\n" + target.read_bytes())
         self.assert_fail(["Frozen payload changed or missing: v1/config.js"])
+
+    # R002B: the earlier reviewed configuration (R0017, evidence R0037) still passes with its own evidence.
+    def test_r0017_configuration_still_reviewed(self):
+        (self.repo / "_config.yml").write_bytes(R0017_CONFIG)
+        self.assertEqual(hashlib.sha256(R0017_CONFIG).hexdigest(), R0017_DIGEST)
+        code, lines = self.run_verifier("--check-pages")
+        self.assertEqual(code, 0, lines)
+        self.assertIn("reviewed Jekyll configuration _config.yml " + R0017_DIGEST, lines[1])
+
+    # R002B: the current configuration is reviewed only through its one entry; without it the digest is unreviewed.
+    def test_current_configuration_without_its_entry_fails(self):
+        source = VERIFIER.read_text(encoding="utf-8")
+        entry = re.search(r'\n[^\n]*\n[^\n]*\n\s*"' + CURRENT_DIGEST + r'":\n\s*"[^"]+",', source)
+        self.assertIsNotNone(entry, "the R002B entry is present in the verifier")
+        stripped = self.repo / "verify_v1_without_entry.py"
+        stripped.write_text(source.replace(entry.group(0), ""), encoding="utf-8")
+        r = subprocess.run([sys.executable, str(stripped), "--repo", str(self.repo), "--check-pages"],
+                           capture_output=True, text=True, timeout=60)
+        self.assertEqual(r.returncode, 1, r.stdout)
+        self.assertEqual(r.stdout.splitlines(),
+                         [f"FAIL: Jekyll configuration _config.yml {CURRENT_DIGEST} has no recorded V1 inclusion review"])
+
+    # R002B: the admitted evidence names the hosted run, head and published-source digest it came from.
+    def test_current_evidence_carries_provenance(self):
+        data = self.evidence_json()
+        self.assertEqual(data["configuration"]["sha256"], CURRENT_DIGEST)
+        run = data["hostedRun"]
+        self.assertEqual(run["conclusion"], "success")
+        self.assertRegex(str(run["runId"]), r"^\d+$")
+        self.assertRegex(run["headSha"], r"^[0-9a-f]{40}$")
+        self.assertRegex(run["publishedSourceSha256"], r"^[0-9a-f]{64}$")
+        canonical = "".join(f"{v['sha256']}  {k}\n" for k, v in sorted(data["protectedConsumers"].items()))
+        self.assertEqual(hashlib.sha256(canonical.encode()).hexdigest(), data["protectedConsumersSetSha256"])
 
     # R37-09: payload verification and the default mode are unchanged; --check-pages is not consulted by default.
     def test_default_mode_ignores_configuration(self):
