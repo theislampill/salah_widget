@@ -37,7 +37,10 @@ window.SalahNativeSkyHost=Object.freeze({
   solarAnchor=Number.isFinite(sx)&&Number.isFinite(sy)?{...(actual??{x:sx,y:sy}),...(Number.isFinite(presence)?{presence}: {})}:null;
   }
   return {utcMs:simNow(),lat,lon,heightM:elevation?.heightM??0,elevationSource:elevation?'native response elevation bound to this target generation':'default zero; no bound eligible weather height',elevationOwner:elevation?{...elevation}:null,generation:_runtimeGeneration,sceneIdentity:identity,
-   tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
+   // R002D D.3: the refined identity's zone is the configured effective hint (_cacheTz), equal to the
+   // first-paint snapshot's; adopting the provider zone is no refined-sky input. Isolated hook fixtures
+   // that bind no configuration fall back to their live zone.
+   tz:typeof _cacheTz==='string'?_cacheTz:tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
    camera:{azDeg:cameraNumber('skyAz',180),altDeg:cameraNumber('skyAlt',45),fovYDeg:cameraNumber('skyFov',90),rollDeg:cameraNumber('skyRoll',0)},allowEstimates:q.get('skyEstimates')!=='off',
    weather:cw?{src:cw.src??'accepted-native',temp:cw.temp??null,rh:cw.rh??null,vis:cw.vis??null,cloud:cw.cloud??null,code:cw.code??null,wind:cw.wind??null}:null,
    solarAnchor,

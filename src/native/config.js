@@ -136,13 +136,21 @@
     return { cfg: c, flags: flags };
   }
 
+  // ---- zone hint admission (R002D): the same rule the widget applies to provider metadata ----
+  // A non-empty string, not an offset ("+03:00"), constructible as an Intl timeZone in this engine.
+  function admitZone(z) {
+    if (typeof z !== "string" || !z || /^[+-]/.test(z)) return false;
+    try { new Intl.DateTimeFormat("en", { timeZone: z }).format(new Date(0)); return true; }
+    catch (e) { return false; }
+  }
+
   // ---- normalize: fill defaults, coerce types, clamp ranges -----------------
   function normalize(cfg) {
     var c = Object.assign({}, DEFAULTS, cfg || {});
     c.lat = numOrNull(c.lat); c.lon = numOrNull(c.lon);
     if (c.lat != null) c.lat = clampN(c.lat, -90, 90);
     if (c.lon != null) c.lon = clampN(c.lon, -180, 180);
-    c.tz = (typeof c.tz === "string" && c.tz) ? c.tz : DEFAULTS.tz;
+    c.tz = admitZone(c.tz) ? c.tz : DEFAULTS.tz;   // R002D: a rejected hint is an absent hint
     c.label = (c.label == null) ? "" : String(c.label);
     c.method = /^([0-9]|1[0-6])$/.test(String(c.method)) ? String(c.method) : DEFAULTS.method;
     c.school = (String(c.school) === "1") ? "1" : "0";
