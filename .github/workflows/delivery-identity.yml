@@ -1,0 +1,150 @@
+name: Delivery identity readback
+
+# R002A (issue 91 section 4.2; docs/state-contracts/R002A.md). Reads the public GitHub Pages bytes back against
+# the blobs of one merged commit with tools/qualification/delivery_identity.py and keeps the receipt as an
+# artifact. Read-only: it never builds, deploys, changes settings or comments; a certificate cites the receipt.
+#
+# Triggers. page_build: fires after a legacy Pages build, if GitHub delivers it for this repository's dynamic
+# "pages build and deployment" (G-08 records whether it does). workflow_dispatch: the owner-commissioned
+# delivery step of a work order, with the merge commit as input. push to claude/r002a-*: pre-merge
+# qualification only - the G-09 controls against the currently deployed main. No schedule.
+# Network: the project's own github.io site, raw.githubusercontent.com paths and the GitHub API (pages:read).
+on:
+  page_build:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: Full SHA of the merged main commit to read back
+        required: true
+      retry_window:
+        description: Bounded CDN retry window in seconds
+        required: false
+        default: '300'
+  push:
+    branches: ['claude/r002a-*']
+    paths:
+      - .github/workflows/delivery-identity.yml
+      - tools/qualification/delivery_identity.py
+      - tools/pages_payload.py
+
+permissions:
+  contents: read
+  pages: read
+
+concurrency:
+  group: delivery-identity-${{ github.event_name }}-${{ github.event.build.commit || inputs.commit || github.sha }}
+  cancel-in-progress: false
+
+jobs:
+  readback:
+    name: Read back the deployed commit
+    if: github.repository == 'theislampill/salah_widget' && github.event_name != 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      TARGET: ${{ github.event.build.commit || inputs.commit }}
+      RETRY_WINDOW: ${{ inputs.retry_window || '300' }}
+    steps:
+      - name: Record the triggering event
+        timeout-minutes: 2
+        shell: bash
+        env:
+          BUILD_STATUS: ${{ github.event.build.status }}
+          BUILD_ERROR: ${{ github.event.build.error.message }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/delivery"
+          printf '{"event":"%s","target":"%s","buildStatus":"%s","buildError":"%s","workflowSha":"%s"}\n' \
+            "$GITHUB_EVENT_NAME" "$TARGET" "$BUILD_STATUS" "$BUILD_ERROR" "$GITHUB_SHA" > "$RUNNER_TEMP/delivery/event.json"
+          cat "$RUNNER_TEMP/delivery/event.json"
+          printf '%s' "$TARGET" | grep -Eq '^[0-9a-f]{40}$'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 10
+        with:
+          ref: ${{ env.TARGET }}
+          # All commits and trees, and only the blobs of the readback set; other blobs (the README-pinned
+          # installers) are fetched lazily from this public repository.
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/docs/
+            !/tests/
+            !/vendor/
+            !/src/
+      - name: Read back the served bytes
+        timeout-minutes: 20
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tool="$RUNNER_TEMP/delivery-tool"; mkdir -p "$tool/qualification"
+          # The instrument comes from this workflow's commit, never from the commit under test.
+          git show "$GITHUB_SHA:tools/pages_payload.py" > "$tool/pages_payload.py"
+          git show "$GITHUB_SHA:tools/qualification/delivery_identity.py" > "$tool/qualification/delivery_identity.py"
+          python3 "$tool/qualification/delivery_identity.py" --root "$GITHUB_WORKSPACE" --commit "$TARGET" \
+            --out "$RUNNER_TEMP/delivery/readback" --wait-build 900 --retry-window "$RETRY_WINDOW"
+      - name: Retain the receipt
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: delivery-identity-${{ env.TARGET }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/delivery/
+          if-no-files-found: error
+          retention-days: 30
+
+  controls:
+    name: G-09 controls against the deployed main (pre-merge)
+    if: github.repository == 'theislampill/salah_widget' && github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 10
+        with:
+          # The deployed main, as in the readback job; the instrument comes from this branch's commit.
+          ref: main
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/docs/
+            !/tests/
+            !/vendor/
+            !/src/
+      - name: Run the identical, wrong-commit and excluded-path controls
+        timeout-minutes: 20
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -u
+          out="$RUNNER_TEMP/delivery"; mkdir -p "$out"
+          tool="$RUNNER_TEMP/delivery-tool"; mkdir -p "$tool/qualification"
+          git show "$GITHUB_SHA:tools/pages_payload.py" > "$tool/pages_payload.py"
+          git show "$GITHUB_SHA:tools/qualification/delivery_identity.py" > "$tool/qualification/delivery_identity.py"
+          main="$(git rev-parse HEAD)"; parent="$(git rev-parse HEAD^1)"
+          echo "main=$main parent=$parent tool=$GITHUB_SHA" | tee "$out/controls-input.txt"
+          excluded="$(git ls-tree -r --name-only "$main" docs/rlgwo-execution/20261014/R000C/native/ | head -n 1)"
+          test -n "$excluded"
+          set +e
+          python3 "$tool/qualification/delivery_identity.py" --root "$GITHUB_WORKSPACE" --commit "$main" \
+            --out "$out/predecessor" --extra-path "$excluded" --wait-build 0 --retry-window 300; a=$?
+          python3 "$tool/qualification/delivery_identity.py" --root "$GITHUB_WORKSPACE" --commit "$parent" \
+            --out "$out/wrong-commit" --wait-build 0; b=$?
+          set -e
+          echo "predecessor=$a (expect 0 identical) wrong-commit=$b (expect 2 inconclusive)" | tee "$out/controls.txt"
+          test "$a" -eq 0 && test "$b" -eq 2
+      - name: Retain the receipts
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: delivery-identity-controls-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/delivery/
+          if-no-files-found: error
+          retention-days: 30
