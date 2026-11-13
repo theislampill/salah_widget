@@ -484,7 +484,8 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   Name-bearing formats require a string month name; numeric-only formats do not.
   The footer and **Calendar dates** show one selected payload. The AH date advances at
   Maghrib only when the matching next-day record is available for the current zone;
-  otherwise the footer keeps the earlier date, marked **Sunset date update unavailable**.
+  otherwise the footer keeps today's Hijri date, marked **Sunset date update unavailable**,
+  or reads **Hijri date unavailable** when today's record has no usable Hijri date.
   No offset or corrected date is inferred from provider labels.
 
 Click or tap either CE or AH date, or Tab to it and press Enter or Space, to open **Calendar dates**. It shows both complete selected dates, any preview and the current explanation. Scroll and select long values to read their full text. Close or Escape dismisses the view and returns focus to the date that opened it. Reading dates does not apply settings, save data or request another calendar value.

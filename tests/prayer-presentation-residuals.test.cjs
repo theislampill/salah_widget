@@ -171,15 +171,15 @@ test("E-07a every D.5 row yields today's visible text, including the replacement
 // counted by its canvas text measurement.
 function fitFixture(src){
   const code=nativeScript(src);const body=code.slice(code.indexOf('let _cnFit="";'),code.indexOf("// PROCEDURAL BRANCHING LIGHTNING"));
-  let measurements=0;const cn={style:{fontSize:"30px",top:"100px",marginBottom:"0px",fontFamily:"serif"},textContent:"Dhuhr"},nt={};
+  let measurements=0;const faces=[{family:"Fraunces",weight:"600",style:"normal",status:"unloaded",loaded:Promise.resolve()}];const cn={style:{fontSize:"30px",top:"100px",marginBottom:"0px",fontFamily:"serif"},textContent:"Dhuhr"},nt={};
   const rail={getAttribute:()=>"rail",getTotalLength:()=>200,getPointAtLength:l=>({x:20+l*1.4,y:200-100*Math.sin(l*Math.PI/200)}),getScreenCTM:()=>({a:1,b:0,c:0,d:1,e:0,f:0}),
     ownerSVGElement:{createSVGPoint:()=>({matrixTransform(m){return {x:this.x*m.a+m.e,y:this.y*m.d+m.f};}})}};
   const els={".cn":cn,".nt":nt,".arc .rail":rail,".arc .horizon":{getBoundingClientRect:()=>({top:200})},".bar":{getBoundingClientRect:()=>({top:260})}};
   const scope={_renderDirty:false,Math,isFinite,parseFloat,Symbol,WeakMap,$:s=>els[s],getComputedStyle:e=>e.style,
-    document:{fonts:{addEventListener(){}},querySelector:s=>els[s],createRange:()=>({selectNodeContents(e){this.e=e;},getBoundingClientRect(){return this.e===cn?{left:120,right:200,width:80,bottom:190}:{top:200,bottom:250};}}),
+    document:{fonts:{addEventListener(){},[Symbol.iterator]:()=>faces[Symbol.iterator]()},querySelector:s=>els[s],createRange:()=>({selectNodeContents(e){this.e=e;},getBoundingClientRect(){return this.e===cn?{left:120,right:200,width:80,bottom:190}:{top:200,bottom:250};}}),
       createElement:()=>({getContext:()=>({measureText(){measurements++;return {actualBoundingBoxAscent:21,fontBoundingBoxDescent:7.2};}})})}};
   vm.createContext(scope);vm.runInContext(body,scope);
-  return {fit:M=>scope.fitCn(M),count:()=>measurements,invalidate:()=>scope.cnFontChanged()};
+  return {fit:M=>scope.fitCn(M),count:()=>measurements,invalidate:()=>scope.cnFontChanged(),face:s=>{faces[0].status=s;}};
 }
 const BASE_M=Object.freeze({currentKey:"Dhuhr",sunrise:367,sunset:1093,noon:730,decl:0.0123,selection:Object.freeze({generation:1})});
 function fitKeyRows(src){
@@ -190,10 +190,13 @@ function fitKeyRows(src){
   f.fit({...BASE_M,selection:{generation:2},decl:0.0161,noon:731});rows.noon=f.count();
   f.invalidate();f.fit({...BASE_M,selection:{generation:2},decl:0.0161,noon:731});rows.font=f.count();
   f.fit({...BASE_M,selection:{generation:2},decl:0.0161,noon:731});rows.settled=f.count();
+  // A face state change seen only through the signature (no FontFaceSet event): the key must still refit.
+  f.face("loaded");f.fit({...BASE_M,selection:{generation:2},decl:0.0161,noon:731});rows.faceState=f.count();
+  f.fit({...BASE_M,selection:{generation:2},decl:0.0161,noon:731});rows.faceSettled=f.count();
   return rows;
 }
-test("E-03 a cached .cn fit is reused only when noon, declination, generation and font state are equal",()=>{
-  assert.deepEqual(fitKeyRows(SOURCE),{same:1,generation:2,decl:3,noon:4,font:5,settled:5});
+test("E-03 a cached .cn fit is reused only when noon, declination, generation and font face states (signature) are equal",()=>{
+  assert.deepEqual(fitKeyRows(SOURCE),{same:1,generation:2,decl:3,noon:4,font:5,settled:5,faceState:6,faceSettled:6});
 });
 
 // ---- E-09 mutants ----------------------------------------------------------------------------------------------
@@ -204,8 +207,9 @@ function mutate(edits){
 }
 const MUTANTS=[
   ["m1 a mirror write removed from the prefetch finish",[['  if(op.kind==="prefetch") fetchingTomorrow=false;\n','\n']],async src=>{await mirrorSequence(src);}],
-  ["m2 fit key without noon and declination",[['+"|"+M.noon+"|"+M.decl+"|"+','+"|"+']],src=>{assert.deepEqual(fitKeyRows(src),{same:1,generation:2,decl:3,noon:4,font:5,settled:5});}],
-  ["m3 fit key without the runtime generation (broad location change)",[['+"|"+(M.selection&&M.selection.generation)+"|"+','+"|"+']],src=>{assert.deepEqual(fitKeyRows(src),{same:1,generation:2,decl:3,noon:4,font:5,settled:5});}],
+  ["m2 fit key without noon and declination",[['+"|"+M.noon+"|"+M.decl+"|"+','+"|"+']],src=>{assert.deepEqual(fitKeyRows(src),{same:1,generation:2,decl:3,noon:4,font:5,settled:5,faceState:6,faceSettled:6});}],
+  ["m3 fit key without the runtime generation (broad location change)",[['+"|"+(M.selection&&M.selection.generation)+"|"+','+"|"+']],src=>{assert.deepEqual(fitKeyRows(src),{same:1,generation:2,decl:3,noon:4,font:5,settled:5,faceState:6,faceSettled:6});}],
+  ["m5 fit key without the font-face signature",[['+"|"+(M.selection&&M.selection.generation)+"|"+cnFontSignature();','+"|"+(M.selection&&M.selection.generation);']],src=>{assert.deepEqual(fitKeyRows(src),{same:1,generation:2,decl:3,noon:4,font:5,settled:5,faceState:6,faceSettled:6});}],
   ["m4 status owner bypassed by a direct .left write",[['  $(".cn").textContent="—";writePrayerStatus("—","Prayer times unavailable");','  $(".cn").textContent="—";$(".nt").textContent="—";$(".left").textContent="Prayer times unavailable";']],src=>{assertSingleOwner(src);}]
 ];
 for(const [name,edits,discriminate] of MUTANTS)test("E-09 mutant "+name+" is killed",{skip:!MUTATION_ROWS&&"mutation anchors belong to this tree's source"},async()=>{

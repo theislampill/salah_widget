@@ -163,9 +163,9 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
 - **Calendar date row:** the footer and the Calendar dates dialog show one
   selected provider payload. Before Maghrib that is today's record; from Maghrib
   the matching next-day record's Hijri date, when that record is admitted for the
-  current zone. Otherwise the old Hijri date stays, marked
+  current zone. Otherwise today's usable Hijri date stays, marked
   `Sunset date update unavailable`, and is never relabelled as advanced; with no
-  Hijri value the row reads `Hijri date unavailable`. The dialog names the
+  usable selected Hijri value the row reads `Hijri date unavailable`. The dialog names the
   convention as `Aladhan; <method>` from the selected payload, or
   `calendar convention unavailable`. No anomaly classifier exists: the widget
   never infers an offset or a corrected date from provider labels.
