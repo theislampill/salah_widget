@@ -289,7 +289,7 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 |----------|:--------:|--------------------|-------------|
 | `lat`    | ✅       | —                  | Latitude, e.g. `28.93084` |
 | `lon`    | ✅       | —                  | Longitude, e.g. `-82.39122` |
-| `tz`     |          | *auto*             | **Auto-detected from the coordinates** — you normally don't need to set it. The countdown and day-rollover use the *location's* zone (so Madinah always shows Madinah time, whatever device you view it on). Pass an IANA zone (e.g. `Europe/London`, `/` encoded as `%2F`) only as a fallback for the first paint. |
+| `tz`     |          | *auto*             | **Auto-detected from the coordinates** — you normally don't need to set it. The countdown and day-rollover use the *location's* zone (so Madinah always shows Madinah time, whatever device you view it on). Pass an IANA zone (e.g. `Europe/London`, `/` encoded as `%2F`) only as a fallback for the first paint. An unrecognised zone (for example a typo or an offset such as `+03:00`) is ignored like an absent one, and the location's zone is still resolved. |
 | `label`  |          | `Prayer Times`     | Location name shown on the widget. Encode spaces as `%20`. |
 | `method` |          | `2` (ISNA)         | Calculation method — see table below. |
 | `school` |          | `0`                | Asr calculation: `0` = standard, `1` = Hanafi (later Asr). |
@@ -381,7 +381,9 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
 - **Time-zone correct** — a supplied `tz` is an initial hint. Valid selected-cache or
   prayer-provider metadata resolves the location's time zone; a timetable is accepted
   as current only for that zone's civil date at adoption. The times and countdown
-  reflect the *location's* clock, no matter where you view the widget.
+  reflect the *location's* clock, no matter where you view the widget. A `tz` that
+  this browser does not recognise is ignored (treated as absent), so prayer times
+  still load and adopt the location's zone.
   If the prayer endpoint is nonexistent, ambiguous or otherwise unsupported, or
   required next-day data is missing or for the wrong day, the next-time field shows
   **—** and the countdown reads **Countdown unavailable**. An unresolved event

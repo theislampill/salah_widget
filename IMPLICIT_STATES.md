@@ -154,7 +154,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-PRAY-006](#ism-pray-006) | Calendar publication, Hijri provenance/rollover and date disclosure | N07 | PEX | IMS | PEX | implemented but not fully verified |
 | [ISM-PRAY-007](#ism-pray-007) | Countdown font readiness, rail sampling and geometry-fit cache | N18 | PEX | IMS | PEX | partly resolved |
 | [ISM-PRAY-008](#ism-pray-008) | Optional web-typography activation gate | new | EIV | EEV | EIV | new |
-| [ISM-PRAY-009](#ism-pray-009) | Live timezone authority `tz` (multi-writer) and its consumer fan-out | new | IMS | IMS | PEX | new |
+| [ISM-PRAY-009](#ism-pray-009) | Live timezone authority `tz` (multi-writer) and its consumer fan-out | new | EIV | EEV | EEV | new; R002D implemented on branch, review pending |
 | [ISM-PRAY-010](#ism-pray-010) | Singleton render loop, visibility, provider cadence and motion lifecycle | N19 | IMS | IMS | PEX | still implicit or vulnerable |
 | [ISM-PRAY-011](#ism-pray-011) | User-visible prayer status text owner (`.left`, `.nt`) | new | IMS | IMS | PEX | new |
 
@@ -313,7 +313,7 @@ Original audit: **N02** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   | explicit mode, first call or `_simTz!==tz` | — | `initSim()` re-anchors to `simTime` in `tz`, or to `Date.now()` when no `simTime` |
   | gap/fold `simTime` | — | `_simValid=false`, sticky until `tz` changes; 8 layers hidden, "SIM unavailable" |
   | `SalahClock.set({rate,utcMs,live})` | validated | sets mode, anchors `_simTz=tz`, invalidates sky/preview, `maintainPrayerDay`, `render` |
-  | `tz` written after a `SalahClock` preview | `_simTz!==tz` | preview `utcMs` replaced by wall now; `_clockPreview` stays true (PRA-F-14) |
+  | `tz` written after a `SalahClock` preview | `_simTz!==tz` | preview `utcMs` replaced by wall now; `_clockPreview` stays true (PRA-F-14) — **removed by R002D on its branch**: `_anchorKind` ∈ {wall, fragment, control}; only fragment anchors re-anchor on a zone change |
 
 - **Guards.** `Intl` formatter construction (throw → host-zone fallback in `partsInTz`); gap/fold detection in `epochForTzTime`; `SalahClock.set` validates rate/utcMs/live before mutating
 - **Actors and ownership.** URL fragment (`simTime`, `timeScale`), `window.SalahClock` (diagnostics, `tools/cp9/*_check.py`), timezone writers (ISM-PRAY-009)
@@ -336,6 +336,7 @@ Original audit: **N02** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r0007-countdown.cjs', 'tests/r0008-timezone.cjs', 'tests/r0020-clock.cjs', 'tests/real-sky/native-rate-availability.test.mjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Intl behavior across all supported browsers/historical offset transitions was not exercised here. Cold profile cost needs browser timing if performance becomes a user-visible issue; no new defect asserted.'}
   - Original remaining risk: Intl behavior across all supported browsers/historical offset transitions was not exercised here. Cold profile cost needs browser timing if performance becomes a user-visible issue; no new defect asserted. Wall-clock rollback can reject weather freshness while weather/radar retry gates remain closed; exact-source gates were exercised under XF02, without native browser/provider qualification.
 - **Findings.** [PRA-F-02](docs/audit/post-rlgwo/FINDINGS.md#pra-f-02), [PRA-F-14](docs/audit/post-rlgwo/FINDINGS.md#pra-f-14)
+- **R002D anchor rows (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D contract](docs/state-contracts/R002D.md) D.2. Enforced: `_anchorKind` is `wall` (FOLLOW_WALL_CLOCK), `fragment` (URL `simTime`/`timeScale`, zone-relative, re-anchors on zone settle, sticky invalidity) or `control` (`SalahClock.set`, absolute UTC, never re-anchored by a zone write; `_clockPreview` true exactly while `control`). Verified by: `tests/timezone-authority-state.test.cjs` D-07 (fragment positive control) and D-08/D-09 (frozen and advancing previews survive Tokyo adoption), mutant m2 killed; r0020-clock 44/44 and r0008-timezone 37/37 unchanged. Status for the anchor rows: D EIV / I EEV / V EEV (not independently reviewed); other rows unchanged.
 
 <a id="ism-pray-002"></a>
 ### ISM-PRAY-002 — Request ownership and bounded attempt leases (prayer, weather, radar slots)
@@ -390,7 +391,7 @@ Original audit: **N04** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   | cache hit | `requestEligible` | `tz=cached.timezone` before the day filter (~L3676) |
   | network result | `prayerResultEligible` | `tz=data.meta.timezone` (~L3691, ~L3697) |
   | day differs after adoption | — | one corrected request within the same 3-attempt budget |
-  | `prayerCivilDay()` returns null | invalid live `tz` | request `/timings/null`; every response rejected; never retried (PRA-F-02) |
+  | `prayerCivilDay()` returns null | invalid live `tz` | request `/timings/null`; every response rejected; never retried (PRA-F-02) — **removed by R002D on its branch**: the hint is admitted before binding, and no request is issued for an unresolved day |
 
 - **Guards.** strict clocks, exact Gregorian date, valid IANA `meta.timezone`, malformed AH → `hijri:null`
 - **Actors and ownership.** boot, `applyConfig`, `maintainPrayerDay`
@@ -412,6 +413,7 @@ Original audit: **N04** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r0002-admission.test.cjs', 'tests/r0005-adoption.test.cjs', 'tests/r0005-day-return.test.cjs', 'tests/r0004-boot-day.test.cjs', 'tests/hotfix-prayer-weather.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Provider coverage/reality is not established by admitted synthetic payloads. Native persistence and quota behavior were not exercised. Immutability is conventional rather than enforced by freezing.'}
   - Original remaining risk: Provider coverage/reality is not established by admitted synthetic payloads. Native persistence and quota behavior were not exercised. Immutability is conventional rather than enforced by freezing.
 - **Findings.** [PRA-F-02](docs/audit/post-rlgwo/FINDINGS.md#pra-f-02)
+- **R002D zone/hint and unresolved-day rows (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D contract](docs/state-contracts/R002D.md). Enforced: hint admission (W1/W1b/`normalize`), the shared predicate in `admitPrayerRecord` (unchanged rule; r0002-admission unchanged), and the unresolved-day guard in `fetchTimings` (throws before any slot) and `beginPrayerRequest` (no owner/cooldown). Verified by: D-01 (`Bogus/Zone`, `Asia/Riyad`, `+03:00`, `""` on the config.js and legacy paths: real `DD-MM-YYYY` requests, Riyadh adopted, `today` loaded within the corrected-day budget), D-04 (forced null day: 0 requests, retry once resolved), D-05 (valid-hint cache keys and request sequences equal main), mutants m3/m4/m5 killed. Status for these rows: D EIV / I EEV / V EEV (not independently reviewed); other rows unchanged.
 
 <a id="ism-pray-004"></a>
 ### ISM-PRAY-004 — Prayer day rollover, next-day prefetch, cooldown and stale state
@@ -450,6 +452,7 @@ Original audit: **N05** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r0004-boot-day.test.cjs', 'tests/r0005-day-return.test.cjs', 'tests/r0006-recovery.test.cjs', 'tests/r0003-ownership.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Targeted NF02 uses model-unavailable as a controlled boundary; a full native midnight/offline reproduction remains an acceptance case. Clock jumps across multiple days depend on the same exact-day checks; no new day-owner defect found.'}
   - Original remaining risk: Targeted NF02 uses model-unavailable as a controlled boundary; a full native midnight/offline reproduction remains an acceptance case. Clock jumps across multiple days depend on the same exact-day checks; no new day-owner defect found.
 - **Findings.** [PRA-F-21](docs/audit/post-rlgwo/FINDINGS.md#pra-f-21)
+- **R002D `!day` early-return row (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** `maintainPrayerDay` still returns on an unresolved day (codes unchanged). Recovery is now explicit ([R002D](docs/state-contracts/R002D.md) D.1-10): a rejected hint can no longer produce an unresolved day; for any other cause no request is issued and no owner/cooldown is created, and the next maintenance opportunity after the day resolves starts `loadPrayerData` (D-04). The speculative prefetch-zone retry hypothesis above is unchanged and not remediated.
 
 <a id="ism-pray-005"></a>
 ### ISM-PRAY-005 — Prayer model, explicit next-event selection, countdown and DOM publication
@@ -596,7 +599,7 @@ Original audit: **new (NEW-A-01)** · Lane papers: [A](docs/audit/post-rlgwo/lan
 <a id="ism-pray-009"></a>
 ### ISM-PRAY-009 — Live timezone authority `tz` (multi-writer) and its consumer fan-out
 
-Original audit: **new (NEW-A-03; reader list extended by the second omission pass, OM-01)** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **IMS / IMS / PEX** · Historical disposition: *new*
+Original audit: **new (NEW-A-03; reader list extended by the second omission pass, OM-01)** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **EIV / EEV / EEV** (R002D, branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet); audit baseline IMS / IMS / PEX) · Historical disposition: *new*
 
 - **Scope and decision.** Which zone is current: config hint → provider-adopted → current-record zone.
 - **Sources.** writers `src/native/index.html` `bindConfig` ~L686, `loadPrayerData` ~L3676/3691/3697, `adoptPrayerBundle` ~L1213; readers `partsInTz` ~L937, `prayerCivilDay` ~L1170, `simNow` ~L1014, `beginRequest` ~L1076, `selectPrayerEvent` ~L2324, `selectCalendarDisplay` ~L865, `prayerRecordReady` ~L1185, weather `requestZone`, and (added by OM-01) `skySceneIdentity` ~L2219, `moonGeometryObservation` ~L2031, `weatherInformation` ~L1749, `SalahMoonHost.capture` ~L4171, `real-sky/native-host-hooks.js` ~L42, `real-sky/native-first-paint.mjs` ~L18 (hint copy)
@@ -622,6 +625,7 @@ Original audit: **new (NEW-A-03; reader list extended by the second omission pas
 - **Hypotheses.** visible re-pending of celestial layers after the timetable arrives
 - **Unknowns.** pixel visibility of the second scene
 - **Findings.** [PRA-F-02](docs/audit/post-rlgwo/FINDINGS.md#pra-f-02), [PRA-F-08](docs/audit/post-rlgwo/FINDINGS.md#pra-f-08), [PRA-F-14](docs/audit/post-rlgwo/FINDINGS.md#pra-f-14)
+- **R002D (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D contract](docs/state-contracts/R002D.md) (two authorities: configured hint and adopted zone; one admission predicate; five writers). Enforced in code: `admissibleZone` gates the hint in `bindConfig`, the legacy config.js-absent fallback and `config.js` `normalize`, and provider/cached metadata in `admitPrayerRecord` (behaviour-identical); a rejected hint binds the absent-hint default (`America/New_York`, `_cacheTz` = the absent-hint key); writers record `_tzAdopted`/`_tzAdoptedSource`; `fetchTimings`/`beginPrayerRequest` refuse an unresolved civil day; wall-mode `skySceneIdentity` and the refined capture use the effective hint `_cacheTz`; `qaState().zone` is a pure readout. Verified by: `tests/timezone-authority-state.test.cjs` 20/20 (RED 15/20 failing on main sources), mutants m1–m5 killed (m3b equivalent: `bindConfig` re-admits on the legacy path). Unresolved: native D-13 (Playwright, three engines) and pixel neutrality D-15 are PENDING-NATIVE; engine-specific zone support; the speculative prefetch-zone retry (ISM-PRAY-004) is unchanged.
 
 <a id="ism-pray-010"></a>
 ### ISM-PRAY-010 — Singleton render loop, visibility, provider cadence and motion lifecycle
@@ -1496,7 +1500,7 @@ Original audit: **N13** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   |---|---|---|
   | boot / broad apply / `SalahClock.set` | — | `beginSkyScene`: pending classes, key null, uncommit, cloud receipt withdrawn |
   | paint sees identity ≠ key | identity ≠ null | `beginSkyScene(_skyInitialDocument)` then adopt key |
-  | `tz` hint → provider zone (boot, after `finishInitialSkyDocument` L3827) | identity contains `tz` | second scene per boot; Moon invalidation non-initial (OM-01, PRA-F-08) |
+  | `tz` hint → provider zone (boot, after `finishInitialSkyDocument` L3827) | identity contains `tz` | second scene per boot; Moon invalidation non-initial (OM-01, PRA-F-08) — **removed by R002D on its branch**: the identity's zone element is the effective hint `_cacheTz` |
   | `commitSkyScene` | not committed, key set, fresh Moon observation, star key = scene key | paint clouds, remove pending classes |
 
 - **Guards.** identity equality
@@ -1512,6 +1516,7 @@ Original audit: **N13** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 - **Observed facts.** integrator: `skySceneIdentity` includes `tz` (L2219); `paint` begins a new scene on any identity change (L3246); `finishInitialSkyDocument()` at L3827 precedes `loadPrayerData` (L3846) which writes `tz` (L3676/L3691)
 - **Hypotheses.** brief visible re-pending of celestial layers on non-default-zone boots
 - **Unknowns.** pixel visibility; lifecycle coalescing
+- **R002D identity definition (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D](docs/state-contracts/R002D.md) D.3 — the identity changes iff target coordinates, the anchor (instant/rate/kind) or a configuration generation changes; in wall mode it is `lat|lon|<effective hint>|wall`, equal to the first-paint snapshot identity. The refined-sky capture reports the same hint as `tz`. Verified by: D-06 (builder-shape boot begins 2 scenes / 2 Moon invalidations, equal to the `tz=Asia/Riyadh` control; main 3/3), D-11 (first-paint formula = boot and post-adoption identity for hint≠provider, hint=provider and a rejected hint), mutant m1 killed; tests/real-sky 354/354 unchanged. Codes unchanged (PEX / PEX / EIV); native D-13 and pixel D-15 are PENDING-NATIVE.
 - **Original catalogue contract** ([N13 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/src/native/index.html#L167-L188); carried forward for reference, not re-derived):
   - States: initial document warrant available; scene invalidated/pending; current bodies/preview available without prayer; surface pending/current; complete atmosphere staged; scene committed; initial warrant consumed permanently
   - Transitions: boot or config/explicit clock change → invalidate modern moon and generated preview/real-sky → reset native scene/star/cloud state and withdraw ready classes; current scene key is coordinates/zone plus wall-or-explicit anchor; it intentionally excludes ordinary ticking civil day; surface-ready class requires current runtime.surface, href and scene key; mask additionally requires lunar presence; commit requires fresh moon observation and matching star projection → paint clouds/particle gates → force one style/layout resolution → remove transition suppression and mark committed; no-timetable helper can publish real bodies/current catalogue and remove sky-pending; it retains initial transition suppression until full palette paint; finishInitialSkyDocument permanently consumes first-document warrant before async providers/yield; later invalidations cannot reacquire it
