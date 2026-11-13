@@ -93,8 +93,9 @@ recorded V1 inclusion review. `python tools/verify_v1.py --check-pages` passes
 only when there is no Jekyll configuration file, when `.nojekyll` is present, or
 when exactly one configuration file (`_config.yml`, `_config.yaml` or
 `_config.toml`) has a SHA-256 listed in `REVIEWED_JEKYLL_CONFIGS` in the verifier
-and the listed evidence file exists. Any other state fails and names the file and
-digest. An edit to the configuration fails until the same change records a review.
+and the listed evidence is JSON that names `v1/index.html`, `v1/config.js`,
+`v1/VERSION.json` and `v1/MANIFEST.sha256` with the tree's SHA-256. Any other
+state fails and names the file and digest. An edit to the configuration fails until the same change records a review.
 
 The current `_config.yml` (SHA-256 `0f846f7e…`, blob `0700f748`) is admitted on the
 measured deployed Pages artifact of merge `06772824`, which has the same blob.

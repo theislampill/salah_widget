@@ -6,6 +6,7 @@ never written. VERIFY_V1_UNDER_TEST may name another verifier file (used only by
 Python standard library only. Run: python tests/test_verify_v1_pages.py
 """
 import hashlib
+import json
 import os
 from pathlib import Path
 import re
@@ -56,6 +57,51 @@ class CheckPages(unittest.TestCase):
     def test_missing_review_evidence_fails(self):
         (self.repo / EVIDENCE).unlink()
         self.assert_fail([f"Jekyll configuration _config.yml {CURRENT_DIGEST} review evidence missing: {EVIDENCE}"])
+
+    # R0037 review hardening: the admitted evidence must list every V1 public file with the tree's SHA-256.
+    def evidence_json(self):
+        return json.loads((self.repo / EVIDENCE).read_text(encoding="utf-8"))
+
+    def write_evidence(self, data):
+        (self.repo / EVIDENCE).write_text(json.dumps(data), encoding="utf-8")
+
+    def expect_unlisted(self, path):
+        return (f"Jekyll configuration _config.yml {CURRENT_DIGEST} review evidence {EVIDENCE} does not list {path} "
+                "with the tree's SHA-256")
+
+    def test_evidence_without_a_v1_file_fails(self):
+        data = self.evidence_json()
+        del data["protectedConsumers"]["v1/VERSION.json"]
+        self.write_evidence(data)
+        self.assert_fail([self.expect_unlisted("v1/VERSION.json")])
+
+    def test_evidence_with_a_different_v1_hash_fails(self):
+        data = self.evidence_json()
+        data["protectedConsumers"]["v1/config.js"]["sha256"] = "0" * 64
+        self.write_evidence(data)
+        self.assert_fail([self.expect_unlisted("v1/config.js")])
+
+    def test_evidence_with_a_different_v1_size_fails(self):
+        data = self.evidence_json()
+        data["protectedConsumers"]["v1/MANIFEST.sha256"]["bytes"] += 1
+        self.write_evidence(data)
+        self.assert_fail([self.expect_unlisted("v1/MANIFEST.sha256")])
+
+    def test_evidence_naming_no_v1_file_fails_for_each(self):
+        self.write_evidence({"protectedConsumers": {}})
+        self.assert_fail([self.expect_unlisted(p) for p in
+                          ("v1/index.html", "v1/config.js", "v1/VERSION.json", "v1/MANIFEST.sha256")])
+
+    def test_evidence_not_json_fails(self):
+        (self.repo / EVIDENCE).write_bytes(b"not json")
+        self.assert_fail([f"Jekyll configuration _config.yml {CURRENT_DIGEST} review evidence is not JSON: {EVIDENCE}"])
+
+    def test_list_shaped_evidence_passes(self):
+        files = [{"path": p, "sha256": hashlib.sha256((self.repo / p).read_bytes()).hexdigest()}
+                 for p in ("v1/index.html", "v1/config.js", "v1/VERSION.json", "v1/MANIFEST.sha256")]
+        self.write_evidence({"site": {"files": files}})
+        code, lines = self.run_verifier("--check-pages")
+        self.assertEqual(code, 0, lines)
 
     # R37-04: one appended comment byte makes the configuration unreviewed; the new digest is named.
     def test_unreviewed_configuration_fails(self):
