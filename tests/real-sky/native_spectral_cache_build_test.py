@@ -3,14 +3,16 @@
 The transform must apply exactly once to the digest-pinned immutable vendor input, fail
 closed (precise diagnostic, nothing written) on digest or anchor drift, refuse a second
 application, introduce no identifier that collides inside the concatenated bundles, and be
-what the REAL builder (tools/build_native.py) writes to the generated core.
+what the REAL builder (tools/build_native.py) writes to the generated core. Since R0029 the
+builder stages outputs and writes nothing on failure, so check_builder_invokes observes the
+staged core through a capture wrapper instead of a partially written tree (same property).
 
 Mutation controls at the bottom load disposable in-memory mutants of the transform or of
 the builder and require these same checks to fail with an AssertionError.
 Run: python -m unittest tests/real-sky/native_spectral_cache_build_test.py -v
 """
 from pathlib import Path
-import ast, hashlib, importlib.util, re, shutil, subprocess, sys, tempfile, types, unittest
+import ast, hashlib, importlib.util, os, re, shutil, subprocess, sys, tempfile, types, unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOLS = ROOT / 'tools'
@@ -99,7 +101,31 @@ def check_identifiers(t):
         t.assertTrue(name.startswith('sf'), 'module-local sf prefix')
 
 
-def run_builder(tree, builder_text=None, transform_text=None):
+# R0029 re-expression: the builder now stages every output in memory and writes nothing until
+# all guards pass, so a partial tree no longer exists to inspect. This wrapper runs the REAL
+# builder script unchanged and records each staged output (generated_outputs.Outputs.add)
+# into a capture directory OUTSIDE the tree, which the check below compares exactly as the
+# R0027 check compared the partially written core.
+CAPTURE = r'''
+import runpy, sys
+from pathlib import Path
+tools, capture = sys.argv[1], Path(sys.argv[2]); sys.path.insert(0, tools)
+import generated_outputs
+add = generated_outputs.Outputs.add
+def recording(self, path, data):
+    add(self, path, data)
+    target = capture / path; target.parent.mkdir(parents=True, exist_ok=True); target.write_bytes(self[path])
+generated_outputs.Outputs.add = recording
+runpy.run_path(tools + '/build_native.py', run_name='__main__')
+'''
+ENV = dict(os.environ, PYTHONDONTWRITEBYTECODE='1')
+
+
+def tree_files(tree):
+    return {p.relative_to(tree).as_posix(): p.read_bytes() for p in tree.rglob('*') if p.is_file()}
+
+
+def run_builder(tree, builder_text=None, transform_text=None, capture=None):
     """Run the REAL builder in a disposable tree that carries only tools/ and the core inputs."""
     shutil.copytree(TOOLS, tree / 'tools', ignore=shutil.ignore_patterns('__pycache__', 'cp9', 'qa', 'qualification'))
     if builder_text is not None:
@@ -111,26 +137,29 @@ def run_builder(tree, builder_text=None, transform_text=None):
         target = tree / 'vendor/real-sky' / p
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / 'vendor/real-sky' / p, target)
-    return subprocess.run([sys.executable, str(tree / 'tools/build_native.py')], cwd=tree,
-                          capture_output=True, text=True, timeout=120)
+    argv = [sys.executable, '-c', CAPTURE, str(tree / 'tools'), str(capture)] if capture else \
+        [sys.executable, str(tree / 'tools/build_native.py')]
+    return subprocess.run(argv, cwd=tree, capture_output=True, text=True, timeout=120, env=ENV)
 
 
 def check_builder_invokes(t, builder_text=None):
-    with tempfile.TemporaryDirectory() as d:
-        tree = Path(d)
-        r = run_builder(tree, builder_text)
+    with tempfile.TemporaryDirectory() as d, tempfile.TemporaryDirectory() as c:
+        tree, capture = Path(d), Path(c)
+        r = run_builder(tree, builder_text, capture=capture)
         # The disposable tree stops at the first input it does not carry (licence notices),
-        # strictly after the complete core-copy stage that owns both authored transforms.
+        # strictly after the complete core stage that owns both authored transforms. That
+        # failure is detected before publish, so the tree itself receives nothing (R0029).
         t.assertIn('LICENSE-CODE.txt', r.stderr)
-        t.assertEqual((tree / 'real-sky/core/src/spectral.mjs').read_bytes(),
-                      t.mod.bound_spectral_cache(VENDOR.read_bytes()), 'builder writes transform(vendor)')
+        t.assertFalse((tree / 'real-sky').exists(), 'failed build wrote nothing into the tree')
+        t.assertEqual((capture / 'real-sky/core/src/spectral.mjs').read_bytes(),
+                      t.mod.bound_spectral_cache(VENDOR.read_bytes()), 'builder stages transform(vendor)')
         sys.path.insert(0, str(TOOLS))
         try:
             from native_core_horizon import correct_horizon
         finally:
             sys.path.pop(0)
         renderer = 'src/physical-sky-renderer.mjs'
-        t.assertEqual((tree / 'real-sky/core' / renderer).read_bytes(),
+        t.assertEqual((capture / 'real-sky/core' / renderer).read_bytes(),
                       correct_horizon((ROOT / 'vendor/real-sky' / renderer).read_bytes()), 'horizon transform preserved')
 
 
@@ -145,14 +174,17 @@ def check_builder_fails_closed(t):
             shutil.copyfile(ROOT / 'vendor/real-sky' / p, target)
         spectral = tree / 'vendor/real-sky/src/spectral.mjs'
         spectral.write_bytes(spectral.read_bytes().replace(b'i<48', b'i<47', 1))
+        before = tree_files(tree)
         r = subprocess.run([sys.executable, str(tree / 'tools/build_native.py')], cwd=tree,
-                           capture_output=True, text=True, timeout=120)
+                           capture_output=True, text=True, timeout=120, env=ENV)
         t.assertNotEqual(r.returncode, 0)
         t.assertIn('R0027 spectral source drift', r.stderr)
         t.assertFalse((tree / 'real-sky/core/src/spectral.mjs').exists(), 'no transformed output written')
         t.assertFalse((tree / 'real-sky/core/src/optics.mjs').exists(), 'build stopped at the drift')
         for bundle in ['real-sky/native-worker.js', 'real-sky/native-sky.js', 'index.html', 'offline.html']:
             t.assertFalse((tree / bundle).exists(), bundle)
+        # R0029 strengthening: no in-tree file written at all.
+        t.assertEqual(tree_files(tree), before, 'no in-tree file written at all')
 
 
 class SpectralCacheTransformTest(unittest.TestCase):
@@ -193,7 +225,7 @@ MUTANTS = [
     ('m10b constant collides with another module', 'transform',
      'sfFitCacheLimit', 'clamp', check_identifiers),
     ('bypass generator invocation', 'builder',
-     " elif p=='src/spectral.mjs':target.write_bytes(bound_spectral_cache((S/p).read_bytes()))\n", '',
+     " elif p=='src/spectral.mjs':data=bound_spectral_cache(data)\n", '',
      lambda t: check_builder_invokes(t, t.builder)),
 ]
 
