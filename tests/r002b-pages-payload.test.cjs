@@ -162,10 +162,12 @@ print(__import__("json").dumps(out))`);
   const v = py(`import json
 small=pp.envelope_bounds({"entries":[{"name":"artifact.tar","uncompressedBytes":905902080}]},5825)
 big=pp.envelope_bounds({"entries":[{"name":"artifact.tar","uncompressedBytes":1933260800}]},19412)
-print(json.dumps([pp.envelope_verdict(small,1000000000),pp.envelope_verdict(big,1000000000),pp.envelope_verdict(big,10**10)]))`);
+print(json.dumps([pp.envelope_verdict(small,1000000000),pp.envelope_verdict(big,1000000000),pp.envelope_verdict(big,10**10),pp.envelope_verdict(big,1900000000)]))`);
   assert.equal(v[0].verdict, 'within');
   assert.equal(v[1].verdict, 'inconclusive'); assert.equal(v[1].inferredVerdict, 'exceeds');
   assert.equal(v[2].verdict, 'within');
+  // lower bound <= bound < upper bound: an inferred lower bound never proves `within`.
+  assert.equal(v[3].verdict, 'inconclusive'); assert.equal(v[3].inferredVerdict, 'within');
 });
 
 test('projection mirrors Jekyll string-prefix excludes and flags collateral and protected removals', () => {

@@ -266,7 +266,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 |---|---|---|---|---|---|---|
 | [ISM-BLD-001](#ism-bld-001) | Native generation output publication sequence | C13 | PEX | PEX | PEX | implemented but not fully verified |
 | [ISM-BLD-002](#ism-bld-002) | Moon generation preflight and expansion | C14 | PEX | PEX | PEX | implemented but not fully verified |
-| [ISM-BLD-003](#ism-bld-003) | R0017 Pages payload qualification workflow and retained receipt | C24 | PEX | EEV | IMS | no longer applicable |
+| [ISM-BLD-003](#ism-bld-003) | R0017 Pages payload qualification workflow and retained receipt; R002B payload machine | C24 | EIV | EEV | EEV | refounded by R002B (candidate) |
 | [ISM-BLD-004](#ism-bld-004) | Pages deployment from main (a commit to main is a deploy) | new | PEX | IMS | PEX | new |
 | [ISM-BLD-005](#ism-bld-005) | RLGWO delivery workflow (campaign governance) | new | PEX | IMS | PEX | new |
 | [ISM-BLD-006](#ism-bld-006) | Installer-bytes delivery routes and README pin ↔ docs-receipt coupling | new | PEX | IMS | PEX | new |
@@ -3043,6 +3043,11 @@ Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
   - Original evidence: Read exact workflow/script; no build/CI run
   - Original remaining risk: Imported snapshot has no Git metadata/complete payload, so cannot execute qualification. Hard-coded explanatory zero reference counts are not live dependency scans; root owns deployment evidence.
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07)
+- **R002B update (issue 92; candidate branch, not merged or deployed).** Contract: [docs/state-contracts/R002B.md](docs/state-contracts/R002B.md).
+  - Documented: payload machine (measurement sources `ci-build` / `deployed-artifact`, bound 1,000,000,000 regular-file bytes by owner decision DG-1(a), verdicts `within` / `exceeds` / `inconclusive`, invariants I1-I4).
+  - Enforced in code: `tools/pages_payload.py` (explicit exceptions, no `assert`; `inconclusive` never `within`; envelope-only readback can prove `within` but never `exceeds`). The R0017 verifier is frozen to PR 62 and its `assert` guards are explicit. Branch-bound M2 workflow `.github/workflows/r002b-pages-payload.yml`.
+  - Verified by: `tests/r002b-pages-payload.test.cjs` (15 tests; RED 14 fail on main source; 10/10 mutants killed). Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
+  - Unresolved: no real Pages build has been measured by the new instrument (M2 runs only after the branch is pushed); post-merge deployed measurement and PR-gate wiring (R002A, issue 91) pending; not independently reviewed.
 
 <a id="ism-bld-004"></a>
 ### ISM-BLD-004 — Pages deployment from main (a commit to main is a deploy)
@@ -3066,6 +3071,11 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Status evidence.** D: AGENTS/README · I: external · V: post-hoc readback in certificates
 - **Accepted evidence.** latest Pages build `363c3e53` `built` (integrator `gh api`); lane F public byte readback of four files
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07), [PRA-F-09](docs/audit/post-rlgwo/FINDINGS.md#pra-f-09)
+- **R002B update, payload dimension only (issue 92; candidate, not merged).** Readback dimensions belong to R002A (issue 91).
+  - Documented: `_config.yml` excludes the retained evidence trees `docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence`, `docs/moon/evidence` (owner decision DG-2(a)); evidence stays in git and on github.com.
+  - Enforced: by the external Jekyll 3 builder only (string-prefix `exclude`); no repository gate before merge (R002A).
+  - Verified: advisory git-tree projection only (published 9,707 files / 1,908,811,828 bytes at `5a90cc03` -> 941 files / 336,329,748 bytes; no protected path removed). The real build measure and the post-merge deployed measure are pending.
+  - Unresolved: Pages still serves the over-limit site until a merge; GitHub's enforcement behaviour is unknown.
 
 <a id="ism-bld-005"></a>
 ### ISM-BLD-005 — RLGWO delivery workflow (campaign governance)
