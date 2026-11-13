@@ -107,13 +107,13 @@ Entries by status value and dimension (all entries, installer entries included):
 
 | Status value | Code | Documentation | Implementation | Verification |
 |---|---|---|---|---|
-| implicit and materially significant | IMS | 47 | 38 | 4 |
-| partially explicit | PEX | 42 | 44 | 55 |
-| explicitly documented but weakly enforced | DWE | 6 | 0 | 0 |
-| explicitly enforced but insufficiently verified | EEV | 0 | 18 | 13 |
-| explicit, enforced and independently verified | EIV | 17 | 0 | 12 |
+| implicit and materially significant | IMS | 33 | 31 | 3 |
+| partially explicit | PEX | 48 | 45 | 49 |
+| explicitly documented but weakly enforced | DWE | 4 | 0 | 0 |
+| explicitly enforced but insufficiently verified | EEV | 0 | 25 | 21 |
+| explicit, enforced and independently verified | EIV | 27 | 0 | 14 |
 | historically problematic but demonstrably resolved | HRS | 0 | 11 | 10 |
-| unknown or insufficient evidence | UNK | 0 | 1 | 18 |
+| unknown or insufficient evidence | UNK | 0 | 0 | 15 |
 | **Total** | | 112 | 112 | 112 |
 
 | Domain | Entries | of which new |
@@ -157,14 +157,14 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-PRAY-001](#ism-pray-001) | Civil/simulation clock, timezone inverse, invalid-scene recovery, diagnostic clock control | N02 | PEX | PEX | PEX | still implicit or vulnerable |
 | [ISM-PRAY-002](#ism-pray-002) | Request ownership and bounded attempt leases (prayer, weather, radar slots) | N03 | PEX | EEV | EEV | implemented but not fully verified |
 | [ISM-PRAY-003](#ism-pray-003) | Current prayer acquisition, admission/cache and adopted-zone reconciliation | N04 | PEX | PEX | PEX | still implicit or vulnerable |
-| [ISM-PRAY-004](#ism-pray-004) | Prayer day rollover, next-day prefetch, cooldown and stale state | N05 | IMS | IMS | PEX | still implicit or vulnerable |
+| [ISM-PRAY-004](#ism-pray-004) | Prayer day rollover, next-day prefetch, cooldown and stale state | N05 | EIV | PEX | EEV | still implicit or vulnerable |
 | [ISM-PRAY-005](#ism-pray-005) | Prayer model, explicit next-event selection, countdown and DOM publication | N06 | EIV | HRS | HRS | implemented but not fully verified |
 | [ISM-PRAY-006](#ism-pray-006) | Calendar publication, Hijri provenance/rollover and date disclosure | N07 | PEX | IMS | PEX | implemented but not fully verified |
-| [ISM-PRAY-007](#ism-pray-007) | Countdown font readiness, rail sampling and geometry-fit cache | N18 | PEX | IMS | PEX | partly resolved |
+| [ISM-PRAY-007](#ism-pray-007) | Countdown font readiness, rail sampling and geometry-fit cache | N18 | EIV | EEV | EEV | partly resolved |
 | [ISM-PRAY-008](#ism-pray-008) | Optional web-typography activation gate | new | EIV | EEV | EIV | new |
-| [ISM-PRAY-009](#ism-pray-009) | Live timezone authority `tz` (multi-writer) and its consumer fan-out | new | IMS | IMS | PEX | new |
-| [ISM-PRAY-010](#ism-pray-010) | Singleton render loop, visibility, provider cadence and motion lifecycle | N19 | IMS | IMS | PEX | still implicit or vulnerable |
-| [ISM-PRAY-011](#ism-pray-011) | User-visible prayer status text owner (`.left`, `.nt`) | new | IMS | IMS | PEX | new |
+| [ISM-PRAY-009](#ism-pray-009) | Live timezone authority `tz` (multi-writer) and its consumer fan-out | new | EIV | EEV | EEV | new |
+| [ISM-PRAY-010](#ism-pray-010) | Singleton render loop, visibility, provider cadence and motion lifecycle | N19 | EIV | EEV | EIV | still implicit or vulnerable |
+| [ISM-PRAY-011](#ism-pray-011) | User-visible prayer status text owner (`.left`, `.nt`) | new | EIV | EEV | EEV | new |
 
 ### Weather, radar and location acquisition (`ISM-WX`)
 
@@ -196,7 +196,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-CFG-007](#ism-cfg-007) | Builder mode, form, serialisation and preview publication | C05 | EIV | HRS | HRS | resolved and independently verified |
 | [ISM-CFG-008](#ism-cfg-008) | Builder edit ownership, candidate cycle and automatic fills (reverse geocode) | C06 | PEX | PEX | PEX | partly resolved |
 | [ISM-CFG-009](#ism-cfg-009) | Clipboard attempts, fallback and expiring feedback | C07 | PEX | EEV | EEV | implemented but not fully verified |
-| [ISM-CFG-010](#ism-cfg-010) | Builder ↔ widget preview handoff and the 325×530 geometry contract | new | DWE | PEX | PEX | new |
+| [ISM-CFG-010](#ism-cfg-010) | Builder ↔ widget preview handoff and the 325×530 geometry contract | new | PEX | PEX | PEX | new |
 | [ISM-CFG-011](#ism-cfg-011) | Diagnostic-input override surface (`sim*`, `debug*`, `qa`, `timeScale`, `motion`) | new | PEX | PEX | PEX | new |
 
 ### Sky, cloud, star and optical rendering (`ISM-SKY`)
@@ -264,30 +264,30 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 
 | Registry ID | Name | Original ID | Doc | Impl | Verif | Historical disposition |
 |---|---|---|---|---|---|---|
-| [ISM-BLD-001](#ism-bld-001) | Native generation output publication sequence | C13 | PEX | PEX | PEX | implemented but not fully verified |
-| [ISM-BLD-002](#ism-bld-002) | Moon generation preflight and expansion | C14 | PEX | PEX | PEX | implemented but not fully verified |
-| [ISM-BLD-003](#ism-bld-003) | R0017 Pages payload qualification workflow and retained receipt | C24 | PEX | EEV | IMS | no longer applicable |
+| [ISM-BLD-001](#ism-bld-001) | Native generation output publication sequence | C13 | EIV | EEV | EEV | implemented but not fully verified |
+| [ISM-BLD-002](#ism-bld-002) | Moon generation preflight and expansion | C14 | EIV | EEV | EEV | implemented but not fully verified |
+| [ISM-BLD-003](#ism-bld-003) | R0017 Pages payload qualification workflow and retained receipt | C24 | EIV | EEV | EEV | no longer applicable |
 | [ISM-BLD-004](#ism-bld-004) | Pages deployment from main (a commit to main is a deploy) | new | PEX | IMS | PEX | new |
 | [ISM-BLD-005](#ism-bld-005) | RLGWO delivery workflow (campaign governance) | new | PEX | IMS | PEX | new |
-| [ISM-BLD-006](#ism-bld-006) | Installer-bytes delivery routes and README pin ↔ docs-receipt coupling | new | PEX | IMS | PEX | new |
+| [ISM-BLD-006](#ism-bld-006) | Installer-bytes delivery routes and README pin ↔ docs-receipt coupling | new | PEX | EEV | EEV | new |
 | [ISM-BLD-007](#ism-bld-007) | Registered regression suites and the known-failure baseline | new | DWE | IMS | PEX | new |
-| [ISM-BLD-008](#ism-bld-008) | Work-order-branch qualification workflows | new | IMS | IMS | UNK | new |
+| [ISM-BLD-008](#ism-bld-008) | Work-order-branch qualification workflows | new | PEX | PEX | PEX | new |
 | [ISM-BLD-009](#ism-bld-009) | Evidence receipts bound to source hashes | new | PEX | PEX | PEX | new |
-| [ISM-BLD-010](#ism-bld-010) | Frozen v1 verification | new | DWE | EEV | EEV | new |
+| [ISM-BLD-010](#ism-bld-010) | Frozen v1 verification | new | EIV | EEV | EIV | new |
 
 ### Frozen v1 compatibility snapshot (`ISM-V1`)
 
 | Registry ID | Name | Original ID | Doc | Impl | Verif | Historical disposition |
 |---|---|---|---|---|---|---|
-| [ISM-V1-001](#ism-v1-001) | Frozen v1 one-time root configuration import | C15 | IMS | PEX | PEX | implemented but not fully verified |
-| [ISM-V1-002](#ism-v1-002) | Frozen v1 configuration apply and boot without generation ownership | C16 | IMS | IMS | UNK | still implicit or vulnerable |
-| [ISM-V1-003](#ism-v1-003) | Frozen v1 prayer cache, retry, tomorrow and rollover | C17 | IMS | PEX | UNK | implemented but not fully verified |
-| [ISM-V1-004](#ism-v1-004) | Frozen v1 weather current/forecast acquisition | C18 | IMS | PEX | UNK | implemented but not fully verified |
-| [ISM-V1-005](#ism-v1-005) | Frozen v1 radar manifest, tile and freshness acquisition | C19 | IMS | IMS | UNK | still implicit or vulnerable |
-| [ISM-V1-006](#ism-v1-006) | Frozen v1 modal editing, lookup, GPS and Reset | C20 | IMS | IMS | UNK | still implicit or vulnerable |
-| [ISM-V1-007](#ism-v1-007) | Frozen v1 real/simulated clock anchor compatibility variant | C21 | IMS | PEX | UNK | implemented but not fully verified |
-| [ISM-V1-008](#ism-v1-008) | Frozen v1 Moon texture readiness and pending render cache | C22 | IMS | IMS | UNK | still implicit or vulnerable |
-| [ISM-V1-009](#ism-v1-009) | Frozen v1 synthetic star catalogue and projection cadence | C23 | IMS | IMS | UNK | still implicit or vulnerable |
+| [ISM-V1-001](#ism-v1-001) | Frozen v1 one-time root configuration import | C15 | PEX | PEX | PEX | implemented but not fully verified |
+| [ISM-V1-002](#ism-v1-002) | Frozen v1 configuration apply and boot without generation ownership | C16 | PEX | IMS | UNK | still implicit or vulnerable |
+| [ISM-V1-003](#ism-v1-003) | Frozen v1 prayer cache, retry, tomorrow and rollover | C17 | PEX | PEX | UNK | implemented but not fully verified |
+| [ISM-V1-004](#ism-v1-004) | Frozen v1 weather current/forecast acquisition | C18 | PEX | PEX | UNK | implemented but not fully verified |
+| [ISM-V1-005](#ism-v1-005) | Frozen v1 radar manifest, tile and freshness acquisition | C19 | PEX | IMS | UNK | still implicit or vulnerable |
+| [ISM-V1-006](#ism-v1-006) | Frozen v1 modal editing, lookup, GPS and Reset | C20 | PEX | IMS | PEX | still implicit or vulnerable |
+| [ISM-V1-007](#ism-v1-007) | Frozen v1 real/simulated clock anchor compatibility variant | C21 | PEX | PEX | UNK | implemented but not fully verified |
+| [ISM-V1-008](#ism-v1-008) | Frozen v1 Moon texture readiness and pending render cache | C22 | PEX | IMS | UNK | still implicit or vulnerable |
+| [ISM-V1-009](#ism-v1-009) | Frozen v1 synthetic star catalogue and projection cadence | C23 | PEX | IMS | UNK | still implicit or vulnerable |
 
 ### Installer workflows (`ISM-INST`)
 
@@ -300,7 +300,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-INST-005](#ism-inst-005-windows-native-helper-compile-and-load) | Windows native helper compile and load | C11 (part) | EIV | EEV | EIV | see CROSSWALK (C08–C12) |
 | [ISM-INST-006](#ism-inst-006-artifact-admission-and-publication) | Artifact admission and publication | C10; C11 (part); C12 (part); CF01-CF03 | EIV | HRS | HRS | see CROSSWALK (C08–C12) |
 | [ISM-INST-007](#ism-inst-007-manual-hand-off-and-retained-bundle) | Manual hand-off and retained bundle | C08 (part); C12 (part) | EIV | PEX | EIV | see CROSSWALK (C08–C12) |
-| [ISM-INST-008](#ism-inst-008) | Release metadata and asset selection | new | PEX | UNK | UNK | new |
+| [ISM-INST-008](#ism-inst-008) | Release metadata and asset selection | new | EIV | PEX | EEV | new |
 
 ---
 
@@ -344,7 +344,7 @@ Original audit: **N02** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r0007-countdown.cjs', 'tests/r0008-timezone.cjs', 'tests/r0020-clock.cjs', 'tests/real-sky/native-rate-availability.test.mjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Intl behavior across all supported browsers/historical offset transitions was not exercised here. Cold profile cost needs browser timing if performance becomes a user-visible issue; no new defect asserted.'}
   - Original remaining risk: Intl behavior across all supported browsers/historical offset transitions was not exercised here. Cold profile cost needs browser timing if performance becomes a user-visible issue; no new defect asserted. Wall-clock rollback can reject weather freshness while weather/radar retry gates remain closed; exact-source gates were exercised under XF02, without native browser/provider qualification.
 - **Findings.** [PRA-F-02](docs/audit/post-rlgwo/FINDINGS.md#pra-f-02), [PRA-F-14](docs/audit/post-rlgwo/FINDINGS.md#pra-f-14)
-- **R002D anchor rows (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D contract](docs/state-contracts/R002D.md) D.2. Enforced: `_anchorKind` is `wall` (FOLLOW_WALL_CLOCK), `fragment` (URL `simTime`/`timeScale`, zone-relative, re-anchors on zone settle, sticky invalidity) or `control` (`SalahClock.set`, absolute UTC, never re-anchored by a zone write; `_clockPreview` true exactly while `control`). Verified by: `tests/timezone-authority-state.test.cjs` D-07 (fragment positive control) and D-08/D-09 (frozen and advancing previews survive Tokyo adoption), mutant m2 killed; r0020-clock 44/44 and r0008-timezone 37/37 unchanged. Proposed status (effective on acceptance) for the anchor rows: D EIV / I EEV / V EEV; other rows and the entry's current codes unchanged.
+- **R002D anchor rows (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D contract](docs/state-contracts/R002D.md) D.2. Enforced: `_anchorKind` is `wall` (FOLLOW_WALL_CLOCK), `fragment` (URL `simTime`/`timeScale`, zone-relative, re-anchors on zone settle, sticky invalidity) or `control` (`SalahClock.set`, absolute UTC, never re-anchored by a zone write; `_clockPreview` true exactly while `control`). Verified by: `tests/timezone-authority-state.test.cjs` D-07 (fragment positive control) and D-08/D-09 (frozen and advancing previews survive Tokyo adoption), mutant m2 killed; r0020-clock 44/44 and r0008-timezone 37/37 unchanged. Status accepted (R002D, issue 94; [R002D final certificate](https://github.com/theislampill/salah_widget/issues/94#issuecomment-6845125534); the branch above was merged as pull request 113): for the anchor rows only, D EIV / I EEV / V EEV (the certificate says these rows are proposed likewise to ISM-PRAY-009, whose V it states as EIV; the registry records this entry's more conservative V EEV). The machine-level codes of this entry are unchanged.
 
 <a id="ism-pray-002"></a>
 ### ISM-PRAY-002 — Request ownership and bounded attempt leases (prayer, weather, radar slots)
@@ -421,12 +421,12 @@ Original audit: **N04** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r0002-admission.test.cjs', 'tests/r0005-adoption.test.cjs', 'tests/r0005-day-return.test.cjs', 'tests/r0004-boot-day.test.cjs', 'tests/hotfix-prayer-weather.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Provider coverage/reality is not established by admitted synthetic payloads. Native persistence and quota behavior were not exercised. Immutability is conventional rather than enforced by freezing.'}
   - Original remaining risk: Provider coverage/reality is not established by admitted synthetic payloads. Native persistence and quota behavior were not exercised. Immutability is conventional rather than enforced by freezing.
 - **Findings.** [PRA-F-02](docs/audit/post-rlgwo/FINDINGS.md#pra-f-02)
-- **R002D zone/hint and unresolved-day rows (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D contract](docs/state-contracts/R002D.md). Enforced: hint admission (W1/W1b/`normalize`), the shared predicate in `admitPrayerRecord` (unchanged rule; r0002-admission unchanged), and the unresolved-day guard in `fetchTimings` (throws before any slot) and `beginPrayerRequest` (no owner/cooldown). Verified by: D-01 (`Bogus/Zone`, `Asia/Riyad`, `+03:00`, `""` on the config.js and legacy paths: real `DD-MM-YYYY` requests, Riyadh adopted, `today` loaded within the corrected-day budget), D-04 (forced null day: 0 requests, retry once resolved), D-05 (valid-hint cache keys and request sequences equal main), mutants m3/m4/m5 killed. Proposed status (effective on acceptance) for these rows: D EIV / I EEV / V EEV; other rows and the entry's current codes unchanged.
+- **R002D zone/hint and unresolved-day rows (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D contract](docs/state-contracts/R002D.md). Enforced: hint admission (W1/W1b/`normalize`), the shared predicate in `admitPrayerRecord` (unchanged rule; r0002-admission unchanged), and the unresolved-day guard in `fetchTimings` (throws before any slot) and `beginPrayerRequest` (no owner/cooldown). Verified by: D-01 (`Bogus/Zone`, `Asia/Riyad`, `+03:00`, `""` on the config.js and legacy paths: real `DD-MM-YYYY` requests, Riyadh adopted, `today` loaded within the corrected-day budget), D-04 (forced null day: 0 requests, retry once resolved), D-05 (valid-hint cache keys and request sequences equal main), mutants m3/m4/m5 killed. Status accepted (R002D, issue 94; [R002D final certificate](https://github.com/theislampill/salah_widget/issues/94#issuecomment-6845125534); the branch above was merged as pull request 113): for the zone, hint and unresolved-day rows only, D EIV / I EEV / V EEV (the certificate says these rows are proposed likewise to ISM-PRAY-009, whose V it states as EIV; the registry records this entry's more conservative V EEV). The machine-level codes of this entry are unchanged.
 
 <a id="ism-pray-004"></a>
 ### ISM-PRAY-004 — Prayer day rollover, next-day prefetch, cooldown and stale state
 
-Original audit: **N05** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md) · Status D / I / V: **IMS / IMS / PEX** · Historical disposition: *still implicit or vulnerable*
+Original audit: **N05** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md) · Status D / I / V: **EIV / PEX / EEV** · Historical disposition: *still implicit or vulnerable*
 
 - **Scope and decision.** Promotion of tomorrow at civil midnight, recovery of a missing current day, next-day prefetch.
 - **Sources.** `src/native/index.html` `_prayerCooldown` ~L1166, `prayerNextDay` ~L1177, `beginPrayerRequest`…`maintainPrayerDay` ~L1224-1260, state ~L2271-2274
@@ -462,7 +462,7 @@ Original audit: **N05** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
 - **Findings.** [PRA-F-21](docs/audit/post-rlgwo/FINDINGS.md#pra-f-21)
 - **R002D `!day` early-return row (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** `maintainPrayerDay` still returns on an unresolved day (codes unchanged). Recovery is now explicit ([R002D](docs/state-contracts/R002D.md) D.1-10): a rejected hint can no longer produce an unresolved day; for any other cause no request is issued and no owner/cooldown is created, and the next maintenance opportunity after the day resolves starts `loadPrayerData` (D-04). The speculative prefetch-zone retry hypothesis above is unchanged and not remediated.
 - **R002E rollover/prefetch/stale contract (issue 95), branch `claude/r002e-prayer-presentation-20261113` (not merged; no independent review yet).** Documented: [R002E contract](docs/state-contracts/R002E.md) §1.1 (regions, events, guards, effects; invariants I-S1 and I-S2). Enforced in code: behaviour unchanged; the mirror flags are kept (gate G-E2 option b). Verified by `tests/prayer-presentation-residuals.test.cjs`: E-04 mirrors equal `_requestSlots`/`_prayerCooldown.current` after 15 events (mutant m1 killed); E-02 stale ⇒ no model holds over 9 clock/seek/adoption/apply/zone sequences; the one exception is pinned. Corrected (PRA-F-21, amendment R002E-A2): the stale marker is **reachable in one clock-step-back interleaving; retained** — a backward wall step across civil midnight between `maintainPrayerDay` and `render` in one frame publishes the model with `data-stale="prayer"` for that frame; the next frame clears it. G-E1 is resolved by retention (rule and writer unchanged). Unresolved: the prefetch-zone retry hypothesis is unchanged.
-- **Proposed status (effective on acceptance).** D / I / V **EIV / PEX / EEV** (R002E): contract documented and matching the code; slots and cooldowns are centralised; the mirrors are consistent by test, not by construction, and the stale marker's one-frame reachability is documented and retained; V by unit tests plus mutation control.
+- **Status accepted (R002E, issue 95).** D / I / V **EIV / PEX / EEV**, per the [R002E final certificate](https://github.com/theislampill/salah_widget/issues/95#issuecomment-6861511641): contract documented and matching the code; slots and cooldowns are centralised; the mirrors are consistent by test, not by construction, and the stale marker's one-frame reachability is documented and retained; V by unit tests plus mutation control.
 
 <a id="ism-pray-005"></a>
 ### ISM-PRAY-005 — Prayer model, explicit next-event selection, countdown and DOM publication
@@ -501,7 +501,7 @@ Original audit: **N06** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original remaining risk: New local proof: evidence/probes/native/join-probes.cjs → NF01. Native visual/semantic acceptance after a future fix remains required. Timeline progress uses a wall cycle even when next epoch is unavailable; no separate defect is asserted without a stricter presentation contract.
 - **Findings.** [PRA-F-21](docs/audit/post-rlgwo/FINDINGS.md#pra-f-21), [PRA-F-35](docs/audit/post-rlgwo/FINDINGS.md#pra-f-35)
 - **R0028 (issue 89).** `r0022-baseline-balance` London case repaired by a lawful next-civil-date successor; R0007's `next-day-required` rule is confirmed as accepted behaviour, not a regression. The accepted R0007 test `test_effect_request_selects_the_fixed_font_ingress_pair` failed against the later committed request; R0028 slice 3 (amendment R0028-A1) re-points it to the frozen accepted font-ingress request, and it passes (ledger R28-L11 removed).
-- **R002C prayer-stage ordering (issue 93), branch `claude/r002c-prayer-isolation-20261113` (not merged; no independent review yet).** Documented: [R002C contract](docs/state-contracts/R002C.md) §1.2 (P-1..P-3; the R0007 contract is preserved unchanged). Enforced: `render` runs the prayer stage (`model`, `prefetchPrayerDay`, `.cn/.nt/.left`, bar, arc, `fitCn`, rows, `renderCalendarDates`, `data-stale`; or the withdrawal and calendar) before every optional stage; a prayer-stage failure records `prayer`, sets `_lastRender=null`, publishes the existing withdrawal and runs only the no-timetable optional stages (never `applyTheme`); the receipt is written in `finally` after the theme, with `fx` null when the theme failed. Verified by: `tests/render-liveness-containment.test.cjs` R2C-01, R2C-05, R2C-08 (RED on 5542ef4e, GREEN here), mutants m1, m4, m7a-c killed; prayer-next-event-state and r0007-countdown unchanged. Proposed status: codes unchanged.
+- **R002C prayer-stage ordering (issue 93), branch `claude/r002c-prayer-isolation-20261113` (not merged; no independent review yet).** Documented: [R002C contract](docs/state-contracts/R002C.md) §1.2 (P-1..P-3; the R0007 contract is preserved unchanged). Enforced: `render` runs the prayer stage (`model`, `prefetchPrayerDay`, `.cn/.nt/.left`, bar, arc, `fitCn`, rows, `renderCalendarDates`, `data-stale`; or the withdrawal and calendar) before every optional stage; a prayer-stage failure records `prayer`, sets `_lastRender=null`, publishes the existing withdrawal and runs only the no-timetable optional stages (never `applyTheme`); the receipt is written in `finally` after the theme, with `fx` null when the theme failed. Verified by: `tests/render-liveness-containment.test.cjs` R2C-01, R2C-05, R2C-08 (RED on 5542ef4e, GREEN here), mutants m1, m4, m7a-c killed; prayer-next-event-state and r0007-countdown unchanged. Status accepted (R002C, issue 93; [R002C final certificate](https://github.com/theislampill/salah_widget/issues/93#issuecomment-6859282902); pull request 116): codes unchanged.
 - **R002E model fields (issue 95), branch `claude/r002e-prayer-presentation-20261113` (not merged; no independent review yet).** `warmEnd` and `needTomorrow` have no product reader and are kept as instrument seams (R0007 ES07 `independent-label` mutant; `tests/r0002-harness.cjs`), recorded in [R0007](docs/state-contracts/R0007.md) and asserted by E-06 of `tests/prayer-presentation-residuals.test.cjs`. No status change proposed (field documentation only).
 
 <a id="ism-pray-006"></a>
@@ -546,7 +546,7 @@ Original audit: **N07** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
 <a id="ism-pray-007"></a>
 ### ISM-PRAY-007 — Countdown font readiness, rail sampling and geometry-fit cache
 
-Original audit: **N18** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md) · Status D / I / V: **PEX / IMS / PEX** · Historical disposition: *partly resolved*
+Original audit: **N18** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *partly resolved*
 
 - **Scope and decision.** When the countdown text is re-measured and fitted to the arc rail.
 - **Sources.** `src/native/index.html` `_cnFit`, `cnFontChanged`, `cnFontSignature` ~L3374-3402, `fitCn` ~L3403-3447 (gen ~L6836)
@@ -581,7 +581,7 @@ Original audit: **N18** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original remaining risk: Real FontFace arrival/failure, exact text/rail geometry and possible equal-key/different-path collision need native metrics/pixels. No speculative fix is authorized.
 - **Findings.** [PRA-F-23](docs/audit/post-rlgwo/FINDINGS.md#pra-f-23)
 - **R002E fit key (issue 95), branch `claude/r002e-prayer-presentation-20261113` (not merged; no independent review yet).** Stage 1 native discriminator (`tools/qa/r002e_fit_discriminator.cjs`, Chromium/Firefox/WebKit, fixture records, all requests stubbed) established a visible stale fit at R002C `e1839a45`: Pisa → Trondheim on 25-09-2026 (equal rounded sunrise/sunset) left `.cn` at 19.8 px where a fresh load fits 19.4–19.5 px, crops differing on all three engines; Sendai → Iwaki differed on Chromium. Enforced in code: the key now also carries `noon`, the model declination and the runtime generation (a broad location change — the only way latitude changes — starts a new generation); the font gate and exact-`d` sample cache are unchanged. Verified: candidate 18/18 cells warm = fresh with 0 differing crop pixels; VM row E-03 (RED at `e1839a45`), mutants m2/m3 killed. Documented: [R002E](docs/state-contracts/R002E.md) §1.3, §2; DESIGN "Countdown name fit". Deviation: `resetForNewLocation` does not clear `_cnFit` (the generation component covers every broad change). Unresolved: arbitrary embedding transforms (no ResizeObserver), unchanged.
-- **Proposed status (effective on acceptance).** D / I / V **EIV / EEV / EEV** (R002E; V EIV only after independent review of the native evidence).
+- **Status accepted (R002E, issue 95).** D / I / V **EIV / EEV / EEV**, per the [R002E final certificate](https://github.com/theislampill/salah_widget/issues/95#issuecomment-6861511641) (V stays EEV, as the certificate states).
 
 <a id="ism-pray-008"></a>
 ### ISM-PRAY-008 — Optional web-typography activation gate
@@ -616,9 +616,9 @@ Original audit: **new (NEW-A-01)** · Lane papers: [A](docs/audit/post-rlgwo/lan
 <a id="ism-pray-009"></a>
 ### ISM-PRAY-009 — Live timezone authority `tz` (multi-writer) and its consumer fan-out
 
-Original audit: **new (NEW-A-03; reader list extended by the second omission pass, OM-01)** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **IMS / IMS / PEX** · Historical disposition: *new*
+Original audit: **new (NEW-A-03; reader list extended by the second omission pass, OM-01)** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *new*
 
-Proposed status (effective on acceptance): D / I / V **EIV / EEV / EEV** (R002D; V EIV only after independent review and native evidence are accepted).
+Status accepted (R002D, issue 94): D / I / V **EIV / EEV / EEV**, per the [R002D final certificate](https://github.com/theislampill/salah_widget/issues/94#issuecomment-6845125534) for D and I. The certificate's Limits bullet proposes V EIV; this entry's own proposed line was V EEV (EIV only after independent review and native evidence), and the registry records the more conservative EEV. The certificate bounds the native evidence to one site and one instant and records the visual effect of the removed second scene as unobserved.
 
 - **Scope and decision.** Which zone is current: config hint → provider-adopted → current-record zone.
 - **Sources.** writers `src/native/index.html` `bindConfig` ~L686, `loadPrayerData` ~L3676/3691/3697, `adoptPrayerBundle` ~L1213; readers `partsInTz` ~L937, `prayerCivilDay` ~L1170, `simNow` ~L1014, `beginRequest` ~L1076, `selectPrayerEvent` ~L2324, `selectCalendarDisplay` ~L865, `prayerRecordReady` ~L1185, weather `requestZone`, and (added by OM-01) `skySceneIdentity` ~L2219, `moonGeometryObservation` ~L2031, `weatherInformation` ~L1749, `SalahMoonHost.capture` ~L4171, `real-sky/native-host-hooks.js` ~L42, `real-sky/native-first-paint.mjs` ~L18 (hint copy)
@@ -649,7 +649,7 @@ Proposed status (effective on acceptance): D / I / V **EIV / EEV / EEV** (R002D;
 <a id="ism-pray-010"></a>
 ### ISM-PRAY-010 — Singleton render loop, visibility, provider cadence and motion lifecycle
 
-Original audit: **N19** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md), [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md), [E](docs/audit/post-rlgwo/lanes/E-moon.md) · Status D / I / V: **IMS / IMS / PEX** · Historical disposition: *still implicit or vulnerable*
+Original audit: **N19** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer-time.md), [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md), [E](docs/audit/post-rlgwo/lanes/E-moon.md) · Status D / I / V: **EIV / EEV / EIV** · Historical disposition: *still implicit or vulnerable*
 
 - **Scope and decision.** Drives prayer maintenance, render, weather/radar polls, cloud paint and preview presentation every visible frame.
 - **Sources.** `src/native/index.html` `_loopStarted` ~L3648, `startRenderLoop` ~L3855-3898: `loop` L3869-3889, `_raf=requestAnimationFrame(loop)` L3888, `start` L3890, `stop`/`setVis` L3891-3892 (gen ~L7288)
@@ -684,12 +684,12 @@ Original audit: **N19** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r001d-lifecycle.cjs', 'tests/r0020-clock.cjs', 'tests/r0025-lifecycle.cjs', 'tests/real-sky/native-lifecycle.test.mjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'No real-browser RAF suspension, media-query transition, frame-budget or renderer-present exception recovery proof. Hypothetical thrown callbacks are not listed as reproduced product defects.'}
   - Original remaining risk: No real-browser RAF suspension, media-query transition, frame-budget or renderer-present exception recovery proof. Hypothetical thrown callbacks are not listed as reproduced product defects. Wall-clock rollback can reject weather freshness while weather/radar retry gates remain closed; exact-source gates were exercised under XF02, without native browser/provider qualification.
 - **Findings.** [PRA-F-01](docs/audit/post-rlgwo/FINDINGS.md#pra-f-01)
-- **R002C render-loop liveness (issue 93), branch `claude/r002c-prayer-isolation-20261113` (not merged; no independent review yet).** Documented: [R002C contract](docs/state-contracts/R002C.md) §1.1. Enforced: `loop` clears its consumed id on entry and reschedules in `finally` while wanted (`_wanted` is false only after `stop()`); `start()` schedules only when no frame is pending or running; each loop stage (`maintainPrayerDay`, `render`, cloud reconcile, cloud paint, telemetry, preview present) runs in `runRenderStage`; a residual failure is recorded as `frame` and never leaves the rAF callback. Fault record: `qaState().renderFaults`. Verified by: R2C-02, R2C-03, R2C-09 (RED on 5542ef4e, GREEN here), mutants m2, m3, m6 killed; r001d-lifecycle, r0025-lifecycle, r0020-clock unchanged; native injected-fault recipe `tools/qa/run_r002c_native.cjs` (contract §5). Also removes a latent double schedule: a hide+show inside a healthy frame left two pending frames on 5542ef4e. Proposed status (effective on acceptance): D EIV / I EEV / V EIV only after independent review; the entry's current codes unchanged.
+- **R002C render-loop liveness (issue 93), branch `claude/r002c-prayer-isolation-20261113` (not merged; no independent review yet).** Documented: [R002C contract](docs/state-contracts/R002C.md) §1.1. Enforced: `loop` clears its consumed id on entry and reschedules in `finally` while wanted (`_wanted` is false only after `stop()`); `start()` schedules only when no frame is pending or running; each loop stage (`maintainPrayerDay`, `render`, cloud reconcile, cloud paint, telemetry, preview present) runs in `runRenderStage`; a residual failure is recorded as `frame` and never leaves the rAF callback. Fault record: `qaState().renderFaults`. Verified by: R2C-02, R2C-03, R2C-09 (RED on 5542ef4e, GREEN here), mutants m2, m3, m6 killed; r001d-lifecycle, r0025-lifecycle, r0020-clock unchanged; native injected-fault recipe `tools/qa/run_r002c_native.cjs` (contract §5). Also removes a latent double schedule: a hide+show inside a healthy frame left two pending frames on 5542ef4e. Status accepted (R002C, issue 93; [R002C final certificate](https://github.com/theislampill/salah_widget/issues/93#issuecomment-6859282902); pull request 116): D / I / V EIV / EEV / EIV for the whole machine, as the certificate states; the independent review the proposal required is recorded there as completed.
 
 <a id="ism-pray-011"></a>
 ### ISM-PRAY-011 — User-visible prayer status text owner (`.left`, `.nt`)
 
-Original audit: **new (independent review omission)** · Lane papers: none (added by the integrator after the independent review) · Status D / I / V: **IMS / IMS / PEX** · Historical disposition: *new*
+Original audit: **new (independent review omission)** · Lane papers: none (added by the integrator after the independent review) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *new*
 
 - **Scope and decision.** Which message the countdown line shows when prayer data or the countdown is unavailable.
 - **Sources.** `src/native/index.html` `showError` L2278 (writes `.nt`="—" and `.left`); callers L1027 ("Simulation time unavailable"), L3503 ("Countdown unavailable"), L3704 and L3706 ("Could not load prayer times"), L3811 ("Add lat & lon to the URL"); `withdrawPrayerPresentation` L3477-3481 ("Prayer times unavailable"); model branch L3502 (countdown markup)
@@ -714,7 +714,7 @@ Original audit: **new (independent review omission)** · Lane papers: none (adde
 - **Hypotheses.** the "Could not load prayer times" text is effectively invisible in the live loop; not observed in a browser
 - **Unknowns.** pixel visibility
 - **R002E status owner (issue 95), branch `claude/r002e-prayer-presentation-20261113` (not merged; no independent review yet).** Documented: [R002E contract](docs/state-contracts/R002E.md) §1.2 (nine visible states, last-writer precedence kept by gate G-E3 option 1); DESIGN "Status line". Enforced in code: `writePrayerStatus` is the only `.nt`/`.left` writer; `showError`, the withdrawal and the countdown route through it with the same write order and DOM properties (VM differential vs `e1839a45`: 14/14 scenes identical). Verified by `tests/prayer-presentation-residuals.test.cjs` E-07a: the single-writer row (RED at `e1839a45`) and every state including the replacement sequences (load failure → withdrawal at the next render; invalid scene → withdrawal after a direct `render()` → simulation text at the next frame); mutant m4 killed. Resolved hypothesis: in the VM fixture "Could not load prayer times" is visible until the next render (the first loop frame), as stated above; on-screen duration in a browser is not measured.
-- **Proposed status (effective on acceptance).** D / I / V **EIV / EEV / EEV** (R002E).
+- **Status accepted (R002E, issue 95).** D / I / V **EIV / EEV / EEV**, per the [R002E final certificate](https://github.com/theislampill/salah_widget/issues/95#issuecomment-6861511641).
 
 ## Weather, radar and location acquisition (`ISM-WX`)
 
@@ -1453,7 +1453,7 @@ Original audit: **C07** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-cfg-010"></a>
 ### ISM-CFG-010 — Builder ↔ widget preview handoff and the 325×530 geometry contract
 
-Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **DWE / PEX / PEX** · Historical disposition: *new*
+Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** How a builder draft reaches a running widget and where the card geometry is fixed.
 - **Sources.** `src/native/builder.html` `base` ~L201, iframe ~L166-167, snippet ~L215; `presets/salah-widget.tablissng.json` ~L9; `README.md` ~L564-575; geometry literals (OM-06) `src/native/index.html` ~L482, ~L520-554, ~L2072, ~L2088, ~L2986; `real-sky/native-contract.mjs` ~L20, `native-host.mjs`, `native-composition.mjs`, `native-first-paint.mjs`, `native-preview.mjs`, `native-host-hooks.js` ~L35
@@ -1473,7 +1473,7 @@ Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/a
 - **Accepted evidence.** R000F invariants scenario (current snippets only); native layout cell
 - **Tests.** R000F `invariants` scenario
 - **Observed facts.** README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); values agree across modules at baseline (OM-06)
-- **Proposed status (R0037, issue 104).** Owner decision DG2 (amendment R0037-A1): the frozen V1 README snippet stays 330×534, V1's card-plus-drop-shadow footprint (native comparison: 3,102 pixels differ inside the card box at 325×530); the 325×530 rule applies to the current widget. On the R0037 slice-2 branch the README states the current-version size and no longer says "change only `src`", AGENTS.md names the V1 snippet as the documented exception, and the R000F `invariants` scenario asserts the current-version size statement. This removes the contradiction that made D DWE; proposed D / I / V **PEX / PEX / PEX**, taking effect only on acceptance (the renderer-literal census OM-06 stays with R0034). The cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** Owner decision DG2 (amendment R0037-A1): the frozen V1 README snippet stays 330×534, V1's card-plus-drop-shadow footprint (native comparison: 3,102 pixels differ inside the card box at 325×530); the 325×530 rule applies to the current widget. On the R0037 slice-2 branch the README states the current-version size and no longer says "change only `src`", AGENTS.md names the V1 snippet as the documented exception, and the R000F `invariants` scenario asserts the current-version size statement. This removes the contradiction that made D DWE; status accepted on R0037's acceptance ([R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360)): D / I / V **PEX / PEX / PEX** (the renderer-literal census OM-06 stays with R0034).
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
 - **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Renderer-literal facet only: `tests/real-sky/native-geometry-census.test.mjs` pins every `325`/`530` literal per renderer module against the `.c` 325×530 card rule and rejects near-miss literals (mutant M8 killed). Builder/README/preset contract unchanged (R000F; README V1 snippet is R0037). Proposed status (effective on acceptance): codes unchanged for the other facets; renderer-literal facet V EEV.
 
@@ -1542,7 +1542,7 @@ Original audit: **N13** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 - **Observed facts.** integrator: `skySceneIdentity` includes `tz` (L2219); `paint` begins a new scene on any identity change (L3246); `finishInitialSkyDocument()` at L3827 precedes `loadPrayerData` (L3846) which writes `tz` (L3676/L3691)
 - **Hypotheses.** brief visible re-pending of celestial layers on non-default-zone boots
 - **Unknowns.** pixel visibility; lifecycle coalescing
-- **R002D identity definition (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D](docs/state-contracts/R002D.md) D.3 — the identity changes iff target coordinates, the anchor (instant/rate/kind) or a configuration generation changes; in wall mode it is `lat|lon|<effective hint>|wall`, equal to the first-paint snapshot identity. The refined-sky capture reports the same hint as `tz`. Verified by: D-06 (builder-shape boot begins 2 scenes / 2 Moon invalidations, equal to the `tz=Asia/Riyadh` control; main 3/3), D-11 (first-paint formula = boot and post-adoption identity for hint≠provider, hint=provider and a rejected hint), mutant m1 killed; tests/real-sky 354/354 unchanged. Proposed status (effective on acceptance): codes unchanged (PEX / PEX / EIV). Native D-13/D-15 evidence: see the contract §5.
+- **R002D identity definition (issue 94), branch `claude/r002d-timezone-authority-20261112` (not merged; no independent review yet).** Documented: [R002D](docs/state-contracts/R002D.md) D.3 — the identity changes iff target coordinates, the anchor (instant/rate/kind) or a configuration generation changes; in wall mode it is `lat|lon|<effective hint>|wall`, equal to the first-paint snapshot identity. The refined-sky capture reports the same hint as `tz`. Verified by: D-06 (builder-shape boot begins 2 scenes / 2 Moon invalidations, equal to the `tz=Asia/Riyadh` control; main 3/3), D-11 (first-paint formula = boot and post-adoption identity for hint≠provider, hint=provider and a rejected hint), mutant m1 killed; tests/real-sky 354/354 unchanged. Status accepted (R002D, issue 94; [R002D final certificate](https://github.com/theislampill/salah_widget/issues/94#issuecomment-6845125534)): codes unchanged (PEX / PEX / EIV), as the certificate states. Native D-13/D-15 evidence: see the contract §5.
 - **Original catalogue contract** ([N13 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/src/native/index.html#L167-L188); carried forward for reference, not re-derived):
   - States: initial document warrant available; scene invalidated/pending; current bodies/preview available without prayer; surface pending/current; complete atmosphere staged; scene committed; initial warrant consumed permanently
   - Transitions: boot or config/explicit clock change → invalidate modern moon and generated preview/real-sky → reset native scene/star/cloud state and withdraw ready classes; current scene key is coordinates/zone plus wall-or-explicit anchor; it intentionally excludes ordinary ticking civil day; surface-ready class requires current runtime.surface, href and scene key; mask additionally requires lunar presence; commit requires fresh moon observation and matching star projection → paint clouds/particle gates → force one style/layout resolution → remove transition suppression and mark committed; no-timetable helper can publish real bodies/current catalogue and remove sky-pending; it retains initial transition suppression until full palette paint; finishInitialSkyDocument permanently consumes first-document warrant before async providers/yield; later invalidations cannot reacquire it
@@ -2974,7 +2974,7 @@ Original audit: **new (NEW-E-05 + NEW-D-04)** · Lane papers: [D](docs/audit/pos
 <a id="ism-bld-001"></a>
 ### ISM-BLD-001 — Native generation output publication sequence
 
-Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
+Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Turns authored sources into root entries and bundles; a wrong output ships at the next merge to main.
 - **Sources.** `tools/build_native.py` (computes every output into an in-memory `Outputs` map; `publish` at the end); `tools/generated_outputs.py` (guards, `replace_exact`, declared owned set, `publish`, `GENERATED.json`); `tools/native_core_horizon.py`; `tools/native_core_spectral_cache.py`; `tools/native_star_bootstrap.py`. Contract: [R0029](docs/state-contracts/R0029.md).
@@ -2996,7 +2996,7 @@ Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 - **Invariants.** I1 no detected failure leaves an in-tree change; I2 `-O` does not change validation; I3 a drifted anchor fails the build; I4 stale owned outputs never survive a successful build; I5 identical inputs give the committed bytes
 - **Failure and recovery.** failure before publish needs no recovery; failure during publish is recovered by re-running. Two concurrent builds on one tree are unsupported (DG-1 default: documented, no lock file)
 - **Invalid, duplicate, stale or concurrent risks.** a forged or stale inventory cannot widen deletion beyond the declared set; an unreadable inventory fails before publish; a multi-file publish is not atomic as a whole (per-file `os.replace`); concurrent builds unsupported
-- **Proposed status (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, taking effect only when R0029 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, per the [R0029 final certificate](https://github.com/theislampill/salah_widget/issues/90#issuecomment-6860166513).
 - **Status evidence.** D: [R0029 contract](docs/state-contracts/R0029.md) + AGENTS CP9 sentence · I: explicit, centralised in `generated_outputs.py` · V: `tests/real-sky/generator_atomicity_test.py` (12 tests) and the re-expressed R0027 tests, with mutation controls recorded in R0029.md; independent review passed at candidate `c9290f8b` with advisories (orchestrator records the reference); codes change only on acceptance
 - **Work orders.** R0027 (issue 69: spectral transform added); R0029 (issue 90: staging, guards, inventory)
 - **Accepted evidence.** `tests/real-sky/native_spectral_cache_build_test.py` 8 OK; build-twice parity (lane F probe: 0 diffs over 509 files; integrator re-run at hand-back). R0029 executor evidence (not yet accepted): see R0029.md ledger
@@ -3016,7 +3016,7 @@ Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 <a id="ism-bld-002"></a>
 ### ISM-BLD-002 — Moon generation preflight and expansion
 
-Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
+Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Validation and expansion of Moon outputs into the entries.
 - **Sources.** `tools/build_moon.py` `plan_moon` (computes every Moon output from the given entry texts into an `Outputs` map; writes nothing) and `build_moon` (direct form: plan, then `publish` without inventory); `tools/compact_receivers.py`; `tools/generated_outputs.py`. Contract: [R0029](docs/state-contracts/R0029.md).
@@ -3036,7 +3036,7 @@ Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 - **Effects.** Moon outputs, published by ISM-BLD-001; `moon/BUILD.json` keeps its schema and bytes; the file inventory lives in the sibling `GENERATED.json`
 - **Failure and recovery.** every Moon failure is detected before publish and needs no recovery
 - **Invalid, duplicate, stale or concurrent risks.** stale chunks removed by the next successful build (R0029 G-06); non-`.js` files in `moon/file-data/` and any other `moon/` file outside the declared set are never removed
-- **Proposed status (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, taking effect only when R0029 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, per the [R0029 final certificate](https://github.com/theislampill/salah_widget/issues/90#issuecomment-6860166513).
 - **Status evidence.** D: AGENTS Moon section + [R0029 contract](docs/state-contracts/R0029.md) · I: explicit · V: guard tests + `generator_atomicity_test.py` (Moon asset drift, both Moon count sites, stale chunk); independent review pending
 - **Work orders.** R0021 (HOST_UNITS gained `moon-install-guard.mjs`); R0029 (issue 90: staged `plan_moon` interface); R0033 (issue 100) must rebase onto `plan_moon`
 - **Accepted evidence.** `tests/real-sky/moon_build_guard_test.py` 8 OK
@@ -3053,7 +3053,7 @@ Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 <a id="ism-bld-003"></a>
 ### ISM-BLD-003 — R0017 Pages payload qualification workflow and retained receipt
 
-Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / EEV / IMS** · Historical disposition: *no longer applicable*
+Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *no longer applicable*
 
 - **Scope and decision.** Whether the published payload stays within the qualified bound.
 - **Sources.** `.github/workflows/r0017-pages-payload.yml`; `tools/verify_r0017_pages_payload.py` (APPROVED, ALLOWED ~L11-23; bound ~L106)
@@ -3081,7 +3081,7 @@ Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
   - Original evidence: Read exact workflow/script; no build/CI run
   - Original remaining risk: Imported snapshot has no Git metadata/complete payload, so cannot execute qualification. Hard-coded explanatory zero reference counts are not live dependency scans; root owns deployment evidence.
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07)
-- **Proposed status (R002B, issue 92).** D / I / V **EIV / EEV / EEV**, taking effect only when R002B is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R002B, issue 92).** D / I / V **EIV / EEV / EEV**, per the [R002B final certificate](https://github.com/theislampill/salah_widget/issues/92#issuecomment-6844979120) for D and I. The certificate's Limits bullet proposes V EIV; this entry's own proposed line was V EEV, and the registry records the more conservative EEV.
 - **R002B update (issue 92; candidate branch, not merged or deployed).** Contract: [docs/state-contracts/R002B.md](docs/state-contracts/R002B.md).
   - Documented: payload machine (measurement sources `ci-build` / `deployed-artifact`, bound 1,000,000,000 regular-file bytes by owner decision DG-1(a), verdicts `within` / `exceeds` / `inconclusive`, invariants I1-I4).
   - Enforced in code: `tools/pages_payload.py` (explicit exceptions, no `assert`; `inconclusive` never `within`; envelope-only readback can prove `within` but never `exceeds`). The R0017 verifier is frozen to PR 62 and its `assert` guards are explicit. Branch-bound M2 workflow `.github/workflows/r002b-pages-payload.yml`.
@@ -3111,7 +3111,7 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Status evidence.** D: AGENTS/README · I: external · V: post-hoc readback in certificates
 - **Accepted evidence.** latest Pages build `363c3e53` `built` (integrator `gh api`); lane F public byte readback of four files
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07), [PRA-F-09](docs/audit/post-rlgwo/FINDINGS.md#pra-f-09)
-- **Proposed status, payload dimension (R002B, issue 92).** D / I / V **EIV / PEX / EEV** for the payload dimension only, taking effect only when R002B is accepted and the post-merge deployed measurement is recorded; the cells above stay at the audit baseline until then.
+- **Status accepted, payload dimension only (R002B, issue 92).** D / I / V **EIV / PEX / EEV** for the payload dimension only, per the [R002B final certificate](https://github.com/theislampill/salah_widget/issues/92#issuecomment-6844979120) (the post-merge deployed measurement is recorded there: 1,054 files, 341,027,664 bytes, within the bound). The machine-level codes of this entry stay PEX / IMS / PEX: the machine is the Pages deployment as a whole, whose service is external, and its gate and readback dimensions are covered by the R002A line below.
 - **R002B update, payload dimension only (issue 92; candidate, not merged).** Readback dimensions belong to R002A (issue 91).
   - Documented: `_config.yml` excludes the retained evidence trees `docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence`, `docs/moon/evidence` (owner decision DG-2(a)); evidence stays in git and on github.com.
   - Enforced: by the external Jekyll 3 builder only (string-prefix `exclude`); no repository gate before merge (R002A).
@@ -3122,7 +3122,7 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
   - Enforced: `.github/workflows/qualification.yml` with `tools/qualification/qualification_gate.py` (detects only; no required check, so a merge still deploys unconditionally); `tools/qualification/delivery_identity.py` and `.github/workflows/delivery-identity.yml` (`page_build`, dispatch).
   - Verified: `tests/test_r002a_qualification.py` (registered `py-test_r002a_qualification`, 54 cases, 14 tool mutants killed across the executor's and the reviewer's sets); local readback of the deployed `bcd02af2`: `identical` (128 rows, 2 `not-published`), wrong commit `inconclusive`. Hosted runs and the first post-merge readback are pending.
   - Unresolved: G-08 (`page_build` delivery) not observed. The accepted-history object `8b83df02` is now reachable through the tag `evidence/r0022-accepted-prayer-8b83df02`, and the suites job checks every runner history locator first (missing means INCOMPLETE). Hosted run 43419734052 showed Linux environment differences (vendor-suite wheels, stale bytecode in R0028's mutant harness), fixed in the gate environment. Merged head `60f59fba`: run 43427729405 all jobs green, suites `PASS_WITH_DECLARED_FAILURES (18)` on Linux (historically (24) at `488debfd`, run 43424583530) (R002A sections 7, 7a, 8.1a).
-- **Proposed status (R002A, issue 91).** D / I / V **EIV / EEV / EIV** for the gate and readback dimensions, taking effect only on acceptance (V after the hosted rows and the first post-merge `identical` readback); the cells above stay at the audit baseline until then.
+- **Status accepted, gate and readback dimensions only (R002A, issue 91).** D / I / V **EIV / EEV / EIV** for the gate and readback dimensions only, per the [R002A final certificate](https://github.com/theislampill/salah_widget/issues/91#issuecomment-6860164878) (hosted rows and the first post-merge `identical` readback are recorded there). The gate is advisory and a merge still deploys unconditionally, so the machine-level codes of this entry stay PEX / IMS / PEX.
 
 <a id="ism-bld-005"></a>
 ### ISM-BLD-005 — RLGWO delivery workflow (campaign governance)
@@ -3154,7 +3154,7 @@ Original audit: **new (NEW-F-03)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 <a id="ism-bld-006"></a>
 ### ISM-BLD-006 — Installer-bytes delivery routes and README pin ↔ docs-receipt coupling
 
-Original audit: **new (NEW-F-04; also covers the delivery-route omission FND-F-11)** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / IMS / PEX** · Historical disposition: *new*
+Original audit: **new (NEW-F-04; also covers the delivery-route omission FND-F-11)** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / EEV / EEV** · Historical disposition: *new*
 
 - **Scope and decision.** Which installer bytes users run and what an installer change obliges.
 - **Sources.** `README.md` L59, L63 (unpinned `main` pipe routes), L92-117 (pinned `a4c617eb` review-first route); builder command ~L429-445; `tools/qualification/installer_preview_docs.cjs` L18-20
@@ -3167,7 +3167,7 @@ Original audit: **new (NEW-F-04; also covers the delivery-route omission FND-F-1
 - **Accepted evidence.** `tools/qualification/installer_preview_docs.cjs` L18-20 pins; README L92-117
 - **Findings.** [PRA-F-28](docs/audit/post-rlgwo/FINDINGS.md#pra-f-28)
 - **R002A update (issue 91; branch, not merged, not independently reviewed).** Documented: [R002A](docs/state-contracts/R002A.md) section 2.5 and the single pinned-receipt rule of issue 91 section 4.3 (cited in section 5). Enforced: gate job J5 (`qualification_gate.py pins`): (a) the three docs-receipt SHA-256 pins must equal README/builder/config, no divergence path; (b) the README `INSTALL_COMMIT`/`$InstallCommit` installer blobs must equal the checked-out installers or a valid record in `tools/qualification/installer-pin-divergence.json` (empty at this branch; stale, outlived, duplicate or malformed records are red). `installer-preview-docs.yml` now renders the successor receipt on any branch that changes a pinned file (trigger by path). Verified: unit controls in `tests/test_r002a_qualification.py`; disposable-copy controls (README edit, `install.sh` edit, valid record, stale record) red/red/declared/red; at `bcd02af2` J5 PASS. Unresolved: hosted G-05 runs. DG-4(a): per-receipt pins kept, no central manifest.
-- **Proposed status (R002A, issue 91).** D / I / V **PEX / EEV / EEV**, taking effect only on acceptance; the cells above stay at the audit baseline until then.
+- **Status accepted (R002A, issue 91).** D / I / V **PEX / EEV / EEV**, per the [R002A final certificate](https://github.com/theislampill/salah_widget/issues/91#issuecomment-6860164878) (pull request 117).
 
 <a id="ism-bld-007"></a>
 ### ISM-BLD-007 — Registered regression suites and the known-failure baseline
@@ -3193,7 +3193,7 @@ Original audit: **new (NEW-F-05; carries EF01)** · Lane papers: [A](docs/audit/
 <a id="ism-bld-008"></a>
 ### ISM-BLD-008 — Work-order-branch qualification workflows
 
-Original audit: **new (NEW-F-06)** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **IMS / IMS / UNK** · Historical disposition: *new*
+Original audit: **new (NEW-F-06)** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** Lifecycle of the campaign's CI harnesses.
 - **Sources.** `.github/workflows/*.yml` `on:` blocks
@@ -3205,7 +3205,7 @@ Original audit: **new (NEW-F-06)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Accepted evidence.** integrator trigger census: 32 files; 30 `push` (named branches), 6 `workflow_dispatch`, 1 `pull_request` (PR 62-gated); none on `push` to main
 - **Findings.** [PRA-F-09](docs/audit/post-rlgwo/FINDINGS.md#pra-f-09)
 - **R002A update (issue 91; branch, not merged, not independently reviewed).** Documented: [R002A](docs/state-contracts/R002A.md) section 6, the lifecycle census of every workflow file (owner decision DG-3(a): retained as dispatchable or branch-bound qualification infrastructure; none deleted). Two new workflows: `qualification.yml` (the first `main` trigger) and `delivery-identity.yml`; `installer-preview-docs.yml` re-triggered by path. Enforced: the triggers themselves. Verified: static census at this branch (35 files) and the workflow-guard tests. Unresolved: the three workflows Actions still lists without a file (lane F NEW-F-06) are not touched (registration records are a settings-side artifact); retirement remains an owner decision.
-- **Proposed status (R002A, issue 91).** D / I / V **PEX / PEX / PEX**, taking effect only on acceptance; the cells above stay at the audit baseline until then.
+- **Status accepted (R002A, issue 91).** D / I / V **PEX / PEX / PEX**, per the [R002A final certificate](https://github.com/theislampill/salah_widget/issues/91#issuecomment-6860164878) (pull request 117).
 
 <a id="ism-bld-009"></a>
 ### ISM-BLD-009 — Evidence receipts bound to source hashes
@@ -3228,7 +3228,7 @@ Original audit: **new (NEW-F-07)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 <a id="ism-bld-010"></a>
 ### ISM-BLD-010 — Frozen v1 verification
 
-Original audit: **new (NEW-F-01)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **DWE / EEV / EEV** · Historical disposition: *new*
+Original audit: **new (NEW-F-01)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **EIV / EEV / EIV** · Historical disposition: *new*
 
 *Entry text updated by R0037 (branch candidate, not yet accepted). Contract: [R0037](docs/state-contracts/R0037.md). The status cells stay at the audit baseline until acceptance.*
 
@@ -3253,7 +3253,7 @@ Original audit: **new (NEW-F-01)** · Lane papers: [C](docs/audit/post-rlgwo/lan
 - **Actors and ownership.** `tools/verify_v1.py` owned by R0037; the executor of any change that edits a Jekyll configuration file owns its re-review (adds one `REVIEWED_JEKYLL_CONFIGS` entry with evidence in the same change); Pages build/deploy external (ISM-BLD-004)
 - **Invariants.** v1 bytes unchanged; `MANIFEST_SHA256` unchanged; no reachable permanently-red state for a correct tree; no PASS text claims deployment
 - **Invalid, duplicate, stale or concurrent risks.** a configuration change merged without re-review fails on the next run (no gate on `main` until R002A); a reviewed digest whose evidence is later found wrong must be removed (FAIL returns); the Jekyll configuration-file lookup order on the hosted builder is taken from Jekyll's documented default, not re-measured
-- **Proposed status (R0037, issue 104).** D / I / V **EIV / EEV / EIV (V EIV only after the independent exact-tree review R37-15)**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **EIV / EEV / EIV**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360); the independent exact-tree review R37-15, which the V code required, is recorded there as met.
 - **Status evidence.** D: R0037 contract and `docs/V1_PRESERVATION.md` match the code · I: explicit, centralised guards · V: `tests/test_verify_v1_pages.py` 12/12, 8/8 scratch mutants killed, `--negative-control`; independent review pending
 - **Work orders.** R0017 (`_config.yml` added, 02ab7a93); R0037 (reviewed-digest `--check-pages`, current digest `0f846f7e…` admitted on the measured deployed artifact of merge `06772824`)
 - **Accepted evidence.** none yet accepted for R0037 (branch candidate). Audit baseline: `python tools/verify_v1.py` PASS; `--check-pages` FAIL "New Jekyll configuration requires V1 inclusion review" (retained in `docs/state-contracts/evidence/R0037/baseline/`)
@@ -3265,7 +3265,7 @@ Original audit: **new (NEW-F-01)** · Lane papers: [C](docs/audit/post-rlgwo/lan
 <a id="ism-v1-001"></a>
 ### ISM-V1-001 — Frozen v1 one-time root configuration import
 
-Original audit: **C15** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / PEX / PEX** · Historical disposition: *implemented but not fully verified*
+Original audit: **C15** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C15); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3279,7 +3279,7 @@ Original audit: **C15** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_storage.cjs` 10/10: legacy settings copied once, root byte-identical, save/clear never resurrect root
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / PEX**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / PEX / PEX**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C15 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/config.js#L132-L177); carried forward for reference, not re-derived):
   - States: no V1/latch; latch set; valid imported; no import; V1 record cleared
   - Transitions: when V1 absent and latch absent, set latch before inspecting root record; import only valid version1 record; later loads never retry root import once latch set; existing V1 record wins; clear sets latch then removes V1 key, preserving root key
@@ -3291,7 +3291,7 @@ Original audit: **C15** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-002"></a>
 ### ISM-V1-002 — Frozen v1 configuration apply and boot without generation ownership
 
-Original audit: **C16** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
+Original audit: **C16** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C16); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3306,7 +3306,7 @@ Original audit: **C16** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C16 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L593-L632); carried forward for reference, not re-derived):
   - States: resolve; coarse pending; configured; saving; resetting; fetching; rendering; manual location needed
   - Transitions: apply optionally persists, binds globals, clears datasets and starts weather/prayer; loop start is idempotent; reset clears visible/cache state but neither cancels nor epochs existing network operations; coarse boot completion binds after await without a user-edit ownership token
@@ -3319,7 +3319,7 @@ Original audit: **C16** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-003"></a>
 ### ISM-V1-003 — Frozen v1 prayer cache, retry, tomorrow and rollover
 
-Original audit: **C17** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / PEX / UNK** · Historical disposition: *implemented but not fully verified*
+Original audit: **C17** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / PEX / UNK** · Historical disposition: *implemented but not fully verified*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C17); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3333,7 +3333,7 @@ Original audit: **C17** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C17 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L734-L759); carried forward for reference, not re-derived):
   - States: cached; fetch retry1/2/3; today admitted; tomorrow pending; rollover stale; rollover pending
   - Transitions: cache date match immediately renders; fetch retries with900/1800ms delays and accepts timings without current-date/owner/schema fencing; fetchTimings updates global timezone; completion saves using current mutable cacheKey; after evening, missing tomorrow triggers a retry chain; failure clears flag so another render retries; rollover has60second retry guard
@@ -3345,7 +3345,7 @@ Original audit: **C17** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-004"></a>
 ### ISM-V1-004 — Frozen v1 weather current/forecast acquisition
 
-Original audit: **C18** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / PEX / UNK** · Historical disposition: *implemented but not fully verified*
+Original audit: **C18** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / PEX / UNK** · Historical disposition: *implemented but not fully verified*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C18); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3359,7 +3359,7 @@ Original audit: **C18** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C18 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L761-L808); carried forward for reference, not re-derived):
   - States: no sample; cached; busy; fresh; throttled; stale; forecast simulation
   - Transitions: load sample under six hours; request if not busy, not fresh15min, and last attempt at least60sec; fetch captures URL; completion writes elevation/current sample and caches using current mutable coordinates; hourly epoch conversion uses current tz; simulation override bypasses network; advancing simulation mutates from forecast track
@@ -3371,7 +3371,7 @@ Original audit: **C18** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-005"></a>
 ### ISM-V1-005 — Frozen v1 radar manifest, tile and freshness acquisition
 
-Original audit: **C19** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
+Original audit: **C19** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C19); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3385,7 +3385,7 @@ Original audit: **C19** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C19 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L809-L843); carried forward for reference, not re-derived):
   - States: throttled; manifest pending; tile pending; sample accepted; stale/none
   - Transitions: ten-minute throttle is stamped before manifest request; last past frame selected; coordinates are read after manifest await, then image tile/canvas alpha sample determines precipitation; receipt wall time is stamped on acceptance;20min expiry uses receipt time rather than source frame time
@@ -3397,7 +3397,7 @@ Original audit: **C19** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-006"></a>
 ### ISM-V1-006 — Frozen v1 modal editing, lookup, GPS and Reset
 
-Original audit: **C20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
+Original audit: **C20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / IMS / PEX** · Historical disposition: *still implicit or vulnerable*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C20); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3412,7 +3412,7 @@ Original audit: **C20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_limitations.test.cjs` (R0037, CF08 Reset-truth witness); `tests/v1_browser.py` exists but was not run for this entry
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / PEX (V PEX on the CF08 witness `tests/v1_limitations.test.cjs`)**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / IMS / PEX** (V PEX on the CF08 witness `tests/v1_limitations.test.cjs`), per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C20 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L2283-L2451); carried forward for reference, not re-derived):
   - States: closed; open clean; dirty; search pending; candidate cycle; GPS pending; reset pending; commit
   - Transitions: open populates and increments search sequence; close commits dirty config then hides; manual coordinate edits or changed query do not fence earlier lookup; candidate Enter can cycle old list; GPS/permission await has no session owner; Reset ignores clearLocal result, clears stored error and claims success; later coarse completion can replace newer draft
@@ -3425,7 +3425,7 @@ Original audit: **C20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-007"></a>
 ### ISM-V1-007 — Frozen v1 real/simulated clock anchor compatibility variant
 
-Original audit: **C21** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / PEX / UNK** · Historical disposition: *implemented but not fully verified*
+Original audit: **C21** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / PEX / UNK** · Historical disposition: *implemented but not fully verified*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C21); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3439,7 +3439,7 @@ Original audit: **C21** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C21 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L699-L731); carried forward for reference, not re-derived):
   - States: unanchored; wall-like advancing; fixed simulation; fast simulation; timezone re-anchor
   - Transitions: first call/timezone change captures Date.now or simulation HHMM; subsequent epoch is base plus monotonic elapsed multiplied by timescale; invalid timezone falls back to browser local Date parts; real default also uses monotonic anchor rather than following corrected wall clock
@@ -3451,7 +3451,7 @@ Original audit: **C21** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-008"></a>
 ### ISM-V1-008 — Frozen v1 Moon texture readiness and pending render cache
 
-Original audit: **C22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
+Original audit: **C22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C22); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3465,7 +3465,7 @@ Original audit: **C22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C22 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L953-L1022); carried forward for reference, not re-derived):
   - States: textures pending; one texture ready; both ready; pending latest render; render cache hit; painted
   - Transitions: two image onload callbacks extract pixels; both ready flush only latest pending request; render before ready replaces pending parameters; ready render reuses buffer and skips phase change under0.004 with same waxing; image/canvas failure does not set a settled failure flag
@@ -3477,7 +3477,7 @@ Original audit: **C22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-v1-009"></a>
 ### ISM-V1-009 — Frozen v1 synthetic star catalogue and projection cadence
 
-Original audit: **C23** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **IMS / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
+Original audit: **C23** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / IMS / UNK** · Historical disposition: *still implicit or vulnerable*
 
 *Status carried forward from the original catalogue at `f71fef6c` (id C23); not re-derived in this audit. Fields below that are not marked as lane or integrator observations restate that catalogue.*
 
@@ -3491,7 +3491,7 @@ Original audit: **C23** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
 - **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
 - **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status accepted (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, per the [R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360). The limitations stay documented, not repaired.
 - **Original catalogue contract** ([C23 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L1083-L1170); carried forward for reference, not re-derived):
   - States: unbuilt; built; projected; reprojection required
   - Transitions: boot seeded pseudo-random catalogue, creates elements and initial projection; configuration reset/day change invalidates projected flag; advancing simulation projects on render; ordinary real-time render leaves already-projected stars fixed between invalidation events; moon position updates independently
@@ -4362,7 +4362,7 @@ page opening); `Read-Host` is the host's own.
 <a id="ism-inst-008"></a>
 ## ISM-INST-008: Release metadata and asset selection
 
-Original audit: **new (FND-F-11 omission; R0014 issue 20 behaviour)** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / UNK / UNK** · Historical disposition: *new*
+Original audit: **new (FND-F-11 omission; R0014 issue 20 behaviour)** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **EIV / PEX / EEV** · Historical disposition: *new*
 
 - **Scope and decision.** Which TablissNG release asset an installer selects. Partial entry: transitions not traced.
 - **Sources.** `install.ps1` `$script:LatestRelease` L1140, `Get-LatestRelease` L1141-1150 (`/releases/latest`), `Select-TablissNgAsset` L1154; `install.sh` `select_asset` L560 (`/releases/latest` L566); `docs/state-contracts/R0013.md` ~L146-151
@@ -4377,7 +4377,7 @@ Original audit: **new (FND-F-11 omission; R0014 issue 20 behaviour)** · Lane pa
 - **Tests.** not identified
 - **Observed facts.** sources located by the integrator
 - **Unknowns.** tier order; behaviour on missing or renamed assets; GitHub API failures
-- **Proposed status (R0039, issue 106).** D / I / V **EIV / PEX / EEV**, taking effect only when R0039 is accepted; the cells above stay at the audit baseline until then. V is EEV because the Bash tier test carries a tier-reorder mutant that must fail.
+- **Status accepted (R0039, issue 106).** D / I / V **EIV / PEX / EEV**, per the [R0039 final certificate](https://github.com/theislampill/salah_widget/issues/106#issuecomment-6862449283). V is EEV because the Bash tier test carries a tier-reorder mutant that must fail.
 - **R0039 completion (issue 106; candidate branch, not merged). Traced at `846952ba` (installer bytes unchanged since `e4dbf91b`).**
   - **Dimensions.** (1) Release metadata: `unfetched` or `fetched`. PowerShell: `$script:LatestRelease` is reset to `$null` at each run start (L1140) and `Get-LatestRelease` (L1141–1152) fetches `https://api.github.com/repos/<repo>/releases/latest` once through `Invoke-RestMethod` (no `-TimeoutSec`) and caches it for later targets of the same run; a failed fetch caches nothing, so the next target fetches again. Bash: `select_asset` (L560–591) fetches on every call through embedded Python `urllib` with `timeout=30`; there is no per-run cache. (2) Tier: the first non-empty candidate list in order. (3) Selected object: one asset (`name`, `browser_download_url`), or a refusal.
   - **Tiers (identical on both installers).** Firefox: `.xpi` whose name contains `signed` or `firefox`; then any `.xpi`; then `firefox*.zip`; each excluding `unsigned` and `source`. Chromium: `chrom(e|ium)*.zip`; then `tabliss*.zip`; each excluding `firefox`, `safari` and `source`. Case-insensitive; within a tier, release order. Any other family is refused.
