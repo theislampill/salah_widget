@@ -266,7 +266,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 |---|---|---|---|---|---|---|
 | [ISM-BLD-001](#ism-bld-001) | Native generation output publication sequence | C13 | PEX | PEX | PEX | implemented but not fully verified |
 | [ISM-BLD-002](#ism-bld-002) | Moon generation preflight and expansion | C14 | PEX | PEX | PEX | implemented but not fully verified |
-| [ISM-BLD-003](#ism-bld-003) | R0017 Pages payload qualification workflow and retained receipt; R002B payload machine | C24 | EIV | EEV | EEV | refounded by R002B (candidate) |
+| [ISM-BLD-003](#ism-bld-003) | R0017 Pages payload qualification workflow and retained receipt | C24 | PEX | EEV | IMS | no longer applicable |
 | [ISM-BLD-004](#ism-bld-004) | Pages deployment from main (a commit to main is a deploy) | new | PEX | IMS | PEX | new |
 | [ISM-BLD-005](#ism-bld-005) | RLGWO delivery workflow (campaign governance) | new | PEX | IMS | PEX | new |
 | [ISM-BLD-006](#ism-bld-006) | Installer-bytes delivery routes and README pin ↔ docs-receipt coupling | new | PEX | IMS | PEX | new |
@@ -3049,12 +3049,12 @@ Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
   - Original evidence: Read exact workflow/script; no build/CI run
   - Original remaining risk: Imported snapshot has no Git metadata/complete payload, so cannot execute qualification. Hard-coded explanatory zero reference counts are not live dependency scans; root owns deployment evidence.
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07)
+- **Proposed status (R002B, issue 92).** D / I / V **EIV / EEV / EEV**, taking effect only when R002B is accepted; the cells above stay at the audit baseline until then.
 - **R002B update (issue 92; candidate branch, not merged or deployed).** Contract: [docs/state-contracts/R002B.md](docs/state-contracts/R002B.md).
   - Documented: payload machine (measurement sources `ci-build` / `deployed-artifact`, bound 1,000,000,000 regular-file bytes by owner decision DG-1(a), verdicts `within` / `exceeds` / `inconclusive`, invariants I1-I4).
   - Enforced in code: `tools/pages_payload.py` (explicit exceptions, no `assert`; `inconclusive` never `within`; envelope-only readback can prove `within` but never `exceeds`). The R0017 verifier is frozen to PR 62 and its `assert` guards are explicit. Branch-bound M2 workflow `.github/workflows/r002b-pages-payload.yml`.
-  - Verified by: `tests/r002b-pages-payload.test.cjs` (16 tests; RED 15 fail on main source; 13/13 mutants killed). Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
-  - Hosted M2 run 43344320802 measured real builds (predecessor `5b846476` 10,160 files / 1,920,250,770 B `exceeds`; candidate 1,044 files / 340,738,680 B `within`) but failed its diff on the intended `AGENTS.md` resize; the instrument now takes a declared-change list (`git diff --name-only BASE HEAD`) and the base is current `main`.
-  - Unresolved: a green M2 re-run and its receipts; M1 deployed-artifact stream (owner permission, G-02); post-merge deployed measurement and PR-gate wiring (R002A, issue 91).
+  - Verified by: `tests/r002b-pages-payload.test.cjs` (19 tests; 17/17 mutants killed) and hosted M2 run 43366170074 (head `c1ab548d`, published-source digest `38097925…`): base `5a90cc03` 10,162 files / 1,920,370,569 B `exceeds`; candidate 1,044 files / 340,753,776 B `within`; 9,122 files removed, all under the four prefixes; 156 protected files byte-identical. Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
+  - Unresolved: the final-head run (bound by published-source digest); M1 deployed-artifact stream (owner permission, G-02); post-merge deployed measurement and PR-gate wiring (R002A, issue 91).
 
 <a id="ism-bld-004"></a>
 ### ISM-BLD-004 — Pages deployment from main (a commit to main is a deploy)
@@ -3078,10 +3078,11 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Status evidence.** D: AGENTS/README · I: external · V: post-hoc readback in certificates
 - **Accepted evidence.** latest Pages build `363c3e53` `built` (integrator `gh api`); lane F public byte readback of four files
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07), [PRA-F-09](docs/audit/post-rlgwo/FINDINGS.md#pra-f-09)
+- **Proposed status, payload dimension (R002B, issue 92).** D / I / V **EIV / PEX / EEV** for the payload dimension only, taking effect only when R002B is accepted and the post-merge deployed measurement is recorded; the cells above stay at the audit baseline until then.
 - **R002B update, payload dimension only (issue 92; candidate, not merged).** Readback dimensions belong to R002A (issue 91).
   - Documented: `_config.yml` excludes the retained evidence trees `docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence`, `docs/moon/evidence` (owner decision DG-2(a)); evidence stays in git and on github.com.
   - Enforced: by the external Jekyll 3 builder only (string-prefix `exclude`); no repository gate before merge (R002A).
-  - Verified: advisory git-tree projection (9,707 files / 1,908,811,828 B at `5a90cc03` -> 941 files / 336,329,748 B) and the failed-diff hosted run 43344320802 (9,122 files removed, 0 outside the four prefixes, 0 protected removed). A green re-run and the post-merge deployed measure are pending.
+  - Verified: hosted ci-build run 43366170074, base `5a90cc03` 1,920,370,569 B -> candidate 340,753,776 B; only evidence paths removed. Not yet the deployed artifact: the post-merge deployed measure is pending.
   - Unresolved: Pages still serves the over-limit site until a merge; GitHub's enforcement behaviour is unknown.
 
 <a id="ism-bld-005"></a>
