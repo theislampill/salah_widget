@@ -483,11 +483,14 @@ function mentions(name, tokens) {
         mentions('DESIGN.md', ['synthetic-present-v1', 'underlying', 'exclusive', 'outage', 'generation', 'trusted:true']);
         mentions('AGENTS.md', ['model estimate', 'synthetic']);
       });
+      }
+      // Adopted on main and green: not retired.
       await check('docs composed: fix acquisition age and portable privacy survive saving', () => {
         mentions('README.md', ['acquisition', 'Saving settings does not renew', 'Portable', 'partition']);
         mentions('DESIGN.md', ['locationEvidence', 'accuracyM', 'acquiredAt', 'savedAt', 'fixed-site']);
         assert(!/precise GPS|stores nothing about you/.test(sources['README.md']), 'unsupported precision/privacy claim');
       });
+      if (unadoptedComposedDocs) {
       await check('docs composed: ordinary wall and explicit anchored one-times authorities', () => {
         mentions('DESIGN.md', ['Date.now()', 'backward', 'timeScale=1', 'anchored', 'Countdown unavailable']);
       });
