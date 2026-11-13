@@ -132,8 +132,10 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
   not the arc-sun azimuth). A center-screen halo is an instant FAIL.
 - Footer date row clipped or any header change that **moves the content stack**.
 - **Builder/embed:** the iframe wrapper size drifting from the widget card — it must be **325×530** (= `.c`) in the
-  builder preview, the copy snippet, README, and the TablissNG preset (an oversized wrapper adds invisible margin
-  and misaligns the builder card/buttons).
+  builder preview, the copy snippet, every current-version README snippet, and the TablissNG preset (an oversized
+  wrapper adds invisible margin and misaligns the builder card/buttons). The one documented exception is the frozen
+  V1 README snippet, which stays 330×534: that is V1's own card-plus-drop-shadow footprint, and the shadow is part
+  of the design (owner decision, R0037 DG2; `docs/state-contracts/R0037.md`).
 - Header buckle off-centre, straps full-width, a heavy drop shadow, or **any strap geometry visible THROUGH the
   translucent buckle** (the strap inner ends must be *masked/cut*, not merely z-indexed — translucent glass reveals
   what's under it).
