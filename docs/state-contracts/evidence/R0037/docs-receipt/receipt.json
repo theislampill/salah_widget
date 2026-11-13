@@ -1,0 +1,105 @@
+{
+  "schema": "r0037-successor-documentation-receipt/v1",
+  "rule": "R002A (issue 91) section 4.3: pins and a successor documentation receipt in the same change; pinned sentences re-verified",
+  "predecessor": {
+    "receipt": "docs/state-contracts/evidence/R0016/third-successor/successor-20261112/docs/report.md",
+    "readmeSha256": "b5df3f58f87368077798c205ac6cd682dee09ac2492e1f89d0dd6f6ec940923d",
+    "status": "historical; unchanged by this change"
+  },
+  "instrument": {
+    "path": "tools/qualification/installer_preview_docs.cjs",
+    "sha256": "cbb98f822206e57f1ac239b969fdbd2ec93945db7eea3a9653244a39e37f6809",
+    "change": "README pin only (b5df3f58... -> current README); builder and config pins unchanged"
+  },
+  "inputs": {
+    "readme": {
+      "bytes": 45869,
+      "sha256": "067c54ca471786d6ad8703f02c3c5d034fa95743b6cea634dec2e7e3e1d5893b"
+    },
+    "builder": {
+      "bytes": 36147,
+      "sha256": "873e8dedfd4380d5bb8271945b23d73dc5afd3b5c8b848f67017cc4aaa41fd9f"
+    },
+    "config": {
+      "bytes": 29516,
+      "sha256": "719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80"
+    }
+  },
+  "inputsEqualTree": true,
+  "readmeChecks": {
+    "pinnedOccurrences": 4,
+    "oldPinAbsent": true,
+    "downloadSeparate": true,
+    "zeroFilesystem": true,
+    "noNetwork": true,
+    "normalNoOpen": true,
+    "builderMain": true,
+    "manual": true
+  },
+  "readmeChecksPass": true,
+  "complete": true,
+  "pageErrors": [],
+  "readmeChangeConfinedToV1Section": {
+    "v1SectionStartsAtBaseLine": 556,
+    "hunkBaseStarts": [
+      558,
+      570,
+      575,
+      577
+    ],
+    "confined": true
+  },
+  "environment": {
+    "host": "WSL Ubuntu (local), unmodified instrument",
+    "node": "v22.22.2",
+    "browser": "147.0.7727.15",
+    "deviationsFromR0016Workflow": [
+      "marked 18.0.4 (workflow pins 17.0.5): an already-installed local copy; no package was downloaded",
+      "playwright 1.60.0 (workflow pins 1.62.1): the machine's global install",
+      "Chromium headless shell revision 1217 (147.0.7727.15) aliased under the 1223 directory name Playwright 1.60 expects; no browser was downloaded",
+      "not run by the GitHub workflow (it triggers only on the R0016 branch); a pinned CI re-render is not claimed"
+    ],
+    "staging": "The instrument ran from a scratch directory holding byte-identical copies of README.md, src/native/builder.html, src/native/config.js and tools/qualification/installer_preview_docs.cjs (verified with cmp against the tree)."
+  },
+  "files": {
+    "inputs.json": {
+      "bytes": 397,
+      "sha256": "178acda6d0cfdc89da52fe92876cdf42e1d3f38deb6b6da644de58001798d5a5",
+      "sanitized": false
+    },
+    "readme-visible-text.txt": {
+      "bytes": 43088,
+      "sha256": "3c8c84805bc08b2a6037b05f770168f7bc4c1c5633c5565d66e4df62869ce645",
+      "sanitized": false
+    },
+    "readme-review-route.png": {
+      "bytes": 201567,
+      "sha256": "17c53fad75d51bfa793efb5ddbb69fc312d30d7ffa63513d40952cd20323a135",
+      "sanitized": false
+    },
+    "readme-preview-policy.png": {
+      "bytes": 224527,
+      "sha256": "694fc86ed1f4052128cbfa9a98b166565f1c947fd2e62276e33b9ab1636fc6b2",
+      "sanitized": false
+    },
+    "builder-install-context.png": {
+      "bytes": 464261,
+      "sha256": "b37e9cc0e7bb103b6bd6a659fbfb0853344df82f0afc598654cf18c1387b2d8f",
+      "sanitized": false
+    },
+    "result.json": {
+      "bytes": 6227,
+      "sha256": "1d3f65f0c1329badcf4ddaf20c9b737e55b11a5c02d088565e8d05f6ee2ddcc1",
+      "sanitized": true,
+      "originalSha256": "f56712d7d717df72d806f000d63ee64ce666d845fe06f78ce26a1072ea45c12e",
+      "sanitization": "local scratch and home paths replaced by <scratch>/<home>; nothing else changed"
+    },
+    "render.stdout": {
+      "bytes": 551,
+      "sha256": "b8557a960c7f3c157ec9ad752ca54deda747d91232b0bfe201134dd3bd7c5e20",
+      "sanitized": false
+    }
+  },
+  "limits": "Local rendered documentation only; external requests blocked by the instrument. Must be regenerated if README.md changes again (for example when rebased on R002D, issue 94).",
+  "recordedBy": "R0037 engineering worker, 2026-11-12; not independently reviewed"
+}

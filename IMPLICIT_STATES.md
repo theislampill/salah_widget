@@ -108,8 +108,8 @@ Entries by status value and dimension (all entries, installer entries included).
 | Status value | Code | Documentation | Implementation | Verification |
 |---|---|---|---|---|
 | implicit and materially significant | IMS | 38 | 38 | 4 |
-| partially explicit | PEX | 51 | 44 | 56 |
-| explicitly documented but weakly enforced | DWE | 5 | 0 | 0 |
+| partially explicit | PEX | 52 | 44 | 56 |
+| explicitly documented but weakly enforced | DWE | 4 | 0 | 0 |
 | explicitly enforced but insufficiently verified | EEV | 0 | 18 | 13 |
 | explicit, enforced and independently verified | EIV | 18 | 0 | 12 |
 | historically problematic but demonstrably resolved | HRS | 0 | 11 | 10 |
@@ -196,7 +196,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-CFG-007](#ism-cfg-007) | Builder mode, form, serialisation and preview publication | C05 | EIV | HRS | HRS | resolved and independently verified |
 | [ISM-CFG-008](#ism-cfg-008) | Builder edit ownership, candidate cycle and automatic fills (reverse geocode) | C06 | PEX | PEX | PEX | partly resolved |
 | [ISM-CFG-009](#ism-cfg-009) | Clipboard attempts, fallback and expiring feedback | C07 | PEX | EEV | EEV | implemented but not fully verified |
-| [ISM-CFG-010](#ism-cfg-010) | Builder ↔ widget preview handoff and the 325×530 geometry contract | new | DWE | PEX | PEX | new |
+| [ISM-CFG-010](#ism-cfg-010) | Builder ↔ widget preview handoff and the 325×530 geometry contract | new | PEX | PEX | PEX | new |
 | [ISM-CFG-011](#ism-cfg-011) | Diagnostic-input override surface (`sim*`, `debug*`, `qa`, `timeScale`, `motion`) | new | PEX | PEX | PEX | new |
 
 ### Sky, cloud, star and optical rendering (`ISM-SKY`)
@@ -1433,7 +1433,9 @@ Original audit: **C07** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 <a id="ism-cfg-010"></a>
 ### ISM-CFG-010 — Builder ↔ widget preview handoff and the 325×530 geometry contract
 
-Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **DWE / PEX / PEX** · Historical disposition: *new*
+Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
+
+*R0037 (branch candidate) removed the README V1 wrapper contradiction that made D DWE; D re-derived as PEX because the renderer-literal census (OM-06, R0034) remains open. The handoff stays under completed R000F. Audit baseline: DWE / PEX / PEX.*
 
 - **Scope and decision.** How a builder draft reaches a running widget and where the card geometry is fixed.
 - **Sources.** `src/native/builder.html` `base` ~L201, iframe ~L166-167, snippet ~L215; `presets/salah-widget.tablissng.json` ~L9; `README.md` ~L564-575; geometry literals (OM-06) `src/native/index.html` ~L482, ~L520-554, ~L2072, ~L2088, ~L2986; `real-sky/native-contract.mjs` ~L20, `native-host.mjs`, `native-composition.mjs`, `native-first-paint.mjs`, `native-preview.mjs`, `native-host-hooks.js` ~L35
@@ -1446,13 +1448,13 @@ Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/a
 
 - **Actors and ownership.** builder
 - **Effects.** preview widget; in `#local=1` the preview uses and can write the visitor's own saved settings
-- **Invariants.** 325×530 in builder iframe, snippet, README current snippets and preset (AGENTS forbidden regression)
-- **Invalid, duplicate, stale or concurrent risks.** README V1 snippet is 330×534 and says "change only `src`" for the current version (PRA-F-18); the same literal is duplicated across renderer modules without a shared constant (OM-06)
-- **Status evidence.** D: AGENTS rule contradicted by the README V1 snippet · I: static literals · V: current snippets only
-- **Work orders.** R000F (ES0F-15)
-- **Accepted evidence.** R000F invariants scenario (current snippets only); native layout cell
+- **Invariants.** 325×530 in builder iframe, snippet, every README snippet including the V1 one (R0037), and preset (AGENTS forbidden regression)
+- **Invalid, duplicate, stale or concurrent risks.** (resolved on the R0037 branch: the README V1 snippet was 330×534 while saying "change only `src`", PRA-F-18; it is now 325×530, matching the V1 card); the same literal is duplicated across renderer modules without a shared constant (OM-06)
+- **Status evidence.** D: AGENTS rule, R000F and `docs/V1_PRESERVATION.md` agree with every README snippet (R0037); literal census open (R0034) · I: static literals · V: R000F `invariants` asserts every README iframe including V1 (R0037 RED/GREEN and mutant controls)
+- **Work orders.** R000F (ES0F-15); R0037 (README V1 wrapper only); R0034 (renderer-literal census only)
+- **Accepted evidence.** R000F invariants scenario (current snippets only); native layout cell. R0037 branch (not yet accepted): scenario extended to the V1 snippet, `docs/state-contracts/evidence/R0037/r000f-readme-controls.txt`
 - **Tests.** R000F `invariants` scenario
-- **Observed facts.** README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); values agree across modules at baseline (OM-06)
+- **Observed facts.** Audit baseline: README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); R0037 branch: `width:325px;height:530px`, V1 card 325×530 (`v1/index.html` L11, L24); values agree across modules at baseline (OM-06)
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
 
 <a id="ism-cfg-011"></a>
