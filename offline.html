@@ -6232,7 +6232,18 @@ let _prayerStale=false, _rolloverBusy=false, _rolloverNextTry=0; const _ROLLOVER
 function setLocLabel(){ const el=$("#loc"); if(el){ el.textContent=label; el.style.display=label?"":"none"; } }
 setLocLabel();   // initial (hardcoded embeds show their label immediately; runtime/local changes refresh via render())
 
-function showError(msg){ $(".nt").textContent="—"; $(".left").textContent=msg; }
+function showError(msg){ writePrayerStatus("—",msg); }
+// PRAYER STATUS LINE OWNER (R002E, ISM-PRAY-011): the ONLY writer of the hero time `.nt` and the status `.left`.
+// Callers, in today's last-writer order (nothing ranks messages; the later write is the visible one):
+// initial markup "Loading…"; showError — "Add lat & lon to the URL" (bare boot), "Simulation time unavailable"
+// (simulationReady, every loop frame of an invalid scene), "Could not load prayer times" (current-generation load
+// failure with no `today`), "Countdown unavailable" (model present, no countdown target); the withdrawal
+// "Prayer times unavailable" (no admitted current record; it also replaces an earlier load-failure text at the next
+// render); and the countdown markup (model and target). New status strings need an owner decision (gate G-E3).
+function writePrayerStatus(time,status,markup=false){
+  $(".nt").textContent=time;
+  if(markup) $(".left").innerHTML=status; else $(".left").textContent=status;
+}
 function isDayNow(nowMin){
   if(!today) return true;
   const sr=mins(today.timings.Sunrise), ss=mins(today.timings.Sunset||today.timings.Maghrib);
@@ -7363,7 +7374,11 @@ function fitCn(M){
   const cn=$(".cn"), nt=$(".nt"), rail=document.querySelector(".arc .rail"),
         hz=document.querySelector(".arc .horizon"), bar=$(".bar");
   if(!cn||!nt||!rail||!hz||!bar) return;
-  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset)+"|"+cnFontSignature();
+  // R002E (ISM-PRAY-007): reuse a fit only when every input of the fitted rail is equal — text, sunrise, sunset,
+  // noon, the model declination and the runtime generation (latitude changes only through a broad location change,
+  // which begins a new generation) — and the font state. The PRA-F-23 discriminator measured a visible stale fit
+  // after a site change when the shorter key matched (tools/qa/r002e_fit_discriminator.cjs).
+  const key=M.currentKey+"|"+Math.round(M.sunrise)+"|"+Math.round(M.sunset)+"|"+M.noon+"|"+M.decl+"|"+(M.selection&&M.selection.generation)+"|"+cnFontSignature();
   if(key===_cnFit) return;
   const Mu=16, gap=Mu/2;
   const box=el=>{ const r=document.createRange(); r.selectNodeContents(el); return r.getBoundingClientRect(); };
@@ -7465,7 +7480,7 @@ function renderFaultSnapshot(){ const out={}; for(const [name,record] of _render
 // The truthful no-timetable prayer publication (withdrawal and calendar), shared by the withdrawn branches.
 function withdrawnPrayerStage(){ withdrawPrayerPresentation(); renderCalendarDates(selectCalendarDisplay(null)); }
 function withdrawPrayerPresentation(){
-  $(".cn").textContent="—";$(".nt").textContent="—";$(".left").textContent="Prayer times unavailable";
+  $(".cn").textContent="—";writePrayerStatus("—","Prayer times unavailable");
   $(".arc").innerHTML="";$(".times").innerHTML=prayers.map(k=>`<div class="p" data-prayer-key="${k}"><b>${k}</b><span class="tm">—</span></div>`).join("");
   const p=$(".bar>i");p.style.width="";p.style.visibility="hidden";_lastRender=null;
 }
@@ -7483,8 +7498,7 @@ function render(){
   prefetchPrayerDay();                                        // civil-day/owner/cooldown checks also allow late midnight reclassification
   $(".cn").textContent = M.currentKey;
   if(Number.isFinite(M.leftMin)){
-    $(".nt").textContent = fmt(M.nextTime);
-    $(".left").innerHTML = `<span class="until-time">${dur(M.leftMin)}</span> <span class="until-label">left</span> <span class="until-label">until</span> <span class="until-prayer">${M.nextKey}</span>`;
+    writePrayerStatus(fmt(M.nextTime),`<span class="until-time">${dur(M.leftMin)}</span> <span class="until-label">left</span> <span class="until-label">until</span> <span class="until-prayer">${M.nextKey}</span>`,true);
   }else showError("Countdown unavailable");
   const progress=$(".bar>i"),width=(M.progress*100).toFixed(1)+"%";
   progress.style.visibility="";
@@ -7500,6 +7514,8 @@ function render(){
     return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}" data-prayer-key="${k}"><b>${k}</b><span class="tm">${fmt(on?M.nextTime:M.t[k])}</span></div>`;
   }).join("");
   renderCalendarDates(selectCalendarDisplay(M));
+  // Stale presentation (R002E, G-E1 resolved by retention): "prayer" is reachable only when the wall clock steps back
+  // across civil midnight between maintainPrayerDay() and this render (one frame); every other stale state has no model.
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
     }else withdrawnPrayerStage();                             // no timetable: withdrawal and calendar precede every optional stage
     prayerPublished=true;
