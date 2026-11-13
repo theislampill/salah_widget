@@ -333,5 +333,53 @@ class GeneratorAtomicity(unittest.TestCase):
         self.assertEqual(r.staging_leftovers, [])
 
 
+def load_star_bootstrap():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('native_star_bootstrap_under_test',
+                                                  ROOT / 'tools/native_star_bootstrap.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.star_bootstrap
+
+
+class StarBootstrapGuards(unittest.TestCase):
+    """The catalogue-identity and size-bound raises (formerly asserts) on a synthetic pinned source."""
+
+    def source(self, stars, catalogue_bytes=None, catalogue_sha=None):
+        d = Path(self.directory.name) / str(len(list(Path(self.directory.name).iterdir())))
+        (d / 'data/registered-starlight').mkdir(parents=True)
+        (d / 'src').mkdir()
+        raw = json.dumps({'stars': stars}).encode()
+        (d / 'data/bright-stars.json').write_bytes(raw)
+        manifest = json.dumps({'catalogue': {'sha256': catalogue_sha or sha(raw),
+                                             'bytes': len(raw) if catalogue_bytes is None else catalogue_bytes}}).encode()
+        (d / 'data/registered-starlight/runtime-manifest.json').write_bytes(manifest)
+        (d / 'src/diffuse-manifest-pin.mjs').write_text(f'export const PIN="{sha(manifest)}";\n', encoding='utf-8')
+        return d
+
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory(prefix='salah-r0029-bootstrap-')
+        self.addCleanup(self.directory.cleanup)
+        self.star_bootstrap = load_star_bootstrap()
+        self.star = {'hygId': 1, 'hip': 1, 'raDeg': 1.0, 'decDeg': 2.0, 'epochJyear': 2000.0, 'vmag': 1.0, 'bv': 0.5,
+                     'pmRaCosDecMasYr': 0, 'pmDecMasYr': 0, 'distancePc': 10, 'radialVelocityKmS': 0,
+                     'spectralType': 'G2V', 'sed': None}
+
+    def test_positive_control_passes(self):
+        text, pin = self.star_bootstrap(self.source([self.star]))
+        self.assertEqual(pin['records'], 1)
+        self.assertEqual(pin['bytes'], len(text.encode()))
+
+    def test_catalogue_identity_drift_raises(self):
+        for name, kwargs in {'digest': {'catalogue_sha': '0' * 64}, 'bytes': {'catalogue_bytes': 1}}.items():
+            with self.subTest(name=name):
+                with self.assertRaisesRegex(ValueError, 'catalogue identity'):
+                    self.star_bootstrap(self.source([self.star], **kwargs))
+
+    def test_bootstrap_size_bound_raises(self):
+        with self.assertRaisesRegex(ValueError, 'bootstrap size bound'):
+            self.star_bootstrap(self.source([self.star] * 5000))
+
+
 if __name__ == '__main__':
     unittest.main()
