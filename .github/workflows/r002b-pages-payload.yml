@@ -1,11 +1,13 @@
 name: R002B Pages payload measure
 
-# R002B method M2 (ci-build): builds the Pages output of the predecessor main commit and of this
-# candidate with the same pinned builder as the active legacy Pages build, measures both with
-# tools/pages_payload.py and diffs their published paths (G-01 RED at the predecessor, G-05 CI
-# measure, G-06/G-07 on real builds). Measurement only: it never deploys, never changes Pages settings
-# and never runs on main. Bound to the R002B branch like the repository's other branch-bound
-# qualification workflows. PR gate wiring belongs to R002A (issue 91); the R0017 workflow is untouched.
+# R002B method M2 (ci-build): builds the Pages output of the candidate's merge base with main and of
+# this candidate with the same pinned builder as the active legacy Pages build, measures both with
+# tools/pages_payload.py and diffs their published paths (G-01 RED at the base, G-05 CI measure,
+# G-06/G-07 on real builds). Each run records the published-source digest, so the measurement binds
+# to the Jekyll input rather than to a head (docs/state-contracts/R002B.md section 7).
+# Measurement only: it never deploys, never changes Pages settings and never runs on main. Bound to
+# the R002B branch like the repository's other branch-bound qualification workflows. PR gate wiring
+# belongs to R002A (issue 91); the R0017 workflow is untouched.
 on:
   push:
     branches: [claude/r002b-pages-payload-20261112]
@@ -13,33 +15,36 @@ on:
 permissions:
   contents: read
 
-env:
-  # Current main, the candidate's merge base, so main's own additions stay out of the diff (G-07).
-  BASE_SHA: 5a90cc030a68d92c4486d439d2dcdbccdb14ffec
-
 jobs:
   measure:
     if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/claude/r002b-pages-payload-20261112'
     runs-on: ubuntu-24.04
-    # Each Pages build of the predecessor (~9.7k files) takes about 2-3.5 min; two builds plus walks.
+    # Each Pages build of the base (~10.2k files) takes about 2-3.5 min; two builds plus walks.
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; active Pages checkout
         with:
-          fetch-depth: 0  # the declared-change list below needs BASE_SHA
+          fetch-depth: 0  # merge base with main and the declared-change list need history
           persist-credentials: false
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; predecessor main
+      - name: Resolve the base (merge base with main)
+        id: base
+        run: |
+          base="$(git merge-base origin/main "$GITHUB_SHA")"
+          test -n "$base"
+          echo "sha=$base" >> "$GITHUB_OUTPUT"
+          echo "base=$base"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; the base
         with:
-          ref: ${{ env.BASE_SHA }}
+          ref: ${{ steps.base.outputs.sha }}
           path: _r002b_base
           persist-credentials: false
-      # Jekyll skips "_"-prefixed paths, so the predecessor checkout cannot leak into the candidate.
-      - name: Build the predecessor with the active Pages builder
+      # Jekyll skips "_"-prefixed paths, so the base checkout cannot leak into the candidate.
+      - name: Build the base with the active Pages builder
         uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13 image
         with:
           source: ./_r002b_base
           destination: ./_site_base
-          build_revision: ${{ env.BASE_SHA }}
+          build_revision: ${{ steps.base.outputs.sha }}
           verbose: false
       - name: Build the candidate with the active Pages builder
         uses: actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697 # v1.0.13 image
@@ -49,13 +54,16 @@ jobs:
           build_revision: ${{ github.sha }}
           verbose: false
       - name: Measure both outputs and diff the published paths
+        env:
+          BASE_SHA: ${{ steps.base.outputs.sha }}
         run: |
           export PAGES_BUILDER_DIGESTS="$(docker image inspect ghcr.io/actions/jekyll-build-pages:v1.0.13 --format '{{json .RepoDigests}}' 2>/dev/null || true)"
           out="$RUNNER_TEMP/r002b"; mkdir -p "$out"
           # Paths this candidate intentionally changes; only these protected paths may change size.
           # Fails closed: no list, no run.
-          test "$(git merge-base "$BASE_SHA" "$GITHUB_SHA")" = "$BASE_SHA"
           git diff --name-only "$BASE_SHA" "$GITHUB_SHA" > "$out/changed-paths.txt"
+          python3 tools/pages_payload.py source-digest --commit "$BASE_SHA" --out "$out/base-source.json"
+          python3 tools/pages_payload.py source-digest --commit "$GITHUB_SHA" --out "$out/candidate-source.json"
           set +e
           python3 tools/pages_payload.py site --site _site_base --root _r002b_base --commit "$BASE_SHA" \
             --out "$out/base-payload.json" --manifest-out "$out/base-manifest.txt"; base=$?

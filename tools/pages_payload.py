@@ -42,8 +42,9 @@ SCHEMA = "r002b-pages-payload/v1"
 DEFAULT_BOUND = 1_000_000_000
 BUILDER_IMAGE = "ghcr.io/actions/jekyll-build-pages:v1.0.13"
 REPO = "theislampill/salah_widget"
-# Paths the published site must keep under any exclusion (R002B section 3.3, G-06).
-PROTECTED_FILES = ("index.html", "offline.html", "config.js", "builder.html", "install.sh", "install.ps1",
+# Paths the published site must keep under any exclusion (R002B section 3.3, G-06). GENERATED.json is the
+# R0029 generated-output inventory, published at the root; a tree without it simply has no such path.
+PROTECTED_FILES = ("index.html", "offline.html", "config.js", "builder.html", "GENERATED.json", "install.sh", "install.ps1",
                    "README.md", "DESIGN.md", "AGENTS.md", "OPTICS.md", "ARCHITECTURE.md", "HANDOFF.md",
                    "tests/widget-fixture.html")
 PROTECTED_PREFIXES = ("v1/", "presets/", "real-sky/", "moon/")
@@ -658,6 +659,28 @@ def published_diff(root, base, head):
             "protectedPathsWithChangedSize": changed_protected}
 
 
+def published_source_digest(root, commit):
+    """Identity of the Jekyll *input* that reaches the site: sha256 over sorted "<blob sha>  <path>"
+    records of every tracked blob the commit's own _config.yml does not exclude (plus _config.yml
+    itself, which steers the build). Two commits with the same digest feed the pinned builder the same
+    published source, so a hosted measurement of one binds to the other (R002B section 7)."""
+    config = _git(root, "show", f"{commit}:_config.yml").decode() if _has(root, commit, "_config.yml") else ""
+    excludes = config_excludes(config)
+    records = []
+    for record in _git(root, "ls-tree", "-r", "-z", commit).decode("utf-8", "replace").split("\0"):
+        if not record:
+            continue
+        meta, path = record.split("\t", 1)
+        _, kind, sha1 = meta.split()
+        if kind == "blob" and (path == "_config.yml" or not jekyll_excluded(path, excludes)):
+            records.append(f"{sha1}  {path}\n")
+    records.sort()
+    return {"commit": _git(root, "rev-parse", commit).decode().strip(),
+            "tree": _git(root, "rev-parse", f"{commit}^{{tree}}").decode().strip(),
+            "configExcludes": excludes, "publishedSourceFiles": len(records),
+            "publishedSourceSha256": hashlib.sha256("".join(records).encode()).hexdigest()}
+
+
 def _has(root, commit, path):
     return subprocess.run(["git", "cat-file", "-e", f"{commit}:{path}"], cwd=root,
                           capture_output=True).returncode == 0
@@ -826,6 +849,9 @@ def main(argv=None):
     p.add_argument("--changed-from", help="file listing the candidate's intentionally changed paths "
                                            "(git diff --name-only BASE HEAD), one per line")
     p.add_argument("--out")
+    p = sub.add_parser("source-digest")
+    p.add_argument("--commit", default="HEAD")
+    p.add_argument("--out")
     p = sub.add_parser("published-diff")
     p.add_argument("--base", required=True)
     p.add_argument("--head", default="HEAD")
@@ -849,8 +875,10 @@ def main(argv=None):
             Path(args.out).write_text(text, encoding="utf-8")
         print(json.dumps({k: receipt[k] for k in ("removedFiles", "onlyEvidenceRemoved")}))
         return 0 if receipt["onlyEvidenceRemoved"] else 1
-    if args.mode in ("project", "census", "published-diff"):
-        if args.mode == "project":
+    if args.mode in ("project", "census", "published-diff", "source-digest"):
+        if args.mode == "source-digest":
+            receipt = {"schema": SCHEMA + "#source-digest", **published_source_digest(root, args.commit)}
+        elif args.mode == "project":
             receipt = {"schema": SCHEMA + "#projection", **project(root, args.commit, args.exclude)}
         elif args.mode == "published-diff":
             receipt = {"schema": SCHEMA + "#published-diff", **published_diff(root, args.base, args.head)}

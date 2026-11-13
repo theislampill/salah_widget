@@ -180,6 +180,31 @@ print(json.dumps([pp.project_listing(rows,["docs/a"]),pp.project_listing(rows,["
   assert.deepEqual(p[2], ['a/b', 'd']);
 });
 
+test('source-digest binds a measurement to the published Jekyll input, not to a head', () => {
+  const dir = tmp();
+  const git = (...a) => { const r = spawnSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', ...a], {cwd: dir, encoding: 'utf8'}); if (r.status) throw new Error(r.stderr); return r.stdout.trim(); };
+  const write = (name, text) => { fs.mkdirSync(path.dirname(path.join(dir, name)), {recursive: true}); fs.writeFileSync(path.join(dir, name), text); };
+  git('init', '-q');
+  write('_config.yml', 'exclude:\n  - docs/moon/evidence\n'); write('index.html', 'a'); write('GENERATED.json', '{}');
+  write('docs/moon/evidence/r.json', '1'); write('.github/w.yml', 'x');
+  git('add', '-A'); git('commit', '-qm', 'a'); const a = git('rev-parse', 'HEAD');
+  write('docs/moon/evidence/r.json', '2'); write('.github/w.yml', 'y'); git('commit', '-qam', 'b'); const b = git('rev-parse', 'HEAD');
+  write('index.html', 'b'); git('commit', '-qam', 'c'); const c = git('rev-parse', 'HEAD');
+  write('_config.yml', 'exclude:\n  - docs/moon/evidence\n  - docs/x\n'); git('commit', '-qam', 'd'); const d = git('rev-parse', 'HEAD');
+  const dig = (commit) => py('import json;print(json.dumps(pp.published_source_digest(sys.argv[1],sys.argv[2])))', dir, commit);
+  const [da, db, dc, dd] = [a, b, c, d].map(dig);
+  assert.equal(db.publishedSourceSha256, da.publishedSourceSha256, 'evidence/.github-only change keeps the binding');
+  assert.notEqual(db.tree, da.tree);
+  assert.notEqual(dc.publishedSourceSha256, da.publishedSourceSha256, 'a published-file change breaks it');
+  assert.notEqual(dd.publishedSourceSha256, dc.publishedSourceSha256, 'a _config.yml change breaks it');
+  assert.equal(da.publishedSourceFiles, 3);  // _config.yml, index.html, GENERATED.json
+});
+
+test('GENERATED.json (R0029 inventory) is a protected published path', () => {
+  const p = py('import json;print(json.dumps(pp.project_listing([("GENERATED.json",9),("docs/a/x",1)],["GENERATED"])))');
+  assert.deepEqual(p.protectedPathsRemoved, ['GENERATED.json']);
+});
+
 test('compare-sites: only evidence may disappear; a removed or resized protected path fails (G-07)', () => {
   const base = '10  index.html\n5  docs/rlgwo-execution/x.png\n3  docs/notes.md\n';
   const ok = py('import json;print(json.dumps(pp.compare_manifests(sys.argv[1],sys.argv[2],sys.argv[3:])))',
@@ -250,6 +275,23 @@ test('no assert-based guard remains in either payload verifier (R0029 class)', (
     const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
     assert.doesNotMatch(text, /^\s*assert\b/m, file);
   }
+});
+
+test('hosted receipts (run 43366170074) are mutually consistent and support G-01/G-05/G-06/G-07', () => {
+  const dir = path.join(ROOT, 'docs/state-contracts/evidence/R002B/hosted-43366170074');
+  const read = (n) => JSON.parse(fs.readFileSync(path.join(dir, n), 'utf8'));
+  const run = read('RUN.json'), base = read('base-payload.json'), cand = read('candidate-payload.json');
+  const diff = read('published-diff.json'), csrc = read('candidate-source.json'), bsrc = read('base-source.json');
+  assert.equal(run.conclusion, 'success');
+  for (const r of [base, cand]) assert.equal(String(r.workflowRunId), String(run.runId));
+  assert.equal(base.sourceCommit, run.baseSha); assert.equal(cand.sourceCommit, run.headSha);
+  assert.equal(csrc.commit, run.headSha); assert.equal(csrc.tree, run.headTree); assert.equal(bsrc.commit, run.baseSha);
+  assert.equal(base.verdict, 'exceeds'); assert.ok(base.measured.regularFileBytes > base.bound);   // G-01
+  assert.equal(cand.verdict, 'within'); assert.ok(cand.measured.regularFileBytes <= cand.bound);   // G-05 (CI)
+  assert.equal(cand.protectedConsumers.allComparedByteIdentical, true);                            // G-06
+  assert.equal(diff.onlyEvidenceRemoved, true); assert.deepEqual(diff.removedOutsideExcludes, []); // G-07
+  assert.deepEqual(diff.protectedRemoved, []); assert.deepEqual(diff.protectedResized, []);
+  assert.equal(diff.baseFiles, base.measured.regularFiles); assert.equal(diff.headFiles, cand.measured.regularFiles);
 });
 
 test('the committed Stage-1 receipt states only what the envelope proves', () => {
