@@ -348,6 +348,11 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   temperature and stops unsupported clouds, rain/snow particles and lightning.
   Optional missing precipitation alone does not invalidate an otherwise eligible
   model condition. Client clock skew can temporarily withhold useful data.
+  Model estimate freshness ends with each 15-minute provider step: at that moment
+  the condition, temperature, clouds and weather effects are withdrawn, and the
+  widget asks for the next record ≈3 seconds later (an assumed margin), so the gap
+  lasts about that margin plus the request time. Provider delay or a device clock
+  running ahead by more than the margin can stretch it to about a minute.
   Radar retains mosaic frame-generation, index-generation and retrieval times
   separately: frame and retrieval ages each have an inclusive **20-minute** limit,
   with no future allowance. Index time never replaces a missing frame time.
@@ -447,8 +452,9 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   refetch for less than 15 minutes after the last accepted current receipt.
   Valid coordinates and free request ownership still matter. The ordinary
   visible render loop offers approximately 30-second opportunities outside an
-  advancing sweep; eligibility and timeout release are not immediate retry or
-  successful recovery.
+  advancing sweep, plus a per-frame renewal opportunity once the current record's
+  provider step has ended; eligibility and timeout release are not immediate retry
+  or successful recovery.
   The deadline continues through JSON body consumption: receiving HTTP 200
   headers does not restart or remove it. A timed-out refresh cannot renew an
   accepted record's source or receipt time. If current weather expires, its
