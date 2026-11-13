@@ -1,0 +1,278 @@
+{
+ "schema": "r0039-installer-probes/1",
+ "hostName": "ps51",
+ "runner": "GitHub Actions 1000005813",
+ "rows": {
+  "R39-07": {
+   "verdict": "MET",
+   "reason": "real custody: S1 observed after the S2 call in -File and iex; single-load control observed S2"
+  },
+  "R39-08": {
+   "verdict": "MET",
+   "reason": "(i) stops at the selection prompt with no effect; (ii) hand-off reached, ended input acknowledged, no store fallback, exit 0, bundle retained in the fixture"
+  }
+ },
+ "cases": {
+  "b1-file-real": {
+   "exit": 0,
+   "result": {
+    "host": "5.1.26100.33648",
+    "edition": "Desktop",
+    "mode": "file",
+    "compiler": "real",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "native, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": true,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "native, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": false,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     }
+    ],
+    "outcome": "reuse-confirmed: second call observed S1"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-file-fixture": {
+   "exit": 0,
+   "result": {
+    "host": "5.1.26100.33648",
+    "edition": "Desktop",
+    "mode": "file",
+    "compiler": "fixture",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "41z2ctxn, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": true,
+      "lastCompiledTag": "S1"
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": true,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "41z2ctxn, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": false,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": "S1"
+     }
+    ],
+    "outcome": "reuse-confirmed: second call observed S1"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-iex-real": {
+   "exit": 0,
+   "result": {
+    "host": "5.1.26100.33648",
+    "edition": "Desktop",
+    "mode": "iex",
+    "compiler": "real",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "native, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": true,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "native, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": false,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     }
+    ],
+    "outcome": "reuse-confirmed: second call observed S1"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-iex-fixture": {
+   "exit": 0,
+   "result": {
+    "host": "5.1.26100.33648",
+    "edition": "Desktop",
+    "mode": "iex",
+    "compiler": "fixture",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "huo1vwhi, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": true,
+      "lastCompiledTag": "S1"
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": true,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "huo1vwhi, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": false,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": "S1"
+     }
+    ],
+    "outcome": "reuse-confirmed: second call observed S1"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-control-S2": {
+   "exit": 0,
+   "result": {
+    "host": "5.1.26100.33648",
+    "edition": "Desktop",
+    "mode": "file",
+    "compiler": "real",
+    "order": "S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S2",
+      "typeLoadedBefore": false,
+      "error": null,
+      "observedConstant": "S2",
+      "assembly": "native, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     }
+    ],
+    "outcome": "single-load control: observed S2"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b2-i-noninteractive": {
+   "exit": 0,
+   "result": {
+    "host": "5.1.26100.33648",
+    "edition": "Desktop",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "entryExit": "terminating-error",
+    "entryError": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.",
+    "events": [],
+    "handoffReached": false,
+    "storeOpenedAfterHandoff": false,
+    "storeOpenCount": 0,
+    "fallbackWarning": false,
+    "retainedBundleUnderFixtureHome": false,
+    "createdEntryCount": 0,
+    "removedEntries": [],
+    "lastOutput": [
+     "Salah Widget Installer",
+     "",
+     "This wizard can:",
+     "- detect supported browsers/profiles",
+     "- check for TablissNG",
+     "- safely refuse to modify legacy Tabliss profiles",
+     "- download the right TablissNG build from GitHub latest release when needed",
+     "- guide the browser-required install step",
+     "- stage the Salah Widget preset for import",
+     "",
+     "It will not silently force-install extensions or write directly into extension storage.",
+     "",
+     "== Detecting browsers ==",
+     "[1] Google Chrome / Default - neither extension identified by chromium-directory-and-preferences",
+     ""
+    ]
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b2-ii-ended-input": {
+   "exit": 0,
+   "result": {
+    "host": "5.1.26100.33648",
+    "edition": "Desktop",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "entryExit": 0,
+    "entryError": null,
+    "events": [
+     "metadata:https://api.github.com/repos/BookCatKid/TablissNG/releases/latest",
+     "download:https://example.invalid/tabliss-chromium.zip",
+     "clipboard",
+     "open:chrome://extensions/ ",
+     "download:https://example.invalid/preset",
+     "clipboard",
+     "open:chrome://newtab/ "
+    ],
+    "handoffReached": true,
+    "storeOpenedAfterHandoff": false,
+    "storeOpenCount": 0,
+    "fallbackWarning": false,
+    "retainedBundleUnderFixtureHome": true,
+    "createdEntryCount": 7,
+    "removedEntries": [],
+    "lastOutput": [
+     "  3. Use Import/Restore settings.",
+     "  4. Select the preset JSON file above.",
+     "",
+     "This wizard does not directly write into browser extension storage.",
+     "That avoids corrupting profiles and avoids touching legacy Tabliss.",
+     "[WARN] Importing the preset replaces your current TablissNG dashboard.",
+     "",
+     "== Manual action pending ==",
+     "Manual browser installation/import remain pending. Retained bundle:",
+     "  C:\\Users\\runneradmin\\AppData\\Local\\Temp\\r0039-fixtures-ps51\\r0039-b2-dc9ff55c\\home\\SalahWidgetBundle-597a841d86604be08a5ef1f344fec427",
+     "Keep unpacked extension folders while the browser uses them. Enter does not prove installation or release an older folder.",
+     "After you verify successful import/install, you may manually delete unneeded preset/XPI files.",
+     "Failed candidates remain partial; existing bundles are never adopted as a new-run download cache.",
+     "",
+     "Review this script before publishing it. The preset URL should point at your real raw JSON file."
+    ]
+   },
+   "stdoutHead": "all",
+   "stderrTail": ""
+  }
+ }
+}

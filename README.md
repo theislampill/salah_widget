@@ -67,6 +67,8 @@ The Windows response-string command executes the downloaded text in the host
 where you paste it. Windows PowerShell 5.1 is the declared minimum; the retained
 PowerShell 7 qualification is version 7.6.6. The commands below use one selected
 host. Your execution policy still applies; a policy refusal is not installation.
+Start a new PowerShell window for each such run: a helper type loaded by an
+earlier run stays loaded in that window, and a later run there would reuse it.
 
 If you configured the widget in the builder, **Install widget** carries its
 encoded settings through `SALAH_WIDGET_HASH` into the preset iframe. For a
@@ -132,7 +134,7 @@ download command is a separate preparation step; the preview invocation makes
 no network requests, including release or availability checks. It asks no
 questions and needs no interactive terminal.
 
-Preview creates, overwrites and deletes no files or directories. It changes no
+During preview the installer itself creates, overwrites and deletes no files or directories. It changes no
 clipboard, browser profile or extension data, opens no browser pages, and does
 no extraction, preset rewriting or cleanup. Existing caches and retained
 bundles do not become preview outputs. Release versions, artifact paths and
@@ -141,6 +143,10 @@ staged result or installed success is promised. Unknown or legacy-refused
 targets stay held or refused. When no target is eligible, the installer exits
 unsuccessfully. Malformed or unsupported mode options are refused with an
 unsuccessful exit.
+Starting Bash or PowerShell, and on Bash the `python3` used for Firefox
+discovery, may still write that program's own start-up or cache data, which the
+installer does not control. Host-level absence of such effects, and of network
+activity, is not separately proven.
 
 To perform normal setup while opening browser pages yourself, use
 `NO_OPEN=1 bash ./install.sh` or

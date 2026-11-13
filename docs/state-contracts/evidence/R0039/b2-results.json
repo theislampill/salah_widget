@@ -1,0 +1,269 @@
+{
+  "meta": {
+    "schema": "r0039-discriminators/1",
+    "base": "846952ba305edcc6cf373e9a406b8fdac33fcbde",
+    "installPs1Sha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "date": "2026-11-13",
+    "os": "Windows 11 Pro 10.0.26200 (executor workstation, not a qualified runner)"
+  },
+  "probes": [
+    "b2-readhost-eof.ps1",
+    "b2-noninteractive-entry.ps1"
+  ],
+  "results": [
+    {
+      "host": "powershell.exe",
+      "case": "primitive -NonInteractive, inherited empty input",
+      "driverExit": 0,
+      "echoedInput": "",
+      "result": {
+        "host": "5.1.26100.9711",
+        "edition": "Desktop",
+        "inputRedirected": true,
+        "rows": [
+          {
+            "prompt": 1,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 2,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 3,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          }
+        ]
+      }
+    },
+    {
+      "host": "powershell.exe",
+      "case": "primitive, stdin 'all' then EOF",
+      "driverExit": 0,
+      "echoedInput": "all",
+      "result": {
+        "host": "5.1.26100.9711",
+        "edition": "Desktop",
+        "inputRedirected": true,
+        "rows": [
+          {
+            "prompt": 1,
+            "outcome": "returned",
+            "isNull": false,
+            "value": "all"
+          },
+          {
+            "prompt": 2,
+            "outcome": "returned",
+            "isNull": true,
+            "value": {}
+          },
+          {
+            "prompt": 3,
+            "outcome": "returned",
+            "isNull": true,
+            "value": {}
+          }
+        ]
+      }
+    },
+    {
+      "host": "powershell.exe",
+      "case": "primitive -NonInteractive, stdin 'all' then EOF",
+      "driverExit": 0,
+      "echoedInput": "",
+      "result": {
+        "host": "5.1.26100.9711",
+        "edition": "Desktop",
+        "inputRedirected": true,
+        "rows": [
+          {
+            "prompt": 1,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 2,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 3,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          }
+        ]
+      }
+    },
+    {
+      "host": "powershell.exe",
+      "case": "entry (i) -NonInteractive",
+      "driverExit": 0,
+      "echoedInput": "",
+      "result": {
+        "host": "5.1.26100.9711",
+        "edition": "Desktop",
+        "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+        "entryExit": "terminating-error",
+        "entryError": "System.Management.Automation.PSInvalidOperationException: Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.",
+        "events": [],
+        "createdEntries": [],
+        "removedEntries": [],
+        "lastOutput": []
+      }
+    },
+    {
+      "host": "powershell.exe",
+      "case": "entry (ii) stdin 'all' then EOF",
+      "driverExit": 0,
+      "echoedInput": "all",
+      "result": {
+        "host": "5.1.26100.9711",
+        "edition": "Desktop",
+        "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+        "entryExit": "terminating-error",
+        "entryError": "System.Management.Automation.RuntimeException: Compiler ancestor permits foreign replacement or has an untrusted owner.",
+        "events": [],
+        "createdEntries": [],
+        "removedEntries": [],
+        "lastOutput": []
+      }
+    },
+    {
+      "host": "pwsh.exe",
+      "case": "primitive -NonInteractive, inherited empty input",
+      "driverExit": 0,
+      "echoedInput": "",
+      "result": {
+        "host": "7.6.9",
+        "edition": "Core",
+        "inputRedirected": true,
+        "rows": [
+          {
+            "prompt": 1,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 2,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 3,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          }
+        ]
+      }
+    },
+    {
+      "host": "pwsh.exe",
+      "case": "primitive, stdin 'all' then EOF",
+      "driverExit": 0,
+      "echoedInput": "all",
+      "result": {
+        "host": "7.6.9",
+        "edition": "Core",
+        "inputRedirected": true,
+        "rows": [
+          {
+            "prompt": 1,
+            "outcome": "returned",
+            "isNull": false,
+            "value": "all"
+          },
+          {
+            "prompt": 2,
+            "outcome": "returned",
+            "isNull": true,
+            "value": null
+          },
+          {
+            "prompt": 3,
+            "outcome": "returned",
+            "isNull": true,
+            "value": null
+          }
+        ]
+      }
+    },
+    {
+      "host": "pwsh.exe",
+      "case": "primitive -NonInteractive, stdin 'all' then EOF",
+      "driverExit": 0,
+      "echoedInput": "",
+      "result": {
+        "host": "7.6.9",
+        "edition": "Core",
+        "inputRedirected": true,
+        "rows": [
+          {
+            "prompt": 1,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 2,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          },
+          {
+            "prompt": 3,
+            "outcome": "threw",
+            "isNull": null,
+            "value": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+          }
+        ]
+      }
+    },
+    {
+      "host": "pwsh.exe",
+      "case": "entry (i) -NonInteractive",
+      "driverExit": 0,
+      "echoedInput": "",
+      "result": {
+        "host": "7.6.9",
+        "edition": "Core",
+        "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+        "entryExit": "terminating-error",
+        "entryError": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.",
+        "events": [],
+        "createdEntries": [],
+        "removedEntries": [],
+        "lastOutput": []
+      }
+    },
+    {
+      "host": "pwsh.exe",
+      "case": "entry (ii) stdin 'all' then EOF",
+      "driverExit": 0,
+      "echoedInput": "all",
+      "result": {
+        "host": "7.6.9",
+        "edition": "Core",
+        "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+        "entryExit": "terminating-error",
+        "entryError": "System.Management.Automation.RuntimeException: Compiler ancestor permits foreign replacement or has an untrusted owner.",
+        "events": [],
+        "createdEntries": [],
+        "removedEntries": [],
+        "lastOutput": []
+      }
+    }
+  ]
+}
