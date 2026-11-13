@@ -10,7 +10,7 @@ this candidate. Edit native UI, prayer/weather, geometry, PBR, Earthshine and
 embedded lunar textures in `src/native/index.html`; edit config and builder in
 `src/native/`. Integration owners are `real-sky/native-*.mjs` and
 `native-host-hooks.js`. Rebuild with `python tools/build_native.py`; never patch
-generated root entries, bundles, worker, data, CSS or copied `real-sky/core`. The builder is all-or-nothing on detected failure (nothing is written until every guard passes) and never edits outside its declared generated set, recorded in `GENERATED.json`; run one build per tree at a time (R0029).
+generated root entries, bundles, worker, data, CSS or copied `real-sky/core`. The builder is all-or-nothing on detected failure (nothing is written until every guard passes) and never edits outside its declared generated set, recorded in `GENERATED.json`; run one build per tree at a time (R0029). A build deletes any `.js` file in `moon/file-data/` and any `.mjs` file in `real-sky/core/src/` or `real-sky/core/integration/` that it does not produce, tracked or untracked, so keep no files of your own there.
 `vendor/real-sky` retains immutable scientific source and oracle fixtures.
 The requested bottom-border fix is authored in `tools/native_core_horizon.py`;
 the builder applies that one digest-guarded horizon-predicate correction while

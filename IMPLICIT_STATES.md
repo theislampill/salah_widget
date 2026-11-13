@@ -108,10 +108,10 @@ Entries by status value and dimension (all entries, installer entries included):
 | Status value | Code | Documentation | Implementation | Verification |
 |---|---|---|---|---|
 | implicit and materially significant | IMS | 47 | 38 | 4 |
-| partially explicit | PEX | 40 | 42 | 53 |
+| partially explicit | PEX | 42 | 44 | 55 |
 | explicitly documented but weakly enforced | DWE | 6 | 0 | 0 |
-| explicitly enforced but insufficiently verified | EEV | 0 | 20 | 15 |
-| explicit, enforced and independently verified | EIV | 19 | 0 | 12 |
+| explicitly enforced but insufficiently verified | EEV | 0 | 18 | 13 |
+| explicit, enforced and independently verified | EIV | 17 | 0 | 12 |
 | historically problematic but demonstrably resolved | HRS | 0 | 11 | 10 |
 | unknown or insufficient evidence | UNK | 0 | 1 | 18 |
 | **Total** | | 112 | 112 | 112 |
@@ -264,8 +264,8 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 
 | Registry ID | Name | Original ID | Doc | Impl | Verif | Historical disposition |
 |---|---|---|---|---|---|---|
-| [ISM-BLD-001](#ism-bld-001) | Native generation output publication sequence | C13 | EIV | EEV | EEV | implemented but not fully verified |
-| [ISM-BLD-002](#ism-bld-002) | Moon generation preflight and expansion | C14 | EIV | EEV | EEV | implemented but not fully verified |
+| [ISM-BLD-001](#ism-bld-001) | Native generation output publication sequence | C13 | PEX | PEX | PEX | implemented but not fully verified |
+| [ISM-BLD-002](#ism-bld-002) | Moon generation preflight and expansion | C14 | PEX | PEX | PEX | implemented but not fully verified |
 | [ISM-BLD-003](#ism-bld-003) | R0017 Pages payload qualification workflow and retained receipt | C24 | PEX | EEV | IMS | no longer applicable |
 | [ISM-BLD-004](#ism-bld-004) | Pages deployment from main (a commit to main is a deploy) | new | PEX | IMS | PEX | new |
 | [ISM-BLD-005](#ism-bld-005) | RLGWO delivery workflow (campaign governance) | new | PEX | IMS | PEX | new |
@@ -2942,7 +2942,7 @@ Original audit: **new (NEW-E-05 + NEW-D-04)** · Lane papers: [D](docs/audit/pos
 <a id="ism-bld-001"></a>
 ### ISM-BLD-001 — Native generation output publication sequence
 
-Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *implemented but not fully verified*
+Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Turns authored sources into root entries and bundles; a wrong output ships at the next merge to main.
 - **Sources.** `tools/build_native.py` (computes every output into an in-memory `Outputs` map; `publish` at the end); `tools/generated_outputs.py` (guards, `replace_exact`, declared owned set, `publish`, `GENERATED.json`); `tools/native_core_horizon.py`; `tools/native_core_spectral_cache.py`; `tools/native_star_bootstrap.py`. Contract: [R0029](docs/state-contracts/R0029.md).
@@ -2964,7 +2964,8 @@ Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 - **Invariants.** I1 no detected failure leaves an in-tree change; I2 `-O` does not change validation; I3 a drifted anchor fails the build; I4 stale owned outputs never survive a successful build; I5 identical inputs give the committed bytes
 - **Failure and recovery.** failure before publish needs no recovery; failure during publish is recovered by re-running. Two concurrent builds on one tree are unsupported (DG-1 default: documented, no lock file)
 - **Invalid, duplicate, stale or concurrent risks.** a forged or stale inventory cannot widen deletion beyond the declared set; an unreadable inventory fails before publish; a multi-file publish is not atomic as a whole (per-file `os.replace`); concurrent builds unsupported
-- **Status evidence.** D: [R0029 contract](docs/state-contracts/R0029.md) + AGENTS CP9 sentence · I: explicit, centralised in `generated_outputs.py` · V: `tests/real-sky/generator_atomicity_test.py` (9 tests) and the re-expressed R0027 tests, with mutation controls recorded in R0029.md; independent review pending (V stays EEV until it is recorded)
+- **Proposed status (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, taking effect only when R0029 is accepted; the cells above stay at the audit baseline until then.
+- **Status evidence.** D: [R0029 contract](docs/state-contracts/R0029.md) + AGENTS CP9 sentence · I: explicit, centralised in `generated_outputs.py` · V: `tests/real-sky/generator_atomicity_test.py` (12 tests) and the re-expressed R0027 tests, with mutation controls recorded in R0029.md; independent review passed at candidate `c9290f8b` with advisories (orchestrator records the reference); codes change only on acceptance
 - **Work orders.** R0027 (issue 69: spectral transform added); R0029 (issue 90: staging, guards, inventory)
 - **Accepted evidence.** `tests/real-sky/native_spectral_cache_build_test.py` 8 OK; build-twice parity (lane F probe: 0 diffs over 509 files; integrator re-run at hand-back). R0029 executor evidence (not yet accepted): see R0029.md ledger
 - **Tests.** `tests/real-sky/native_spectral_cache_build_test.py`, `native_horizon_build_test.py`, `generator_atomicity_test.py`
@@ -2983,7 +2984,7 @@ Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 <a id="ism-bld-002"></a>
 ### ISM-BLD-002 — Moon generation preflight and expansion
 
-Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *implemented but not fully verified*
+Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Validation and expansion of Moon outputs into the entries.
 - **Sources.** `tools/build_moon.py` `plan_moon` (computes every Moon output from the given entry texts into an `Outputs` map; writes nothing) and `build_moon` (direct form: plan, then `publish` without inventory); `tools/compact_receivers.py`; `tools/generated_outputs.py`. Contract: [R0029](docs/state-contracts/R0029.md).
@@ -3003,6 +3004,7 @@ Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 - **Effects.** Moon outputs, published by ISM-BLD-001; `moon/BUILD.json` keeps its schema and bytes; the file inventory lives in the sibling `GENERATED.json`
 - **Failure and recovery.** every Moon failure is detected before publish and needs no recovery
 - **Invalid, duplicate, stale or concurrent risks.** stale chunks removed by the next successful build (R0029 G-06); non-`.js` files in `moon/file-data/` and any other `moon/` file outside the declared set are never removed
+- **Proposed status (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, taking effect only when R0029 is accepted; the cells above stay at the audit baseline until then.
 - **Status evidence.** D: AGENTS Moon section + [R0029 contract](docs/state-contracts/R0029.md) · I: explicit · V: guard tests + `generator_atomicity_test.py` (Moon asset drift, both Moon count sites, stale chunk); independent review pending
 - **Work orders.** R0021 (HOST_UNITS gained `moon-install-guard.mjs`); R0029 (issue 90: staged `plan_moon` interface); R0033 (issue 100) must rebase onto `plan_moon`
 - **Accepted evidence.** `tests/real-sky/moon_build_guard_test.py` 8 OK
