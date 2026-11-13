@@ -8,6 +8,9 @@
 // R2C-14 healthy cells: frozen simTime scenes from the AGENTS evidence list (noon, sunrise, sunset, overcast,
 //   rain, thunder, gibbous and crescent Moon, near-Fajr), each run twice per tree for the run-to-run noise
 //   floor; the 325x530 card screenshot of base and candidate is compared (byte equality and pixel delta).
+//   Also: the six debugOptic forces, a physical lunar-corona scene, the header buckle clipped at 4x DPR, and a
+//   live-motion clip (real time, motion=full, broken cloud, frames at 1/6/11/16 s) compared against each tree's
+//   own run-to-run noise (live motion cannot be byte-identical between page loads).
 // R2C-13 fault cells (real-time, 55 s before the stub Isha so the countdown text changes every second): an
 //   init script wraps window.SalahMoonRuntime on assignment so request() throws on every call after the
 //   first N (N=2 "after-start"; N=0 "boot"). Samples once per second for 12 s: .left text, the published
@@ -42,7 +45,17 @@ function serve(root){return http.createServer((req,res)=>{
 const SITE='#lat=24.47&lon=39.61&label=Madinah&method=4&seed=1&tz=Asia%2FRiyadh';
 const HEALTHY_ALL=[['noon','&simTime=12:30&simWx=0&simCloud=0'],['sunrise','&simTime=05:50&simWx=0&simCloud=0'],['sunset','&simTime=18:55&simWx=0&simCloud=0'],
   ['overcast','&simTime=12:30&simWx=3&simCloud=100'],['rain','&simTime=14:00&simWx=63'],['thunder','&simTime=14:00&simWx=95&simPrecip=5'],
-  ['gibbous','&simTime=22:00&simMoon=0.92&simWax=1&simMoonAlt=20&simMoonH=42'],['crescent','&simTime=20:30&simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42'],['near-fajr','&simTime=04:40']];
+  ['gibbous','&simTime=22:00&simMoon=0.92&simWax=1&simMoonAlt=20&simMoonH=42'],['crescent','&simTime=20:30&simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42'],['near-fajr','&simTime=04:40'],
+  // Forced optics (AGENTS debugOptic names), the physical lunar corona scene and the header buckle at 4x zoom.
+  ['optic-halo','&simTime=12:30&debugOptic=halo'],['optic-sundogs','&simTime=17:30&debugOptic=sundogs'],['optic-pillar','&simTime=18:20&debugOptic=pillar'],
+  ['optic-anticrep','&simTime=17:45&debugOptic=anticrep'],
+  ['optic-paraselene','&simTime=22:00&simMoon=0.98&simWax=1&simMoonAlt=30&simMoonH=20&debugOptic=paraselene'],
+  ['optic-lunarhalo','&simTime=22:00&simMoon=0.98&simWax=1&simMoonAlt=30&simMoonH=20&debugOptic=lunarhalo'],
+  ['lunar-corona','&simTime=22:00&simMoon=0.98&simWax=1&simMoonAlt=30&simMoonH=20&simWx=2&simCloud=30&simHumid=95'],
+  ['buckle-zoom-noon','&simTime=12:30&simWx=0&simCloud=0',{dpr:4,clip:{x:95,y:0,width:135,height:46}}],
+  ['buckle-zoom-night','&simTime=22:00&simMoon=0.92&simWax=1&simMoonAlt=20&simMoonH=42',{dpr:4,clip:{x:95,y:0,width:135,height:46}}]];
+// Live motion clip: real time, motion=full, broken cloud; frames at 1/6/11/16 s, two interleaved runs per tree.
+const MOTION=('no-motion' in args)?null:{hash:'&simWx=2&simCloud=50&motion=full',at:[1000,5000,5000,5000]};
 const HEALTHY=args.scenes?HEALTHY_ALL.filter(([s])=>String(args.scenes).split(',').includes(s)):HEALTHY_ALL;
 const SETTLE=+(args.settle||2500);   // ms after the loop starts before the healthy screenshot
 const HEALTHY_INSTANT='2026-09-07T12:00:00Z';
@@ -54,8 +67,8 @@ const HOOK=n=>`(()=>{const L=window.__r2c={calls:0,throws:0};let rt;
    v.request=function(...a){L.calls++;if(L.calls>${n}){L.throws++;throw new Error('injected R002C Moon request failure');}return rq.apply(this,a);};
    Object.defineProperty(v,'__r2cWrapped',{value:true});}
   rt=v;}});})();`;
-async function cell(browser,base,{hash,instant,hook}){
-  const context=await browser.newContext({viewport:{width:325,height:530},deviceScaleFactor:1,timezoneId:'America/Los_Angeles',locale:'en-US',reducedMotion:'reduce'});
+async function cell(browser,base,{hash,instant,hook,dpr=1,reducedMotion='reduce'}){
+  const context=await browser.newContext({viewport:{width:325,height:530},deviceScaleFactor:dpr,timezoneId:'America/Los_Angeles',locale:'en-US',reducedMotion});
   const days=[];
   await context.route('**/*',route=>{const u=route.request().url();
     if(u.startsWith(base))return route.continue();
@@ -93,23 +106,41 @@ const servers={},bases={};
   const px=await pixelDiffer();
   for(const engine of engines){
     const browser=await ENG[engine].launch({headless:true});report.engines[engine]=browser.version();
-    for(const [scene,extra] of HEALTHY){
+    for(const [scene,extra,opt={}] of HEALTHY){
       const shots={};
       for(const run of [1,2])for(const k of ['base','cand']){            // interleaved, so timing drift is not attributed to a tree
-        const c=await cell(browser,bases[k],{hash:SITE+extra,instant:HEALTHY_INSTANT});
+        const c=await cell(browser,bases[k],{hash:SITE+extra,instant:HEALTHY_INSTANT,dpr:opt.dpr||1});
         await c.page.waitForFunction(()=>{try{return !!window.eval('today')&&window.eval('_loopStarted')}catch(e){return false}},null,{timeout:15000}).catch(()=>{});
         // Let asynchronous Moon terrain refinement settle, so its progress at the capture instant is not compared.
         await c.page.waitForFunction(()=>{const s=window.SalahMoonRuntime?.state?.status;return !s||!['refining','pending','initializing','loading'].includes(s);},null,{timeout:30000}).catch(()=>{});
         await c.page.waitForTimeout(SETTLE);
-        const shot=await c.page.locator('.c').screenshot(),file=`${engine}-${scene}-${k}-${run}.png`;fs.writeFileSync(path.join(out,file),shot);shots[k+run]=shot;
+        const shot=opt.clip?await c.page.screenshot({clip:opt.clip}):await c.page.locator('.c').screenshot(),file=`${engine}-${scene}-${k}-${run}.png`;fs.writeFileSync(path.join(out,file),shot);shots[k+run]=shot;
         if(run===1)report.healthy.push({engine,scene,tree:k,pageErrors:c.pageErrors,consoleErrors:c.consoleErrors,state:await read(c.page)});
-        await c.context.close();
+        await c.context.close().catch(()=>{});
       }
       const row={engine,scene,baseNoise:await px.diff(shots.base1,shots.base2),candNoise:await px.diff(shots.cand1,shots.cand2),
         baseVsCand:[await px.diff(shots.base1,shots.cand1),await px.diff(shots.base2,shots.cand2)]};
       const floor=Math.max(row.baseNoise.maxDelta,row.candNoise.maxDelta);
       row.byteIdentical=row.baseVsCand.every(d=>d.bytesEqual);row.withinNoise=row.baseVsCand.every(d=>!d.sizeDiffers&&d.maxDelta<=floor);
       report.healthy.push({summary:row});console.log(JSON.stringify({engine,scene,byteIdentical:row.byteIdentical,withinNoise:row.withinNoise,baseVsCand:row.baseVsCand}));
+    }
+    if(MOTION){
+      const frames={};
+      for(const run of [1,2])for(const k of ['base','cand']){
+        const c=await cell(browser,bases[k],{hash:SITE+MOTION.hash,instant:HEALTHY_INSTANT,reducedMotion:'no-preference'});
+        await c.page.waitForFunction(()=>{try{return !!window.eval('today')&&window.eval('_loopStarted')}catch(e){return false}},null,{timeout:15000}).catch(()=>{});
+        const list=[];for(const ms of MOTION.at){await c.page.waitForTimeout(ms);list.push(await c.page.locator('.c').screenshot());}
+        frames[k+run]=list;report.motion=report.motion||[];report.motion.push({engine,tree:k,run,pageErrors:c.pageErrors,state:await read(c.page)});
+        await c.context.close().catch(()=>{});
+      }
+      const row={engine,cell:'motion',withinTree:{},baseVsCand:[],noise:[]};
+      for(const k of ['base','cand'])row.withinTree[k]=[];
+      for(let i=1;i<MOTION.at.length;i++)for(const k of ['base','cand'])row.withinTree[k].push(await px.diff(frames[k+'1'][i-1],frames[k+'1'][i]));
+      for(let i=0;i<MOTION.at.length;i++){row.noise.push([await px.diff(frames.base1[i],frames.base2[i]),await px.diff(frames.cand1[i],frames.cand2[i])]);row.baseVsCand.push([await px.diff(frames.base1[i],frames.cand1[i]),await px.diff(frames.base2[i],frames.cand2[i])]);}
+      row.moves={base:row.withinTree.base.every(d=>d.differingPixels>0),cand:row.withinTree.cand.every(d=>d.differingPixels>0)};
+      row.withinNoise=row.baseVsCand.every((p,i)=>{const f=Math.max(row.noise[i][0].differingPixels,row.noise[i][1].differingPixels);return p.every(d=>d.differingPixels<=Math.max(f*1.5,f+500));});
+      report.motionSummary=report.motionSummary||[];report.motionSummary.push(row);
+      console.log(JSON.stringify({engine,cell:'motion',moves:row.moves,withinNoise:row.withinNoise,noisePx:row.noise.map(n=>n.map(d=>d.differingPixels)),baseVsCandPx:row.baseVsCand.map(p=>p.map(d=>d.differingPixels))}));
     }
     for(const [variant,n] of FAULTS)for(const k of ['base','cand']){
       const c=await cell(browser,bases[k],{hash:SITE,instant:FAULT_INSTANT,hook:HOOK(n)});
@@ -120,7 +151,7 @@ const servers={},bases={};
         loadingPersists:lefts.every(v=>v==='Loading…'||v===''||v==null),final:samples[samples.length-1]};
       const shot=await c.page.locator('.c').screenshot(),file=`${engine}-fault-${variant}-${k}.png`;fs.writeFileSync(path.join(out,file),shot);row.screenshot=file;
       report.faults.push(row);console.log(JSON.stringify({engine,variant,tree:k,leftChanges:changes,pageErrors:c.pageErrors.length,consoleErrors:c.consoleErrors.length,first:lefts[0],last:lefts[lefts.length-1],moon:row.final.moon,faults:row.final.faults&&Object.keys(row.final.faults)}));
-      await c.context.close();
+      await c.context.close().catch(()=>{});
     }
     await browser.close();
   }
