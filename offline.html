@@ -7512,8 +7512,8 @@ function render(){
     return `<div class="p ${on?"on":""} ${now?"now":""} ${dim?"past":""}" data-prayer-key="${k}"><b>${k}</b><span class="tm">${fmt(on?M.nextTime:M.t[k])}</span></div>`;
   }).join("");
   renderCalendarDates(selectCalendarDisplay(M));
-  // Stale presentation (R002E, gate G-E1 pending): "prayer" is reachable only when the wall clock steps back across
-  // civil midnight between maintainPrayerDay() and this render (one frame); every other stale state has no model.
+  // Stale presentation (R002E, G-E1 resolved by retention): "prayer" is reachable only when the wall clock steps back
+  // across civil midnight between maintainPrayerDay() and this render (one frame); every other stale state has no model.
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
     }else withdrawnPrayerStage();                             // no timetable: withdrawal and calendar precede every optional stage
     prayerPublished=true;
