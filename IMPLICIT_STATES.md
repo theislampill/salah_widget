@@ -4104,8 +4104,8 @@ ISM-INST-004 and ISM-INST-006 runs inside the loaded `SalahInstaller.StageNative
   new PowerShell window) and **retained as a recorded limitation**; correction C2 is not
   implemented (owner decision DG-I1 = A). The reused predicates are those of an earlier
   run of the reviewed installer; a same-named type planted by other code already running as
-  the user stays outside R0015's isolation claim. The real-custody variant of B1 on a host
-  whose TEMP ancestry the installer admits is a native recipe (PENDING-NATIVE in R0039).
+  the user stays outside R0015's isolation claim. The real-custody variant ran on GitHub
+  windows-2022/2025 with PS5.1 and PS7 7.6.6 (run 43481842088): reuse confirmed on every leg (R0039 R39-07 MET).
 - The hypothesis above is therefore observed for the guard; codes unchanged.
 
 ---
@@ -4338,8 +4338,8 @@ page opening); `Read-Host` is the host's own.
   acknowledgement and continues (an empty selection reply means `all`, an `ask` reply means
   GitHub), where Bash's `read_answer` fails and exits 1. Enter never proves installation
   (invariant above), so the impact is wording/exit truthfulness only. It joins the recorded
-  exit-status divergence. The end-to-end hand-off under ended input on a host whose TEMP the
-  installer admits is a native recipe (PENDING-NATIVE in [R0039](docs/state-contracts/R0039.md)).
+  exit-status divergence. End to end on GitHub windows-2022/2025 with PS5.1 and PS7 7.6.6 (run
+  43481842088): hand-off reached, no store page, exit 0 ([R0039](docs/state-contracts/R0039.md) R39-08 MET).
 - **Exit parity (item 11):** PowerShell exits 0 with "Manual action pending … Retained bundle:"
   when nothing was staged, where Bash exits 1 ("No files were staged…"). **Retained as a
   recorded limitation** (owner decision DG-I1 = A; correction C4 not implemented).

@@ -1,0 +1,270 @@
+{
+ "schema": "r0039-installer-probes/1",
+ "hostName": "ps7",
+ "runner": "GitHub Actions 1000005812",
+ "rows": {
+  "R39-07": {
+   "verdict": "GAP",
+   "reason": "real custody inconclusive (for example TEMP ancestry refused) or control failed: ['inconclusive', 'inconclusive'] / 'single-load control: observed '"
+  },
+  "R39-08": {
+   "verdict": "GAP",
+   "reason": "hand-off not reached or harness did not complete (see case results)"
+  }
+ },
+ "cases": {
+  "b1-file-real": {
+   "exit": 0,
+   "result": {
+    "host": "7.6.6",
+    "edition": "Core",
+    "mode": "file",
+    "compiler": "real",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+      "observedConstant": null,
+      "assembly": null,
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "refused-before-create",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": false,
+      "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+      "observedConstant": null,
+      "assembly": null,
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "refused-before-create",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     }
+    ],
+    "outcome": "inconclusive"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-file-fixture": {
+   "exit": 0,
+   "result": {
+    "host": "7.6.6",
+    "edition": "Core",
+    "mode": "file",
+    "compiler": "fixture",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "uvxpofw5.hst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": true,
+      "lastCompiledTag": "S1"
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": true,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "uvxpofw5.hst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": false,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": "S1"
+     }
+    ],
+    "outcome": "reuse-confirmed: second call observed S1"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-iex-real": {
+   "exit": 0,
+   "result": {
+    "host": "7.6.6",
+    "edition": "Core",
+    "mode": "iex",
+    "compiler": "real",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+      "observedConstant": null,
+      "assembly": null,
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "refused-before-create",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": false,
+      "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+      "observedConstant": null,
+      "assembly": null,
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "refused-before-create",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     }
+    ],
+    "outcome": "inconclusive"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-iex-fixture": {
+   "exit": 0,
+   "result": {
+    "host": "7.6.6",
+    "edition": "Core",
+    "mode": "iex",
+    "compiler": "fixture",
+    "order": "S1,S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S1",
+      "typeLoadedBefore": false,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "hcniudqk.skd, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": true,
+      "lastCompiledTag": "S1"
+     },
+     {
+      "load": "S2",
+      "typeLoadedBefore": true,
+      "error": null,
+      "observedConstant": "S1",
+      "assembly": "hcniudqk.skd, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+      "compilerContextAllocated": false,
+      "compilerContextStatus": "closed",
+      "compilerInvoked": false,
+      "lastCompiledTag": "S1"
+     }
+    ],
+    "outcome": "reuse-confirmed: second call observed S1"
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b1-control-S2": {
+   "exit": 0,
+   "result": {
+    "host": "7.6.6",
+    "edition": "Core",
+    "mode": "file",
+    "compiler": "real",
+    "order": "S2",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "rows": [
+     {
+      "load": "S2",
+      "typeLoadedBefore": false,
+      "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+      "observedConstant": null,
+      "assembly": null,
+      "compilerContextAllocated": true,
+      "compilerContextStatus": "refused-before-create",
+      "compilerInvoked": false,
+      "lastCompiledTag": null
+     }
+    ],
+    "outcome": "single-load control: observed "
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b2-i-noninteractive": {
+   "exit": 0,
+   "result": {
+    "host": "7.6.6",
+    "edition": "Core",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "entryExit": "terminating-error",
+    "entryError": "System.Management.Automation.PSInvalidOperationException: PowerShell is in NonInteractive mode. Read and Prompt functionality is not available.",
+    "events": [],
+    "handoffReached": false,
+    "storeOpenedAfterHandoff": false,
+    "storeOpenCount": 0,
+    "fallbackWarning": false,
+    "retainedBundleUnderFixtureHome": false,
+    "createdEntryCount": 0,
+    "removedEntries": [],
+    "lastOutput": [
+     "Salah Widget Installer",
+     "",
+     "This wizard can:",
+     "- detect supported browsers/profiles",
+     "- check for TablissNG",
+     "- safely refuse to modify legacy Tabliss profiles",
+     "- download the right TablissNG build from GitHub latest release when needed",
+     "- guide the browser-required install step",
+     "- stage the Salah Widget preset for import",
+     "",
+     "It will not silently force-install extensions or write directly into extension storage.",
+     "",
+     "== Detecting browsers ==",
+     "[1] Google Chrome / Default - neither extension identified by chromium-directory-and-preferences",
+     ""
+    ]
+   },
+   "stdoutHead": "",
+   "stderrTail": ""
+  },
+  "b2-ii-ended-input": {
+   "exit": 0,
+   "result": {
+    "host": "7.6.6",
+    "edition": "Core",
+    "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "entryExit": "terminating-error",
+    "entryError": "System.Management.Automation.RuntimeException: Compiler ancestor permits foreign replacement or has an untrusted owner.",
+    "events": [],
+    "handoffReached": false,
+    "storeOpenedAfterHandoff": false,
+    "storeOpenCount": 0,
+    "fallbackWarning": false,
+    "retainedBundleUnderFixtureHome": false,
+    "createdEntryCount": 0,
+    "removedEntries": [],
+    "lastOutput": [
+     "",
+     "This wizard can:",
+     "- detect supported browsers/profiles",
+     "- check for TablissNG",
+     "- safely refuse to modify legacy Tabliss profiles",
+     "- download the right TablissNG build from GitHub latest release when needed",
+     "- guide the browser-required install step",
+     "- stage the Salah Widget preset for import",
+     "",
+     "It will not silently force-install extensions or write directly into extension storage.",
+     "",
+     "== Detecting browsers ==",
+     "[1] Google Chrome / Default - neither extension identified by chromium-directory-and-preferences",
+     "",
+     "Selected targets: 1 eligible, 0 held, 0 refused."
+    ]
+   },
+   "stdoutHead": "all",
+   "stderrTail": ""
+  }
+ }
+}
