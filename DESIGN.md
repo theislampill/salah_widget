@@ -125,8 +125,8 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
   Calendar dates dialog. The dimmed date-row style `.c[data-stale="prayer"]` is set
   only on the timetable branch, which a stale record never reaches except for one
   frame when the device wall clock steps back across civil midnight between the
-  day check and the render; whether to remove or activate that style is an open
-  owner decision ([R002E](docs/state-contracts/R002E.md) gate G-E1).
+  day check and the render. The style and its writer are retained unchanged for
+  that one frame ([R002E](docs/state-contracts/R002E.md) gate G-E1, resolved by retention).
 - **Status line:** one owner, `writePrayerStatus`, writes the large next time
   (`.nt`) and the line under it (`.left`); nothing ranks the messages, so the
   later write is the visible one. Before the first publication the markup shows

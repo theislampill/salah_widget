@@ -1749,6 +1749,20 @@
     ],
     "protocol": "one JSON line per engine/pair cell and a final summary line {decision: DEFECT ESTABLISHED | NO DEFECT ESTABLISHED | INCOMPLETE}; <out>/report.json and .cn crops; exit 3 when INCOMPLETE (docs/state-contracts/R002E.md §2)"
    }
+  },
+  {
+   "path": "tools/qa/r002e_smoke_stubbed.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit running the unchanged tests/smoke.html with every non-loopback request route-aborted); not a headless unit instrument",
+   "owner": "R002E",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r002e_smoke_stubbed.cjs",
+     "<tree>",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line per engine {status, pass, fail, skip, pageErrors, abortedHosts, rolloverRow} (docs/state-contracts/R002E.md E-05)"
+   }
   }
  ]
 }

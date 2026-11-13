@@ -277,8 +277,9 @@ function mentions(name, tokens) {
       // 4928684d...; R002C changes only render/loop/boot containment, not the force block, helper, clamp or call above.
       // R002E re-bind (issue 95, candidate source 32631902): body 811f706d... -> ad071c00..., entry 4928684d... ->
       // cc9d2326...; R002E changes only the prayer status writer and the .cn fit key, not the block, helper, clamp or call.
-      assert.equal(digest(body),"ad071c00c010528f67dc4a6fc0c7578154b5a8231ba0bea4ed9b22499a63c5cb",'delegated native script changed');
-      assert.equal(digest(source),"cc9d2326f2b431258085435376968cb421a6a54d448941cad4d69af545e6c7c6",'delegated current generated entry changed');
+      // R002E comment-only successor 14e8e895: body ad071c00... -> 4f64a2c5..., entry cc9d2326... -> 5dc6d71c....
+      assert.equal(digest(body),"4f64a2c5b5b32baa077123bcc5b62bac7afeb5662488a3946d098ab993ada883",'delegated native script changed');
+      assert.equal(digest(source),"5dc6d71cad539e7b9707e5377e1194fe466235adf75e691b73e9f45134c6226b",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {

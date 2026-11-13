@@ -45,6 +45,15 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R002E comment-only successor at 14e8e895 (G-E1 retention ruling): authored source 83fd1b93 and the legacy-Moon
+    // structural control of its generated index 5dc6d71c. The 32631902 entries below remain admitted unchanged.
+    '83fd1b93f73c1f805eae41846c82053729599799d0ccec4a8942a24b88edbea1':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'14e8e8955bd4fc2a27da0d7cdf724ef5fb1ef535',path:'src/native/index.html',layout:'config,native'}),
+    '01c2a1d07dd460462594e6002c442b774e8ce9f384648d81d326b406fbe6d982':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'14e8e8955bd4fc2a27da0d7cdf724ef5fb1ef535',path:'index.html',
+      parentSha256:'5dc6d71cad539e7b9707e5377e1194fe466235adf75e691b73e9f45134c6226b',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R002E (issue 95) prayer presentation residuals at 32631902, stacked on the R002C candidate e1839a45: authored
     // source 5e410421 and the legacy-Moon structural control of its generated index cc9d2326. Every entry below,
     // including R002C's 147b96cd and 224a104d, remains admitted unchanged.

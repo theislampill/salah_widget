@@ -1,7 +1,8 @@
 "use strict";
 // R002E (issue 95): prayer presentation residual state. Rows refer to docs/state-contracts/R002E.md.
 //   E-02  I-S1 "stale => no model" over clock jumps, seeks, adoption, broad apply and zone change, plus the one
-//         counterexample found (a backward wall step across civil midnight between maintainPrayerDay and render).
+//         pinned reachability of the retained stale marker (a backward wall step across civil midnight between
+//         maintainPrayerDay and render; G-E1 resolved by retention, amendment R002E-A2).
 //   E-03  fit-cache key completeness (noon, declination, runtime generation) with the font gate preserved.
 //   E-04  mirror flags (fetchingTomorrow, _rolloverBusy, _rolloverNextTry) equal the authoritative slots/cooldown.
 //   E-05  qaState().cache prayerStale / rolloverPendingMs derivation unchanged.
@@ -50,10 +51,10 @@ for(const [name,steps] of Object.entries(SEQUENCES))test(`E-02 I-S1 holds: ${nam
   assert.notEqual(stalePresentation(h),"prayer");
   assert.ok(h.run("__r2eSeen.length")>1,"the sequence must exercise render");
 });
-test("E-02 I-S1 counterexample: a backward wall step across midnight between maintainPrayerDay and render (gate G-E1 Andon)",async()=>{
-  // Characterises the one reachable violation found. It lasts one frame: the next maintainPrayerDay clears
-  // _prayerStale and the next render writes "". If I-S1 is later enforced in code, this row must be revised
-  // together with gate G-E1 (docs/state-contracts/R002E.md §3).
+test("E-02 retained stale marker is reachable only in one clock-step-back interleaving (G-E1 retention, R002E-A2)",async()=>{
+  // Pins the retained behaviour (rule and writer unchanged): the only stale-with-model frame, lasting one frame -
+  // the next maintainPrayerDay clears _prayerStale and the next render writes "". Changing it is a visible change
+  // that needs an owner decision (docs/state-contracts/R002E.md §3).
   const h=watched(SOURCE,{epoch:"2026-09-07T23:59:59Z"});h.seed(record(undefined,"UTC","day7"));h.run("render();startRenderLoop()");await h.frame();
   const g=h.run("globalThis");g.__r2eHook=()=>{};
   h.run("const __r2eMaintain=maintainPrayerDay;maintainPrayerDay=function(){__r2eMaintain();__r2eHook();};");

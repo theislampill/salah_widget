@@ -25,6 +25,11 @@
 // prayer provider from these fixtures, the webfont stylesheet/faces only in the fonts pair (local files), and
 // every other non-local request is aborted. Mocked clock; browser zone America/Los_Angeles; reduced motion.
 //
+// --inputs (fit-key completeness, R002E item 4): instead of the pairs, load one scene per engine and refit .cn in
+// place (key cleared, fitCn(model())) while varying one UNKEYED input at a time — the .nt text ("—", 24 h, 12 h), the
+// "now" knot of the rail (clock seeks inside one current period), the appearance (glass/contrast), the .left text and
+// the header label — and report the largest deviation from the scene's own fit. Within the issue's bounds (0.1 px
+// font-size, 0.5 px top/margin-bottom) the input cannot change the fitted geometry at the measured scenes.
 // Usage: node tools/qa/r002e_fit_discriminator.cjs --root <generated tree> --out <fresh dir>
 //          [--engines chromium,firefox,webkit] [--playwright <playwright package dir>] [--pairs day,sites,...]
 //          [--fonts <regular.ttf>,<display.ttf>]
@@ -156,7 +161,45 @@ function verdict(w,f){
   const dFont=Math.abs(px(w.fontSize)-px(f.fontSize)),dTop=Math.abs(px(w.top)-px(f.top)),dMb=Math.abs(px(w.marginBottom)-px(f.marginBottom));
   return {dFont:+dFont.toFixed(3),dTop:+dTop.toFixed(3),dMarginBottom:+dMb.toFixed(3),geometryExceeds:dFont>0.1||dTop>0.5||dMb>0.5};
 }
-(async()=>{
+async function inputsMode(){
+  const server=serve(root);await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+  const report={scope:'R002E fit-key completeness: unkeyed-input sensitivity of the in-place .cn fit',root:{'index.html':sha(fs.readFileSync(path.join(root,'index.html')))},engines:{},cells:[]};
+  // Seeks stay inside the reference's current period (same currentKey), so only the rail's "now" knot moves.
+  const scenes=[['madinah','07-09-2026',[12,30],[[13,30],[14,30],[15,0]]],['trondheim','25-09-2026',[13,30],[[14,0],[14,45],[15,30]]],['madinah','07-09-2026',[20,30],[[21,30],[23,0],[23,50]]]];
+  for(const engine of engines){
+    const browser=await ENG[engine].launch({headless:true});report.engines[engine]=browser.version();
+    for(const [key,ds,[h,mi],seeks] of scenes){
+      const site=SITES[key],[d,mo,y]=ds.split('-').map(Number),at=(hh,mm)=>Date.UTC(y,mo-1,d,hh,mm)-site.offset*6e4;
+      const c=await open(browser,base,{site,instantMs:at(h,mi)});let row={engine,scene:key+' '+ds+' '+h+':'+mi};
+      try{
+        await settle(c.page,site,ds);await freeze(c.page,at(h,mi));
+        const fit=()=>c.page.evaluate(()=>{_cnFit="";fitCn(model());const s=document.querySelector('.cn').style;return {key:model().currentKey,fontSize:s.fontSize,top:s.top,marginBottom:s.marginBottom};});
+        const ref=await fit(),out={};
+        const dev=(a)=>({font:Math.abs(px(a.fontSize)-px(ref.fontSize)),top:Math.abs(px(a.top)-px(ref.top)),mb:Math.abs(px(a.marginBottom)-px(ref.marginBottom)),key:a.key});
+        const nt0=await c.page.evaluate(()=>document.querySelector('.nt').textContent);
+        out.nt=[];for(const t of ['—','15:30','3:30 PM','12:00',nt0]){await c.page.evaluate(t=>{document.querySelector('.nt').textContent=t;},t);out.nt.push({t,...dev(await fit())});}
+        const left0=await c.page.evaluate(()=>document.querySelector('.left').innerHTML);
+        out.left=[];for(const t of ['Countdown unavailable','Prayer times unavailable']){await c.page.evaluate(t=>{document.querySelector('.left').textContent=t;},t);out.left.push({t,...dev(await fit())});}
+        await c.page.evaluate(h=>{document.querySelector('.left').innerHTML=h;},left0);
+        out.appearance=[];for(const a of ['contrast','glass']){await c.page.evaluate(a=>{document.querySelector('.c').dataset.appearance=a;},a);out.appearance.push({a,...dev(await fit())});}
+        out.label=[];for(const l of ['','A much longer location label']){await c.page.evaluate(l=>{const e=document.querySelector('#loc');e.textContent=l;e.style.display=l?'':'none';},l);out.label.push({l,...dev(await fit())});}
+        out.now=[];for(const [sh,sm] of seeks){await freeze(c.page,at(sh,sm));const f=await fit();out.now.push({at:sh+':'+sm,...dev(f)});}
+        if(out.now.some(x=>x.key!==ref.key))throw new Error('a clock seek left the reference period');
+        const all=[...out.nt,...out.left,...out.appearance,...out.label,...out.now];
+        const max={font:Math.max(...all.map(x=>x.font)),top:Math.max(...all.map(x=>x.top)),mb:Math.max(...all.map(x=>x.mb))};
+        row={...row,status:'MEASURED',ref,out,max:{font:+max.font.toFixed(3),top:+max.top.toFixed(3),mb:+max.mb.toFixed(3)},exceeds:max.font>0.1||max.top>0.5||max.mb>0.5,pageErrors:c.pageErrors};
+      }catch(e){row={...row,status:'ERROR',error:String(e&&e.message||e).slice(0,300)};}
+      await c.context.close().catch(()=>{});report.cells.push(row);console.log(JSON.stringify({engine:row.engine,scene:row.scene,status:row.status,max:row.max,exceeds:row.exceeds,error:row.error}));
+    }
+    await browser.close();
+  }
+  server.close();
+  report.summary={cells:report.cells.length,errors:report.cells.filter(c=>c.status!=='MEASURED').length,exceeding:report.cells.filter(c=>c.exceeds).map(c=>c.engine+':'+c.scene)};
+  fs.writeFileSync(path.join(out,'inputs-report.json'),JSON.stringify(report,null,1));console.log(JSON.stringify({summary:report.summary}));
+  process.exit(report.summary.errors?3:0);
+}
+if('inputs' in args){inputsMode().catch(e=>{console.error(e);process.exit(1);});}
+else (async()=>{
   const server=serve(root);await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
   const P=pairs(),want=args.pairs?String(args.pairs).split(','):Object.keys(P);
   const report={scope:'R002E stage 1 (PRA-F-23) native fit discriminator; fixture records (NOAA solar equations), every request route-stubbed, mocked clock',
