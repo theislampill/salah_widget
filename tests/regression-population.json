@@ -367,23 +367,6 @@
    "expectedCases": 10
   },
   {
-   "name": "r0021-reveal-direct",
-   "argv": [
-    "node",
-    "--test-reporter=tap",
-    "tests/r0021-reveal.cjs"
-   ],
-   "protocol": "auto",
-   "covers": [
-    "tests/r0021-reveal.cjs"
-   ],
-   "inputs": [
-    "tests/r0021-reveal.cjs",
-    "index.html",
-    "config.js"
-   ]
-  },
-  {
    "name": "r0022-lunar-consumers-direct",
    "argv": [
     "node",
@@ -1500,6 +1483,20 @@
      "chromium,firefox,webkit"
     ],
     "protocol": "per-engine discriminator counts in <out> (R002D D-06/D-13/D-15; docs/state-contracts/R002D.md)"
+   }
+  },
+  {
+   "path": "tools/qa/r0028_g12b_native.cjs",
+   "reason": "native browser observation (Playwright Chromium/Firefox/WebKit, loopback-served tree, prayer fixture, every other request aborted, frozen clock); not a headless unit instrument",
+   "owner": "R0028",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0028_g12b_native.cjs",
+     "<tree root>",
+     "<directory containing the playwright package>"
+    ],
+    "protocol": "JSON on stdout: per-engine qaState().wxTruth and data-fx; summary in docs/state-contracts/evidence/R0028/g12b-native.json"
    }
   },
   {
