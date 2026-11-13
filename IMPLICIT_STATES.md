@@ -3636,7 +3636,7 @@ PowerShell's `Clear-OwnedScratch` sits in a `finally` that only begins after the
   activity is not separately proven. Each sentence is mapped to its R0016 evidence row in
   [R0039](docs/state-contracts/R0039.md), "README sentence map". The pinned-sentence check in
   `tools/qualification/installer_preview_docs.cjs` follows the new wording; the successor
-  documentation receipt is rendered by the hosted workflow (PENDING-HOSTED in R0039).
+  documentation receipt is hosted run 43481353177 (job `render` success; R39-05/06 MET in R0039).
 - Codes unchanged: the documentation now matches the recorded scope; host-wide zero effects
   stay `unresolved`.
 
@@ -4424,7 +4424,7 @@ verified, no change needed; (c) material, but implementation or verification inc
 | Bash publishes with a rename after validating the partial, without a post-rename readback. Same inode in the private root; issue 21 row 21-07 requires validation before publication. R0039: retained with reason | 006 |
 | Transport timeouts and redirect policy (recorded NOT DONE in R0015). R0039: retained (DG-I1 = A; C3 not implemented; DG-I2 not activated) | 006 |
 | PS exits 0 when nothing was staged (Bash exits 1); PS treats ended input as an acknowledgement (Bash exits 1); empty preset URL differs between hosts. R0039 B2: the former "store fallback after a hand-off" hypothesis is unreachable as stated on PS5.1 and PS7; exit parity retained (DG-I1 = A; C4 not implemented); empty-URL difference documented | 007 |
-| ~~README sentence "Preview creates, overwrites and deletes no files or directories" is stronger than the host-level evidence.~~ R0039: corrected; the README scopes the claim to the installer itself and states the host-level limits; pins and pinned-sentence check updated in the same change, successor receipt PENDING-HOSTED (effective on acceptance) | 001 |
+| ~~README sentence "Preview creates, overwrites and deletes no files or directories" is stronger than the host-level evidence.~~ R0039: corrected; the README scopes the claim to the installer itself and states the host-level limits; pins and pinned-sentence check updated in the same change, successor receipt hosted run 43481353177 (effective on acceptance) | 001 |
 | ISM-INST-008 release metadata and asset selection was a partial entry with the Bash tiers untested. R0039: entry completed and `tests/test_install_select_asset.py` added (parity 10/10, tier-reorder mutant) | 008 |
 
 ### Final focused sweep (2026-11-12, merged main `e4dbf91b`)
