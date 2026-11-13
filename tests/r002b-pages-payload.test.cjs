@@ -328,6 +328,26 @@ test('the admitted V1 inclusion evidence reproduces its hosted run protected-con
   assert.equal(ev.configuration.sha256, crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, '_config.yml'))).digest('hex'));
 });
 
+test('G-02: the streamed deployed artifact (M1) agrees with the build-equivalent measure (M2) of the same commit', () => {
+  const dir = path.join(ROOT, 'docs/state-contracts/evidence/R002B/m1-c696b39f');
+  const m1 = JSON.parse(fs.readFileSync(path.join(dir, 'm1-deployed-artifact.json'), 'utf8'));
+  const g = JSON.parse(fs.readFileSync(path.join(dir, 'g02-m1-m2.json'), 'utf8'));
+  const m2 = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/state-contracts/evidence/R002B/hosted-43368101308/base-payload.json'), 'utf8'));
+  assert.equal(m1.source, 'deployed-artifact'); assert.equal(m1.conclusion, 'success');
+  assert.equal(m1.sourceCommit, m2.sourceCommit);
+  assert.equal(m1.measured.archive.bytes, m1.artifact.size_in_bytes);
+  assert.equal('sha256:' + m1.measured.archive.sha256, m1.artifact.digest);
+  assert.equal(m1.measured.zipMember.memberUncompressedBytes, m1.measured.tarContainerBytes);
+  assert.equal(m1.measured.regularFiles, m2.measured.regularFiles);
+  assert.equal(m1.measured.regularFileBytes, m2.measured.regularFileBytes);
+  assert.equal(m1.measured.pathSizeManifestSha256, m2.measured.pathSizeManifestSha256);
+  assert.equal(m1.verdict, 'exceeds'); assert.ok(m1.measured.regularFileBytes > m1.bound);
+  assert.equal(g.comparison.agree, true);
+  assert.equal(g.comparison.deployedProtectedSetSha256, m2.protectedConsumers.setSha256);
+  for (const f of ['v1/index.html', 'v1/config.js', 'v1/VERSION.json', 'v1/MANIFEST.sha256'])
+    assert.equal(g.m1.v1PublicFiles[f].sha256, crypto.createHash('sha256').update(fs.readFileSync(path.join(ROOT, f))).digest('hex'), f);
+});
+
 test('the committed Stage-1 receipt states only what the envelope proves', () => {
   const r = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs/state-contracts/evidence/R002B/stage1-deployed-envelope.json'), 'utf8'));
   assert.equal(r.source, 'deployed-artifact');
