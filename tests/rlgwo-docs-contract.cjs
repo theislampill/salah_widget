@@ -277,8 +277,10 @@ function mentions(name, tokens) {
       // render/loop/boot containment, not the force block, helper, clamp or call pinned above.
       // R002E re-bind (issue 95, merge 421a44a9): body bc11c040... -> ae528330..., entry 531bea69... -> 3a93bfc9...;
       // R002E changes only the prayer status writer, the .cn fit key and one comment, not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"ae528330310292ad38706c9410471319cc31532bff58deb1c4a036ffd72de14e",'delegated native script changed');
-      assert.equal(digest(source),"3a93bfc9168508bd7643e28bba31fbc7d35b0eada21a56113361dedf01d916ba",'delegated current generated entry changed');
+      // R002F re-bind (issue 96): body ae528330... -> 3950522f..., entry 3a93bfc9... -> cb3e81c7...;
+      // R002F changes only the weather gate/renewal/preview-range region and one loop line, not the pinned block, helper, clamp or call.
+      assert.equal(digest(body),"3950522faac4b41c3614387f52350dc43e94278766db7b87542227cf44d7f578",'delegated native script changed');
+      assert.equal(digest(source),"cb3e81c7b1327d54f9d401eb5c1fb2e81ed1f852a527e2ac0c5b3145b59e2133",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {

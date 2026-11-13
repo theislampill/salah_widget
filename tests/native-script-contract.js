@@ -45,6 +45,16 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R002F (issue 96) weather renewal and preview range, stacked on R002E d661d56c: authored source 6a131513
+    // and the legacy-Moon structural control of its generated index cb3e81c7. Every entry below, including
+    // R002E's 3c80fd51 and 3c1f1a0a, remains admitted unchanged.
+    '6a131513e668474be3d89efdb939ddf5ccf56baeb205a71ea55305b7f149ebc0':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'8c95c5ad1e770a026aa58900a9773b7a2e13a4d0',path:'src/native/index.html',layout:'config,native'}),
+    '2ec95e93df9a2cdeb6ed6948c9e9b473b12a93ebaf45b4b2cbf24a11d06e8af1':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'8c95c5ad1e770a026aa58900a9773b7a2e13a4d0',path:'index.html',
+      parentSha256:'cb3e81c7b1327d54f9d401eb5c1fb2e81ed1f852a527e2ac0c5b3145b59e2133',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R002E (issue 95) prayer presentation residuals merged with main 885d5a31 at 421a44a9: authored source 3c80fd51
     // and the legacy-Moon structural control of its generated index 3a93bfc9. Every entry below, including R002C's
     // 88eade13 and 78079b51, remains admitted unchanged.

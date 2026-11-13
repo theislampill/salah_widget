@@ -190,48 +190,6 @@
    "trigger": "a qualification host with the symlink privilege (R002A CI) runs it; no retirement needed (condition-gated)"
   },
   {
-   "id": "R28-D01",
-   "status": "active",
-   "kind": "case-fail",
-   "command": "rlgwo-docs-contract",
-   "case": "docs composed: useful model estimate without local observation or arrival",
-   "messagePrefix": "README.md: missing contract Model estimate",
-   "firstRed": "red at every tested commit since the instrument arrived (3cf6ce2f); identical set since f71fef6c",
-   "causeClass": "unadopted-contract",
-   "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
-   "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL semantics, side-branch wording: main presents current weather as a model estimate with no local observation or arrival (src/native/index.html weather evidence: \"current weather model\", \"model-estimated-wet/dry\", horizon arrival only from admitted present evidence). README/DESIGN are outside R0028. Assigned to R002F (issue 96) section 6 stage 5, which rewrites the DESIGN \"Weather truthfulness\" freshness paragraph (and README under its option A); dependency: R002F stage 5 lands after its freshness decision D-2F-1",
-   "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
-  },
-  {
-   "id": "R28-D02",
-   "status": "active",
-   "kind": "case-fail",
-   "command": "rlgwo-docs-contract",
-   "case": "docs composed: current and forecast quantity windows retain unavailable metadata",
-   "messagePrefix": "DESIGN.md: missing contract preceding-hour",
-   "firstRed": "red at every tested commit since the instrument arrived (3cf6ce2f); identical set since f71fef6c",
-   "causeClass": "unadopted-contract",
-   "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
-   "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL: preceding-interval/preceding-hour amounts, instantaneous values, probability and \"unavailable\" metadata exist in source (src/native/index.html quantityKind \"preceding-hour-amount\" and the quantity-kind labels). DESIGN.md (outside R0028) lacks \"preceding-hour\". Assigned to R002F (issue 96) section 6 stage 5 weather documentation",
-   "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
-  },
-  {
-   "id": "R28-D03",
-   "status": "active",
-   "kind": "case-fail",
-   "command": "rlgwo-docs-contract",
-   "case": "docs composed: admitted synthetic lane and immediate withdrawal stay separate",
-   "messagePrefix": "DESIGN.md: missing contract synthetic-present-v1",
-   "firstRed": "red at every tested commit since the instrument arrived (3cf6ce2f); identical set since f71fef6c",
-   "causeClass": "unadopted-contract",
-   "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
-   "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL: the synthetic-present-v1 simulation-fixture lane, its expiry/outage withdrawal and the rule that no provider response or \"trusted:true\" field enters weatherSynthetic exist (src/native/index.html admitWeatherFixture/reconcileWeatherEvidence; R0024 accepted). DESIGN.md is outside R0028 and the AGENTS sentence belongs with it. Assigned to R002F (issue 96) stage 5 \"Weather truthfulness\"; visible provenance of the override itself stays R0036 (issue 103, gate G1)",
-   "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
-  },
-  {
    "id": "R28-D05",
    "status": "active",
    "kind": "case-fail",
@@ -244,20 +202,6 @@
    "owner": "R0033",
    "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R0033-A1, issue 100 comment 6851945304). ACTUAL: the opaque calendar disc keeps Earthshine while moonLightEligible gates atmospheric moonlight (near-new, below-horizon, daylight, surface-unavailable reasons) and the stellar-background cutout follows the disc (src/native/index.html nativeLunarPresentation, stellar-cutout mask; R0021/R0022 accepted). DESIGN/OPTICS are outside R0028. Assigned to R0033 (issue 100) section 10 documentation (light eligibility)",
    "trigger": "R0033 writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
-  },
-  {
-   "id": "R28-D06",
-   "status": "active",
-   "kind": "case-fail",
-   "command": "rlgwo-docs-contract",
-   "case": "docs composed: cloud monotonic intervals, old wind, identity and suspension",
-   "messagePrefix": "DESIGN.md: missing contract signed",
-   "firstRed": "red at every tested commit since the instrument arrived (3cf6ce2f); identical set since f71fef6c",
-   "causeClass": "unadopted-contract",
-   "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
-   "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL behaviour per accepted R0025 (advanceCloudMotion monotonic intervals, wind change applied after the elapsed interval, periodic decks, suspension), but the exact side-branch statements (\"two seconds\", \"Empty decks\", \"explicit seek\") are not re-verified here. Assigned to R002F (issue 96) stage 5 DESIGN \"Continuity\" bullet, which owns cloud continuity across the freshness boundary; R002F must verify each statement before writing it",
-   "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
    "id": "R28-D07",
