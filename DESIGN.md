@@ -178,7 +178,7 @@ Islamically distinct — and represented honestly. **Neither false nor true dawn
 
 ## Atmosphere state model
 
-There is one temporal API, `simNow()` / `simDate()` / `nowParts()`, with two authorities. With neither `simTime` nor `timeScale`, `simNow()` reads the current device `Date.now()` on every call; a timezone change reformats that instant. Explicit previews use a validated anchor plus independent elapsed time multiplied by `TIMESCALE`. An explicit `timeScale=1` remains a 1× anchored preview with ADVANCING, forecast weather, star reprojection and the SIM readout. `timeScale=60` advances 60×; `simTime=HH:MM` without a scale is frozen. Existing scale parsing preserves frozen behavior for zero, empty, invalid and clamped negative values. Independent elapsed behavior assumes a supported native `performance.now()` host; the existing `Date.now()` fallback has no separate wall-step guarantee. Injected wall corrections do not establish native sleep/wake or NTP behavior.
+There is one temporal API, `simNow()` / `simDate()` / `nowParts()`, with two authorities. With neither `simTime` nor `timeScale`, `simNow()` reads the current device `Date.now()` on every call; a timezone change reformats that instant. Explicit previews use a validated anchor plus independent elapsed time multiplied by `TIMESCALE`. An explicit `timeScale=1` remains a 1× anchored preview with ADVANCING, forecast weather, star reprojection and the SIM readout. `timeScale=60` advances 60×; `simTime=HH:MM` without a scale is frozen. Existing scale parsing preserves frozen behavior for zero, empty, invalid and clamped negative values. Independent elapsed behavior assumes a supported native `performance.now()` host; the existing `Date.now()` fallback has no separate wall-step guarantee. Injected wall corrections do not establish native sleep/wake or NTP behavior. Anchors have a kind (R002D): a URL `simTime`/`timeScale` **fragment** anchor is zone-relative and re-anchors when the location zone settles; a `SalahClock.set` **control** anchor is an absolute UTC instant that no zone adoption re-anchors; ordinary **wall** mode has no anchor. In wall mode the scene identity carries the configured effective hint zone (`_cacheTz`), not the live adopted zone, so adopting the provider zone does not restart the sky/Moon scene.
 
 **Clock correction direction:** In ordinary direct-wall mode, forward and backward device wall corrections are followed by the next `Date.now()` read. An explicit `timeScale=1` is an anchored preview, not ordinary wall-clock mode. Independent elapsed behavior still has the stated native-host assumption and wall-clock fallback limitation; this source distinction does not qualify sleep/wake or NTP behavior.
 
@@ -537,6 +537,9 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   `source ∈ {hash, localStorage, coarse-ip, browser-geolocation, place, manual, fallback}`; `origin`, when present,
   preserves the acquisition origin independently of the storage marker. Persisted under `salah_widget:config:v1`
   (separate from prayer/weather caches; every access wrapped in try/catch).
+  `tz` is admitted by `normalize` with the widget's one zone predicate (a non-empty string, not an offset,
+  constructible as an `Intl` time zone); a rejected value becomes the absent-hint default `America/New_York`
+  (R002D). The widget's binding and legacy fallback apply the same rule.
 - **Location evidence:** `{intent, source, accuracyM, acquiredAt, provider, area, bounds}`.
   `intent ∈ {fixed-site, device-position, coarse-area, unknown}` and evidence
   `source ∈ {hash, manual, place, browser-geolocation, coarse-ip, legacy, unknown}`. Coordinates select the

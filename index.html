@@ -4209,13 +4209,32 @@ let lat=null, lon=null, tz="America/New_York", label="", method="2", school="0",
 let _cacheTz="America/New_York";   // tz FROZEN into the prayer-cache key at resolve time (the old const captured the boot-time tz; the live `tz` is later overwritten by the API's meta zone, but the cache key must stay stable across reloads)
 let CONFIG=null, _cfgMode="bare", _needsDetect=false, _hashCfg={}, _cfgFlags={local:false,preferLocal:false};
 let _autoDetectSource=null, _autoDetectStatus="idle", _geoPermission="unknown", _geoLastError=null, _storageErr=null;
+// ---- R002D live-zone authority (docs/state-contracts/R002D.md, ISM-PRAY-009) ----
+// `tz` = the adopted location zone (admitted prayer metadata: cache/network/current-day record) when one is
+// adopted, else the configured EFFECTIVE HINT. `_cacheTz` IS that effective hint (frozen at binding), so it
+// is also the zone element of the wall-clock scene identity: the sky is determined by UTC/lat/lon and a
+// hint->adopted transition is no astronomical change. One admission predicate (admissibleZone) gates the
+// hint and provider metadata alike; a rejected hint binds exactly like an absent one (the default zone), so
+// the provider zone is still adopted through the existing corrected-day request. Writers of `tz`: Bind
+// (bindConfig, legacy fallback) and the loader/adoption sites that record _tzAdopted. Nothing else.
+let _tzConfigured="America/New_York", _tzConfiguredAdmitted=true, _tzAdopted=null, _tzAdoptedSource=null;
 function bindConfig(c){            // copy a resolved WidgetConfig into the live runtime bindings
   if(!c) return;
   CONFIG=c;
-  lat=c.lat; lon=c.lon; tz=c.tz||tz; _cacheTz=c.tz||_cacheTz; label=c.label||"";
+  // Hint admission (I-2): a rejected non-empty hint binds the absent-hint default, never the raw string.
+  const hint=c.tz ? (admissibleZone(c.tz) ? c.tz : "America/New_York") : null;
+  if(c.tz){ _tzConfigured=c.tz; _tzConfiguredAdmitted=hint===c.tz; _tzAdopted=null; _tzAdoptedSource=null; }
+  lat=c.lat; lon=c.lon; tz=hint||tz; _cacheTz=hint||_cacheTz; label=c.label||"";
   method=c.method; school=c.school; fmt24=(c.time!=="12"); units=c.units;
   datefmtStr=c.datefmt; LPOLL=c.lp||0;
   const card=document.querySelector(".c"); if(card) card.dataset.appearance=c.appearance==="contrast"?"contrast":"glass";
+}
+// The one zone admission predicate (R002D D.1-6): the rule admitPrayerRecord has always applied to
+// provider/cached metadata — a non-empty string, not an offset, constructible as an Intl timeZone here.
+function admissibleZone(zone){
+  if(typeof zone!=="string" || !zone || /^[+-]/.test(zone)) return false;
+  try{ new Intl.DateTimeFormat("en",{timeZone:zone}).format(new Date(0)); return true; }
+  catch(e){ return false; }
 }
 // ---- R0003 configuration-effect contract (docs/state-contracts/R0003.md) ----
 // One row per key any real producer puts on a WidgetConfig. applyConfig classifies a proposal against the
@@ -4272,6 +4291,9 @@ if(window.SalahConfig){
   const _r=SalahConfig.resolve(location.hash);
   _cfgMode=_r.mode; _needsDetect=_r.needsDetect; _hashCfg=_r.hashCfg||{}; _cfgFlags=_r.flags||_cfgFlags;
   bindConfig(_r.cfg);             // null for bare / needs-detect → lat/lon stay null, resolved later in boot()
+  // Diagnostic only (R002D): normalize already applied the zone admission to a fragment-sourced config;
+  // record what the fragment asked for and whether it was admitted. Binding is unchanged.
+  if(_r.cfg && _r.cfg.source==="hash" && typeof _hashCfg.tz==="string"){ _tzConfigured=_hashCfg.tz; _tzConfiguredAdmitted=admissibleZone(_hashCfg.tz); }
 }else{
   // DEGRADE: config.js failed to load → legacy hash-only parse so the widget still runs.
   console.warn("salah_widget: config.js missing — falling back to legacy hash parsing.");
@@ -4279,13 +4301,15 @@ if(window.SalahConfig){
   _cfgMode=(_la!=null&&_lo!=null)?"hardcoded":"bare";
   if(_cfgMode==="hardcoded"){
     const _P={iso:"YYYY-MM-DD",us:"MM/DD/YYYY",eu:"DD/MM/YYYY",long:"DD MMMM YYYY"};
-    lat=+_la; lon=+_lo; tz=q.get("tz")||"America/New_York"; _cacheTz=tz; label=q.get("label")||"";
+    const _tzq=q.get("tz");          // same hint admission as bindConfig: a rejected raw zone is the absent-hint default
+    lat=+_la; lon=+_lo; tz=admissibleZone(_tzq)?_tzq:"America/New_York"; _cacheTz=tz; label=q.get("label")||"";
     method=q.get("method")||"2"; school=q.get("school")||"0";
     fmt24=(q.get("time")||"24")!=="12"; units=(q.get("units")||"f").toLowerCase()==="c"?"c":"f";
     const _df=q.get("datefmt")||"iso"; datefmtStr=Object.prototype.hasOwnProperty.call(_P,_df.toLowerCase())?_P[_df.toLowerCase()]:_df;
     LPOLL=Math.min(1,Math.max(0,+q.get("lp")||0));
     CONFIG={v:1,lat,lon,tz,label,method,school,time:fmt24?"24":"12",datefmt:datefmtStr,units,appearance:q.get("appearance")==="contrast"?"contrast":"glass",lp:LPOLL,source:"hash"};
     bindConfig(CONFIG);
+    if(_tzq){ _tzConfigured=_tzq; _tzConfiguredAdmitted=_tzq===tz; }   // diagnostic only: what the fragment asked for
   }
 }
 
@@ -4457,6 +4481,10 @@ let ADVANCING = _tsParam!=null && TIMESCALE>0;          // a running fast-forwar
 let FOLLOW_WALL_CLOCK = _tsParam==null && SIM.time==null && TIMESCALE===1;
 let _clockPreview=false; // explicit runtime clock control retains forecast provenance while paused
 let _rafT0=_RAFNOW(), _simBase=null, _simTz=null, _simValid=true, _simInvalidTz=null;
+// R002D anchor kind: "wall" follows Date.now(); "fragment" is a URL simTime/timeScale anchor whose meaning
+// is zone-relative (re-anchors when the zone settles); "control" is a SalahClock.set anchor at an absolute
+// UTC instant (never re-anchored by a zone change). Invalid-scene stickiness applies to "fragment" only.
+let _anchorKind=FOLLOW_WALL_CLOCK?"wall":"fragment";
 // Formatter construction appeared on the first-scene critical path dozens of
 // times. Reuse only its immutable zone/options; every call still projects the
 // supplied current UTC, including DST, seek and configuration changes.
@@ -4536,11 +4564,13 @@ function initSim(){
   _simBase=base; _rafT0=_RAFNOW(); _simTz=tz; _simValid=true; _simInvalidTz=null;
   return true;
 }
-// re-anchor when the timezone settles (it loads from the location AFTER boot — only changes once, near t0)
+// re-anchor a FRAGMENT when the timezone settles (it loads from the location AFTER boot — only changes once,
+// near t0). A control anchor is an absolute UTC instant and survives zone adoption (R002D D.2).
 function simNow(){
   if(FOLLOW_WALL_CLOCK) return Date.now();
-  if(!_simValid && _simInvalidTz===tz) return NaN;
-  if((_simBase==null || _simTz!==tz) && !initSim()) return NaN;
+  const zoneRelative=_anchorKind!=="control";
+  if(zoneRelative && !_simValid && _simInvalidTz===tz) return NaN;
+  if((_simBase==null || (zoneRelative && _simTz!==tz)) && !initSim()) return NaN;
   return _simBase + (_RAFNOW()-_rafT0)*TIMESCALE;
 }
 function simDate(){ return new Date(simNow()); }
@@ -4584,9 +4614,7 @@ function admitPrayerRecord(data,dateStr){
   const date=`${pad(fields.d)}-${pad(fields.mo)}-${String(fields.y).padStart(4,"0")}`;
   if(typeof dateStr!=="string" || date!==dateStr || g.date!==date) return {ok:false,reason:"gregorian-date"};
   const timezone=data.meta&&data.meta.timezone;
-  if(typeof timezone!=="string" || !timezone || /^[+-]/.test(timezone)) return {ok:false,reason:"timezone"};
-  try{ new Intl.DateTimeFormat("en",{timeZone:timezone}).format(new Date(0)); }
-  catch(e){ return {ok:false,reason:"timezone"}; }
+  if(!admissibleZone(timezone)) return {ok:false,reason:"timezone"};   // the one zone predicate (R002D), unchanged rule
   // Malformed optional AH is unavailable; it cannot poison otherwise usable times
   // or supply an invalid preview-day value. Missing names remain optional.
   const h=data.date.hijri;
@@ -4655,6 +4683,8 @@ function saveCache(dateStr,data,key=cacheKey()){
   try{ localStorage.setItem(key,JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){}
 }
 async function fetchTimings(dateStr,operation=null){
+  // I-3 (R002D): no provider request for an unresolved civil day (null / non-calendar string), before any slot.
+  if(prayerNextDay(dateStr)==null) throw new Error("unresolved prayer day");
   const op=operation||beginRequest("current",dateStr), own=!operation;
   if(!op || !requestEligible(op)) throw new Error("obsolete prayer request");
   // Pure transport: only guarded caller adoption may change the resolved timezone or cache.
@@ -4739,7 +4769,7 @@ function adoptPrayerBundle(data,requestedDay,op=null,replaceCurrent=true,persist
     if(changedDay && _prayerCooldown.current && _prayerCooldown.current.day!==current){
       _prayerCooldown.current={day:current,nextTry:0};
     }
-    tz=admitted.timezone; today=admitted.data; lastDate=current; _prayerStale=false; _prayerRecordsGeneration=_runtimeGeneration;
+    tz=admitted.timezone; _tzAdopted=tz; _tzAdoptedSource="record"; today=admitted.data; lastDate=current; _prayerStale=false; _prayerRecordsGeneration=_runtimeGeneration;
     if(!prayerRecordReady(tomorrow,next)) tomorrow=null;
     if(persist) saveCache(current,today,op?op.cacheKey:cacheKey());
     if(changedDay){ _starsProjected=false; lastMoonMin=-1; }
@@ -4751,6 +4781,7 @@ function adoptPrayerBundle(data,requestedDay,op=null,replaceCurrent=true,persist
   return false;
 }
 function beginPrayerRequest(kind,day){
+  if(prayerNextDay(day)==null) return null;   // unresolved day: no owner/cooldown; maintenance retries once it resolves
   const elapsed=_RAFNOW(), cooldown=_prayerCooldown[kind];
   if(cooldown && cooldown.day===day && elapsed<cooldown.nextTry) return null;
   const op=beginRequest(kind,day); if(!op) return null;
@@ -5646,7 +5677,9 @@ function buildStars(){
 // Accepted target/explicit anchor, not ticking sidereal time. Ordinary positions remain held.
 function skySceneIdentity(){
   if(lat==null || lon==null || !Number.isFinite(+lat) || !Number.isFinite(+lon) || !Number.isFinite(simNow())) return null;
-  return [lat,lon,tz,FOLLOW_WALL_CLOCK?"wall":[_simBase,_simTz,_rafT0,TIMESCALE].join(":")].join("|");
+  // R002D D.3: the zone element is the configured effective hint (_cacheTz), not the live adopted zone.
+  // Hint->adopted adoption is no astronomical change; fragment re-anchors still change the anchor element.
+  return [lat,lon,_cacheTz,FOLLOW_WALL_CLOCK?"wall":[_simBase,_simTz,_rafT0,TIMESCALE].join(":")].join("|");
 }
 let _skySceneKey=null,_skyCommitted=false,_skyMoonPresence=0;
 let _skyInitialDocument=true;
@@ -6980,6 +7013,11 @@ window.qaState=function(){
   return {
     sim:`${n.dateStr} ${pad(n.h)}:${pad(n.mi)}`,
     dateTruth:_lastDateTruth?{..._lastDateTruth}:null,
+    // R002D zone authority (pure read): configured hint, its admission, effective hint, adopted zone/source,
+    // the live zone and the clock anchor kind.
+    // Best-effort like the other readouts: isolated fixtures that bind no configuration report null.
+    zone:(()=>{ try{ return {configured:_tzConfigured,admitted:_tzConfiguredAdmitted,effective:_cacheTz,adopted:_tzAdopted,source:_tzAdoptedSource,live:tz,
+      anchor:_anchorKind}; }catch(e){ return null; } })(),
     sunEl:+(A.solarElevationDeg||0).toFixed(1),
     wx:{code:current?current.code:null, cloud:current&&current.cloud!=null?Math.round(current.cloud):null, temp:current?current.temp:null, rh:current&&current.rh!=null?Math.round(current.rh):null, vis:current?current.vis:null, wind:current&&current.wind!=null?+current.wind.toFixed(1):null},
     // ── WEATHER TRUTHFULNESS diagnostics: why the widget is / isn't showing rain or thunder ──
@@ -7106,7 +7144,7 @@ async function loadPrayerData(){
   try{
     const cached=readPrayerCache(op.cacheKey);
     if(cached && requestEligible(op)){
-      tz=cached.timezone;                                    // validated selected-envelope metadata, before requested-day filtering
+      tz=cached.timezone; _tzAdopted=tz; _tzAdoptedSource="cache";   // validated selected-envelope metadata, before requested-day filtering
       if(!simulationReady()) return;
       const day=prayerCivilDay();
       if(cached.date===day && adoptPrayerBundle(cached.data,day,op,true,false) && !_loopStarted){
@@ -7121,13 +7159,13 @@ async function loadPrayerData(){
     _prayerCooldown.current.day=requested;
     let data=await fetchTimings(requested,op);
     if(!prayerResultEligible(op)) return;
-    tz=data.meta.timezone;                                   // guarded bootstrap metadata never paints the hint-day payload as current
+    tz=data.meta.timezone; _tzAdopted=tz; _tzAdoptedSource="network";   // guarded bootstrap metadata never paints the hint-day payload as current
     if(!simulationReady()) return;
     let day=prayerCivilDay(); _prayerCooldown.current.day=day;
     if(day!==requested){
       requested=day; data=await fetchTimings(requested,op);   // at most one corrected-day request, within the same three-attempt budget
       if(!prayerResultEligible(op)) return;
-      tz=data.meta.timezone;
+      tz=data.meta.timezone; _tzAdopted=tz; _tzAdoptedSource="network";
       if(!simulationReady()) return;
       day=prayerCivilDay(); _prayerCooldown.current.day=day;
     }
@@ -7199,7 +7237,7 @@ async function applyConfig(cfg, opts){
 window.SalahClock=Object.freeze({set({rate=TIMESCALE,utcMs=null,live=false}={}){
   if(!Number.isFinite(rate)||rate<0||utcMs!=null&&(!Number.isFinite(utcMs)||Math.abs(utcMs)>8640000000000000))throw new RangeError("Invalid native clock control");
   const next=live?Date.now():utcMs??simNow();if(!Number.isFinite(next))throw new RangeError("Native clock requires an accepted time");
-  TIMESCALE=live?1:rate;FOLLOW_WALL_CLOCK=!!live;ADVANCING=!live&&rate>0;_clockPreview=!live;
+  TIMESCALE=live?1:rate;FOLLOW_WALL_CLOCK=!!live;ADVANCING=!live&&rate>0;_clockPreview=!live;_anchorKind=live?"wall":"control";
   _simBase=next;_rafT0=_RAFNOW();_simTz=tz;_simValid=true;_simInvalidTz=null;
   window.SalahRealSky?.invalidate("explicit native clock control");window.SalahSkyPreview?.clear("explicit native clock control");beginSkyScene();
   if(live&&weather?.src==="forecast"){weather=null;loadWx();fetchWeather();}
@@ -7655,7 +7693,10 @@ window.SalahNativeSkyHost=Object.freeze({
   solarAnchor=Number.isFinite(sx)&&Number.isFinite(sy)?{...(actual??{x:sx,y:sy}),...(Number.isFinite(presence)?{presence}: {})}:null;
   }
   return {utcMs:simNow(),lat,lon,heightM:elevation?.heightM??0,elevationSource:elevation?'native response elevation bound to this target generation':'default zero; no bound eligible weather height',elevationOwner:elevation?{...elevation}:null,generation:_runtimeGeneration,sceneIdentity:identity,
-   tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
+   // R002D D.3: the refined identity's zone is the configured effective hint (_cacheTz), equal to the
+   // first-paint snapshot's; adopting the provider zone is no refined-sky input. Isolated hook fixtures
+   // that bind no configuration fall back to their live zone.
+   tz:typeof _cacheTz==='string'?_cacheTz:tz,timeScale:TIMESCALE,units,lp:LPOLL,reducedMotion:isMotionReduced(),paused:document.hidden||!!$('.c')?.classList.contains('paused'),
    camera:{azDeg:cameraNumber('skyAz',180),altDeg:cameraNumber('skyAlt',45),fovYDeg:cameraNumber('skyFov',90),rollDeg:cameraNumber('skyRoll',0)},allowEstimates:q.get('skyEstimates')!=='off',
    weather:cw?{src:cw.src??'accepted-native',temp:cw.temp??null,rh:cw.rh??null,vis:cw.vis??null,cloud:cw.cloud??null,code:cw.code??null,wind:cw.wind??null}:null,
    solarAnchor,
