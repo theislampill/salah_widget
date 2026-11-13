@@ -112,11 +112,12 @@ test('ES34-11 numeric camera values equal the native parse',()=>{
   const {styles,fp}=firstPaint(hash);assert.equal(styles.length,1,hash);assert.deepEqual(fp.snapshot.camera,nativeCamera(hash),hash);
  }
 });
-test('ES34-11 temporal exclusion keys are exactly the native temporal owners (simTime, timeScale; not simDate)',()=>{
+test('ES34-11 temporal exclusion keys cover the native temporal owners (simTime, timeScale); simDate stays head-less pending G1',()=>{
  const native=new Set([...nativeSource.matchAll(/q\.get\("(simTime|timeScale|simDate)"\)/g)].map(m=>m[1]));
  assert.deepEqual([...native].sort(),['simTime','timeScale'],'the native clock reads simTime and timeScale and never simDate');
  for(const key of ['simTime=11:00','timeScale=2','timeScale=1'])assert.equal(firstPaint('#local=1&'+key).styles.length,0,key);
- assert.equal(firstPaint('#local=1&simDate=2026-01-01').styles.length,1,'simDate (no native owner) does not suppress the head');
+ assert.equal(firstPaint('#local=1&simDate=2026-01-01').styles.length,0,'simDate (no native owner) is retained as head-less: accepted moon/tests contract; owner sub-choice G1');
+ assert.equal(firstPaint('#local=1&simMoon=0.5').styles.length,1,'a non-temporal simulation key does not suppress the head');
 });
 test('ES34-11 scene identity and reduced motion equal the native owners for default and non-default zones',()=>{
  const scene=nativeSource.slice(nativeSource.indexOf('function skySceneIdentity(){'),nativeSource.indexOf('let _skySceneKey=null'));

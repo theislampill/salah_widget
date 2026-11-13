@@ -9,11 +9,12 @@ import {joinNativeStarPreview} from './native-star-preview.mjs';
  * temporal previews are left to the existing native temporal owner. */
 export function prepareNativeFirstPaint(){
  const params=new URLSearchParams(location.hash.slice(1));
- // R0034 (ISM-SKY-019) parse parity with the native owners: the temporal keys are
- // exactly the ones the native clock reads (simTime, timeScale; no native owner
- // reads simDate), camera values use the native rule (present but blank is a
- // refusal, never 0) and a refused camera installs no head.
- if(['simTime','timeScale'].some(k=>params.has(k)))return;
+ // R0034 (ISM-SKY-019) parse parity with the native owners: the native clock reads
+ // simTime and timeScale; simDate has no native owner but stays head-less (accepted
+ // moon/tests head-producer contract; dropping it is an open owner sub-choice, G1).
+ // Camera values use the native rule (present but blank is a refusal, never 0) and
+ // a refused camera installs no head.
+ if(['simTime','simDate','timeScale'].some(k=>params.has(k)))return;
  const resolved=window.SalahConfig?.resolve(location.hash),c=resolved?.cfg;
  if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lon))return;
  const number=(key,fallback)=>params.has(key)?(params.get(key).trim()===''?NaN:Number(params.get(key))):fallback;

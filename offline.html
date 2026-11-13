@@ -1159,7 +1159,7 @@ html.webfonts body{
   };
 })(typeof window !== "undefined" ? window : this);
 </script>
-<script id="native-first-paint-code" data-sha256="3caedd89e2f7b43c0ab4e6824dcee8790b8855a15477cefffa7bf1291cc07d0d">(function(){"use strict";
+<script id="native-first-paint-code" data-sha256="94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980">(function(){"use strict";
 // real-sky/core/src/time-scales.mjs
 /** Time policy: USNO TAI-UTC table, IERS Bulletin C72 (2026-07-06), NASA historical DeltaT.
  * See docs/CHECKPOINT_4.md. Numeric POSIX milliseconds cannot represent a leap-second label.
@@ -3632,11 +3632,12 @@ function startNativeSkyPreview(){
  * temporal previews are left to the existing native temporal owner. */
 function prepareNativeFirstPaint(){
  const params=new URLSearchParams(location.hash.slice(1));
- // R0034 (ISM-SKY-019) parse parity with the native owners: the temporal keys are
- // exactly the ones the native clock reads (simTime, timeScale; no native owner
- // reads simDate), camera values use the native rule (present but blank is a
- // refusal, never 0) and a refused camera installs no head.
- if(['simTime','timeScale'].some(k=>params.has(k)))return;
+ // R0034 (ISM-SKY-019) parse parity with the native owners: the native clock reads
+ // simTime and timeScale; simDate has no native owner but stays head-less (accepted
+ // moon/tests head-producer contract; dropping it is an open owner sub-choice, G1).
+ // Camera values use the native rule (present but blank is a refusal, never 0) and
+ // a refused camera installs no head.
+ if(['simTime','simDate','timeScale'].some(k=>params.has(k)))return;
  const resolved=window.SalahConfig?.resolve(location.hash),c=resolved?.cfg;
  if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lon))return;
  const number=(key,fallback)=>params.has(key)?(params.get(key).trim()===''?NaN:Number(params.get(key))):fallback;
