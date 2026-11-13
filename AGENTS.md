@@ -169,6 +169,15 @@ Do not commit or push unless the user explicitly asks. When asked: commit the **
 `main` deploys to GitHub Pages, so a commit to `main` is a deploy. End commit messages with the standard
 `Co-Authored-By` line.
 
+The qualification gate `.github/workflows/qualification.yml` (R002A, issue 91) runs on pull requests to `main`,
+pushes to `main` and dispatch: build twice with a clean tree, the registered population under the exact ledger,
+`verify_v1` and pin coherence. It is **advisory** (owner decision DG-1(a)): no check is required, so it detects
+and cannot prevent a deploy. Quote each job's verdict string (for example `PASS_WITH_DECLARED_FAILURES (n)`),
+never the check colour. After a merge, the delivery step reads the public bytes back with
+`tools/qualification/delivery_identity.py --commit <merge sha>` (workflow `delivery-identity.yml`); a
+certificate cites that receipt, and only an `identical` verdict for the exact commit. See
+`docs/state-contracts/R002A.md`.
+
 Retained evidence is kept in git but not published (R002B, owner decision DG-2(a)): `_config.yml` excludes
 `docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence` and `docs/moon/evidence`
 from the Pages build. Cite evidence by commit-pinned github.com links, never github.io; put new evidence
