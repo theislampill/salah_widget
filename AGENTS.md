@@ -41,6 +41,17 @@ behaviour in `install.sh`/`install.ps1` or performing a consequential transition
 Record materially relevant discoveries there, linking the `docs/state-contracts/`
 contracts rather than duplicating them. It grants no execution authority and proves
 no runtime behaviour.
+Regression evidence is the verdict of `python tools/cp9/run_native_regressions.py --output <new dir>`
+over the registered population and the exact expected-failure ledger (`tests/regression-population.json`,
+`tests/expected-failures.json`; `docs/state-contracts/R0028.md`), quoted verbatim (for example
+`PASS_WITH_DECLARED_FAILURES (n)`), not the node glob alone.
+A change that adds, renames or removes an instrument (`tests/*.cjs|js|mjs|py`, `tests/**/*.test.cjs|.test.mjs|_test.py`,
+`moon/tests/*`, `tools/**/test_*.py`) edits `tests/regression-population.json` in the same commit: a new or renamed
+`tests/*.test.cjs` goes in `nativeTestGlob`; any other instrument gets a `commands` entry (argv, protocol, inputs, covers),
+a `modules` entry (imported helper) or an `exclusions` entry (reason, owner; native recipes also record `recipe`
+argv and protocol). Removed instruments are deleted there, with any ledger entry in `tests/expected-failures.json`.
+Verify with `python tools/cp9/run_native_regressions.py --output <new dir> --select native-runner-contract`: the
+census always covers the whole tree, and any `setupErrors` (unregistered or missing instrument) make it INCOMPLETE.
 
 ## Golden rules
 

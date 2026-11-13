@@ -35,10 +35,10 @@ INSTRUMENT = ('native-runner-contract', (sys.executable, '-m', 'unittest', 'disc
               '-s', 'tests', '-p', 'test_native_regression_runner.py', '-v'))
 HISTORY_INPUTS = {
     'r0018-timetable-contrast': ('ed5e7afbd2fcf7a59050817e2a561bcdbfa9043d:index.html',),
-    'r0021-reveal': ('47c0fa0c6e32618f22b43b6a18717908b0de5f5e:index.html',),
+    'r0021-reveal': ('18ff14860ff41c084b1db5f396bb62aa9c22b1be:index.html',),
     'r0022-baseline-balance': tuple(sha + ':index.html' for sha in (
         'fd2972ba64225fe9d6848e92497e6d0ed20ea624', '8b83df029966c203a503ab217d121c48b8ee6e8a',
-        '18ff14860ff41c084b1db5f396bb62aa9c22b1be')),
+        '18ff14860ff41c084b1db5f396bb62aa9c22b1be', 'f71fef6ccf7e4efcb57b5a26688d2360461a3253')),
     'r0023-metadata': tuple('fd2972ba64225fe9d6848e92497e6d0ed20ea624:' + path
                           for path in ('index.html', 'config.js')),
 }
@@ -67,6 +67,29 @@ CASE_RESIDUALS = {
     'native/browser qualification: fixture chip/data-fx, zero-axis consumer, layout/moon/motion pixel evidence':
         ('native-test-glob', 'R0017-native', 'retained TODO: browser/pixel observations require their own qualified native run'),
 }
+
+# R0028: registered population beyond NAMED and the exact expected-failure ledger.
+# Both are repository data reviewed like source (docs/state-contracts/R0028.md). A root
+# that carries this runner (the repository) must carry the population manifest; isolated
+# fixture roots without either file keep the R0017 behaviour unchanged.
+POPULATION_FILE = 'tests/regression-population.json'
+LEDGER_FILE = 'tests/expected-failures.json'
+POPULATION_SCHEMA = 'salah-regression-population/1'
+LEDGER_SCHEMA = 'salah-expected-failures/1'
+DECLARED = 'PASS_WITH_DECLARED_FAILURES'
+CAUSE_CLASSES = ('harness-gap', 'stale-pin', 'stale-expectation-vs-accepted-contract',
+                 'unadopted-contract', 'undetermined')
+ENTRY_KINDS = ('case-fail', 'case-not-executed', 'command-incomplete')
+ENTRY_FIELDS = ('id', 'status', 'kind', 'command', 'case', 'messagePrefix', 'firstRed', 'causeClass',
+                'evidence', 'owner', 'disposition', 'trigger')
+CONDITIONS = ('symlink-unavailable',)
+EXTENDED_PROTOCOLS = ('case-lines', 'json-lines', 'json-cases', 'unittest-cases', 'scientific')
+# Completion reasons that prove the classified output is a whole terminal population.
+COMPLETE_REASONS = ('complete TAP terminal', 'complete named result array',
+                    'complete case lines and matching JSON terminal')
+CENSUS_PATTERNS = ('tests/*.cjs', 'tests/*.js', 'tests/*.mjs', 'tests/*.py', 'tests/**/*.test.cjs',
+                   'tests/**/*.test.mjs', 'tests/**/*_test.py', 'tests/**/*.cjs', 'moon/tests/*.test.cjs',
+                   'moon/tests/*.py', 'tools/**/test_*.py')
 
 
 def digest(path):
@@ -132,16 +155,21 @@ def history_input(root, locator):
             'blob': blob, 'reason': None if blob else 'exact Git object/path unavailable'}
 
 
-def build_plan(root, selected=None):
+def build_plan(root, selected=None, out=None, manifest=None):
     glob = tuple(str(path.relative_to(root)) for path in sorted((root / 'tests').glob('*.test.cjs')))
     specs = [('native-test-glob', ('node', '--test', '--test-reporter=tap',
               '--test-concurrency=1', *glob), glob, 'auto', None)]
+    overrides = (manifest or {}).get('protocols', {})
     for filename in NAMED:
         argv = ('node', '--test-reporter=tap', 'tests/' + filename)
         if filename in SNAPSHOT_ONLY:
             argv += ('--cp8-snapshot-only',)
+        override = overrides.get(Path(filename).stem, {})
         specs.append((Path(filename).stem, argv, ('tests/' + filename, 'index.html', 'config.js'),
-                      'auto', HISTORICAL.get(filename)))
+                      override.get('protocol', 'auto'), HISTORICAL.get(filename),
+                      {key: override[key] for key in ('expectedCases',) if key in override}))
+    if manifest:
+        specs.extend(population_specs(manifest, out))
     if INSTRUMENT:
         specs.insert(0, (*INSTRUMENT, ('tests/test_native_regression_runner.py',
                       'tools/cp9/run_native_regressions.py'), 'unittest', None))
@@ -323,7 +351,7 @@ def classify_output(text, protocol='auto'):
 
 
 def check_setup(root, spec):
-    name, _, inputs, _, _ = spec
+    name, _, inputs, _, _ = spec[:5]
     files = [file_input(root, path) for path in inputs]
     history = [history_input(root, locator) for locator in HISTORY_INPUTS.get(name, ())]
     ready = bool(inputs) and all(row['available'] for row in files + history)
@@ -348,8 +376,443 @@ def case_dispositions(command, exclusions):
     return records
 
 
+def strict_json(path):
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('duplicate JSON property ' + key)
+            result[key] = value
+        return result
+    return json.loads(Path(path).read_text(encoding='utf-8'), object_pairs_hook=unique)
+
+
+def load_population(root):
+    """Return (manifest or None, setup errors). Never selects by outcome."""
+    path = root / POPULATION_FILE
+    if not path.exists():
+        required = (root / 'tools/cp9/run_native_regressions.py').exists()
+        return None, ['population manifest missing: ' + POPULATION_FILE] if required else []
+    try:
+        manifest = strict_json(path)
+    except (OSError, ValueError) as error:
+        return None, ['population manifest unreadable: ' + str(error)]
+    errors = []
+    if manifest.get('schema') != POPULATION_SCHEMA:
+        errors.append('population schema must be ' + POPULATION_SCHEMA)
+    seen = set()
+    for entry in manifest.get('commands', []):
+        name = entry.get('name')
+        if not isinstance(name, str) or not name or name in seen:
+            errors.append('population command name missing or duplicated: ' + repr(name))
+        seen.add(name)
+        if (not isinstance(entry.get('argv'), list) or not entry['argv']
+                or not all(isinstance(arg, str) and arg for arg in entry['argv'])):
+            errors.append(str(name) + ': argv must be a nonempty string list')
+        protocol = entry.get('protocol')
+        if protocol not in ('auto', 'unittest') + EXTENDED_PROTOCOLS:
+            errors.append(str(name) + ': unknown terminal protocol ' + repr(protocol))
+        if protocol == 'case-lines' and (type(entry.get('expectedCases')) is not int or entry['expectedCases'] < 1):
+            errors.append(str(name) + ': case-lines requires a positive declared expectedCases')
+        if not isinstance(entry.get('covers', []), list) or not isinstance(entry.get('inputs', []), list):
+            errors.append(str(name) + ': covers/inputs must be lists')
+    for key in ('modules', 'exclusions'):
+        for entry in manifest.get(key, []):
+            if not isinstance(entry.get('path'), str) or not entry.get('reason') or (key == 'exclusions' and not entry.get('owner')):
+                errors.append(key + ' entry needs path, reason' + (' and owner' if key == 'exclusions' else '') + ': ' + repr(entry))
+    for name, override in manifest.get('protocols', {}).items():
+        if name.replace('.cjs', '') + '.cjs' not in NAMED or override.get('protocol') not in ('auto',) + EXTENDED_PROTOCOLS:
+            errors.append('protocol override must name a NAMED command and a known protocol: ' + name)
+        if override.get('protocol') == 'case-lines' and (type(override.get('expectedCases')) is not int or override['expectedCases'] < 1):
+            errors.append(name + ': case-lines requires a positive declared expectedCases')
+    return manifest, errors
+
+
+def resolve(arg, out):
+    replacements = {'{python}': sys.executable, '{receipt}': str(out) if out else '{receipt}'}
+    for key, value in replacements.items():
+        arg = arg.replace(key, value)
+    return arg
+
+
+def population_specs(manifest, out):
+    specs = []
+    for entry in manifest.get('commands', []):
+        options = {key: entry[key] for key in ('env', 'timeout', 'expectedCases', 'resultsDir') if key in entry}
+        if 'resultsDir' in options:
+            options['resultsDir'] = resolve(options['resultsDir'], out)
+        argv = tuple(resolve(arg, out) for arg in entry['argv'])
+        specs.append((entry['name'], argv, tuple(entry.get('inputs', [])), entry['protocol'], None, options))
+    return specs
+
+
+def census(root, plan, manifest):
+    """Every instrument-shaped file is selected, a declared module, or a registered exclusion."""
+    covered = set()
+    for command in plan:
+        covered.update(arg.replace('\\', '/') for arg in command[1] if not str(arg).startswith('-'))
+        covered.update(command[2])
+    for entry in manifest.get('commands', []):
+        covered.update(entry.get('covers', []))
+    declared = {entry['path'] for key in ('modules', 'exclusions') for entry in manifest.get(key, [])}
+    found = sorted({path.relative_to(root).as_posix() for pattern in CENSUS_PATTERNS
+                    for path in root.glob(pattern) if path.is_file()})
+    errors = ['unregistered instrument (neither selected, module nor exclusion): ' + path
+              for path in found if path not in covered and path not in declared]
+    errors += ['registered module/exclusion path does not exist: ' + path
+               for path in sorted(declared) if not (root / path).is_file()]
+    errors += ['path is both selected and declared module/exclusion: ' + path
+               for path in sorted(declared & covered)]
+    # The glob command is derived from disk; the manifest pins its expected members so a
+    # deleted (or silently added) glob file is a setup error, not a smaller green population.
+    expected = manifest.get('nativeTestGlob')
+    glob = sorted(path.relative_to(root).as_posix() for path in (root / 'tests').glob('*.test.cjs'))
+    if not isinstance(expected, list):
+        errors.append('population manifest must list nativeTestGlob members')
+    else:
+        errors += ['registered glob member missing: ' + path for path in sorted(set(expected) - set(glob))]
+        errors += ['glob member not registered in nativeTestGlob: ' + path for path in sorted(set(glob) - set(expected))]
+    return errors
+
+
+def load_ledger(root, known, excluded):
+    """Exact per-case expected-failure entries. Malformed input is a setup error, never a pass."""
+    path = root / LEDGER_FILE
+    if not path.exists():
+        return [], [], []
+    try:
+        ledger = strict_json(path)
+    except (OSError, ValueError) as error:
+        return [], [], ['ledger unreadable: ' + str(error)]
+    errors, active, retired, ids, keys = [], [], [], set(), set()
+    if ledger.get('schema') != LEDGER_SCHEMA:
+        errors.append('ledger schema must be ' + LEDGER_SCHEMA)
+    for entry in ledger.get('entries', []):
+        label = repr(entry.get('id'))
+        missing = [field for field in ENTRY_FIELDS if field not in entry or (field != 'case' and not entry[field])]
+        if missing:
+            errors.append(label + ': missing field(s) ' + ', '.join(missing))
+            continue
+        if set(entry) - set(ENTRY_FIELDS) - {'condition', 'notes', 'discriminator', 'retiredBy'}:
+            errors.append(label + ': unknown field(s) ' + ', '.join(sorted(set(entry) - set(ENTRY_FIELDS))))
+        if entry['id'] in ids:
+            errors.append(label + ': duplicate id')
+        ids.add(entry['id'])
+        if entry['status'] not in ('active', 'retired') or entry['kind'] not in ENTRY_KINDS:
+            errors.append(label + ': status must be active|retired and kind one of ' + '|'.join(ENTRY_KINDS))
+        if entry['causeClass'] not in CAUSE_CLASSES:
+            errors.append(label + ': unknown causeClass ' + repr(entry['causeClass']))
+        if not re.fullmatch(r'R[0-9A-Z]{4}|pending-owner-decision', str(entry['owner'])):
+            errors.append(label + ': owner must be Rxxxx or pending-owner-decision')
+        if entry['causeClass'] == 'undetermined' and not entry.get('discriminator'):
+            errors.append(label + ': undetermined entry needs a named discriminator')
+        if entry.get('condition') is not None and entry['condition'] not in CONDITIONS:
+            errors.append(label + ': unknown condition ' + repr(entry['condition']))
+        case, prefix = entry['case'], entry['messagePrefix']
+        if entry['kind'] == 'command-incomplete':
+            if case is not None:
+                errors.append(label + ': command-incomplete entries name no case')
+        elif not isinstance(case, str) or not case:
+            errors.append(label + ': exact case name required')
+        for value in (case, prefix):
+            if isinstance(value, str) and ('*' in value or value != value.strip()):
+                errors.append(label + ': wildcards and padded names are not exact identities')
+        if not isinstance(prefix, str) or not prefix:
+            errors.append(label + ': exact first-failure message prefix required')
+        if entry['status'] == 'retired':
+            retired.append(entry)
+            continue
+        key = (entry['command'], case, entry.get('condition'))
+        if key in keys:
+            errors.append(label + ': duplicate active entry for one command/case')
+        keys.add(key)
+        if entry['command'] in excluded:
+            errors.append(label + ': command is a registered exclusion, not an executed instrument')
+        elif entry['command'] not in known:
+            errors.append(label + ': command is outside the registered population')
+        active.append(entry)
+    return active, retired, errors
+
+
+def probe_capabilities(directory):
+    """Host facts a conditional entry may depend on; probed, never assumed."""
+    directory.mkdir(parents=True, exist_ok=True)
+    link, target = directory / 'symlink-probe', directory / 'symlink-target'
+    target.write_text('probe', encoding='utf-8')
+    try:
+        link.symlink_to(target.name)
+        available = True
+    except OSError:
+        available = False
+    finally:
+        for path in (link, target):
+            try:
+                path.unlink()
+            except OSError:
+                pass
+    return {'symlink-unavailable': not available}
+
+
+def first_line(text):
+    return next((line.strip() for line in str(text or '').splitlines() if line.strip()), '')
+
+
+def extended_result(format_name, cases, complete, reason, exclusions=()):
+    counts = {'passCases': sum(case['state'] == 'pass' for case in cases),
+              'failCases': sum(case['state'] == 'fail' for case in cases),
+              'notExecutedCases': sum(case['state'] == 'not-executed' for case in cases)}
+    if not complete:
+        result = output_result(format_name, counts=counts, reason=reason, exclusions=exclusions)
+    else:
+        status = 'FAIL' if counts['failCases'] else 'INCOMPLETE' if counts['notExecutedCases'] else 'PASS'
+        result = output_result(format_name, status, counts, reason, exclusions)
+    result['complete'] = bool(complete)
+    result['cases'] = cases
+    return result
+
+
+def unittest_cases(text):
+    """(cases, complete) from a verbose unittest log; failure identities come from its blocks."""
+    ran = re.findall(r'^Ran (\d+) tests? in [\d.]+s$', text, re.M)
+    terms = re.findall(r'^(OK|FAILED)(?: \(([^)]*)\))?[ \t]*$', text, re.M)
+    if len(ran) != 1 or len(terms) != 1 or int(ran[0]) < 1:
+        return [], False
+    detail = {}
+    for part in filter(None, terms[0][1].split(', ')):
+        key, _, value = part.partition('=')
+        detail[key] = int(value) if value.isdigit() else -1
+    failures = detail.get('failures', 0) + detail.get('errors', 0)
+    skipped = detail.get('skipped', 0)
+    body = text[:text.rfind('\nRan ' + ran[0] + ' test')]
+    cases, failing = [], set()
+    for block in re.split(r'^={60,}\n', body, flags=re.M)[1:]:
+        header = re.match(r'(FAIL|ERROR): (test\w*) \(([\w.]+)\)( \([^\n]*\))?\n-{60,}\n', block)
+        if not header:
+            return cases, False
+        base = header[2] + ' (' + header[3] + ')'
+        trace = [line for line in block[header.end():].splitlines() if line.strip() and not re.match(r'-{60,}$', line)]
+        message = next((line.strip() for line in reversed(trace) if not line.startswith((' ', '\t'))), '')
+        cases.append({'name': base + (header[4] or ''), 'state': 'fail', 'message': message})
+        failing.add(base)
+    for match in re.finditer(r'^(test\w*) \(([\w.]+)\)[^\n]*? \.\.\. skipped (.*)$', text, re.M):
+        base = match[1] + ' (' + match[2] + ')'
+        cases.append({'name': base, 'state': 'not-executed', 'message': match[3].strip()})
+        failing.add(base)
+    seen = sorted({match[1] + ' (' + match[2] + ')' for match in re.finditer(r'^(test\w*) \(([\w.]+)\)', text, re.M)})
+    cases += [{'name': base, 'state': 'pass', 'message': ''} for base in seen if base not in failing]
+    complete = (failures >= 0 and skipped >= 0 and sum(case['state'] == 'fail' for case in cases) == failures
+                and sum(case['state'] == 'not-executed' for case in cases) == skipped
+                and (terms[0][0] == 'OK') == (failures == 0))
+    return cases, complete
+
+
+def classify_extended(text, protocol, options):
+    exclusions = re.findall(r'^SKIP_(?:HISTORICAL|SUPERSEDED|EXPLICIT) .+$', text, re.M)
+    if protocol == 'case-lines':
+        cases = []
+        for match in re.finditer(r'^(PASS|DETECTED|FAIL)(?::\s*|\s+)(.+?)(?: :: (.*))?$', text, re.M):
+            cases.append({'name': match[2].strip(), 'state': 'fail' if match[1] == 'FAIL' else 'pass',
+                          'message': (match[3] or '').strip()})
+        for line in exclusions:
+            name, _, why = line.split(' ', 1)[1].partition(' — ')
+            cases.append({'name': name.strip(), 'state': 'not-executed', 'message': why.strip()})
+        names = [case['name'] for case in cases]
+        complete = len(names) == len(set(names)) and len(names) == options.get('expectedCases')
+        return extended_result('case-lines', cases, complete,
+                               'complete declared case lines' if complete else 'case lines do not match the declared population')
+    if protocol == 'json-lines':
+        cases, summary = [], None
+        for line in text.splitlines():
+            if not line.startswith('{'):
+                continue
+            try:
+                value = json.loads(line)
+            except ValueError:
+                return extended_result('json-lines', cases, False, 'invalid JSON line')
+            if isinstance(value.get('summary'), dict):
+                summary = value['summary']
+            elif isinstance(value.get('name'), str) and value.get('status') in ('PASS', 'FAIL'):
+                cases.append({'name': value['name'], 'state': 'pass' if value['status'] == 'PASS' else 'fail',
+                              'message': first_line(value.get('error'))})
+        names = [case['name'] for case in cases]
+        complete = (summary is not None and len(names) == len(set(names)) and summary.get('cases') == len(cases)
+                    and summary.get('failed') == sum(case['state'] == 'fail' for case in cases))
+        return extended_result('json-lines', cases, complete,
+                               'complete JSON case lines and summary' if complete else 'JSON case lines disagree with summary')
+    if protocol == 'json-cases':
+        try:
+            value = json.loads(text)
+            cases = [{'name': item['case'], 'state': 'pass' if item['passed'] is True else 'fail',
+                      'message': first_line(item.get('error'))} for item in value['cases']]
+            complete = (bool(cases) and type(value.get('allPassed')) is bool
+                        and value['allPassed'] == all(case['state'] == 'pass' for case in cases)
+                        and len({case['name'] for case in cases}) == len(cases))
+        except (ValueError, KeyError, TypeError):
+            return extended_result('json-cases', [], False, 'JSON case object not proved')
+        return extended_result('json-cases', cases, complete,
+                               'complete JSON case object' if complete else 'JSON case object inconsistent')
+    if protocol == 'unittest-cases':
+        cases, complete = unittest_cases(text)
+        return extended_result('unittest-cases', cases, complete,
+                               'complete unittest terminal' if complete else 'unittest completion not proved')
+    if protocol == 'scientific':
+        directory = Path(options['resultsDir'])
+        try:
+            receipt = strict_json(directory / 'results.json')
+        except (OSError, ValueError):
+            return extended_result('scientific', [], False, 'scientific results.json not produced')
+        rows = receipt.get('commands', [])
+        names = [row.get('name') for row in rows]
+        if names != ['viewer-build', 'scientific-js', 'scientific-python'] or receipt.get('oracleUnchanged') is not True:
+            return extended_result('scientific', [], False, 'scientific receipt incomplete or oracle changed')
+        cases, complete = [], True
+        for row in rows:
+            log = (directory / (row['name'] + '.log')).read_text(encoding='utf-8')
+            if row['name'] == 'viewer-build':
+                cases.append({'name': 'viewer-build', 'state': 'pass' if row['exitCode'] == 0 else 'fail',
+                              'message': 'exit ' + str(row['exitCode'])})
+                continue
+            if row['name'] == 'scientific-js':
+                tap = classify_output(log, 'auto')
+                sub = extract_cases(log, tap) if tap['reason'] in COMPLETE_REASONS else None
+            else:
+                sub, done = unittest_cases(log)
+                sub = sub if done else None
+            if sub is None:
+                complete = False
+                continue
+            cases += [dict(case, name=row['name'] + ': ' + case['name']) for case in sub]
+            if row['exitCode'] != 0 and not any(case['state'] == 'fail' for case in sub):
+                complete = False
+        return extended_result('scientific', cases, complete,
+                               'complete scientific receipt and logs' if complete else 'scientific logs incomplete')
+    raise ValueError('unknown extended protocol ' + str(protocol))
+
+
+def extract_cases(text, output):
+    """Per-case identities for the R0017 protocols; used only by the ledger adjudication."""
+    if output.get('cases') is not None:
+        return output['cases']
+    cases = []
+    if output['format'] == 'tap':
+        lines = list(re.finditer(r'^( *)(ok|not ok) (\d+)(?: - )?([^\n]*)$', text, re.M))
+        for index, match in enumerate(lines):
+            end = lines[index + 1].start() if index + 1 < len(lines) else len(text)
+            block = text[match.end():end]
+            if re.search(r'^' + match[1] + r"  type: ['\"]suite['\"]$", block, re.M):
+                continue
+            name, _, directive = match[4].partition(' # ')
+            if directive and re.match(r'(TODO|SKIP)\b', directive, re.I):
+                cases.append({'name': name.strip(), 'state': 'not-executed', 'message': '# ' + directive.strip()})
+                continue
+            message = ''
+            error = re.search(r'^' + match[1] + r"  error: (.*)$", block, re.M)
+            if error:
+                value = error[1].strip()
+                if value in ('|-', '|', '>-', '>'):
+                    rest = block[error.end():].splitlines()
+                    value = next((line.strip() for line in rest if line.strip()), '')
+                message = value.strip('\'"')
+            cases.append({'name': name.strip(), 'state': 'pass' if match[2] == 'ok' else 'fail', 'message': message})
+    elif output['format'] == 'json-results':
+        payload = terminal_json(text)
+        for item in payload['results']:
+            state = item.get('status', item.get('result'))
+            cases.append({'name': item['name'], 'state': 'pass' if state == 'PASS' else 'fail',
+                          'message': first_line(item.get('error'))})
+    elif output['format'] == 'json-summary':
+        for match in re.finditer(r'^(PASS|FAIL)\s+(.+?)(?: :: (.*))?$', text, re.M):
+            cases.append({'name': match[2].strip(), 'state': 'pass' if match[1] == 'PASS' else 'fail',
+                          'message': (match[3] or '').strip()})
+    for line in re.findall(r'^SKIP_(?:HISTORICAL|SUPERSEDED|EXPLICIT) .+$', text, re.M):
+        name, _, why = line.split(' ', 1)[1].partition(' — ')
+        cases.append({'name': name.strip(), 'state': 'not-executed', 'message': why.strip()})
+    return cases
+
+
+def adjudicate(row, out, entries, capabilities):
+    """Apply exact ledger entries to one terminal command row (R0028 section 4.1)."""
+    applicable = [entry for entry in entries if entry['command'] == row['name']
+                  and (entry.get('condition') is None or capabilities.get(entry['condition']))]
+    report = {'expectedFail': [], 'declaredNotExecuted': [], 'declaredIncomplete': [], 'unexpectedFail': [],
+              'unexpectedNotExecuted': [], 'unexpectedPass': [], 'notExecuted': [], 'notAdjudicated': []}
+    row['ledger'] = report
+    output = row.get('output', {})
+    exited = row['execution']['state'] == 'exited'
+    complete = exited and (output.get('complete') is True or output.get('reason') in COMPLETE_REASONS)
+    if row['status'] in ('HISTORICAL_EXCLUDED', 'NOT_APPLICABLE'):
+        return row
+    log = out / row['log']
+    text = log.read_text(encoding='utf-8') if log.exists() else ''
+    if not complete or row['setup']['status'] != 'READY':
+        lines = set(line.strip() for line in text.splitlines())
+        for entry in applicable:
+            if entry['kind'] == 'command-incomplete' and row['status'] == 'INCOMPLETE' and entry['messagePrefix'] in lines:
+                report['declaredIncomplete'].append(entry['id'])
+            else:
+                report['notAdjudicated'].append(entry['id'])
+        if report['declaredIncomplete'] and len(report['declaredIncomplete']) == len(applicable):
+            row['status'] = DECLARED
+            row['reason'] = 'declared whole-command incompletion: ' + ', '.join(report['declaredIncomplete'])
+        return row
+    cases = extract_cases(text, output)
+    by_name = {}
+    for case in cases:
+        by_name.setdefault(case['name'], []).append(case)
+    matched = set()
+    for name, group in by_name.items():
+        for case in group:
+            if case['state'] == 'pass':
+                continue
+            kind = 'case-fail' if case['state'] == 'fail' else 'case-not-executed'
+            hits = [entry for entry in applicable if entry['kind'] == kind and entry['case'] == name]
+            hit = hits[0] if len(hits) == 1 and len(group) == 1 and case['message'].startswith(hits[0]['messagePrefix']) else None
+            if hit:
+                matched.add(hit['id'])
+                (report['expectedFail'] if kind == 'case-fail' else report['declaredNotExecuted']).append(
+                    {'case': name, 'id': hit['id']})
+            else:
+                target = report['unexpectedFail'] if kind == 'case-fail' else report['unexpectedNotExecuted']
+                target.append({'case': name, 'message': case['message'][:300],
+                               'entryMismatch': [entry['id'] for entry in hits]})
+    for entry in applicable:
+        if entry['id'] in matched:
+            continue
+        group = by_name.get(entry['case']) if entry['case'] is not None else None
+        if entry['kind'] == 'command-incomplete' or (group and any(case['state'] == 'pass' for case in group)):
+            report['unexpectedPass'].append(entry['id'])
+        elif not group:
+            report['notExecuted'].append(entry['id'])
+    if not applicable:
+        return row  # Without entries the R0017 verdict stands; failures are listed above.
+    if report['unexpectedFail'] or report['unexpectedPass'] or report['notExecuted']:
+        row['status'] = 'FAIL'
+        row['reason'] = 'ledger: unexpected failure, unexpected pass or absent ledgered case'
+    elif report['unexpectedNotExecuted']:
+        row['status'] = 'INCOMPLETE'
+        row['reason'] = 'selected observations remain unexecuted without a ledger entry'
+    elif row['status'] in ('FAIL', 'INCOMPLETE') and (report['expectedFail'] or report['declaredNotExecuted']):
+        # A failure exit must be the ordinary failure code; any other exit stays FAIL.
+        if row['exitCode'] == (1 if report['expectedFail'] else 0):
+            row['status'] = DECLARED
+            row['reason'] = 'every failure/unexecuted case is an exact ledger entry'
+        else:
+            row['status'] = 'FAIL'
+            row['reason'] = 'declared failures but unexpected exit code ' + str(row['exitCode'])
+    return row
+
+
+def command_env(out, name, options):
+    """Children inherit the environment, with temporary files bound inside the receipt (R0028 G-17)."""
+    temp = out / 'tmp' / name
+    temp.mkdir(parents=True, exist_ok=True)
+    return dict(os.environ, **options.get('env', {}), TMP=str(temp), TEMP=str(temp), TMPDIR=str(temp))
+
+
 def execute_command(root, out, spec, timeout, stop_reason=None):
-    name, argv, _, protocol, disposition = spec
+    name, argv, _, protocol, disposition = spec[:5]
+    options = spec[5] if len(spec) > 5 else {}
+    timeout = options.get('timeout', timeout)
     log = out / (name + '.log')
     row = {'name': name, 'command': list(argv), 'exitCode': None, 'seconds': 0.0,
            'counts': {}, 'log': log.name, 'explicitExclusions': [], 'caseExclusions': [], 'status': 'INCOMPLETE',
@@ -373,7 +836,7 @@ def execute_command(root, out, spec, timeout, stop_reason=None):
         with log.open('w', encoding='utf-8') as stream:
             try:
                 child = subprocess.run(list(argv), cwd=root, stdout=stream,
-                                       stderr=subprocess.STDOUT, timeout=timeout)
+                                       stderr=subprocess.STDOUT, timeout=timeout, env=command_env(out, name, options))
                 row['exitCode'] = child.returncode
                 row['execution'] = {'state': 'exited', 'returnCode': child.returncode}
             except subprocess.TimeoutExpired:
@@ -393,7 +856,8 @@ def execute_command(root, out, spec, timeout, stop_reason=None):
         row['lifecycle'].append(row['execution']['state'])
         try:
             text = log.read_text(encoding='utf-8')
-            output = classify_output(text, protocol)
+            output = (classify_extended(text, protocol, options) if protocol in EXTENDED_PROTOCOLS
+                      else classify_output(text, protocol))
         except UnicodeError:
             text = ''
             output = output_result('unparsed', reason='output is not valid UTF-8; raw log retained')
@@ -435,20 +899,30 @@ def summarize(plan, records):
     statuses = [row['status'] for row in records]
     if 'FAIL' in statuses:
         return 'FAIL'
-    if 'INCOMPLETE' in statuses or 'PASS' not in statuses:
+    if 'INCOMPLETE' in statuses or not ('PASS' in statuses or DECLARED in statuses):
         return 'INCOMPLETE'
-    if any(status not in ('PASS', 'HISTORICAL_EXCLUDED', 'NOT_APPLICABLE') for status in statuses):
+    if any(status not in ('PASS', DECLARED, 'HISTORICAL_EXCLUDED', 'NOT_APPLICABLE') for status in statuses):
         raise ValueError('unknown terminal status')
-    return 'PASS'
+    return DECLARED if DECLARED in statuses else 'PASS'
 
 
 def run(root, out, *, selected=None, timeout=180):
     root, out = Path(root).resolve(), Path(out).resolve()
     if not math.isfinite(timeout) or timeout <= 0:
         raise ValueError('timeout must be finite and positive')
-    plan = build_plan(root, selected)
+    manifest, setup_errors = load_population(root)
+    plan = build_plan(root, selected, out, manifest)
+    full = build_plan(root, None, out, manifest)
+    if manifest is not None:
+        setup_errors += census(root, full, manifest)
+    excluded = {Path(entry['path']).stem for entry in (manifest or {}).get('exclusions', [])}
+    entries, retired, ledger_errors = load_ledger(root, {spec[0] for spec in full}, excluded)
+    setup_errors += ledger_errors
+    selected_names = {spec[0] for spec in plan}
+    entries = [entry for entry in entries if entry['command'] in selected_names]
     # Existing receipts are immutable input, never an output slot to overwrite.
     out.mkdir(parents=True, exist_ok=False)
+    capabilities = probe_capabilities(out / 'tmp' / 'runner-capabilities')
     source = source_identity(root, excluded=(out,))
     records = []
     result = {'schema': SCHEMA, 'status': 'RUNNING', 'commands': records,
@@ -457,6 +931,14 @@ def run(root, out, *, selected=None, timeout=180):
                            'source': source, 'runnerSha256': digest(__file__), 'host': host_identity()},
               'continuationPolicy': 'continue after terminal fixture results; stop later launches after timeout, launch failure or cancellation',
               'notRunHistorical': HISTORICAL,
+              'population': {'manifest': POPULATION_FILE if manifest is not None else None,
+                             'sha256': digest(root / POPULATION_FILE) if manifest is not None else None,
+                             'exclusions': (manifest or {}).get('exclusions', []),
+                             'modules': len((manifest or {}).get('modules', []))},
+              'ledger': {'file': LEDGER_FILE, 'sha256': digest(root / LEDGER_FILE) if (root / LEDGER_FILE).exists() else None,
+                         'active': len(entries), 'retired': [entry['id'] for entry in retired],
+                         'capabilities': capabilities},
+              'setupErrors': setup_errors,
               'scope': 'Only explicitly selected source-contract commands. Counts are descriptive; exclusions are not passes. No native pixels, live provider, platform, performance or delivery certification.'}
 
     def save():
@@ -467,18 +949,25 @@ def run(root, out, *, selected=None, timeout=180):
     save()
     stop_reason = None
     for spec in plan:
-        row = execute_command(root, out, spec, timeout, stop_reason)
+        row = adjudicate(execute_command(root, out, spec, timeout, stop_reason), out, entries, capabilities)
         records.append(row)
         if row['execution']['state'] in ('timed-out', 'launch-failed', 'cancelled') or row.get('interrupted'):
             stop_reason = 'not launched after ' + row['name'] + ': ' + row.get('reason', row['execution']['state'])
         save()
         print(row['name'], row['exitCode'], row['status'], row['counts'], flush=True)
     result['status'] = summarize(plan, records)
+    if setup_errors and result['status'] != 'FAIL':
+        result['status'] = 'INCOMPLETE'  # A malformed ledger/population is never a pass.
+    declared = sorted({hit['id'] for row in records for key in ('expectedFail', 'declaredNotExecuted')
+                       for hit in row.get('ledger', {}).get(key, [])}
+                      | {hit for row in records for hit in row.get('ledger', {}).get('declaredIncomplete', [])})
+    result['ledger']['declared'] = declared
     result['sourceUnchanged'] = source == source_identity(root, excluded=(out,))
     if not result['sourceUnchanged'] or source.get('available') is False:
         if result['status'] != 'FAIL':
             result['status'] = 'INCOMPLETE'
         result['identityError'] = 'source identity changed or was unavailable during invocation'
+    result['verdict'] = result['status'] + (' (' + str(len(declared)) + ')' if result['status'] == DECLARED else '')
     save()
     return result
 
@@ -496,7 +985,9 @@ def main(argv=None):
         result = run(args.root, args.output, selected=args.select, timeout=args.timeout)
     except (OSError, ValueError) as error:
         parser.error(str(error))
-    return 0 if result['status'] == 'PASS' else 1
+    print('VERDICT', result.get('verdict', result['status']), flush=True)
+    # 0 PASS; 3 PASS_WITH_DECLARED_FAILURES (never reported as PASS); 1 otherwise.
+    return 0 if result['status'] == 'PASS' else 3 if result['status'] == DECLARED else 1
 
 
 if __name__ == '__main__':

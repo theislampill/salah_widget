@@ -84,8 +84,12 @@ test('mask follows the actual transform transition and existing withdrawal durat
   assert.match(source,/\.moon-mask-disc\{opacity:0;transition:opacity 0s linear 1\.2s\}/);assert.match(source,/\.moon-mask-disc\.mask-on\{opacity:1;transition-delay:0s\}/);
   assert.match(source,/\.c\.fast,\.c\.fast \*\{transition:none!important\}/);
 });
+// R0028 re-bind: 47c0fa0c -> 18ff1486, the accepted CP9/V5 native owner already pinned by
+// r0022-baseline-balance (acceptedNativeCommit). The shader slice diverged at 5f1f0003
+// (CP9 integration, runtime-owner delegation and Earthshine floor; slice sha256 88a22593... ->
+// 056669e2...). The two payload lines are byte-equal at both commits.
 test('moon PBR shader and embedded payloads retain exact accepted bytes',()=>{
-  const {execFileSync}=require('node:child_process'),base=execFileSync('git',['show','47c0fa0c6e32618f22b43b6a18717908b0de5f5e:index.html'],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024});
+  const {execFileSync}=require('node:child_process'),base=execFileSync('git',['show','18ff14860ff41c084b1db5f396bb62aa9c22b1be:index.html'],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024});
   const shader=s=>s.slice(s.indexOf('function renderMoonPBR('),s.indexOf('function moonNow('));assert.equal(shader(source),shader(base));
   for(const name of ['MOON_ALBEDO','MOON_NORMAL'])assert.equal(source.split('\n').find(l=>l.startsWith('const '+name+'=')),base.split('\n').find(l=>l.startsWith('const '+name+'=')));
 });

@@ -498,6 +498,7 @@ Original audit: **N06** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r0002-admission.test.cjs', 'tests/r0007-countdown.cjs', 'tests/r0018-prayer-row-status.test.cjs', 'tests/r000a-markers.test.cjs', 'tests/real-sky/native-prayer-arc-samples.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'New local proof: evidence/probes/native/join-probes.cjs → NF01. Native visual/semantic acceptance after a future fix remains required. Timeline progress uses a wall cycle even when next epoch is unavailable; no separate defect is asserted without a stricter presentation contract.'}
   - Original remaining risk: New local proof: evidence/probes/native/join-probes.cjs → NF01. Native visual/semantic acceptance after a future fix remains required. Timeline progress uses a wall cycle even when next epoch is unavailable; no separate defect is asserted without a stricter presentation contract.
 - **Findings.** [PRA-F-21](docs/audit/post-rlgwo/FINDINGS.md#pra-f-21), [PRA-F-35](docs/audit/post-rlgwo/FINDINGS.md#pra-f-35)
+- **R0028 (issue 89).** `r0022-baseline-balance` London case repaired by a lawful next-civil-date successor; R0007's `next-day-required` rule is confirmed as accepted behaviour, not a regression. The accepted R0007 test `test_effect_request_selects_the_fixed_font_ingress_pair` fails against the later committed request (ledger R28-L11, pending owner decision).
 
 <a id="ism-pray-006"></a>
 ### ISM-PRAY-006 — Calendar publication, Hijri provenance/rollover and date disclosure
@@ -535,6 +536,7 @@ Original audit: **N07** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original evidence: {'relevant_existing_files': ['tests/r0009-date-selection.cjs', 'tests/r0019-date-disclosure.cjs', 'tests/r0001-date-sinks.cjs', 'tests/r0002-admission.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Historical date/disclosure test extraction currently has parent-adjudicated failures. Source inspection is not native modal focus, viewport or footer-pixel acceptance; no new calendar defect asserted.'}
   - Original remaining risk: Historical date/disclosure test extraction currently has parent-adjudicated failures. Source inspection is not native modal focus, viewport or footer-pixel acceptance; no new calendar defect asserted.
 - **Findings.** [PRA-F-06](docs/audit/post-rlgwo/FINDINGS.md#pra-f-06)
+- **R0028 (issue 89).** The "3 cases red at baseline" were a harness gap (both date doubles lacked `style.getPropertyValue`), repaired in `tests/r0009-calendar-harness.cjs` and `tests/r0001-date-sinks.cjs`: r0001 13/0, r0009 22/0, r0019 16/0, `r0009-date-mutations` 10/10. G-03(b): a wrong `visibility` read-back changes no calendar-harness assertion, so these harnesses do not observe the lunar-optic visibility read (recorded residual in R0028.md).
 
 <a id="ism-pray-007"></a>
 ### ISM-PRAY-007 — Countdown font readiness, rail sampling and geometry-fit cache
@@ -1570,6 +1572,7 @@ Original audit: **N14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: {'relevant_existing_files': ['tests/real-sky/native-star-preview.test.mjs', 'tests/real-sky/native-host-streams.test.mjs', 'tests/real-sky/cp9-scintillation.test.mjs', 'tests/real-sky/native-bootstrap.test.mjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Actual native star visibility/scintillation needs clips/pixels; this lane establishes only substitution/contract. Source-only star projection was not freshly executed.'}
   - Original remaining risk: Actual native star visibility/scintillation needs clips/pixels; this lane establishes only substitution/contract. Source-only star projection was not freshly executed.
 - **Findings.** [PRA-F-11](docs/audit/post-rlgwo/FINDINGS.md#pra-f-11)
+- **R0028 (issue 89).** The synthetic-star cases (`r0021-reveal` R17-STAR-01..03 under `--cp8-snapshot-only`, `r0022-lunar-consumers` R17-STAR-04/05, `r001d-mutations` "omit held-position appearance refresh") are exact active ledger entries in `tests/expected-failures.json` (R0035 for R17-STAR-04/05 and the r001d probe; R17-STAR-01..03 pass in the direct-mode command and are skipped only by runner snapshot mode, owner decision); the runner fails if any of them starts passing or changes message.
 
 <a id="ism-sky-003"></a>
 ### ISM-SKY-003 — Cloud population, motion integration, coverage and paint cache
@@ -3119,6 +3122,7 @@ Original audit: **new (NEW-F-03)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Work orders.** all certificate-bearing work orders
 - **Accepted evidence.** FINAL-CERTIFICATE comments (12 spot-checked by the integrator)
 - **Findings.** [PRA-F-27](docs/audit/post-rlgwo/FINDINGS.md#pra-f-27)
+- **R0028 (issue 89).** Repository-side append-only index [`docs/state-contracts/CLOSURE_INDEX.md`](docs/state-contracts/CLOSURE_INDEX.md): certificates and bound commits, withdrawals/corrections/reopenings, the three R0015 `wholeContractComplete` lines superseded by FINAL 6828391831 (DG-2 (a): contract bytes untouched), and the R0007 owner-approved cross-run reuse basis. V: `tests/r0028-closure-index.test.cjs` (deleting the R0015 row, a stale quotation or a new false-completion line fails) and `tools/qa/r0028_closure_readback.py` (read-only readback, 25/25 agree at drafting). Proposed D / I / V **EIV / PEX / EEV** on acceptance; cells unchanged until then.
 
 <a id="ism-bld-006"></a>
 ### ISM-BLD-006 — Installer-bytes delivery routes and README pin ↔ docs-receipt coupling
@@ -3154,6 +3158,8 @@ Original audit: **new (NEW-F-05; carries EF01)** · Lane papers: [A](docs/audit/
 - **Tests.** `node --test tests/*.test.cjs tests/*.test.mjs` 959/955/0/4
 - **Observed facts.** see REPORT instrument table
 - **Findings.** [PRA-F-06](docs/audit/post-rlgwo/FINDINGS.md#pra-f-06)
+- **R0028 (issue 89) — documented / enforced / verified.** D: [R0028 contract](docs/state-contracts/R0028.md) (population, protocols, ledger fields, transitions, verdict `PASS_WITH_DECLARED_FAILURES (n)`, exit 3). I: enforced in `tools/cp9/run_native_regressions.py` (`load_population`, `census`, `load_ledger`, `adjudicate`) over `tests/regression-population.json` and `tests/expected-failures.json`. V: `tests/test_regression_ledger.py` (G-05..G-10 controls and six runner mutants, all killed; deleted or unlisted glob members are setup errors) beside the unchanged 42 R0017 runner controls; executor runner receipt on the candidate recorded in R0028.md. Unresolved: independent review (G-18), owner DG-1/DG-2, and the `pending-owner-decision` / `undetermined` entries listed in R0028.md.
+- **Proposed status (R0028, issue 89).** D / I / V **EIV / EEV / EIV**, taking effect only after independent review and acceptance; the cells above stay at the audit baseline until then.
 
 <a id="ism-bld-008"></a>
 ### ISM-BLD-008 — Work-order-branch qualification workflows
@@ -3186,6 +3192,7 @@ Original audit: **new (NEW-F-07)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Work orders.** R0017, R0021, R0027
 - **Accepted evidence.** pins in `installer_preview_docs.cjs`, `rlgwo-docs-contract.cjs` ~L270, `tests/native-script-contract.js`, `tools/build_moon.py` ~L15-16
 - **Findings.** [PRA-F-06](docs/audit/post-rlgwo/FINDINGS.md#pra-f-06)
+- **R0028 (issue 89).** Re-pin rule documented in [R0028](docs/state-contracts/R0028.md) §2 (a pin re-binds only to bytes with a recorded acceptance; a changed predicate needs the accepting contract/certificate locator). Applied: `r0021-reveal` shader → `18ff1486`; `r0022-baseline-balance` material/moon-detail/moon-precision → `f71fef6c` (CLOSE-R0021 6326407465); `rlgwo-docs-contract` force-branch body/entry → R0021 FINAL 6809435795 / R0027 FINAL 6810490146. Each pin still fails a one-character mutant (R0028 mutation log). Implementation stays per-pin (no manifest; O-6 is R002A's gate). Status codes unchanged until accepted.
 
 <a id="ism-bld-010"></a>
 ### ISM-BLD-010 — Frozen v1 verification

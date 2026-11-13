@@ -267,8 +267,14 @@ function mentions(name, tokens) {
       const calls = [...body.matchAll(/^  const \{mFrac,.*\}=lunarPresentation\(sm.altDeg\);$/gm)].map(match => match[0]);
       assert.equal(calls.length,1,'unique delegated atmosphere lunar call required');
       assert.equal(digest(calls[0]),"9fc8a550af80cf2ff526fcf69d40c4d9863135f551c97386e6ff65bce799d46f",'delegated atmosphere lunar call changed');
-      assert.equal(digest(body),"5855c29ae0496734b791ded1e1f62939d8605d253ab836cea66a5bf122770ab7",'delegated native script changed');
-      assert.equal(digest(source),"c773af444ed1071f9ba6b62b8e635c8d38b1b7f73de995c781ed23c0d307499a",'delegated current generated entry changed');
+      // R0028 re-bind (reviewed): the old pins 5855c29a.../c773af44... are a side-branch snapshot
+      // (2e14e1b1) never on main. The force block, lunar helper, clamp and atmosphere call are
+      // byte-equal there and now (their own digests above are unchanged); the rest of the native
+      // body differs by later certified work orders. Body and entry = the bytes R002D delivered at main
+      // e10da481 (R002D FINAL, issue 94 comment 6845125534); earlier re-bind 529c220a.../e3a3dedb...
+      // (R0021 FINAL 6809435795 / R0027 FINAL 6810490146) superseded by that change.
+      assert.equal(digest(body),"a772c04c7f551456e048b4d9a13d325fa40afd5cd532d510149776598998e785",'delegated native script changed');
+      assert.equal(digest(source),"794bb701a34c69448954a6e835fa1f20ceab1338ac733de9a65984c2bd3992f1",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
@@ -392,8 +398,13 @@ function mentions(name, tokens) {
       assert.equal(api.reconcile({ ...inputs, lane: 'simulation-fixture' }, raw.validUntil).permissions.rain, false);
       const outage = api.admit(null, target, now); assert.equal(outage.ok, false);
       assert.equal(api.reconcile({ ...inputs, present: null, presentRejection: outage.reason, lane: 'simulation-fixture' }, now).permissions.rain, false);
-      const preview = api.reconcile({ ...inputs, model: { ...model, precip: 5 }, modelCategory: 'thunder', lane: 'preview' }, now);
+      // R0028: the documented preview policy (src/native/index.html weather decision site, R0024
+      // current/preview split): a forecast thunder category is not a lightning detection; only an
+      // explicitly synthetic (src:'sim', the &simWx= scene) model may preview invented strikes.
+      const preview = api.reconcile({ ...inputs, model: { ...model, src: 'sim', precip: 5 }, modelCategory: 'thunder', lane: 'preview' }, now);
       assert.equal(preview.permissions.rain, true); assert.equal(preview.permissions.lightning, true);
+      const currentPreview = api.reconcile({ ...inputs, model: { ...model, precip: 5 }, modelCategory: 'thunder', lane: 'preview' }, now);
+      assert.equal(currentPreview.permissions.rain, true); assert.equal(currentPreview.permissions.lightning, false, 'current-model thunder previews no invented strike');
     });
   }
   if (!sourceOnly) {
