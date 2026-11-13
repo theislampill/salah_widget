@@ -3101,6 +3101,12 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
   - Enforced: by the external Jekyll 3 builder only (string-prefix `exclude`); no repository gate before merge (R002A).
   - Verified: hosted ci-build run 43368101308, base `c696b39f` 1,920,475,771 B -> candidate 340,873,013 B; only evidence paths removed. Not yet the deployed artifact: the post-merge deployed measure is pending.
   - Unresolved: Pages still serves the over-limit site until a merge; GitHub's enforcement behaviour is unknown.
+- **R002A update, pre-deploy gate and delivery-identity dimensions (issue 91; branch `claude/r002a-qualification-gate-20261113`, not merged, not independently reviewed).**
+  - Documented: [R002A contract](docs/state-contracts/R002A.md) sections 2-3: gate jobs J1-J5, verdicts, guards and concurrency; readback states `awaiting-build` -> `built(commit)` | `errored` -> `reading-back` -> `identical` | `mismatch` | `inconclusive`, the exact-commit build guard and the derived, `_config.yml`-filtered readback set. Owner decisions DG-1(a) advisory, DG-2(a) legacy branch deploy (issue 91 comment 6840681354).
+  - Enforced: `.github/workflows/qualification.yml` with `tools/qualification/qualification_gate.py` (detects only; no required check, so a merge still deploys unconditionally); `tools/qualification/delivery_identity.py` and `.github/workflows/delivery-identity.yml` (`page_build`, dispatch).
+  - Verified: `tests/test_r002a_qualification.py` (registered `py-test_r002a_qualification`, 54 cases, 14 tool mutants killed across the executor's and the reviewer's sets); local readback of the deployed `bcd02af2`: `identical` (128 rows, 2 `not-published`), wrong commit `inconclusive`. Hosted runs and the first post-merge readback are pending.
+  - Unresolved: G-08 (`page_build` delivery) not observed. The accepted-history object `8b83df02` is now reachable through the tag `evidence/r0022-accepted-prayer-8b83df02`, and the suites job checks every runner history locator first (missing means INCOMPLETE). Hosted run 43419734052 showed Linux environment differences (vendor-suite wheels, stale bytecode in R0028's mutant harness), fixed in the gate environment. Merged head `60f59fba`: run 43427729405 all jobs green, suites `PASS_WITH_DECLARED_FAILURES (18)` on Linux (historically (24) at `488debfd`, run 43424583530) (R002A sections 7, 7a, 8.1a).
+- **Proposed status (R002A, issue 91).** D / I / V **EIV / EEV / EIV** for the gate and readback dimensions, taking effect only on acceptance (V after the hosted rows and the first post-merge `identical` readback); the cells above stay at the audit baseline until then.
 
 <a id="ism-bld-005"></a>
 ### ISM-BLD-005 — RLGWO delivery workflow (campaign governance)
@@ -3144,6 +3150,8 @@ Original audit: **new (NEW-F-04; also covers the delivery-route omission FND-F-1
 - **Work orders.** R0015, R0016
 - **Accepted evidence.** `tools/qualification/installer_preview_docs.cjs` L18-20 pins; README L92-117
 - **Findings.** [PRA-F-28](docs/audit/post-rlgwo/FINDINGS.md#pra-f-28)
+- **R002A update (issue 91; branch, not merged, not independently reviewed).** Documented: [R002A](docs/state-contracts/R002A.md) section 2.5 and the single pinned-receipt rule of issue 91 section 4.3 (cited in section 5). Enforced: gate job J5 (`qualification_gate.py pins`): (a) the three docs-receipt SHA-256 pins must equal README/builder/config, no divergence path; (b) the README `INSTALL_COMMIT`/`$InstallCommit` installer blobs must equal the checked-out installers or a valid record in `tools/qualification/installer-pin-divergence.json` (empty at this branch; stale, outlived, duplicate or malformed records are red). `installer-preview-docs.yml` now renders the successor receipt on any branch that changes a pinned file (trigger by path). Verified: unit controls in `tests/test_r002a_qualification.py`; disposable-copy controls (README edit, `install.sh` edit, valid record, stale record) red/red/declared/red; at `bcd02af2` J5 PASS. Unresolved: hosted G-05 runs. DG-4(a): per-receipt pins kept, no central manifest.
+- **Proposed status (R002A, issue 91).** D / I / V **PEX / EEV / EEV**, taking effect only on acceptance; the cells above stay at the audit baseline until then.
 
 <a id="ism-bld-007"></a>
 ### ISM-BLD-007 — Registered regression suites and the known-failure baseline
@@ -3180,6 +3188,8 @@ Original audit: **new (NEW-F-06)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Work orders.** R0007, R000B, R0013, R0015, R0016, R0017
 - **Accepted evidence.** integrator trigger census: 32 files; 30 `push` (named branches), 6 `workflow_dispatch`, 1 `pull_request` (PR 62-gated); none on `push` to main
 - **Findings.** [PRA-F-09](docs/audit/post-rlgwo/FINDINGS.md#pra-f-09)
+- **R002A update (issue 91; branch, not merged, not independently reviewed).** Documented: [R002A](docs/state-contracts/R002A.md) section 6, the lifecycle census of every workflow file (owner decision DG-3(a): retained as dispatchable or branch-bound qualification infrastructure; none deleted). Two new workflows: `qualification.yml` (the first `main` trigger) and `delivery-identity.yml`; `installer-preview-docs.yml` re-triggered by path. Enforced: the triggers themselves. Verified: static census at this branch (35 files) and the workflow-guard tests. Unresolved: the three workflows Actions still lists without a file (lane F NEW-F-06) are not touched (registration records are a settings-side artifact); retirement remains an owner decision.
+- **Proposed status (R002A, issue 91).** D / I / V **PEX / PEX / PEX**, taking effect only on acceptance; the cells above stay at the audit baseline until then.
 
 <a id="ism-bld-009"></a>
 ### ISM-BLD-009 — Evidence receipts bound to source hashes
