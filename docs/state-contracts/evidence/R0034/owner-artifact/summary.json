@@ -1,5 +1,5 @@
 {
- "scope": "R0034 owner-artifact probe (stipple in \"Sky preview \u00b7 refining\u2026\"): NOT reproduced",
+ "scope": "R0034 owner-artifact probe (stipple in \"Sky preview · refining…\"): NOT reproduced",
  "scene": "Central Florida 28.5383,-81.3792, America/New_York, 2026-11-13 15:15 local (20:15Z), clear day 70F fixture; real-time clock (Playwright clock installed at that instant, then resumed)",
  "embedding": "325x530 iframe on a textured page; viewport 400x600",
  "network": "prayer fulfilled from tests/r0002-ordinary.json; weather answered in-page from a fixture; radar rejected; every other non-loopback request aborted (only fonts.googleapis.com was attempted)",
@@ -2838,5 +2838,90 @@
     }
    }
   }
- ]
+ ],
+ "secondRound": {
+  "why": "owner detail: Firefox, 100% scaling (DPR 1), iframe on a new-tab page",
+  "fixture": "valid current record (local times, utc_offset_seconds); the header shows the admitted temperature",
+  "adoptionProbe": "after the first refined frame, the accepted weather record is replaced in-page with rh+7 and wind+2 only (as fetchWeather assigns it); 8 s sampled every 250 ms",
+  "runs": [
+   {
+    "tree": "main",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "dpr": 1,
+    "firstRefinedMs": 2355,
+    "refiningBadgeMs": [
+     884,
+     2014
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": true,
+     "refiningSamples": 5,
+     "recomposedMs": 1451,
+     "invalidationsDelta": 0
+    },
+    "weatherHeader": "☀️"
+   },
+   {
+    "tree": "main",
+    "engine": "chromium",
+    "version": "148.0.7778.96",
+    "dpr": 1,
+    "firstRefinedMs": 4436,
+    "refiningBadgeMs": [
+     1225,
+     4045
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": true,
+     "refiningSamples": 9,
+     "recomposedMs": 2633,
+     "invalidationsDelta": 1
+    },
+    "weatherHeader": "☀️"
+   },
+   {
+    "tree": "branch",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "dpr": 1,
+    "firstRefinedMs": 2654,
+    "refiningBadgeMs": [
+     808,
+     2234
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": false,
+     "refiningSamples": 0,
+     "recomposedMs": null,
+     "invalidationsDelta": 0
+    },
+    "weatherHeader": "☀️"
+   },
+   {
+    "tree": "branch",
+    "engine": "chromium",
+    "version": "148.0.7778.96",
+    "dpr": 1,
+    "firstRefinedMs": 2449,
+    "refiningBadgeMs": [
+     880,
+     2078
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": false,
+     "refiningSamples": 0,
+     "recomposedMs": null,
+     "invalidationsDelta": 0
+    },
+    "weatherHeader": "☀️"
+   }
+  ],
+  "flatSkyHighPassStd_DPR1": "Firefox 0.40-0.42 and Chromium 0.43-0.44 grey levels, preview-only and refined, with and without backdrop-filter, main and branch; canvas readback high-frequency 0.67 (preview) / 0.68 (refined) on both trees: no stipple in canvas pixels or in composited headless frames",
+  "finding": "On main an rh/wind-only adoption withdraws the refined frame and shows \"Sky preview · refining…\" again (Firefox 1.45 s, Chromium 2.6 s until recomposition); on the branch the refined frame is not withdrawn. The owner frame is a \"refining…\" frame seconds after load, consistent with this withdrawal (PRA-F-10, D-F02 half). The stipple itself was not reproduced headless."
+ }
 }

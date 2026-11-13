@@ -20,12 +20,12 @@ const server=http.createServer((req,res)=>{const u=new URL(req.url,'http://x');i
  const p=path.normalize(path.join(root,decodeURIComponent(u.pathname)));
  if(!p.startsWith(root)||!fs.existsSync(p)||fs.statSync(p).isDirectory()){res.writeHead(404);return res.end();}
  res.writeHead(200,{'content-type':TYPES[path.extname(p)]||'application/octet-stream','cache-control':'no-store'});fs.createReadStream(p).pipe(res);});
-const SHIM=`(()=>{const nf=window.fetch.bind(window),iso=ms=>new Date(ms).toISOString().slice(0,16);window.__calls={weather:0,radar:0};
+const SHIM=`(()=>{const nf=window.fetch.bind(window),iso=ms=>new Date(ms-new Date(ms).getTimezoneOffset()*60000).toISOString().slice(0,16);window.__calls={weather:0,radar:0};window.__wx={rh:55,cloud:0,wind:5};
  const json=v=>Promise.resolve(new Response(JSON.stringify(v),{status:200,headers:{'Content-Type':'application/json'}}));
  window.fetch=(input,init)=>{const u=String(input&&input.url||input);
   if(u.includes('api.open-meteo.com')){window.__calls.weather++;const w=Date.now(),m=Math.floor(w/60000)*60000,h=Math.floor(w/3600000)*3600000;
-   return json({timezone:'America/New_York',elevation:30,current:{time:iso(m),interval:900,weather_code:0,temperature_2m:70,apparent_temperature:70,
-    relative_humidity_2m:55,dew_point_2m:53,wind_speed_10m:5,wind_direction_10m:90,wind_gusts_10m:8,cloud_cover:0,precipitation:0,is_day:1,visibility:24000},
+   return json({timezone:'America/New_York',utc_offset_seconds:-new Date(w).getTimezoneOffset()*60,elevation:30,current:{time:iso(m),interval:900,weather_code:0,temperature_2m:70,apparent_temperature:70,
+    relative_humidity_2m:window.__wx.rh,dew_point_2m:53,wind_speed_10m:window.__wx.wind,wind_direction_10m:90,wind_gusts_10m:8,cloud_cover:window.__wx.cloud,precipitation:0,is_day:1,visibility:24000},
     hourly:{time:[iso(h),iso(h+3600000)],temperature_2m:[70,69],weather_code:[0,0],precipitation:[0,0],cloud_cover:[0,0]}});}
   if(u.includes('api.rainviewer.com')){window.__calls.radar++;return Promise.reject(new TypeError('controlled radar unavailable'));}
   return nf(input,init);};})();`;
@@ -58,18 +58,27 @@ const STATE=`(()=>{const s=window.SalahRealSky?.state,c=document.querySelector('
   if((Date.now()-t0)>=shot*1000){fs.writeFileSync(path.join(out,`${engine}-dpr${dpr}-t${String(shot).padStart(2,'0')}.png`),await page.locator('#w').screenshot());shot++;}
   await page.waitForTimeout(250);
  }
+ // Simulated live weather adoption that changes ONLY unconsumed fields (rh, wind): the accepted record is replaced
+ // in the page exactly as fetchWeather assigns it. Records whether the refined frame is withdrawn ("refining…").
+ const f=frame(),adoption=[];
+ const before=await f.evaluate(()=>{const had=typeof weather!=='undefined'&&weather;if(had){weather={...weather,rh:(weather.rh??50)+7,wind:(weather.wind??3)+2};_renderDirty=true;}return {adopted:!!had};});
+ const ta=Date.now();while(Date.now()-ta<8000){adoption.push({ms:Date.now()-ta,...await f.evaluate(STATE)});await page.waitForTimeout(250);}
+ const adoptionSummary={...before,withdrawn:adoption.some(s=>!s.composed),refiningSamples:adoption.filter(s=>/refining/.test(s.badge||'')).length,
+  recomposedMs:(()=>{const i=adoption.findIndex(s=>!s.composed);if(i<0)return null;const j=adoption.findIndex((s,k)=>k>i&&s.composed);return j<0?'not within 8 s':adoption[j].ms;})(),
+  invalidationsDelta:(adoption.at(-1)?.invalidations??0)-(adoption[0]?.invalidations??0)};
  // Forced states: preview-only (refined disposed -> preview handoff) and with glass backdrop-filter removed.
- const f=frame(),grab=async tag=>{await page.waitForTimeout(600);fs.writeFileSync(path.join(out,`${engine}-dpr${dpr}-${tag}.png`),await page.locator('#w').screenshot());return f.evaluate(STATE);};
+ const grab=async tag=>{await page.waitForTimeout(600);fs.writeFileSync(path.join(out,`${engine}-dpr${dpr}-${tag}.png`),await page.locator('#w').screenshot());return f.evaluate(STATE);};
  const forced={refinedOrCurrent:await grab('current')};
  await f.addStyleTag({content:'*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}'});forced.currentNoBackdrop=await grab('current-nobackdrop');
  await f.evaluate(()=>{document.querySelectorAll('style').forEach(s=>{if(s.textContent.startsWith('*{backdrop-filter:none'))s.remove();});window.SalahRealSky?.dispose();});
  forced.previewOnly=await grab('preview-only');
  await f.addStyleTag({content:'*{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}'});forced.previewNoBackdrop=await grab('preview-nobackdrop');
+ const weatherState=await f.evaluate(()=>{try{const q=window.qaState();return {wxTruth:q.wxTruth??null,weather:q.weather??null,header:document.querySelector('.c')?.innerText.split(String.fromCharCode(10)).slice(0,3)};}catch(e){return {error:String(e.message)};}});
  const version=browser.version();await browser.close();server.close();
  const firstRefined=trace.find(s=>s.composed),badges=[...new Set(trace.map(s=>s.badge))];
- const summary={engine,version,dpr,secs,aborted:[...new Set(aborted)],errors,firstRefinedMs:firstRefined?.ms??null,badges,
+ const summary={engine,version,dpr,secs,adoption:adoptionSummary,weatherState,aborted:[...new Set(aborted)],errors,firstRefinedMs:firstRefined?.ms??null,badges,
   refiningMs:trace.filter(s=>/refining/.test(s.badge||'')).map(s=>s.ms).reduce((m,x,i,arr)=>i?m:[arr[0],arr.at(-1)],null),
   maxInvalidations:Math.max(...trace.map(s=>s.invalidations??0)),forced:Object.fromEntries(Object.entries(forced).map(([k,s])=>[k,{badge:s.badge,composed:s.composed,previewReady:s.previewReady,canv:s.canv}]))};
- fs.writeFileSync(path.join(out,`${engine}-dpr${dpr}.json`),JSON.stringify({summary,trace},null,1));
+ fs.writeFileSync(path.join(out,`${engine}-dpr${dpr}.json`),JSON.stringify({summary,trace,adoption},null,1));
  console.log(JSON.stringify(summary));
 })().catch(e=>{console.error(e);process.exitCode=1;server.close();});
