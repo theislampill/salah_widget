@@ -29,24 +29,27 @@ const LOOK=`(()=>{const c=document.querySelector('.c'),cv=document.querySelector
 async function run(engine,base,phaseS){
   const T0=B+phaseS*1000-150000;                                 // boot poll origin: polls at ~T0+30 s*k, one of them ~B+phase
   const b=await pw[engine].launch(); const c=await b.newContext({viewport:{width:325,height:530},timezoneId:'Asia/Riyadh',reducedMotion:'no-preference'});
-  let pageNow=T0; const requests=[];
-  await c.route('**/*',r=>{const u=r.request().url(); if(u.startsWith(base)) return r.continue();
+  let pageNow=T0, page=null; const requests=[];
+  // The provider stub reads the PAGE's mocked clock at request time (engines advance it slightly differently
+  // from the runner's own step counter), so floor(server now, 15 min) is evaluated at the request's own instant.
+  const pageClock=async()=>{ try{ return await page.evaluate(()=>Date.now()); }catch(e){ return pageNow; } };
+  await c.route('**/*',async r=>{const u=r.request().url(); if(u.startsWith(base)) return r.continue();
     if(u.includes('api.aladhan.com')){const m=/timings\/(\d\d-\d\d-\d{4})/.exec(u);const x=JSON.parse(JSON.stringify(rec));x.meta.timezone='Asia/Riyadh';if(m)x.date.gregorian.date=m[1];
       return r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify({code:200,status:'OK',data:x})});}
-    if(u.includes('api.open-meteo.com')){requests.push(pageNow-B);const q=Math.floor(pageNow/900000)*900000,hr=q-q%3600000;
+    if(u.includes('api.open-meteo.com')){const now=await pageClock();requests.push(now-B);const q=Math.floor(now/900000)*900000,hr=q-q%3600000;
       const body={timezone:'Asia/Riyadh',elevation:600,current:{time:iso(q),interval:900,weather_code:95,temperature_2m:24,apparent_temperature:26,relative_humidity_2m:80,
         dew_point_2m:18,wind_speed_10m:6,wind_direction_10m:225,wind_gusts_10m:9,cloud_cover:95,cloud_cover_low:92,cloud_cover_mid:90,cloud_cover_high:60,precipitation:2,rain:2,showers:0,snowfall:0,is_day:1,visibility:10000},
         hourly:{time:[iso(hr),iso(hr+3600000),iso(hr+7200000)],temperature_2m:[24,24,24],weather_code:[95,95,95],cloud_cover:[95,95,95],precipitation:[2,2,2]}};
       return r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:JSON.stringify(body)});}
     if(u.includes('api.rainviewer.com')) return r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"radar":{"past":[]}}'});
     return r.abort();});
-  const p=await c.newPage(); const errors=[]; p.on('pageerror',e=>errors.push(String(e)));
+  const p=await c.newPage(); page=p; const errors=[]; p.on('pageerror',e=>errors.push(String(e)));
   await p.clock.install({time:new Date(T0)});
   await p.goto(base+'/index.html#lat=24.47&lon=39.61&label=Madinah&method=4&seed=1&tz=Asia%2FRiyadh');
-  const step=async ms=>{await p.clock.runFor(ms);pageNow+=ms;};
+  const step=async ms=>{await p.clock.runFor(ms);pageNow=await p.evaluate(()=>Date.now());};
   for(let i=0;i<40&&!(await p.evaluate(()=>{try{return window.eval('_loopStarted&&!!selectedWeather()')}catch(e){return false}}));i++) await step(250);
   const before=await p.evaluate(()=>window.eval('weather&&weather.currentValidAt'));
-  await step(B-5000-pageNow);
+  pageNow=await p.evaluate(()=>Date.now()); await step(B-5000-pageNow);
   const samples=[],shots={};const tag=`${engine}-${path.basename(root)}-phase${phaseS}`;
   while(pageNow<B+60000){ await step(250); const s=await p.evaluate(LOOK); s.t=s.now-B; samples.push(s);
     if(s.t>=-1000&&shots.before==null){shots.before=s.t;await p.screenshot({path:path.join(out,tag+'-before.png')});}
@@ -55,9 +58,9 @@ async function run(engine,base,phaseS){
   await b.close();
   const off=samples.find(s=>s.t>0&&!s.sel), on=off&&samples.find(s=>s.t>off.t&&s.sel&&s.ready&&s.painted>0);
   const header=off&&samples.find(s=>s.t>off.t&&s.wt!=='');
-  const gap=samples.filter(s=>off&&s.t>=off.t&&(!on||s.t<on.t));
+  const back=off&&samples.find(s=>s.t>off.t&&s.sel), gap=samples.filter(s=>off&&s.t>=off.t&&(!back||s.t<back.t));
   return {engine,tree:path.basename(root),phaseS,recordStepBefore:before,requestsRelativeToB:requests.filter(t=>t>-200000),
-    withdrawnAtMs:off?off.t:null,deckBackAtMs:on?on.t:null,headerBackAtMs:header?header.t:null,
+    withdrawnAtMs:off?off.t:null,selectedAgainAtMs:back?back.t:null,deckBackAtMs:on?on.t:null,headerBackAtMs:header?header.t:null,
     withdrawnFramesShowNothing:gap.every(s=>s.painted===0&&!s.ready&&s.wt===''&&s.precip==='off'&&s.lightning==='off'),
     identityKept:!!(on&&samples[0].seed===on.seed&&samples[0].population===on.population),lightningEverOn:samples.some(s=>s.lightning==='on'),
     shots,pageErrors:errors,samples};
