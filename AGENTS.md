@@ -178,7 +178,8 @@ never the check colour. After a merge, the delivery step reads the public bytes 
 certificate cites that receipt, and only an `identical` verdict for the exact commit. The suites job installs
 exactly two hash-locked wheels (`numpy`, `scipy`, `tools/qualification/gate-requirements.txt`) that the vendor
 scientific suite imports; it is the gate's only network use beyond checkout and pinned actions. Declared counts are
-host-conditional: `PASS_WITH_DECLARED_FAILURES (24)` on the Linux runner, `(27)` where symlinks are unavailable.
+host-conditional: the Linux runner declares three fewer entries (R28-L12/L14/L17, condition `symlink-unavailable`)
+than a host that cannot create symlinks.
 See `docs/state-contracts/R002A.md`.
 
 Retained evidence is kept in git but not published (R002B, owner decision DG-2(a)): `_config.yml` excludes
