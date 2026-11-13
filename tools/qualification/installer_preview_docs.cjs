@@ -15,7 +15,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
  const config=fs.readFileSync(path.join(repo,'src/native/config.js'));
  const bindings={};
  for(const [name,raw] of [['README.md',readme],['src/native/builder.html',builder],['src/native/config.js',config]])bindings[name]={bytes:raw.length,sha256:sha(raw)};
- if(bindings['README.md'].sha256!=='b5df3f58f87368077798c205ac6cd682dee09ac2492e1f89d0dd6f6ec940923d')throw Error('README candidate identity differs');
+ if(bindings['README.md'].sha256!=='6dbad6ac3aa602881cda8352a0cb70976d8ab6352159942eeccec589b472e017')throw Error('README candidate identity differs');
  if(bindings['src/native/builder.html'].sha256!=='873e8dedfd4380d5bb8271945b23d73dc5afd3b5c8b848f67017cc4aaa41fd9f')throw Error('Builder candidate identity differs');
  if(bindings['src/native/config.js'].sha256!=='719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80')throw Error('Config candidate identity differs');
  fs.writeFileSync(path.join(out,'inputs.json'),JSON.stringify(bindings,null,2)+'\n');

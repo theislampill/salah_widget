@@ -1455,6 +1455,7 @@ Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/a
 - **Accepted evidence.** R000F invariants scenario (current snippets only); native layout cell
 - **Tests.** R000F `invariants` scenario
 - **Observed facts.** README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); values agree across modules at baseline (OM-06)
+- **Proposed status (R0037, issue 104).** Owner decision DG2 (amendment R0037-A1): the frozen V1 README snippet stays 330×534, V1's card-plus-drop-shadow footprint (native comparison: 3,102 pixels differ inside the card box at 325×530); the 325×530 rule applies to the current widget. On the R0037 slice-2 branch the README states the current-version size and no longer says "change only `src`", AGENTS.md names the V1 snippet as the documented exception, and the R000F `invariants` scenario asserts the current-version size statement. This removes the contradiction that made D DWE; proposed D / I / V **PEX / PEX / PEX**, taking effect only on acceptance (the renderer-literal census OM-06 stays with R0034). The cells above stay at the audit baseline until then.
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
 
 <a id="ism-cfg-011"></a>
@@ -3052,6 +3053,13 @@ Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
   - Original evidence: Read exact workflow/script; no build/CI run
   - Original remaining risk: Imported snapshot has no Git metadata/complete payload, so cannot execute qualification. Hard-coded explanatory zero reference counts are not live dependency scans; root owns deployment evidence.
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07)
+- **Proposed status (R002B, issue 92).** D / I / V **EIV / EEV / EEV**, taking effect only when R002B is accepted; the cells above stay at the audit baseline until then.
+- **R002B update (issue 92; candidate branch, not merged or deployed).** Contract: [docs/state-contracts/R002B.md](docs/state-contracts/R002B.md).
+  - Documented: payload machine (measurement sources `ci-build` / `deployed-artifact`, bound 1,000,000,000 regular-file bytes by owner decision DG-1(a), verdicts `within` / `exceeds` / `inconclusive`, invariants I1-I4).
+  - Enforced in code: `tools/pages_payload.py` (explicit exceptions, no `assert`; `inconclusive` never `within`; envelope-only readback can prove `within` but never `exceeds`). The R0017 verifier is frozen to PR 62 and its `assert` guards are explicit. Branch-bound M2 workflow `.github/workflows/r002b-pages-payload.yml`.
+  - Verified by: `tests/r002b-pages-payload.test.cjs` (21 tests; 17/17 mutants killed) and hosted M2 runs 43366170074 (published source `38097925…`) and 43368101308 (head `b891b985`, published source `35f51cad…`: base `c696b39f` 10,167 files / 1,920,475,771 B `exceeds`; candidate 1,049 files / 340,873,013 B `within`; 9,122 files removed, all under the four prefixes; 157 protected files byte-identical). `tools/verify_v1.py --check-pages` admits the new `_config.yml` through one R0037 reviewed entry. Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
+  - M1: the deployed artifact of `c696b39f` (artifact 14010762508), streamed once with owner permission, agrees exactly with the M2 build of the same commit: 10,167 files, 1,920,475,771 B `exceeds`, equal path-size manifest and protected-set digests, archive size and SHA-256 equal to the API's.
+  - Unresolved: one more hosted run on the final head (its published-source digest differs from both runs); post-merge deployed measurement and PR-gate wiring (R002A, issue 91).
 
 <a id="ism-bld-004"></a>
 ### ISM-BLD-004 — Pages deployment from main (a commit to main is a deploy)
@@ -3075,6 +3083,12 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **Status evidence.** D: AGENTS/README · I: external · V: post-hoc readback in certificates
 - **Accepted evidence.** latest Pages build `363c3e53` `built` (integrator `gh api`); lane F public byte readback of four files
 - **Findings.** [PRA-F-07](docs/audit/post-rlgwo/FINDINGS.md#pra-f-07), [PRA-F-09](docs/audit/post-rlgwo/FINDINGS.md#pra-f-09)
+- **Proposed status, payload dimension (R002B, issue 92).** D / I / V **EIV / PEX / EEV** for the payload dimension only, taking effect only when R002B is accepted and the post-merge deployed measurement is recorded; the cells above stay at the audit baseline until then.
+- **R002B update, payload dimension only (issue 92; candidate, not merged).** Readback dimensions belong to R002A (issue 91).
+  - Documented: `_config.yml` excludes the retained evidence trees `docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence`, `docs/moon/evidence` (owner decision DG-2(a)); evidence stays in git and on github.com.
+  - Enforced: by the external Jekyll 3 builder only (string-prefix `exclude`); no repository gate before merge (R002A).
+  - Verified: hosted ci-build run 43368101308, base `c696b39f` 1,920,475,771 B -> candidate 340,873,013 B; only evidence paths removed. Not yet the deployed artifact: the post-merge deployed measure is pending.
+  - Unresolved: Pages still serves the over-limit site until a merge; GitHub's enforcement behaviour is unknown.
 
 <a id="ism-bld-005"></a>
 ### ISM-BLD-005 — RLGWO delivery workflow (campaign governance)
@@ -3178,25 +3192,34 @@ Original audit: **new (NEW-F-07)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 
 Original audit: **new (NEW-F-01)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **DWE / EEV / EEV** · Historical disposition: *new*
 
-- **Scope and decision.** Proof that v1 bytes are unchanged and servable.
-- **Sources.** `tools/verify_v1.py` ~L18-92 (`--check-pages` ~L54, ~L65); `docs/V1_PRESERVATION.md` L93
-- **State dimensions.** mode {default, check-root, check-pages, negative-control}
+*Entry text updated by R0037 (branch candidate, not yet accepted). Contract: [R0037](docs/state-contracts/R0037.md). The status cells stay at the audit baseline until acceptance.*
+
+- **Scope and decision.** Proof that v1 bytes are unchanged, plus a bounded preflight that the root Pages configuration does not drop V1. Not a deployment or readback claim.
+- **Sources.** `tools/verify_v1.py` (`REVIEWED_JEKYLL_CONFIGS`, `JEKYLL_CONFIG_NAMES`, `pages_config`); `docs/V1_PRESERVATION.md` "Dependency and Pages inclusion checks", "Focused validation"
+- **State dimensions.** mode {default, check-root, check-pages, negative-control}; Jekyll configuration state {none; `.nojekyll`; one reviewed digest; one unreviewed digest; reviewed digest with missing evidence; more than one configuration file}
 - **Transitions.**
 
   | Event | Guard | Effect |
   |---|---|---|
-  | default mode | — | PASS (integrator run) |
-  | `--check-pages` | `_config.yml` present | FAIL "New Jekyll configuration requires V1 inclusion review" |
-  | `--negative-control` | — | tampered copy detected (lane F) |
+  | default mode | payload digests and manifest anchor match | PASS |
+  | any mode | payload or manifest differs | FAIL (short-circuits all other checks) |
+  | `--check-pages` | `.nojekyll` present, or no `_config.yml`/`_config.yaml`/`_config.toml` | PASS "...; inclusion preflight only; deployment not checked" |
+  | `--check-pages` | exactly one configuration whose SHA-256 is in `REVIEWED_JEKYLL_CONFIGS` and whose evidence file exists | PASS "reviewed Jekyll configuration <name> <sha256>; inclusion preflight only; deployment not checked" |
+  | `--check-pages` | digest not in the reviewed set | FAIL "Jekyll configuration <name> <sha256> has no recorded V1 inclusion review" |
+  | `--check-pages` | reviewed digest, evidence file missing | FAIL "... review evidence missing: <path>" |
+  | `--check-pages` | more than one configuration file | FAIL "More than one Jekyll configuration file (ambiguous build input): ..." |
+  | `--check-root` | after the root overhaul | expected FAIL (pre-overhaul check only; not in the current recipe) |
+  | `--negative-control` | — | tampered disposable copy rejected with exactly "Frozen payload changed or missing: v1/index.html" |
 
-- **Guards.** byte digests
-- **Actors and ownership.** executors
-- **Invariants.** v1 bytes unchanged (`git diff f71fef6c 363c3e53 -- v1` empty)
-- **Invalid, duplicate, stale or concurrent risks.** documented recipe requires a check that fails at baseline (PRA-F-18)
-- **Status evidence.** D: recipe stale · I: explicit · V: negative control
-- **Work orders.** R0017 (`_config.yml` added, 02ab7a93)
-- **Accepted evidence.** `python tools/verify_v1.py` PASS (integrator); `--check-pages` prints "FAIL: New Jekyll configuration requires V1 inclusion review"
-- **Tests.** `tools/verify_v1.py --negative-control`
+- **Guards.** byte digests; reviewed-digest set, admitted only with evidence that every V1 public file was present and byte-identical in a built or deployed site for that exact configuration (review adequacy is a reviewer judgement; the verifier checks only the digest and the evidence file's existence)
+- **Actors and ownership.** `tools/verify_v1.py` owned by R0037; the executor of any change that edits a Jekyll configuration file owns its re-review (adds one `REVIEWED_JEKYLL_CONFIGS` entry with evidence in the same change); Pages build/deploy external (ISM-BLD-004)
+- **Invariants.** v1 bytes unchanged; `MANIFEST_SHA256` unchanged; no reachable permanently-red state for a correct tree; no PASS text claims deployment
+- **Invalid, duplicate, stale or concurrent risks.** a configuration change merged without re-review fails on the next run (no gate on `main` until R002A); a reviewed digest whose evidence is later found wrong must be removed (FAIL returns); the Jekyll configuration-file lookup order on the hosted builder is taken from Jekyll's documented default, not re-measured
+- **Proposed status (R0037, issue 104).** D / I / V **EIV / EEV / EIV (V EIV only after the independent exact-tree review R37-15)**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
+- **Status evidence.** D: R0037 contract and `docs/V1_PRESERVATION.md` match the code · I: explicit, centralised guards · V: `tests/test_verify_v1_pages.py` 12/12, 8/8 scratch mutants killed, `--negative-control`; independent review pending
+- **Work orders.** R0017 (`_config.yml` added, 02ab7a93); R0037 (reviewed-digest `--check-pages`, current digest `0f846f7e…` admitted on the measured deployed artifact of merge `06772824`)
+- **Accepted evidence.** none yet accepted for R0037 (branch candidate). Audit baseline: `python tools/verify_v1.py` PASS; `--check-pages` FAIL "New Jekyll configuration requires V1 inclusion review" (retained in `docs/state-contracts/evidence/R0037/baseline/`)
+- **Tests.** `tests/test_verify_v1_pages.py`; `tools/verify_v1.py --negative-control`
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
 
 ## Frozen v1 compatibility snapshot (`ISM-V1`)
@@ -3212,11 +3235,13 @@ Original audit: **C15** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Sources.** `v1/config.js`
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification, `tests/v1_storage.cjs` 10/10
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification, `tests/v1_storage.cjs` 10/10
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; `tests/v1_storage.cjs` 10/10
 - **Tests.** `tests/v1_storage.cjs` 10/10: legacy settings copied once, root byte-identical, save/clear never resurrect root
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / PEX**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C15 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/config.js#L132-L177); carried forward for reference, not re-derived):
   - States: no V1/latch; latch set; valid imported; no import; V1 record cleared
   - Transitions: when V1 absent and latch absent, set latch before inspecting root record; import only valid version1 record; later loads never retry root import once latch set; existing V1 record wins; clear sets latch then removes V1 key, preserving root key
@@ -3237,11 +3262,13 @@ Original audit: **C16** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
 - **Invalid, duplicate, stale or concurrent risks.** CF07: location changes do not invalidate earlier data or settings work
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C16 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L593-L632); carried forward for reference, not re-derived):
   - States: resolve; coarse pending; configured; saving; resetting; fetching; rendering; manual location needed
   - Transitions: apply optionally persists, binds globals, clears datasets and starts weather/prayer; loop start is idempotent; reset clears visible/cache state but neither cancels nor epochs existing network operations; coarse boot completion binds after await without a user-edit ownership token
@@ -3262,11 +3289,13 @@ Original audit: **C17** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Sources.** `v1/index.html` ~L743ff
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C17 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L734-L759); carried forward for reference, not re-derived):
   - States: cached; fetch retry1/2/3; today admitted; tomorrow pending; rollover stale; rollover pending
   - Transitions: cache date match immediately renders; fetch retries with900/1800ms delays and accepts timings without current-date/owner/schema fencing; fetchTimings updates global timezone; completion saves using current mutable cacheKey; after evening, missing tomorrow triggers a retry chain; failure clears flag so another render retries; rollover has60second retry guard
@@ -3286,11 +3315,13 @@ Original audit: **C18** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Sources.** `v1/index.html` ~L771ff
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C18 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L761-L808); carried forward for reference, not re-derived):
   - States: no sample; cached; busy; fresh; throttled; stale; forecast simulation
   - Transitions: load sample under six hours; request if not busy, not fresh15min, and last attempt at least60sec; fetch captures URL; completion writes elevation/current sample and caches using current mutable coordinates; hourly epoch conversion uses current tz; simulation override bypasses network; advancing simulation mutates from forecast track
@@ -3310,11 +3341,13 @@ Original audit: **C19** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Sources.** `v1/index.html` ~L816ff
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C19 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L809-L843); carried forward for reference, not re-derived):
   - States: throttled; manifest pending; tile pending; sample accepted; stale/none
   - Transitions: ten-minute throttle is stamped before manifest request; last past frame selected; coordinates are read after manifest await, then image tile/canvas alpha sample determines precipitation; receipt wall time is stamped on acceptance;20min expiry uses receipt time rather than source frame time
@@ -3335,11 +3368,13 @@ Original audit: **C20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
 - **Invalid, duplicate, stale or concurrent risks.** CF07; CF08: `_resetLocal` ~L2421-2428 ignores the `clearLocal` result and says "Local settings cleared."
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: CF08 characterised by `tests/v1_limitations.test.cjs` (3 cases, VM, exact frozen source; a limitation witness, not a fix); the rest of the machine untested
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
-- **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Tests.** `tests/v1_limitations.test.cjs` (R0037, CF08 Reset-truth witness); `tests/v1_browser.py` exists but was not run for this entry
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / PEX (V PEX on the CF08 witness `tests/v1_limitations.test.cjs`)**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C20 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L2283-L2451); carried forward for reference, not re-derived):
   - States: closed; open clean; dirty; search pending; candidate cycle; GPS pending; reset pending; commit
   - Transitions: open populates and increments search sequence; close commits dirty config then hides; manual coordinate edits or changed query do not fence earlier lookup; candidate Enter can cycle old list; GPS/permission await has no session owner; Reset ignores clearLocal result, clears stored error and claims success; later coarse completion can replace newer draft
@@ -3360,11 +3395,13 @@ Original audit: **C21** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Sources.** `v1/index.html`
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C21 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L699-L731); carried forward for reference, not re-derived):
   - States: unanchored; wall-like advancing; fixed simulation; fast simulation; timezone re-anchor
   - Transitions: first call/timezone change captures Date.now or simulation HHMM; subsequent epoch is base plus monotonic elapsed multiplied by timescale; invalid timezone falls back to browser local Date parts; real default also uses monotonic anchor rather than following corrected wall clock
@@ -3384,11 +3421,13 @@ Original audit: **C22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Sources.** `v1/index.html`
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C22 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L953-L1022); carried forward for reference, not re-derived):
   - States: textures pending; one texture ready; both ready; pending latest render; render cache hit; painted
   - Transitions: two image onload callbacks extract pixels; both ready flush only latest pending request; render before ready replaces pending parameters; ready render reuses buffer and skips phase change under0.004 with same waxing; image/canvas failure does not set a settled failure flag
@@ -3408,11 +3447,13 @@ Original audit: **C23** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 - **Sources.** `v1/index.html`; `tools/build_native.py`
 - **State dimensions.** as original catalogue
 - **Invariants.** bytes frozen
-- **Status evidence.** D: provenance only (`docs/V1_PRESERVATION.md`) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
+- **Status evidence.** D: limitation record in `docs/V1_PRESERVATION.md` (R0037) · I: as original · V: byte verification only; behaviour not tested in this audit — unknown or insufficient evidence
 - **Work orders.** none (`v1/` byte-unchanged f71fef6c → 363c3e53; frozen by AGENTS)
 - **Accepted evidence.** `tools/verify_v1.py` byte verification; none behavioural
 - **Tests.** `tests/v1_browser.py` exists but was not examined or run in this audit; no Node test targets this machine
-- **Unknowns.** v1 deployment status (`VERSION.json` says pending; Pages not contacted)
+- **Unknowns.** current public V1 bytes after 2026-10-14 (not re-read). Deployment record: the deployed Pages artifact of merge `06772824` contained the four V1 public files byte-identical to the tree, and earlier public readbacks exist (`docs/V1_PRESERVATION.md` "Public deployment record", R0037); `VERSION.json`'s "pending" line is frozen historical text
+- **Disposition (R0037).** Frozen compatibility variant: limitations documented in [`docs/V1_PRESERVATION.md`](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy) (R0037); not re-engineered; any repair needs explicit owner authority (DG1). Not resolved.
+- **Proposed status (R0037, issue 104).** D / I / V **PEX / IMS / UNK**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
 - **Original catalogue contract** ([C23 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/v1/index.html#L1083-L1170); carried forward for reference, not re-derived):
   - States: unbuilt; built; projected; reprojection required
   - Transitions: boot seeded pseudo-random catalogue, creates elements and initial projection; configuration reset/day change invalidates projected flag; advancing simulation projects on render; ordinary real-time render leaves already-projected stars fixed between invalidation events; moon position updates independently

@@ -136,8 +136,10 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
   not the arc-sun azimuth). A center-screen halo is an instant FAIL.
 - Footer date row clipped or any header change that **moves the content stack**.
 - **Builder/embed:** the iframe wrapper size drifting from the widget card — it must be **325×530** (= `.c`) in the
-  builder preview, the copy snippet, README, and the TablissNG preset (an oversized wrapper adds invisible margin
-  and misaligns the builder card/buttons).
+  builder preview, the copy snippet, every current-version README snippet, and the TablissNG preset (an oversized
+  wrapper adds invisible margin and misaligns the builder card/buttons). The one documented exception is the frozen
+  V1 README snippet, which stays 330×534: that is V1's own card-plus-drop-shadow footprint, and the shadow is part
+  of the design (owner decision, R0037 DG2; `docs/state-contracts/R0037.md`).
 - Header buckle off-centre, straps full-width, a heavy drop shadow, or **any strap geometry visible THROUGH the
   translucent buckle** (the strap inner ends must be *masked/cut*, not merely z-indexed — translucent glass reveals
   what's under it).
@@ -159,6 +161,12 @@ Do not commit or push unless the user explicitly asks. When asked: commit the **
 **never** the stray research scratch files (`noaa_clouds.html`, `*_photopills.html`, `_mag_extract.txt`, etc.).
 `main` deploys to GitHub Pages, so a commit to `main` is a deploy. End commit messages with the standard
 `Co-Authored-By` line.
+
+Retained evidence is kept in git but not published (R002B, owner decision DG-2(a)): `_config.yml` excludes
+`docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence` and `docs/moon/evidence`
+from the Pages build. Cite evidence by commit-pinned github.com links, never github.io; put new evidence
+under one of those trees, and measure the payload with `tools/pages_payload.py` (bound 1,000,000,000
+regular-file bytes; `docs/state-contracts/R002B.md`).
 
 ## Running / debugging common scenarios
 
