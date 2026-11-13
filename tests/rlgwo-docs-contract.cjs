@@ -507,7 +507,10 @@ function mentions(name, tokens) {
       });
       await check('docs composed: actual smoke terminal contract and held qualification', () => {
         mentions('ARCHITECTURE.md', ['automatically', 'PASS', 'FAIL', 'INCOMPLETE', 'declared', 'missing']);
-        mentions('HANDOFF.md', ['30', '141', 'Apple Bash 3.2', 'PARTIAL', 'round-4', 'held']);
+        // R0028 slice 2 retirement (provenance: docs commit 89b29c47, carried by bdc806f0, never merged):
+        // the HANDOFF tokens 30/141/Apple Bash 3.2/PARTIAL/round-4/held recorded that side branch's
+        // installer round-4 status, superseded on main by the R0013/R0015/R0016 FINAL certificates
+        // (docs/state-contracts/CLOSURE_INDEX.md); not applicable to main. The ARCHITECTURE check stays.
         assert(!/\?run=1|manual Run button/.test(sources['ARCHITECTURE.md']), 'unimplemented smoke opt-in');
       });
       await check('docs composed: two legacy SIM comments describe synthetic preview amount', () => {
