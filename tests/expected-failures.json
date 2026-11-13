@@ -130,20 +130,6 @@
    "trigger": "R0035 decision on the synthetic-star cases; retire with L08/L09"
   },
   {
-   "id": "R28-L11",
-   "status": "active",
-   "kind": "case-fail",
-   "command": "py-test_r0007_native_request",
-   "case": "test_effect_request_selects_the_fixed_font_ingress_pair (test_r0007_native_request.SelectionTests.test_effect_request_selects_the_fixed_font_ingress_pair)",
-   "messagePrefix": "ValueError: unknown case-id: NE07-dst-recovery12",
-   "firstRed": "inferred a71d7df0 (2026-11-10), which replaced tests/rlgwo/R0007-native-request.json with the firefox-affected cohort request; not bisected",
-   "causeClass": "stale-pin",
-   "evidence": "tests/rlgwo/R0007-native-request.json (git log a71d7df0); tests/test_r0007_native_request.py SelectionTests",
-   "owner": "pending-owner-decision",
-   "disposition": "R0007 successor change, unassigned: needs a small work order. Not in R002E (prayer presentation residuals) or R002A (qualification gate) scope. Stale test coupled to the mutable committed request (passes with the a71d7df0^ request); not a product defect",
-   "trigger": "owner assigns the repair (re-point the test at the committed request or restore a font-ingress request fixture)"
-  },
-  {
    "id": "R28-L12",
    "status": "active",
    "kind": "case-fail",
@@ -214,7 +200,7 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL semantics, side-branch wording: main presents current weather as a model estimate with no local observation or arrival (src/native/index.html weather evidence: \"current weather model\", \"model-estimated-wet/dry\", horizon arrival only from admitted present evidence). README/DESIGN are outside R0028. Assigned to R002F (issue 96) section 6 stage 5, which rewrites the DESIGN \"Weather truthfulness\" freshness paragraph (and README under its option A); dependency: R002F stage 5 lands after its freshness decision D-2F-1",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL semantics, side-branch wording: main presents current weather as a model estimate with no local observation or arrival (src/native/index.html weather evidence: \"current weather model\", \"model-estimated-wet/dry\", horizon arrival only from admitted present evidence). README/DESIGN are outside R0028. Assigned to R002F (issue 96) section 6 stage 5, which rewrites the DESIGN \"Weather truthfulness\" freshness paragraph (and README under its option A); dependency: R002F stage 5 lands after its freshness decision D-2F-1",
    "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
@@ -228,7 +214,7 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL: preceding-interval/preceding-hour amounts, instantaneous values, probability and \"unavailable\" metadata exist in source (src/native/index.html quantityKind \"preceding-hour-amount\" and the quantity-kind labels). DESIGN.md (outside R0028) lacks \"preceding-hour\". Assigned to R002F (issue 96) section 6 stage 5 weather documentation",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL: preceding-interval/preceding-hour amounts, instantaneous values, probability and \"unavailable\" metadata exist in source (src/native/index.html quantityKind \"preceding-hour-amount\" and the quantity-kind labels). DESIGN.md (outside R0028) lacks \"preceding-hour\". Assigned to R002F (issue 96) section 6 stage 5 weather documentation",
    "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
@@ -242,7 +228,7 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL: the synthetic-present-v1 simulation-fixture lane, its expiry/outage withdrawal and the rule that no provider response or \"trusted:true\" field enters weatherSynthetic exist (src/native/index.html admitWeatherFixture/reconcileWeatherEvidence; R0024 accepted). DESIGN.md is outside R0028 and the AGENTS sentence belongs with it. Assigned to R002F (issue 96) stage 5 \"Weather truthfulness\"; visible provenance of the override itself stays R0036 (issue 103, gate G1)",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL: the synthetic-present-v1 simulation-fixture lane, its expiry/outage withdrawal and the rule that no provider response or \"trusted:true\" field enters weatherSynthetic exist (src/native/index.html admitWeatherFixture/reconcileWeatherEvidence; R0024 accepted). DESIGN.md is outside R0028 and the AGENTS sentence belongs with it. Assigned to R002F (issue 96) stage 5 \"Weather truthfulness\"; visible provenance of the override itself stays R0036 (issue 103, gate G1)",
    "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
@@ -256,7 +242,7 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R002E",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL: Date.now() wall authority, backward-correction handling, explicit timeScale=1 anchored preview and the \"Countdown unavailable\" state exist (src/native/index.html timeScale comment and showError(\"Countdown unavailable\")). DESIGN.md is outside R0028. Assigned to R002E (issue 95) section B.3 (countdown writers) and its stage 7 docs, which must add the DESIGN clock/countdown paragraph once the countdown-fit writers are settled",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002E-A1, issue 95 comment 6851942702). ACTUAL: Date.now() wall authority, backward-correction handling, explicit timeScale=1 anchored preview and the \"Countdown unavailable\" state exist (src/native/index.html timeScale comment and showError(\"Countdown unavailable\")). DESIGN.md is outside R0028. Assigned to R002E (issue 95) by its scope amendment R002E-A1, which adds this DESIGN statement to R002E; it relates to the section B.3 countdown writers",
    "trigger": "R002E writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
@@ -270,7 +256,7 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R0033",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL: the opaque calendar disc keeps Earthshine while moonLightEligible gates atmospheric moonlight (near-new, below-horizon, daylight, surface-unavailable reasons) and the stellar-background cutout follows the disc (src/native/index.html nativeLunarPresentation, stellar-cutout mask; R0021/R0022 accepted). DESIGN/OPTICS are outside R0028. Assigned to R0033 (issue 100) section 10 documentation (light eligibility)",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R0033-A1, issue 100 comment 6851945304). ACTUAL: the opaque calendar disc keeps Earthshine while moonLightEligible gates atmospheric moonlight (near-new, below-horizon, daylight, surface-unavailable reasons) and the stellar-background cutout follows the disc (src/native/index.html nativeLunarPresentation, stellar-cutout mask; R0021/R0022 accepted). DESIGN/OPTICS are outside R0028. Assigned to R0033 (issue 100) section 10 documentation (light eligibility)",
    "trigger": "R0033 writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
@@ -284,7 +270,7 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R002F",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL behaviour per accepted R0025 (advanceCloudMotion monotonic intervals, wind change applied after the elapsed interval, periodic decks, suspension), but the exact side-branch statements (\"two seconds\", \"Empty decks\", \"explicit seek\") are not re-verified here. Assigned to R002F (issue 96) stage 5 DESIGN \"Continuity\" bullet, which owns cloud continuity across the freshness boundary; R002F must verify each statement before writing it",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002F-A1, issue 96 comment 6851943487). ACTUAL behaviour per accepted R0025 (advanceCloudMotion monotonic intervals, wind change applied after the elapsed interval, periodic decks, suspension), but the exact side-branch statements (\"two seconds\", \"Empty decks\", \"explicit seek\") are not re-verified here. Assigned to R002F (issue 96) stage 5 DESIGN \"Continuity\" bullet, which owns cloud continuity across the freshness boundary; R002F must verify each statement before writing it",
    "trigger": "R002F writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
@@ -298,7 +284,7 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R0033",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL in part: the initial sky reveal waits for a fresh consumed scene and a decoded surface (R0021 accepted; updateSkySurface/commitSkyScene), but the texture-failure path is exactly what R0033 corrects (fault-path presence, M3). PLANNED correction: assigned to R0033 (issue 100) M3 and section 10 docs",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R0033-A1, issue 100 comment 6851945304). ACTUAL in part: the initial sky reveal waits for a fresh consumed scene and a decoded surface (R0021 accepted; updateSkySurface/commitSkyScene), but the texture-failure path is exactly what R0033 corrects (fault-path presence, M3). PLANNED correction: assigned to R0033 (issue 100) M3 and section 10 docs",
    "trigger": "R0033 writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
@@ -312,22 +298,23 @@
    "causeClass": "unadopted-contract",
    "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
    "owner": "R002E",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL: \"Hijri date unavailable\", \"Sunset date update unavailable\", \"calendar convention unavailable\" and the Maghrib advance exist in the date-row projection (src/native/index.html calendar projection; R0009/R0019 accepted); \"anomaly\" is recorded as hijriAnomaly:null (no anomaly classifier on main). README/DESIGN are outside R0028. Assigned to R002E (issue 95), which owns the date-row stale/rollover presentation, stage 7 docs; R002E must not document an anomaly classifier main lacks",
+   "disposition": "assigned (owner decision 2026-11-13, issue 89 comment 6851177343; scope amendment R002E-A1, issue 95 comment 6851942702). ACTUAL: \"Hijri date unavailable\", \"Sunset date update unavailable\", \"calendar convention unavailable\" and the Maghrib advance exist in the date-row projection (src/native/index.html calendar projection; R0009/R0019 accepted); \"anomaly\" is recorded as hijriAnomaly:null (no anomaly classifier on main). README/DESIGN are outside R0028. Assigned to R002E (issue 95) by its scope amendment R002E-A1 (date-row stale/rollover presentation); no anomaly classifier may be documented because main has none",
    "trigger": "R002E writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
-   "id": "R28-D09",
-   "status": "active",
+   "id": "R28-R10",
+   "status": "retired",
    "kind": "case-fail",
    "command": "rlgwo-docs-contract",
-   "case": "docs composed: default glass and opt-in contrast keep distinct gates",
-   "messagePrefix": "README.md: missing contract Liquid glass",
-   "firstRed": "red at every tested commit since the instrument arrived (3cf6ce2f); identical set since f71fef6c",
+   "case": "docs composed: actual smoke terminal contract and held qualification",
+   "messagePrefix": "HANDOFF.md: missing contract 141",
+   "firstRed": "red at every tested commit since the instrument arrived (3cf6ce2f)",
    "causeClass": "unadopted-contract",
-   "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f",
-   "owner": "R0030",
-   "disposition": "assigned (owner decision 2026-11-13, \"write them, subject to implementation truth\"). ACTUAL: \"Liquid glass (default)\" and \"High contrast\" options and the data-appearance contrast backing exist (src/native/index.html settings select and .c[data-appearance=\"contrast\"] rules; builder select; R0018 accepted). README/DESIGN are outside R0028. Assigned to R0030 (issue 97), the open work order that touches the appearance setting (Reset field edits, ES30-04); scope fit to be confirmed by its executor, else an owner reassignment",
-   "trigger": "R0030 writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
+   "evidence": "expectation introduced by docs commit 89b29c47 (codex/rlgwo-docs-final-20261002) and carried by bdc806f0 (integration/rlgwo-r0001-r0025-20261002), neither merged to main; matcher arrived on main via 3cf6ce2f; HANDOFF tokens 30/141/Apple Bash 3.2/PARTIAL/round-4/held",
+   "owner": "R0028",
+   "retiredBy": "R0028 slice 2 (owner decision issue 89 comment 6851177343)",
+   "disposition": "retired expectation (HANDOFF part only): it recorded the side branch installer round-4 qualification status (141 checks, Apple Bash 3.2 PARTIAL, held), which is not true of main: Apple Bash 3.2 was later observed on macos-15 (R0013, R0016 contracts) and main has no round-4 governor; installer status on main is carried by the R0013/R0015/R0016 FINAL certificates (CLOSURE_INDEX.md). The ARCHITECTURE part of the case was written and passes",
+   "trigger": "none: historical side-branch status; never re-enable on main"
   }
  ]
 }

@@ -117,7 +117,12 @@ class SelectionTests(unittest.TestCase):
         self.assertEqual(plan["arguments"], launch_arguments(INGRESS_PREFIX, INGRESS_CASE_IDS))
 
     def test_effect_request_selects_the_fixed_font_ingress_pair(self):
-        value = json.loads((ROOT / "tests/rlgwo/R0007-native-request.json").read_text())
+        # R0028-A1: this case accepted the font-ingress effect request. The committed
+        # tests/rlgwo/R0007-native-request.json is the selector's live, mutable input and was
+        # replaced at a71d7df0 by the next run's firefox-affected request, so reading it here
+        # tested whichever request happened to be committed. Read the frozen bytes of the
+        # accepted font-ingress request instead (the file at a71d7df0^, last written by 1e3610d9).
+        value = json.loads((ROOT / "tests/rlgwo/R0007-native-request.font-ingress.json").read_text())
         diagnostic = load_ingress_recipe(self)
         plan = SELECTOR.plan_request(value, diagnostic)
         self.assertEqual(plan["profile"], "firefox-font-ingress")
