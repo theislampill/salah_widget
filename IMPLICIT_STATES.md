@@ -3054,8 +3054,8 @@ Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 - **R002B update (issue 92; candidate branch, not merged or deployed).** Contract: [docs/state-contracts/R002B.md](docs/state-contracts/R002B.md).
   - Documented: payload machine (measurement sources `ci-build` / `deployed-artifact`, bound 1,000,000,000 regular-file bytes by owner decision DG-1(a), verdicts `within` / `exceeds` / `inconclusive`, invariants I1-I4).
   - Enforced in code: `tools/pages_payload.py` (explicit exceptions, no `assert`; `inconclusive` never `within`; envelope-only readback can prove `within` but never `exceeds`). The R0017 verifier is frozen to PR 62 and its `assert` guards are explicit. Branch-bound M2 workflow `.github/workflows/r002b-pages-payload.yml`.
-  - Verified by: `tests/r002b-pages-payload.test.cjs` (19 tests; 17/17 mutants killed) and hosted M2 run 43366170074 (head `c1ab548d`, published-source digest `38097925…`): base `5a90cc03` 10,162 files / 1,920,370,569 B `exceeds`; candidate 1,044 files / 340,753,776 B `within`; 9,122 files removed, all under the four prefixes; 156 protected files byte-identical. Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
-  - Unresolved: the final-head run (bound by published-source digest); M1 deployed-artifact stream (owner permission, G-02); post-merge deployed measurement and PR-gate wiring (R002A, issue 91).
+  - Verified by: `tests/r002b-pages-payload.test.cjs` (21 tests; 17/17 mutants killed) and hosted M2 runs 43366170074 (published source `38097925…`) and 43368101308 (head `b891b985`, published source `35f51cad…`: base `c696b39f` 10,167 files / 1,920,475,771 B `exceeds`; candidate 1,049 files / 340,873,013 B `within`; 9,122 files removed, all under the four prefixes; 157 protected files byte-identical). `tools/verify_v1.py --check-pages` admits the new `_config.yml` through one R0037 reviewed entry. Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
+  - Unresolved: one more hosted run on the final head (its published-source digest differs from both runs); M1 deployed-artifact stream (owner permission, G-02); post-merge deployed measurement and PR-gate wiring (R002A, issue 91).
 
 <a id="ism-bld-004"></a>
 ### ISM-BLD-004 — Pages deployment from main (a commit to main is a deploy)
@@ -3083,7 +3083,7 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **R002B update, payload dimension only (issue 92; candidate, not merged).** Readback dimensions belong to R002A (issue 91).
   - Documented: `_config.yml` excludes the retained evidence trees `docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence`, `docs/moon/evidence` (owner decision DG-2(a)); evidence stays in git and on github.com.
   - Enforced: by the external Jekyll 3 builder only (string-prefix `exclude`); no repository gate before merge (R002A).
-  - Verified: hosted ci-build run 43366170074, base `5a90cc03` 1,920,370,569 B -> candidate 340,753,776 B; only evidence paths removed. Not yet the deployed artifact: the post-merge deployed measure is pending.
+  - Verified: hosted ci-build run 43368101308, base `c696b39f` 1,920,475,771 B -> candidate 340,873,013 B; only evidence paths removed. Not yet the deployed artifact: the post-merge deployed measure is pending.
   - Unresolved: Pages still serves the over-limit site until a merge; GitHub's enforcement behaviour is unknown.
 
 <a id="ism-bld-005"></a>
