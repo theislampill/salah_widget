@@ -1,4 +1,9 @@
-"""Measure the actual R0017 Pages output; never builds or deploys the widget."""
+"""Measure the actual R0017 Pages output; never builds or deploys the widget.
+
+FROZEN to PR 62 (R0017 delivery history): its ancestry and allowed-change guards cannot pass on a
+later commit by design. The generalised instrument for any commit is tools/pages_payload.py (R002B).
+Guards raise explicitly (never `assert`), so `python -O` cannot drop the payload bound.
+"""
 import argparse
 import hashlib
 import importlib.util
@@ -22,6 +27,12 @@ ALLOWED = {
 }
 
 
+def require(condition, detail=""):
+    """Explicit guard; same AssertionError type and message as the former `assert` statements."""
+    if not condition:
+        raise AssertionError(detail)
+
+
 def sha(path):
     with path.open("rb") as stream:
         return hashlib.file_digest(stream, "sha256").hexdigest()
@@ -34,16 +45,16 @@ def verify(root, site, receipt):
     head = git("rev-parse", "HEAD")
     subprocess.run(["git", "merge-base", "--is-ancestor", APPROVED, head], cwd=root, check=True)
     changes = git("diff", "--name-only", APPROVED, head).splitlines()
-    assert set(changes) <= ALLOWED, changes
+    require(set(changes) <= ALLOWED, changes)
     receipt.update({"sourceCommit": head, "sourceTree": git("rev-parse", "HEAD^{tree}"),
                     "approvedImplementation": APPROVED, "reviewedBase": BASE,
                     "additionalChangedPaths": changes})
     config = (root / "_config.yml").read_text()
     exclusions = [line.strip()[2:] for line in config.splitlines() if line.strip().startswith("- ")]
-    assert exclusions == [EXCLUDED]
+    require(exclusions == [EXCLUDED])
     digests = json.loads(subprocess.check_output(
         ["docker", "image", "inspect", IMAGE, "--format", "{{json .RepoDigests}}"], text=True))
-    assert any(value.endswith("@" + IMAGE_DIGEST) for value in digests), digests
+    require(any(value.endswith("@" + IMAGE_DIGEST) for value in digests), digests)
     receipt["build"] = {
         "action": "actions/jekyll-build-pages@44a6e6beabd48582f863aeeb6cb2151cc1716697",
         "image": IMAGE, "imageDigest": IMAGE_DIGEST,
@@ -56,8 +67,8 @@ def verify(root, site, receipt):
     tracked = git("ls-files", "-z").split("\0")
     tracked = [name for name in tracked if name]
     excluded = [name for name in tracked if name.startswith(EXCLUDED + "/")]
-    assert excluded and not (site / EXCLUDED).exists()
-    assert git("rev-parse", head + ":" + EXCLUDED) == "2f452a4ba3cbe353f25327a39d2f026d53838b16"
+    require(excluded and not (site / EXCLUDED).exists())
+    require(git("rev-parse", head + ":" + EXCLUDED) == "2f452a4ba3cbe353f25327a39d2f026d53838b16")
     receipt["excluded"] = [{
         "path": EXCLUDED, "reason": "Historical R000C raw PNG/JPEG/video/JSON/XZ records; no runtime or test resource",
         "files": len(excluded), "sourceBytes": sum((root / name).stat().st_size for name in excluded),
@@ -70,7 +81,7 @@ def verify(root, site, receipt):
     module = importlib.util.module_from_spec(module_spec)
     module_spec.loader.exec_module(module)
     runtime = module.runtime_identity(root)
-    assert runtime["treeSha256"] == RUNTIME and len(runtime["files"]) == 135
+    require(runtime["treeSha256"] == RUNTIME and len(runtime["files"]) == 135)
     protected = set(runtime["files"])
     protected.update(name for name in tracked if name.startswith(("v1/", "tests/", "presets/"))
                      and not any(part.startswith(".") for part in Path(name).parts))
@@ -80,17 +91,17 @@ def verify(root, site, receipt):
     identities = {}
     for name in sorted(protected):
         source, output = root / name, site / name
-        assert output.is_file() and not output.is_symlink(), name
+        require(output.is_file() and not output.is_symlink(), name)
         actual = sha(output)
-        assert actual == sha(source), name
+        require(actual == sha(source), name)
         identities[name] = {"bytes": output.stat().st_size, "sha256": actual}
     all_files = []
     for path in site.rglob("*"):
-        assert not path.is_symlink(), str(path)
+        require(not path.is_symlink(), str(path))
         if path.is_file():
             all_files.append((path.relative_to(site).as_posix(), path.stat().st_size))
-    assert all_files
-    assert not any(name.endswith("/R0017_EVIDENCE.zip") for name, _ in all_files)
+    require(all_files)
+    require(not any(name.endswith("/R0017_EVIDENCE.zip") for name, _ in all_files))
     total = sum(size for _, size in all_files)
     receipt["output"] = {"regularFiles": len(all_files), "regularFileBytes": total, "limitBytes": 1_000_000_000,
                          "measurement": "Complete generated _site, including generated HTML/CSS and all static files; not Git-tree or compressed-archive size",
@@ -102,8 +113,8 @@ def verify(root, site, receipt):
                              "rawEvidenceOrCertificatesRewritten": False,
                              "directLinksIntoExcludedPrefixBeforeChange": 0,
                              "runtimeDependenciesOnExcludedPrefix": 0}
-    assert EVIDENCE in (root / "docs/rlgwo-execution/20261014/R000C/README.md").read_text()
-    assert total <= 1_000_000_000, total
+    require(EVIDENCE in (root / "docs/rlgwo-execution/20261014/R000C/README.md").read_text())
+    require(total <= 1_000_000_000, total)
     receipt["status"] = "PASS"
 
 
