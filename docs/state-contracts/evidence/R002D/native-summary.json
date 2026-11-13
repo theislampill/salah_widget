@@ -1,0 +1,2388 @@
+{
+ "workOrder": "R002D",
+ "recipe": "tools/qa/run_r002d_native.cjs",
+ "commands": [
+  "node tools/qa/run_r002d_native.cjs --root <branch tree> --out <fresh dir> --playwright <global playwright 1.60.0>",
+  "node tools/qa/run_r002d_native.cjs --root <git archive of 5b846476 without docs/ plans/> --out <fresh dir> --playwright <same>",
+  "node tools/qa/run_r002d_native.cjs --compare <main report.json> <branch report.json> --out <fresh dir>"
+ ],
+ "network": "every request route-stubbed: prayer provider fulfilled from tests/r0002-ordinary.json with meta.timezone Asia/Riyadh; all other non-local requests aborted; no provider contacted",
+ "instant": "2026-09-07T22:00:00Z (New York 07-09, Riyadh 08-09); browser zone America/Los_Angeles; mocked running clock; reducedMotion reduce; 325x530 at DPR 1",
+ "engines": {
+  "chromium": "148.0.7778.96",
+  "firefox": "150.0.2",
+  "webkit": "26.4"
+ },
+ "mainInputs": {
+  "index.html": "e3a3dedbfaaf5e5d604add26fa071852da109d72773a077b444fdd376f771185",
+  "config.js": "719efed90a9173a7ca42216b0131631a2e0e219e5e45d8567e791784f425ed80"
+ },
+ "branchInputs": {
+  "index.html": "794bb701a34c69448954a6e835fa1f20ceab1338ac733de9a65984c2bd3992f1",
+  "config.js": "78891de38c1c87ccae6d79a99f71b20a6fb812aaa527d4662340b749a59fcaad"
+ },
+ "mainSummary": [
+  {
+   "engine": "chromium",
+   "builder": [
+    {
+     "sceneBegins": 3,
+     "moonInvalidations": 3,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 2,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 3,
+     "moonInvalidations": 3,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 2,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "control": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "rejected": {
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "sceneSupersededReceiptsSampled": 0,
+    "epochs": 1,
+    "zone": "Bogus/Zone",
+    "days": [
+     "null",
+     "null",
+     "null"
+    ]
+   },
+   "builderEqualsControlCounts": false,
+   "noise": {
+    "builder": {
+     "differingPixels": 22,
+     "of": 172250,
+     "maxDelta": 1,
+     "bytesEqual": false
+    },
+    "control": {
+     "differingPixels": 310,
+     "of": 172250,
+     "maxDelta": 6,
+     "bytesEqual": false
+    },
+    "frozenControl": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   },
+   "builderVsControl": {
+    "differingPixels": 310,
+    "of": 172250,
+    "maxDelta": 6,
+    "bytesEqual": false
+   },
+   "rowsEqual": true
+  },
+  {
+   "engine": "firefox",
+   "builder": [
+    {
+     "sceneBegins": 3,
+     "moonInvalidations": 3,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 2,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 3,
+     "moonInvalidations": 3,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 2,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "control": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "rejected": {
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "sceneSupersededReceiptsSampled": 0,
+    "epochs": 1,
+    "zone": "Bogus/Zone",
+    "days": [
+     "null",
+     "null",
+     "null"
+    ]
+   },
+   "builderEqualsControlCounts": false,
+   "noise": {
+    "builder": {
+     "differingPixels": 3021,
+     "of": 172250,
+     "maxDelta": 2,
+     "bytesEqual": false
+    },
+    "control": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    },
+    "frozenControl": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   },
+   "builderVsControl": {
+    "differingPixels": 3021,
+    "of": 172250,
+    "maxDelta": 2,
+    "bytesEqual": false
+   },
+   "rowsEqual": true
+  },
+  {
+   "engine": "webkit",
+   "builder": [
+    {
+     "sceneBegins": 3,
+     "moonInvalidations": 3,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 2,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 3,
+     "moonInvalidations": 3,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 2,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "control": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "rejected": {
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "sceneSupersededReceiptsSampled": 0,
+    "epochs": 1,
+    "zone": "Bogus/Zone",
+    "days": [
+     "null",
+     "null",
+     "null"
+    ]
+   },
+   "builderEqualsControlCounts": false,
+   "noise": {
+    "builder": {
+     "differingPixels": 622,
+     "of": 172250,
+     "maxDelta": 2,
+     "bytesEqual": false
+    },
+    "control": {
+     "differingPixels": 374,
+     "of": 172250,
+     "maxDelta": 1,
+     "bytesEqual": false
+    },
+    "frozenControl": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   },
+   "builderVsControl": {
+    "differingPixels": 6,
+    "of": 172250,
+    "maxDelta": 1,
+    "bytesEqual": false
+   },
+   "rowsEqual": true
+  }
+ ],
+ "branchSummary": [
+  {
+   "engine": "chromium",
+   "builder": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "control": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "rejected": {
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "sceneSupersededReceiptsSampled": 0,
+    "epochs": 1,
+    "zone": "Asia/Riyadh",
+    "days": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ]
+   },
+   "builderEqualsControlCounts": true,
+   "noise": {
+    "builder": {
+     "differingPixels": 148,
+     "of": 172250,
+     "maxDelta": 1,
+     "bytesEqual": false
+    },
+    "control": {
+     "differingPixels": 36,
+     "of": 172250,
+     "maxDelta": 1,
+     "bytesEqual": false
+    },
+    "frozenControl": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   },
+   "builderVsControl": {
+    "differingPixels": 89,
+    "of": 172250,
+    "maxDelta": 1,
+    "bytesEqual": false
+   },
+   "rowsEqual": true
+  },
+  {
+   "engine": "firefox",
+   "builder": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "control": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "rejected": {
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "sceneSupersededReceiptsSampled": 0,
+    "epochs": 1,
+    "zone": "Asia/Riyadh",
+    "days": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ]
+   },
+   "builderEqualsControlCounts": true,
+   "noise": {
+    "builder": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    },
+    "control": {
+     "differingPixels": 1273,
+     "of": 172250,
+     "maxDelta": 11,
+     "bytesEqual": false
+    },
+    "frozenControl": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   },
+   "builderVsControl": {
+    "differingPixels": 1266,
+    "of": 172250,
+    "maxDelta": 11,
+    "bytesEqual": false
+   },
+   "rowsEqual": true
+  },
+  {
+   "engine": "webkit",
+   "builder": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "07-09-2026",
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "control": [
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    },
+    {
+     "sceneBegins": 2,
+     "moonInvalidations": 2,
+     "initialHeadRetirements": 1,
+     "sceneSupersededReceiptsSampled": 0,
+     "epochs": 1,
+     "zone": "Asia/Riyadh",
+     "days": [
+      "08-09-2026",
+      "09-09-2026"
+     ]
+    }
+   ],
+   "rejected": {
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "sceneSupersededReceiptsSampled": 0,
+    "epochs": 1,
+    "zone": "Asia/Riyadh",
+    "days": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ]
+   },
+   "builderEqualsControlCounts": true,
+   "noise": {
+    "builder": {
+     "differingPixels": 504,
+     "of": 172250,
+     "maxDelta": 2,
+     "bytesEqual": false
+    },
+    "control": {
+     "differingPixels": 763,
+     "of": 172250,
+     "maxDelta": 3,
+     "bytesEqual": false
+    },
+    "frozenControl": {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   },
+   "builderVsControl": {
+    "differingPixels": 10,
+    "of": 172250,
+    "maxDelta": 1,
+    "bytesEqual": false
+   },
+   "rowsEqual": true
+  }
+ ],
+ "d15": [
+  {
+   "engine": "chromium",
+   "cell": "control",
+   "mainNoise": {
+    "differingPixels": 310,
+    "of": 172250,
+    "maxDelta": 6,
+    "bytesEqual": false
+   },
+   "branchNoise": {
+    "differingPixels": 36,
+    "of": 172250,
+    "maxDelta": 1,
+    "bytesEqual": false
+   },
+   "mainVsBranch": [
+    {
+     "differingPixels": 11,
+     "of": 172250,
+     "maxDelta": 1,
+     "bytesEqual": false
+    },
+    {
+     "differingPixels": 286,
+     "of": 172250,
+     "maxDelta": 6,
+     "bytesEqual": false
+    }
+   ],
+   "withinNoise": true,
+   "byteIdentical": false
+  },
+  {
+   "engine": "chromium",
+   "cell": "frozen-control",
+   "mainNoise": {
+    "differingPixels": 0,
+    "of": 172250,
+    "maxDelta": 0,
+    "bytesEqual": true
+   },
+   "branchNoise": {
+    "differingPixels": 0,
+    "of": 172250,
+    "maxDelta": 0,
+    "bytesEqual": true
+   },
+   "mainVsBranch": [
+    {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    },
+    {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   ],
+   "withinNoise": true,
+   "byteIdentical": true
+  },
+  {
+   "engine": "firefox",
+   "cell": "control",
+   "mainNoise": {
+    "differingPixels": 0,
+    "of": 172250,
+    "maxDelta": 0,
+    "bytesEqual": true
+   },
+   "branchNoise": {
+    "differingPixels": 1273,
+    "of": 172250,
+    "maxDelta": 11,
+    "bytesEqual": false
+   },
+   "mainVsBranch": [
+    {
+     "differingPixels": 1273,
+     "of": 172250,
+     "maxDelta": 11,
+     "bytesEqual": false
+    },
+    {
+     "differingPixels": 14,
+     "of": 172250,
+     "maxDelta": 1,
+     "bytesEqual": false
+    }
+   ],
+   "withinNoise": true,
+   "byteIdentical": false
+  },
+  {
+   "engine": "firefox",
+   "cell": "frozen-control",
+   "mainNoise": {
+    "differingPixels": 0,
+    "of": 172250,
+    "maxDelta": 0,
+    "bytesEqual": true
+   },
+   "branchNoise": {
+    "differingPixels": 0,
+    "of": 172250,
+    "maxDelta": 0,
+    "bytesEqual": true
+   },
+   "mainVsBranch": [
+    {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    },
+    {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   ],
+   "withinNoise": true,
+   "byteIdentical": true
+  },
+  {
+   "engine": "webkit",
+   "cell": "control",
+   "mainNoise": {
+    "differingPixels": 374,
+    "of": 172250,
+    "maxDelta": 1,
+    "bytesEqual": false
+   },
+   "branchNoise": {
+    "differingPixels": 763,
+    "of": 172250,
+    "maxDelta": 3,
+    "bytesEqual": false
+   },
+   "mainVsBranch": [
+    {
+     "differingPixels": 278,
+     "of": 172250,
+     "maxDelta": 1,
+     "bytesEqual": false
+    },
+    {
+     "differingPixels": 561,
+     "of": 172250,
+     "maxDelta": 2,
+     "bytesEqual": false
+    }
+   ],
+   "withinNoise": true,
+   "byteIdentical": false
+  },
+  {
+   "engine": "webkit",
+   "cell": "frozen-control",
+   "mainNoise": {
+    "differingPixels": 0,
+    "of": 172250,
+    "maxDelta": 0,
+    "bytesEqual": true
+   },
+   "branchNoise": {
+    "differingPixels": 0,
+    "of": 172250,
+    "maxDelta": 0,
+    "bytesEqual": true
+   },
+   "mainVsBranch": [
+    {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    },
+    {
+     "differingPixels": 0,
+     "of": 172250,
+     "maxDelta": 0,
+     "bytesEqual": true
+    }
+   ],
+   "withinNoise": true,
+   "byteIdentical": true
+  }
+ ],
+ "limits": [
+  "cloud publication receipts are sampled every 250 ms and the transient \"scene superseded\" receipt was never sampled (it is replaced within the same task); the exact withdrawal count equals sceneBegins because beginSkyScene performs exactly one withdrawal",
+  "presented class states are sampled once per animation frame",
+  "wall-clock pixels are not deterministic; they are judged against each tree's own run-to-run noise floor; frozen simTime cells are byte-compared"
+ ],
+ "cells": {
+  "main": [
+   {
+    "engine": "chromium",
+    "cell": "builder",
+    "run": 1,
+    "sceneBegins": 3,
+    "moonInvalidations": 3,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2,
+     4
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "1e16523bfab168ccd8c2b9757f4467af4457c6676e284cb598f418a87783f437"
+   },
+   {
+    "engine": "chromium",
+    "cell": "builder",
+    "run": 2,
+    "sceneBegins": 3,
+    "moonInvalidations": 3,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2,
+     4
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "2873c11ba96e3c663e905a0bd922efb2c4023a137496610ba59a4f5d28482676"
+   },
+   {
+    "engine": "chromium",
+    "cell": "control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "2b07d3167b47727cdbeb312553116abf149c5e0952c2c4c9dfa95c8b14af9665"
+   },
+   {
+    "engine": "chromium",
+    "cell": "control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "1e16523bfab168ccd8c2b9757f4467af4457c6676e284cb598f418a87783f437"
+   },
+   {
+    "engine": "chromium",
+    "cell": "frozen-control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "8faea6a73f7a96fe48df2d24c4ee1281ba17dc1b01411a4fe2c3b5298a600789"
+   },
+   {
+    "engine": "chromium",
+    "cell": "frozen-control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "8faea6a73f7a96fe48df2d24c4ee1281ba17dc1b01411a4fe2c3b5298a600789"
+   },
+   {
+    "engine": "chromium",
+    "cell": "rejected",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready"
+    ],
+    "zone": "Bogus/Zone",
+    "prayerRequestDays": [
+     "null",
+     "null",
+     "null"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "0d144f92123e9a0acd74059482f7dd8bbf9a5fbc6317dfcde15a72d7a9424ee8"
+   },
+   {
+    "engine": "firefox",
+    "cell": "builder",
+    "run": 1,
+    "sceneBegins": 3,
+    "moonInvalidations": 3,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2,
+     4
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "928d58132419d57320cb49ff6d6e15cb93387125ef0a813038dc2dea1af0bb8d"
+   },
+   {
+    "engine": "firefox",
+    "cell": "builder",
+    "run": 2,
+    "sceneBegins": 3,
+    "moonInvalidations": 3,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2,
+     4
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "ed8a0b156a15258e7557d362438c688c8b176b00b996852ee36f76768d62c00b"
+   },
+   {
+    "engine": "firefox",
+    "cell": "control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "ed8a0b156a15258e7557d362438c688c8b176b00b996852ee36f76768d62c00b"
+   },
+   {
+    "engine": "firefox",
+    "cell": "control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "ed8a0b156a15258e7557d362438c688c8b176b00b996852ee36f76768d62c00b"
+   },
+   {
+    "engine": "firefox",
+    "cell": "frozen-control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "39a78716f80b829e9e085c3cd3701a8fe7f04d19036288a82821ad8dd637c9ce"
+   },
+   {
+    "engine": "firefox",
+    "cell": "frozen-control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "39a78716f80b829e9e085c3cd3701a8fe7f04d19036288a82821ad8dd637c9ce"
+   },
+   {
+    "engine": "firefox",
+    "cell": "rejected",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready"
+    ],
+    "zone": "Bogus/Zone",
+    "prayerRequestDays": [
+     "null",
+     "null",
+     "null"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "427f1134216f87cc7fcd6a12a8495ede385ca5d6a581a4c91f262a708e1b8d3c"
+   },
+   {
+    "engine": "webkit",
+    "cell": "builder",
+    "run": 1,
+    "sceneBegins": 3,
+    "moonInvalidations": 3,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2,
+     4
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "a67bb26e9e444b7cd60f6c19d6124b709ee167f2e0575a4c4b1ca58d6dded529"
+   },
+   {
+    "engine": "webkit",
+    "cell": "builder",
+    "run": 2,
+    "sceneBegins": 3,
+    "moonInvalidations": 3,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2,
+     4
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "b9949dc19b6d403fe3d7de3d867066290f79ea98d4a57842ab174c81b4cd390e"
+   },
+   {
+    "engine": "webkit",
+    "cell": "control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "8dfaa00799cdb42aace36772402a204bd5e4be8e8e6d63f52ec54a205151aaa1"
+   },
+   {
+    "engine": "webkit",
+    "cell": "control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "08ca38b1cbc8214abbc743c6e3fd2d3343f8b469abcb3197569745d941667208"
+   },
+   {
+    "engine": "webkit",
+    "cell": "frozen-control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "7d020beea9e1fe197713a3475fb3ced12d7782ad63ae4c51de78e0be41ff6f1f"
+   },
+   {
+    "engine": "webkit",
+    "cell": "frozen-control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "7d020beea9e1fe197713a3475fb3ced12d7782ad63ae4c51de78e0be41ff6f1f"
+   },
+   {
+    "engine": "webkit",
+    "cell": "rejected",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready"
+    ],
+    "zone": "Bogus/Zone",
+    "prayerRequestDays": [
+     "null",
+     "null",
+     "null"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "8cd6519d768d5f6da6a922c577f298d63a60ad8c1450411c2e53df33badd2037"
+   }
+  ],
+  "branch": [
+   {
+    "engine": "chromium",
+    "cell": "builder",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "503d8f84a6eae33173a36d6395f113f2fe439129304895dea54dc564ca7b0672"
+   },
+   {
+    "engine": "chromium",
+    "cell": "builder",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "4607b04afe443efabf32de3730902ed42fec6e5c4849e819083133cb34e32afd"
+   },
+   {
+    "engine": "chromium",
+    "cell": "control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "5b5a00fb22bb4c4ee4b5cea4937daa256ec4617b18b665e5fcc601ddc0467ed2"
+   },
+   {
+    "engine": "chromium",
+    "cell": "control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "6943848659dc5e27ab9622ad1f8ad11299f05c0c6a275b82e84172d3fbf61b53"
+   },
+   {
+    "engine": "chromium",
+    "cell": "frozen-control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "8faea6a73f7a96fe48df2d24c4ee1281ba17dc1b01411a4fe2c3b5298a600789"
+   },
+   {
+    "engine": "chromium",
+    "cell": "frozen-control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "8faea6a73f7a96fe48df2d24c4ee1281ba17dc1b01411a4fe2c3b5298a600789"
+   },
+   {
+    "engine": "chromium",
+    "cell": "rejected",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "7200d2ca4c3df08dd97b2e342f1a50c743a086b6c8c3ba590e458368d2b43279"
+   },
+   {
+    "engine": "firefox",
+    "cell": "builder",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "ab58e19a2f5339b84fe3e6ba2f73eb624d04bf4fb7bfd221db3f9646b096c744"
+   },
+   {
+    "engine": "firefox",
+    "cell": "builder",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "ab58e19a2f5339b84fe3e6ba2f73eb624d04bf4fb7bfd221db3f9646b096c744"
+   },
+   {
+    "engine": "firefox",
+    "cell": "control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "e41899e11e53d18c3b25e9fe72b2f0fa1f7d36a65ecee7528df43f3c5ac88bfc"
+   },
+   {
+    "engine": "firefox",
+    "cell": "control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "ca661c222c3bf945d7ba7eac10d1421474604b8610337497c7e98f7c1c7f2469"
+   },
+   {
+    "engine": "firefox",
+    "cell": "frozen-control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "39a78716f80b829e9e085c3cd3701a8fe7f04d19036288a82821ad8dd637c9ce"
+   },
+   {
+    "engine": "firefox",
+    "cell": "frozen-control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "39a78716f80b829e9e085c3cd3701a8fe7f04d19036288a82821ad8dd637c9ce"
+   },
+   {
+    "engine": "firefox",
+    "cell": "rejected",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "pending",
+      null
+     ],
+     [
+      "ready",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "1f9d9f1de13e4cdd429204902d81329138077f3fef6c88bd80e4670fac200bfa"
+   },
+   {
+    "engine": "webkit",
+    "cell": "builder",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "4aae8b786685cbcb53d02808f54270b600b40e392edc4edc555ddf4713224f27"
+   },
+   {
+    "engine": "webkit",
+    "cell": "builder",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "6e6d2f881fc093f0c1d2ce04d7a377537582e93526e95ba3a2634e28fbbb05f7"
+   },
+   {
+    "engine": "webkit",
+    "cell": "control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "fb45bcfe2ba981b4fc0d04922b3b31606abeb679823d8d57ebcd917e2ee69622"
+   },
+   {
+    "engine": "webkit",
+    "cell": "control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "6fea7558eabed31b88aeff328de11a8f58e96936c2eedd8fd0dc43ea34bb3883"
+   },
+   {
+    "engine": "webkit",
+    "cell": "frozen-control",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "7d020beea9e1fe197713a3475fb3ced12d7782ad63ae4c51de78e0be41ff6f1f"
+   },
+   {
+    "engine": "webkit",
+    "cell": "frozen-control",
+    "run": 2,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "7d020beea9e1fe197713a3475fb3ced12d7782ad63ae4c51de78e0be41ff6f1f"
+   },
+   {
+    "engine": "webkit",
+    "cell": "rejected",
+    "run": 1,
+    "sceneBegins": 2,
+    "moonInvalidations": 2,
+    "initialDocumentInvalidations": 2,
+    "initialHeadRetirements": 1,
+    "invalidationReasons": [
+     "native beginSkyScene",
+     "native beginSkyScene"
+    ],
+    "moonEpochsSampled": [
+     2
+    ],
+    "refinedStatusSampled": [
+     null,
+     [
+      "unavailable",
+      null
+     ]
+    ],
+    "presentedClassStates": [
+     "sky-initializing moon-ready",
+     "moon-ready"
+    ],
+    "zone": "Asia/Riyadh",
+    "prayerRequestDays": [
+     "07-09-2026",
+     "08-09-2026",
+     "09-09-2026"
+    ],
+    "pageErrors": 0,
+    "screenshotSha256": "3b6ca63b5145c3ac906af59d24209d3063ebadd7164a12ab1f4e01eff339a194"
+   }
+  ]
+ }
+}

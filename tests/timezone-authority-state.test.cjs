@@ -166,7 +166,9 @@ test('D-06 wall-mode zone adoption keeps the scene, Moon scope and refined ident
   assert.equal(builder.after,builder.before,'scene identity unchanged by hint->adopted transition');
   assert.equal(builder.key,builder.committed);
   assert.equal(builder.pending,control.pending,'no sky-pending re-add after the first commit');
-  if(builder.captureTz!==null&&builder.captureTz!=='capture-error')assert.equal(builder.captureTz,'America/New_York','refined identity zone is the configured hint, not the adopted zone');
+  // Unconditional: the real host capture must exist and report the configured hint, not the adopted zone.
+  assert.equal(builder.captureTz,'America/New_York','refined identity zone is the configured hint, not the adopted zone');
+  assert.equal(control.captureTz,'Asia/Riyadh');
 });
 
 for(const timeScale of [null,60])test(`D-07 fragment anchors still re-anchor in the adopted zone (simTime${timeScale?'+timeScale':''})`,async()=>{
