@@ -1,0 +1,182 @@
+name: Qualification gate
+
+# R002A (issue 91; docs/state-contracts/R002A.md). Advisory (owner decision DG-1(a)): this workflow detects; it
+# cannot prevent a deploy. A merge to main is still a GitHub Pages deploy (legacy branch build, DG-2(a)).
+# Whether a check becomes required is a later owner governance decision; nothing here changes settings.
+#
+# Jobs: J1 parity (build twice, clean tree), J2+J3 suites (the R0028 runner over the registered population,
+# judged by the exact expected-failure ledger), J4 v1 (verify_v1 --negative-control and --check-pages),
+# J5 pins (docs-receipt pins and README review-first installer pins). Each job prints and records its verdict
+# string verbatim; PASS_WITH_DECLARED_FAILURES (n) is a green check whose verdict is never a plain PASS.
+# Guards: contents:read only, no secrets, persist-credentials:false, every job and step time-bounded, no
+# network beyond checkout and the pinned action/tool downloads. Effects: check results and receipt
+# artifacts only (short retention). The gate never deploys, pushes or comments.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    # main: every push keeps its own result. claude/r002a-*: pre-merge qualification of this work order and
+    # its fault-injection branches (G-02..G-05); inert once those branches are gone (R002A section 6).
+    branches: [main, 'claude/r002a-*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  # Pull requests: a newer push supersedes the older run. Pushes and dispatches: one group per commit, so
+  # no run on main is cancelled or dropped as pending.
+  group: gate-${{ github.ref }}-${{ github.event_name == 'pull_request' && 'pr' || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # I2: the result binds the exact head SHA (the pull request head, not the ephemeral merge ref).
+  GATE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+  PYTHONUTF8: '1'
+  # No bytecode cache: R0028's runner-mutant test rewrites one module path several times within a second, and a
+  # stale .pyc with the same size and whole-second mtime would be reused (observed on run 43419734052).
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  parity:
+    name: J1 parity (build twice, clean tree)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 10
+        with:
+          ref: ${{ env.GATE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        timeout-minutes: 5
+        with:
+          python-version: '3.11'
+      - name: Build twice and require a clean tree
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          export TMP="$RUNNER_TEMP/gate-tmp" TEMP="$RUNNER_TEMP/gate-tmp" TMPDIR="$RUNNER_TEMP/gate-tmp"
+          mkdir -p "$TMPDIR"
+          python tools/qualification/qualification_gate.py parity --out "$RUNNER_TEMP/gate/parity"
+      - name: Retain the parity receipt
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: gate-parity-${{ env.GATE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gate/
+          if-no-files-found: error
+          retention-days: 14
+
+  suites:
+    name: J2+J3 suites (R0028 runner and ledger)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 15
+        with:
+          ref: ${{ env.GATE_SHA }}
+          # Registered instruments read historical blobs (runner HISTORY_INPUTS, docs-contract pins). They are
+          # reachable from main, other branches or a tag (evidence/r0022-accepted-prayer-8b83df02), so fetch
+          # every branch and tag; the suites job checks the objects first (accepted-history precondition).
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        timeout-minutes: 5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        timeout-minutes: 5
+        with:
+          node-version: '24.14.0'
+      - name: Install the hash-locked numpy and scipy wheels the vendor scientific suite imports
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          python -m pip install --disable-pip-version-check --no-deps --only-binary=:all: --require-hashes             -r tools/qualification/gate-requirements.txt
+      - name: Run the registered population under the exact ledger
+        timeout-minutes: 35
+        shell: bash
+        run: |
+          export TMP="$RUNNER_TEMP/gate-tmp" TEMP="$RUNNER_TEMP/gate-tmp" TMPDIR="$RUNNER_TEMP/gate-tmp"
+          mkdir -p "$TMPDIR"
+          python tools/qualification/qualification_gate.py suites --out "$RUNNER_TEMP/gate/suites"
+      - name: Retain the runner receipt and logs
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: gate-suites-${{ env.GATE_SHA }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gate/
+            !${{ runner.temp }}/gate/**/tmp/**
+          if-no-files-found: error
+          retention-days: 14
+
+  v1:
+    name: J4 v1 (verify_v1 and Pages inclusion preflight)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 10
+        with:
+          ref: ${{ env.GATE_SHA }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Verify the frozen V1 payload
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          export TMP="$RUNNER_TEMP/gate-tmp" TEMP="$RUNNER_TEMP/gate-tmp" TMPDIR="$RUNNER_TEMP/gate-tmp"
+          mkdir -p "$TMPDIR"
+          python3 tools/qualification/qualification_gate.py v1 --out "$RUNNER_TEMP/gate/v1"
+      - name: Retain the v1 receipt
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: gate-v1-${{ env.GATE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gate/
+          if-no-files-found: error
+          retention-days: 14
+
+  pins:
+    name: J5 pin coherence (docs receipt, README installer pins)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        timeout-minutes: 5
+        with:
+          ref: ${{ env.GATE_SHA }}
+          # Commits and trees only: J5(b) compares blob IDs at the README-pinned commit.
+          fetch-depth: 0
+          filter: blob:none
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /README.md
+            /install.sh
+            /install.ps1
+            /src/native/builder.html
+            /src/native/config.js
+            /tools/qualification/
+      - name: Check pin coherence
+        timeout-minutes: 3
+        shell: bash
+        run: |
+          python3 tools/qualification/qualification_gate.py pins --out "$RUNNER_TEMP/gate/pins"
+      - name: Retain the pins receipt
+        if: always()
+        timeout-minutes: 5
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: gate-pins-${{ env.GATE_SHA }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gate/
+          if-no-files-found: error
+          retention-days: 14

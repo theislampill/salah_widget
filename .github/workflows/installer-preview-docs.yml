@@ -1,15 +1,17 @@
 name: R0016 rendered README and builder context
 
+# Lifecycle (R002A, issue 91; owner decision DG-3(a)): the pinned documentation-receipt rule (issue 91 section
+# 4.3) obliges any branch that changes README.md, src/native/builder.html or src/native/config.js to produce a
+# successor receipt, whatever the branch is called, so the trigger is by path, not by branch name.
 on:
   workflow_dispatch:
   push:
-    branches:
-      - pro/r0016-effect-free-preview-20261111
-      - 'claude/r00*'
     paths:
       - .github/workflows/installer-preview-docs.yml
       - tools/qualification/installer_preview_docs.cjs
       - README.md
+      - src/native/builder.html
+      - src/native/config.js
 
 permissions:
   contents: read
