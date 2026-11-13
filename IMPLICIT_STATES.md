@@ -3625,6 +3625,21 @@ PowerShell's `Clear-OwnedScratch` sits in a `finally` that only begins after the
 - Environment-default source validation: `enforced and covered by tests` (R0016 full20
   "resolved-source/NoOpen regressions", run 43220592915).
 
+**R0039 (issue 106) update; candidate branch, effective on acceptance.**
+- Item 1 (host-wide zero effects and transport absence): **retained as a recorded
+  limitation** (owner decision DG-I1 = A). Acquiring hard containment or host-wide
+  telemetry is out of scope; the public text must simply not claim it.
+- Item 12 (README sentence): **corrected**. The README "Offline local preview" paragraph
+  now scopes the zero-effect claim to the installer itself and states that the shell or
+  PowerShell host, and on Bash the `python3` used for Firefox discovery, may write their own
+  start-up or cache data, and that host-level absence of such effects and of network
+  activity is not separately proven. Each sentence is mapped to its R0016 evidence row in
+  [R0039](docs/state-contracts/R0039.md), "README sentence map". The pinned-sentence check in
+  `tools/qualification/installer_preview_docs.cjs` follows the new wording; the successor
+  documentation receipt is hosted run 43481353177 (job `render` success; R39-05/06 MET in R0039).
+- Codes unchanged: the documentation now matches the recorded scope; host-wide zero effects
+  stay `unresolved`.
+
 ---
 
 ## ISM-INST-002: Discovery knowledge, target eligibility and selection
@@ -3717,6 +3732,21 @@ R0013 owns this machine. R0015 and R0016 consume its result.
   43146668695; the discovery mutants recorded in [R0013](docs/state-contracts/R0013.md)).
 - PowerShell strict selection: `unresolved` (divergence; see Open findings).
 
+**R0039 (issue 106) update; candidate branch, effective on acceptance.**
+- Item 4: the token dropping is now **demonstrated**, effect-free, on Windows PowerShell
+  5.1.26100.9711 and PowerShell 7.6.9 at installer SHA256 `07671cb9…` (the two exact
+  selection statements evaluated against three fixture targets; no installer top level):
+  `1,2O`→1, `1,99`→1, `,1`→1, `1,,2`→1,2, `2,2`→2, `99` and `x`→none ("No valid targets
+  selected", exit 1). Bash refuses each malformed, empty-segment or unknown token before
+  staging (~L880–891). Evidence: `docs/state-contracts/evidence/R0039/ps-selection-tokens-results.json`.
+  Impact: user-intent loss only (a typo can only remove targets; held/refused targets are
+  re-checked at dispatch).
+- Disposition: **retained as a recorded limitation** (owner decision DG-I1 = A; correction C1
+  not implemented). Reconsideration trigger: the next installer change for any other reason.
+- Ownership note: R0013's body assigns "Windows parsing/selection" to R0014, whose body and
+  certificate cover parsing and release-asset selection only; target-number validation on
+  Windows is therefore unowned (issue 106 section 2). Codes unchanged.
+
 ---
 
 ## ISM-INST-003: Staging-parent trust decision
@@ -3804,8 +3834,22 @@ and processes already running as the same user are outside the isolation claim (
   - Both runs are recorded in [R0016](docs/state-contracts/R0016.md), "Successor
     receiving and merge record".
 - `posix (macos-15, Darwin)` in run 43239081990 never acquired a runner, and that run's
-  overall conclusion is failure. The R0015 job's own macOS run is absent. The macOS
-  native staging suites on the final bytes come from the R0016 run 43173749688 instead.
+  overall conclusion is failure. The R0015 job's own macOS run is absent and is not
+  evidence. The macOS native staging suites on the final bytes come from the R0016 run
+  43173749688 instead (R0039 derivation below).
+- R0039 (issue 106) derivation, re-performed at base `846952ba`
+  ([transcript](docs/state-contracts/evidence/R0039/a1-macos-derivation.txt)):
+  `git rev-parse 8a360f54:install.sh` = `e2e2640e…`, the merged blob (also at `dfff0f8f`,
+  `363c3e53` and `846952ba`); `git diff --stat 8a360f54` to `363c3e53`, `dfff0f8f` and
+  `846952ba` over `install.sh`, `tools/qualification/installer_native.py` and the nine Bash
+  suites it runs (bash, entry-bash, discovery, detectors, discovery-mutations, mutations,
+  builder, staging-native, staging-parent) is empty; in `installer_native.py` L217–230 the
+  Darwin `--phase r0016` suite set is a strict superset of `--phase r0015` (r0016 adds
+  read-only staging and preview), and the R0015 workflow's macOS job runs `--phase r0015`;
+  `gh run view 43173749688` = "R0016 actual macOS installer qualification", head
+  `8a360f54`, job `darwin` success; the R0016 POSIX receiving report lists its eleven suites
+  on Apple `/bin/bash` 3.2.57, including native staging lifetime/admission 9 and
+  staging-parent admission 23. The 248 rows were not recounted (as R0016 also states).
 - The Windows staging parent (`$env:TEMP`) and the compiler parent
   (`[IO.Path]::GetTempPath()`, which prefers `TMP`) are read from different sources.
   Each is admitted independently.
@@ -3824,7 +3868,10 @@ and processes already running as the same user are outside the isolation claim (
   (run 43162309006; independent reviews of `852d026c` recorded in R0015).
 - Same rules on the merged bytes: `enforced and covered by tests`. Re-run in 43239081990
   (Windows owner controls; default environments on Linux, Windows and macos-15) and
-  43239087955. The macOS native staging suite was not re-run.
+  43239087955. The macOS native staging and staging-parent suites were re-run natively on
+  Apple Bash 3.2 at the merged installer bytes in 43173749688 (phase r0016 ⊇ r0015;
+  corrected by R0039, issue 106; the former "not re-run" statement contradicted this
+  entry's own observed facts).
 - Private-child owner term (`$private` / `privateAcl` require owner = user):
   `enforced in code`. R0015 records that no mutant pins it.
 - Refusal-message wording ("not owned by this user"): `unresolved`. It under-describes
@@ -3833,6 +3880,16 @@ and processes already running as the same user are outside the isolation claim (
 - The transaction contract's former "self-owned immediate parent" sentence: corrected in
   [the R0015 Windows transactions contract](docs/r0015-artifact-transactions.md) to state
   the current rule; now `documented`.
+
+**R0039 (issue 106) dispositions; candidate branch, effective on acceptance.**
+- Item 3 (macOS record): **corrected** above and in ISM-INST-004/006 and Open findings.
+- Item 5 (no mutant pins the private-child owner term; refusal text under-describes the
+  owner set): **retained** under R0015's NOT DONE follow-ups. No behaviour defect; the
+  mutant needs native Windows ACL hosts, and a wording-only change would trigger installer
+  requalification.
+- Item 6 (newline check only on the supplied spelling): **retained**. It needs a
+  root-created link, which is outside the same-user isolation claim.
+- Codes unchanged.
 
 ---
 
@@ -3899,9 +3956,16 @@ for manual use. This machine also governs what cleanup may delete.
   cleanup (on earlier Bash bytes).
 - In run 43162309006, Windows transactions passed 28/28 and staging custody 8/8 per host.
 - The R0015 suites were re-run on the R0016 bytes in run 43239081990 (attempt 3): the
-  Linux posix job and both Windows jobs were green. The `posix (macos-15, Darwin)` job,
-  which carries the Apple native staging and lifetime suite, never acquired a runner. The
-  Apple INT/TERM evidence therefore still binds earlier Bash bytes.
+  Linux posix job and both Windows jobs were green. The `posix (macos-15, Darwin)` job
+  never acquired a runner and is not evidence.
+- The Apple native staging and lifetime suite (`tests/install-staging-native.py`, nine
+  controls including exit, failure, INT and TERM) did run on the merged Bash bytes: the
+  R0016 run 43173749688 at head `8a360f54`, whose `install.sh` blob is the merged
+  `e2e2640e…` and whose suite set includes R0015's (see the R0039 derivation in
+  ISM-INST-003). The R0016 POSIX receiving report records "retained consumers after
+  exit/failure/INT/TERM" and the predictable-root, symlink-admission and retained-deletion
+  controls detected on Apple `/bin/bash` 3.2.57. (Corrected by R0039, issue 106; the former
+  statement that the Apple INT/TERM evidence still bound earlier Bash bytes was wrong.)
 - `trap` covers EXIT, INT and TERM only (~L221–223).
 
 **Hypotheses.**
@@ -3931,6 +3995,15 @@ for manual use. This machine also governs what cleanup may delete.
   transactions and custody in run 43162309006). The Bash rows 21-04, 21-09, 21-10 and
   21-14 in issue 21 carry SATISFIED audit verdicts on earlier bytes.
 - Kill-time and interrupt-window leakage: `unresolved` (documented here only).
+
+**R0039 (issue 106) dispositions; candidate branch, effective on acceptance.**
+- Item 3: Apple record corrected (Observed facts above).
+- Item 7 (kill-time or closed-console scratch leakage; interrupt window before a root is
+  recorded): **documented and retained** in [R0039](docs/state-contracts/R0039.md). An
+  uncatchable termination cannot run cleanup; fresh random names prevent a later run from
+  adopting the leftover; temporary-directory hygiene belongs to the operating system. No
+  prior NOT DONE record existed; this is now the record.
+- Codes unchanged.
 
 ---
 
@@ -4008,6 +4081,33 @@ ISM-INST-004 and ISM-INST-006 runs inside the loaded `SalahInstaller.StageNative
   [R0015](docs/state-contracts/R0015.md)), and re-run green in 43162309006 on later bytes.
 - Session-persistent type reuse: `unresolved` (documented here only).
 
+**R0039 (issue 106) discriminator B1; candidate branch, effective on acceptance.**
+- Executed on the executor's Windows 11 workstation (not a qualified runner) with Windows
+  PowerShell 5.1.26100.9711 and PowerShell 7.6.9, each under `-File` and under
+  `Invoke-Expression` of the probe text, at installer SHA256 `07671cb9…`. Probe and results:
+  `docs/state-contracts/evidence/R0039/b1-helper-type-reuse.ps1` and `b1-results.json`.
+- Two in-memory copies of the installer's function definitions, S1 and S2, differ only in
+  one constant added to the `StageNative` C# class. In one process the real
+  `Initialize-StagingNative` of S1 is called, then that of S2.
+- With the installer's own compiler custody, both calls refused this workstation's TEMP
+  ancestry ("Compiler ancestor permits foreign replacement or has an untrusted owner": the
+  profile's temporary directory grants other principals write access). That is the R0015
+  fail-closed rule working; the result is inconclusive for B1.
+- With the three compiler-custody functions replaced by a fixture that compiles the exact
+  C# text handed to `Invoke-StagingCompiler` (custody is not what B1 tests), both hosts and
+  both modes observed **S1 after the S2 call**: the type was already loaded, the
+  `-as [type]` guard (~L341) skipped compilation, and the fixture compiler was not invoked
+  for S2. A single-load S2 control observed S2. **Reuse confirmed** for the decisive guard.
+- `exit` inside `Invoke-Expression` in a `-Command` host ended the host with that exit code
+  on both hosts (the text after it did not run). An interactive console was not tested.
+- Disposition (item 2): **documentation** (README "One-line install": run each install in a
+  new PowerShell window) and **retained as a recorded limitation**; correction C2 is not
+  implemented (owner decision DG-I1 = A). The reused predicates are those of an earlier
+  run of the reviewed installer; a same-named type planted by other code already running as
+  the user stays outside R0015's isolation claim. The real-custody variant ran on GitHub
+  windows-2022/2025 with PS5.1 and PS7 7.6.6 (run 43481842088): reuse confirmed on every leg (R0039 R39-07 MET).
+- The hypothesis above is therefore observed for the guard; codes unchanged.
+
 ---
 
 ## ISM-INST-006: Artifact admission and publication
@@ -4076,8 +4176,10 @@ ZIP/XPI, the unpacked Chromium tree and the configured preset.
   per host.
 - On the R0016 installer bytes (head `dfff0f8f`), run 43239081990 re-ran the Windows
   transaction and owner/archive suites green on windows-2022 and windows-2025, and the
-  Linux posix job green. The macOS posix job was not acquired, so Bash admission on Apple
-  hosts was not re-run on these bytes.
+  Linux posix job green. Its macOS posix job was not acquired and is not evidence. Bash
+  admission on Apple hosts did run on these bytes in the R0016 run 43173749688 (same
+  `install.sh` blob `e2e2640e…`, unchanged suites; "Bash helpers/basic behavior 26",
+  native staging lifetime/admission 9; derivation in ISM-INST-003, corrected by R0039).
 - PowerShell shares state through `$script:` variables: `LatestRelease` (release
   metadata, fetched once per run), `WorkRoot`, `DownloadRoot` and `PresetRoot` (set by
   `Initialize-Staging`), and `StagingAttempt`. `StagingAttempt` and `LatestRelease` are
@@ -4113,6 +4215,27 @@ ZIP/XPI, the unpacked Chromium tree and the configured preset.
 - Bash preset rewrite scope and hash validation: `unresolved` (divergence; see Open
   findings).
 - Transport hardening: `unresolved`.
+
+**R0039 (issue 106) dispositions; candidate branch, effective on acceptance.**
+- Item 3: Apple admission record corrected (Observed facts above).
+- Item 8 (Bash preset whole-text `local=1` replacement, unvalidated `SALAH_WIDGET_HASH`,
+  line-ending normalisation): **retained with reason**. The value comes from the invoking
+  user, who already controls the shell, or from the builder command, whose fragment is the
+  configuration serializer's output: `src/native/config.js` `serialize` (~L190–213) returns
+  `URLSearchParams.toString()`, whose form encoding leaves only alphanumerics and `*-._`
+  unescaped, so a quote, apostrophe or backslash reaches the command percent-encoded
+  (re-confirmed at `846952ba`; the builder's `installCmd` passes `hash()`, builder ~L212,
+  ~L435–446). The shipped preset contains `local=1` once, and the result's
+  JSON validity is checked.
+- Item 9 (publication by rename without post-rename readback): **retained with reason**.
+  Same-directory rename inside a verified 0700 private root after `guard_owned_path`; only
+  the same user or root can swap it, both outside the claim.
+- Item 10 (transport timeouts and redirect policy): **retained** as R0015's recorded NOT
+  DONE (owner decision DG-I1 = A; correction C3 not implemented; DG-I2 not activated). By
+  source trace, not executed: a stalled transfer would wait until the user interrupts it
+  (interruption cleanup is ISM-INST-004); admission still validates the bytes. How the
+  host `curl` and both PowerShell versions treat an https→http redirect is not established.
+- Codes unchanged.
 
 ---
 
@@ -4190,6 +4313,41 @@ copying, page opening, acknowledgement and the retained bundle's lifetime.
 - Exit-status parity and the non-interactive acknowledgement path: `unresolved`
   (divergence; see Open findings).
 
+**R0039 (issue 106) discriminator B2 and dispositions; candidate branch, effective on
+acceptance.** Executed on the executor's Windows 11 workstation with Windows PowerShell
+5.1.26100.9711 and PowerShell 7.6.9 at installer SHA256 `07671cb9…`; probes and results in
+`docs/state-contracts/evidence/R0039/` (`b2-readhost-eof.ps1`, `b2-noninteractive-entry.ps1`,
+`b2-results.json`). The entry runs use the exact `install.ps1` in normal mode inside a
+disposable fixture (fixture TEMP/TMP/LOCALAPPDATA/APPDATA/ProgramFiles, one eligible Chrome
+and one eligible Firefox fixture profile, argument spies on metadata, download, clipboard and
+page opening); `Read-Host` is the host's own.
+- **(i) `-NonInteractive`.** The target-selection `Read-Host` (~L1670) throws
+  `PSInvalidOperationException` ("… is in NonInteractive mode …") before the `try` at
+  ~L1699, on both hosts: no spy fired and no fixture entry was created or removed. The run
+  ends before staging, so the hand-off `Read-Host` is never reached.
+- **(ii) Redirected input that supplies `all` and then ends.** `Read-Host` returns the
+  supplied line and then `$null` at end of input, without throwing, on both hosts (primitive
+  probe, three consecutive prompts). The exact entry then selected all targets and reached
+  `Initialize-Staging`, which refused this workstation's TEMP ancestry (R0015 fail-closed rule;
+  no spy fired, nothing created), so the hand-off was not reached end to end here.
+- **Disposition (item 11, non-interactive part):** the registry hypothesis (the hand-off
+  `Read-Host` throws, the `catch` opens the store page after a hand-off) is **unreachable as
+  stated** on both hosts: a non-interactive host stops at the selection prompt, and ended
+  input does not throw. What remains, by the primitive plus source trace: after input ends,
+  each later `Read-Host` returns `$null`, so PowerShell treats end of input as an Enter
+  acknowledgement and continues (an empty selection reply means `all`, an `ask` reply means
+  GitHub), where Bash's `read_answer` fails and exits 1. Enter never proves installation
+  (invariant above), so the impact is wording/exit truthfulness only. It joins the recorded
+  exit-status divergence. End to end on GitHub windows-2022/2025 with PS5.1 and PS7 7.6.6 (run
+  43481842088): hand-off reached, no store page, exit 0 ([R0039](docs/state-contracts/R0039.md) R39-08 MET).
+- **Exit parity (item 11):** PowerShell exits 0 with "Manual action pending … Retained bundle:"
+  when nothing was staged, where Bash exits 1 ("No files were staged…"). **Retained as a
+  recorded limitation** (owner decision DG-I1 = A; correction C4 not implemented).
+- **Empty preset URL (item 11):** **documented**. An explicitly empty
+  `SALAH_WIDGET_PRESET_URL` disables preset staging in Bash (`${VAR-default}`, ~L24); PowerShell
+  treats an empty variable as unset and stages the default preset (~L23). No safety effect.
+- Codes unchanged.
+
 ---
 
 <a id="ism-inst-008"></a>
@@ -4210,6 +4368,17 @@ Original audit: **new (FND-F-11 omission; R0014 issue 20 behaviour)** · Lane pa
 - **Tests.** not identified
 - **Observed facts.** sources located by the integrator
 - **Unknowns.** tier order; behaviour on missing or renamed assets; GitHub API failures
+- **Proposed status (R0039, issue 106).** D / I / V **EIV / PEX / EEV**, taking effect only when R0039 is accepted; the cells above stay at the audit baseline until then. V is EEV because the Bash tier test carries a tier-reorder mutant that must fail.
+- **R0039 completion (issue 106; candidate branch, not merged). Traced at `846952ba` (installer bytes unchanged since `e4dbf91b`).**
+  - **Dimensions.** (1) Release metadata: `unfetched` or `fetched`. PowerShell: `$script:LatestRelease` is reset to `$null` at each run start (L1140) and `Get-LatestRelease` (L1141–1152) fetches `https://api.github.com/repos/<repo>/releases/latest` once through `Invoke-RestMethod` (no `-TimeoutSec`) and caches it for later targets of the same run; a failed fetch caches nothing, so the next target fetches again. Bash: `select_asset` (L560–591) fetches on every call through embedded Python `urllib` with `timeout=30`; there is no per-run cache. (2) Tier: the first non-empty candidate list in order. (3) Selected object: one asset (`name`, `browser_download_url`), or a refusal.
+  - **Tiers (identical on both installers).** Firefox: `.xpi` whose name contains `signed` or `firefox`; then any `.xpi`; then `firefox*.zip`; each excluding `unsigned` and `source`. Chromium: `chrom(e|ium)*.zip`; then `tabliss*.zip`; each excluding `firefox`, `safari` and `source`. Case-insensitive; within a tier, release order. Any other family is refused.
+  - **Transitions.** `unfetched → fetched` on the first selection of a run (PS) or of a call (Bash); `fetched → selected(asset)` when a tier is non-empty; `fetched → refused` when the asset list is empty (PS: "has no assets"), no tier matches ("No safe <family> asset …"), or the family is unsupported; a fetch failure is a refusal. A refusal throws (PS) or makes `select_asset` fail (Bash).
+  - **Guards.** The tiers above. PowerShell `Download-Asset` (L1337) additionally requires a `.zip`/`.xpi` name and an `https://` download URL, and checks a declared `size` and `sha256:` `digest` when the release supplies them (L1339–1347, L1363). Bash requires a non-empty tag, name and URL and sanitises the path components (L600–603); it has no https rule and no declared-size/digest check. Preview refuses on both (PS L1155, Bash L562).
+  - **Failure.** Store fallback on both: PowerShell's `Install-TablissNG` `catch` opens the store page (L1596–1601); Bash `install_tablissng` falls back to the store page when `download_tablissng_asset` fails (L752–757).
+  - **Effects.** Network read of release metadata; the selected download URL is consumed by ISM-INST-006, where admission (not selection) decides readiness.
+  - **Tests.** PowerShell: `tests/install-powershell-routes.ps1` L30–58 (six selections with object identity, four refusals with exact reasons; routes8 run 43171927350). Bash: `tests/test_install_select_asset.py` (R0039): the exact embedded program with `urlopen` replaced in-process, the same ten rows parsed from the PowerShell test under the parity relation (same selected `name`, or both refuse; message text excluded), the per-call fetch with `timeout=30`, a URL-scheme row recording that Bash selects a non-https URL unchanged, and a tier-reorder mutant that must disagree. 6/6 pass; six disposable source mutants (Firefox and Chromium tier swaps, `source` and `unsigned` exclusions removed, a silent refusal, an unsupported family falling into the Chromium tiers) were all killed (R0039 contract).
+  - **Parity.** 10/10 rows agree under the parity relation. Refusal wording differs ("has no assets" / "Unsupported browser family for GitHub release install: safari" on PS; "No safe chromium asset found…" / "Unsupported family: safari" on Bash) and is not part of the relation.
+  - **Remaining unknowns.** Whether TablissNG releases currently carry `digest`; redirect scheme handling by the hosts (ISM-INST-006, item 10, retained).
 
 ---
 
@@ -4230,32 +4399,33 @@ verified, no change needed; (c) material, but implementation or verification inc
 |---|---|
 | Preview guards and the whole-entry early return on both hosts, within R0016's recorded scope | 001 |
 | Eligibility gating before staging and at dispatch | 002 |
-| B1/B2 staging-parent rules; re-run on the merged bytes except the macOS native staging suite | 003 |
+| B1/B2 staging-parent rules; re-run on the merged bytes, the Apple native staging-parent suite in R0016 run 43173749688 (corrected by R0039) | 003 |
 | Identity-checked scratch cleanup, and retained bundles through exit, failure, INT and TERM | 004 |
 | Windows artifact admission and publication with readback | 006 |
 | Transaction contract's final-parent owner rule, now corrected | 003 |
+| Apple native staging, lifetime and admission on the merged bytes: run 43173749688 at head `8a360f54` (`install.sh` blob `e2e2640e…` = merged), whose Darwin phase-r0016 suite set includes R0015's, with the runner and suite bytes unchanged to `363c3e53` and `846952ba`. Moved from (c) by R0039 (issue 106; effective on acceptance). Job `posix (macos-15, Darwin)` of run 43239081990 was never acquired and remains non-evidence | 003, 004, 006 |
 
 **(c) Material, but implementation or verification incomplete.**
 
 | Finding | Entry |
 |---|---|
-| Host-wide zero effects and transport absence in preview are not established: no hard containment, null telemetry, and host start-up effects outside the installer's statements | 001 |
-| Session-persistent `StageNative` reuse under `irm \| iex` (possibly stale predicates) | 005 |
-| `posix (macos-15, Darwin)` not acquired in run 43239081990, so Apple native staging, lifetime and admission were not re-run on the merged bytes | 003, 004, 006 |
+| Host-wide zero effects and transport absence in preview are not established: no hard containment, null telemetry, and host start-up effects outside the installer's statements. R0039: retained as a recorded limitation (DG-I1 = A); the README no longer claims them | 001 |
+| Session-persistent `StageNative` reuse under `irm \| iex` (stale predicates). R0039 B1: reuse observed for the type guard on PS5.1 and PS7, `-File` and `iex` (compiler custody replaced by a fixture on the executing host); documented in the README and retained (DG-I1 = A; C2 not implemented) | 005 |
 
 **(d) Non-blocking, or out of scope for later work.**
 
 | Finding | Entry |
 |---|---|
-| PowerShell drops malformed or unknown selection tokens instead of refusing them (Bash refuses) | 002 |
-| No mutant pins the private-child owner term; the refusal text under-describes the admitted owner set (recorded NOT DONE in R0015) | 003 |
-| Newline check only on the supplied spelling (recorded as theoretical in R0015) | 003 |
-| Kill-time or closed-console scratch leakage, and the interrupt window before a root is recorded (no prior NOT DONE record found) | 004 |
-| Bash preset rewrite replaces `local=1` across the whole text, does not validate `SALAH_WIDGET_HASH` and normalises line endings; outside the Windows transaction contract | 006 |
-| Bash publishes with a rename after validating the partial, without a post-rename readback. Same inode in the private root; issue 21 row 21-07 requires validation before publication | 006 |
-| Transport timeouts and redirect policy (recorded NOT DONE in R0015) | 006 |
-| PS non-interactive acknowledgement can trigger a store fallback after a hand-off; PS exits 0 when nothing was staged (Bash exits 1); empty preset URL differs between hosts | 007 |
-| README sentence "Preview creates, overwrites and deletes no files or directories" is stronger than the host-level evidence. Two examples are the PowerShell host's own start-up profile writes, and Bash discovery running `python3` from PATH, whose start-up the installer does not control. A wording change would need a new R0016 documentation receipt, because `tools/qualification/installer_preview_docs.cjs` pins the README SHA256 and that sentence. It therefore ties to rows 22-14 and R0016-A06 | 001 |
+| PowerShell drops malformed or unknown selection tokens instead of refusing them (Bash refuses). R0039: demonstrated on PS5.1 and PS7; retained (DG-I1 = A; C1 not implemented) | 002 |
+| No mutant pins the private-child owner term; the refusal text under-describes the admitted owner set (recorded NOT DONE in R0015). R0039: retained | 003 |
+| Newline check only on the supplied spelling (recorded as theoretical in R0015). R0039: retained | 003 |
+| Kill-time or closed-console scratch leakage, and the interrupt window before a root is recorded. R0039: now recorded in `docs/state-contracts/R0039.md`; retained | 004 |
+| Bash preset rewrite replaces `local=1` across the whole text, does not validate `SALAH_WIDGET_HASH` and normalises line endings; outside the Windows transaction contract. R0039: retained with reason (user-supplied or form-encoded builder value) | 006 |
+| Bash publishes with a rename after validating the partial, without a post-rename readback. Same inode in the private root; issue 21 row 21-07 requires validation before publication. R0039: retained with reason | 006 |
+| Transport timeouts and redirect policy (recorded NOT DONE in R0015). R0039: retained (DG-I1 = A; C3 not implemented; DG-I2 not activated) | 006 |
+| PS exits 0 when nothing was staged (Bash exits 1); PS treats ended input as an acknowledgement (Bash exits 1); empty preset URL differs between hosts. R0039 B2: the former "store fallback after a hand-off" hypothesis is unreachable as stated on PS5.1 and PS7; exit parity retained (DG-I1 = A; C4 not implemented); empty-URL difference documented | 007 |
+| ~~README sentence "Preview creates, overwrites and deletes no files or directories" is stronger than the host-level evidence.~~ R0039: corrected; the README scopes the claim to the installer itself and states the host-level limits; pins and pinned-sentence check updated in the same change, successor receipt hosted run 43481353177 (effective on acceptance) | 001 |
+| ISM-INST-008 release metadata and asset selection was a partial entry with the Bash tiers untested. R0039: entry completed and `tests/test_install_select_asset.py` added (parity 10/10, tier-reorder mutant) | 008 |
 
 ### Final focused sweep (2026-11-12, merged main `e4dbf91b`)
 

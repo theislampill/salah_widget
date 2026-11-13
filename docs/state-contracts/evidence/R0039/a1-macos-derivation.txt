@@ -1,0 +1,70 @@
+# R0039 A1: re-performed issue 106 section 3.1 checks (read-only). Base origin/main 846952ba305edcc6cf373e9a406b8fdac33fcbde, 2026-11-13.
+
+$ git rev-parse 8a360f54:install.sh
+e2e2640eb85adf302c87305cd68d642743785bb1
+
+$ git rev-parse 846952ba:install.sh 846952ba:install.ps1 363c3e53:install.sh dfff0f8f:install.sh
+e2e2640eb85adf302c87305cd68d642743785bb1
+28cfdae73305a2a2e5a58e30878bffea7b5142b8
+e2e2640eb85adf302c87305cd68d642743785bb1
+e2e2640eb85adf302c87305cd68d642743785bb1
+
+$ git diff --stat 8a360f54 363c3e53 -- tools/qualification/installer_native.py tests/install-bash.py tests/install-entry-bash.py tests/install-discovery.py tests/install-detectors.py tests/install-discovery-mutations.py tests/install-mutations.py tests/install-staging-native.py tests/install-staging-parent.py tests/install-builder.cjs
+(empty output)
+
+$ git diff --stat 8a360f54 846952ba -- install.sh tools/qualification/installer_native.py tests/install-bash.py tests/install-entry-bash.py tests/install-discovery.py tests/install-detectors.py tests/install-discovery-mutations.py tests/install-mutations.py tests/install-staging-native.py tests/install-staging-parent.py tests/install-builder.cjs
+(empty output)
+
+$ git diff --stat 8a360f54 dfff0f8f -- install.sh tools/qualification/installer_native.py tests/install-bash.py tests/install-entry-bash.py tests/install-discovery.py tests/install-detectors.py tests/install-discovery-mutations.py tests/install-mutations.py tests/install-staging-native.py tests/install-staging-parent.py tests/install-builder.cjs
+(empty output)
+
+$ git show 846952ba:tools/qualification/installer_native.py (lines 217-230: POSIX suites by phase)
+        for test in ("install-bash.py", "install-entry-bash.py", "install-discovery.py", "install-detectors.py"):
+            run(test[:-3], [sys.executable, str(root / "tests" / test), str(root / "install.sh")])
+        run("install-discovery-mutations", [sys.executable, str(root / "tests/install-discovery-mutations.py"), str(root / "install.sh")])
+        run("install-original-mutations", [sys.executable, str(root / "tests/install-mutations.py"), str(root / "install.sh")])
+        run("install-builder", ["node", str(root / "tests/install-builder.cjs")])
+        if args.phase in ("r0015", "r0016"):
+            run("install-staging-native", [sys.executable, str(root / "tests/install-staging-native.py"), str(root / "install.sh")])
+            run("install-staging-parent", [sys.executable, str(root / "tests/install-staging-parent.py"), str(root / "install.sh")])
+        if args.expected_os == "Darwin" and args.phase == "r0016":
+            run("install-staging-readonly", [sys.executable, str(root / "tests/install-staging-readonly.py"), str(root / "install.sh")])
+        if args.expected_os == "Linux" and args.phase in ("r0015", "r0016"):
+            run("install-linux-owner", [sys.executable, str(root / "tests/install-linux-owner.py"), str(root / "install.sh")])
+        if args.phase == "r0016":
+            run("install-preview", [sys.executable, str(root / "tests/install-preview.py"), str(root / "install.sh")])
+
+$ git show dfff0f8f:.github/workflows/r0015-integration-qualification.yml | lines naming installer_native.py --phase
+python3 tools/qualification/installer_native.py --expected-os '${{ matrix.native }}' --phase r0015 --output "$RUNNER_TEMP/installer-evidence"
+python tools/qualification/installer_native.py --expected-os Windows --phase r0015 --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+python tools/qualification/installer_native.py --expected-os Windows --phase r0013 --output (Join-Path $env:RUNNER_TEMP 'installer-evidence')
+
+$ gh run view 43173749688 (read-only)
+{"conclusion":"success","headBranch":"pro/r0016-effect-free-preview-20261111","headSha":"8a360f549a7d9ff291b91d2e62e848c72b78d38d","jobs":[{"conclusion":"success","name":"darwin"}],"name":"R0016 actual macOS installer qualification"}
+
+$ gh run view 43239081990 (read-only)
+{"conclusion":"failure","headBranch":"pro/r0016-effect-free-preview-20261111","headSha":"dfff0f8f3921b9f114f6922fd07174500b8e0b9d","jobs":[{"conclusion":"cancelled","name":"posix (macos-15, Darwin)"},{"conclusion":"success","name":"environment-posix (macos-15)"},{"conclusion":"success","name":"windows-r0013-phase"},{"conclusion":"success","name":"windows-standard-user (windows-2022)"},{"conclusion":"success","name":"windows"},{"conclusion":"success","name":"windows-owner-archive (windows-2025)"},{"conclusion":"success","name":"environment-posix (ubuntu-24.04)"},{"conclusion":"success","name":"windows-standard-user (windows-2025)"},{"conclusion":"success","name":"environment-windows (windows-2022)"},{"conclusion":"success","name":"environment-windows (windows-2025)"},{"conclusion":"success","name":"posix (ubuntu-24.04, Linux)"},{"conclusion":"success","name":"windows-owner-archive (windows-2022)"}],"name":"R0015 integration qualification"}
+
+$ docs/state-contracts/evidence/R0016/third-successor/successor-20261112/posix/report.md lines 35 and 93-112
+| macOS `43173749688` | 1,449,525 | `72fd29d25760c07087c8114b202b8f81b25e511c7ebf9b04f2348719fa8b86d6` | `88fa5ba601f2c951d39f4189fc55ed26dff24d5c80e9580fced3398850ba649d` |
+The original host receipt identifies macOS 15.8.2 arm64, Apple `/bin/bash` 3.2.57, and native `/usr/bin/sandbox-exec`. These are archived native observations. The actual command list contains eleven completed suites, each exiting 0, each within its recorded 240-second bound, and all raw row verdict flags are true.
+
+| Suite | Rows |
+|---|---:|
+| Bash helpers/basic behavior | 26 |
+| Actual Bash entry | 25 |
+| Discovery | 76 |
+| Detectors | 12 |
+| Discovery mutation controls | 13 |
+| Original mutation controls | 8 |
+| Native builder | 4 |
+| Native staging lifetime/admission | 9 |
+| Staging-parent admission | 23 |
+| Read-only staging helper | 6 |
+| Preview | 46 |
+| **Total retained suite rows** | **248** |
+
+The preview's 46 raw rows differ from Linux's 45 by the additional literal zero-target refusal case. Its 12 helpers, 18 entry cases, seven interface cases, two normal controls, six mutation pairs, and containment bootstrap retain their original classifications. Healthy helper/entry/interface observations have empty effect events and equal subject snapshots. Apple preview rows keep missing independent transport telemetry as `null`.
+
+The macOS native controls retain allowed inside writes, two EPERM outside-write refusals, and EPERM TCP/UDP refusals. The PTY control records its child exited 0, was reaped, the master closed, ownership was retained, and no cleanup signals/errors occurred. Real post-trap failure/INT/TERM preview rows retain the corresponding source traps and 97/130/143 exits. Native staging rows preserve same-attempt identity reuse, distinct subsequent roots, retained consumers after exit/failure/INT/TERM, and detected predictable-root, symlink-admission, and retained-deletion controls. Parent admission has 23 passing controls, including native `/tmp` spellings, ownership/mode rejection, and symlink boundaries.
+

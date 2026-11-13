@@ -1,0 +1,364 @@
+{
+  "meta": {
+    "schema": "r0039-discriminators/1",
+    "base": "846952ba305edcc6cf373e9a406b8fdac33fcbde",
+    "installPs1Sha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+    "date": "2026-11-13",
+    "os": "Windows 11 Pro 10.0.26200 (executor workstation, not a qualified runner)"
+  },
+  "probe": "b1-helper-type-reuse.ps1",
+  "results": [
+    {
+      "host": "powershell.exe",
+      "mode": "file",
+      "compiler": "real",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "inconclusive",
+      "hostVersion": "5.1.26100.9711",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "powershell.exe",
+      "mode": "file",
+      "compiler": "fixture",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "reuse-confirmed: second call observed S1",
+      "hostVersion": "5.1.26100.9711",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "1bqazw4h, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": true,
+          "lastCompiledTag": "S1"
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": true,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "1bqazw4h, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": false,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": false,
+          "lastCompiledTag": "S1"
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "powershell.exe",
+      "mode": "iex",
+      "compiler": "real",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "inconclusive",
+      "hostVersion": "5.1.26100.9711",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "powershell.exe",
+      "mode": "iex",
+      "compiler": "fixture",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "reuse-confirmed: second call observed S1",
+      "hostVersion": "5.1.26100.9711",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "etyqi4x2, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": true,
+          "lastCompiledTag": "S1"
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": true,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "etyqi4x2, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": false,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": false,
+          "lastCompiledTag": "S1"
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "powershell.exe",
+      "mode": "file",
+      "compiler": "fixture",
+      "order": "S2",
+      "exit": 0,
+      "outcome": "single-load control: observed S2",
+      "hostVersion": "5.1.26100.9711",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S2",
+          "typeLoadedBefore": false,
+          "error": null,
+          "observedConstant": "S2",
+          "assembly": "533lyewl, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": true,
+          "lastCompiledTag": "S2"
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "powershell.exe",
+      "mode": "exit-inside-iex (-Command host)",
+      "compiler": null,
+      "order": null,
+      "exit": 7,
+      "outcome": null,
+      "hostVersion": null,
+      "sourceSha256": null,
+      "rows": null,
+      "rawWhenNotJson": ""
+    },
+    {
+      "host": "pwsh.exe",
+      "mode": "file",
+      "compiler": "real",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "inconclusive",
+      "hostVersion": "7.6.9",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "pwsh.exe",
+      "mode": "file",
+      "compiler": "fixture",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "reuse-confirmed: second call observed S1",
+      "hostVersion": "7.6.9",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "ouvm0jab.zy4, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": true,
+          "lastCompiledTag": "S1"
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": true,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "ouvm0jab.zy4, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": false,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": false,
+          "lastCompiledTag": "S1"
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "pwsh.exe",
+      "mode": "iex",
+      "compiler": "real",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "inconclusive",
+      "hostVersion": "7.6.9",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": false,
+          "error": "Compiler ancestor permits foreign replacement or has an untrusted owner.",
+          "observedConstant": null,
+          "assembly": null,
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "refused-before-create",
+          "compilerInvoked": false,
+          "lastCompiledTag": null
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "pwsh.exe",
+      "mode": "iex",
+      "compiler": "fixture",
+      "order": "S1,S2",
+      "exit": 0,
+      "outcome": "reuse-confirmed: second call observed S1",
+      "hostVersion": "7.6.9",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S1",
+          "typeLoadedBefore": false,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "guakri3c.er1, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": true,
+          "lastCompiledTag": "S1"
+        },
+        {
+          "load": "S2",
+          "typeLoadedBefore": true,
+          "error": null,
+          "observedConstant": "S1",
+          "assembly": "guakri3c.er1, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": false,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": false,
+          "lastCompiledTag": "S1"
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "pwsh.exe",
+      "mode": "file",
+      "compiler": "fixture",
+      "order": "S2",
+      "exit": 0,
+      "outcome": "single-load control: observed S2",
+      "hostVersion": "7.6.9",
+      "sourceSha256": "07671cb9e6a0afb8eb9051a0a5f378d12e577877453a773860b3cf94d5e2951a",
+      "rows": [
+        {
+          "load": "S2",
+          "typeLoadedBefore": false,
+          "error": null,
+          "observedConstant": "S2",
+          "assembly": "53ueeybo.x3s, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
+          "compilerContextAllocated": true,
+          "compilerContextStatus": "closed",
+          "compilerInvoked": true,
+          "lastCompiledTag": "S2"
+        }
+      ],
+      "rawWhenNotJson": null
+    },
+    {
+      "host": "pwsh.exe",
+      "mode": "exit-inside-iex (-Command host)",
+      "compiler": null,
+      "order": null,
+      "exit": 7,
+      "outcome": null,
+      "hostVersion": null,
+      "sourceSha256": null,
+      "rows": null,
+      "rawWhenNotJson": ""
+    }
+  ]
+}
