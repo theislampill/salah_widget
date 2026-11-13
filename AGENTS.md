@@ -158,6 +158,12 @@ Do not commit or push unless the user explicitly asks. When asked: commit the **
 `main` deploys to GitHub Pages, so a commit to `main` is a deploy. End commit messages with the standard
 `Co-Authored-By` line.
 
+Retained evidence is kept in git but not published (R002B, owner decision DG-2(a)): `_config.yml` excludes
+`docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence` and `docs/moon/evidence`
+from the Pages build. Cite evidence by commit-pinned github.com links, never github.io; put new evidence
+under one of those trees, and measure the payload with `tools/pages_payload.py` (bound 1,000,000,000
+regular-file bytes; `docs/state-contracts/R002B.md`).
+
 ## Running / debugging common scenarios
 
 Configuration and diagnostics are read from the fragment after #. Append &debugMotion=1 or &motion=full to that same fragment. A query-only ?debugMotion=1 is not read. The six debugOptic force names are halo, sundogs, pillar, anticrep, paraselene and lunarhalo. Corona, earthshine, refraction and the crepuscular ray require controlled physical scene inputs; no dedicated debugOptic switch forces them.
