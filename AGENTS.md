@@ -41,6 +41,10 @@ behaviour in `install.sh`/`install.ps1` or performing a consequential transition
 Record materially relevant discoveries there, linking the `docs/state-contracts/`
 contracts rather than duplicating them. It grants no execution authority and proves
 no runtime behaviour.
+Regression evidence is the verdict of `python tools/cp9/run_native_regressions.py --output <new dir>`
+over the registered population and the exact expected-failure ledger (`tests/regression-population.json`,
+`tests/expected-failures.json`; `docs/state-contracts/R0028.md`), quoted verbatim (for example
+`PASS_WITH_DECLARED_FAILURES (n)`), not the node glob alone.
 
 ## Golden rules
 
