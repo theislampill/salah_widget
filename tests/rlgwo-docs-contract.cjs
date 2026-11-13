@@ -273,10 +273,10 @@ function mentions(name, tokens) {
       // body differs by later certified work orders. Body and entry = the bytes R002D delivered at main
       // e10da481 (R002D FINAL, issue 94 comment 6845125534); earlier re-bind 529c220a.../e3a3dedb...
       // (R0021 FINAL 6809435795 / R0027 FINAL 6810490146) superseded by that change.
-      // R002C re-bind (issue 93, candidate source 6e4e4588): body a772c04c... -> 811f706d..., entry 794bb701... ->
-      // 4928684d...; R002C changes only render/loop/boot containment, not the force block, helper, clamp or call above.
-      assert.equal(digest(body),"811f706dead6bb2d8cacac9d81311d825212af1b3f9458c701c9e9143a326c70",'delegated native script changed');
-      assert.equal(digest(source),"4928684dceb028f1b51378c7315ff9423dfe0b6f4bea3b5950dfec6231e56cf0",'delegated current generated entry changed');
+      // R002C re-bind (issue 93): body a772c04c... -> bc11c040..., entry 794bb701... -> 531bea69...; R002C changes only
+      // render/loop/boot containment, not the force block, helper, clamp or call pinned above.
+      assert.equal(digest(body),"bc11c040ebf738d0e8f49a6190ea990f165d925267a3e440515a8fb470ee2a54",'delegated native script changed');
+      assert.equal(digest(source),"531bea691d326b27656a7e21c8a379deaf61e352d3f8468c6997ade2d7e2e09a",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {

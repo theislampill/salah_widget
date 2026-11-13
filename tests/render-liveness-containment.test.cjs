@@ -235,6 +235,64 @@ test('R2C-03 bounded record: qaState().renderFaults is a frozen pure read',()=>{
   assert.equal(h.run('qaState().renderFaults["moon-geometry"].last.message.length'),200,'message truncated');
 });
 
+// ---- Review corrections: shared Error instances, boundary guards, split withdrawal, weather start ----
+const CACHED='window.__cached=new Error("cached Moon failure");SalahMoonRuntime.request=()=>{throw window.__cached};';
+function sharedInstance(src){
+  const h=harness(src);h.run('render();window.__r1=_lastRender;'+CACHED+'_simBase+=1000;lastMoonMin=-1;');
+  const error=tryRun(h,'render()');contained(h,error);
+  assert.ok(faultCount(h,'moon-geometry')>=1,'first stage recorded');
+  assert.equal(faultCount(h,'theme-paint'),1,'a second stage throwing the same instance is still recorded');
+  assert.equal(h.run('_lastRender.fx'),null,'receipt does not claim a theme this frame lacked');
+  assert.equal(faults(h).render,undefined);
+}
+function sharedAcrossFrames(src){
+  const h=harness(src);h.run('render();startRenderLoop();');step(h);
+  h.run('window.__cached=new Error("cached preview failure");window.SalahSkyPreview={present(){throw window.__cached}};');
+  for(let i=0;i<5;i++)step(h);
+  assert.equal(faultCount(h,'sky-preview'),5,'one count per frame for a reused instance');assert.equal(h.rafs.length,1);
+}
+async function bootGuards(src){
+  const h=harness(src,{hash:LIVE});
+  h.run('today=null;tomorrow=null;lastDate=null;TIMESCALE=1;window.__renders=0;render=()=>{window.__renders++;throw new Error("injected render failure")};'
+    +'startWeather=()=>{throw new Error("injected weather start failure")};');
+  h.run('window.__boot=boot();window.__boot.catch(()=>{});');
+  let rejected=null;try{await h.complete(h.run('window.__boot'),{turns:200});}catch(e){rejected=String(e&&e.message||e);}
+  assert.equal(rejected,null,'boot must not reject');
+  assert.ok(h.requests.length>=1,'prayer acquisition started');assert.equal(h.run('_loopStarted'),true);
+  assert.equal(faultCount(h,'weather-start'),1);
+  assert.ok(faultCount(h,'render')>=2,'boot render and loader render both recorded (not swallowed)');
+}
+function clockGuards(src,target){
+  const h=harness(src);h.run('window.__n=0;window.__c=0;window.SalahNativeSkyHost={notify(){window.__n++;'+(target==='notify'?'throw new Error("injected notify")':'')+'}};'
+    +'window.SalahRealSky={invalidate(){'+(target==='invalidate'?'throw new Error("injected invalidate")':'')+'}};'
+    +'window.SalahSkyPreview={clear(){window.__c++;'+(target==='clear'?'throw new Error("injected clear")':'')+'},present(){},update(){}};');
+  const t=h.run('_simBase')+60000;
+  const r=JSON.parse(h.run('(()=>{try{return JSON.stringify(SalahClock.set({rate:0,utcMs:'+t+'}))}catch(e){return JSON.stringify({threw:e.message})}})()'));
+  assert.deepEqual(r,{utcMs:t,rate:0,live:false});assert.ok(h.run('window.__n')>=1,'notify still ran');assert.ok(h.run('window.__c')>=1,'preview clear still ran');
+  assert.ok(faultCount(h,target==='clear'?'sky-preview':'real-sky')>=1,'the failure is recorded');
+}
+function loopStage(src,inject,stage,check){
+  const h=harness(src);h.run('render();startRenderLoop();');step(h);h.run(inject);
+  h.run('document.querySelector(".cn").textContent="SENTINEL";_renderDirty=true;');assert.equal(step(h),null);
+  assert.equal(faultCount(h,stage),1,stage+' recorded under its own stage');assert.equal(faultCount(h,'frame'),0,'not left to the residual frame catch');
+  if(check)check(h);assert.equal(h.rafs.length,1);
+}
+function splitWithdrawal(src){
+  const h=harness(src);h.run(NO_MODEL+'window.__w=0;const __ww=withdrawWeatherEffects;withdrawWeatherEffects=(d,r)=>{window.__w++;return __ww(d,r);};'
+    +'reconcileCloudPublication=()=>{throw new Error("injected reconcile failure")};');
+  tryRun(h,'render()');
+  assert.equal(h.run('window.__w'),1,'effects withdrawal still ran once');assert.equal(faultCount(h,'weather-withdrawal'),1);assert.equal(faultCount(h,'weather-effects'),0);
+  assert.equal(h.select('.c').dataset.precip,'off');assert.equal(h.select('.c').dataset.lightning,'off');
+}
+test('review: one Error instance thrown by two stages records both; fx null',()=>sharedInstance(SOURCE));
+test('review: one Error instance across loop frames is counted per frame',()=>sharedAcrossFrames(SOURCE));
+test('review: boot first render, loader render and weather start are contained and recorded',()=>bootGuards(SOURCE));
+for(const t of ['notify','invalidate','clear'])test('review: SalahClock.set completes when '+t+' throws',()=>clockGuards(SOURCE,t));
+test('review: maintainPrayerDay failure is its own stage; the frame still renders',()=>loopStage(SOURCE,'maintainPrayerDay=()=>{throw new Error("injected prayer-day")};','prayer-day',h=>assert.equal(h.select('.cn').textContent,'Isha')));
+test('review: cloud paint failure is its own stage; preview present still runs',()=>loopStage(SOURCE,'window.__p=0;window.SalahSkyPreview={present(){window.__p++}};syncCloudMotionPreference=()=>{throw new Error("injected clouds")};','clouds',h=>assert.equal(h.run('window.__p'),1)));
+test('review: preview present failure is its own stage',()=>loopStage(SOURCE,'window.SalahSkyPreview={present(){throw new Error("injected present")}};','sky-preview'));
+test('review: a reconcile failure does not skip the no-timetable effects withdrawal',()=>splitWithdrawal(SOURCE));
+
 // ---------------------------------------------------------------- R2C-12 mutation discrimination
 // Each mutant edits one exact anchor of this source in memory; the discriminator must fail with an
 // actual assertion (a setup error or an unapplied anchor is not a kill).
@@ -253,6 +311,13 @@ const MUTANTS=[
     'withdrawPrayerPresentation();runRenderStage("weather-header",()=>paintWeatherHeader(weatherHeader(weatherDecision(),false)));renderCalendarDates(selectCalendarDisplay(null));']],src=>orderHeader(src,SIM_INVALID)],
   ['m7c no-model header ahead of the calendar',[['    }else withdrawnPrayerStage();','    }else withdrawPrayerPresentation();'],
     ['    runRenderStage("celestial",()=>paintCelestialWithoutTimetable(d));return;','    runRenderStage("celestial",()=>paintCelestialWithoutTimetable(d));renderCalendarDates(selectCalendarDisplay(null));return;']],src=>orderHeader(src,NO_MODEL)],
+  ['m8 dedupe by error instance for every stage',[['if((name==="render"||name==="frame") && _frameRecorded.has(error)) return;','if(_frameRecorded.has(error)) return;']],src=>sharedInstance(src)],
+  ['m9 boot first-render guard removed',[['  try{ render(); }catch(e){ recordRenderFault("render",e); } // Current shell','  render(); // Current shell']],src=>bootGuards(src)],
+  ['m10 loader render guard removed',[['      try{ render(); }catch(e){ recordRenderFault("render",e); }\n      try{ window.SalahSkyPreview?.update(); }','      render();\n      try{ window.SalahSkyPreview?.update(); }']],src=>bootGuards(src)],
+  ['m11 SalahClock notify guard removed',[['  try{ window.SalahNativeSkyHost?.notify(); }catch(e){ recordRenderFault("real-sky",e); }','  window.SalahNativeSkyHost?.notify();']],src=>clockGuards(src,'notify')],
+  ['m12 prayer-day stage guard removed',[['runRenderStage("prayer-day",maintainPrayerDay);','maintainPrayerDay();']],src=>loopStage(src,'maintainPrayerDay=()=>{throw new Error("injected prayer-day")};','prayer-day')],
+  ['m13 effects-withdrawal fallback removed',[['}finally{ if(!effects) runRenderStage("weather-effects",()=>withdrawWeatherEffects(d,"prayer timetable unavailable")); }','}finally{ void effects; }']],src=>splitWithdrawal(src)],
+  ['m14 boot weather-start guard removed',[['  try{ startWeather(true); }catch(e){ recordRenderFault("weather-start",e); }','  startWeather(true);']],src=>bootGuards(src)],
 ];
 function mutate(edits){
   let out=SOURCE;
