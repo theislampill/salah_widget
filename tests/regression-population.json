@@ -7,6 +7,49 @@
    "expectedCases": 37
   }
  },
+ "nativeTestGlob": [
+  "tests/builder-preview-publication-mutations.test.cjs",
+  "tests/builder-preview-publication.test.cjs",
+  "tests/config-effects-mutations.test.cjs",
+  "tests/config-effects-state.test.cjs",
+  "tests/hotfix-prayer-weather.test.cjs",
+  "tests/location-admission-mutations.test.cjs",
+  "tests/location-admission-outcomes.test.cjs",
+  "tests/moon-fixture-anchors.test.cjs",
+  "tests/native-appearance-currentness.test.cjs",
+  "tests/prayer-next-event-state.test.cjs",
+  "tests/r0002-admission.test.cjs",
+  "tests/r0003-ownership.test.cjs",
+  "tests/r0004-boot-day.test.cjs",
+  "tests/r0004-currentness-controls.test.cjs",
+  "tests/r0005-adoption.test.cjs",
+  "tests/r0005-day-return.test.cjs",
+  "tests/r0006-recovery.test.cjs",
+  "tests/r0007-async-observation.test.cjs",
+  "tests/r0007-font-gate.test.cjs",
+  "tests/r0007-font-use.test.cjs",
+  "tests/r0007-recovery-precondition.test.cjs",
+  "tests/r000a-markers.test.cjs",
+  "tests/r000b-remaining.test.cjs",
+  "tests/r000c-weather.test.cjs",
+  "tests/r000d-weather.test.cjs",
+  "tests/r0017-adapters.test.cjs",
+  "tests/r0018-prayer-row-status.test.cjs",
+  "tests/r0024-cloud-expiry.test.cjs",
+  "tests/r0024-information.test.cjs",
+  "tests/r0024-particle-origin.test.cjs",
+  "tests/r0024-response-zone.test.cjs",
+  "tests/r0024-weather.test.cjs",
+  "tests/r0028-closure-index.test.cjs",
+  "tests/r002b-pages-payload.test.cjs",
+  "tests/v1_limitations.test.cjs",
+  "tests/weather-no-timetable-handoff.test.cjs",
+  "tests/weather-no-timetable-withdrawal.test.cjs",
+  "tests/weather-retry-clock-mutations.test.cjs",
+  "tests/weather-retry-clock-state.test.cjs",
+  "tests/weather-withdrawal-authority.test.cjs",
+  "tests/weather-withdrawal-mutations.test.cjs"
+ ],
  "commands": [
   {
    "name": "native-test-glob-mjs",
@@ -321,6 +364,59 @@
     "config.js"
    ],
    "expectedCases": 10
+  },
+  {
+   "name": "r0021-reveal-direct",
+   "argv": [
+    "node",
+    "--test-reporter=tap",
+    "tests/r0021-reveal.cjs"
+   ],
+   "protocol": "auto",
+   "covers": [
+    "tests/r0021-reveal.cjs"
+   ],
+   "inputs": [
+    "tests/r0021-reveal.cjs",
+    "index.html",
+    "config.js"
+   ]
+  },
+  {
+   "name": "r0022-lunar-consumers-direct",
+   "argv": [
+    "node",
+    "--test-reporter=tap",
+    "tests/r0022-lunar-consumers.cjs"
+   ],
+   "protocol": "auto",
+   "covers": [
+    "tests/r0022-lunar-consumers.cjs"
+   ],
+   "inputs": [
+    "tests/r0022-lunar-consumers.cjs",
+    "index.html",
+    "config.js"
+   ]
+  },
+  {
+   "name": "tools-qa-r0021-native-sanitize",
+   "argv": [
+    "{python}",
+    "tools/qa/test_run_r0021_native_sanitize.py"
+   ],
+   "protocol": "case-lines",
+   "covers": [
+    "tools/qa/test_run_r0021_native_sanitize.py"
+   ],
+   "inputs": [
+    "tools/qa/test_run_r0021_native_sanitize.py",
+    "tools/qa/run_r0021_native.py"
+   ],
+   "expectedCases": 1,
+   "env": {
+    "PYTHONUTF8": "1"
+   }
   },
   {
    "name": "real-sky-moon-projection-cache",
@@ -1140,6 +1236,32 @@
    }
   },
   {
+   "name": "py-test_verify_v1_pages",
+   "argv": [
+    "{python}",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "test_verify_v1_pages.py",
+    "-v"
+   ],
+   "protocol": "unittest-cases",
+   "covers": [
+    "tests/test_verify_v1_pages.py"
+   ],
+   "inputs": [
+    "tests/test_verify_v1_pages.py",
+    "index.html",
+    "config.js"
+   ],
+   "env": {
+    "PYTHONUTF8": "1"
+   }
+  },
+  {
    "name": "py-r0022-paint-cost",
    "argv": [
     "{python}",
@@ -1346,6 +1468,30 @@
    "path": "moon/tests/browser_check.py",
    "reason": "requires Python Playwright and a browser",
    "owner": "Moon browser qualification (docs/moon/QUALIFICATION.md)"
+  },
+  {
+   "path": "tests/r0037-v1-wrapper-native.cjs",
+   "reason": "native browser recipe (Playwright Chromium, served disposable v1 copy, fixture providers); not a headless unit instrument",
+   "owner": "R0037",
+   "recipe": {
+    "argv": [
+     "node",
+     "tests/r0037-v1-wrapper-native.cjs",
+     "<fresh-output-dir>",
+     "<directory containing the playwright package>"
+    ],
+    "protocol": "native capture result.json (docs/state-contracts/evidence/R0037/native-r37-13/result.json)"
+   }
+  },
+  {
+   "path": "tools/test_moon.py",
+   "reason": "receipt wrapper over moon/tests/*.test.cjs (requires --output); the same files run directly as moon-tests-cjs",
+   "owner": "Moon qualification (docs/moon/QUALIFICATION.md)"
+  },
+  {
+   "path": "tools/qualification/test_installer_preview_linux_namespace_probe.py",
+   "reason": "POSIX-only receipt tests (os.getuid); 4 errors on Windows by construction; Linux installer qualification",
+   "owner": "installer qualification (Linux namespace probe, tools/qualification)"
   },
   {
    "path": "tests/real-sky/moon_continuity_observer_test.py",

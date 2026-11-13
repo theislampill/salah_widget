@@ -93,10 +93,12 @@ function materialPart(source){
   assert.equal(source.split(start).length,2,'one current calendar/material owner');assert.equal(source.split(end).length,2,'one current catalogue boundary');
   return source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));
 }
-// R0028 re-bind: 18ff1486 section 22e5b5c7... -> f71fef6c section ff065aad... (CLOSE-R0021,
-// certificate 6326407465: S2-S4 V5/opaque body/material transfer through verified identities).
-// The delta extracts the unchanged phase/position equations into nativeLunarSnapshot() for the
-// Moon head owner; the section is byte-equal at f71fef6c and current main.
+// R0028 re-bind: material section sha256 22e5b5c7... (18ff1486) -> ff065aad... (f71fef6c).
+// Recorded acceptance of these exact bytes: R0021 FINAL certificate 6809435795 binds commit
+// 5279958a (tree aec2075c), whose index.html carries this section byte-for-byte (sha256
+// ff065aad...); CLOSE-R0021 6326407465 binds f71fef6c (tree 79aedcac), where it first shipped.
+// Delta: the phase/position code moves into nativeLunarSnapshot() for the Moon head owner, and
+// the no-coordinates fallback now calls moonPhase(date) instead of moonNow().
 const acceptedStartupCommit='f71fef6ccf7e4efcb57b5a26688d2360461a3253',acceptedMaterialSha256='ff065aad9ebce2d31c34c9983c860d4e8137951bcf700e8cda253cc58bfc90ea';
 test('current native phase/body/Earthshine/material equations match accepted CP9/V5 owner',()=>{
   const acceptedStartup=option('accepted-startup')?fs.readFileSync(option('accepted-startup'),'utf8'):gitSource(acceptedStartupCommit,'index.html');
@@ -112,10 +114,12 @@ test('current material guard rejects altered Earthshine without relying on old P
 // source identity. Actual old/new material, atmosphere and cloud composition
 // execute in moon-projection-cache.test.mjs and the bound native comparisons;
 // this inventory and the generated-consumer checks are packaging guards only.
-// R0028 re-bind: moon-detail f2596f26... -> c5f336a5... and moon-precision e0ca3303... ->
-// 57bd2781..., both the bytes delivered and certified at f71fef6c (CLOSE-R0021, certificate
-// 6326407465; R0021.md names moon-detail c5f336a5 as the pinned initial receiver). Delta at that
-// merge: 5 and 8 lines (initial-receiver/head compose support); unchanged since.
+// R0028 re-bind: moon-detail sha256 f2596f26... -> c5f336a5... (git blob 81ebdd15) and
+// moon-precision sha256 e0ca3303... -> 57bd2781... (git blob d070bc3d). Recorded acceptance of
+// these exact bytes: R0021 FINAL certificate 6809435795 binds commit 5279958a (tree aec2075c),
+// whose two blobs are identical, and lists the public moon/moon-host.js fee33628... that embeds
+// them; CLOSE-R0021 6326407465 binds f71fef6c (tree 79aedcac), same blobs. R0021.md names
+// moon-detail c5f336a5. Delta at f71fef6c: 5 and 8 lines (initial-receiver/head compose support).
 const protectedCurrentMaterial={"moon/src/surface_v5.mjs":"f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f","moon/src/moon-calendar.mjs":"b508ea0a0bbc2a68039ba71bb4be75299cfa57bcb74992be1b1b0a0eddfad953","moon/src/moon-detail.mjs":"c5f336a5f42e3774866d66215e2944b2cde7afad05db801868980121fa70a8b8","moon/src/moon-precision.mjs":"57bd2781b12dddf68857a96fb3046089b4f730611da82e9c974d66bef9f253d2","moon/src/moon_kernel.c":"919bf0b0a17ceb1ce3d3d7e0b5d9958bba3835b96e8558d6b518e7db1137f57f","moon/moon_kernel.wasm":"4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7","moon/asset-manifest.json":"3d4cb527489acda67082bbc97d984abbb28a11a40f0aec8b4030223fb15e9afa"};
 test('frozen pre-cache compositor remains the exact adopted reference',()=>assert.equal(sha(fs.readFileSync(path.join(candidateRoot,'tests/fixtures/moon-detail-pre-cache.mjs'))),'3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0'));
 for(const [file,expected] of Object.entries(protectedCurrentMaterial))test(file+' matches adopted V5 material/profile/opaque source',()=>assert.equal(sha(fs.readFileSync(path.join(candidateRoot,file))),expected,file));

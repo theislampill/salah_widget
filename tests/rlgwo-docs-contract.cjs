@@ -10,7 +10,6 @@ const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const root = path.resolve(process.argv[2] || path.join(__dirname, '..'));
 const sourceOnly = process.argv.includes('--source-only');
-const unadoptedComposedDocs = process.argv.includes('--unadopted-composed-docs');
 const ref = process.argv.find(arg => arg.startsWith('--ref='))?.slice(6);
 const scope = process.argv.find(arg => arg.startsWith('--scope='))?.slice(8);
 assert(!scope || ['R001B', 'R001C'].includes(scope), 'scope must be R001B or R001C');
@@ -463,13 +462,6 @@ function mentions(name, tokens) {
       assert.throws(() => assert(privacy.replaceAll('Nominatim', 'withheld').includes('Nominatim')));
     });
     if (!historicalBaseline) {
-      // R0028 DG-1 (a), conservative default: these ten cases encode README/DESIGN/ARCHITECTURE/
-      // HANDOFF/OPTICS text that exists only in the unmerged docs commits bdc806f0
-      // (integration/rlgwo-r0001-r0025-20261002 and related prayer branches) and 89b29c47
-      // (codex/rlgwo-docs-final-20261002). They remain valid there and are retired on main: they
-      // run only with --unadopted-composed-docs. Re-enable by default if that documentation is
-      // merged. Retirement records: tests/expected-failures.json (status "retired").
-      if (unadoptedComposedDocs) {
       await check('docs composed: useful model estimate without local observation or arrival', () => {
         mentions('README.md', ['Model estimate', '≈', 'local precipitation', 'nearby', 'arrival']);
         const weather = region(sources['DESIGN.md'], '### Weather truthfulness (critical)', '\n## Star');
@@ -483,14 +475,11 @@ function mentions(name, tokens) {
         mentions('DESIGN.md', ['synthetic-present-v1', 'underlying', 'exclusive', 'outage', 'generation', 'trusted:true']);
         mentions('AGENTS.md', ['model estimate', 'synthetic']);
       });
-      }
-      // Adopted on main and green: not retired.
       await check('docs composed: fix acquisition age and portable privacy survive saving', () => {
         mentions('README.md', ['acquisition', 'Saving settings does not renew', 'Portable', 'partition']);
         mentions('DESIGN.md', ['locationEvidence', 'accuracyM', 'acquiredAt', 'savedAt', 'fixed-site']);
         assert(!/precise GPS|stores nothing about you/.test(sources['README.md']), 'unsupported precision/privacy claim');
       });
-      if (unadoptedComposedDocs) {
       await check('docs composed: ordinary wall and explicit anchored one-times authorities', () => {
         mentions('DESIGN.md', ['Date.now()', 'backward', 'timeScale=1', 'anchored', 'Countdown unavailable']);
       });
@@ -520,7 +509,6 @@ function mentions(name, tokens) {
         mentions('HANDOFF.md', ['30', '141', 'Apple Bash 3.2', 'PARTIAL', 'round-4', 'held']);
         assert(!/\?run=1|manual Run button/.test(sources['ARCHITECTURE.md']), 'unimplemented smoke opt-in');
       });
-      }
       await check('docs composed: two legacy SIM comments describe synthetic preview amount', () => {
         const parameter = sources['index.html'].match(/^\s*precip:\s*q\.get\("simPrecip"\).*$/m)?.[0];
         const defaultComment = sources['index.html'].match(/^\s*\/\/ default a code-appropriate.*$/m)?.[0];

@@ -89,7 +89,7 @@ COMPLETE_REASONS = ('complete TAP terminal', 'complete named result array',
                     'complete case lines and matching JSON terminal')
 CENSUS_PATTERNS = ('tests/*.cjs', 'tests/*.js', 'tests/*.mjs', 'tests/*.py', 'tests/**/*.test.cjs',
                    'tests/**/*.test.mjs', 'tests/**/*_test.py', 'tests/**/*.cjs', 'moon/tests/*.test.cjs',
-                   'moon/tests/*.py')
+                   'moon/tests/*.py', 'tools/**/test_*.py')
 
 
 def digest(path):
@@ -463,6 +463,15 @@ def census(root, plan, manifest):
                for path in sorted(declared) if not (root / path).is_file()]
     errors += ['path is both selected and declared module/exclusion: ' + path
                for path in sorted(declared & covered)]
+    # The glob command is derived from disk; the manifest pins its expected members so a
+    # deleted (or silently added) glob file is a setup error, not a smaller green population.
+    expected = manifest.get('nativeTestGlob')
+    glob = sorted(path.relative_to(root).as_posix() for path in (root / 'tests').glob('*.test.cjs'))
+    if not isinstance(expected, list):
+        errors.append('population manifest must list nativeTestGlob members')
+    else:
+        errors += ['registered glob member missing: ' + path for path in sorted(set(expected) - set(glob))]
+        errors += ['glob member not registered in nativeTestGlob: ' + path for path in sorted(set(glob) - set(expected))]
     return errors
 
 

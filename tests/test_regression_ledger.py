@@ -208,7 +208,8 @@ class PopulationTests(unittest.TestCase):
     def manifest(self, **extra):
         value = {"schema": runner.POPULATION_SCHEMA, "commands": [
             {"name": "extra", "argv": ["node", "tests/extra.cjs"], "protocol": "auto", "covers": ["tests/extra.cjs"],
-             "inputs": ["tests/extra.cjs"]}], "modules": [], "exclusions": []}
+             "inputs": ["tests/extra.cjs"]}], "modules": [], "exclusions": [],
+            "nativeTestGlob": ["tests/probe.test.cjs"]}
         value.update(extra)
         (self.root / runner.POPULATION_FILE).write_text(json.dumps(value))
 
@@ -247,6 +248,17 @@ class PopulationTests(unittest.TestCase):
         self.assertEqual(result["commands"][0]["status"], "PASS")
         self.assertEqual(result["status"], "INCOMPLETE")
         self.assertTrue(any("tests/extra.cjs" in error for error in result["setupErrors"]))
+
+    def test_g10_deleted_or_unlisted_glob_member_is_a_setup_error(self):
+        self.manifest()
+        self.assertEqual(self.errors(), [])
+        (self.root / "tests/probe.test.cjs").unlink()
+        self.assertTrue(any("registered glob member missing: tests/probe.test.cjs" in error for error in self.errors()))
+        (self.root / "tests/probe.test.cjs").write_text("//\n")
+        (self.root / "tests/added.test.cjs").write_text("//\n")
+        self.assertTrue(any("glob member not registered in nativeTestGlob: tests/added.test.cjs" in error for error in self.errors()))
+        self.manifest(nativeTestGlob=None)
+        self.assertTrue(any("must list nativeTestGlob" in error for error in self.errors()))
 
     def test_g10_module_or_exclusion_needs_reason_owner_and_an_existing_path(self):
         self.manifest(exclusions=[{"path": "tests/extra.cjs", "reason": "controlled"}])
@@ -298,6 +310,8 @@ class LedgerMutationTests(unittest.TestCase):
              ("LedgerTests.test_g07_abort_before_terminal_is_never_expected_fail",)),
             ("census-blind", "    errors = ['unregistered instrument", "    errors = [] and ['unregistered instrument",
              ("PopulationTests.test_g10_new_unregistered_instrument_is_a_setup_error",)),
+            ("glob-pin-ignored", "        errors += ['registered glob member missing: ' + path", "        errors += [] and ['registered glob member missing: ' + path",
+             ("PopulationTests.test_g10_deleted_or_unlisted_glob_member_is_a_setup_error",)),
         ]
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
