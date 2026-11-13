@@ -4,9 +4,15 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {load,makeElement,syntheticDisc,sha,root}=require('./r001d-harness.cjs');
 const sourcePath=process.argv[2]||path.join(root,'index.html'),source=fs.readFileSync(sourcePath,'utf8');
-function change(from,to){assert.equal(source.split(from).length,2,'mutation anchor must match once');return source.replace(from,to);}
+// The generated entry also inlines a Moon bootstrap copy of nativeLunarPresentation
+// that this VM does not execute, so anchors are scoped to the executed native owner
+// (still exactly once there). Sampler probes use the Moon-runtime surface double (R0028).
+const {nativeInlineRuntime}=require('./native-inline-runtime.cjs');
+const nativeBody=nativeInlineRuntime(source),nativeStart=source.indexOf(nativeBody);
+assert.ok(nativeStart>=0&&source.indexOf(nativeBody,nativeStart+1)<0,'native owner body located once');
+function change(from,to){assert.equal(nativeBody.split(from).length,2,'mutation anchor must match once');return source.slice(0,nativeStart)+nativeBody.replace(from,to)+source.slice(nativeStart+nativeBody.length);}
 function freshProbe(html){const h=load({source:html});h.run('render();_simBase+=60000;applyTheme(model());renderMoon();');assert.equal(h.select('.c').dataset.fx,'cloud');return h.run('qaState().moonTruth.moonSkyFresh')===false;}
-function samplerProbe(html){const h=load({source:html,debugMoon:true}),cv=makeElement('canvas');cv.ctx.data=syntheticDisc().data;h.ctx.__sampleCanvas=cv;h.run('_moonCv=__sampleCanvas;renderMoon();');assert.ok(h.select('.dbgmoon').textContent.includes('MOON frac'));return /limb[^\n]*0\/255/.test(h.select('.dbgmoon').textContent);}
+function samplerProbe(html){const h=load({source:html,debugMoon:true}),cv=makeElement('canvas');cv.ctx.data=syntheticDisc().data;h.ctx.__sampleCanvas=cv;h.run('window.SalahMoonRuntime={surface:()=>__sampleCanvas,request(){}};renderMoon();');assert.ok(h.select('.dbgmoon').textContent.includes('MOON frac'));return /limb[^\n]*0\/255/.test(h.select('.dbgmoon').textContent);}
 function boundsProbe(html){const h=load({source:html});h.ctx.__pixels=syntheticDisc().data;return h.run('sampleMoonPixel(__pixels,300,300,300,150).status')==='OOB';}
 function zeroProbe(html,prop){const h=load({source:html});h.run('SIM.moon="0.01";render();');assert.equal(h.select('.c').dataset.fx,'cloud');return +(prop==='--mgo'?h.select('.mglow'):h.select('.c')).style.getPropertyValue(prop)===0;}
 function appearanceProbe(html){const h=load({source:html,hash:'#lat=24.47&lon=39.61&tz=Asia%2FRiyadh&units=c&seed=1&simMoon=.5&simWax=1&simMoonAlt=20&simMoonH=42'});assert.equal(h.run('FOLLOW_WALL_CLOCK'),true);h.run('SIM.moon="1";render();');const before=h.run('JSON.stringify(_starEls.map(e=>e.style.opacity))'),positions=h.run('JSON.stringify(_starEls.map(e=>[e.getAttribute("cx"),e.getAttribute("cy")]))');h.clock.wall+=60000;h.clock.now+=60000;h.run('SIM.moon="0.01";render();');assert.equal(h.run('JSON.stringify(_starEls.map(e=>[e.getAttribute("cx"),e.getAttribute("cy")]))'),positions);return h.run('JSON.stringify(_starEls.map(e=>e.style.opacity))')!==before;}

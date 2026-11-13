@@ -80,20 +80,23 @@ test('consumed diagnostic and nested identities are immutable',()=>{
   const h=fixture();h.run('render()');
   assert.equal(h.run('Object.isFrozen(_lastMoonPaint)&&Object.isFrozen(_lastMoonPaint.observation)&&Object.isFrozen(_lastMoonPaint.observation.produced)&&Object.isFrozen(_lastMoonPaint.observation.expected)&&Object.isFrozen(_lastMoonPaint.observation.light)'),true);
 });
+// moonDebugSamples() reads its surface from window.SalahMoonRuntime.surface()
+// (V5 Moon owner, 890d5bdb); the old _moonCv slot is no longer read. The double
+// supplies only that surface and an inert request(); assertions are unchanged (R0028).
 test('actual debug readout distinguishes dark opaque limb and canvas exterior',()=>{
   const h=fixture({debugMoon:true}),disc=syntheticDisc(),cv=makeElement('canvas'); cv.ctx.data=disc.data;
-  h.ctx.__sampleCanvas=cv; h.run('_moonCv=__sampleCanvas; renderMoon();');
+  h.ctx.__sampleCanvas=cv; h.run('window.SalahMoonRuntime={surface:()=>__sampleCanvas,request(){}}; renderMoon();');
   const read=h.select('.dbgmoon').textContent;
   assert.match(read,/limb[^\n]*0\/255/);
   assert.match(read,/canvas exterior[^\n]*0\/0/);
 });
 test('bright-disc positive debug readout is not hardcoded dark',()=>{
   const h=fixture({debugMoon:true}),cv=makeElement('canvas'); cv.ctx.data=syntheticDisc(true).data;
-  h.ctx.__sampleCanvas=cv; h.run('_moonCv=__sampleCanvas; renderMoon();');
+  h.ctx.__sampleCanvas=cv; h.run('window.SalahMoonRuntime={surface:()=>__sampleCanvas,request(){}}; renderMoon();');
   assert.match(h.select('.dbgmoon').textContent,/limb[^\n]*255\/255/);
 });
 test('sampler coordinates and geometry use actual dimensions/shared radius',()=>{
-  const h=fixture(),cv=makeElement('canvas');cv.ctx.data=syntheticDisc().data;h.ctx.__sampleCanvas=cv;h.run('_moonCv=__sampleCanvas');
+  const h=fixture(),cv=makeElement('canvas');cv.ctx.data=syntheticDisc().data;h.ctx.__sampleCanvas=cv;h.run('window.SalahMoonRuntime={surface:()=>__sampleCanvas,request(){}}');
   const p=h.run('moonDebugSamples()');assert.equal(p.width,300);assert.equal(p.height,300);assert.equal(p.radius,144);
   assert.deepEqual(Array.from(p.samples,s=>[s.label,s.x,s.y,s.status,s.lum,s.alpha]),[
     ['inner',222,150,'ok',255,255],['limb',293,150,'ok',0,255],['edge',294,150,'ok',0,255],
@@ -112,11 +115,11 @@ test('absent/empty/throwing image read is explicitly unavailable',()=>{
     if(kind==='context')cv.getContext=()=>null;
     if(kind==='empty')cv.ctx.data=new Uint8ClampedArray(0);
     if(kind==='error')cv.ctx.error=true;
-    h.ctx.__sampleCanvas=kind==='absent'?null:cv;h.run('_moonCv=__sampleCanvas');assert.equal(h.run('moonDebugSamples().status'),'unavailable');
+    h.ctx.__sampleCanvas=kind==='absent'?null:cv;h.run('window.SalahMoonRuntime={surface:()=>__sampleCanvas,request(){}}');assert.equal(h.run('moonDebugSamples().status'),'unavailable');
   }
 });
 test('cropped backing canvas does not relabel an interior pixel as exterior',()=>{
-  const h=fixture(),cv=makeElement('canvas');cv.width=200;cv.height=200;h.ctx.__sampleCanvas=cv;h.run('_moonCv=__sampleCanvas');
+  const h=fixture(),cv=makeElement('canvas');cv.width=200;cv.height=200;h.ctx.__sampleCanvas=cv;h.run('window.SalahMoonRuntime={surface:()=>__sampleCanvas,request(){}}');
   assert.equal(h.run('moonDebugSamples().samples.find(p=>p.label==="canvas exterior").status'),'unavailable');
 });
 test('PBR cache preserves reuse threshold and storage without texture changes',()=>{

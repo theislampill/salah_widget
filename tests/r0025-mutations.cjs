@@ -22,6 +22,8 @@ function run(name,suite,file){
 for(const suite of Object.keys(counts)){
   const control=run('healthy-'+suite,suite,sourcePath);assert.equal(control.exit,0);assert.equal(control.terminal.fail,0);controls.push(control);
 }
+// R0028: the undecoded-surface seam follows readiness to the Moon runtime surface owner
+// (dbc0387b replaced _pbrReady with window.SalahMoonRuntime?.surface()); same mutant intent.
 const definitions=[
   ['new-wind-before-elapsed','r0025-continuity',html=>change(change(html,'\n  advanceCloudMotion(simNow()/1000);\n','\n'),'  CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;','  CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;\n  advanceCloudMotion(simNow()/1000);')],
   ['ordinary-daily-reseed','r0025-continuity',html=>change(html,'const _cs=_cloudMotion.population;','const _cs=(_cloudFieldSeed+Math.floor(t/86400)*3.13)%617;')],
@@ -34,7 +36,7 @@ const definitions=[
   ['mask-retains-default-transform','r0021-reveal',html=>change(html,'if(mask) mask.setAttribute("transform",transform);','/* mask transform omitted */')],
   ['projection-retains-prior-anchor','r0021-reveal',html=>change(html,'if(ADVANCING || !_starsProjected || _starProjectionKey!==skySceneIdentity()) projectStars(simDate());','if(ADVANCING || !_starsProjected) projectStars(simDate());')],
   ['stale-first-paint-reveals','r0021-reveal',html=>change(html,' || !A.moonObservation || A.moonObservation.fresh!==true','')],
-  ['undecoded-surface-ready','r0021-reveal',html=>change(html,'!!(_pbrReady && photo && photo.getAttribute("href") && _skySceneKey!==null)','!!(_skySceneKey!==null)')],
+  ['undecoded-surface-ready','r0021-reveal',html=>change(html,'!!(window.SalahMoonRuntime?.surface() && photo && photo.getAttribute("href") && _skySceneKey!==null)','!!(_skySceneKey!==null)')],
 ];
 let detected=0,failed=0;
 for(const [name,suite,mutate] of definitions){

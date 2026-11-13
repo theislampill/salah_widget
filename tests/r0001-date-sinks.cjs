@@ -12,7 +12,7 @@ const config = fs.readFileSync(path.join(ROOT,'config.js'),'utf8');
 function run({source=html, format='YYYY-MM-DD', saved=false, month=false, preview=false, time='12:30', stale=false, missing=false}={}) {
   const nodes = new Map();
   const node = selector => {
-    if (!nodes.has(selector)) nodes.set(selector,{innerHTML:'',textContent:'',style:{setProperty(){}},dataset:{},attributes:{},
+    if (!nodes.has(selector)) nodes.set(selector,{innerHTML:'',textContent:'',style:{setProperty(name,value){this[name]=String(value);},removeProperty(name){delete this[name];},getPropertyValue(name){return Object.hasOwn(this,name)&&typeof this[name]==='string'?this[name]:'';}},dataset:{},attributes:{},
       getAttribute(key){return this.attributes[key]??null;},setAttribute(key,value){this.attributes[key]=String(value);},addEventListener(){}});
     return nodes.get(selector);
   };

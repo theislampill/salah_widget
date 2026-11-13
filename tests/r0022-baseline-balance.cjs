@@ -66,9 +66,20 @@ for(const [name,altitude,time] of [['daylight',20,'12:30'],['below horizon',-10,
   for(const field of protectedGainFields)assert.deepEqual(after.gains[field],(['moonGlow','moonLocalWash'].includes(field)?accepted:before).gains[field],field+' native-zero amendment');
   assert.equal(after.glow,accepted.glow);assert.deepEqual(after.cloud,before.cloud);
 });
+// R0028 changed predicate: since f71fef6c (CLOSE-R0021, certificate 6326407465, "exact embedded
+// host delivery") the generated entry also inlines a Moon bootstrap copy of nativeLunarPresentation
+// that this VM never executes. Count and mutate the anchor inside the executed native owner only;
+// a whole-file first-match replacement would mutate the unexecuted copy and escape.
+const {nativeInlineRuntime}=require('./native-inline-runtime.cjs');
+function inNativeOwner(source,from,to){
+  const body=nativeInlineRuntime(source),start=source.indexOf(body);
+  assert.ok(start>=0&&source.indexOf(body,start+1)<0,'native owner body located once');
+  assert.equal(body.split(from).length,2,'one actual native gain anchor');
+  return source.slice(0,start)+body.replace(from,to)+source.slice(start+body.length);
+}
 test('protected phase-gain guard rejects a changed .08 crescent curve',()=>{
-  const anchor='(0.35+0.65*mFrac)',hits=candidate.split(anchor).length-1;assert.equal(hits,1,'one actual native gain anchor');
-  assert.throws(()=>compareEligible(candidate.replace(anchor,'(0.36+0.64*mFrac)'),'.08'),/protected|moon|--/);
+  const anchor='(0.35+0.65*mFrac)';
+  assert.throws(()=>compareEligible(inNativeOwner(candidate,anchor,'(0.36+0.64*mFrac)'),'.08'),/protected|moon|--/);
 });
 // R0025 intentionally changes travel/population/time and periodic copy orchestration.
 // Protect the unchanged art, with an explicit mutation control, instead of requiring
@@ -82,45 +93,70 @@ function materialPart(source){
   assert.equal(source.split(start).length,2,'one current calendar/material owner');assert.equal(source.split(end).length,2,'one current catalogue boundary');
   return source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));
 }
+// R0028 re-bind: material section sha256 22e5b5c7... (18ff1486) -> ff065aad... (f71fef6c).
+// Recorded acceptance of these exact bytes: R0021 FINAL certificate 6809435795 binds commit
+// 5279958a (tree aec2075c), whose index.html carries this section byte-for-byte (sha256
+// ff065aad...); CLOSE-R0021 6326407465 binds f71fef6c (tree 79aedcac), where it first shipped.
+// Delta: the phase/position code moves into nativeLunarSnapshot() for the Moon head owner, and
+// the no-coordinates fallback now calls moonPhase(date) instead of moonNow().
+const acceptedStartupCommit='f71fef6ccf7e4efcb57b5a26688d2360461a3253',acceptedMaterialSha256='ff065aad9ebce2d31c34c9983c860d4e8137951bcf700e8cda253cc58bfc90ea';
 test('current native phase/body/Earthshine/material equations match accepted CP9/V5 owner',()=>{
-  assert.equal(sha(Buffer.from(materialPart(candidate))),'22e5b5c7abee4f3197a3a8ddfd2b5ebc879f2c9546e5d0cd298253bc98ab1392','accepted current material section');
-  assert.equal(materialPart(candidate),materialPart(acceptedNative));
+  const acceptedStartup=option('accepted-startup')?fs.readFileSync(option('accepted-startup'),'utf8'):gitSource(acceptedStartupCommit,'index.html');
+  assert.equal(sha(Buffer.from(materialPart(candidate))),acceptedMaterialSha256,'accepted current material section');
+  assert.equal(materialPart(candidate),materialPart(acceptedStartup));
 });
 test('current material guard rejects altered Earthshine without relying on old PBR wrapper bytes',()=>{
   const part=materialPart(candidate),anchor='const esFloor=0.09';
   assert.equal(part.split(anchor).length,2,'one accepted native legacy material Earthshine floor');
-  const mutated=part.replace(anchor,'const esFloor=0');assert.notEqual(sha(Buffer.from(mutated)),'22e5b5c7abee4f3197a3a8ddfd2b5ebc879f2c9546e5d0cd298253bc98ab1392','Earthshine counterfactual cannot earn material preservation');
+  const mutated=part.replace(anchor,'const esFloor=0');assert.notEqual(sha(Buffer.from(mutated)),acceptedMaterialSha256,'Earthshine counterfactual cannot earn material preservation');
 });
 // The owner-approved single-entry projection cache changes this compositor's
 // source identity. Actual old/new material, atmosphere and cloud composition
 // execute in moon-projection-cache.test.mjs and the bound native comparisons;
 // this inventory and the generated-consumer checks are packaging guards only.
-const protectedCurrentMaterial={"moon/src/surface_v5.mjs":"f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f","moon/src/moon-calendar.mjs":"b508ea0a0bbc2a68039ba71bb4be75299cfa57bcb74992be1b1b0a0eddfad953","moon/src/moon-detail.mjs":"f2596f26f19f946873792a7e121ea472b361021c8cc2b1831faa6cd10fdef07c","moon/src/moon-precision.mjs":"e0ca3303f1cbdcb87a6d80b73fdbbe132d3c8e9e0becde25435724e8ac72dca1","moon/src/moon_kernel.c":"919bf0b0a17ceb1ce3d3d7e0b5d9958bba3835b96e8558d6b518e7db1137f57f","moon/moon_kernel.wasm":"4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7","moon/asset-manifest.json":"3d4cb527489acda67082bbc97d984abbb28a11a40f0aec8b4030223fb15e9afa"};
+// R0028 re-bind: moon-detail sha256 f2596f26... -> c5f336a5... (git blob 81ebdd15) and
+// moon-precision sha256 e0ca3303... -> 57bd2781... (git blob d070bc3d). Recorded acceptance of
+// these exact bytes: R0021 FINAL certificate 6809435795 binds commit 5279958a (tree aec2075c),
+// whose two blobs are identical, and lists the public moon/moon-host.js fee33628... that embeds
+// them; CLOSE-R0021 6326407465 binds f71fef6c (tree 79aedcac), same blobs. R0021.md names
+// moon-detail c5f336a5. Delta at f71fef6c: 5 and 8 lines (initial-receiver/head compose support).
+const protectedCurrentMaterial={"moon/src/surface_v5.mjs":"f0d0b4ab0b5478979371c8c9839d53dfb688596dd08773769d7d9c254c02b65f","moon/src/moon-calendar.mjs":"b508ea0a0bbc2a68039ba71bb4be75299cfa57bcb74992be1b1b0a0eddfad953","moon/src/moon-detail.mjs":"c5f336a5f42e3774866d66215e2944b2cde7afad05db801868980121fa70a8b8","moon/src/moon-precision.mjs":"57bd2781b12dddf68857a96fb3046089b4f730611da82e9c974d66bef9f253d2","moon/src/moon_kernel.c":"919bf0b0a17ceb1ce3d3d7e0b5d9958bba3835b96e8558d6b518e7db1137f57f","moon/moon_kernel.wasm":"4fcf7888b55486947189c4a701c75ab25465714036c42fc60980e98ac0bdcbb7","moon/asset-manifest.json":"3d4cb527489acda67082bbc97d984abbb28a11a40f0aec8b4030223fb15e9afa"};
 test('frozen pre-cache compositor remains the exact adopted reference',()=>assert.equal(sha(fs.readFileSync(path.join(candidateRoot,'tests/fixtures/moon-detail-pre-cache.mjs'))),'3cfa1498918706adf21a5f8462f27f9919bed9402f179b03ae3e932500c5cba0'));
 for(const [file,expected] of Object.entries(protectedCurrentMaterial))test(file+' matches adopted V5 material/profile/opaque source',()=>assert.equal(sha(fs.readFileSync(path.join(candidateRoot,file))),expected,file));
 const moonHost=fs.readFileSync(path.join(candidateRoot,'moon/moon-host.js'),'utf8');
 const moonWorker=fs.readFileSync(path.join(candidateRoot,'moon/moon-worker.js'),'utf8');
 const moonBuild=JSON.parse(fs.readFileSync(path.join(candidateRoot,'moon/BUILD.json'),'utf8'));
+// R0028 changed predicates (tools/build_moon.py packaging delivered at f71fef6c; CLOSE-R0021,
+// certificate 6326407465: "exact embedded host delivery", the separate Moon-host HTTP response is
+// not required). The host declares `let MOON_WORKER_SOURCE=null;` and its refinement tail installs
+// the worker once through installWorkerSource(<json>); the entry embeds the host as
+// moon-initial-code and that tail as moon-refinement-code instead of <script src=moon/moon-host.js>.
+const WORKER_INSTALL=/^window\.SalahMoonRuntime\.installWorkerSource\((.+)\);$/gm;
 function boundWorker(host){
-  const declarations=[...host.matchAll(/^const MOON_WORKER_SOURCE=(.+);$/gm)];
+  const declarations=[...host.matchAll(WORKER_INSTALL)];
   assert.equal(declarations.length,1,'one actual worker payload in loaded host');
+  assert.equal(host.split('\nlet MOON_WORKER_SOURCE=null;\n').length,2,'one pending worker slot in loaded host');
   const worker=JSON.parse(declarations[0][1]);
   assert.equal(worker,moonWorker,'loaded host and standalone worker bytes');
   assert.equal(sha(Buffer.from(worker)),moonBuild.workerSha256,'canonical generated worker binding');
   return worker;
 }
 test('HTTP Moon consumer resolves the canonical host and its exact worker payload',()=>{
-  assert.equal(candidate.split('<script src="moon/moon-host.js"></script>').length,2,'single HTTP host route');
+  const inline=text=>text.replace(/<\/script/g,'<\\/script'),tail=moonHost.slice(moonHost.search(WORKER_INSTALL));
+  assert.equal(candidate.split('<script src="moon/moon-host.js"></script>').length,1,'no separate HTTP host route');
+  assert.equal(candidate.split('<script id="moon-initial-code">').length,2,'single embedded host route');
+  assert.equal(candidate.split('\n'+inline(moonHost.slice(0,moonHost.length-tail.length))+'</script>\n').length,2,'entry embeds the exact generated host');
+  assert.equal(candidate.split('<script id="moon-refinement-code">'+inline(tail)+'</script>').length,2,'entry embeds the exact refinement tail');
   assert.equal(sha(Buffer.from(moonHost)),moonBuild.hostSha256,'canonical generated host binding');
   assert.equal(boundWorker(moonHost),moonWorker);
-  assert.throws(()=>boundWorker(moonHost.replace(/^const MOON_WORKER_SOURCE=.+;$/m,'const MOON_WORKER_SOURCE="wrong worker";')),/worker/);
+  assert.throws(()=>boundWorker(moonHost.replace(/^window\.SalahMoonRuntime\.installWorkerSource\(.+\);$/m,'window.SalahMoonRuntime.installWorkerSource("wrong worker");')),/worker/);
 });
 for(const file of ['moon/src/surface_v5.mjs','moon/src/moon-calendar.mjs','moon/src/moon-detail.mjs','moon/src/moon-precision.mjs'])test(file+' actual generated host/worker consumes the exact authored material once',()=>{
   const owner=fs.readFileSync(path.join(candidateRoot,file),'utf8');
   // build_moon.concat strips trailing whitespace and appends exactly one LF.
   const generated='// '+path.basename(file)+'\n'+owner.trimEnd()+'\n';
-  // The current HTTP entry loads the host externally; surface_v5 belongs to
-  // the worker embedded in that host, while the other three have host owners.
+  // The entry embeds the generated host (see above); surface_v5 belongs to
+  // the worker installed by that host's refinement tail, the other three have host owners.
   // These packaging bindings supplement actual native material/opacity proof.
   const consumer=file.endsWith('surface_v5.mjs')?boundWorker(moonHost):moonHost;
   assert.equal(consumer.split(generated).length,2,'unique material source in actual generated consumer: '+file);
@@ -170,7 +206,17 @@ function arcGeometry(source,{lat,lon,epoch,record,zone='Asia/Riyadh'}){
   const day=[fields.day,fields.month,fields.year].join('-');
   h.ctx.__geometryPrayer=record||prayerForDate(day);
   if(!record)h.ctx.__geometryPrayer.meta.timezone=zone;
-  h.run('lat='+lat+';lon='+lon+';tz=__geometryPrayer.meta.timezone;_simBase=Date.parse('+JSON.stringify(epoch)+');_simTz=tz;today=__geometryPrayer;tomorrow=__geometryPrayer;');
+  // R0028: a synthetic record's successor is the matching next civil date in the same zone.
+  // Installing today's record as tomorrow is an impossible successor that R0007 lawfully
+  // refuses (next-day-required: no precise target or next highlight, R0007.md). Supplied
+  // records (Tromso) keep their original single-record fixture.
+  if(record)h.ctx.__geometryTomorrow=record;
+  else{
+    const [d,m,y]=day.split('-').map(Number),next=new Date(Date.UTC(y,m-1,d+1));
+    h.ctx.__geometryTomorrow=prayerForDate([next.getUTCDate(),next.getUTCMonth()+1].map(v=>String(v).padStart(2,'0')).join('-')+'-'+next.getUTCFullYear());
+    h.ctx.__geometryTomorrow.meta.timezone=zone;
+  }
+  h.run('lat='+lat+';lon='+lon+';tz=__geometryPrayer.meta.timezone;_simBase=Date.parse('+JSON.stringify(epoch)+');_simTz=tz;today=__geometryPrayer;tomorrow=__geometryTomorrow;');
   const output=h.run('drawArc(model())');
   const geometry=[...output.matchAll(/<(line|path|circle)\b([^>]*?)\/?>/g)].map(([,tag,text])=>{
     const attrs=Object.fromEntries([...text.matchAll(/([\w-]+)="([^"]*)"/g)].map(([,k,v])=>[k,v]));

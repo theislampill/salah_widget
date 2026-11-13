@@ -18,7 +18,7 @@ function session({sourcePath=path.join(ROOT,'index.html'),source,format='YYYY-MM
   const document={activeElement:null};
   function make(selector,tag='div',attrs={},connected=true){
     let html='',plain=''; const events=new Map();
-    const n={tagName:tag.toUpperCase(),id:attrs.id||'',attributes:{...attrs},dataset:{},style:{setProperty(){}},open:false,writes:0,attributeWrites:0,isConnected:connected,calls:[],
+    const n={tagName:tag.toUpperCase(),id:attrs.id||'',attributes:{...attrs},dataset:{},style:{setProperty(name,value){this[name]=String(value);},removeProperty(name){delete this[name];},getPropertyValue(name){return Object.hasOwn(this,name)&&typeof this[name]==='string'?this[name]:'';}},open:false,writes:0,attributeWrites:0,isConnected:connected,calls:[],
       get innerHTML(){return html;},set innerHTML(v){html=String(v);plain=text(html);n.writes++;},
       get textContent(){return plain;},set textContent(v){plain=String(v);html=encodeText(plain);n.writes++;},
       getAttribute:k=>n.attributes[k]??null,setAttribute:(k,v)=>{n.attributes[k]=String(v);n.attributeWrites++;},removeAttribute:k=>{delete n.attributes[k];n.attributeWrites++;},
