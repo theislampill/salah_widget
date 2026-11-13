@@ -30,7 +30,9 @@ NAMED = [
 ]
 # Compatibility mapping: entries are dispositions, never a selection filter.
 HISTORICAL = {}
-SNAPSHOT_ONLY = {'r0021-reveal.cjs', 'r0022-lunar-consumers.cjs'}
+# R0028 slice 2: r0021-reveal runs directly; its three R17-STAR-01..03 cases execute and pass
+# against the shipped entry, so the snapshot skip only hid executable evidence.
+SNAPSHOT_ONLY = {'r0022-lunar-consumers.cjs'}
 INSTRUMENT = ('native-runner-contract', (sys.executable, '-m', 'unittest', 'discover',
               '-s', 'tests', '-p', 'test_native_regression_runner.py', '-v'))
 HISTORY_INPUTS = {
