@@ -237,7 +237,7 @@ Work orders by machine (reverse view):
 Filing order is ID order. The **integration (merge) order** below is a recommendation; every merge still needs
 the owner's execution commission. Issue number is not priority.
 
-1. **Foundation.** [R0028](https://github.com/theislampill/salah_widget/issues/89) (regression instruments and the expected-failure ledger) → [R0029](https://github.com/theislampill/salah_widget/issues/90) (generator atomicity) → [R002A](https://github.com/theislampill/salah_widget/issues/91)
+1. **Foundation.** [R0028](https://github.com/theislampill/salah_widget/issues/89) (regression instruments and the expected-failure ledger) and [R0029](https://github.com/theislampill/salah_widget/issues/90) (generator atomicity), which are independent of each other, then [R002A](https://github.com/theislampill/salah_widget/issues/91)
    (gate on `main`/PRs; hard dependency on the R0028 ledger). [R002B](https://github.com/theislampill/salah_widget/issues/92) (Pages payload) is independent of the product
    chain and can start immediately.
 2. **Serial chain for the shared authored owner `src/native/index.html`** (each change rebuilds every generated
@@ -279,14 +279,17 @@ measures the deployed artifact.
   the authors the same reviewers re-read every draft: 17 of 18 cleared for filing. The R0033 reviewer
   withheld clearance on one ground only — the draft exceeded a 60,000-character drafting cap by its count
   (GitHub's limit is 65,536); its substantive blocking finding was resolved. R0033 was filed on that basis and
-  the complete published body is subject to a further independent review recorded on the issue.
+  the complete published body was then reviewed by a further independent reviewer and accepted as published
+  ([record](https://github.com/theislampill/salah_widget/issues/100#issuecomment-6840589815)). R0037 and R0039 were
+  cleared only on a third pass, after the integrator aligned three table rows with the pinned-receipt rule.
 - **Independent portfolio review.** A separate reviewer reconciled the set: 38/38 findings with exactly one owner;
   112/112 machines disposed; all 153 draft pairs disposed (individually where they share a source owner,
   invariant, test, document passage or decision gate); admission check against R0001–R0027; decision-gate
   census. First verdict "ready after required corrections" (5 blocking cross-draft items); final verdict ready
   to file once one remaining sentence in R0036 was aligned. That sentence was corrected by the integrator
-  after the re-review and was not itself re-reviewed before filing; a bounded independent review of it is
-  recorded on the issue.
+  after the re-review and was not itself re-reviewed before filing; a bounded independent review afterwards
+  found it correct and required a test amendment, recorded as binding on the issue
+  ([amendment R0036-A1](https://github.com/theislampill/salah_widget/issues/103#issuecomment-6840589436)).
 - **Publication readback.** Each issue was read back from the server after creation and again after the
   cross-link backfill; title, state (open) and complete body matched the reviewed text byte for byte (line
   endings normalised). The only differences between the reviewed drafts and the published bodies are the
