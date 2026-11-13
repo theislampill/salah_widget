@@ -24,6 +24,10 @@ REVIEWED_JEKYLL_CONFIGS = {
     # _config.yml blob 0700f748 (R0017, 02ab7a93): measured deployed Pages artifact of merge 06772824.
     "0f846f7efb27c391c66dffc66913f3eb452d5769e13170db64c2d0cd32a3e5c8":
         "docs/state-contracts/evidence/R0037/config-0f846f7e/deployed-pages-payload.json",
+    # _config.yml with the R002B evidence-tree exclusions (owner decision DG-2(a), issue 92): build-equivalent
+    # Jekyll build of b891b985 in hosted run 43368101308, protected consumers byte-identical.
+    "e11bdd3d0dbe981f1ae6de2537e4353421dbc2e4b79f051e59242f1d01506a24":
+        "docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json",
 }
 
 
