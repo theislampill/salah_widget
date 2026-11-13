@@ -3,10 +3,14 @@
 const assert=require('node:assert/strict');
 const {read,sha,widget,builder,configSession}=require('./r0018-appearance-fixture.cjs');
 const {composition,mutateTimetable}=require('./r0018-timetable-contrast.cjs');
-// Mutate the semantic settings/CSS owner. Generated native entries also contain
-// independent Moon bootstrap scripts that this recording DOM does not execute;
-// native-pinned-contrast separately checks the generated appearance policy.
-const source=read('src/native/index.html'),config=read('config.js'),builderSource=read('builder.html');
+// Mutate the generated entry's native owner (built from src/native/index.html).
+// R0017's source admission accepts only digest-pinned authored bytes, so an
+// authored-source mutant is refused as SETUP_INCOMPLETE before any consumer
+// assertion runs (R0028). The split-Moon profile pins the Moon prerequisites
+// and admits a changed native body; every seam is still unique in the file.
+// This recording DOM executes only that native owner; native-pinned-contrast
+// separately checks the generated appearance policy.
+const source=read('index.html'),config=read('config.js'),builderSource=read('builder.html');
 const valid={lat:24.47,lon:39.61,tz:'UTC',label:'Madinah',method:'4',school:'0',time:'24',units:'f',datefmt:'YYYY-MM-DD',source:'manual'};
 const once=(text,before,after)=>{assert.equal(text.split(before).length,2,'Exact single mutation seam');return text.replace(before,after);};
 const cases=[
