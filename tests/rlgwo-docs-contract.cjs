@@ -273,13 +273,10 @@ function mentions(name, tokens) {
       // body differs by later certified work orders. Body and entry = the bytes R002D delivered at main
       // e10da481 (R002D FINAL, issue 94 comment 6845125534); earlier re-bind 529c220a.../e3a3dedb...
       // (R0021 FINAL 6809435795 / R0027 FINAL 6810490146) superseded by that change.
-      // R002C re-bind (issue 93, candidate source 6e4e4588): body a772c04c... -> 811f706d..., entry 794bb701... ->
-      // 4928684d...; R002C changes only render/loop/boot containment, not the force block, helper, clamp or call above.
-      // R002E re-bind (issue 95, candidate source 32631902): body 811f706d... -> ad071c00..., entry 4928684d... ->
-      // cc9d2326...; R002E changes only the prayer status writer and the .cn fit key, not the block, helper, clamp or call.
-      // R002E comment-only successor 14e8e895: body ad071c00... -> 4f64a2c5..., entry cc9d2326... -> 5dc6d71c....
-      assert.equal(digest(body),"4f64a2c5b5b32baa077123bcc5b62bac7afeb5662488a3946d098ab993ada883",'delegated native script changed');
-      assert.equal(digest(source),"5dc6d71cad539e7b9707e5377e1194fe466235adf75e691b73e9f45134c6226b",'delegated current generated entry changed');
+      // R002C re-bind (issue 93): body a772c04c... -> bc11c040..., entry 794bb701... -> 531bea69...; R002C changes only
+      // render/loop/boot containment, not the force block, helper, clamp or call pinned above.
+      assert.equal(digest(body),"bc11c040ebf738d0e8f49a6190ea990f165d925267a3e440515a8fb470ee2a54",'delegated native script changed');
+      assert.equal(digest(source),"531bea691d326b27656a7e21c8a379deaf61e352d3f8468c6997ade2d7e2e09a",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
@@ -512,7 +509,10 @@ function mentions(name, tokens) {
       });
       await check('docs composed: actual smoke terminal contract and held qualification', () => {
         mentions('ARCHITECTURE.md', ['automatically', 'PASS', 'FAIL', 'INCOMPLETE', 'declared', 'missing']);
-        mentions('HANDOFF.md', ['30', '141', 'Apple Bash 3.2', 'PARTIAL', 'round-4', 'held']);
+        // R0028 slice 2 retirement (provenance: docs commit 89b29c47, carried by bdc806f0, never merged):
+        // the HANDOFF tokens 30/141/Apple Bash 3.2/PARTIAL/round-4/held recorded that side branch's
+        // installer round-4 status, superseded on main by the R0013/R0015/R0016 FINAL certificates
+        // (docs/state-contracts/CLOSURE_INDEX.md); not applicable to main. The ARCHITECTURE check stays.
         assert(!/\?run=1|manual Run button/.test(sources['ARCHITECTURE.md']), 'unimplemented smoke opt-in');
       });
       await check('docs composed: two legacy SIM comments describe synthetic preview amount', () => {

@@ -6965,13 +6965,15 @@ let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered sta
 // simply runs the stage again from scratch.
 const _renderFaults=new Map(), _renderFaultsReported=new Set(), _frameFaults=new Set(); let _frameRecorded=new WeakSet();
 function recordRenderFault(name,error){
-  if(error && (typeof error==="object" || typeof error==="function")){ if(_frameRecorded.has(error)) return; _frameRecorded.add(error); }   // within one render: one failure, one record (inner owner first)
+  _frameFaults.add(name);
+  // Every stage is recorded. Only the caller boundaries ("render", "frame") skip an error object an inner stage
+  // already recorded in this frame (the retained theme rethrow), so a failure is not counted twice.
+  if(error && (typeof error==="object" || typeof error==="function")){ if((name==="render"||name==="frame") && _frameRecorded.has(error)) return; _frameRecorded.add(error); }
   let message;
   try{ message=String(error&&error.message!==undefined?error.message:error); }catch(e){ message="unprintable failure"; }
   message=message.slice(0,200);
   const event=Object.freeze({at:Math.round(_RAFNOW()),message}),prior=_renderFaults.get(name);
   _renderFaults.set(name,Object.freeze({count:(prior?prior.count:0)+1,first:prior?prior.first:event,last:event}));
-  _frameFaults.add(name);
   const key=name+"\n"+message;
   if(_renderFaultsReported.has(key) || _renderFaultsReported.size>=32) return;   // repeats are counted, not re-reported
   _renderFaultsReported.add(key);
@@ -7037,8 +7039,10 @@ function render(){
     runRenderStage("weather-header",()=>paintWeatherHeader(weatherHeader(d,d.record?.isDay!==0)));
     // No accepted scene paint may leave another epoch's particles behind. The
     // independently admitted header remains usable while the timetable loads.
-    // One stage for this R000B pair (its accepted mutation instrument edits the exact two-call text).
-    runRenderStage("weather-withdrawal",()=>{ reconcileCloudPublication(d);withdrawWeatherEffects(d,"prayer timetable unavailable"); });
+    // One stage for this R000B pair (its accepted mutation instrument edits the exact two-call text). If the
+    // reconcile fails, the effects withdrawal still runs in its own stage, so no stale weather effects stay shown;
+    // only when the effects call itself was the failure is it attempted once more (bounded, both recorded).
+    runRenderStage("weather-withdrawal",()=>{ let effects=false; try{ reconcileCloudPublication(d);withdrawWeatherEffects(d,"prayer timetable unavailable");effects=true; }finally{ if(!effects) runRenderStage("weather-effects",()=>withdrawWeatherEffects(d,"prayer timetable unavailable")); } });
     runRenderStage("celestial",()=>paintCelestialWithoutTimetable(d));return;
   }
   runRenderStage("moon-geometry",()=>{ const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; } });   // minute cadence + date/location invalidation; failed production never advances the success marker
@@ -7305,7 +7309,7 @@ async function applyConfig(cfg, opts){
   resetForNewLocation();
   if(!simulationReady()) return;
   if(lat==null||lon==null){ try{ render(); }catch(e){ recordRenderFault("render",e); } return; }     // incomplete manual entry → nothing to load yet
-  startWeather();
+  try{ startWeather(); }catch(e){ recordRenderFault("weather-start",e); }   // optional relative to prayer (R002C)
   const generation=_runtimeGeneration;
   await loadPrayerData();
   if(generation!==_runtimeGeneration) return;
@@ -7378,7 +7382,7 @@ async function boot(){
   }
 
   if(!simulationReady()){finishInitialSkyDocument();return;} // coordinate detection may have changed the explicit scene's zone
-  startWeather(true); // Retained/explicit weather participates in the first scene.
+  try{ startWeather(true); }catch(e){ recordRenderFault("weather-start",e); } // Retained/explicit weather participates in the first scene; weather never blocks prayer acquisition (R002C).
   try{ render(); }catch(e){ recordRenderFault("render",e); } // Current shell/header and explicit pending prayer rows precede network settlement.
   // The first native paint adopts its scene key and invalidates the head
   // preview. Republish accepted inputs before yielding: a cache-warm browser
@@ -7436,7 +7440,7 @@ function startRenderLoop(){
   // —— MOTION TELEMETRY (&debugMotion=1): prove the sky is actually alive in normal real-time ——
   let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)
   function loop(){
-    _raf=null; _running=true;
+    _raf=null; _running=true; _frameRecorded=new WeakSet();
     try{
     _rafN++;
     if(!simulationReady()) return;

@@ -45,33 +45,14 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
-    // R002E comment-only successor at 14e8e895 (G-E1 retention ruling): authored source 83fd1b93 and the legacy-Moon
-    // structural control of its generated index 5dc6d71c. The 32631902 entries below remain admitted unchanged.
-    '83fd1b93f73c1f805eae41846c82053729599799d0ccec4a8942a24b88edbea1':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'14e8e8955bd4fc2a27da0d7cdf724ef5fb1ef535',path:'src/native/index.html',layout:'config,native'}),
-    '01c2a1d07dd460462594e6002c442b774e8ce9f384648d81d326b406fbe6d982':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'14e8e8955bd4fc2a27da0d7cdf724ef5fb1ef535',path:'index.html',
-      parentSha256:'5dc6d71cad539e7b9707e5377e1194fe466235adf75e691b73e9f45134c6226b',
-      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
-      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
-    // R002E (issue 95) prayer presentation residuals at 32631902, stacked on the R002C candidate e1839a45: authored
-    // source 5e410421 and the legacy-Moon structural control of its generated index cc9d2326. Every entry below,
-    // including R002C's 147b96cd and 224a104d, remains admitted unchanged.
-    '5e4104215bd9876e358adc512bec57a56563d13dcdaf68d9298e0e6fba1022f1':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'32631902aef802367be96568257db5bdde353eed',path:'src/native/index.html',layout:'config,native'}),
-    '70c88d928a663954f14d4aff86bed7c89d50a33a01241547bee60b19abba7f33':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'32631902aef802367be96568257db5bdde353eed',path:'index.html',
-      parentSha256:'cc9d2326f2b431258085435376968cb421a6a54d448941cad4d69af545e6c7c6',
-      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
-      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
-    // R002C (issue 93) render-loop containment at 6e4e4588, stacked on the R002D candidate 5542ef4e: authored source
-    // 147b96cd and the legacy-Moon structural control of its generated index 4928684d. Every entry below, including
+    // R002C (issue 93) render-loop containment at 46908d51 (review corrections; replaces the undelivered 6e4e4588 entry 147b96cd/224a104d), on main bcd02af2: authored source
+    // 88eade13 and the legacy-Moon structural control of its generated index 531bea69. Every entry below, including
     // R002D's e6cd59af and 9e8f20a6, remains admitted unchanged.
-    '147b96cd502ea46b32d4cc2939b8287039b26a9cca3b8bff1a53b9c1c0623031':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'6e4e4588ac429936b832ce46967a70aace39fa8a',path:'src/native/index.html',layout:'config,native'}),
-    '224a104d57fc56e2fabfd546d72f8058e54723c7bae4ee0c851f727940a00d05':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'6e4e4588ac429936b832ce46967a70aace39fa8a',path:'index.html',
-      parentSha256:'4928684dceb028f1b51378c7315ff9423dfe0b6f4bea3b5950dfec6231e56cf0',
+    '88eade138fc6cdaa42d9f1c4d086b38e68a5b5429767f164ed496be08f9d4922':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'46908d515d5e813bc0e1cb5aa22fd1bb6b7f6b3a',path:'src/native/index.html',layout:'config,native'}),
+    '78079b518620578a964eefb4646b4fd1ebd3f586c79f00cf6830c0809b804d55':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'46908d515d5e813bc0e1cb5aa22fd1bb6b7f6b3a',path:'index.html',
+      parentSha256:'531bea691d326b27656a7e21c8a379deaf61e352d3f8468c6997ade2d7e2e09a',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R002D (issue 94) timezone authority at ee2f9d12 on accepted main 5b846476: authored source e6cd59af and the

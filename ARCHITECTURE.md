@@ -208,6 +208,15 @@ reason + `data-fx`; precip-supported rain; fog ≠ rain; new/below-horizon moon 
 moonlight**; physical moon up = `--moongrp`/`--moonocc` ~1 + moonlight on; **no `.falsedawn`/`.truedawn`
 elements**; cloud identity stable across reads; observability surface present + not-stale under sim.
 
+The page runs every required case automatically when it loads; there is no run button or opt-in switch. Each
+required case declares how many assertions it must make. The summary reads PASS only when every declared case
+executed all of its assertions and none failed. Any failed assertion, callback error or harness error makes it
+FAIL. A case that times out, completes fewer assertions than it declared, or never runs is reported as missing,
+and the summary is then INCOMPLETE and names the missing cases. `window.__smoke` exposes the declared, executed,
+failed and missing cases for a driver. The wrapper uses private injected stores, synthetic prayer responses, a
+fixed reference instant and blocked remote resources, so a PASS is a deterministic source-contract result. It is
+not evidence of appearance, live motion or production behaviour (R0017).
+
 ## Exact changes made this pass
 1. **FIX (correctness):** `sunAltAt`'s declination clamp `24°` → **`27.5°`** to match `drawArc` — they are
    documented to "match exactly," but the differing clamp let the sky-sun elevation diverge from the arc when the

@@ -111,6 +111,18 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
 - Large **moon** lives in the **top-right** (mostly **in-frame** — the disc sits in the pocket *below* the
   temperature strap and *above* the arc so its right limb shows and the lunar phase is readable; only a sliver of
   the right edge clips the card). Large clipped **sun** in the **top-left**.
+- **Timetable appearance:** two row styles, selected with `appearance=glass` (the default) or
+  `appearance=contrast` in the URL hash or with Settings' "Timetable appearance" control; any other value reads
+  as glass. The owner's 16 October 2026 decision restores the historical Liquid Glass default: translucent white
+  tint, 7px backdrop blur with 135% saturation, and elapsed rows at `.42` group opacity. High Contrast retains
+  full text opacity and its `rgba(9,17,28,.90)` backing, with the strict 4.5:1 intended-color contrast
+  requirement. NEXT keeps its opaque accent and dark text; CURRENT keeps its separate inset. The two styles keep
+  distinct gates: the 4.5:1 floor is High Contrast's guarantee, while
+  the default glass does not claim that guarantee because its contrast depends on the sky behind it. The earlier R0018 default `.74` backing and
+  full-opacity policy is superseded specifically for Liquid Glass; its historical default-mode contrast evidence
+  does not certify the restored glass styling. An appearance-only settings change binds and persists the row
+  style without replacing the weather, prayer, scene or request generation. Fonts, row geometry, the 325×530
+  card, header/footer and physical sky remain unchanged.
 
 ## Prayer-time logic & arc semantics
 
@@ -171,18 +183,6 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
   or epoch; unavailable endpoints also retain only decorative progress. A selected
   next-day event supplies its own clock/key to the boundary interval and marker.
   See [R0007 state contract](docs/state-contracts/R0007.md) for guards and evidence.
-- **Timetable appearances:** the owner's 16 October 2026 decision restores the
-  historical Liquid Glass default: translucent white tint, 7px backdrop blur with
-  135% saturation, and elapsed rows at `.42` group opacity. High Contrast retains
-  full text opacity and its `rgba(9,17,28,.90)` backing, with the strict 4.5:1
-  intended-color contrast requirement. NEXT keeps its opaque accent and dark text;
-  CURRENT keeps its separate inset. The earlier R0018 default `.74` backing and
-  full-opacity policy is superseded specifically for Liquid Glass; its historical
-  default-mode contrast evidence does not certify the restored glass styling.
-  Glass contrast depends on the sky behind it and is not certified to that floor.
-  An appearance-only settings change binds and persists the row style without
-  replacing the weather, prayer, scene or request generation. Fonts, row geometry,
-  the 325×530 card, header/footer and physical sky remain unchanged.
 - The arc (`drawArc`) is **one continuous solar-elevation curve** built from real solar motion (hour angle +
   declination), NOT from prayer-to-prayer interpolation. Prayer events are *sampled onto* it. The declination is
   fit so elevation crosses **0° exactly at this date's sunrise/sunset** (the fit may slightly exceed the real
