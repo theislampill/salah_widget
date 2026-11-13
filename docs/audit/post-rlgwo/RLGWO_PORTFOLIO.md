@@ -11,6 +11,27 @@ statement, the correction is in the work order and summarised in [section 6](#6-
 verification and closure of each work order need a separate owner execution commission. Nothing here was
 implemented, and no acceptance row in any issue has been executed unless the issue says it was run while drafting.
 
+### Execution status (2026-11-13)
+
+The Status paragraph above records the state at filing and is kept as written. Since then, eight work orders
+have been accepted and closed with final certificates:
+
+- R0037 (issue 104): [final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360)
+- R002B (issue 92): [final certificate](https://github.com/theislampill/salah_widget/issues/92#issuecomment-6844979120)
+- R002D (issue 94): [final certificate](https://github.com/theislampill/salah_widget/issues/94#issuecomment-6845125534)
+- R002C (issue 93): [final certificate](https://github.com/theislampill/salah_widget/issues/93#issuecomment-6859282902)
+- R002A (issue 91): [final certificate](https://github.com/theislampill/salah_widget/issues/91#issuecomment-6860164878)
+- R0029 (issue 90): [final certificate](https://github.com/theislampill/salah_widget/issues/90#issuecomment-6860166513) (with its [evidence-pointer correction](https://github.com/theislampill/salah_widget/issues/90#issuecomment-6860222361))
+- R002E (issue 95): [final certificate](https://github.com/theislampill/salah_widget/issues/95#issuecomment-6861511641)
+- R0039 (issue 106): [final certificate](https://github.com/theislampill/salah_widget/issues/106#issuecomment-6862449283); Part A only, Part C not implemented
+
+The other ten remain open: R0028 (issue 89), R002F (issue 96), R0030 to R0036 (issues 97 to 103) and R0038
+(issue 105). The per-issue certificates are authoritative; this portfolio does not restate their evidence.
+The registry status codes that the eight certificates propose are applied in
+[IMPLICIT_STATES.md](../../../IMPLICIT_STATES.md), and each certificate is indexed in
+[CLOSURE_INDEX.md](../../state-contracts/CLOSURE_INDEX.md). The machine dispositions in section 3 keep the
+audit-baseline codes they were filed with.
+
 ## 1. Filed work orders
 
 | RLGWO | Issue | Title | Findings | Owner decision gates (defaults are in the issue) |
