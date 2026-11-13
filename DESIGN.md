@@ -457,7 +457,12 @@ static-looking sky is a regression, not a "polish" gap.
 - **Pipeline.** One rAF loop. `render()` runs each sim-second (state/sky/marker/moon). The **cloud canvas repaints
   ~13 fps** (`paintClouds(simNow()/1000)`); **star twinkle + glint scintillation, rain, fog, lightning** are CSS
   animations, independent of `render()`. The loop **pauses** (and CSS via `.c.paused`) when the iframe is hidden or
-  scrolled offscreen (visibilitychange + IntersectionObserver) — battery for a 24/7 embed.
+  scrolled offscreen (visibilitychange + IntersectionObserver) — battery for a 24/7 embed. Each `render()`
+  publishes the prayer stage (timetable, countdown, rows, arc, calendar, or the truthful withdrawal) **before** any
+  optional stage (weather sync, Moon, stars, theme/sky, lightning), and every optional stage, cloud paint, telemetry
+  and preview present runs inside a stage boundary that records a failure (`qaState().renderFaults`, first
+  occurrence reported once) and lets the frame and the next frame continue; the loop reschedules in `finally`, and
+  boot, settings apply and `SalahClock.set` contain their optional calls (R002C; `docs/state-contracts/R002C.md`).
 - **Accessibility.** Under OS `prefers-reduced-motion: reduce` the CSS reduced-motion block stops all atmospheric/
   weather animation and the cloud loop paints **one frozen frame** (no animation). `&motion=full` is an honest
   **override** (adds `.c.motionfull`, clears the JS `_RM`/`_REDUCED` flags) so motion runs even under the OS
