@@ -1,0 +1,142 @@
+{
+  "schema": "r002e-successor-documentation-receipt/v1",
+  "rule": "R002A (issue 91) section 4.3 pinned documentation-receipt rule; successor to the R0028 documentation receipt (README corrected by the R002E review: the calendar date-row sentence now names both unavailable states)",
+  "run": {
+    "id": 43478017061,
+    "workflow": "R0016 rendered README and builder context (.github/workflows/installer-preview-docs.yml)",
+    "event": "push",
+    "conclusion": "success",
+    "job": {
+      "name": "render",
+      "id": 132066885423,
+      "conclusion": "success"
+    },
+    "createdAt": "2026-11-13T17:58:21Z",
+    "headSha": "7486c1e6a56c3a65d2f641d13ecb085b81f72b27",
+    "branch": "claude/r002e-prayer-presentation-20261113"
+  },
+  "artifact": {
+    "id": 14064346716,
+    "name": "r0016-doc-context-43478017061-1",
+    "bytes": 907760,
+    "digest": "sha256:1a242d32166eddae087372126b896c0db8c30ecbb7566d812ccda947b9907b2a",
+    "digestReverified": "SHA-256 of the downloaded ZIP equals the API digest",
+    "members": {
+      "browser-setup.log": {
+        "bytes": 6838,
+        "sha256": "f2cbc35d88dd65e66773255279ea77fd854a27093358064ff4f00f5c5a01c0cc"
+      },
+      "dependencies.log": {
+        "bytes": 24,
+        "sha256": "c59541a7d8bfc9987c0aa47adf2cdd2858be8b66de5abc0331d5a6484ae63ab6"
+      },
+      "node-version.txt": {
+        "bytes": 9,
+        "sha256": "17e666b140e321b57eec7d7066da9f774ad2457620dc275d6386b5224ab416ac"
+      },
+      "npm-version.txt": {
+        "bytes": 7,
+        "sha256": "d49bd31f65cb736f4045946e1c8365657cfed300dc0e4f173af5e93ab4500e1a"
+      },
+      "package-lock.json": {
+        "bytes": 2016,
+        "sha256": "e109e1c1e2250a74f24893225e03f2232e912471c336e2312f7172e094776a5a"
+      },
+      "render.stderr": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "render.stdout": {
+        "bytes": 551,
+        "sha256": "dfc04052f40e8e8f8ed2c1d40878651ddcb270f6734359ac9753b3de197da042"
+      },
+      "render/builder-install-context.png": {
+        "bytes": 461098,
+        "sha256": "a02ebd7ad8b1ce76848206b0a879ec2aeda67b1bf41884a989c8b15dc93fc028"
+      },
+      "render/inputs.json": {
+        "bytes": 397,
+        "sha256": "809734981e74dcf302f21ac9a1307d06afae27e5499508d2252e2a1e94e1157b"
+      },
+      "render/readme-preview-policy.png": {
+        "bytes": 224950,
+        "sha256": "69219ade5796b62492877fea5f30a67e3b25955a1a963dea2254dd8f4fd8e9e3"
+      },
+      "render/readme-rendered.html": {
+        "bytes": 54323,
+        "sha256": "2abeb918a348e39fba6c57cc8b218ec86995c69e16ec50fc9afc0da3432f9838"
+      },
+      "render/readme-review-route.png": {
+        "bytes": 201830,
+        "sha256": "f6f076a3a445bd4d9881f8fa405930d7e9064b206525afaecfc133c65c430781"
+      },
+      "render/readme-visible-text.txt": {
+        "bytes": 44304,
+        "sha256": "f3fd250d7aeabd8a9d3f37693730d0aade231e8b0ee1b32aedb70e9f5d650cbd"
+      },
+      "render/result.json": {
+        "bytes": 6336,
+        "sha256": "06f3ce72ecf309b8b78f31532bf3940486c91065a8fde284ab4bbe28c47b2a87"
+      }
+    }
+  },
+  "dependencies": {
+    "node": "v22.23.5",
+    "npm": "10.9.9",
+    "playwright": "1.62.1",
+    "playwright-core": "1.62.1",
+    "marked": "17.0.5",
+    "browser": "chromium 151.0.7922.34",
+    "install": "runner step: npm install --ignore-scripts playwright@1.62.1 marked@17.0.5; lockfile retained"
+  },
+  "result": {
+    "complete": true,
+    "browserClosed": true,
+    "exitStatus": "job render success; render.stderr empty (0 bytes)",
+    "readmeChecks": {
+      "pinnedOccurrences": 4,
+      "oldPinAbsent": true,
+      "downloadSeparate": true,
+      "zeroFilesystem": true,
+      "noNetwork": true,
+      "normalNoOpen": true,
+      "builderMain": true,
+      "manual": true
+    },
+    "pageErrors": [],
+    "inputs": {
+      "readme": {
+        "bytes": 47160,
+        "sha256": "88e573391688c2c1254c08475aa8462babe41495288c23681ce63574f2b80fb5"
+      },
+      "builder": {
+        "bytes": 36147,
+        "sha256": "873e8dedfd4380d5bb8271945b23d73dc5afd3b5c8b848f67017cc4aaa41fd9f"
+      },
+      "config": {
+        "bytes": 29968,
+        "sha256": "78891de38c1c87ccae6d79a99f71b20a6fb812aaa527d4662340b749a59fcaad"
+      }
+    }
+  },
+  "verification": {
+    "inputsEqualCommittedFiles": {
+      "README.md": true,
+      "src/native/builder.html": true,
+      "src/native/config.js": true
+    },
+    "pinsInInstrumentEqualCommittedFiles": true,
+    "pinnedSentenceChecksPass": true,
+    "committedTreeHashes": {
+      "README.md": "88e573391688c2c1254c08475aa8462babe41495288c23681ce63574f2b80fb5",
+      "src/native/builder.html": "873e8dedfd4380d5bb8271945b23d73dc5afd3b5c8b848f67017cc4aaa41fd9f",
+      "src/native/config.js": "78891de38c1c87ccae6d79a99f71b20a6fb812aaa527d4662340b749a59fcaad",
+      "tools/qualification/installer_preview_docs.cjs": "4ac8b099a32c2feac9ecf3a2203e45e95e8b69ef3b38b17b4a273997dd057573",
+      ".github/workflows/installer-preview-docs.yml": "910f7bde299300ce8350079d4a1ee952a41d602305b4bd181005022c36d9b00f"
+    },
+    "committedAt": "7486c1e6a56c3a65d2f641d13ecb085b81f72b27"
+  },
+  "retained": "result.json, inputs.json, render.stdout, package-lock.json and node/npm versions copied byte-for-byte; screenshots and rendered HTML/text are not committed (their digests are under artifact.members)",
+  "historicalPredecessor": "docs/state-contracts/evidence/R002E/docs-receipt-hosted/superseded-run-43475007338/receipt.json (README 4733a84f..., run 43475007338), unchanged; superseded because the README changed after it",
+  "recordedBy": "R002E engineering worker, 2026-11-13; not independently reviewed"
+}

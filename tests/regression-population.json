@@ -18,6 +18,7 @@
   "tests/moon-fixture-anchors.test.cjs",
   "tests/native-appearance-currentness.test.cjs",
   "tests/prayer-next-event-state.test.cjs",
+  "tests/prayer-presentation-residuals.test.cjs",
   "tests/r0002-admission.test.cjs",
   "tests/r0003-ownership.test.cjs",
   "tests/r0004-boot-day.test.cjs",
@@ -1753,6 +1754,40 @@
      "<candidate index.html>"
     ],
     "protocol": "JSON on stdout {scenes, failures, rows[identical, candidateFaults]}; exit 1 on any difference (R2C-10)"
+   }
+  },
+  {
+   "path": "tools/qa/r002e_fit_discriminator.cjs",
+   "reason": "native browser measurement (Playwright Chromium/Firefox/WebKit, served generated tree, fixture prayer records, every request route-stubbed, mocked clock); stage-1 discriminator for PRA-F-23, not a headless unit instrument",
+   "owner": "R002E",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r002e_fit_discriminator.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engines",
+     "chromium,firefox,webkit",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line per engine/pair cell and a final summary line {decision: DEFECT ESTABLISHED | NO DEFECT ESTABLISHED | INCOMPLETE}; <out>/report.json and .cn crops; exit 3 when INCOMPLETE (docs/state-contracts/R002E.md §2)"
+   }
+  },
+  {
+   "path": "tools/qa/r002e_smoke_stubbed.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit running the unchanged tests/smoke.html with every non-loopback request route-aborted); not a headless unit instrument",
+   "owner": "R002E",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r002e_smoke_stubbed.cjs",
+     "<tree>",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line per engine {status, pass, fail, skip, pageErrors, abortedHosts, rolloverRow} (docs/state-contracts/R002E.md E-05)"
    }
   }
  ]

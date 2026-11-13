@@ -133,6 +133,42 @@ Complete values keep their 14px font, normal whitespace, anywhere wrapping and s
   old rows cannot nominate a current next prayer: values/highlights/countdown
   withdraw to an explicit unavailable state. Calendar source disclosure remains
   independent. `qaState().cache` exposes `prayerStale` and `rolloverPendingMs`.
+  Staleness is disclosed by the footer `stale` tag beside the AH value and by the
+  Calendar dates dialog. The dimmed date-row style `.c[data-stale="prayer"]` is set
+  only on the timetable branch, which a stale record never reaches except for one
+  frame when the device wall clock steps back across civil midnight between the
+  day check and the render. The style and its writer are retained unchanged for
+  that one frame ([R002E](docs/state-contracts/R002E.md) gate G-E1, resolved by retention).
+- **Status line:** one owner, `writePrayerStatus`, writes the large next time
+  (`.nt`) and the line under it (`.left`); nothing ranks the messages, so the
+  later write is the visible one. Before the first publication the markup shows
+  `Loading…`. A bare embed without coordinates shows `Add lat & lon to the URL`.
+  An invalid explicit scene shows `Simulation time unavailable`, republished on
+  every loop frame; a direct `render()` in between (for example a clock control)
+  shows `Prayer times unavailable` until the next frame, and when the scene was
+  already invalid at boot no loop runs, so that text stays. A load failure for the
+  current generation with no timetable shows `Could not load prayer times` until
+  the next render replaces it with `Prayer times unavailable`, which is also the
+  text whenever no admitted current-day record exists (loading, stale, wrong zone).
+  With a current timetable but no supported next event the time is `—` and the
+  line reads `Countdown unavailable`; otherwise it is the countdown. The countdown
+  reads the single clock: in ordinary loads `Date.now()` on every call, so a
+  backward or forward device correction is followed at the next render; an
+  explicit `timeScale=1` or other anchored preview counts from its anchor instead.
+- **Countdown name fit:** the current-period name is sized against the drawn rail
+  once per fit key: name, sunrise, sunset, noon, the model declination, the
+  runtime generation (a location change starts a new one) and the web-font face
+  states. A site or day change therefore refits instead of reusing the previous
+  geometry ([R002E](docs/state-contracts/R002E.md) §2).
+- **Calendar date row:** the footer and the Calendar dates dialog show one
+  selected provider payload. Before Maghrib that is today's record; from Maghrib
+  the matching next-day record's Hijri date, when that record is admitted for the
+  current zone. Otherwise today's usable Hijri date stays, marked
+  `Sunset date update unavailable`, and is never relabelled as advanced; with no
+  usable selected Hijri value the row reads `Hijri date unavailable`. The dialog names the
+  convention as `Aladhan; <method>` from the selected payload, or
+  `calendar convention unavailable`. No anomaly classifier exists: the widget
+  never infers an offset or a corrected date from provider labels.
 - **Next and current:** `.p.on` is the next event and uses a stable accent plate
   with dark text; `.p.now` independently outlines the current prayer. Future rows
   stay readable glass, elapsed rows are subdued, and Forenoon has no current row.

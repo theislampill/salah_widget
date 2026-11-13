@@ -293,6 +293,7 @@ Read with: [REPORT.md](REPORT.md) (method, verification, limits), the registry
 - **Registry:** [ISM-PRAY-004](../../../IMPLICIT_STATES.md#ism-pray-004), [ISM-PRAY-005](../../../IMPLICIT_STATES.md#ism-pray-005). Lane ID: A-F04.
 - **Evidence class:** demonstrated (probe A P5 re-run; source). The only writer, S:3518, is on the model branch, unreachable while stale (S:2329–2331 → `!M` branch); the staletag still discloses staleness; `warmEnd`/`needTomorrow` (S:2386, S:2392) have no reader; `_rolloverBusy`/`_rolloverNextTry`/`fetchingTomorrow` duplicate slot state and feed only `qaState` (S:3577).
 - **Severity:** low; redundant state raises drift risk. Any visual change needs owner approval.
+- **Disposition (R002E, issue 95, amendment R002E-A2).** The stale marker is **reachable in one clock-step-back interleaving; retained**: when the device wall clock steps back across civil midnight between `maintainPrayerDay` and `render` within one loop frame, `render` publishes the model with `data-stale="prayer"` for that frame and the next frame clears it ([R002E](../../state-contracts/R002E.md) §1.1; pinned by `tests/prayer-presentation-residuals.test.cjs`). The rule and its writer are kept unchanged. "Unreachable" above is corrected accordingly. The mirror-flag part is kept and enforced consistent by test; `warmEnd`/`needTomorrow` are kept as instrument seams (not unused by instruments).
 
 <a id="pra-f-22"></a>
 ## PRA-F-22 — Preview host lifecycle asymmetries
