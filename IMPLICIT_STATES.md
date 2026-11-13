@@ -1453,7 +1453,7 @@ Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/a
 - **Accepted evidence.** R000F invariants scenario (current snippets only); native layout cell
 - **Tests.** R000F `invariants` scenario
 - **Observed facts.** README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); values agree across modules at baseline (OM-06)
-- **Proposed status (R0037, issue 104).** Pending owner decision DG2 (README V1 wrapper size): R0037 measured that a 325×530 wrapper is not pixel-neutral for the frozen V1 card (its box-shadow and some glass pixels differ), so the README V1 snippet stays 330×534 on this branch and the cells above stay at the audit baseline. See [R0037 DG2](docs/state-contracts/R0037.md#dg2--readme-v1-wrapper-size-pending-owner).
+- **Proposed status (R0037, issue 104).** Owner decision DG2 (amendment R0037-A1): the frozen V1 README snippet stays 330×534, V1's card-plus-drop-shadow footprint (native comparison: 3,102 pixels differ inside the card box at 325×530); the 325×530 rule applies to the current widget. On the R0037 slice-2 branch the README states the current-version size and no longer says "change only `src`", AGENTS.md names the V1 snippet as the documented exception, and the R000F `invariants` scenario asserts the current-version size statement. This removes the contradiction that made D DWE; proposed D / I / V **PEX / PEX / PEX**, taking effect only on acceptance (the renderer-literal census OM-06 stays with R0034). The cells above stay at the audit baseline until then.
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
 
 <a id="ism-cfg-011"></a>

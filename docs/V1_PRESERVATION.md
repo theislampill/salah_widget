@@ -136,9 +136,15 @@ is `325×530` (`v1/index.html`: global `box-sizing:border-box`; `.c` sets
 `width:325px;height:530px;border-radius:28px` and `box-shadow:0 18px 50px #0008`).
 In a `330×534` wrapper, part of that shadow shows in the margin and in the
 rounded-corner cut-outs; a `325×530` wrapper clips it. The two sizes are therefore
-not pixel-identical for V1 (R0037 measurement). Which size the README V1 snippet
-should use is an open owner decision (R0037 decision gate DG2); until then it
-stays `330×534`.
+not pixel-identical for V1 (R0037 measurement: 3,102 pixels differ inside the card
+box). The drop shadow is part of the intended design of both the frozen V1 card and
+the current widget. The owner decided (R0037 DG2, Option A, amendment A1) that the
+README V1 snippet stays `330×534`, V1's visual footprint including part of its
+shadow, so V1's wrapper intentionally differs from the current widget's `325×530`.
+`330×534` still clips the outermost part of the shadow; that is acknowledged. Any
+future change to V1's framing must preserve the shadow and be separately justified.
+The `325×530` wrapper requirement, and the current widget's geometry and shadow, are
+unchanged. Evidence: [side-by-side and difference map](state-contracts/evidence/R0037/native-r37-13/dg2-side-by-side.png).
 
 Provider responses and observer coordinates are controlled fixtures. Browser time,
 timezone, viewport, DPR and reduced-motion preference are controlled. Google Fonts

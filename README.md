@@ -555,8 +555,7 @@ Provider retention or handling is not established by this widget-source descript
 
 ## Preserved V1 compatibility URL
 
-After the preservation PR is merged and Pages deploys, `/salah_widget/v1/` serves
-the frozen pre-overhaul application. The root URL remains the current version.
+`/salah_widget/v1/` serves the frozen pre-overhaul application. The root URL remains the current version.
 V1's clock, location, prayer timetable, weather and externally hosted fonts remain
 live. Local settings and caches use V1-specific keys; valid existing root settings
 are copied once without changing root data.
@@ -572,7 +571,13 @@ are copied once without changing root data.
 </iframe>
 ```
 
-For the current version, change only `src` to
-`https://theislampill.github.io/salah_widget/#local=1`.
-The iframe dimensions and internal card layout are unchanged.
+This frozen V1 snippet is intentionally 330×534, unlike the current version: that
+is V1's visual footprint, the 325×530 card plus part of its drop shadow, which is
+part of the design (owner decision on R0037 DG2). The outermost part of the shadow
+is still clipped; that is acknowledged.
+The current version uses a 325×530 wrapper: use the current-version snippets
+above, or change `src` to `https://theislampill.github.io/salah_widget/#local=1`
+and the size to `width:325px;height:530px`.
+V1 is not maintained and keeps known defects; see
+[known limitations of the frozen copy](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy).
 See [preservation provenance, validation and limitations](docs/V1_PRESERVATION.md).
