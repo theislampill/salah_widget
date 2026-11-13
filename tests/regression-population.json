@@ -1797,6 +1797,22 @@
     ],
     "protocol": "one JSON line per engine {status, pass, fail, skip, pageErrors, abortedHosts, rolloverRow} (docs/state-contracts/R002E.md E-05)"
    }
+  },
+  {
+   "path": "tools/qa/run_r002f_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, one served generated tree, every non-loopback request route-stubbed: floor-to-15-min Open-Meteo stub, Aladhan fixture, empty RainViewer; mocked Date/timers/rAF/performance.now); not a headless unit instrument",
+   "owner": "R002F",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r002f_native.cjs",
+     "<playwright package>",
+     "<tree>",
+     "<fresh dir>",
+     "chromium,firefox,webkit"
+    ],
+    "protocol": "one JSON summary line per engine and poll phase {withdrawnAtMs, deckBackAtMs, headerBackAtMs, withdrawnFramesShowNothing, identityKept, requestsRelativeToB, pageErrors}; per-run JSON with 4 fps samples and three PNG crops (docs/state-contracts/R002F.md 5.2); exit 0 when every run completed"
+   }
   }
  ]
 }
