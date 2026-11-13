@@ -129,7 +129,7 @@ jobs:
           git show "$GITHUB_SHA:tools/qualification/delivery_identity.py" > "$tool/qualification/delivery_identity.py"
           main="$(git rev-parse HEAD)"; parent="$(git rev-parse HEAD^1)"
           echo "main=$main parent=$parent tool=$GITHUB_SHA" | tee "$out/controls-input.txt"
-          excluded="$(git ls-tree -r --name-only "$main" docs/rlgwo-execution/20261014/R000C/native/ | head -n 1)"
+          excluded="$(git ls-tree -r --name-only "$main" docs/rlgwo-execution/20261014/R000C/native/ | sed -n '1p')"  # no early-closing reader under pipefail
           test -n "$excluded"
           set +e
           python3 "$tool/qualification/delivery_identity.py" --root "$GITHUB_WORKSPACE" --commit "$main" \

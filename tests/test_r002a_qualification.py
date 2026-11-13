@@ -322,6 +322,43 @@ class SuitesVerdict(unittest.TestCase):
         self.assertEqual(receipt['verdict'], 'INCOMPLETE')
 
 
+class AcceptedHistory(Fixture):
+    """Precondition control: a missing accepted-history object makes suites INCOMPLETE, naming it."""
+
+    def run_suites(self, locators):
+        git(self.root, 'init', '-q')
+        write(self.root, 'index.html', 'accepted\n')
+        head = self.commit()
+        results = {'commands': [row('docs', 'PASS')], 'status': 'PASS', 'verdict': 'PASS', 'setupErrors': [],
+                   'ledger': {'capabilities': {}, 'declared': []}}
+        write(self.root, 'tools/cp9/run_native_regressions.py',
+              'import json, pathlib, sys\nHISTORY_INPUTS = ' + repr({'r0022-baseline-balance': tuple(
+                  loc.replace('HEAD', head) for loc in locators)}) + '\n'
+              'if __name__ == "__main__":\n    out = pathlib.Path(sys.argv[sys.argv.index("--output") + 1]); out.mkdir()\n'
+              '    (out / "results.json").write_text(' + repr(json.dumps(results)) + ')\n    sys.exit(0)\n')
+        write(self.root, 'tests/expected-failures.json', '{"entries": []}')
+        out = self.out()
+        code = quiet(gate.suites, self.root, out)
+        return code, json.loads((out / 'suites.json').read_text())
+
+    def test_present_objects_pass(self):
+        code, receipt = self.run_suites(['HEAD:index.html'])
+        self.assertEqual((code, receipt['verdict']), (0, 'PASS'))
+        self.assertEqual(receipt['acceptedHistory']['missing'], [])
+
+    def test_missing_object_is_incomplete_and_named(self):
+        missing = '8b83df029966c203a503ab217d121c48b8ee6e8a:index.html'
+        code, receipt = self.run_suites(['HEAD:index.html', missing])
+        self.assertEqual((code, receipt['verdict']), (1, 'INCOMPLETE'))
+        self.assertIn(missing, receipt['reason'])
+        self.assertEqual([o['available'] for o in receipt['acceptedHistory']['objects']], [True, False])
+
+    def test_repository_runner_inputs_are_present_here(self):
+        rows, missing = gate.accepted_history(ROOT)
+        self.assertEqual(missing, [])
+        self.assertGreaterEqual(len(rows), 7)
+
+
 class Delivery(Fixture):
     """G-09 at the unit level: no identical without a built status for the exact commit."""
 

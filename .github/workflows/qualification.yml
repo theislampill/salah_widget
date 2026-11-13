@@ -76,8 +76,11 @@ jobs:
         timeout-minutes: 15
         with:
           ref: ${{ env.GATE_SHA }}
-          # Registered instruments read historical blobs (runner HISTORY_INPUTS, docs-contract pins).
+          # Registered instruments read historical blobs (runner HISTORY_INPUTS, docs-contract pins). They are
+          # reachable from main, other branches or a tag (evidence/r0022-accepted-prayer-8b83df02), so fetch
+          # every branch and tag; the suites job checks the objects first (accepted-history precondition).
           fetch-depth: 0
+          fetch-tags: true
           persist-credentials: false
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         timeout-minutes: 5

@@ -239,7 +239,33 @@ def summarize_suites(results, python, ledger_entries=()):
             'sourceUnchanged': results.get('sourceUnchanged'), 'declared': results.get('ledger', {}).get('declared', [])}
 
 
+def accepted_history(root):
+    """Precondition: every accepted-history object the runner reads (its HISTORY_INPUTS) is in this clone.
+
+    The objects are reachable on GitHub from `main`, a branch or a tag (8b83df02 through the tag
+    `evidence/r0022-accepted-prayer-8b83df02`), so the gate checkout fetches full history and tags. A missing
+    object is reported here by name and makes the suites verdict INCOMPLETE; it is never converted into a pass."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('gate_runner_inputs', root / RUNNER)
+    try:
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        inputs = getattr(module, 'HISTORY_INPUTS', {})
+    except Exception as error:  # an unreadable runner is a setup failure, not a pass
+        return [], ['runner HISTORY_INPUTS unreadable: ' + str(error)]
+    rows, missing = [], []
+    for command, locators in sorted(inputs.items()):
+        for locator in locators:
+            ok = git(root, 'cat-file', '-e', locator, check=False).returncode == 0
+            rows.append({'command': command, 'locator': locator, 'available': ok})
+            if not ok:
+                missing.append('accepted-history object unavailable for ' + command + ': ' + locator
+                               + ' (fetch full history and tags; the runner would report it set-up INCOMPLETE)')
+    return rows, missing
+
+
 def suites(root, out, python=sys.executable, timeout=None):
+    history, missing = accepted_history(root)
     runner_out = out / 'runner'
     argv = [python, RUNNER, '--output', str(runner_out)]
     if timeout:
@@ -270,8 +296,14 @@ def suites(root, out, python=sys.executable, timeout=None):
     if child.returncode != expected_exit:
         receipt['status'] = 'INCOMPLETE' if summary['status'] != 'FAIL' else 'FAIL'
         receipt['reason'] = 'runner exit ' + str(child.returncode) + ' disagrees with verdict ' + str(summary['runnerVerdict'])
+    receipt['acceptedHistory'] = {'objects': history, 'missing': missing}
+    if missing and receipt['status'] != 'FAIL':
+        receipt['status'] = 'INCOMPLETE'
+        receipt['reason'] = '; '.join(missing)
     receipt['verdict'] = summary['runnerVerdict'] if receipt['status'] == summary['status'] else receipt['status']
-    lines = ['- runner verdict (verbatim): `' + str(summary['runnerVerdict']) + '`, exit ' + str(child.returncode),
+    lines = ['- accepted-history precondition: ' + (str(len(history)) + ' objects present' if not missing
+                                                    else 'MISSING - ' + '; '.join(missing)),
+             '- runner verdict (verbatim): `' + str(summary['runnerVerdict']) + '`, exit ' + str(child.returncode),
              '- J2 node instruments and docs contract: `' + summary['jobs']['J2']['verdict'] + '` ('
              + str(summary['jobs']['J2']['commands']) + ' commands)',
              '- J3 Python instruments: `' + summary['jobs']['J3']['verdict'] + '` ('
