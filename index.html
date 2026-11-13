@@ -5683,13 +5683,13 @@ function skySceneIdentity(){
 }
 let _skySceneKey=null,_skyCommitted=false,_skyMoonPresence=0;
 let _skyInitialDocument=true;
-function finishInitialSkyDocument(){_skyInitialDocument=false;window.SalahMoonRuntime?.finishInitialDocument();}
+function finishInitialSkyDocument(){_skyInitialDocument=false;try{window.SalahMoonRuntime?.finishInitialDocument();}catch(e){recordRenderFault("moon-handoff",e);}}
 // PRAYER owns calls at boot and after accepted configuration invalidation, before builders.
 function beginSkyScene(initialDocument=false){
   window.SalahSkyPreview?.clear("native beginSkyScene");
   window.SalahRealSky?.invalidate("native beginSkyScene");
   if(!initialDocument)_skyInitialDocument=false;
-  window.SalahMoonRuntime?.invalidate("native beginSkyScene",{initialDocument:initialDocument&&_skyInitialDocument&&_runtimeGeneration===0});
+  try{ window.SalahMoonRuntime?.invalidate("native beginSkyScene",{initialDocument:initialDocument&&_skyInitialDocument&&_runtimeGeneration===0}); }catch(e){ recordRenderFault("moon-invalidate",e); }   // R002C: the native scene withdrawal below always completes
   const c=$(".c"); if(c){ c.classList.add("sky-pending","sky-initializing"); c.classList.remove("moon-ready"); }
   _skySceneKey=null; _skyCommitted=false; _skyMoonPresence=0; _starsProjected=false;
   withdrawCloudState(null,"scene superseded",cloudPublicationReceipt().revision?"superseded":"uninitialised");
@@ -6799,7 +6799,8 @@ function applyTheme(M){
     if(observation && observation.fresh===false && !_moonStaleWarned){ _moonStaleWarned=true; console.warn("salah_widget: paint consumed stale moon geometry — renderMoon() must run before atmosphere()/applyTheme() in the same time/location context."); }
   }catch(e){
     _lastMoonPaint=Object.freeze({status:"failed",stage,fresh:null,observation});
-    throw e;                                                    // preserve render error behavior; qaState remains nonthrowing
+    recordRenderFault("theme-"+stage,e);                       // R002C: recorded here, once (the caller's stage boundary will not re-count it)
+    throw e;                                                    // preserve render error behavior (R0021); qaState remains nonthrowing
   }
 }
 
@@ -6940,27 +6941,51 @@ function genLightning(seed){
   return d;
 }
 let _lastBolt=-1, _lastRender=null;   // _lastRender: last actually-rendered state summary (observability, read by qaState)
+// R002C stage containment (docs/state-contracts/R002C.md). Prayer publication runs first; every optional
+// stage after it (weather presentation, sky, Moon, stars, clouds, preview, telemetry) is contained, so its
+// failure can never block prayer, reject boot/apply or strand the render loop. A failure is never silent:
+// one bounded in-memory record per stage name (count, first, last; message truncated; no stack, storage
+// or network), read through qaState().renderFaults, and the first occurrence of each distinct stage and
+// message is reported once (reportError, else console.error). No retry inside a frame; the next frame
+// simply runs the stage again from scratch.
+const _renderFaults=new Map(), _renderFaultsReported=new Set(), _frameFaults=new Set(); let _frameRecorded=new WeakSet();
+function recordRenderFault(name,error){
+  if(error && (typeof error==="object" || typeof error==="function")){ if(_frameRecorded.has(error)) return; _frameRecorded.add(error); }   // within one render: one failure, one record (inner owner first)
+  let message;
+  try{ message=String(error&&error.message!==undefined?error.message:error); }catch(e){ message="unprintable failure"; }
+  message=message.slice(0,200);
+  const event=Object.freeze({at:Math.round(_RAFNOW()),message}),prior=_renderFaults.get(name);
+  _renderFaults.set(name,Object.freeze({count:(prior?prior.count:0)+1,first:prior?prior.first:event,last:event}));
+  _frameFaults.add(name);
+  const key=name+"\n"+message;
+  if(_renderFaultsReported.has(key) || _renderFaultsReported.size>=32) return;   // repeats are counted, not re-reported
+  _renderFaultsReported.add(key);
+  try{
+    const reported=error instanceof Error?error:new Error(name+": "+message);
+    if(typeof reportError==="function") reportError(reported);
+    else if(typeof console!=="undefined" && typeof console.error==="function") console.error("salah_widget: render stage "+name+" failed",reported);
+  }catch(e){}
+}
+function runRenderStage(name,fn){ try{ fn(); return true; }catch(e){ recordRenderFault(name,e); return false; } }
+function renderFaultSnapshot(){ const out={}; for(const [name,record] of _renderFaults) out[name]=record; return Object.freeze(out); }
+// The truthful no-timetable prayer publication (withdrawal and calendar), shared by the withdrawn branches.
+function withdrawnPrayerStage(){ withdrawPrayerPresentation(); renderCalendarDates(selectCalendarDisplay(null)); }
 function withdrawPrayerPresentation(){
   $(".cn").textContent="—";$(".nt").textContent="—";$(".left").textContent="Prayer times unavailable";
   $(".arc").innerHTML="";$(".times").innerHTML=prayers.map(k=>`<div class="p" data-prayer-key="${k}"><b>${k}</b><span class="tm">—</span></div>`).join("");
   const p=$(".bar>i");p.style.width="";p.style.visibility="hidden";_lastRender=null;
 }
 function render(){
-  if(!simulationReady()){ withdrawPrayerPresentation();paintWeatherHeader(weatherHeader(weatherDecision(),false));renderCalendarDates(selectCalendarDisplay(null));return; }
+  _frameFaults.clear(); _frameRecorded=new WeakSet();         // this render's own fault set (P-3 receipt truth)
+  if(!simulationReady()){ runRenderStage("prayer",withdrawnPrayerStage);runRenderStage("weather-header",()=>paintWeatherHeader(weatherHeader(weatherDecision(),false)));return; }
   setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
-  syncWeather();                                              // sim/fast-forward: pull weather from the forecast track at simTime
-  const M=model();
-  if(!M){
-    withdrawPrayerPresentation();const d=weatherDecision();paintWeatherHeader(weatherHeader(d,d.record?.isDay!==0));
-    // No accepted scene paint may leave another epoch's particles behind. The
-    // independently admitted header remains usable while the timetable loads.
-    reconcileCloudPublication(d);withdrawWeatherEffects(d,"prayer timetable unavailable");
-    paintCelestialWithoutTimetable(d);renderCalendarDates(selectCalendarDisplay(null));return;
-  }
-  const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; }   // minute cadence + date/location invalidation; failed production never advances the success marker
-  // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
-  // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
-  if(ADVANCING || !_starsProjected || _starProjectionKey!==skySceneIdentity()) projectStars(simDate());
+  // PRAYER STAGE FIRST (R002C P-1): nothing below reads optional-stage state, so the timetable, countdown,
+  // rows and calendar are published before any optional producer can fail. If the prayer stage itself
+  // fails (P-2), the truthful withdrawal replaces it — a frozen previous countdown never stays as if current.
+  let M=null, prayerPublished=false, modelDone=false;
+  try{
+    M=model(); modelDone=true;
+    if(M){
   prefetchPrayerDay();                                        // civil-day/owner/cooldown checks also allow late midnight reclassification
   $(".cn").textContent = M.currentKey;
   if(Number.isFinite(M.leftMin)){
@@ -6982,16 +7007,46 @@ function render(){
   }).join("");
   renderCalendarDates(selectCalendarDisplay(M));
   $(".c").dataset.stale = _prayerStale ? "prayer" : "";
+    }else withdrawnPrayerStage();                             // no timetable: withdrawal and calendar precede every optional stage
+    prayerPublished=true;
+  }catch(e){
+    recordRenderFault("prayer",e); _lastRender=null;
+    // No receipt describes a frame that was not published. When the withdrawal itself was what failed, it is not retried this frame.
+    if(M || !modelDone) runRenderStage("prayer-withdrawal",withdrawnPrayerStage);
+  }
+  runRenderStage("weather-sync",syncWeather);                 // sim/fast-forward: pull weather from the forecast track at simTime
+  if(!M || !prayerPublished){
+    let d=null; runRenderStage("weather-decision",()=>{ d=weatherDecision(); });
+    if(!d) return;
+    runRenderStage("weather-header",()=>paintWeatherHeader(weatherHeader(d,d.record?.isDay!==0)));
+    // No accepted scene paint may leave another epoch's particles behind. The
+    // independently admitted header remains usable while the timetable loads.
+    // One stage for this R000B pair (its accepted mutation instrument edits the exact two-call text).
+    runRenderStage("weather-withdrawal",()=>{ reconcileCloudPublication(d);withdrawWeatherEffects(d,"prayer timetable unavailable"); });
+    runRenderStage("celestial",()=>paintCelestialWithoutTimetable(d));return;
+  }
+  runRenderStage("moon-geometry",()=>{ const mm=Math.floor(M.nowMin); if(mm!==lastMoonMin || moonGeometryObservation(M).fresh!==true){ renderMoon(); lastMoonMin=moonSky._min; } });   // minute cadence + date/location invalidation; failed production never advances the success marker
+  // REAL-TIME: star POSITIONS stay fixed (no record-player spin) — only CSS per-star scintillation varies. The sky
+  // is re-projected ONLY under timeScale (ADVANCING), or once per new day, so fast-forward shows celestial motion.
+  runRenderStage("stars",()=>{ if(ADVANCING || !_starsProjected || _starProjectionKey!==skySceneIdentity()) projectStars(simDate()); });
   // applyTheme captures the geometry actually consumed; a later producer cannot erase stale/failure evidence.
+  // It records its own failure (theme-atmosphere / theme-paint) and rethrows it, as accepted since R0021; the
+  // finally block still writes this frame's receipt and runs the lightning stage before the failure reaches the
+  // caller's stage boundary (loop, boot, apply, clock), which contains it without counting it twice.
+  try{
   applyTheme(M);
   // OBSERVABILITY: capture the state actually rendered this tick (read by qaState().render — a real last-render
-  // summary, not a recompute), so the next failure is diagnosable.
+  // summary, not a recompute), so the next failure is diagnosable. fx comes only from this frame's completed
+  // theme stage; when that stage failed this frame, fx is null (not produced), never an earlier frame's value.
+  }finally{
+  const themed=!_frameFaults.has("theme-atmosphere") && !_frameFaults.has("theme-paint");
   _lastRender={ atMs:Math.round(_RAFNOW()), sim:`${M.nowWall.dateStr} ${pad(M.nowWall.h)}:${pad(M.nowWall.mi)}`,
-    currentKey:M.currentKey,nextKey:M.nextKey,leftMin:M.leftMin,progress:M.progress,fx:$(".c").dataset.fx,
+    currentKey:M.currentKey,nextKey:M.nextKey,leftMin:M.leftMin,progress:M.progress,fx:themed?$(".c").dataset.fx:null,
     generation:M.selection.generation,acceptedUtcMs:M.nowEpoch,timetableDate:M.nowWall.dateStr,nextDate:M.nextDateStr,nextEpoch:M.nextEpoch,nextTime:M.nextTime,nextZone:M.nextZone,zone:tz,timetable:{...M.t},
     selectionState:M.selection.state,selectionReason:M.selection.reason,progressKind:M.progressKind,prevMin:M.prevMin,nextMin:M.nextMin,previousEpoch:M.previousEpoch,previousDate:M.previousDateStr };
   // regenerate the branching bolt each ~2.6s strike-window while a thunderstorm is active (deterministic from simTime)
-  if($(".c").dataset.lightning==="on"){ const bk=Math.floor(simNow()/2600); if(bk!==_lastBolt){ _lastBolt=bk; const bp=document.querySelector(".bolt path"); if(bp) bp.setAttribute("d",genLightning(bk)); } }
+  runRenderStage("lightning",()=>{ if($(".c").dataset.lightning==="on"){ const bk=Math.floor(simNow()/2600); if(bk!==_lastBolt){ _lastBolt=bk; const bp=document.querySelector(".bolt path"); if(bp) bp.setAttribute("d",genLightning(bk)); } } });
+  }
 }
 
 function updateSimClock(n){       // debug fast-forward read-out (only shown when timeScale is set)
@@ -7069,6 +7124,9 @@ window.qaState=function(){
       };
     })(),
     render: _lastRender,weatherHeader:_lastWeatherHeader,
+    // R002C contained stage failures: frozen per-stage {count, first, last}; pure read. Best-effort like the
+    // other readouts: isolated fixtures without the render owner report null.
+    renderFaults:(()=>{ try{ return renderFaultSnapshot(); }catch(e){ return null; } })(),
     clouds:{low:cloudState.covLow,mid:cloudState.covMid,high:cloudState.covHigh,targets:[cloudState.tgtLow,cloudState.tgtMid,cloudState.tgtHigh],ready:_cloudReady,density:_colDens?Math.max(..._colDens):0,publication:cloudPublicationReceipt(),hash:cloudHash,alpha:cloudAlpha,
       lighting:cloudPublicationReceipt().state==="eligible-published"&&cloudState.physicalLight?{owner:cloudState.physicalLight.owner,utcMs:cloudState.physicalLight.utcMs,sun:cloudState.physicalLight.sun,camera:cloudState.physicalLight.camera,warmth:cloudState.warmth}:null},
     stars:{op:+(cs.getPropertyValue("--stars").trim()||0), visible:starsVis, blur:cs.getPropertyValue("--starblur").trim(), mw:+(cs.getPropertyValue("--mw").trim()||0)},
@@ -7148,10 +7206,10 @@ async function loadPrayerData(){
       if(!simulationReady()) return;
       const day=prayerCivilDay();
       if(cached.date===day && adoptPrayerBundle(cached.data,day,op,true,false) && !_loopStarted){
-        render();
+        try{ render(); }catch(e){ recordRenderFault("render",e); }   // R002C: recorded, not swallowed by the load catch
         // Adopting the first prayer scene clears the earlier sky preview.
         // Republish its accepted target in this turn, before network/rAF yield.
-        window.SalahSkyPreview?.update(); _renderDirty=false;
+        try{ window.SalahSkyPreview?.update(); }catch(e){ recordRenderFault("sky-preview",e); } _renderDirty=false;
       }
     }
     if(!requestEligible(op)) return;
@@ -7170,7 +7228,8 @@ async function loadPrayerData(){
       day=prayerCivilDay(); _prayerCooldown.current.day=day;
     }
     if(adoptPrayerBundle(data,requested,op) && !_loopStarted){
-      render(); window.SalahSkyPreview?.update(); _renderDirty=false; alreadyRendered=true;
+      try{ render(); }catch(e){ recordRenderFault("render",e); }
+      try{ window.SalahSkyPreview?.update(); }catch(e){ recordRenderFault("sky-preview",e); } _renderDirty=false; alreadyRendered=true;
     }
     else if(!today && requestEligible(op)) showError("Could not load prayer times");
   }catch(e){
@@ -7191,9 +7250,16 @@ function resetForNewLocation(){
   weatherRadar=null; lastRadarAt=0; _wxRetry.weather=null; _wxRetry.radar=null;
   _starsProjected=false; _prayerStale=false; lastMoonMin=-1; _renderDirty=true;
   _rolloverBusy=false; _rolloverNextTry=0;
-  withdrawPrayerPresentation();paintWeatherHeader(weatherHeader(weatherDecision(),false));
+  withdrawPrayerPresentation();
+  // R002C B-1: optional presentation failures are recorded and never stop the caller's acquisition.
+  try{ paintWeatherHeader(weatherHeader(weatherDecision(),false)); }catch(e){ recordRenderFault("weather-header",e); }
+  try{                                                          // (statement kept on its own line: accepted R0003 instruments edit it)
   beginSkyScene();
-  if(simulationReady()){ buildSceneOnce(); renderMoon(); }
+  }catch(e){ recordRenderFault("sky-scene",e); }
+  if(simulationReady()){
+    try{ buildSceneOnce(); }catch(e){ recordRenderFault("scene-build",e); }
+    try{ renderMoon(); }catch(e){ recordRenderFault("moon-geometry",e); }
+  }
 }
 // Apply a new WidgetConfig at RUNTIME (settings panel) — IN-MEMORY, no reload, so it still
 // works when third-party-iframe localStorage is blocked/partitioned. opts.save persists it.
@@ -7222,7 +7288,7 @@ async function applyConfig(cfg, opts){
   bindConfig(cfg);
   resetForNewLocation();
   if(!simulationReady()) return;
-  if(lat==null||lon==null){ render(); return; }     // incomplete manual entry → nothing to load yet
+  if(lat==null||lon==null){ try{ render(); }catch(e){ recordRenderFault("render",e); } return; }     // incomplete manual entry → nothing to load yet
   startWeather();
   const generation=_runtimeGeneration;
   await loadPrayerData();
@@ -7239,27 +7305,38 @@ window.SalahClock=Object.freeze({set({rate=TIMESCALE,utcMs=null,live=false}={}){
   const next=live?Date.now():utcMs??simNow();if(!Number.isFinite(next))throw new RangeError("Native clock requires an accepted time");
   TIMESCALE=live?1:rate;FOLLOW_WALL_CLOCK=!!live;ADVANCING=!live&&rate>0;_clockPreview=!live;_anchorKind=live?"wall":"control";
   _simBase=next;_rafT0=_RAFNOW();_simTz=tz;_simValid=true;_simInvalidTz=null;
-  window.SalahRealSky?.invalidate("explicit native clock control");window.SalahSkyPreview?.clear("explicit native clock control");beginSkyScene();
+  // R002C B-4: the clock state above is committed; optional sky failures below are recorded and the
+  // transition (including notify) still completes.
+  try{ window.SalahRealSky?.invalidate("explicit native clock control"); }catch(e){ recordRenderFault("real-sky",e); }
+  try{ window.SalahSkyPreview?.clear("explicit native clock control"); }catch(e){ recordRenderFault("sky-preview",e); }
+  try{ beginSkyScene(); }catch(e){ recordRenderFault("sky-scene",e); }
   if(live&&weather?.src==="forecast"){weather=null;loadWx();fetchWeather();}
   _wxDecisionCache=null;lastMoonMin=-1;_renderDirty=true;
   const c=$(".c"),sc=$(".simclock");c?.classList.toggle("fast",ADVANCING);if(sc)sc.style.display=live?"none":"block";
-  maintainPrayerDay();render();window.SalahNativeSkyHost?.notify();
+  maintainPrayerDay();
+  try{ render(); }catch(e){ recordRenderFault("render",e); }
+  try{ window.SalahNativeSkyHost?.notify(); }catch(e){ recordRenderFault("real-sky",e); }
   return {utcMs:simNow(),rate:TIMESCALE,live:FOLLOW_WALL_CLOCK};
 }});
 
 async function boot(){
   const generation=_runtimeGeneration;
   if(_cfgMode==="local"||_cfgMode==="preferLocal") enableSettingsAffordance();  // recovery controls do not depend on a valid scene
+  // R002C B-1..B-3: optional sky/Moon work before acquisition is contained (recorded, never a boot rejection),
+  // so weather/radar, prayer acquisition and the render loop always follow; the initial-head handoff still
+  // runs before the first await (finishInitialSkyDocument contains its own Moon call).
+  try{                                                          // (statement kept on its own line: accepted R0003 instruments edit it)
   beginSkyScene(_skyInitialDocument);
+  }catch(e){ recordRenderFault("sky-scene",e); }
   if(!simulationReady()){finishInitialSkyDocument();return;}
   if(QA){ lastWxAt=0; lastWxTry=0; }                          // QA: always build a fresh forecast track on boot (cache must not block it)
-  buildSceneOnce();
-  renderMoon();
+  try{ buildSceneOnce(); }catch(e){ recordRenderFault("scene-build",e); }
+  try{ renderMoon(); }catch(e){ recordRenderFault("moon-geometry",e); }
 
   // ---- resolve coordinates (mode-aware: hardcoded sync above; local resolves here) ----
   if(lat==null||lon==null){
     finishInitialSkyDocument(); // No initial head may cross an acquisition await.
-    window.SalahStartSkyPreview?.();
+    try{ window.SalahStartSkyPreview?.(); }catch(e){ recordRenderFault("sky-preview",e); }
     if(_needsDetect && window.SalahConfig){
       // local / preferLocal with no saved config → coarse, PERMISSION-FREE area auto-detect.
       _autoDetectStatus="pending";
@@ -7286,15 +7363,17 @@ async function boot(){
 
   if(!simulationReady()){finishInitialSkyDocument();return;} // coordinate detection may have changed the explicit scene's zone
   startWeather(true); // Retained/explicit weather participates in the first scene.
-  render(); // Current shell/header and explicit pending prayer rows precede network settlement.
+  try{ render(); }catch(e){ recordRenderFault("render",e); } // Current shell/header and explicit pending prayer rows precede network settlement.
   // The first native paint adopts its scene key and invalidates the head
   // preview. Republish accepted inputs before yielding: a cache-warm browser
   // can present this turn before the first rAF, exposing the dark base colour.
   // The initial foreground must follow current native geometry. Starting it
   // before render() built a complete preview only to discard it in that same
   // turn. Unknown-location acquisition already created its waiting owner.
-  if(window.SalahSkyPreview) window.SalahSkyPreview.update();
-  else window.SalahStartSkyPreview?.();
+  try{
+    if(window.SalahSkyPreview) window.SalahSkyPreview.update();
+    else window.SalahStartSkyPreview?.();
+  }catch(e){ recordRenderFault("sky-preview",e); }
   finishInitialSkyDocument(); // End the one-use handoff before any rAF/task yield.
   // The complete celestial scene and settings controls are already published.
   // Let the browser present them before synchronous cached timetable fitting
@@ -7333,33 +7412,41 @@ function startRenderLoop(){
   // repaint on the first frame, including frozen previews and late results.
   const paintedSecond=_lastRender?.generation===_runtimeGeneration && Number.isFinite(_lastRender.acceptedUtcMs)
     ? Math.floor(_lastRender.acceptedUtcMs/1000) : -1;
-  let _raf=null, _onScreen=true, _lastSec=paintedSecond, _lastWx=0, _lastCloud=0;
+  // Scheduling state (R002C D.1): _raf is the one PENDING frame id (null when none); _running marks the
+  // frame body; _wanted is false only after stop() (hidden/offscreen). A frame clears _raf on entry
+  // (the id is consumed) and reschedules in finally, however its body ended, while still wanted.
+  let _raf=null, _running=false, _wanted=false, _onScreen=true, _lastSec=paintedSecond, _lastWx=0, _lastCloud=0;
   const visible=()=>_onScreen && document.visibilityState!=="hidden";
   // —— MOTION TELEMETRY (&debugMotion=1): prove the sky is actually alive in normal real-time ——
   let _rafN=0,_cloudN=0,_tickAcc=_RAFNOW(),_rafPS=0,_cloudPS=0;   // loop rate counters (consumed only by the debugMotion overlay, which now lives at module scope)
   function loop(){
+    _raf=null; _running=true;
+    try{
     _rafN++;
-    if(!simulationReady()){ _raf=requestAnimationFrame(loop); return; }
+    if(!simulationReady()) return;
     const n=nowParts();
-    maintainPrayerDay();                               // promotion, rollover and cold same-day recovery share this visible opportunity
+    runRenderStage("prayer-day",maintainPrayerDay);    // promotion, rollover and cold same-day recovery share this visible opportunity
     const rt=_RAFNOW();
     if(!ADVANCING && rt-_lastWx>30000){ _lastWx=rt; fetchWeather(); fetchRadar(); }    // refresh real weather ~½-min + radar (self-throttled ~10min); both held during a fast sweep
     const sec=Math.floor(simNow()/1000);
-    if(sec!==_lastSec || _renderDirty){ _lastSec=sec; _renderDirty=false; render(); if(ADVANCING) updateSimClock(n); }
+    if(sec!==_lastSec || _renderDirty){ _lastSec=sec; _renderDirty=false; runRenderStage("render",render); if(ADVANCING) updateSimClock(n); }
     // Cloud evolution uses bounded visual intervals, with CLOCK's preview rate. Reduced-motion
     // paints changed state at the same held axes, never a substitute epoch like 1000.
-    reconcileCloudPublication(); // Also reaches expiry when reduced motion has no dirty painter yet.
+    runRenderStage("cloud-publication",()=>reconcileCloudPublication()); // Also reaches expiry when reduced motion has no dirty painter yet.
+    runRenderStage("clouds",()=>{
     const reduced=isMotionReduced(); syncCloudMotionPreference(reduced,rt);
     if(reduced){ if(_cloudDirty){ paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; } }
     else if(rt-_lastCloud>76){ _lastCloud=rt; paintClouds(simNow()/1000); tieRainToClouds(); _cloudN++; }
-    if(rt-_tickAcc>=1000){ _rafPS=Math.round(_rafN*1000/(rt-_tickAcc)); _cloudPS=Math.round(_cloudN*1000/(rt-_tickAcc)); _rafN=0;_cloudN=0;_tickAcc=rt; if(DEBUGMOTION) updateMotionDbg(_rafPS,_cloudPS,cEl); }
+    });
+    runRenderStage("telemetry",()=>{ if(rt-_tickAcc>=1000){ _rafPS=Math.round(_rafN*1000/(rt-_tickAcc)); _cloudPS=Math.round(_cloudN*1000/(rt-_tickAcc)); _rafN=0;_cloudN=0;_tickAcc=rt; if(DEBUGMOTION) updateMotionDbg(_rafPS,_cloudPS,cEl); } });
     // Optional sky presents after native UI/cloud work, using a freshly
     // accepted UTC. Bootstrap owns its own callback until this handoff.
-    window.SalahSkyPreview?.present(_RAFNOW());
-    _raf=requestAnimationFrame(loop);
+    runRenderStage("sky-preview",()=>window.SalahSkyPreview?.present(_RAFNOW()));
+    }catch(e){ recordRenderFault("frame",e); }   // residual (unstaged) failure: recorded, never strands the loop
+    finally{ _running=false; if(_wanted) _raf=requestAnimationFrame(loop); }
   }
-  function start(){ if(!_raf) _raf=requestAnimationFrame(loop); }
-  function stop(){ if(_raf){ cancelAnimationFrame(_raf); _raf=null; } }
+  function start(){ _wanted=true; if(_raf===null && !_running) _raf=requestAnimationFrame(loop); }   // a running frame reschedules itself in finally
+  function stop(){ _wanted=false; if(_raf!==null){ cancelAnimationFrame(_raf); _raf=null; } }
   function setVis(){ const on=visible(); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop(); }
   document.addEventListener("visibilitychange",setVis);
   if("IntersectionObserver" in window && cEl)
