@@ -24,7 +24,7 @@ with a cache-busting query on retries; every attempt is recorded. HTTP 404 on a 
 window is `absent` (a mismatch); other HTTP or network failures are `inconclusive`.
 
 Network: only theislampill.github.io, raw.githubusercontent.com (the project's own paths) and the GitHub API
-through `gh`. Never a prayer, weather, radar, geocoding or location provider.
+through `gh`. Redirects are followed only within the requested https origin; any other redirect is `inconclusive`. Never a prayer, weather, radar, geocoding or location provider.
 
 Exit codes: 0 identical, 1 mismatch, 2 inconclusive, 3 instrument error (bad input or repository state).
 """
@@ -167,14 +167,40 @@ def gh_api(path):
         return None, 'gh api ' + path + ' returned non-JSON'
 
 
-def http_get(url, timeout, max_bytes):
-    """(status, bytes or None, error). Bounded: refuses hosts outside the project and oversize bodies."""
-    host = urllib.parse.urlsplit(url).hostname
-    if host not in ALLOWED_HOSTS:
+class RedirectRefused(Exception):
+    """A redirect left the requested origin; the fetch is not trusted (row `http-error`, verdict inconclusive)."""
+
+
+class SameOriginRedirect(urllib.request.HTTPRedirectHandler):
+    """Follow a redirect only to the same https origin as the request.
+
+    Allowed: https://theislampill.github.io -> https://theislampill.github.io (site paths), and
+    https://raw.githubusercontent.com -> https://raw.githubusercontent.com (pinned raw paths). Anything else, including
+    a hop between those two hosts, http, another port or any other host, raises RedirectRefused."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        newurl = urllib.parse.urljoin(req.full_url, newurl)
+        old, new = urllib.parse.urlsplit(req.full_url), urllib.parse.urlsplit(newurl)
+        if (new.scheme, new.hostname, new.port) != ('https', old.hostname, old.port) or new.hostname not in ALLOWED_HOSTS:
+            raise RedirectRefused('redirect from ' + req.full_url + ' to ' + newurl + ' leaves the requested origin')
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+OPENER = urllib.request.build_opener(SameOriginRedirect)
+
+
+def http_get(url, timeout, max_bytes, opener=None):
+    """(status, bytes or None, error). Bounded: refuses hosts outside the project, cross-origin redirects and
+    oversize bodies."""
+    parts = urllib.parse.urlsplit(url)
+    if parts.hostname not in ALLOWED_HOSTS or parts.scheme != 'https':
         raise InstrumentError('refusing to fetch outside the project hosts: ' + url)
     request = urllib.request.Request(url, headers={'User-Agent': 'salah-widget-delivery-identity'})
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        with (opener or OPENER).open(request, timeout=timeout) as response:
+            final = urllib.parse.urlsplit(response.geturl())
+            if (final.scheme, final.hostname, final.port) != ('https', parts.hostname, parts.port):
+                return None, None, 'redirect refused: final URL ' + response.geturl() + ' leaves the requested origin'
             chunks, total = [], 0
             while True:
                 chunk = response.read(1 << 20)
@@ -185,9 +211,13 @@ def http_get(url, timeout, max_bytes):
                     return response.status, None, 'body exceeds the ' + str(max_bytes) + '-byte bound'
                 chunks.append(chunk)
             return response.status, b''.join(chunks), None
+    except RedirectRefused as error:
+        return None, None, 'redirect refused: ' + str(error)[:200]
     except urllib.error.HTTPError as error:
         return error.code, None, 'HTTP ' + str(error.code)
     except (urllib.error.URLError, OSError, TimeoutError) as error:
+        if isinstance(getattr(error, 'reason', None), RedirectRefused):
+            return None, None, 'redirect refused: ' + str(error.reason)[:200]
         return None, None, 'network: ' + str(error)[:200]
 
 

@@ -53,8 +53,8 @@ jobs:
           BUILD_ERROR: ${{ github.event.build.error.message }}
         run: |
           mkdir -p "$RUNNER_TEMP/delivery"
-          printf '{"event":"%s","target":"%s","buildStatus":"%s","buildError":"%s","workflowSha":"%s"}\n' \
-            "$GITHUB_EVENT_NAME" "$TARGET" "$BUILD_STATUS" "$BUILD_ERROR" "$GITHUB_SHA" > "$RUNNER_TEMP/delivery/event.json"
+          # Event text reaches the step only through env and is serialised by a JSON encoder, never by the shell.
+          python3 -c 'import json, os, sys; json.dump({k: os.environ.get(v, "") for k, v in (("event", "GITHUB_EVENT_NAME"), ("target", "TARGET"), ("buildStatus", "BUILD_STATUS"), ("buildError", "BUILD_ERROR"), ("workflowSha", "GITHUB_SHA"))}, sys.stdout); print()' > "$RUNNER_TEMP/delivery/event.json"
           cat "$RUNNER_TEMP/delivery/event.json"
           printf '%s' "$TARGET" | grep -Eq '^[0-9a-f]{40}$'
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

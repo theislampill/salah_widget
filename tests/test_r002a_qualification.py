@@ -306,20 +306,66 @@ class SuitesVerdict(unittest.TestCase):
         s = gate.summarize_suites(self.results([bad], 'FAIL'), sys.executable, [entry])
         self.assertTrue(s['conditionalEntries'][0]['observed'].startswith('case did not pass'))
 
-    def test_runner_exit_disagreement_is_not_a_pass(self):
+    def suites_with(self, status, verdict, exit_code):
+        """Run gate.suites against a fake runner (a Git root with no history inputs) and return (code, receipt)."""
         with tempfile.TemporaryDirectory(prefix='r002a-suites-') as tmp:
             root = Path(tmp)
-            results = self.results([row('docs', 'PASS')], 'PASS')
+            git(root, 'init', '-q')
+            results = self.results([row('docs', status if status != 'DECLARED' else gate.DECLARED,
+                                        ledger={'expectedFail': [{'id': 'D1', 'case': 'c'}]} if status == 'DECLARED' else None)],
+                                   gate.DECLARED if status == 'DECLARED' else status, verdict)
             write(root, 'tools/cp9/run_native_regressions.py',
-                  'import json,sys,pathlib\nout=pathlib.Path(sys.argv[sys.argv.index("--output")+1]);out.mkdir()\n'
-                  '(out/"results.json").write_text(' + repr(json.dumps(results)) + ')\nsys.exit(1)\n')
+                  'import json, pathlib, sys\nHISTORY_INPUTS = {}\nif __name__ == "__main__":\n'
+                  '    out = pathlib.Path(sys.argv[sys.argv.index("--output") + 1]); out.mkdir()\n'
+                  '    (out / "results.json").write_text(' + repr(json.dumps(results)) + ')\n'
+                  '    sys.exit(' + str(exit_code) + ')\n')
             write(root, 'tests/expected-failures.json', '{"entries": []}')
+            git(root, 'add', '-A')
+            git(root, 'commit', '-q', '-m', 'fixture')
             out = root / 'out'
             out.mkdir()
             code = quiet(gate.suites, root, out)
-            receipt = json.loads((out / 'suites.json').read_text())
-        self.assertEqual(code, 1)
-        self.assertEqual(receipt['verdict'], 'INCOMPLETE')
+            return code, json.loads((out / 'suites.json').read_text())
+
+    def test_agreeing_runner_exit_passes(self):
+        """Positive controls: the exit-code agreement check alone decides the two disagreement cases below."""
+        code, receipt = self.suites_with('PASS', 'PASS', 0)
+        self.assertEqual((code, receipt['verdict']), (0, 'PASS'))
+        code, receipt = self.suites_with('DECLARED', gate.DECLARED + ' (1)', 3)
+        self.assertEqual((code, receipt['verdict']), (0, gate.DECLARED + ' (1)'))
+        self.assertEqual(receipt['acceptedHistory'], {'objects': [], 'missing': []})
+
+    def test_runner_exit_disagreement_is_not_a_pass(self):
+        code, receipt = self.suites_with('PASS', 'PASS', 1)
+        self.assertEqual((code, receipt['verdict']), (1, 'INCOMPLETE'))
+        self.assertIn('disagrees with verdict', receipt['reason'])
+        code, receipt = self.suites_with('DECLARED', gate.DECLARED + ' (1)', 0)
+        self.assertEqual((code, receipt['verdict']), (1, 'INCOMPLETE'))
+        self.assertIn('runner exit 0 disagrees', receipt['reason'])
+
+
+class V1Job(Fixture):
+    """J4: either verify_v1 mode failing makes the job FAIL; both passing is PASS."""
+
+    def run_v1(self, failing_flag):
+        write(self.root, 'tools/verify_v1.py',
+              'import sys\nflag = sys.argv[1] if len(sys.argv) > 1 else ""\n'
+              'print(("FAIL: fixture " if flag == ' + repr(failing_flag) + ' else "PASS: fixture ") + flag)\n'
+              'sys.exit(1 if flag == ' + repr(failing_flag) + ' else 0)\n')
+        out = self.out()
+        code = quiet(gate.v1, self.root, out)
+        return code, json.loads((out / 'v1.json').read_text())
+
+    def test_both_modes_pass(self):
+        code, receipt = self.run_v1('--none')
+        self.assertEqual((code, receipt['verdict']), (0, 'PASS'))
+        self.assertEqual([c['argv'][1] for c in receipt['checks']], ['--negative-control', '--check-pages'])
+
+    def test_either_mode_failing_fails(self):
+        for flag in ('--negative-control', '--check-pages'):
+            code, receipt = self.run_v1(flag)
+            self.assertEqual((code, receipt['verdict']), (1, 'FAIL'), flag)
+            self.assertTrue(any(c['exitCode'] == 1 for c in receipt['checks']), flag)
 
 
 class AcceptedHistory(Fixture):
@@ -509,6 +555,49 @@ class Delivery(Fixture):
         with self.assertRaises(di.InstrumentError):
             di.http_get('https://api.open-meteo.com/v1/forecast', 1, 10)
 
+    def test_redirects_stay_inside_the_requested_origin(self):
+        import urllib.request
+        handler = di.SameOriginRedirect()
+        site = urllib.request.Request(di.SITE + 'index.html')
+        same = handler.redirect_request(site, None, 301, 'Moved', {}, di.SITE + 'index2.html')
+        self.assertEqual(same.full_url, di.SITE + 'index2.html')
+        relative = handler.redirect_request(site, None, 302, 'Found', {}, '/salah_widget/x.js')
+        self.assertEqual(relative.full_url, 'https://theislampill.github.io/salah_widget/x.js')
+        for target in ('https://example.com/index.html', 'http://theislampill.github.io/salah_widget/index.html',
+                       'https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh',
+                       'https://theislampill.github.io:8443/salah_widget/index.html'):
+            with self.assertRaises(di.RedirectRefused, msg=target):
+                handler.redirect_request(site, None, 302, 'Found', {}, target)
+        raw = urllib.request.Request(di.RAW + 'main/install.sh')
+        with self.assertRaises(di.RedirectRefused):
+            handler.redirect_request(raw, None, 302, 'Found', {}, di.SITE + 'install.sh')
+
+    def test_refused_redirect_is_inconclusive(self):
+        class Opener:
+            def open(self, request, timeout):
+                raise di.RedirectRefused('redirect from ' + request.full_url + ' to https://example.com/x')
+        status, data, error = di.http_get(di.SITE + 'index.html', 5, 100, opener=Opener())
+        self.assertEqual((status, data), (None, None))
+        self.assertTrue(error.startswith('redirect refused'))
+        self.served[di.SITE + 'index.html'] = lambda url: (None, None, 'redirect refused: fixture')
+        receipt = self.run_di()
+        self.assertEqual(receipt['verdict'], 'inconclusive')
+        self.assertEqual(next(r for r in receipt['rows'] if r['path'] == 'index.html')['state'], 'http-error')
+
+    def test_final_url_off_origin_is_refused(self):
+        class Response:
+            status = 200
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def geturl(self): return 'https://example.com/index.html'
+            def read(self, n): return b''
+
+        class Opener:
+            def open(self, request, timeout): return Response()
+        status, data, error = di.http_get(di.SITE + 'index.html', 5, 100, opener=Opener())
+        self.assertEqual((status, data), (None, None))
+        self.assertIn('leaves the requested origin', error)
+
     def test_bounds_are_enforced(self):
         with self.assertRaises(di.InstrumentError):
             self.run_di(limits={'maxFiles': 3})
@@ -556,6 +645,13 @@ class WorkflowGuards(unittest.TestCase):
         for job in ('parity', 'suites', 'v1', 'pins'):
             self.assertIn('qualification_gate.py ' + job + ' ', text)
         self.assertNotIn('deploy', text.split('\njobs:\n', 1)[1].lower())
+
+    def test_event_record_is_json_encoded(self):
+        text = self.text(WORKFLOWS[1])
+        step = text.split('- name: Record the triggering event', 1)[1].split('- uses:', 1)[0]
+        self.assertIn('json.dump(', step)
+        self.assertNotIn("printf '{", step)  # no shell-built JSON
+        self.assertNotIn('${{', step.split('run: |', 1)[1])  # event fields only through env
 
     def test_readback_triggers(self):
         text = self.text(WORKFLOWS[1])
