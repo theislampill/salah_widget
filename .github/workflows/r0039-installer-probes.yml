@@ -67,9 +67,18 @@ jobs:
         shell: powershell
         run: |
           $exe = if ($env:PROBE_HOST -eq 'ps7') { $env:INSTALL_TEST_PS7 } else { Join-Path $env:SystemRoot 'System32\WindowsPowerShell\v1.0\powershell.exe' }
-          $fixtures = Join-Path $env:RUNNER_TEMP 'r0039-fixtures'
+          # Fixture parent: a new current-user-owned protected directory inside the real TEMP (precedent:
+          # installer-environment-observation.yml). $RUNNER_TEMP (D:\a\_temp) has an ancestry the installer's
+          # compiler and staging custody refuse, which made run 43481353518 a harness GAP.
+          $fixtures = Join-Path $env:TEMP ('r0039-fixtures-' + $env:PROBE_HOST)
+          [void][IO.Directory]::CreateDirectory($fixtures)
+          $sid = [Security.Principal.WindowsIdentity]::GetCurrent().User
+          $acl = New-Object Security.AccessControl.DirectorySecurity
+          $acl.SetAccessRuleProtection($true, $false); $acl.SetOwner($sid)
+          $acl.AddAccessRule((New-Object Security.AccessControl.FileSystemAccessRule($sid, [Security.AccessControl.FileSystemRights]::FullControl, [Security.AccessControl.InheritanceFlags]'ContainerInherit,ObjectInherit', [Security.AccessControl.PropagationFlags]::None, [Security.AccessControl.AccessControlType]::Allow)))
+          Set-Acl -LiteralPath $fixtures -AclObject $acl
           $out = Join-Path $env:RUNNER_TEMP 'r0039-receipt'
-          [void][IO.Directory]::CreateDirectory($fixtures); [void][IO.Directory]::CreateDirectory($out)
+          [void][IO.Directory]::CreateDirectory($out)
           $receipt = Join-Path $out ('r0039-' + $env:PROBE_RUNNER + '-' + $env:PROBE_HOST + '.json')
           python tests/r0039-installer-probes.py --host-name $env:PROBE_HOST --host-exe $exe --source install.ps1 --preset presets/salah-widget.tablissng.json --fixture-parent $fixtures --output $receipt
           exit $LASTEXITCODE
