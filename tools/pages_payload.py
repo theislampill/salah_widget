@@ -220,8 +220,16 @@ def _pax(data):
     return records
 
 
-def measure_tar(stream):
-    """Parse TAR headers from a byte stream; skip member data without storing it."""
+def is_protected(name):
+    return ((name in PROTECTED_FILES or name.startswith(PROTECTED_PREFIXES))
+            and not any(part.startswith((".", "_")) for part in name.split("/"))
+            and not name.startswith(("moon/src/", "moon/tests/")))
+
+
+def measure_tar(stream, hash_member=None):
+    """Parse TAR headers from a byte stream; skip member data without storing it. Regular members for
+    which hash_member(name) is true are SHA-256 hashed in passing (their bytes are never retained)."""
+    hashes = {}
     files, dirs, others, consumed = [], 0, {}, 0
     long_name, pax, ended = None, {}, False
     while True:
@@ -271,12 +279,18 @@ def measure_tar(stream):
         if kind in (b"1", b"2"):
             raise Inconclusive(f"link member {name!r}: served bytes cannot be attributed")
         skipped = 0
+        hasher = (hashlib.sha256() if hash_member and kind in (b"0", b"\0", b"7") and name and hash_member(name)
+                  else None)
         while skipped < padded:  # skip data without retaining it
             chunk = stream.read(min(1 << 20, padded - skipped))
+            if hasher is not None and chunk and skipped < size:
+                hasher.update(chunk[:size - skipped])
             if not chunk:
                 raise Inconclusive(f"TAR stream truncated inside member {name!r}")
             skipped += len(chunk)
         consumed += skipped
+        if hasher is not None:
+            hashes[name] = {"bytes": size, "sha256": hasher.hexdigest()}
         if kind in (b"0", b"\0", b"7"):
             if name:
                 files.append((name, size))
@@ -289,6 +303,10 @@ def measure_tar(stream):
     if not files:
         raise Inconclusive("TAR stream contains no regular files")
     result = manifest(files)
+    if hash_member:
+        canonical = "".join(f"{v['sha256']}  {k}\n" for k, v in sorted(hashes.items()))
+        result["memberHashes"] = {"files": len(hashes), "setSha256": hashlib.sha256(canonical.encode()).hexdigest(),
+                                  "records": hashes}
     result.update({"tarContainerBytes": consumed, "directoryMembers": dirs, "otherMembers": others,
                    "memberIndexSha256": result["pathSizeManifestSha256"]})
     return result
@@ -364,14 +382,32 @@ class _Inflating:
                 "memberUncompressedBytes": self.uncompressed, "crc32": f"{self.crc:08x}"}
 
 
-def measure_zip_stream(stream):
+class _Hashing:
+    """Pass-through reader that counts and SHA-256 hashes every byte read from the archive stream."""
+
+    def __init__(self, stream):
+        self.stream, self.sha, self.count = stream, hashlib.sha256(), 0
+
+    def read(self, n=-1):
+        data = self.stream.read(n)
+        self.sha.update(data)
+        self.count += len(data)
+        return data
+
+
+def measure_zip_stream(stream, hash_member=None):
+    stream = _Hashing(stream)
     member = _Inflating(stream)
     if member.name != "artifact.tar":
         raise PayloadError(f"first zip member is {member.name!r}, not artifact.tar")
-    result = measure_tar(member)
+    result = measure_tar(member, hash_member)
     result["zipMember"] = member.finish()
     if result["zipMember"]["memberUncompressedBytes"] != result["tarContainerBytes"]:
         raise Inconclusive("TAR container bytes disagree with the inflated member size")
+    while stream.read(1 << 20):  # drain data descriptor and central directory into the archive digest
+        pass
+    result["archive"] = {"bytes": stream.count, "sha256": stream.sha.hexdigest(),
+                         "method": "counted and SHA-256 hashed in-stream over every byte received"}
     return result
 
 
@@ -546,7 +582,12 @@ def artifact_readback(run_id, stream=False):
     if stream:
         with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "pages-payload-instrument"}),
                                     timeout=600) as response:
-            measured = measure_zip_stream(response)
+            measured = measure_zip_stream(response, is_protected)
+        archive = measured["archive"]
+        if archive["bytes"] != meta["size_in_bytes"]:
+            raise PayloadError(f"streamed archive is {archive['bytes']} bytes, API size_in_bytes {meta['size_in_bytes']}")
+        if meta.get("digest") and meta["digest"] != "sha256:" + archive["sha256"]:
+            raise PayloadError(f"streamed archive sha256:{archive['sha256']} differs from API digest {meta['digest']}")
         entry = next(e for e in receipt["envelope"]["entries"] if e["name"] == "artifact.tar")
         if (measured["zipMember"]["crc32"], measured["tarContainerBytes"]) != (entry["crc32"],
                                                                               entry["uncompressedBytes"]):
@@ -914,7 +955,8 @@ def main(argv=None):
             if args.root:
                 receipt["protectedConsumers"] = protected_consumers(args.root, args.site)
         elif args.mode in ("tar", "zip"):
-            measure = measure_tar if args.mode == "tar" else measure_zip_stream
+            def measure(stream, _m=measure_tar if args.mode == "tar" else measure_zip_stream):
+                return _m(stream, is_protected)
             if args.file == "-":
                 receipt["measured"] = measure(sys.stdin.buffer)
             else:

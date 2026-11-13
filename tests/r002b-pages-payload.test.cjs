@@ -137,8 +137,25 @@ test('zip: streamed artifact.tar (with and without data descriptor, file and std
     assert.equal(env.entries[0].crc32, r.json.measured.zipMember.crc32);
   }
   const zip = makeZip(dir, tar, 'artifact.tar', false);
+  // M1 identity: the whole archive is counted and hashed in-stream; protected members are hashed in passing.
+  const hashed = receipt(dir, ['zip', '--file', zip]).json.measured;
+  const zbytes = fs.readFileSync(zip);
+  assert.equal(hashed.archive.bytes, zbytes.length);
+  assert.equal(hashed.archive.sha256, crypto.createHash('sha256').update(zbytes).digest('hex'));
+  assert.deepEqual(Object.keys(hashed.memberHashes.records), ['index.html']);
+  assert.equal(hashed.memberHashes.records['index.html'].sha256,
+    crypto.createHash('sha256').update(fs.readFileSync(path.join(s, 'index.html'))).digest('hex'));
+  assert.equal(hashed.memberHashes.records['index.html'].bytes, 10);
   const piped = run(['zip', '--file', '-'], {input: fs.readFileSync(zip)});
   assert.equal(piped.code, 0, piped.err); assert.equal(JSON.parse(piped.out).regularFileBytes, 37);
+});
+
+test('tar: a protected member spanning several read chunks and TAR padding hashes to its exact bytes', () => {
+  const {dir, s} = site({'v1/big.bin': 1_500_001, 'docs/x.bin': 3});
+  const tar = makeTar(dir, s, 'GNU_FORMAT');
+  const r = receipt(dir, ['tar', '--file', tar]).json.measured;
+  const want = crypto.createHash('sha256').update(fs.readFileSync(path.join(s, 'v1/big.bin'))).digest('hex');
+  assert.deepEqual(r.memberHashes.records, {'v1/big.bin': {bytes: 1_500_001, sha256: want}});
 });
 
 test('zip: wrong first member is an error; truncation is inconclusive', () => {
