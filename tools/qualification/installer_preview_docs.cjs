@@ -15,7 +15,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
  const config=fs.readFileSync(path.join(repo,'src/native/config.js'));
  const bindings={};
  for(const [name,raw] of [['README.md',readme],['src/native/builder.html',builder],['src/native/config.js',config]])bindings[name]={bytes:raw.length,sha256:sha(raw)};
- if(bindings['README.md'].sha256!=='6f2a38395c3f159046ecbfa10825f140f8aa9a29a5d075701c0f35858d0b2614')throw Error('README candidate identity differs');
+ if(bindings['README.md'].sha256!=='0fd0f0b411183ef9cda42536f2977a6ab77df309fe34cbb1a98aaada4753b9f5')throw Error('README candidate identity differs');
  if(bindings['src/native/builder.html'].sha256!=='873e8dedfd4380d5bb8271945b23d73dc5afd3b5c8b848f67017cc4aaa41fd9f')throw Error('Builder candidate identity differs');
  if(bindings['src/native/config.js'].sha256!=='78891de38c1c87ccae6d79a99f71b20a6fb812aaa527d4662340b749a59fcaad')throw Error('Config candidate identity differs');
  fs.writeFileSync(path.join(out,'inputs.json'),JSON.stringify(bindings,null,2)+'\n');
@@ -43,7 +43,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
  const previewPolicy=await page.evaluate(()=>{
   const h=[...document.querySelectorAll('h4')].find(h=>h.textContent==='Offline local preview');let text='';for(let p=h?.nextElementSibling;p&&p.tagName!=='H4';p=p.nextElementSibling)text+=p.textContent+'\n';return text;
  });
- const readmeChecks={pinnedOccurrences:(readmeText.match(/a4c617ebeedfb507c0cb7a472683cce47ad62522/g)||[]).length,oldPinAbsent:!/(dc4c251d81ccb0796e70ff0516661204277232cb|81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb|f8d3db2d6d6d84f63bf8d79cf52c6977558cb105|d96f87825f02077da7f6afe742d30aecfd1fc005)/.test(readmeText),downloadSeparate:previewPolicy.includes('separate preparation step'),zeroFilesystem:previewPolicy.includes('creates, overwrites and deletes no files or directories'),noNetwork:previewPolicy.includes('no network requests'),normalNoOpen:previewPolicy.includes('still asks for normal confirmations, downloads and'),builderMain:previewPolicy.includes('published main installer'),manual:previewPolicy.includes('import remain manual')};
+ const readmeChecks={pinnedOccurrences:(readmeText.match(/a4c617ebeedfb507c0cb7a472683cce47ad62522/g)||[]).length,oldPinAbsent:!/(dc4c251d81ccb0796e70ff0516661204277232cb|81c698bea3bfa3e2a5abee2e92fe6bb0c82a80bb|f8d3db2d6d6d84f63bf8d79cf52c6977558cb105|d96f87825f02077da7f6afe742d30aecfd1fc005)/.test(readmeText),downloadSeparate:previewPolicy.includes('separate preparation step'),zeroFilesystem:previewPolicy.includes('installer itself creates, overwrites and deletes no files or directories'),hostLimits:previewPolicy.includes('not separately proven'),noNetwork:previewPolicy.includes('no network requests'),normalNoOpen:previewPolicy.includes('still asks for normal confirmations, downloads and'),builderMain:previewPolicy.includes('published main installer'),manual:previewPolicy.includes('import remain manual')};
  if(readmeChecks.pinnedOccurrences!==4||Object.entries(readmeChecks).some(([k,v])=>k!=='pinnedOccurrences'&&v!==true))throw Error('Rendered README checks failed: '+JSON.stringify(readmeChecks));
  await page.goto('http://r0016.review.invalid/builder.html',{waitUntil:'domcontentloaded'});
  await page.waitForFunction(()=>typeof window.SalahConfig==='object'&&typeof installCmd==='function');
