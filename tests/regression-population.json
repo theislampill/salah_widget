@@ -42,6 +42,7 @@
   "tests/r0024-weather.test.cjs",
   "tests/r0028-closure-index.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
+  "tests/render-liveness-containment.test.cjs",
   "tests/timezone-authority-state.test.cjs",
   "tests/v1_limitations.test.cjs",
   "tests/weather-no-timetable-handoff.test.cjs",
@@ -1653,6 +1654,77 @@
    "path": "tests/install-volume-mutations.py",
    "reason": "installer platform suite (spawns shells/installers against staged trees)",
    "owner": "installer qualification (docs/state-contracts/R0016.md and installer-coordination)"
+  },
+  {
+   "path": "tools/qa/run_r002c_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, two served generated trees, stubbed prayer provider, mocked clock, injected Moon faults); not a headless unit instrument",
+   "owner": "R002C",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r002c_native.cjs",
+     "--base",
+     "<baseline tree>",
+     "--cand",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engines",
+     "chromium,firefox,webkit",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line per healthy scene / motion cell / fault cell on stdout and <out>/report.json (R2C-13/R2C-14; docs/state-contracts/R002C.md §5)"
+   }
+  },
+  {
+   "path": "tools/qa/r002c_natural_watch.cjs",
+   "reason": "native browser recipe (real-time 30-minute watch per engine, no injection, stubbed prayer provider); not a headless unit instrument",
+   "owner": "R002C",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r002c_natural_watch.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--minutes",
+     "30",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "<out>/watch.json per engine: page errors, renderFaults samples, receipt advance (R2C-15)"
+   }
+  },
+  {
+   "path": "tools/qa/r002c_clock_skew.cjs",
+   "reason": "native browser measurement (Playwright Chromium, timeScale stage-entry offsets); not a pass/fail instrument",
+   "owner": "R002C",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r002c_clock_skew.cjs",
+     "<playwright package>",
+     "<tree>",
+     "1800"
+    ],
+    "protocol": "one JSON summary line of per-stage entry offsets (docs/state-contracts/R002C.md §3a)"
+   }
+  },
+  {
+   "path": "tools/qa/r002c_healthy_differential.cjs",
+   "reason": "two-tree VM differential: needs a baseline generated index.html from another tree, so it cannot run inside the single-tree population; headless and effect-free when given one",
+   "owner": "R002C",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r002c_healthy_differential.cjs",
+     "<baseline index.html>",
+     "<candidate index.html>"
+    ],
+    "protocol": "JSON on stdout {scenes, failures, rows[identical, candidateFaults]}; exit 1 on any difference (R2C-10)"
+   }
   }
  ]
 }

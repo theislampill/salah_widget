@@ -1,0 +1,40 @@
+✖ R2C-01 prayer published despite Moon geometry (renderMoon) failure
+✖ R2C-01 prayer published despite weather sync (syncWeather) failure
+✖ R2C-01 prayer published despite star projection (projectStars) failure
+✖ R2C-01 order: weather sync runs after the prayer stage
+✖ R2C-01 order: Moon geometry runs after the prayer stage
+✖ R2C-01 order: no-model header after withdrawal and calendar
+✖ R2C-01 order: sim-invalid header after withdrawal and calendar
+✖ R2C-01 no-model header failure still publishes withdrawal and calendar
+✖ R2C-01 sim-invalid header failure still publishes withdrawal and calendar
+✖ R2C-02 loop survives a one-shot Moon failure
+✖ R2C-02 loop survives a one-shot residual frame failure
+✖ R2C-03 persistent Moon failure: countdown advances each second, faults counted, reported once
+✖ R2C-04 boot continuation under a throwing Moon runtime
+✖ R2C-05 paint-stage failure: fresh receipt, fx unavailable, fault recorded
+✖ R2C-06 no-model paintCelestialWithoutTimetable failure every frame
+✖ R2C-06 no-model withdrawWeatherEffects failure every frame
+✖ R2C-07 applyConfig continues to acquisition and the loop under a throwing Moon runtime
+✖ R2C-07 SalahClock.set completes its transition; invalid input still throws before mutation
+✖ R2C-08 prayer-stage failure publishes the withdrawal, skips the theme, keeps the loop
+✖ R2C-08 a failed no-timetable withdrawal is recorded once and not retried within the frame
+✔ R2C-09 hide during a faulting frame leaves none pending; show schedules exactly one
+✔ R2C-09 hide+show inside a faulting frame leaves exactly one pending
+✖ R2C-09 hide+show inside a healthy frame leaves exactly one pending
+✖ R2C-03 bounded record: qaState().renderFaults is a frozen pure read
+﹣ R2C-12 mutant m1 renderMoon back before the prayer writes is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m2 drop the guaranteed reschedule is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m3 stage guard swallows without a record is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m4 prayer catch-all without the withdrawal is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m5 boot Moon guard removed is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m6 start guard reads a consumed id is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m7a syncWeather back ahead of the prayer writes is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m7b sim-invalid header ahead of the calendar is killed # mutation anchors belong to the candidate source
+﹣ R2C-12 mutant m7c no-model header ahead of the calendar is killed # mutation anchors belong to the candidate source
+ℹ tests 33
+ℹ suites 0
+ℹ pass 2
+ℹ fail 22
+ℹ cancelled 0
+ℹ skipped 9
+ℹ todo 0
