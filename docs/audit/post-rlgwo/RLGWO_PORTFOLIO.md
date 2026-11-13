@@ -276,16 +276,22 @@ measures the deployed artifact.
 - **Independent per-issue review.** Six reviewers in separate contexts, with no access to the authoring
   conversation, reviewed three drafts each against the owner's RLGWO methodology and IMPLEMENTAUDIT R001F: first
   round 2 PASS, 16 PASS WITH REQUIRED CORRECTIONS, 0 FAIL (28 blocking findings in total). After correction by
-  the authors the same reviewers re-read every draft: 18 of 18 cleared for filing.
+  the authors the same reviewers re-read every draft: 17 of 18 cleared for filing. The R0033 reviewer
+  withheld clearance on one ground only — the draft exceeded a 60,000-character drafting cap by its count
+  (GitHub's limit is 65,536); its substantive blocking finding was resolved. R0033 was filed on that basis and
+  the complete published body is subject to a further independent review recorded on the issue.
 - **Independent portfolio review.** A separate reviewer reconciled the set: 38/38 findings with exactly one owner;
   112/112 machines disposed; all 153 draft pairs disposed (individually where they share a source owner,
   invariant, test, document passage or decision gate); admission check against R0001–R0027; decision-gate
   census. First verdict "ready after required corrections" (5 blocking cross-draft items); final verdict ready
-  to file after the last item was corrected.
+  to file once one remaining sentence in R0036 was aligned. That sentence was corrected by the integrator
+  after the re-review and was not itself re-reviewed before filing; a bounded independent review of it is
+  recorded on the issue.
 - **Publication readback.** Each issue was read back from the server after creation and again after the
   cross-link backfill; title, state (open) and complete body matched the reviewed text byte for byte (line
   endings normalised). The only differences between the reviewed drafts and the published bodies are the
-  replacement of sibling placeholders by `Rxxxx (#issue)` and a closing portfolio paragraph.
+  replacement of sibling placeholders by `Rxxxx (#issue)`, an opening identity line and a closing portfolio
+  paragraph.
 
 Limits. These are review results by separate model contexts, not human review. Reviewers spot-checked source
 citations (their brief required at least twelve per draft) rather than every one. Acceptance rows are future recipes. Several work
