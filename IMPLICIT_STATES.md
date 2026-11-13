@@ -20,6 +20,14 @@ mapping from the original audit (commit `f71fef6c`) is in the
 [FINDINGS.md](docs/audit/post-rlgwo/FINDINGS.md). Absence of an entry is still not a claim that
 no other implicit machine exists.
 
+Corrective work orders. The Research-Lab-Grade Work-Orders filed from the audit (R0028–R0039, GitHub issues
+89–106, all open when filed on 2026-11-12) and the disposition of every entry in this registry — owning work
+order, preserved as already explicit, frozen-v1 documentation only, or retained implicit with a
+reconsideration trigger — are in the
+[portfolio index](docs/audit/post-rlgwo/RLGWO_PORTFOLIO.md#3-machine-dispositions-112-of-112). The status
+cells in this registry describe the audit baseline and change only when a work order's accepted evidence
+changes them.
+
 Installer scope (the original entries ISM-INST-001…007): these entries cover the installer workflows examined for R0015 (issue 21:
 artifact transactions and staging trust) and R0016 (issue 22: dry-run as an offline,
 effect-free preview), as of merged main `e4dbf91be91f7539b36297e030f86e2a0e99f54d`
