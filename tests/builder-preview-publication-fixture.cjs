@@ -241,11 +241,10 @@ S.invariants=async mk=>{
   assert.match(f.elements.get("code").value,size);
   assert.match(f.sources.page.match(/<iframe id="pv"[^>]*>/)[0],size);
   const readme=fs.readFileSync(path.join(root,"README.md"),"utf8");
-  // Every README wrapper, including the frozen V1 one (its card is also 325×530; R0037), is 325×530.
-  const snippets=readme.match(/<iframe[\s\S]*?<\/iframe>/g)||[];
-  assert.ok(snippets.filter(x=>!/\/v1\//.test(x)).length>=2,"README current snippets present");
-  assert.ok(snippets.some(x=>/\/v1\//.test(x)),"README V1 snippet present");
-  for(const snippet of snippets)assert.match(snippet,size,"README wrapper is 325×530");
+  // Current-version snippets only; the frozen V1 compatibility snippet (src .../v1/) keeps its own historical size.
+  const current=(readme.match(/<iframe[\s\S]*?<\/iframe>/g)||[]).filter(x=>!/\/v1\//.test(x));
+  assert.ok(current.length>=2,"README current snippets present");
+  for(const snippet of current)assert.match(snippet,size,"README current wrapper is 325×530");
   assert.match(fs.readFileSync(path.join(root,"presets","salah-widget.tablissng.json"),"utf8"),size);
   assert.equal(f.elements.get("pv").allow,""); assert.ok(!/allow=/.test(f.elements.get("code").value));
   f.elements.get("lat").focus(); pair(f,"lat","24.4672"); pair(f,"lat","25"); f.click("reload");

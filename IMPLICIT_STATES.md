@@ -1435,10 +1435,6 @@ Original audit: **C07** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
 
 Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **DWE / PEX / PEX** · Historical disposition: *new*
 
-*R0037 (branch candidate, not yet accepted) removes the README V1 wrapper contradiction that made D DWE. The handoff stays under completed R000F; the renderer-literal census (OM-06) belongs to R0034.*
-
-- **Proposed status (R0037, issue 104).** D / I / V **PEX / PEX / PEX (D re-derived: the contradiction is removed; the literal census remains open)**, taking effect only when R0037 is accepted; the cells above stay at the audit baseline until then.
-
 - **Scope and decision.** How a builder draft reaches a running widget and where the card geometry is fixed.
 - **Sources.** `src/native/builder.html` `base` ~L201, iframe ~L166-167, snippet ~L215; `presets/salah-widget.tablissng.json` ~L9; `README.md` ~L564-575; geometry literals (OM-06) `src/native/index.html` ~L482, ~L520-554, ~L2072, ~L2088, ~L2986; `real-sky/native-contract.mjs` ~L20, `native-host.mjs`, `native-composition.mjs`, `native-first-paint.mjs`, `native-preview.mjs`, `native-host-hooks.js` ~L35
 - **State dimensions.** preview `base?r=N#hash`; no `hashchange` listener (reload required); same-origin iframe (no sandbox)
@@ -1450,13 +1446,14 @@ Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/a
 
 - **Actors and ownership.** builder
 - **Effects.** preview widget; in `#local=1` the preview uses and can write the visitor's own saved settings
-- **Invariants.** 325×530 in builder iframe, snippet, every README snippet including the V1 one (R0037), and preset (AGENTS forbidden regression)
-- **Invalid, duplicate, stale or concurrent risks.** (resolved on the R0037 branch: the README V1 snippet was 330×534 while saying "change only `src`", PRA-F-18; it is now 325×530, matching the V1 card); the same literal is duplicated across renderer modules without a shared constant (OM-06)
-- **Status evidence.** D: AGENTS rule, R000F and `docs/V1_PRESERVATION.md` agree with every README snippet (R0037); literal census open (R0034) · I: static literals · V: R000F `invariants` asserts every README iframe including V1 (R0037 RED/GREEN and mutant controls)
-- **Work orders.** R000F (ES0F-15); R0037 (README V1 wrapper only); R0034 (renderer-literal census only)
-- **Accepted evidence.** R000F invariants scenario (current snippets only); native layout cell. R0037 branch (not yet accepted): scenario extended to the V1 snippet, `docs/state-contracts/evidence/R0037/r000f-readme-controls.txt`
+- **Invariants.** 325×530 in builder iframe, snippet, README current snippets and preset (AGENTS forbidden regression)
+- **Invalid, duplicate, stale or concurrent risks.** README V1 snippet is 330×534 and says "change only `src`" for the current version (PRA-F-18); the same literal is duplicated across renderer modules without a shared constant (OM-06)
+- **Status evidence.** D: AGENTS rule contradicted by the README V1 snippet · I: static literals · V: current snippets only
+- **Work orders.** R000F (ES0F-15)
+- **Accepted evidence.** R000F invariants scenario (current snippets only); native layout cell
 - **Tests.** R000F `invariants` scenario
-- **Observed facts.** Audit baseline: README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); R0037 branch: `width:325px;height:530px`, V1 card 325×530 (`v1/index.html` L11, L24); values agree across modules at baseline (OM-06)
+- **Observed facts.** README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); values agree across modules at baseline (OM-06)
+- **Proposed status (R0037, issue 104).** Pending owner decision DG2 (README V1 wrapper size): R0037 measured that a 325×530 wrapper is not pixel-neutral for the frozen V1 card (its box-shadow and some glass pixels differ), so the README V1 snippet stays 330×534 on this branch and the cells above stay at the audit baseline. See [R0037 DG2](docs/state-contracts/R0037.md#dg2--readme-v1-wrapper-size-pending-owner).
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
 
 <a id="ism-cfg-011"></a>

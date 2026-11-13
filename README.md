@@ -555,8 +555,8 @@ Provider retention or handling is not established by this widget-source descript
 
 ## Preserved V1 compatibility URL
 
-`/salah_widget/v1/` serves the frozen pre-overhaul application (public readbacks
-are recorded in the preservation document). The root URL remains the current version.
+After the preservation PR is merged and Pages deploys, `/salah_widget/v1/` serves
+the frozen pre-overhaul application. The root URL remains the current version.
 V1's clock, location, prayer timetable, weather and externally hosted fonts remain
 live. Local settings and caches use V1-specific keys; valid existing root settings
 are copied once without changing root data.
@@ -567,15 +567,12 @@ are copied once without changing root data.
   referrerpolicy="no-referrer"
   allow="geolocation"
   src="https://theislampill.github.io/salah_widget/v1/#local=1"
-  style="width:325px;height:530px;border:0;border-radius:28px;overflow:hidden"
+  style="width:330px;height:534px;border:0;border-radius:28px;overflow:hidden"
   scrolling="no">
 </iframe>
 ```
 
-The frozen V1 card is 325×530, the same as the current card. For the current version, change only `src` to
+For the current version, change only `src` to
 `https://theislampill.github.io/salah_widget/#local=1`.
 The iframe dimensions and internal card layout are unchanged.
-V1 is not maintained and keeps known defects, for example Reset can report
-"Local settings cleared." when the browser refused the removal; see
-[known limitations of the frozen copy](docs/V1_PRESERVATION.md#known-limitations-of-the-frozen-copy).
 See [preservation provenance, validation and limitations](docs/V1_PRESERVATION.md).

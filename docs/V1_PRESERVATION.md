@@ -131,11 +131,14 @@ forms use `330×534`, border radius `28px`, `allow="geolocation"`, no-referrer a
 no scrolling. Only `src` changes between `/salah_widget/#local=1` and
 `/salah_widget/v1/#local=1`. Internal card remains `325×530`.
 
-That fixture measured a `325×530` card inside a 5×4 px transparent margin. The
-V1 card itself is `325×530` (`v1/index.html`: global `box-sizing:border-box`,
-`.c{width:325px;height:530px}`), the same as the current card. The canonical
-wrapper for both versions is therefore `325×530`, and the README V1 snippet uses
-it (R0037). The `330×534` fixture size is historical. It is not a V1 requirement.
+That fixture measured a `325×530` card inside a 5×4 px margin. The V1 card box
+is `325×530` (`v1/index.html`: global `box-sizing:border-box`; `.c` sets
+`width:325px;height:530px;border-radius:28px` and `box-shadow:0 18px 50px #0008`).
+In a `330×534` wrapper, part of that shadow shows in the margin and in the
+rounded-corner cut-outs; a `325×530` wrapper clips it. The two sizes are therefore
+not pixel-identical for V1 (R0037 measurement). Which size the README V1 snippet
+should use is an open owner decision (R0037 decision gate DG2); until then it
+stays `330×534`.
 
 Provider responses and observer coordinates are controlled fixtures. Browser time,
 timezone, viewport, DPR and reduced-motion preference are controlled. Google Fonts
