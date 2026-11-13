@@ -37,7 +37,7 @@
   // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06): R0021 a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819
   // -> 1ba361b6 (R0021 body plus the same spectral transform).
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'1ba361b60f46ac631f70315b2542018c151013cb83c6b4e0f458da63ed55769e',
+    'first-paint':'3caedd89e2f7b43c0ab4e6824dcee8790b8855a15477cefffa7bf1291cc07d0d',
     'moon-initial':'d5e648ac08b80a8291140eddbd73dc7305aa7d40f38ebcbea71e239d5be54f16',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });

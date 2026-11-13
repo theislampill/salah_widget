@@ -77,3 +77,57 @@ for(const cached of [true,false])test(`${cached?'cached':'network'} prayer boots
  const before={updates,renders};s._loopStarted=true;vm.runInContext('pending=loadPrayerData();',s);resolve(data);await s.pending;
  assert.deepEqual({updates,renders},before,'No extra synchronous render or presenter in ordinary operation');
 });
+
+// R0034 (issue 101) ISM-SKY-019 parse parity: the head declines exactly when the
+// native snapshot would refuse the same fragment, and agrees with it otherwise.
+const nativeSource=fs.readFileSync(new URL('../../src/native/index.html',import.meta.url),'utf8');
+const hooksSource=fs.readFileSync(new URL('../../real-sky/native-host-hooks.js',import.meta.url),'utf8');
+function firstPaint(hash,cfg={lat:24.47,lon:39.61,tz:'Asia/Riyadh',units:'c'},reduce=false){
+ const restore={window:globalThis.window,document:globalThis.document,location:globalThis.location,matchMedia:globalThis.matchMedia,ImageData:globalThis.ImageData,devicePixelRatio:globalThis.devicePixelRatio};
+ const now=Date.now,styles=[];
+ try{
+  Date.now=()=>Date.parse('2026-10-07T15:09:00Z');
+  const backgroundRule=Function(fs.readFileSync(new URL('../../moon/src/moon-first-paint.mjs',import.meta.url),'utf8')+'\nreturn nativeHeadMoonBackgroundRule;')();
+  globalThis.window={SalahConfig:{resolve:()=>({cfg})},SalahMoonHead:{compose:()=>({visible:false,presentation:{moonShow:0,moonlight:0}}),backgroundRule}};
+  globalThis.devicePixelRatio=1;globalThis.location={hash};globalThis.matchMedia=()=>({matches:reduce});
+  globalThis.ImageData=class{constructor(data,w,h){this.data=data;this.width=w;this.height=h;}};
+  globalThis.document={head:{append:s=>styles.push(s)},createElement:name=>name==='canvas'?{getContext:()=>({putImageData(){}}),toDataURL:()=> 'data:image/png;test'}:{}};
+  prepareNativeFirstPaint();return {styles,fp:window.SalahFirstPaint};
+ }finally{Date.now=now;for(const [k,v] of Object.entries(restore))if(v===undefined)delete globalThis[k];else globalThis[k]=v;}
+}
+function nativeCamera(hash){
+ const line=hooksSource.match(/const cameraNumber=\(name,fallback\)=>[^;]+;/)[0];
+ const q=new URLSearchParams(hash.slice(1));
+ return Function('q',line+'\nreturn {azDeg:cameraNumber("skyAz",180),altDeg:cameraNumber("skyAlt",45),fovYDeg:cameraNumber("skyFov",90),rollDeg:cameraNumber("skyRoll",0)};')(q);
+}
+test('ES34-11 a blank or invalid camera parameter installs no head, as the native snapshot refuses it',()=>{
+ for(const key of ['skyAz','skyAlt','skyFov','skyRoll'])for(const raw of ['',' ','abc']){
+  const hash=`#local=1&${key}=${encodeURIComponent(raw)}`,native=nativeCamera(hash);
+  assert.ok(!Object.values(native).every(Number.isFinite),'native refuses '+hash);
+  const {styles,fp}=firstPaint(hash);assert.equal(styles.length,0,hash);assert.equal(fp,undefined,hash);
+ }
+});
+test('ES34-11 numeric camera values equal the native parse',()=>{
+ for(const hash of ['#local=1','#local=1&skyAz=12.5&skyAlt=30&skyFov=60&skyRoll=-5','#local=1&skyAz=-90']){
+  const {styles,fp}=firstPaint(hash);assert.equal(styles.length,1,hash);assert.deepEqual(fp.snapshot.camera,nativeCamera(hash),hash);
+ }
+});
+test('ES34-11 temporal exclusion keys are exactly the native temporal owners (simTime, timeScale; not simDate)',()=>{
+ const native=new Set([...nativeSource.matchAll(/q\.get\("(simTime|timeScale|simDate)"\)/g)].map(m=>m[1]));
+ assert.deepEqual([...native].sort(),['simTime','timeScale'],'the native clock reads simTime and timeScale and never simDate');
+ for(const key of ['simTime=11:00','timeScale=2','timeScale=1'])assert.equal(firstPaint('#local=1&'+key).styles.length,0,key);
+ assert.equal(firstPaint('#local=1&simDate=2026-01-01').styles.length,1,'simDate (no native owner) does not suppress the head');
+});
+test('ES34-11 scene identity and reduced motion equal the native owners for default and non-default zones',()=>{
+ const scene=nativeSource.slice(nativeSource.indexOf('function skySceneIdentity(){'),nativeSource.indexOf('let _skySceneKey=null'));
+ const motion=nativeSource.match(/const MOTIONFULL = [^;]+;/)[0]+'\n'+nativeSource.match(/const isMotionReduced = [^;]+;/)[0];
+ for(const cfg of [{lat:24.47,lon:39.61,tz:'Asia/Riyadh',units:'c'},{lat:51.5072,lon:-0.1276,tz:'Europe/London',units:'f'},{lat:28.5383,lon:-81.3792,units:'c'}])
+  for(const hash of ['#local=1','#local=1&motion=full','#local=1&motion=FULL'])for(const reduce of [false,true]){
+   const {fp}=firstPaint(hash,cfg,reduce);
+   // R002D: the native zone element is the configured effective hint (_cacheTz), default America/New_York.
+   const ctx={lat:cfg.lat,lon:cfg.lon,_cacheTz:cfg.tz||'America/New_York',FOLLOW_WALL_CLOCK:true,simNow:()=>0,q:new URLSearchParams(hash.slice(1)),window:{matchMedia:()=>({matches:reduce})}};
+   vm.createContext(ctx);vm.runInContext(scene+'\n'+motion+'\nthis.identity=skySceneIdentity();this.reduced=isMotionReduced();',ctx);
+   assert.equal(fp.snapshot.sceneIdentity,ctx.identity,JSON.stringify(cfg));assert.equal(fp.snapshot.tz,ctx._cacheTz);
+   assert.equal(fp.snapshot.reducedMotion,ctx.reduced,hash+' reduce='+reduce);
+  }
+});

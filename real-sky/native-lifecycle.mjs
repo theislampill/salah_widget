@@ -1,6 +1,14 @@
 import {nativeIdentity,nativeJob,nativeResultCurrent} from './native-contract.mjs';
 import {LatestRenderQueue} from './core/src/latest-render-queue.mjs';
 
+// R0034 churn record: names of the nativeIdentity elements, used only to say which
+// accepted inputs moved while a dropped result was executing (diagnostic, never a fence).
+const IDENTITY_FIELDS=['sceneIdentity','generation','lat','lon','heightM','camera','weather','lp','reducedMotion','allowEstimates','units','tz','timeScale','elevationSource','elevationOwner'];
+// Two dropped completions/supersessions without an acceptance under one
+// sceneIdentity are reported; one drop is an ordinary single target change.
+export const NATIVE_CHURN_DROPS=2;
+function movedInputs(a,b){try{const x=JSON.parse(a),y=JSON.parse(b);return IDENTITY_FIELDS.filter((_,i)=>JSON.stringify(x[i])!==JSON.stringify(y[i]));}catch{return [];}}
+
 /** Native-only scheduling/fencing. Never supplies or advances astronomical time.
  * One active execution and one newest pending request belong to the retained queue.
  * Monotonic time detects wall-clock discontinuities; it is never a render UTC.
@@ -12,6 +20,7 @@ export class NativeSkyLifecycle {
   this.availability={status:'pending',reason:'initial'};this.durations=new WeakMap();
   this.displayed=null;this.latest=null;this.pending=null;this.lastSubmit=-Infinity;this.disposed=false;
   this.counts={requests:0,accepted:0,superseded:0,rejected:0,invalidations:0};
+  this.sceneIdentity=null;this.churn={sceneIdentity:null,drops:0,inputs:[]};
   this.queue=new LatestRenderQueue(async(job,id)=>{
    const started=this.now(),result=await execute(job,id);this.durations.set(job,this.now()-started);return result;
   },{
@@ -23,27 +32,46 @@ export class NativeSkyLifecycle {
      // result from another target/epoch never overwrites successor diagnostics.
      if(!this.disposed&&!state.paused&&job.native.lifecycleEpoch===this.epoch&&job.native.identity===nativeIdentity(state)&&Math.abs(state.timeScale)>1&&Math.abs(state.utcMs-job.observer.utcMs)>30000){
       this.setAvailability({status:'unavailable',reason:'rate-throughput',rate:state.timeScale,wallBudgetMs:30000/Math.abs(state.timeScale),executionMs:this.durations.get(job)});
-     }
+     }else this.dropped(job,'rejected');
      return;
     }
     if(result.status!=='ready'||!result.raster)throw new Error(result.error??'Native real sky unavailable');
+    this.churn={sceneIdentity:null,drops:0,inputs:[]};
     this.setAvailability({status:'available',reason:'current-frame',rate:state.timeScale??1,executionMs:this.durations.get(job)});
     this.displayed=job;this.hooks.onResult(result,id,job);this.counts.accepted++;
    },
    onError:(error,id)=>{if(this.current(this.latest))this.hooks.onError(error,id);else this.counts.rejected++;}
   });
  }
- get state(){return {...this.counts,epoch:this.epoch,disposed:this.disposed,pending:!!this.pending,paused:!!this.observed?.paused,availability:{...this.availability}};}
+ get state(){return {...this.counts,epoch:this.epoch,disposed:this.disposed,pending:!!this.pending,paused:!!this.observed?.paused,availability:{...this.availability},churn:{drops:this.churn.drops,inputs:[...this.churn.inputs]}};}
  setAvailability(value){this.availability=value;this.hooks.onAvailability({...value});}
- invalidate(reason='native invalidation') {
+ // R0034 status truth. A result dropped (superseded in the queue or rejected at
+ // completion) because the target identity moved while it executed, under the
+ // same accepted sceneIdentity and with nothing accepted since, is churn. Only the
+ // current, unpaused owner reports it; a late result of another scene never does,
+ // and it never replaces a rate-throughput report (a stable-identity condition).
+ dropped(job,kind){
+  if(this.disposed||this.observed?.paused||!job||this.identity===null)return;
+  if(job.native.sceneIdentity!==this.sceneIdentity||job.native.identity===this.identity)return;
+  if(this.churn.sceneIdentity!==this.sceneIdentity)this.churn={sceneIdentity:this.sceneIdentity,drops:0,inputs:[]};
+  this.churn.drops++;this.churn.inputs=movedInputs(job.native.identity,this.identity);
+  if(this.churn.drops>=NATIVE_CHURN_DROPS&&this.availability.reason!=='rate-throughput')
+   this.setAvailability({status:'unavailable',reason:'target-churn',drops:this.churn.drops,last:kind,inputs:[...this.churn.inputs]});
+ }
+ invalidate(reason='native invalidation',{sameScene=false}={}) {
   if(this.disposed)return;
-  this.epoch++;this.displayed=null;this.counts.invalidations++;this.setAvailability({status:'pending',reason});this.hooks.onInvalidate(reason);
+  this.epoch++;this.displayed=null;this.counts.invalidations++;
+  // A further identity move under the same scene keeps an active churn report
+  // instead of flipping it back to "pending"; every other reason replaces it.
+  if(!(sameScene&&reason==='new accepted native scene'&&this.availability.reason==='target-churn'))this.setAvailability({status:'pending',reason});
+  this.hooks.onInvalidate(reason);
  }
  observe(state=this.capture()) {
   if(this.disposed)return null;
   let key;
   try{key=nativeIdentity(state);}catch(error){
    if(this.identity!==null||this.observed!==null)this.invalidate('invalid accepted native input');
+   this.sceneIdentity=null;
    this.identity=null;this.observed=null;return null;
   }
   const now=this.now(),rate=Number.isFinite(state.timeScale)?state.timeScale:1,prior=this.observed;
@@ -59,8 +87,11 @@ export class NativeSkyLifecycle {
    // of the same accepted scene. Its own UTC/identity/epoch is checked at publish.
    this.displayed=null;this.hooks.onInvalidate('native frame expired');
   }
-  this.identity=key;this.observed={now,utcMs:state.utcMs,rate,paused:!!state.paused};
-  if(reason)this.invalidate(reason);
+  const sameScene=this.sceneIdentity===state.sceneIdentity;
+  // Churn clears on a sceneIdentity change or a pause (acceptance/dispose elsewhere).
+  if(!sameScene||state.paused)this.churn={sceneIdentity:null,drops:0,inputs:[]};
+  this.identity=key;this.sceneIdentity=state.sceneIdentity;this.observed={now,utcMs:state.utcMs,rate,paused:!!state.paused};
+  if(reason)this.invalidate(reason,{sameScene});
   return state;
  }
  current(job,state) {
@@ -85,9 +116,9 @@ export class NativeSkyLifecycle {
   this.latest=job;this.pending=job;this.lastSubmit=this.now();this.counts.requests++;
   return this.queue.submit(job).then(result=>{
    if(this.pending===job)this.pending=null;
-   if(result.status==='superseded')this.counts.superseded++;
+   if(result.status==='superseded'){this.counts.superseded++;this.dropped(job,'superseded');}
    return {status:result.status,id:result.id};
   });
  }
- dispose(){if(this.disposed)return;this.invalidate('disposed');this.disposed=true;this.queue.dispose();this.pending=null;this.latest=null;this.observed=null;}
+ dispose(){if(this.disposed)return;this.invalidate('disposed');this.disposed=true;this.churn={sceneIdentity:null,drops:0,inputs:[]};this.queue.dispose();this.pending=null;this.latest=null;this.observed=null;}
 }
