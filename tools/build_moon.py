@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """Build Moon MB1 from complete local source. No network, npm, or compiler required.
 
-Call from build_native.py after the unmodified CP9 output is generated. The supplied
+build_native.py calls plan_moon() with the staged (unexpanded) CP9 entries; plan_moon
+computes every Moon output in memory and writes nothing, so a Moon preflight failure
+leaves the tree unchanged (R0029). build_moon(root) remains the direct form for
+already-generated entries and still refuses already-expanded ones. The supplied
 WASM is source-bound; recompilation is optional and separately qualified.
 """
 from pathlib import Path
 import base64, hashlib, json, math, re
 from compact_receivers import compact_receivers
+from generated_outputs import Outputs, publish, replace_exact
 
 WORKER_UNITS=['asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar.mjs','moon-engine.mjs','moon-quality.mjs','moon-pool.mjs','moon-worker.mjs']
 HOST_UNITS=['moon-install-guard.mjs','asset-digest.mjs','surface_v5.mjs','moon-detail.mjs','moon-calendar.mjs','moon-initial.mjs','moon-initial-compact.mjs','moon-precision.mjs','moon-first-paint.mjs']
@@ -16,8 +20,6 @@ INITIAL_MANIFEST_SHA256='f1184150163bb992279fe7a4f031917cd71d8558b2951b1997bf8dd
 INITIAL_SOURCE_ASSOCIATION_SHA256='48ca605daaefdc836adfb4a7da6b85114a4a0d9d144f5b4e056a7857b1cfd00f'
 
 def sha(data):return hashlib.sha256(data).hexdigest()
-def write(path,text):
- path.parent.mkdir(parents=True,exist_ok=True);path.write_text(text,encoding='utf-8',newline='\n')
 def inline(text):return text.replace('</script','<\\/script')
 
 def validate_initial_sources(root,initial_pin):
@@ -54,11 +56,20 @@ def native_lunar_owner(root):
   section('function moonPhase(date){','// ---- PBR MOON:'),
   section('const MOON_SCALE_MIN=','function renderMoon(){'),
   section('function nativeLunarPresentation(','function lunarPresentation(')])
+ENTRY_NAMES=['index.html','offline.html']
 def build_moon(root):
- root=Path(root).resolve(); moon=root/'moon'
- # Validate both entries before writing any output. A direct repeated Moon build
- # must not partially replace index.html before rejecting the offline entry.
- entries={name:(root/name).read_text(encoding='utf-8') for name in ['index.html','offline.html']}
+ """Direct Moon build on already-generated entries: plan everything, then publish (no inventory)."""
+ root=Path(root).resolve()
+ outputs,summary=plan_moon(root,{name:(root/name).read_text(encoding='utf-8') for name in ENTRY_NAMES})
+ publish(root,outputs,inventory=False)
+ return summary
+def plan_moon(root,entries):
+ """Compute every Moon output from the given entry texts. Returns (Outputs, summary); writes nothing."""
+ root=Path(root).resolve(); moon=root/'moon'; out=Outputs()
+ def write(path,data):out.add(path.relative_to(root).as_posix(),data)
+ # Validate both entries before computing any output. A repeated Moon build must
+ # be rejected for either entry before anything is replaced.
+ entries={name:entries[name] for name in ENTRY_NAMES}
  boundary='\nboot();'
  native_end=boundary+'\n</script>'
  native_start='<script>\n"use strict";\n// ---- config:'
@@ -114,7 +125,10 @@ def build_moon(root):
    chunks.append({'name':path,'index':i,'path':part,'last':last})
    write(moon/part, 'document.currentScript?.SalahMoonAssetChunk?.('+','.join([json.dumps(path),str(i),json.dumps(code),str(last).lower()])+');\n')
    tags.append(f'<script type="application/octet-stream" id="moon-embedded-{counter}">'+code+'</script>');counter+=1
- cloud=(root/'real-sky/native-cloud-transfer.mjs').read_text(encoding='utf-8').replace('export ','')
+ cloud=(root/'real-sky/native-cloud-transfer.mjs').read_text(encoding='utf-8')
+ # Whole-text `export ` strip: every occurrence must be a line-start declaration.
+ cloud=replace_exact(cloud,'export ','','build_moon native-cloud-transfer export strip',
+  count=len(re.findall(r'^export (?=(?:const|let|function|class|async function)\b)',cloud,re.M)))
  initial_boot='\ntry{const text=atob('+json.dumps(base64.b64encode(compact).decode('ascii'))+'),packed=new Uint8Array(text.length);for(let i=0;i<text.length;i++)packed[i]=text.charCodeAt(i);const bytes=decodeCompactReceivers(packed,'+json.dumps(encoding,separators=(',',':'))+');window.SalahMoonInitial=createInitialMoon(bytes,'+json.dumps(decoded_pin,separators=(',',':'))+');}catch(error){window.SalahMoonInitialError=String(error.message??error);}\n'
  worker_pin={'bytes':len(worker.encode()),'sha256':sha(worker.encode())}
  head_owner='''
@@ -129,7 +143,7 @@ window.SalahPrepareFirstPaint?.();
  host='(function(){\n'+cloud+'\nconst MOON_DEFAULT_PROFILE='+json.dumps(PROFILE,separators=(',',':'))+';\nlet MOON_WORKER_SOURCE=null;\nconst MOON_WORKER_PIN='+json.dumps(worker_pin,separators=(',',':'))+';\nconst MOON_OFFLINE_CHUNKS='+json.dumps(chunks,separators=(',',':'))+';\n'+concat(HOST_UNITS)+'\n'+native_owner+initial_boot+concat(['moon-native.mjs'])+head_owner+'\n})();\n'
  refinement='window.SalahMoonRuntime.installWorkerSource('+json.dumps(worker)+');\n'
  write(moon/'moon-host.js',host+refinement)
- (moon/'assets/initial-compact.bin').write_bytes(compact)
+ write(moon/'assets/initial-compact.bin',compact)
  write(moon/'initial-compact-manifest.json',json.dumps(encoding,indent=2)+'\n')
  # The current receiver owner follows the parsed neutral card and preview owner,
  # immediately before native declarations/boot. Keep the full producer order;
@@ -140,7 +154,7 @@ window.SalahPrepareFirstPaint?.();
   flags='window.__SALAH_MOON_INLINE__=true;if(location.protocol==="file:")window.__SALAH_MOON_OFFLINE__=true;' if name=='index.html' else 'window.__SALAH_MOON_INLINE__=true;window.__SALAH_MOON_OFFLINE__=true;window.__SALAH_MOON_EMBEDDED__=true;'
   initial_tag='\n<script id="moon-initial-code">'+flags+'\n'+inline(host)+'</script>\n'
   text=prefix+initial_tag+native+refinement_tag+tail
-  if name=='offline.html':text=text.replace('</body>','\n'.join(tags)+'\n</body>',1)
+  if name=='offline.html':text=replace_exact(text,'</body>','\n'.join(tags)+'\n</body>','build_moon offline </body> chunk tags')
   write(root/name,text)
  sources={str(p.relative_to(root)).replace('\\','/'):sha(p.read_bytes()) for p in sorted({moon/'src'/n for n in WORKER_UNITS+HOST_UNITS+['moon-native.mjs','moon_kernel.c']})}
  sources['real-sky/native-cloud-transfer.mjs']=sha((root/'real-sky/native-cloud-transfer.mjs').read_bytes())
@@ -148,4 +162,4 @@ window.SalahPrepareFirstPaint?.();
  sources['src/native/index.html']=sha((root/'src/native/index.html').read_bytes())
  if initial_association:sources['moon/initial-source-association.json']=initial_association
  write(moon/'BUILD.json',json.dumps({'schema':'moon-build/1','source':sources,'compilerRequired':False,'kernelSha256':sha(wasm),'workerSha256':sha(worker.encode()),'hostSha256':sha((host+refinement).encode()),'assetManifestSha256':sha((moon/'asset-manifest.json').read_bytes()),'initialReceiverSha256':sha(initial),'initialManifestSha256':sha((moon/'initial-manifest.json').read_bytes()),'initialSourceAssociationSha256':initial_association,'initialCompact':encoding,'chunkCount':len(chunks),'profile':PROFILE},indent=2)+'\n')
- return {'moonHostBytes':len((host+refinement).encode()),'moonInitialHostBytes':len(host.encode()),'moonWorkerBytes':len(worker.encode()),'assetBytes':sum(map(len,packed.values())),'chunks':len(chunks)}
+ return out,{'moonHostBytes':len((host+refinement).encode()),'moonInitialHostBytes':len(host.encode()),'moonWorkerBytes':len(worker.encode()),'assetBytes':sum(map(len,packed.values())),'chunks':len(chunks)}

@@ -1,0 +1,62 @@
+{
+  "scope": "Local rendered actual authored builder and candidate README only; external requests blocked. No served-main parity or renderer/widget visual acceptance.",
+  "browser": "151.0.7922.34",
+  "inputs": {
+    "readme": {
+      "bytes": 46265,
+      "sha256": "6df3083c8b65f09bff7cf00f4312ec1b8abfa13d2247497f3c0aa271522777bf"
+    },
+    "builder": {
+      "bytes": 36147,
+      "sha256": "873e8dedfd4380d5bb8271945b23d73dc5afd3b5c8b848f67017cc4aaa41fd9f"
+    },
+    "config": {
+      "bytes": 29968,
+      "sha256": "78891de38c1c87ccae6d79a99f71b20a6fb812aaa527d4662340b749a59fcaad"
+    }
+  },
+  "readmeChecks": {
+    "pinnedOccurrences": 4,
+    "oldPinAbsent": true,
+    "downloadSeparate": true,
+    "zeroFilesystem": true,
+    "noNetwork": true,
+    "normalNoOpen": true,
+    "builderMain": true,
+    "manual": true
+  },
+  "previewPolicy": "With a reviewed local file, DRY_RUN=1 on Bash or -DryRun on PowerShell reads\nlocal browser/profile metadata and prints an offline preview. The earlier\ndownload command is a separate preparation step; the preview invocation makes\nno network requests, including release or availability checks. It asks no\nquestions and needs no interactive terminal.\nPreview creates, overwrites and deletes no files or directories. It changes no\nclipboard, browser profile or extension data, opens no browser pages, and does\nno extraction, preset rewriting or cleanup. Existing caches and retained\nbundles do not become preview outputs. Release versions, artifact paths and\nunanswered install-source choices remain unresolved. No usable artifact path,\nstaged result or installed success is promised. Unknown or legacy-refused\ntargets stay held or refused. When no target is eligible, the installer exits\nunsuccessfully. Malformed or unsupported mode options are refused with an\nunsuccessful exit.\nTo perform normal setup while opening browser pages yourself, use\nNO_OPEN=1 bash ./install.sh or\npowershell.exe -NoProfile -File \".\\install.ps1\" -NoOpen (use pwsh.exe for\nPowerShell 7). This mode still asks for normal confirmations, downloads and\nstages files, and offers clipboard handoffs. Extension installation and preset\nimport remain manual. The builder's Install widget command starts normal\nmode and uses the published main installer; use the reviewed local-file\npreview above before allowing those normal actions.\n",
+  "builder": {
+    "title": "Prayer Times widget · builder",
+    "installLabel": "Install widget",
+    "command": {
+      "cmd": "curl -fsSL https://raw.githubusercontent.com/theislampill/salah_widget/main/install.sh | SALAH_WIDGET_HASH='lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass' bash",
+      "carry": true
+    },
+    "snippet": "<iframe\n  title=\"Prayer Times\"\n  referrerpolicy=\"no-referrer\"\n  src=\"http://r0016.review.invalid/#lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass\"\n  style=\"width:325px;height:530px;border:0;border-radius:28px;overflow:hidden\"\n  scrolling=\"no\">\n</iframe>",
+    "hash": "lat=24.4672&lon=39.6142&label=Madinah&method=4&school=0&appearance=glass",
+    "previewStyle": "width:325px;height:530px;border:0;border-radius:28px;overflow:hidden",
+    "body": "Prayer Times widget · builder\n\nFill in a location, copy the snippet, paste it anywhere that takes HTML (TablissNG, Notion, a webpage…).\nShows live prayer times and local weather — and re-colors itself for the conditions and time of day.\n\nLOCATION NAME\nCouldn’t detect your area — type a place or use the pin.\nLATITUDE\nLONGITUDE\nTIME FORMAT\n24-hour\n12-hour\nCALCULATION METHOD\nISNA — N. America\nMuslim World League\nUniv. of Islamic Sciences, Karachi\nUmm al-Qura, Makkah\nEgyptian General Authority\nShia Ithna-Ashari\nUniv. of Tehran\nGulf Region\nKuwait\nQatar\nSingapore (MUIS)\nUOIF — France\nDiyanet — Turkey\nRussia (SAMR)\nMoonsighting Committee\nDubai\nMITHL(AYN)\nShafiʿi/Maliki/Hanbali\nHanafi (later Asr)\n\nMethod: changes the Fajr & Isha twilight angles\n(choose the authority your region or community follows).\nMithl: Asr begins when an object's shadow equals its height\n(Shafiʿi · Maliki · Hanbali);\nMithlayn: when the shadow is twice its height — a later Asr\n(Hanafi).\n\nTEMPERATURE UNITS\nFahrenheit (°F)\nCelsius (°C)\nDATE FORMAT\n2026-06-14\n06/14/2026\n14/06/2026\n14 June 2026\n(Custom)\n \n\nCustom dates use Unicode date symbols.\n\nTIMETABLE APPEARANCE\nLiquid glass (default)\nHigh contrast\nInstall widget\n\ncopies terminal script for installation wizard\n\n↻ Refresh preview\nEMBED TYPE\nPortable — fixed location\nSelf-configuring — auto-detect\n\nFixed coordinates baked into the URL — works anywhere with no per-viewer setup. Best for one specific place.\n\nEMBED CODE\nCopy embed code\nOpen widget in new tab\n\nPowered by the free Aladhan API. Don't know your coordinates? Right-click your spot on OpenStreetMap → “Show address”.\n\nSelf-configuring embeds & privacy: location is approximate and uses GeoJS, with ipinfo.io as fallback. Place/postcode searches go to Nominatim and, for matching Canadian-style prefixes, Zippopotam. Builder reverse lookups send coordinates to BigDataCloud; the widget also requests prayer, weather, radar and font resources. Saved settings stay in your browser, which does not prevent these service requests. Precise location is optional and requires browser/host permission. An iframe host, including TablissNG, can strip allow=\"geolocation\"; coarse/manual setup remain available. Storage policies can limit persistence. Request details."
+  },
+  "requests": [
+    "http://r0016.review.invalid/README.html",
+    "http://r0016.review.invalid/builder.html",
+    "http://r0016.review.invalid/config.js",
+    "https://get.geojs.io/v1/ip/geo.json",
+    "http://r0016.review.invalid/?r=0",
+    "https://ipinfo.io/json"
+  ],
+  "pageErrors": [],
+  "complete": true,
+  "browserClosed": true,
+  "elapsedMilliseconds": 1499.830262,
+  "command": [
+    "/usr/local/bin/node",
+    "/home/runner/work/salah_widget/salah_widget/tools/qualification/installer_preview_docs.cjs",
+    "/home/runner/work/salah_widget/salah_widget",
+    "/home/runner/work/_temp/r0016-doc-evidence/render",
+    "/home/runner/work/_temp/r0016-doc-deps/node_modules"
+  ],
+  "node": "v22.23.4",
+  "platform": "linux"
+}
