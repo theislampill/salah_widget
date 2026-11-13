@@ -20,6 +20,14 @@ mapping from the original audit (commit `f71fef6c`) is in the
 [FINDINGS.md](docs/audit/post-rlgwo/FINDINGS.md). Absence of an entry is still not a claim that
 no other implicit machine exists.
 
+Corrective work orders. The Research-Lab-Grade Work-Orders filed from the audit (R0028–R0039, GitHub issues
+89–106, all open when filed on 2026-11-12) and the disposition of every entry in this registry — owning work
+order, preserved as already explicit, frozen-v1 documentation only, or retained implicit with a
+reconsideration trigger — are in the
+[portfolio index](docs/audit/post-rlgwo/RLGWO_PORTFOLIO.md#3-machine-dispositions-112-of-112). The status
+cells in this registry describe the audit baseline and change only when a work order's accepted evidence
+changes them.
+
 Installer scope (the original entries ISM-INST-001…007): these entries cover the installer workflows examined for R0015 (issue 21:
 artifact transactions and staging trust) and R0016 (issue 22: dry-run as an offline,
 effect-free preview), as of merged main `e4dbf91be91f7539b36297e030f86e2a0e99f54d`
@@ -2937,30 +2945,33 @@ Original audit: **new (NEW-E-05 + NEW-D-04)** · Lane papers: [D](docs/audit/pos
 Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Turns authored sources into root entries and bundles; a wrong output ships at the next merge to main.
-- **Sources.** `tools/build_native.py` ~L1-114 (index write L83, offline write L109, `build_moon` L113); `tools/native_core_horizon.py`; `tools/native_core_spectral_cache.py`; `tools/native_star_bootstrap.py`
-- **State dimensions.** input identity (vendor digests, authored sources); write phase (core copy → notices → worker → `native-sky.js` → star bootstrap → data → config/builder → `index.html` → CSS → `offline.html` → Moon → report); exit code
+- **Sources.** `tools/build_native.py` (computes every output into an in-memory `Outputs` map; `publish` at the end); `tools/generated_outputs.py` (guards, `replace_exact`, declared owned set, `publish`, `GENERATED.json`); `tools/native_core_horizon.py`; `tools/native_core_spectral_cache.py`; `tools/native_star_bootstrap.py`. Contract: [R0029](docs/state-contracts/R0029.md).
+- **State dimensions.** input identity (vendor digests, authored sources); phase ∈ {planning, computed, validated, publishing, published, failed-before-publish, failed-during-publish}; produced inventory G; prior inventory G₀ (`GENERATED.json`, else the built-in declared list); exit code
 - **Transitions.**
 
   | Event | Guard | Effect |
   |---|---|---|
-  | clean input | — | complete, rc 0; second run byte-identical |
-  | transform digest drift | — | fails before that file; earlier core files already written |
-  | Moon-stage failure | — | rc 1 with root entries unexpanded (lane F probe C) |
-  | hand-edited generated file | — | silently overwritten |
+  | clean input | every guard passes | changed files replaced, stale owned files removed, `GENERATED.json` last; rc 0; second run writes 0 files |
+  | transform, manifest-pin, catalogue, bootstrap-size or Moon preflight failure | explicit exception (also under `-O`) | failed-before-publish: rc 1, zero in-tree writes |
+  | drifted anchor at any count site | `replace_exact` occurrence count | failed-before-publish naming the anchor |
+  | I/O error while replacing | — | failed-during-publish: replaced/removed paths printed to stderr, rc ≠ 0; re-run restores parity |
+  | interruption before publish | — | tree unchanged; staging removed in `finally` |
+  | hand-edited generated file | — | replaced by the next build (unchanged policy) |
 
-- **Guards.** digest guards (`ValueError`); `assert` guards `build_native.py` L70, `native_star_bootstrap.py` L14, L18, L26 (removed under `python -O`); exact-count guard L79; unguarded `replace(...,1)` ~L72-82
-- **Actors and ownership.** executor
-- **Effects.** generated tree
-- **Invariants.** generated = build(authored) (holds at baseline)
-- **Failure and recovery.** no rollback or staging; recovery is a full re-run
-- **Invalid, duplicate, stale or concurrent risks.** partial states and silent no-op replacements (PRA-F-19)
-- **Status evidence.** D: AGENTS + R0027 rebuild protocol · I: partly explicit · V: transform tests; no registered whole-tree parity test
-- **Work orders.** R0027 (issue 69: spectral transform added)
-- **Accepted evidence.** `tests/real-sky/native_spectral_cache_build_test.py` 8 OK; build-twice parity (lane F probe: 0 diffs over 509 files; integrator re-run at hand-back)
-- **Tests.** `tests/real-sky/native_spectral_cache_build_test.py`, `native_horizon_build_test.py`
-- **Observed facts.** integrator confirmed write order and assert lines
-- **Hypotheses.** anchor drift at L72-74 yields a 'successful' build with hooks missing
-- **Unknowns.** whether any executor ran with `-O`
+- **Guards.** digest guards (`ValueError`); former `assert`s are explicit `ValueError`s (`native_star_bootstrap.py` manifest pin, catalogue identity, bootstrap size; `build_native.py` elevation anchor); every census count site goes through `generated_outputs.replace_exact`; exact-count config-tag guard kept; exempt whole-text sites recorded in the census test
+- **Actors and ownership.** executor runs the builder; the builder owns exactly the declared generated-path set (`generated_outputs.DECLARED_EXACT` plus `real-sky/core/**.mjs` and `moon/file-data/*.js`), never `src/`, `vendor/` or `v1/`
+- **Effects.** generated tree plus `GENERATED.json` (paths, bytes, SHA-256 of every generated file)
+- **Invariants.** I1 no detected failure leaves an in-tree change; I2 `-O` does not change validation; I3 a drifted anchor fails the build; I4 stale owned outputs never survive a successful build; I5 identical inputs give the committed bytes
+- **Failure and recovery.** failure before publish needs no recovery; failure during publish is recovered by re-running. Two concurrent builds on one tree are unsupported (DG-1 default: documented, no lock file)
+- **Invalid, duplicate, stale or concurrent risks.** a forged or stale inventory cannot widen deletion beyond the declared set; an unreadable inventory fails before publish; a multi-file publish is not atomic as a whole (per-file `os.replace`); concurrent builds unsupported
+- **Proposed status (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, taking effect only when R0029 is accepted; the cells above stay at the audit baseline until then.
+- **Status evidence.** D: [R0029 contract](docs/state-contracts/R0029.md) + AGENTS CP9 sentence · I: explicit, centralised in `generated_outputs.py` · V: `tests/real-sky/generator_atomicity_test.py` (12 tests) and the re-expressed R0027 tests, with mutation controls recorded in R0029.md; independent review passed at candidate `c9290f8b` with advisories (orchestrator records the reference); codes change only on acceptance
+- **Work orders.** R0027 (issue 69: spectral transform added); R0029 (issue 90: staging, guards, inventory)
+- **Accepted evidence.** `tests/real-sky/native_spectral_cache_build_test.py` 8 OK; build-twice parity (lane F probe: 0 diffs over 509 files; integrator re-run at hand-back). R0029 executor evidence (not yet accepted): see R0029.md ledger
+- **Tests.** `tests/real-sky/native_spectral_cache_build_test.py`, `native_horizon_build_test.py`, `generator_atomicity_test.py`
+- **Observed facts.** integrator confirmed write order and assert lines; R0029 re-ran S0–S4 at `5b846476` (G-01) and reproduced every partial state
+- **Hypotheses.** anchor drift at L72-74 yields a 'successful' build with hooks missing — confirmed at `5b846476` (S3: rc 0, notify hook absent) and removed by R0029 (the same drift now fails before publish)
+- **Unknowns.** whether any executor ran with `-O` (still unknown from records; no longer consequential, since validation no longer depends on `assert`); byte identity on Linux not established (R002A)
 - **Original catalogue contract** ([C13 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/tools/build_native.py#L7-L44); carried forward for reference, not re-derived):
   - States: vendor inputs; worker/host/bootstrap written; config/builder copied; index guards; index/CSS/offline written; Moon expansion; reported
   - Transitions: copy/transform pinned core and concatenate units; write worker/host/data; copy author config/builder to root; replace native index legacy star/hook boundaries, inject scripts; write root index/offline; invoke C14 last, then report generated output identity
@@ -2976,25 +2987,28 @@ Original audit: **C13** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 Original audit: **C14** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-installers-build-workflows.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Validation and expansion of Moon outputs into the entries.
-- **Sources.** `tools/build_moon.py` ~L57-151; `tools/compact_receivers.py`
-- **State dimensions.** preflight (entries, assets, WASM, initial receiver); write order worker → chunks → host → compact → entries → `BUILD.json`
+- **Sources.** `tools/build_moon.py` `plan_moon` (computes every Moon output from the given entry texts into an `Outputs` map; writes nothing) and `build_moon` (direct form: plan, then `publish` without inventory); `tools/compact_receivers.py`; `tools/generated_outputs.py`. Contract: [R0029](docs/state-contracts/R0029.md).
+- **State dimensions.** preflight (entries, assets, WASM, initial receiver) on the **staged** entries supplied by `build_native.py`; computed outputs worker, chunks, host, compact files, both expanded entries, `BUILD.json` (bytes unchanged); publication owned by ISM-BLD-001
 - **Transitions.**
 
   | Event | Guard | Effect |
   |---|---|---|
-  | build | preflight passes (entries, assets, WASM, initial receiver) | worker → chunks → host → compact files → entries → `BUILD.json` |
-  | direct `build_moon` on already-built entries | — | refused (duplicate expansion, ~L67-68) |
-  | rebuild with fewer chunks | — | stale extra chunk survives in `moon/file-data/` (lane F probe B) |
+  | build (from `build_native.py`) | preflight passes on the staged entries | outputs returned in memory; published with the native outputs |
+  | preflight failure (asset, WASM, receiver, boundary) | `ValueError` | nothing written; root entries keep their previous (Moon-expanded) bytes |
+  | `export ` strip or offline `</body>` chunk-tag anchor drift | `replace_exact` count | failed before publish, naming the anchor |
+  | direct `build_moon` on already-built entries | — | refused (duplicate expansion) before any write |
+  | rebuild with fewer chunks | stale sweep of `moon/file-data/*.js` | the stale chunk is removed and absent from `GENERATED.json` |
 
-- **Guards.** identity checks ~L80-92
-- **Actors and ownership.** native builder
-- **Effects.** Moon outputs
-- **Failure and recovery.** preflight failure raises before any write
-- **Invalid, duplicate, stale or concurrent risks.** `moon/file-data/` never cleaned, so a stale extra chunk survives (lane F probe B); `BUILD.json` has no file inventory (PRA-F-19)
-- **Status evidence.** D: AGENTS Moon section · I: partly explicit · V: guard tests
-- **Work orders.** R0021 (HOST_UNITS gained `moon-install-guard.mjs`)
+- **Guards.** identity checks (assets, WASM, initial receiver, ancestry, source association); entry boundary preflight; `replace_exact` at the `export ` strip (count = line-start declarations) and the offline `</body>` chunk tags
+- **Actors and ownership.** native builder; `moon/file-data/` is a generator-exclusive directory (only `*.js` there is owned)
+- **Effects.** Moon outputs, published by ISM-BLD-001; `moon/BUILD.json` keeps its schema and bytes; the file inventory lives in the sibling `GENERATED.json`
+- **Failure and recovery.** every Moon failure is detected before publish and needs no recovery
+- **Invalid, duplicate, stale or concurrent risks.** stale chunks removed by the next successful build (R0029 G-06); non-`.js` files in `moon/file-data/` and any other `moon/` file outside the declared set are never removed
+- **Proposed status (R0029, issue 90).** D / I / V **EIV / EEV / EEV**, taking effect only when R0029 is accepted; the cells above stay at the audit baseline until then.
+- **Status evidence.** D: AGENTS Moon section + [R0029 contract](docs/state-contracts/R0029.md) · I: explicit · V: guard tests + `generator_atomicity_test.py` (Moon asset drift, both Moon count sites, stale chunk); independent review pending
+- **Work orders.** R0021 (HOST_UNITS gained `moon-install-guard.mjs`); R0029 (issue 90: staged `plan_moon` interface); R0033 (issue 100) must rebase onto `plan_moon`
 - **Accepted evidence.** `tests/real-sky/moon_build_guard_test.py` 8 OK
-- **Tests.** `tests/real-sky/moon_build_guard_test.py`, `moon/tests/test_build.py`
+- **Tests.** `tests/real-sky/moon_build_guard_test.py`, `moon/tests/test_build.py`, `tests/real-sky/generator_atomicity_test.py`
 - **Original catalogue contract** ([C14 at f71fef6c](https://github.com/theislampill/salah_widget/blob/f71fef6ccf7e4efcb57b5a26688d2360461a3253/tools/build_moon.py#L11-L43); carried forward for reference, not re-derived):
   - States: unexpanded input; preflight admitted; worker/chunks emitted; host/compact emitted; entry expansion; BUILD receipt
   - Transitions: reject already expanded/missing or misordered boundaries before writes; admit exact payload sizes/digests and approved source-association drift; compact receiver has distinct decoded identity; write worker/chunks/host/compact files, inject entry scripts, finally write BUILD identity receipt
