@@ -287,6 +287,17 @@ function splitWithdrawal(src){
 test('review: one Error instance thrown by two stages records both; fx null',()=>sharedInstance(SOURCE));
 test('review: one Error instance across loop frames is counted per frame',()=>sharedAcrossFrames(SOURCE));
 test('review: boot first render, loader render and weather start are contained and recorded',()=>bootGuards(SOURCE));
+// Cached-timetable loader path: every render call that throws is recorded (none swallowed by the load catch).
+async function cachedLoaderGuard(src){
+  const h=harness(src,{hash:LIVE});
+  h.run('saveCache("08-09-2026",__fixturePrayer);today=null;tomorrow=null;lastDate=null;TIMESCALE=1;window.__renders=0;render=()=>{window.__renders++;throw new Error("injected render failure")};');
+  h.run('window.__boot=boot();window.__boot.catch(()=>{});');
+  let rejected=null;try{await h.complete(h.run('window.__boot'),{turns:200});}catch(e){rejected=String(e&&e.message||e);}
+  assert.equal(rejected,null,'boot must not reject');assert.equal(h.run('_loopStarted'),true);
+  assert.ok(h.run('window.__renders')>=2,'boot and cached-loader renders ran');
+  assert.equal(faultCount(h,'render'),h.run('window.__renders'),'every failed render recorded');
+}
+test('review: cached-timetable loader render is contained and recorded',()=>cachedLoaderGuard(SOURCE));
 for(const t of ['notify','invalidate','clear'])test('review: SalahClock.set completes when '+t+' throws',()=>clockGuards(SOURCE,t));
 test('review: maintainPrayerDay failure is its own stage; the frame still renders',()=>loopStage(SOURCE,'maintainPrayerDay=()=>{throw new Error("injected prayer-day")};','prayer-day',h=>assert.equal(h.select('.cn').textContent,'Isha')));
 test('review: cloud paint failure is its own stage; preview present still runs',()=>loopStage(SOURCE,'window.__p=0;window.SalahSkyPreview={present(){window.__p++}};syncCloudMotionPreference=()=>{throw new Error("injected clouds")};','clouds',h=>assert.equal(h.run('window.__p'),1)));
@@ -317,6 +328,7 @@ const MUTANTS=[
   ['m11 SalahClock notify guard removed',[['  try{ window.SalahNativeSkyHost?.notify(); }catch(e){ recordRenderFault("real-sky",e); }','  window.SalahNativeSkyHost?.notify();']],src=>clockGuards(src,'notify')],
   ['m12 prayer-day stage guard removed',[['runRenderStage("prayer-day",maintainPrayerDay);','maintainPrayerDay();']],src=>loopStage(src,'maintainPrayerDay=()=>{throw new Error("injected prayer-day")};','prayer-day')],
   ['m13 effects-withdrawal fallback removed',[['}finally{ if(!effects) runRenderStage("weather-effects",()=>withdrawWeatherEffects(d,"prayer timetable unavailable")); }','}finally{ void effects; }']],src=>splitWithdrawal(src)],
+  ['m15 cached-loader render guard removed',[['        try{ render(); }catch(e){ recordRenderFault("render",e); }   // R002C: recorded, not swallowed by the load catch','        render();']],src=>cachedLoaderGuard(src)],
   ['m14 boot weather-start guard removed',[['  try{ startWeather(true); }catch(e){ recordRenderFault("weather-start",e); }','  startWeather(true);']],src=>bootGuards(src)],
 ];
 function mutate(edits){
