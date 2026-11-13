@@ -193,6 +193,32 @@ test('compare-sites: only evidence may disappear; a removed or resized protected
   assert.equal(resized.onlyEvidenceRemoved, false); assert.deepEqual(resized.protectedResized, ['index.html']);
 });
 
+test('compare-sites: a declared change may resize a protected path; unlisted resizes and any removal still fail', () => {
+  const dir = tmp();
+  const base = path.join(dir, 'base.txt'), head = path.join(dir, 'head.txt'), changed = path.join(dir, 'changed.txt');
+  fs.writeFileSync(base, '10  index.html\n100  AGENTS.md\n5  docs/rlgwo-execution/x.png\n7  v1/index.html\n');
+  const cmp = (headText, changedText) => {
+    fs.writeFileSync(head, headText); fs.writeFileSync(changed, changedText);
+    const out = path.join(dir, 'diff.json');
+    const r = run(['compare-sites', '--base-manifest', base, '--head-manifest', head, '--changed-from', changed,
+      '--out', out, ...EVIDENCE.flatMap((e) => ['--exclude', e])]);
+    return {code: r.code, json: JSON.parse(fs.readFileSync(out, 'utf8'))};
+  };
+  // The candidate edits AGENTS.md (declared in git diff): its resize is admitted and recorded.
+  const ok = cmp('10  index.html\n140  AGENTS.md\n7  v1/index.html\n', '_config.yml\nAGENTS.md\n');
+  assert.equal(ok.code, 0); assert.equal(ok.json.onlyEvidenceRemoved, true);
+  assert.deepEqual(ok.json.intentionallyResizedProtected, ['AGENTS.md']); assert.deepEqual(ok.json.protectedResized, []);
+  // index.html resizes although the diff does not list it: still a failure.
+  const unlisted = cmp('11  index.html\n140  AGENTS.md\n7  v1/index.html\n', 'AGENTS.md\n');
+  assert.equal(unlisted.code, 1); assert.deepEqual(unlisted.json.protectedResized, ['index.html']);
+  // Without a declared list the AGENTS.md resize fails as before.
+  const none = cmp('10  index.html\n140  AGENTS.md\n7  v1/index.html\n', '');
+  assert.equal(none.code, 1); assert.deepEqual(none.json.protectedResized, ['AGENTS.md']);
+  // A protected removal fails even when the path is listed as changed.
+  const removed = cmp('10  index.html\n100  AGENTS.md\n', 'v1/index.html\n');
+  assert.equal(removed.code, 1); assert.deepEqual(removed.json.protectedRemoved, ['v1/index.html']);
+});
+
 test('census: github.io and main-ref links into the prefixes break; commit-pinned links do not', () => {
   const c = py(`import json
 texts=[("i1","see https://theislampill.github.io/salah_widget/docs/moon/evidence/a.png and https://theislampill.github.io/salah_widget/README.md"),

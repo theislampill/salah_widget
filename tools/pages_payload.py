@@ -117,9 +117,12 @@ def site_manifest_lines(site):
                    for p in sorted(site.rglob("*")) if p.is_file() and not p.is_symlink())
 
 
-def compare_manifests(base_text, head_text, excludes):
+def compare_manifests(base_text, head_text, excludes, changed=()):
     """G-07 on real builds: published paths that disappear must all fall under the new excludes, and
-    no protected path may disappear or change size."""
+    no protected path may disappear. A protected path may change size only when the candidate
+    intentionally changed that source path (`changed`: `git diff --name-only BASE HEAD`); an unlisted
+    resize still fails, and a removal fails even when listed."""
+    changed = {c.strip() for c in changed if c.strip()}
     def parse(text):
         out = {}
         for line in text.splitlines():
@@ -130,12 +133,18 @@ def compare_manifests(base_text, head_text, excludes):
     before, after = parse(base_text), parse(head_text)
     removed = sorted(set(before) - set(after))
     outside = [p for p in removed if not any(p.startswith(e) for e in excludes)]
-    protected = [p for p in removed if p in PROTECTED_FILES or p.startswith(PROTECTED_PREFIXES)]
-    resized = sorted(p for p in after if p in before and before[p] != after[p]
-                     and (p in PROTECTED_FILES or p.startswith(PROTECTED_PREFIXES)))
+    protected_removed = [p for p in removed if p in PROTECTED_FILES or p.startswith(PROTECTED_PREFIXES)]
+    protected_resized = sorted(p for p in after if p in before and before[p] != after[p]
+                               and (p in PROTECTED_FILES or p.startswith(PROTECTED_PREFIXES)))
+    # Declared changes exempt only resizes. A removal is never exempt: outside the exclusions it breaks
+    # G-07, and a protected path must stay published (G-06) whatever the diff says.
+    protected = protected_removed
+    resized = [p for p in protected_resized if p not in changed]
     result = {"baseFiles": len(before), "headFiles": len(after), "removedFiles": len(removed),
               "removedBytes": sum(before[p] for p in removed), "addedPaths": sorted(set(after) - set(before)),
-              "removedOutsideExcludes": outside, "protectedRemoved": protected, "protectedResized": resized}
+              "removedOutsideExcludes": outside, "protectedRemoved": protected, "protectedResized": resized,
+              "intentionallyResizedProtected": sorted(p for p in protected_resized if p in changed),
+              "declaredChangedPaths": len(changed)}
     result["onlyEvidenceRemoved"] = not outside and not protected and not resized
     return result
 
@@ -814,6 +823,8 @@ def main(argv=None):
     p.add_argument("--base-manifest", required=True)
     p.add_argument("--head-manifest", required=True)
     p.add_argument("--exclude", action="append", required=True)
+    p.add_argument("--changed-from", help="file listing the candidate's intentionally changed paths "
+                                           "(git diff --name-only BASE HEAD), one per line")
     p.add_argument("--out")
     p = sub.add_parser("published-diff")
     p.add_argument("--base", required=True)
@@ -831,7 +842,8 @@ def main(argv=None):
     if args.mode == "compare-sites":
         receipt = {"schema": SCHEMA + "#compare-sites", **compare_manifests(
             Path(args.base_manifest).read_text(encoding="utf-8"),
-            Path(args.head_manifest).read_text(encoding="utf-8"), args.exclude)}
+            Path(args.head_manifest).read_text(encoding="utf-8"), args.exclude,
+            Path(args.changed_from).read_text(encoding="utf-8").splitlines() if args.changed_from else ())}
         text = json.dumps(receipt, indent=2) + "\n"
         if args.out:
             Path(args.out).write_text(text, encoding="utf-8")

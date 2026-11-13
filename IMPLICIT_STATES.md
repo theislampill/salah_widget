@@ -3046,8 +3046,9 @@ Original audit: **C24** · Lane papers: [F](docs/audit/post-rlgwo/lanes/F-instal
 - **R002B update (issue 92; candidate branch, not merged or deployed).** Contract: [docs/state-contracts/R002B.md](docs/state-contracts/R002B.md).
   - Documented: payload machine (measurement sources `ci-build` / `deployed-artifact`, bound 1,000,000,000 regular-file bytes by owner decision DG-1(a), verdicts `within` / `exceeds` / `inconclusive`, invariants I1-I4).
   - Enforced in code: `tools/pages_payload.py` (explicit exceptions, no `assert`; `inconclusive` never `within`; envelope-only readback can prove `within` but never `exceeds`). The R0017 verifier is frozen to PR 62 and its `assert` guards are explicit. Branch-bound M2 workflow `.github/workflows/r002b-pages-payload.yml`.
-  - Verified by: `tests/r002b-pages-payload.test.cjs` (15 tests; RED 14 fail on main source; 10/10 mutants killed). Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
-  - Unresolved: no real Pages build has been measured by the new instrument (M2 runs only after the branch is pushed); post-merge deployed measurement and PR-gate wiring (R002A, issue 91) pending; not independently reviewed.
+  - Verified by: `tests/r002b-pages-payload.test.cjs` (16 tests; RED 15 fail on main source; 13/13 mutants killed). Stage-1 deployed envelope at `5b846476` / `5a90cc03`: `artifact.tar` 1,933,260,800 / 1,933,373,440 bytes (> bound); regular-file bytes not streamed.
+  - Hosted M2 run 43344320802 measured real builds (predecessor `5b846476` 10,160 files / 1,920,250,770 B `exceeds`; candidate 1,044 files / 340,738,680 B `within`) but failed its diff on the intended `AGENTS.md` resize; the instrument now takes a declared-change list (`git diff --name-only BASE HEAD`) and the base is current `main`.
+  - Unresolved: a green M2 re-run and its receipts; M1 deployed-artifact stream (owner permission, G-02); post-merge deployed measurement and PR-gate wiring (R002A, issue 91).
 
 <a id="ism-bld-004"></a>
 ### ISM-BLD-004 — Pages deployment from main (a commit to main is a deploy)
@@ -3074,7 +3075,7 @@ Original audit: **new (NEW-F-02)** · Lane papers: [F](docs/audit/post-rlgwo/lan
 - **R002B update, payload dimension only (issue 92; candidate, not merged).** Readback dimensions belong to R002A (issue 91).
   - Documented: `_config.yml` excludes the retained evidence trees `docs/real-sky/evidence`, `docs/rlgwo-execution`, `docs/state-contracts/evidence`, `docs/moon/evidence` (owner decision DG-2(a)); evidence stays in git and on github.com.
   - Enforced: by the external Jekyll 3 builder only (string-prefix `exclude`); no repository gate before merge (R002A).
-  - Verified: advisory git-tree projection only (published 9,707 files / 1,908,811,828 bytes at `5a90cc03` -> 941 files / 336,329,748 bytes; no protected path removed). The real build measure and the post-merge deployed measure are pending.
+  - Verified: advisory git-tree projection (9,707 files / 1,908,811,828 B at `5a90cc03` -> 941 files / 336,329,748 B) and the failed-diff hosted run 43344320802 (9,122 files removed, 0 outside the four prefixes, 0 protected removed). A green re-run and the post-merge deployed measure are pending.
   - Unresolved: Pages still serves the over-limit site until a merge; GitHub's enforcement behaviour is unknown.
 
 <a id="ism-bld-005"></a>

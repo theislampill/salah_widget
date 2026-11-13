@@ -14,7 +14,8 @@ permissions:
   contents: read
 
 env:
-  BASE_SHA: 5b84647686c28a3ce557fba2c2e6a801d0c0cb73
+  # Current main, the candidate's merge base, so main's own additions stay out of the diff (G-07).
+  BASE_SHA: 5a90cc030a68d92c4486d439d2dcdbccdb14ffec
 
 jobs:
   measure:
@@ -25,6 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; active Pages checkout
         with:
+          fetch-depth: 0  # the declared-change list below needs BASE_SHA
           persist-credentials: false
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1; predecessor main
         with:
@@ -50,6 +52,10 @@ jobs:
         run: |
           export PAGES_BUILDER_DIGESTS="$(docker image inspect ghcr.io/actions/jekyll-build-pages:v1.0.13 --format '{{json .RepoDigests}}' 2>/dev/null || true)"
           out="$RUNNER_TEMP/r002b"; mkdir -p "$out"
+          # Paths this candidate intentionally changes; only these protected paths may change size.
+          # Fails closed: no list, no run.
+          test "$(git merge-base "$BASE_SHA" "$GITHUB_SHA")" = "$BASE_SHA"
+          git diff --name-only "$BASE_SHA" "$GITHUB_SHA" > "$out/changed-paths.txt"
           set +e
           python3 tools/pages_payload.py site --site _site_base --root _r002b_base --commit "$BASE_SHA" \
             --out "$out/base-payload.json" --manifest-out "$out/base-manifest.txt"; base=$?
@@ -58,7 +64,8 @@ jobs:
           python3 tools/pages_payload.py compare-sites --base-manifest "$out/base-manifest.txt" \
             --head-manifest "$out/candidate-manifest.txt" --out "$out/published-diff.json" \
             --exclude docs/real-sky/evidence --exclude docs/rlgwo-execution \
-            --exclude docs/state-contracts/evidence --exclude docs/moon/evidence; diff=$?
+            --exclude docs/state-contracts/evidence --exclude docs/moon/evidence \
+            --changed-from "$out/changed-paths.txt"; diff=$?
           set -e
           echo "base=$base (expect 1 exceeds) candidate=$cand (expect 0 within) diff=$diff (expect 0)"
           test "$base" -le 1 && test "$cand" -eq 0 && test "$diff" -eq 0
