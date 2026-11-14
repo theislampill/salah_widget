@@ -10,7 +10,7 @@ import vm from 'node:vm';
 import {nativeJob} from '../../real-sky/native-contract.mjs';
 import {renderPhysicalSky} from '../../real-sky/core/src/physical-sky-renderer.mjs';
 import {encodeNativeFrame} from '../../real-sky/native-encoding.mjs';
-import {nativeSkyPresentation,nativeAtmosphereFields} from '../../real-sky/native-preview.mjs';
+import {nativeSkyPresentation,nativeAtmosphereFields,renderNativeBackgroundPreview} from '../../real-sky/native-preview.mjs';
 import {luminanceToSurfaceMagnitude} from '../../real-sky/core/src/sky-background.mjs';
 
 const source=fs.readFileSync(new URL('../../real-sky/native-host.mjs',import.meta.url),'utf8');
@@ -26,7 +26,7 @@ function runAccept(result,request,{fields=nativeAtmosphereFields,present=nativeS
  vm.createContext(s);vm.runInContext(acceptBody+'\naccept(__result,1,__request);',Object.assign(s,{__result:result,__request:request}));
  return {frame:s.frame,calls};
 }
-const fakeRaster=altDeg=>({physicalState:{sun:{altDeg,azDeg:150}},atmosphere:{},nativeLunarDisplayPrepared:true,width:325,height:530});
+const fakeRaster=(altDeg,azDeg=150)=>({physicalState:{sun:{altDeg,azDeg}},atmosphere:{},nativeLunarDisplayPrepared:true,width:325,height:530});
 const fakeRequest=step=>({options:{backgroundStepCss:step,view:{type:'camera',width:325,height:530,azDeg:180,altDeg:45,fovYDeg:90,rollDeg:0},diffuse:{residualNight:null},atmosphere:{aerosolTau550:.06}},observer:{},native:{}});
 
 test('every non-deep-night solar altitude decomposes on the worker background lattice (step 8 and step 6)',()=>{
@@ -38,6 +38,42 @@ test('every non-deep-night solar altitude decomposes on the worker background la
    assert.deepEqual(calls[0],expected,`alt ${alt}, step ${step}: decomposition lattice must equal the worker lattice`);
   }
  }
+});
+
+// T4/T5: the lattice must not depend on whether the physical Sun is in view, on the registration being active or on
+// an altitude threshold (kills "only when in view", "only above 20 deg" and similar partial fixes).
+test('lattice is independent of solar azimuth, anchor position and registration activity',()=>{
+ const expected=[Math.ceil(325/8),Math.ceil(530/8)];
+ for(const az of [150,235,90,330])for(const alt of [15,25,45])for(const anchor of [{x:20,y:49,presence:1},{x:-50,y:-50,presence:1},{x:20,y:49,presence:0}]){
+  const {calls}=runAccept({status:'ready',raster:fakeRaster(alt,az)},fakeRequest(8),{fields:()=>({}),present:r=>r,anchor});
+  assert.deepEqual(calls[0],expected,`az ${az} alt ${alt} anchor ${JSON.stringify(anchor)}`);
+ }
+});
+
+// All four replaced fields must come from that one worker-lattice decomposition (kills a fix applied to one field).
+test('every replaced field comes from the single worker-lattice decomposition',()=>{
+ const tag={solarAerosolLinear:{t:'a'},solarBackgroundLinear:{t:'s'},lunarBackgroundLinear:{t:'l'},twilightDisplay:{t:'w'}};let seen=null;
+ runAccept({status:'ready',raster:fakeRaster(30)},fakeRequest(8),{fields:()=>tag,present:r=>(seen=r,r)});
+ for(const k of Object.keys(tag))assert.equal(seen[k],tag[k],k);
+});
+
+// T7 (solar path): on the chosen lattice the host's sampled background must reproduce the worker's background field to
+// floating-point precision. A different lattice or a shifted node/pixel origin breaks this (24x40 measured 3.3% error).
+test('host decomposition nodes coincide with the worker background nodes (solar daytime path)',()=>{
+ for(const vis of [20000,6000]){
+  const {request,raw}=ownerScene('2026-11-14T15:26:00Z',vis),src=raw.skyBackgroundLinear??raw.backgroundLinear;
+  const {calls}=runAccept({status:'ready',raster:{...raw}},request);
+  const f=nativeAtmosphereFields(raw.physicalState,raw.atmosphere,request.options.view,undefined,...calls[0]);
+  let m=0;for(let i=0;i<src.length;i++)if(src[i]>0)m=Math.max(m,Math.abs(f.background[i]-src[i])/src[i]);
+  assert.ok(m<=1e-12,`vis ${vis}: host field differs from the worker field by ${m} (relative)`);
+ }
+});
+
+// The preview path is not part of this change: pin its own lattice so a fix cannot silently alter it.
+test('preview keeps its own lattice: [24,40] normally, [12,20] for fast clocks',()=>{
+ const base={utcMs:Date.parse('2026-11-14T15:26:00Z'),lat:28.54,lon:-81.38,heightM:0,generation:2,sceneIdentity:'r0034-a1-preview',camera:{azDeg:180,altDeg:45,fovYDeg:90,rollDeg:0},weather:{vis:20000,cloud:0,code:0,temp:51},units:'f',lp:0};
+ assert.deepEqual(renderNativeBackgroundPreview(base).diagnostics.grid,[24,40]);
+ assert.deepEqual(renderNativeBackgroundPreview({...base,timeScale:1800}).diagnostics.grid,[12,20]);
 });
 
 test('deep night (below -20 degrees) still uses the worker-prepared lunar display and no host decomposition',()=>{
