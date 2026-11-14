@@ -190,7 +190,7 @@ iframe{box-shadow:0 18px 50px #0008}
   </div>
   <p class="note">Powered by the free <a href="https://aladhan.com/prayer-times-api" target="_blank" rel="noreferrer">Aladhan API</a>.
   Don't know your coordinates? Right-click your spot on <a href="https://www.openstreetmap.org" target="_blank" rel="noreferrer">OpenStreetMap</a> → “Show address”.</p>
-  <p class="note"><strong>Self-configuring embeds &amp; privacy:</strong> location is approximate and uses <a href="https://www.geojs.io/" target="_blank" rel="noreferrer">GeoJS</a>, with ipinfo.io as fallback. Place/postcode searches go to Nominatim and, for matching Canadian-style prefixes, Zippopotam. Builder reverse lookups send coordinates to BigDataCloud; the widget also requests prayer, weather, radar and font resources. Saved settings stay in your browser, which does not prevent these service requests. Precise location is optional and requires browser/host permission. An iframe host, including TablissNG, can strip <code>allow="geolocation"</code>; coarse/manual setup remain available. Storage policies can limit persistence. <a href="https://github.com/theislampill/salah_widget#auto-detect-precise-location--privacy" target="_blank" rel="noreferrer">Request details</a>.</p>
+  <p class="note"><strong>Self-configuring embeds &amp; privacy:</strong> location is approximate and uses <a href="https://www.geojs.io/" target="_blank" rel="noreferrer">GeoJS</a>, with ipinfo.io as fallback. Place/postcode searches go to Nominatim and, for matching Canadian-style prefixes, Zippopotam. Builder reverse lookups send the typed or browser-located coordinates to BigDataCloud in fixed-coordinate mode only; in self-configuring mode coordinate edits make no reverse request; the widget also requests prayer, weather, radar and font resources. Saved settings stay in your browser, which does not prevent these service requests. Precise location is optional and requires browser/host permission. An iframe host, including TablissNG, can strip <code>allow="geolocation"</code>; coarse/manual setup remain available. Storage policies can limit persistence. <a href="https://github.com/theislampill/salah_widget#auto-detect-precise-location--privacy" target="_blank" rel="noreferrer">Request details</a>.</p>
 </div>
 
 <script src="config.js"></script>
@@ -276,7 +276,9 @@ function setMode(m){
     button.tabIndex=selected?0:-1;
   });
   if(!chosen) return;
-  embedMode=chosen.id==="mode-local"?"local":"portable";
+  const nextMode=chosen.id==="mode-local"?"local":"portable";
+  if(nextMode!==embedMode) reverseModeEpoch++;   // R0031: a mode change supersedes a pending reverse lookup
+  embedMode=nextMode;
   $("modenote").innerHTML = embedMode==="local"
     ? 'Self-configuring location — each viewer’s area is <strong>auto-detected</strong> (approximate, IP/timezone-based, no permission prompt). The method, temperature units and timetable appearance selected here are included for a fresh viewer; saved widget settings take precedence. Location fields are omitted. Viewers can change settings inside the widget (tap the header buckle); their choice is saved <strong>locally in their browser</strong>. The snippet adds <code>allow="geolocation"</code> so the in-widget location button can work. <strong>TablissNG</strong> may strip <code>allow</code> (precise location then unavailable — coarse auto-detect + manual still work). If storage is unavailable, settings apply for the session only.'
     : 'Fixed coordinates baked into the URL — works anywhere with no per-viewer setup. Best for one specific place.';
@@ -380,21 +382,49 @@ $("label").addEventListener("keydown",(e)=>{          // Enter cycles matches, o
   const q=$("label").value.trim();
   if(q.length>=2){ clearTimeout(srchDebounce); startDots(); doSearch(q); }
 });
+// Reverse lookup admission (R0031). Ownership (R000F, ownsLookup) decides WHOSE reply may apply; admission decides
+// whether the reply is evidence at all. Only an OK response whose body is a plain object, read within one deadline
+// (the geocoder's 8 s budget, which also aborts), is examined, and each field is admitted on its own:
+//   label     — first non-empty string of city/locality/principalSubdivision/countryName (trimmed, ≤200 chars)
+//   homeCC    — only a two-letter alphabetic countryCode
+//   method    — only a continentCode of exactly two upper-case letters, by the unchanged policy NA → ISNA "2",
+//               any other admitted code → "4". The rule is shape-based (no provider code list is cited); a missing,
+//               empty or malformed continentCode is absence of evidence and never means "not North America".
+// A non-OK status, unparsable or non-object body, timeout or transport failure writes nothing.
+// Self-configuring (local) embeds omit coordinates, so their coordinate edits make no reverse request (D-31-1 A);
+// a mode change supersedes a pending lookup. No body is persisted.
+const REVERSE_DEADLINE_MS=8000;
+let reverseModeEpoch=0;
+function admitReverse(j){
+  if(!j || typeof j!=="object" || Array.isArray(j)) return null;
+  const text=v=>typeof v==="string" && v.trim() && v.trim().length<=200 ? v.trim() : "";
+  return { label:text(j.city)||text(j.locality)||text(j.principalSubdivision)||text(j.countryName),
+    cc:typeof j.countryCode==="string" && /^[A-Za-z]{2}$/.test(j.countryCode) ? j.countryCode.toLowerCase() : "",
+    continent:typeof j.continentCode==="string" && /^[A-Z]{2}$/.test(j.continentCode) ? j.continentCode : "" };
+}
 async function fillNameFromCoords(edit=locationEdit){
   if(edit!==locationEdit) return;
+  if(embedMode==="local") return;                  // D-31-1 A: no reverse request in self-configuring mode
   if(!labelAuto && !methodAuto) return;
   const la=$("lat").value.trim(), lo=$("lon").value.trim();
   if(!la||!lo||isNaN(+la)||isNaN(+lo)) return;
-  const owner=captureLookup();
+  const owner=captureLookup(), epoch=reverseModeEpoch;
+  const ac=typeof AbortController==="function"?new AbortController():null; let to=0;
+  const deadline=new Promise((_,reject)=>{ to=setTimeout(()=>{ reject(new Error("timeout")); if(ac) ac.abort(); },REVERSE_DEADLINE_MS); });
   try{
-    const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,{referrerPolicy:"no-referrer"});
-    const j=await r.json();
+    const init=ac?{referrerPolicy:"no-referrer",signal:ac.signal}:{referrerPolicy:"no-referrer"};
+    const work=fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${encodeURIComponent(la)}&longitude=${encodeURIComponent(lo)}&localityLanguage=en`,init)
+      .then(r=>{ if(!r || r.ok!==true) throw new Error("http"); return r.json(); });
+    const j=await Promise.race([work,deadline]);
+    clearTimeout(to);
     if(!ownsLookup(owner)) return;
-    if(j.countryCode) homeCC=j.countryCode.toLowerCase();   // upgrade the postcode-bias country to the actual detected location
-    if(labelAuto){ const name=(j.city||j.locality||j.principalSubdivision||j.countryName||"").trim(); if(name) $("label").value=name; }
-    if(methodAuto) $("method").value = (j.continentCode==="NA") ? "2" : "4";   // ISNA for North America
+    const a=admitReverse(j);
+    if(!a || epoch!==reverseModeEpoch || embedMode==="local") return;
+    if(a.cc) homeCC=a.cc;                            // upgrade the postcode-bias country to the actual detected location
+    if(labelAuto && a.label) $("label").value=a.label;
+    if(methodAuto && a.continent) $("method").value = (a.continent==="NA") ? "2" : "4";   // ISNA for North America
     update();
-  }catch(e){}
+  }catch(e){ clearTimeout(to); }
 }
 ["lat","lon"].forEach(f=>$(f).addEventListener("input",()=>{ builderLocation=null; searchReset(); setGeoPin("off"); const edit=locationEdit; geoTimer=setTimeout(()=>fillNameFromCoords(edit),700); }));
 

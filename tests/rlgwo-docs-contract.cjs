@@ -219,6 +219,10 @@ function mentions(name, tokens) {
     await vm.runInContext('fillNameFromCoords()', e.ctx); assert.deepEqual(e.requests, []);
     vm.runInContext('labelAuto = true;', e.ctx); e.element('lat').value = '';
     await vm.runInContext('fillNameFromCoords()', e.ctx); assert.deepEqual(e.requests, []);
+    // R0031 (D-31-1 A): self-configuring mode sends no reverse request, even with valid coordinates and auto controls.
+    vm.runInContext('labelAuto = true; methodAuto = true; setMode("local");', e.ctx); e.element('lat').value = '51.5'; e.element('lon').value = '-0.12';
+    assert.equal(vm.runInContext('embedMode', e.ctx), 'local');
+    await vm.runInContext('fillNameFromCoords()', e.ctx); assert.deepEqual(e.requests, []);
   });
   await check('source: coarse URLs and fallback', async () => {
     const e = context(); await e.ctx.SalahConfig.coarseDetect();
