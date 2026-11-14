@@ -281,12 +281,14 @@ function mentions(name, tokens) {
       // render/loop/boot containment, not the force block, helper, clamp or call pinned above.
       // R002E re-bind (issue 95, merge 421a44a9): body bc11c040... -> ae528330..., entry 531bea69... -> 3a93bfc9...;
       // R002E changes only the prayer status writer, the .cn fit key and one comment, not the pinned block, helper, clamp or call.
-      // R0030 re-bind (issue 97): body ae528330... -> 07f33b81..., entry dbc77c67... -> f475f8ca...; R0030 changes only the
-      // settings block (Reset authority, close-commit, apply-failure report), not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"07f33b8136eb00c85647140c2cb46e5ce7242804e790155e7411ab61b65960bf",'delegated native script changed');
+      // R002F re-bind (issue 96): body ae528330... -> d21282d7..., entry dbc77c67... (main 516d8cc8) -> 226266a2...;
+      // R002F changes only the weather gate/renewal/preview-range region and one loop line, not the pinned block, helper, clamp or call.
+      // R0030 re-bind (issue 97, merged with main 9d903d6b): body d21282d7... -> 78eb2f3a..., entry 226266a2... -> 7c2175b2...;
+      // R0030 changes only the settings block, not the pinned block, helper, clamp or call.
+      assert.equal(digest(body),"78eb2f3a4ee1f13a535f47829af3405e0b669db3ff89449a034304168c56ac2b",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"f475f8ca0576b3d3e11c8c3bd957c1d0e85d2e035587203c4a4aa3757378243f",'delegated current generated entry changed');
+      assert.equal(digest(source),"7c2175b281e3f441ca803f4f63f2396a3fa70cea9e33b1235eeebba6eb6b9ffa",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
