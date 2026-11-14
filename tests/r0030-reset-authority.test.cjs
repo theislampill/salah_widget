@@ -290,6 +290,14 @@ test("Q12 a no-match search plus a real edit after Reset: the edit is saved, the
   const f=make();f.click("set-reset");await searchFor(f,"Nowhere",[]);f.input("set-units","f","change");f.click("setClose");
   await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);const saved=stored(f);assert.deepEqual([saved.lat,saved.units,saved.label],[24.47,"f","Madinah"]);
 });
+test("ES30-02 pre-dispatch edit + Reset + detection failure in the open panel + clean close saves nothing",T,async()=>{
+  const f=make();f.input("set-method","2","change");f.click("set-reset");await f.resolveCall("coarse",0,{ok:false});
+  f.click("setClose");await settlePrayer(f);assert.equal(stored(f),null,"the pre-Reset site and edit are not re-persisted");
+});
+test("Q13 retyping the same text after a failed search is an intentional name edit",T,async()=>{
+  const f=make();await searchFor(f,"Nowhere",[]);f.input("set-label","Nowhere");f.click("setClose");await settlePrayer(f);
+  assert.deepEqual([stored(f).label,f.config().label],["Nowhere","Nowhere"]);
+});
 // ---- fresh review N1/N2/N3 ----
 test("F3 symmetric: a stale failed apply does not overwrite a newer apply's success",T,async()=>{
   const f=make();f.sandbox.console={...console,error(){}};

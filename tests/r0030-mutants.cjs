@@ -15,7 +15,7 @@ const MUTANTS={
   "gps-click-ends-reset":["const evidence=_setLocationEvidence, done=_usePrecise()","_dropReset(); const evidence=_setLocationEvidence, done=_usePrecise()"],
   // (Removing the post-clear drop is equivalent: the new owner replaces `_setReset` and clears `_setDirty`.)
   "second-reset-drops-before-clear":['_invalidateSetLocation(); const prefOwner={..._setPrefVersions};','_invalidateSetLocation(); _dropReset(); const prefOwner={..._setPrefVersions};'],
-  "drop-deferred-edits":['if(reset.save) _applySettings({...CONFIG,..._newerSetPrefs(reset.prefOwner)},reset.phase==="applied");','if(false) _applySettings({...CONFIG,..._newerSetPrefs(reset.prefOwner)},reset.phase==="applied");'],
+  "drop-deferred-edits":['if(reset.save&&Object.keys(fields).length) _applySettings({...CONFIG,...fields},reset.phase==="applied");','if(false) _applySettings({...CONFIG,...fields},reset.phase==="applied");'],
   "close-keeps-dirty":["    if(_setDirty) reset.save=true;\n    _setDirty=false;\n","    if(_setDirty) reset.save=true;\n"],
   "failed-owner-kept":['_setReset=null; if(reset.phase==="failed") _setResetFailed=true;','if(reset.phase!=="failed") _setReset=null; if(reset.phase==="failed") _setResetFailed=true;'],
   "failed-notice-repeats":['if(_setResetFailed){ _setResetFailed=false; _setStatus(','if(_setResetFailed){ _setStatus('],
@@ -27,6 +27,16 @@ const MUTANTS={
   "stale-failure-writes-fault":["  if(id!==_setApplySeq) return;\n","  if(id!==_setApplySeq&&error==null) return;\n"],
   "reset-apply-unordered":["const applyId=++_setApplySeq;","const applyId=_setApplySeq;"],
   "site-line-empty-label":['(c.label?": "+c.label:".")','": "+(c.label||"")'],
+  // Owner clarification of G2(i) (2026-11-14): an unresolved search query is not a display-name edit.
+  "query-not-recorded":['  _setUnresolved={text:_byId("set-label").value};',"  "],
+  "retype-keeps-query":['    if(id==="set-label") _setUnresolved=null;',"    "],
+  // Equivalent, not counted: clearing the marker on Shift+Enter or on a shown candidate is redundant because both
+  // also set _setLabelBase to the field text, so a still-matching marker yields the same name.
+  "base-ignores-candidate":["_setLabelBase=_setCandOwner.label;","_setLabelBase=_setLabelBase;"],
+  "form-commit-keeps-query":['  if(_unresolvedLabel(_byId("set-label").value)) cfg.label=_setLabelBase.trim();',""],
+  "reset-commit-keeps-query":["if(_unresolvedLabel(fields.label)) delete fields.label;",""],
+  "target-named-by-query":["    if(_unresolvedLabel(c.label)) c.label=targetLabel;",""],
+  "landing-restores-query":["if(_unresolvedLabel(prefs.label)) delete prefs.label;",""],
   "drop-reset-catch":["try{ await applyConfig(c,{save:false,reset:true}); }catch(e){ fault=e; }","await applyConfig(c,{save:false,reset:true});"],
   "commit-after-reset-fault":["if(!_setOpen){ if(fault) _setReset=null; else _commitSettings(); return; }","if(!_setOpen){ _commitSettings(); return; }"],
   "unconditional-detect":['if(policy&&policy.mode==="preferLocal"&&policy.cfg&&!policy.needsDetect){',"if(false){"],

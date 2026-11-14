@@ -63,6 +63,8 @@ async function engineRun(name, root, base, cells, shots, tag) {
       return u.hostname === 'get.geojs.io' ? json(route, 200, { latitude: '24.4672', longitude: '39.6142', city: 'Madinah', country: 'Saudi Arabia', country_code: 'SA', timezone: 'Asia/Riyadh' })
         : json(route, 200, { loc: '24.4672,39.6142', city: 'Madinah', country: 'SA', timezone: 'Asia/Riyadh' });
     }
+    if (u.hostname === 'nominatim.openstreetmap.org') return json(route, 200, []);   // every place search finds nothing
+    if (u.hostname === 'api.zippopotam.us') return json(route, 404, {});
     const m = url.match(/\/timings\/([^/?]+)/);
     if (u.hostname === 'api.aladhan.com' && m && /^\d{2}-\d{2}-\d{4}$/.test(m[1])) return json(route, 200, { code: 200, status: 'OK', data: record(m[1]) });
     if (/open-meteo\.com$|rainviewer\.com$|fonts\.(googleapis|gstatic)\.com$/.test(u.hostname)) return route.fulfill({ status: 503, body: '' });
@@ -125,6 +127,13 @@ async function engineRun(name, root, base, cells, shots, tag) {
     const opened = await page.evaluate(() => document.querySelector('.c').classList.contains('settings-open')); c = await cfg(page); rb = await readback();
     await open(page); const st2 = await page.textContent('#set-status');
     cell('ES30-08a', !opened && rb === null && c.units === 'c' && c.lat === 51.5 && /Enter your location\./.test(st2), { opened, readback: rb, runtime: c, status: st2 }); await page.close();
+    // G2-i clarification: Reset, a place search with no match, close -> nothing saved, the target keeps its own name.
+    ({ page, errors } = await fresh('#local=1', LONDON));
+    await open(page); detect.hold = true; await page.click('#set-reset'); await page.fill('#set-label', 'Nowhere'); await page.press('#set-label', 'Enter');
+    await page.waitForFunction(() => /Couldn’t find/.test(document.getElementById('set-status').textContent), null, { timeout: 15000 });
+    const qs = await page.textContent('#set-status'); await close(page); detect.hold = false; release(); await page.waitForTimeout(2500);
+    c = await cfg(page); rb = await readback();
+    cell('G2i-no-match', rb === null && c.label === 'Madinah' && /This search did not change the location or its name\./.test(qs), { status: qs, readback: rb, runtime: c }); await page.close();
     // ES30-12: injected bindConfig fault on close-save -> no unhandledrejection, G3 copy, save kept.
     ({ page, errors } = await fresh('#local=1', LONDON));
     await open(page); await page.evaluate(() => { window.bindConfig = () => { throw new TypeError('injected'); }; });

@@ -6,7 +6,7 @@ const test=require("node:test"),assert=require("node:assert/strict"),fs=require(
 const {MUTANTS}=require("./r0030-mutants.cjs");
 const root=path.resolve(__dirname,".."),suite=path.join(__dirname,"r0030-reset-authority.test.cjs");
 const KILLERS={
-  "keep-pre-dispatch-dirty":"ES30-02 R1: pre-dispatch edit + Reset + close during detection",
+  "keep-pre-dispatch-dirty":"ES30-02 pre-dispatch edit + Reset + detection failure in the open panel",
   "dirty-cleared-before-clear-result":"ES30-08 denied clear keeps pre-dispatch dirtiness",
   "later-session-rewrite":"ES30-13 Reset apply settling in a later session does not rewrite",
   "close-ends-reset":"ES30-02 R1: pre-dispatch edit + Reset + close during detection",
@@ -29,6 +29,13 @@ const KILLERS={
   "stale-failure-writes-fault":"F3 symmetric: a stale failed apply does not overwrite a newer apply's success",
   "reset-apply-unordered":"F3 the Reset apply is ordered too",
   "site-line-empty-label":"N3 preferLocal Reset to a hash site without a label",
+  "query-not-recorded":"Q1 Reset, no-match search, close: the Reset-selected site keeps its name",
+  "retype-keeps-query":"Q13 retyping the same text after a failed search is an intentional name edit",
+  "base-ignores-candidate":"Q4 Reset, candidate shown, then a no-match search, close",
+  "form-commit-keeps-query":"Q2 no Reset, no-match search, close",
+  "reset-commit-keeps-query":"Q1 Reset, no-match search, close: the Reset-selected site keeps its name",
+  "target-named-by-query":"Q3 Reset, search unavailable, close: the Reset target keeps its name",
+  "landing-restores-query":"Q11 Reset lands in the open panel after a no-match search",
   "commit-after-reset-fault":"F2 limit: a Reset apply fault with the panel closed drops the owner",
   "unconditional-detect":"ES30-10 N1: preferLocal hash site Reset makes no coarse request",
   "reopen-loses-pending-edits":"F1 Reset, edit, close, reopen, denied GPS click, close",
