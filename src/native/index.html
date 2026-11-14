@@ -4060,6 +4060,12 @@ let _setLocationEvidence=null, _setLocationOrigin="manual", _setLocationSaved=fa
 // the user's: a close commits only them, merged into the Reset target when it lands. Shape:
 // {prefOwner, session, phase: detecting|held|applying|applied|failed, save, release}.
 let _setReset=null, _setResetFailed=false, _setApplyFault=null, _setApplySeq=0;
+// R0030 G2-i as clarified by the owner (2026-11-14): text submitted as a search (Enter) is an UNRESOLVED QUERY,
+// not a display-name edit, until a candidate is shown (its name is then accepted), the field is edited again,
+// or Shift+Enter keeps it. `_setLabelBase` is the last accepted name (populated, shown candidate, Shift+Enter).
+// No commit persists an unresolved query as the name.
+let _setUnresolved=null, _setLabelBase="";
+function _unresolvedLabel(v){ return !!_setUnresolved && v===_setUnresolved.text; }
 const _SET_PREF_IDS={method:"set-method",school:"set-school",time:"set-time",units:"set-units",datefmt:"set-datefmt",appearance:"set-appearance",label:"set-label"};
 try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
 const _byId=id=>document.getElementById(id);
@@ -4152,6 +4158,7 @@ function _setPin(src){
 // an unavailable search and partial provider coverage get distinct feedback. Resolves to the detailed status,
 // or "superseded" when a newer session/edit/lookup owns the form (then nothing is touched).
 async function _runSetSearch(q){
+  _setUnresolved={text:_byId("set-label").value};             // a submitted query is not a name until a candidate is shown (R0030 G2-i)
   const owner=_captureSetLookup(), bias=_setHomeCC;
   _setStatus("Searching…");
   let r=null;
@@ -4159,8 +4166,8 @@ async function _runSetSearch(q){
   if(!_ownsSetLookup(owner)) return "superseded";
   const status=r&&r.status||"unavailable";
   if(status!=="matches"){ _setCands=[];
-    _setStatus(status==="no-match" ? "Couldn’t find “"+q+"”. Set coordinates below, or tap the pin for browser location."
-      : "Search unavailable for “"+q+"” — a provider failed. Try again, set coordinates below, or tap the pin for browser location.",true);
+    _setStatus(status==="no-match" ? "Couldn’t find “"+q+"”. This search did not change the location or its name. Set coordinates below, or tap the pin for browser location."
+      : "Search unavailable for “"+q+"” — a provider failed. This search did not change the location or its name. Try again, set coordinates below, or tap the pin for browser location.",true);
     return status; }
   _setCands=r.candidates; _setCandIdx=0; _setCandOwner={...owner,label:_byId("set-label").value,partial:r.coverage==="partial"}; _showSetCand();
   return status;
@@ -4174,6 +4181,7 @@ function _showSetCand(){
   if(c.name) _byId("set-label").value=c.name;                 // display name follows the chosen place (override later with Shift+Enter)
   _setLocationEvidence=window.SalahConfig?SalahConfig.placeLocationEvidence(c):null; _setLocationOrigin="place"; _setLocationSaved=false;
   _setCandOwner.label=_byId("set-label").value;              // cycling owns its programmatic display-name update
+  _setUnresolved=null; _setLabelBase=_setCandOwner.label;     // the shown candidate's name is the accepted name
   _setPin("manual"); _setDirty=true;                          // a searched place is a user choice, not live sensing → grey pin
   const partial=_setCandOwner.partial?"Partial results, a provider failed":"";   // matches exist but a search source failed (leads the line)
   _setStatus(_setCands.length>1
@@ -4218,6 +4226,7 @@ function _populateSettingsForm(){
   const intent=_setLocationEvidence&&_setLocationEvidence.intent;
   _setPin(intent==="device-position"?"precise":(intent==="coarse-area"?"ip":"manual"));
   _setCands=[]; _setCandOwner=null; _setSearchSeq++; _setDirty=false; // fresh open: nothing to auto-save yet
+  _setLabelBase=g("set-label").value;                         // the accepted name (an unresolved query keeps its marker)
   _setStatus("Enter to search a place · Shift+Enter to keep the typed name.");
 }
 function _wireSettings(){
@@ -4242,6 +4251,7 @@ function _wireSettings(){
   // Name edits preserve acquisition; coordinate edits select a manual site.
   ["set-label","set-lat","set-lon"].forEach(id=>_byId(id).addEventListener("input",()=>{
     _invalidateSetLocation();
+    if(id==="set-label") _setUnresolved=null;                 // typing again makes the text an intentional name
     if(id!=="set-label"){                                      // a display-name edit is not a location intent (R0030 G2)
       _dropReset();
       _setLocationEvidence=window.SalahConfig?SalahConfig.normalize({source:"manual"}).locationEvidence:null;
@@ -4262,6 +4272,7 @@ function _wireSettings(){
     e.preventDefault();
     if(e.shiftKey){                                            // Shift+Enter → display-name override (no search)
       _invalidateSetLocation(); const nm=lab.value.trim(); _setDirty=true;
+      _setUnresolved=null; _setLabelBase=lab.value;            // explicit keep: the typed text is the name
       _setStatus(nm ? ("Display name “"+nm+"” — coordinates unchanged.")
                     : "Type a place and press Enter to search.");
       return;
@@ -4284,11 +4295,13 @@ function _commitSettings(){
     _setDirty=false;
     if(reset.phase!=="applied"&&reset.phase!=="failed"){ if(reset.release) reset.release(); return; }
     _setReset=null; if(reset.phase==="failed") _setResetFailed=true;
-    if(reset.save) _applySettings({...CONFIG,..._newerSetPrefs(reset.prefOwner)},reset.phase==="applied");
+    const fields=_newerSetPrefs(reset.prefOwner); if(_unresolvedLabel(fields.label)) delete fields.label;
+    if(reset.save&&Object.keys(fields).length) _applySettings({...CONFIG,...fields},reset.phase==="applied");
     return;
   }
   if(!_setDirty) return;
   const cfg=_settingsFormToConfig();
+  if(_unresolvedLabel(_byId("set-label").value)) cfg.label=_setLabelBase.trim();   // an unresolved query is not the name
   const v=window.SalahConfig?SalahConfig.validate(cfg):{ok:cfg.lat!=null&&cfg.lon!=null};
   if(!v.ok) return;                                            // incomplete/invalid → keep the prior config
   _setDirty=false;
@@ -4340,10 +4353,11 @@ async function _resetLocal(){
   if(d&&d.ok){
     // A later panel session keeps the location it opened with; the target lands when that session closes.
     if(_setOpen&&_setSession!==reset.session){ reset.phase="held"; await new Promise(go=>{ reset.release=go; }); if(_setReset!==reset) return; }
-    const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg);
+    const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg), targetLabel=c.label;
     // Reset still owns the detected location, while preferences edited since
     // dispatch (or during apply's await) own their fields and their close-save.
     Object.assign(c,_newerSetPrefs(prefOwner));
+    if(_unresolvedLabel(c.label)) c.label=targetLabel;          // an unresolved query never names the target
     reset.phase="applying"; let fault=null; const applyId=++_setApplySeq;
     try{ await applyConfig(c,{save:false,reset:true}); }catch(e){ fault=e; }     // an explicit Reset resets even when values are equal (R0003 D1)
     _settleSettingsApply(fault,applyId);
@@ -4352,7 +4366,7 @@ async function _resetLocal(){
     if(!_setOpen){ if(fault) _setReset=null; else _commitSettings(); return; }   // the closed panel's deferred commit
     if(_setSession!==reset.session) return;                    // never rewrite a later session's form or status
     _setReset=null;
-    const prefs=_newerSetPrefs(prefOwner);
+    const prefs=_newerSetPrefs(prefOwner); if(_unresolvedLabel(prefs.label)) delete prefs.label;
     _populateSettingsForm();
     Object.entries(prefs).forEach(([key,value])=>{ _byId(_SET_PREF_IDS[key]).value=value; });
     _syncDateFromBox(); _setDirty=Object.keys(prefs).length>0;
