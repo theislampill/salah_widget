@@ -6,6 +6,11 @@ physically plausible inside a 2-D canvas/CSS widget, it is **removed from produc
 than left as a pretty lie. Gate formulas live in `atmosphere()` (index.html); DOM writes in `paint()`. The art is
 "realism-adjacent": believable and physics-gated, never random, never decorative.
 
+**What ships (R003A).** The generated stylesheet (`tools/build_native.py`; `real-sky/native-sky.css`, inlined in
+`offline.html`) hides `.atmo .airglow`, `.aurora`, `.scatter`, `.belt`, `.anticrep` and `.atmo>.sun` in every shipped
+entry; their gates below still run and publish custom properties, but nothing is drawn. The "shipped" label on each
+heading says which. Approximations are classified in DESIGN.md › "Known approximations".
+
 **Families:** molecular (Rayleigh) · aerosol/haze (Mie) · volumetric water/ice cloud · ice-crystal geometric
 optics · precipitation · thermal/material cues · celestial · visual-only UI. These are **not** interchangeable
 "glow effects."
@@ -81,7 +86,7 @@ Lunar force checks require an eligible night Moon. Near-new, below-horizon, dayl
   pre-sunrise anchor, triangular/wedge falloff, strict dark-sky + low/no-moon + low-light-pollution + clear/haze
   gating, very low opacity, no foreground-crossing slash, and no effect on Fajr/UI state.
 
-### Belt of Venus — *production*
+### Belt of Venus — *computed; hidden in the shipped build*
 - **Family:** anti-solar back-scatter (twilight).
 - **Inputs:** `sm.altDeg`, anti-solar x (`--antix`), weather class.
 - **Gate:** `max(0, 1−|e+4|/5) · (clear||cloud ? 1 : 0)` — peaks at e≈−4°, **off under overcast/precip/fog**
@@ -127,16 +132,21 @@ Lunar force checks require an eligible night Moon. Near-new, below-horizon, dayl
 All discrete solar optics register to the **visible corner-sun** screen position (`--sunvx/--sunvy`), not the
 arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 
-### Crepuscular rays — *production*
+### Crepuscular rays — *production (shipped)*
 - **Family:** geometric shadowing / Mie shafts through broken-deck gaps.
 - **Gate:** `broken=clamp(1−|clMid−0.45|/0.42)`; `ray = min(0.5, clamp(e/8)·broken·(1−0.8·clLow)·clamp(0.3+0.7·
-  humid)·directional·(fog?0.25:1))` — needs a **low sun + broken cloud + participating haze**; 0 in clear-dry and
-  0 in solid overcast.
+  humid)·directional·(fog?0.25:1))` with `directional = 1 − cloud²` (total cover) and `humid` from the dew point —
+  needs a **sun above the horizon + broken mid cloud + participating haze**; 0 in clear-dry and 0 in solid overcast.
+  A heuristic gate, not shadowed-beam transfer; `clamp(e/8)` is 0 for e ≤ 0, so twilight rays (Sun just below the
+  horizon) are not shown.
 - **Shape:** soft radial shafts from the visible sun, fading from source.  **NOT:** a hard conic sticker; a single
   diagonal slash; a lens flare.  **Verdict:** keep.
 
-### Anticrepuscular rays — *production + `&debugOptic=anticrep`*
+### Anticrepuscular rays — *computed + `&debugOptic=anticrep`; hidden in the shipped build*
 - **Family:** the far end of the same shafts, converging by perspective at the antisolar point.
+- **Shipped:** no. `.atmo .anticrep{display:none!important}` arrived with the CP9 integration (`7fe3ba1d`) in the
+  group commented "Broad sky radiance is now physical"; no record states that hiding this discrete optic was intended.
+  Showing it is an owner decision (R003B, issue 125). Forcing it changes `--anticrep` only.
 - **Gate:** `antiCrep = ray·0.5` (inherits every crepuscular gate; strictly fainter), at `--antix=100−sm.x`.
 - **NOT:** brighter than crepuscular; centred on the sun; aurora/false-dawn-like.  **Verdict:** keep.
 
@@ -174,11 +184,13 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 - **Shape:** a narrow **vertical** column through the low sun.  **NOT:** a diagonal beam; a crepuscular ray; false
   dawn.  **Verdict:** keep (cold-gated; defensible).
 
-### Atmospheric refraction / low-sun flattening — *production*
-- **Gate:** `--sunflat = 1 − 0.20·clamp((4−e)/8)·clamp((e+3)/4)` — only near the horizon, strongest at sunrise/set.
+### Atmospheric refraction / low-sun flattening — *production (shipped; presentational)*
+- **Gate:** `--sunflat = 1 − 0.20·clamp((4−e)/8)·clamp((e+3)/4)` — only near the horizon, strongest at sunrise/set:
+  at most 7.7 % (scale 0.923 at e = 0.5°), none at e ≤ −3° or e ≥ 4°. Real refraction compresses a horizon-touching
+  disc to about 0.84 (Bennett 1982), so this understates it; the sky astrometry itself is geometric.
 - **NOT:** applied at high sun; over-ovalised.  **Verdict:** keep.
 
-### Aurora — *production (gated, simulated)*
+### Aurora — *computed (gated, simulated); hidden in the shipped build*
 - **Gate:** `|lat|≳55° · deep-dark · low cloud · (1−moon) · (1−LPOLL)` — a *simulated* presence (no Kp data), so
   it never shows at low latitude.  **NOT:** at low latitude; in bright twilight.  **Verdict:** keep (honestly
   labelled a simulation).
@@ -186,6 +198,10 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 ---
 
 ## Sun white-balance / tone-mapping (the corner-sun body)
+*Corner rays* (`.suncorner .rays`, shipped): opacity `--sunamt·(0.10+0.30·clamp(e/30))·T_cloud`, `T_cloud` from the
+per-class table in `nativeSolarPresentation`; no other weather gate. They are a radiant-body presentation, obstructed
+with the body by the painted-cloud mask, not crepuscular shafts. *Limb:* linear limb darkening `u = 0.6` below 40°
+(full weight to 10°); see DESIGN.md.
 Scene-referred radiance → attenuate → tone-map (not display-colour × a weather mute). Kasten–Young airmass +
 Beer–Lambert + per-class cloud transmittance + CCT(elevation) blackbody → ACES. The nucleus clips to a defined
 white body even through cloud; cloud desaturates toward **warm-white, never grey/purple**.  **Verdict:** keep.

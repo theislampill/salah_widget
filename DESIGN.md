@@ -257,7 +257,8 @@ lighting; its former broad CSS background/veil layers are not painted twice.
   *around the sun you can see*. (Previously they bound to the arc-sun azimuth `--sunx/--suny`, which sweeps
   mid-card, so the halo rendered detached center-screen — that was a bug.) Only the **diffuse, azimuthal** cues
   stay on `--sunx`/`--antix`: the **horizon scatter** band (`.scatter`, pools under the sun's azimuth — left at
-  dawn, right at dusk) and the anti-solar **Belt of Venus** (`.belt`) / **anticrepuscular** rays.
+  dawn, right at dusk) and the anti-solar **Belt of Venus** (`.belt`) / **anticrepuscular** rays. The generated
+  stylesheet hides `.scatter`, `.belt` and `.anticrep` in every shipped entry (see "Known approximations").
 - **Optical phenomena are condition-gated, never random** (ice-crystal vs water-droplet, low-sun + broken-cloud,
   etc.). See "Known approximations". *Known stylization:* the corner-sun body stays top-left in all states (the
   moon owns top-right and the header owns the centre); at dusk the warm directional glow correctly pools on the
@@ -312,6 +313,14 @@ dew point alone is not a water-droplet column and cannot enable a corona.
   screen-px/min; gentle in calm air, fast in a gale), with a slower in-place grow/erode on top. (Earlier rates
   were ~100× too slow → the deck read as a frozen wallpaper even though the QA hash "changed" every frame — see
   "Live motion".) The fragment's `timeScale` sets the explicit scene clock rate; `timeScale=1` remains an anchored 1× preview. A query-only `?timeScale=` is ignored. reduced-motion paints one frozen frame.
+- **Wind drift is horizontal and decorative in calm air** (R003A). `advanceCloudMotion` moves each deck by
+  `wx·wspd·dt·(0.024+0.006·deck)`, with `wx = −sin(windDir)` and `wspd = 0.06 + 0.6·wind`, where `wind` ramps
+  0→1 over 0.5–14 m/s (`wxDrivers`, `applyCloudState`). Calm air therefore still drifts at the 0.06 floor. With no
+  admitted record `wxDrivers` returns `windX −0.7`; a record without a direction uses 225°, i.e. `+0.707`, the
+  opposite sign. `cloudState.wy` (`cos windDir`) is written and read by no renderer, `qaState()` field, debug
+  readout or URL parameter; it is kept because the pinned R000B native fixture records it and an accepted r0025
+  mutation anchors on its assignment (`tests/r003a-cloud-wind-truth.test.cjs` shows that changing it moves no
+  cloud). The lifecycle morph and wander advance with time regardless of wind.
 - **Lighting**: warm sun rim / silver lining on the sun-facing side, cool moonlit edges at night, leaden
   undersides in storm, lit tops / shaded bases for volume; rain/fog diffuse.
 - **Continuity**: the cloud field has a **stable identity** (`_cloudFieldSeed` = location + day + optional
@@ -669,13 +678,46 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   near-new (a deliberate **lunar-calendar** choice, not a literal sky photo) — but it casts **no moonlight** (that
   stays physical-only). Earthshine brightness vs phase is art-directed (never a black cutout).
 - Optical phenomena: all **implemented and condition-gated** (shown only under their physical conditions, never
-  random) — corner sun + entry path + low-sun **refraction flattening**; crepuscular `.godray` + **anticrepuscular**
-  rays; Belt of Venus; solar **22° halo**, **sundogs/parhelia + parhelic circle**, **sun pillar** (all ice-crystal/
+  random) — corner sun + entry path + low-sun **refraction flattening**; crepuscular `.godray`; solar **22° halo**, **sundogs/parhelia + parhelic circle**, **sun pillar** (all ice-crystal/
   cirrus/cold gated, **registered to the visible corner sun** via `--sunvx/--sunvy`); lunar **22° halo + corona +
   paraselenae** and earthshine. Dedicated diagnostic forcing is limited to halo, sundogs, pillar, anticrep, paraselene and lunarhalo; physical-only effects retain their scene inputs. They are **art-directed approximations
   (believable, not photometric)**; the moon's halo/pillar may show as partial arcs because the halo radius exceeds
   the (mostly in-frame) disc. The **corner-sun body stays top-left** in all states (a layout stylization — the moon
   owns top-right); the azimuthal horizon glow correctly moves left→right dawn→dusk.
+- **What ships versus what is computed (R003A).** `atmosphere()` still computes the anticrepuscular rays
+  (`antiCrep = 0.5·ray`, forceable with `debugOptic=anticrep`) and the Belt of Venus, and `paint()` publishes
+  `--anticrep`/`--belt`, but the generated stylesheet (`tools/build_native.py`, rule
+  `.atmo .airglow,.atmo .aurora,.atmo .scatter,.atmo .belt,.atmo .anticrep,.atmo>.sun{display:none!important}`,
+  in `real-sky/native-sky.css` and inlined in `offline.html`) hides both, with airglow, aurora and the horizon
+  scatter band, in every shipped entry. The rule arrived with the CP9 integration (`7fe3ba1d`) under the comment
+  "Broad sky radiance is now physical"; no record says whether hiding the anticrepuscular element (a discrete optic,
+  not broad radiance) was intended. Whether to show it is an owner decision (R003B, issue 125).
+- **Sky-stage approximations, classified (R003A).** Defect = demonstrated implementation defect; simplification =
+  deliberate, accepted model simplification; limitation = affects a known observable; possibility = unverified,
+  future improvement.
+  - *Defect, corrected:* the no-timetable painter (`paintCelestialWithoutTimetable`) did not zero `--ray`/`--anticrep`
+    itself, so a failed effects withdrawal could leave earlier-scene shafts; it now zeroes them with the other optics.
+  - *Simplification:* the crepuscular gate is a heuristic product, not shadowed-beam radiative transfer:
+    `min(0.5, clamp(e/8)·broken(mid)·(1−0.8·low)·clamp(0.3+0.7·humid)·(1−cloud²)·(fog?0.25:1))` (`atmosphere()`).
+    *Limitation:* `clamp(e/8)` is 0 for a Sun at or below the horizon, so twilight crepuscular rays (Sun just below
+    the horizon, shafts cast by clouds) are never shown.
+  - *Simplification:* the corner `.rays` are a radiant-body presentation, not atmospheric shafts. Their opacity is
+    `--sunamt·(0.10+0.30·clamp(e/30))·T_cloud` with `T_cloud` from the per-class table in `nativeSolarPresentation`;
+    no other weather gate, and the painted-cloud mask obstructs them with the body.
+  - *Simplification:* limb darkening uses the linear law `I(μ)/I(1) = 1 − u(1−μ)`, `u = 0.6`, close to the measured
+    visible-band solar value (about 0.6 near 550 nm, Allen's Astrophysical Quantities), in the radial profile of
+    `nativeSolarPresentation`, at full weight up to 10° elevation and blended out by 40°; above 40° the body keeps
+    its earlier flat-core profile (35 % fall-off beyond 60 % radius). The disc is enlarged and not an angular radiance.
+  - *Simplification and limitation:* refraction flattening is presentational: `--sunflat = 1 − 0.20·clamp((4−e)/8)·
+    clamp((e+3)/4)` (`paintSolarPresentation`) compresses the body by at most 7.7 % (scale 0.923 at e = 0.5°, none at
+    e ≤ −3° or ≥ 4°). Bennett's (1982) refraction formula gives about 0.84 for a disc whose lower limb touches the
+    apparent horizon, so the presentation understates the real flattening. Sky astrometry has no refraction
+    (observer pressure 0 in `nativeJob`); the prayer arc's fit absorbs refraction separately (above).
+  - *Limitation:* there is no ground albedo: the refined/preview sky is single scattering with no surface-reflection
+    term, so the near-horizon sky over bright ground (snow, sand) is not brightened; magnitude not measured here.
+  - *Simplification:* there is no cloud albedo or optical depth: cloud colour is a display tint and cloud alpha the
+    painted coverage (`paintClouds`, ISM-SKY-034); the refined job's cloud transmission is fixed at 1.
+  - *Possibility:* a ground-reflection term and twilight crepuscular rays are unverified future improvements.
 
 ## QA matrix (scenes to check before claiming done)
 

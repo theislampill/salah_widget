@@ -45,6 +45,7 @@
   "tests/r0024-weather.test.cjs",
   "tests/r0028-closure-index.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
+  "tests/r003a-cloud-wind-truth.test.cjs",
   "tests/render-liveness-containment.test.cjs",
   "tests/timezone-authority-state.test.cjs",
   "tests/v1_limitations.test.cjs",
@@ -1811,6 +1812,30 @@
      "<candidate index.html>"
     ],
     "protocol": "JSON on stdout {scenes, failures, rows[identical, candidateFaults]}; exit 1 on any difference (R2C-10)"
+   }
+  },
+  {
+   "path": "tools/qa/r003a_pixel_control.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, one served tree with only /index.html swapped, fixture prayer record, in-page weather fixture, every other non-loopback request aborted, forced zone, mocked clock, reduced motion); same-tree pixel control, not a headless unit instrument",
+   "owner": "R003A",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r003a_pixel_control.cjs",
+     "--root",
+     "<tree>",
+     "--index-a",
+     "<baseline index.html>",
+     "--index-b",
+     "<candidate index.html>",
+     "--out",
+     "<fresh dir>",
+     "--engine",
+     "chromium|firefox|webkit",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line per scene {noiseAvsA2, changeAvsB (differing pixels, max channel delta), sha per run A/B/A2, optics, errors, aborted}; <out>/pixel-control-<engine>.json and per-run PNGs (docs/state-contracts/R003A.md R3A-07)"
    }
   },
   {
