@@ -643,7 +643,9 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   session is open waits for that session to close). If detection fails with the panel still open, the visible form
   (old site, "Enter your location.") is the location again; if it fails after close, later edits apply for the
   session only, the panel does not reopen, and the next open says so. After a clear nothing claims the cleared
-  record. In `preferLocal` mode Reset selects what the resolver would (the hash site, no IP request). A settings
+  record. A place search that finds nothing (or is still pending at close) is not a rename: the name stays the
+  last accepted one unless the field is edited again or Shift+Enter keeps the text.
+  In `preferLocal` mode Reset selects what the resolver would (the hash site, no IP request). A settings
   apply that throws is reported once in the status/live region ("Your changes could not be applied. Reload the
   widget to try again."); the saved or
   session-only outcome already shown stays.
