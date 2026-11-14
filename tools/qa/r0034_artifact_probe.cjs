@@ -6,7 +6,7 @@
 // For each run in --plan (JSON array) it captures the card composite and, optionally, a 500 ms time series from load and
 // a single-layer isolation pass (one element hidden at a time with test-only CSS) at a frozen instant.
 // Usage: node tools/qa/r0034_artifact_probe.cjs --root <tree> --out <dir> --engine firefox|chromium --headed 1|0 --plan <plan.json>
-//   optional: --utc <ISO> --lat --lon --tz --label (scene override; the prayer fixture keeps the owner's displayed times)
+//   optional: --fixed 1 (hold Date.now at --utc), --extra '&debugOptic=halo' (fragment suffix), --utc <ISO> --lat --lon --tz --label (scene override; the prayer fixture keeps the owner's displayed times)
 //   plan item: {name, dpr:1, embed:'iframe'|'direct', wx:{code,cloud,low,mid,high,hum,wind,wdir,vis,temp}, wxDelay:ms,
 //               settle:ms, series:ms, isolate:bool, freeze:bool, evalFile:<js expression file evaluated in the widget frame; {pngs:{k:dataURL}} saved>}
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
@@ -21,7 +21,7 @@ function record(day){const r=JSON.parse(JSON.stringify(ordinary)),[d,mo,y]=day.s
  Object.assign(r.timings,{Fajr:'05:44',Sunrise:'06:52',Dhuhr:'12:14',Asr:'15:15',Sunset:'17:36',Maghrib:'17:36',Isha:'18:43'});
  r.date.gregorian={...r.date.gregorian,date:day,day:String(d).padStart(2,'0'),month:{number:mo,en:MONTHS[mo-1]},year:String(y)};return r;}
 const TYPES={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.wasm':'application/wasm','.bin':'application/octet-stream','.woff2':'font/woff2'};
-const FRAG=`lat=${a.lat||28.54}&lon=${a.lon||-81.38}&label=${encodeURIComponent(a.label||'Central FL')}&method=2&tz=${encodeURIComponent(a.tz||'America/New_York')}&qa=1`;
+const FRAG=`lat=${a.lat||28.54}&lon=${a.lon||-81.38}&label=${encodeURIComponent(a.label||'Central FL')}&method=2&tz=${encodeURIComponent(a.tz||'America/New_York')}&qa=1${a.extra||''}`;
 // A photographic-looking wallpaper (layered gradients + fine texture); the card's outside is not measured.
 const HOST=dpr=>`<!doctype html><meta charset=utf-8><style>html,body{margin:0;height:100%}body{background:
  repeating-linear-gradient(83deg,rgba(60,40,20,.35) 0 2px,rgba(150,110,70,.2) 2px 5px,rgba(40,30,20,.3) 5px 7px),
@@ -89,7 +89,9 @@ const TOGGLES={nobackdrop_all:'*{backdrop-filter:none!important;-webkit-backdrop
    if(m)return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({code:200,status:'OK',data:record(m[1])})});
    aborted.push(new URL(u).host);return route.abort();});
   await ctx.addInitScript(SHIM(run.wx,run.wxDelay||0));
-  const page=await ctx.newPage();await page.clock.install({time:T0});await page.clock.resume();
+  const page=await ctx.newPage();
+  // --fixed 1: Date.now() held at T0 while timers run (deterministic refined frame for byte comparison); default: running mocked clock
+  if(a.fixed==='1')await page.clock.setFixedTime(T0);else{await page.clock.install({time:T0});await page.clock.resume();}
   const errors=[];page.on('pageerror',e=>errors.push(String(e.message).slice(0,200)));
   const t0=Date.now();
   await page.goto(embed==='iframe'?base+'/__host.html':base+'/index.html#'+FRAG+(run.debugLayers?'&debugLayers=1':''));
@@ -109,9 +111,11 @@ const TOGGLES={nobackdrop_all:'*{backdrop-filter:none!important;-webkit-backdrop
    if(ev&&ev.pngs){for(const [k,u] of Object.entries(ev.pngs))fs.writeFileSync(path.join(dir,'eval-'+k+'.png'),Buffer.from(u.split(',')[1],'base64'));delete ev.pngs;}
    rec.eval=ev;}
   if(run.freeze){   // frozen-instant capture only (R0034-A1 before/after): composite + raw refined canvas at the same instant
-   await page.clock.pauseAt(await page.evaluate(()=>Date.now())+500);await page.waitForTimeout(1500);rec.frozen=await f.evaluate(STATE);await shot('frozen.png');
+   if(a.fixed!=='1')await page.clock.pauseAt(await page.evaluate(()=>Date.now())+500);await page.waitForTimeout(1500);rec.frozen=await f.evaluate(STATE);await shot('frozen.png');
    const u=await f.evaluate(()=>{const k=document.querySelector('.real-sky-canvas');try{return k?k.toDataURL('image/png'):null;}catch(e){return null;}});
-   if(u)fs.writeFileSync(path.join(dir,'frozen-raw-refined.png'),Buffer.from(u.split(',')[1],'base64'));}
+   if(u)fs.writeFileSync(path.join(dir,'frozen-raw-refined.png'),Buffer.from(u.split(',')[1],'base64'));
+   const pv=await f.evaluate(()=>{const k=document.querySelector('.real-sky-preview');try{return k?k.toDataURL('image/png'):null;}catch(e){return null;}});
+   if(pv)fs.writeFileSync(path.join(dir,'frozen-raw-preview.png'),Buffer.from(pv.split(',')[1],'base64'));}
   if(run.isolate){
    await page.clock.pauseAt(await page.evaluate(()=>Date.now())+500);await page.waitForTimeout(1500);   // freeze clock-driven painting
    rec.isoState=await f.evaluate(STATE);await shot('iso-base-a.png');await page.waitForTimeout(600);await shot('iso-base-b.png');
