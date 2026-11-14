@@ -1870,6 +1870,61 @@
     ],
     "protocol": "receipt rows R39-07 / R39-08 verdict MET | FINDING | GAP, exit 0 only when both MET (.github/workflows/r0039-installer-probes.yml; docs/state-contracts/R0039.md section 9)"
    }
+  },
+  {
+   "path": "tools/qa/r003b_s1_capture.cjs",
+   "reason": "native browser measurement (Playwright Chromium/Firefox/WebKit, loopback-served tree, fixture prayer record and in-page weather fixture, every other request aborted, mocked clock); R003B S1 / CI-02 evidence recipe, not a headless unit instrument",
+   "owner": "R003B",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r003b_s1_capture.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engine",
+     "chromium|firefox|webkit",
+     "--scene",
+     "owner|day|fajr|night",
+     "--variants",
+     "all|min|<list>",
+     "--playwright",
+     "<path to the playwright package>"
+    ],
+    "protocol": "per-run <out>/<tag>/capture.json (synchronised preview/refined captures, layer time series) and PNGs; docs/state-contracts/R003B-S1.md"
+   }
+  },
+  {
+   "path": "tools/qa/r003b_s1_periodicity.py",
+   "reason": "offline analysis of r003b_s1_capture.cjs output (Pillow, numpy, scipy); needs captured PNGs, not a headless unit instrument",
+   "owner": "R003B",
+   "recipe": {
+    "argv": [
+     "python",
+     "tools/qa/r003b_s1_periodicity.py",
+     "capture|degrade",
+     "<capture root | clean composite png>",
+     "<fresh dir>"
+    ],
+    "protocol": "periodicity.json / degrade.json (residual std, per-axis peaks, 8-bit flat control); docs/state-contracts/R003B-S1.md"
+   }
+  },
+  {
+   "path": "tools/qa/r003b_s1_compare.py",
+   "reason": "offline before/after comparison of r003b_s1_capture.cjs runs (Pillow, numpy, scipy); needs captured PNGs from two trees, not a headless unit instrument",
+   "owner": "R003B",
+   "recipe": {
+    "argv": [
+     "python",
+     "tools/qa/r003b_s1_compare.py",
+     "<before root>",
+     "<after root>",
+     "<control root>",
+     "<fresh dir>"
+    ],
+    "protocol": "compare.json (geometry, element boxes, diffs, sharpness, glass effect, perf) and before/after crops; docs/state-contracts/R003B-S1.md"
+   }
   }
  ]
 }
