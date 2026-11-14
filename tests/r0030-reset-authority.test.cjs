@@ -10,23 +10,7 @@ const test=require("node:test"),assert=require("node:assert/strict");
 const {widget,drain}=require("./r0011-fixture.cjs");
 const REF=process.env.R0030_REF||undefined, MUTANT=process.env.R0030_MUTANT||null;
 const T={timeout:10000};
-// Each mutant is one exact edit of the generated settings source; the mutation suite proves every
-// target occurs exactly once and that a named case below kills it.
-const MUTANTS={
-  "keep-pre-dispatch-dirty":['reset=_setReset={prefOwner,session:_setSession,phase:"detecting",save:false,release:null};\n  _setDirty=false;','reset=_setReset={prefOwner,session:_setSession,phase:"detecting",save:false,release:null};'],
-  "dirty-cleared-before-clear-result":['_invalidateSetLocation(); const prefOwner={..._setPrefVersions};','_invalidateSetLocation(); _setDirty=false; const prefOwner={..._setPrefVersions};'],
-  "later-session-rewrite":["if(_setSession!==reset.session) return;                    // never rewrite","if(false) return;                    // never rewrite"],
-  "close-ends-reset":["_setOpen=false; _setSession++; _invalidateSetLookups();","_setOpen=false; _setSession++; _invalidateSetLocation();"],
-  "label-ends-reset":['if(id==="set-label") _invalidateSetLookups();','if(id==="set-label") _invalidateSetLocation();'],
-  "drop-deferred-edits":["if(reset.save) _applySettings({...CONFIG,..._newerSetPrefs(reset.prefOwner)},reset.phase===\"applied\");","if(false) _applySettings({...CONFIG,..._newerSetPrefs(reset.prefOwner)},reset.phase===\"applied\");"],
-  "stale-storage-marker":['if(CONFIG&&CONFIG.source==="localStorage"&&CONFIG.origin) CONFIG={...CONFIG,source:CONFIG.origin,savedAt:null};',""],
-  "drop-apply-catch":["applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null),_settleSettingsApply);","applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null));"],
-  "drop-reset-catch":["try{ await applyConfig(c,{save:false,reset:true}); }catch(e){ fault=e; }","await applyConfig(c,{save:false,reset:true});"],
-  "unconditional-detect":["if(policy&&policy.cfg&&!policy.needsDetect){","if(false){"],
-  "reopen-loses-pending-edits":["if(pending){ for(const key in pending)","if(false){ for(const key in pending)"],
-  "held-never-released":["if(reset.phase!==\"applied\"&&reset.phase!==\"failed\"){ if(reset.release) reset.release(); return; }","if(reset.phase!==\"applied\"&&reset.phase!==\"failed\"){ return; }"],
-  "failure-reopens-form-authority":['else { reset.phase="failed"; if(!_setOpen) _commitSettings(); }','else { _setReset=null; }'],
-};
+const {MUTANTS}=require("./r0030-mutants.cjs");
 if(MUTANT&&!MUTANTS[MUTANT])throw new Error("unknown R0030 mutant "+MUTANT);
 const mutate=MUTANT?source=>source.split(MUTANTS[MUTANT][0]).join(MUTANTS[MUTANT][1]):undefined;
 const LONDON={lat:51.5,lon:-.12,label:"London",method:"3",units:"f",source:"manual"};
@@ -203,7 +187,7 @@ const CALLEES=["beginRuntimeGeneration","bindConfig","resetForNewLocation","load
 for(const callee of CALLEES){
   test(`ES30-12 close-save: injected ${callee} fault is observed and reported; persistence fact kept`,T,async()=>{
     const f=make();f.sandbox[callee]=()=>{throw new TypeError("injected "+callee);};const errors=[];f.sandbox.console={...console,error:(...a)=>errors.push(a)};
-    const seen=unhandled.length;f.input("set-lat","30");f.input("set-lon","31");f.click("setClose");await drain();await drain();
+    const seen=unhandled.length;f.input("set-lat","30");f.input("set-lon","31");f.click("setClose");await settlePrayer(f);
     assert.equal(unhandled.length,seen,"no unhandled rejection");
     assert.equal(stored(f).lat,30,"successful save is not rolled back");assert.equal(f.run("_persistOutcome.status"),"saved");
     assert.match(live(f),/Settings saved in this browser\.\nSettings could not be applied \(TypeError\)\. Reload the widget to try again\./);

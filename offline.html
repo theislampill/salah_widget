@@ -8024,7 +8024,13 @@ let _setSession=0, _setEdit=0, _setOpen=false, _setCandOwner=null, _setFocusTime
 let _setPrefSeq=0, _setPrefVersions={};
 let _persistOutcome=null, _setHint={msg:"",isErr:false};
 let _setLocationEvidence=null, _setLocationOrigin="manual", _setLocationSaved=false;
-const _SET_PREF_IDS={method:"set-method",school:"set-school",time:"set-time",units:"set-units",datefmt:"set-datefmt",appearance:"set-appearance"};
+// R0030 (docs/state-contracts/R0030.md). After a successful clear, Reset owns the LOCATION until a newer
+// explicit location intent (coordinates, a place search, the GPS pin, another Reset); closing/reopening
+// the panel and display-name edits do not end it (owner G1-A, G2-i). Fields edited after dispatch stay
+// the user's: a close commits only them, merged into the Reset target when it lands. Shape:
+// {prefOwner, session, phase: detecting|held|applying|applied|failed, save, release}.
+let _setReset=null, _setResetFailed=false, _setApplyFault=null;
+const _SET_PREF_IDS={method:"set-method",school:"set-school",time:"set-time",units:"set-units",datefmt:"set-datefmt",appearance:"set-appearance",label:"set-label"};
 try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
 const _byId=id=>document.getElementById(id);
 function _persistenceMessage(){
@@ -8034,9 +8040,13 @@ function _persistenceMessage(){
     : status==="reset-failed" ? "Could not clear saved settings ("+error+"). Your saved settings remain."
     : status==="saved" ? "Settings saved in this browser." : "Saved settings cleared.";
 }
+// Persistence fact plus, only after a rejected settings apply, the G3 failure line (R0030 PRA-F-33).
+function _outcomeMessage(){
+  return [_persistenceMessage(),_setApplyFault?"Settings could not be applied ("+_setApplyFault+"). Reload the widget to try again.":""].filter(Boolean).join("\n");
+}
 function _renderSettingsStatus(){
-  const s=_byId("set-status"), message=_persistenceMessage();
-  if(s){ s.textContent=[message,_setHint.msg].filter(Boolean).join("\n"); s.classList.toggle("err",!!_storageErr||_setHint.isErr); }
+  const s=_byId("set-status"), message=_outcomeMessage();
+  if(s){ s.textContent=[message,_setHint.msg].filter(Boolean).join("\n"); s.classList.toggle("err",!!_storageErr||!!_setApplyFault||_setHint.isErr); }
 }
 function _renderPersistenceAffordance(){
   const b=document.querySelector(".buckle"); if(!b) return;
@@ -8050,13 +8060,25 @@ function _publishPersistence(operation,result){
   const error=String(result.error||"error").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,40)||"error";
   _persistOutcome={operation,status:result.ok?(operation==="save"?"saved":"cleared"):(operation==="save"?"session-only":"reset-failed"),error:result.ok?null:error};
   _storageErr=result.ok?null:(result.error||"error");
-  const live=_byId("settings-persistence-status"); if(live) live.textContent=_persistenceMessage();
+  const live=_byId("settings-persistence-status"); if(live) live.textContent=_outcomeMessage();
   _renderPersistenceAffordance(); _renderSettingsStatus();
+}
+// A settings apply that rejects is observed and reported once; the persistence fact already published
+// stays, nothing is retried or rolled back. A later settled apply withdraws the report (R0030 G3-a).
+function _settleSettingsApply(error){
+  if(error==null){ if(!_setApplyFault) return; _setApplyFault=null; }
+  else { try{ console.error("Settings could not be applied",error); }catch(e){}
+    _setApplyFault=String(error&&error.name||"error").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,40)||"error"; }
+  const live=_byId("settings-persistence-status"); if(live) live.textContent=_outcomeMessage();
+  _renderSettingsStatus();
 }
 function _setStatus(msg,isErr){ _setHint={msg:msg||"",isErr:!!isErr}; _renderSettingsStatus(); }
 // A dialog session and location edit own every async lookup, including GPS and
-// reset detection. Query/coordinate equality cannot distinguish A → B → A.
+// place search. Query/coordinate equality cannot distinguish A → B → A.
 function _invalidateSetLocation(){ _setEdit++; _setSearchSeq++; _setCands=[]; _setCandOwner=null; }
+// Reset's location authority has its own owner (R0030): only a newer explicit location intent —
+// coordinates, a place search, the GPS pin, another Reset — ends it; open/close/name edits do not.
+function _dropReset(){ const reset=_setReset; _setReset=null; _setResetFailed=false; if(reset&&reset.release) reset.release(); }
 function _captureSetLookup(){ return {session:_setSession,edit:_setEdit,seq:++_setSearchSeq}; }
 function _ownsSetLookup(owner){ return _setOpen && owner.session===_setSession && owner.edit===_setEdit && owner.seq===_setSearchSeq; }
 function _recordSetEdit(e){
@@ -8089,6 +8111,7 @@ function _setPin(src){
 // an unavailable search and partial provider coverage get distinct feedback. Resolves to the detailed status,
 // or "superseded" when a newer session/edit/lookup owns the form (then nothing is touched).
 async function _runSetSearch(q){
+  _dropReset();                                                // a place search is a newer location intent (R0030)
   const owner=_captureSetLookup(), bias=_setHomeCC;
   _setStatus("Searching…");
   let r=null;
@@ -8159,6 +8182,7 @@ function _populateSettingsForm(){
 function _wireSettings(){
   if(_setWired) return; _setWired=true;
   _byId("setClose").addEventListener("click",_closeSettings);
+  _byId("set-pin").addEventListener("click",_dropReset);      // the GPS pin is a newer location intent (R0030)
   _byId("set-pin").addEventListener("click",_usePrecise);     // one-shot browser position (asks permission)
   _byId("set-reset").addEventListener("click",_resetLocal);
   // AUTO-SAVE (no Save button): any edit marks the form dirty → committed on close. Esc closes; Tab is trapped.
@@ -8178,7 +8202,8 @@ function _wireSettings(){
   // Name edits preserve acquisition; coordinate edits select a manual site.
   ["set-label","set-lat","set-lon"].forEach(id=>_byId(id).addEventListener("input",()=>{
     _invalidateSetLocation();
-    if(id!=="set-label"){
+    if(id!=="set-label"){                                      // a display-name edit is not a location intent (R0030 G2)
+      _dropReset();
       _setLocationEvidence=window.SalahConfig?SalahConfig.normalize({source:"manual"}).locationEvidence:null;
       _setLocationOrigin="manual"; _setLocationSaved=false; _setPin("manual");
     }
@@ -8209,13 +8234,28 @@ function _wireSettings(){
 }
 // AUTO-SAVE: there is no Save button — the current form is applied + persisted when the panel closes
 // (only if something changed and the coordinates are valid). Storage blocked → applies for the session.
+// While a Reset owns the location (R0030 G1-A) the form's location fields are not the user's: a close
+// records whether post-dispatch edits need saving and commits them, merged over the Reset target, once
+// it has landed — or session-only over the current site when detection failed (no target exists).
 function _commitSettings(){
+  const reset=_setReset;
+  if(reset){
+    if(_setDirty) reset.save=true;
+    _setDirty=false;
+    if(reset.phase!=="applied"&&reset.phase!=="failed"){ if(reset.release) reset.release(); return; }
+    _setReset=null; if(reset.phase==="failed") _setResetFailed=true;
+    if(reset.save) _applySettings({...CONFIG,..._newerSetPrefs(reset.prefOwner)},reset.phase==="applied");
+    return;
+  }
   if(!_setDirty) return;
   const cfg=_settingsFormToConfig();
   const v=window.SalahConfig?SalahConfig.validate(cfg):{ok:cfg.lat!=null&&cfg.lon!=null};
   if(!v.ok) return;                                            // incomplete/invalid → keep the prior config
   _setDirty=false;
-  applyConfig(cfg,{save:true});                                // persist + re-fetch + re-render (fire-and-forget)
+  _applySettings(cfg,true);
+}
+function _applySettings(cfg,save){
+  applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null),_settleSettingsApply);   // persist + re-fetch + re-render; a rejection is observed (G3)
 }
 async function _usePrecise(){    // the map-pin button → precise GPS (only place getCurrentPosition is called)
   _invalidateSetLocation(); const owner=_captureSetLookup();
@@ -8235,32 +8275,55 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
       "Browser location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the selected location.", true); }
 }
 async function _resetLocal(){
-  _invalidateSetLocation(); const owner=_captureSetLookup(), prefOwner={..._setPrefVersions};
+  _invalidateSetLocation(); _dropReset(); const prefOwner={..._setPrefVersions};
   const r=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:"unavailable"};
   _publishPersistence("reset",r);
   if(!r.ok){
     _setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return; // the reset also cancelled any pending lookup
   }
-  _setStatus("Detecting your area…");
-  let d=null; try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){}
-  if(!_ownsSetLookup(owner)) return;
-  if(d&&d.ok){ const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg);
+  // Cleared: Reset now owns the location (see _setReset). Edits made before the click are discarded, as a
+  // completed Reset always did, and nothing may still claim the cleared record (OM-04): the storage marker
+  // reverts to the record's own origin, which the classifier compares (origin||source), so it is neutral.
+  const reset=_setReset={prefOwner,session:_setSession,phase:"detecting",save:false,release:null};
+  _setDirty=false;
+  if(CONFIG&&CONFIG.source==="localStorage"&&CONFIG.origin) CONFIG={...CONFIG,source:CONFIG.origin,savedAt:null};
+  _setLocationSaved=false; _setPin(_locSource);
+  // G5-a: the target is what the resolver selects with storage cleared; only a needed detection asks the IP.
+  const policy=window.SalahConfig?SalahConfig.resolve(location.hash):null;
+  let d=null;
+  if(policy&&policy.cfg&&!policy.needsDetect){ d={ok:true,cfg:policy.cfg,site:true}; _setStatus(""); }
+  else { _setStatus("Detecting your area…"); try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){} }
+  if(_setReset!==reset) return;
+  if(d&&d.ok){
+    // A later panel session keeps the location it opened with; the target lands when that session closes.
+    if(_setOpen&&_setSession!==reset.session){ reset.phase="held"; await new Promise(go=>{ reset.release=go; }); if(_setReset!==reset) return; }
+    const c=SalahConfig.applyHashPrefs(d.cfg,_hashCfg);
     // Reset still owns the detected location, while preferences edited since
     // dispatch (or during apply's await) own their fields and their close-save.
     Object.assign(c,_newerSetPrefs(prefOwner));
-    await applyConfig(c,{save:false,reset:true});     // an explicit Reset resets even when values are equal (R0003 D1)
-    if(!_ownsSetLookup(owner)) return;
+    reset.phase="applying"; let fault=null;
+    try{ await applyConfig(c,{save:false,reset:true}); }catch(e){ fault=e; }     // an explicit Reset resets even when values are equal (R0003 D1)
+    _settleSettingsApply(fault);
+    if(_setReset!==reset) return;
+    reset.phase="applied";
+    if(!_setOpen){ if(fault) _setReset=null; else _commitSettings(); return; }   // the closed panel's deferred commit
+    if(_setSession!==reset.session) return;                    // never rewrite a later session's form or status
+    _setReset=null;
     const prefs=_newerSetPrefs(prefOwner);
     _populateSettingsForm();
     Object.entries(prefs).forEach(([key,value])=>{ _byId(_SET_PREF_IDS[key]).value=value; });
     _syncDateFromBox(); _setDirty=Object.keys(prefs).length>0;
-    _setStatus("Using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
-  else { _setStatus("Enter your location.",true); }
+    if(!fault) _setStatus(d.site ? "Using configured site: "+(c.label||"") : "Using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
+  else if(_setOpen&&_setSession===reset.session){ _setReset=null; _setStatus("Enter your location.",true); }   // G1b-a: the visible form owns location again
+  else { reset.phase="failed"; if(!_setOpen) _commitSettings(); }  // G1a-A1: no reopen; deferred edits are session-only; the next open says so
 }
 function _openSettings(){
   const c=document.querySelector(".c"); if(!c) return;
   _setSession++; _setOpen=true; _invalidateSetLocation();
+  const pending=_setReset?_newerSetPrefs(_setReset.prefOwner):null;    // a pending Reset's post-dispatch edits stay in the form
   _wireSettings(); _populateSettingsForm();
+  if(pending){ for(const key in pending) _byId(_SET_PREF_IDS[key]).value=pending[key]; _syncDateFromBox(); }
+  if(_setResetFailed){ _setResetFailed=false; _setStatus("Enter your location.",true); }
   _setLastFocus=document.activeElement;
   const b=document.querySelector(".buckle"); if(b) b.setAttribute("tabindex","-1");   // covered while open → out of the tab order (focus trap)
   c.classList.add("settings-open");
