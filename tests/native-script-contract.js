@@ -45,6 +45,15 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R003A merged with main 9d903d6b (R002F) at 4ccf24c3: authored source 3cb56719, structural control 76ecda80 of its generated index c5fd54fc. Every entry below, including R002F's
+    // and R003A's earlier entries, remains admitted unchanged.
+    '3cb56719084e8f9bf11ad61b42089ef3aa47109c831d6b2d7aaad4c79c701f80':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'4ccf24c35da1c9503515559e10b758c5f51316fa',path:'src/native/index.html',layout:'config,native'}),
+    '76ecda80bad3fa6d5e747b9b203c865cd803ff5e5e874e28a5e636f4cec27ece':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'4ccf24c35da1c9503515559e10b758c5f51316fa',path:'index.html',
+      parentSha256:'c5fd54fcc9d4d104bab1380c0eddd3cc498e254a6e2f56434463add73919484c',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R003A reconciliation (issue 124 rewritten body) at a424a03d: authored source 646e8fdd (painter withdraws all five
     // solar optics first, owner gate G4 b) and structural control 0931aedc of its generated index e808f07d. Every entry below, including R003A's 4d5cc6aa/038b1667, remains admitted.
     '646e8fddcee9ab5970d785d751fea37dece28934ce6bd7fa855e9a1ff4cd9330':Object.freeze({
