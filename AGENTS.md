@@ -157,7 +157,8 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
 - **Claiming direct local rain/lightning observations from model or uncalibrated radar data**, or letting
   hourly forecasts overwrite current conditions in real time. The owner's PR42 policy explicitly permits
   labelled fresh current-model rain/snow with supporting admitted quantities. Keep condition presentation,
-  model effect permissions and direct-observation authority separate; see DESIGN.md.
+  model effect permissions and direct-observation authority separate; see DESIGN.md. The live lane is a
+  labelled model estimate; the synthetic present lane (`synthetic-present-v1`) is QA-only and never fed by a provider.
 - Clouds that **reseed / slideshow** on weather refresh or per render tick.
 - Replacing the accurate PBR moon lighting with a flat sprite; making physics "ugly".
 
@@ -237,7 +238,8 @@ Serve the folder statically and open `index.html#lat=24.47&lon=39.61&label=Madin
 - Readouts: `&debugLayers=1`, `&debugMoon=1`, `&debugMotion=1`, `&qa=1` then `window.qaState()` (incl. `wxTruth`,
   `moonTruth`). `&debugDawn=…` is a deprecated no-op (dawn is not painted).
 - Preview gotcha: `simTime` without `timeScale` freezes the clock (TIMESCALE 0), so cloud drift won't be visible
-  in a still test — use the direct `paintClouds(t)` probe or a real-time / `timeScale` watch to see motion.
+  in a still test — use a real-time / `timeScale` watch to see motion. Calling `paintClouds(t)` directly at two
+  `t` values does not show drift: motion integrates elapsed frame time, not `t`.
 
 ## Frozen V1 compatibility snapshot
 

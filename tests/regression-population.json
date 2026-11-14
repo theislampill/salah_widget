@@ -48,8 +48,13 @@
   "tests/render-liveness-containment.test.cjs",
   "tests/timezone-authority-state.test.cjs",
   "tests/v1_limitations.test.cjs",
+  "tests/weather-effects-contract.test.cjs",
   "tests/weather-no-timetable-handoff.test.cjs",
   "tests/weather-no-timetable-withdrawal.test.cjs",
+  "tests/weather-preview-range.test.cjs",
+  "tests/weather-renewal-miss.test.cjs",
+  "tests/weather-renewal-mutations.test.cjs",
+  "tests/weather-renewal-state.test.cjs",
   "tests/weather-retry-clock-mutations.test.cjs",
   "tests/weather-retry-clock-state.test.cjs",
   "tests/weather-withdrawal-authority.test.cjs",
@@ -1516,6 +1521,10 @@
   {
    "path": "tests/weather-retry-clock-fixture.cjs",
    "reason": "imported harness/fixture module, not an instrument"
+  },
+  {
+   "path": "tests/weather-renewal-fixture.cjs",
+   "reason": "imported harness/fixture module, not an instrument"
   }
  ],
  "exclusions": [
@@ -1887,6 +1896,53 @@
      "<receipt.json>"
     ],
     "protocol": "receipt rows R39-07 / R39-08 verdict MET | FINDING | GAP, exit 0 only when both MET (.github/workflows/r0039-installer-probes.yml; docs/state-contracts/R0039.md section 9)"
+   }
+  },
+  {
+   "path": "tools/qa/run_r002f_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, one served generated tree, every non-loopback request route-stubbed: floor-to-15-min Open-Meteo stub, Aladhan fixture, empty RainViewer; mocked Date/timers/rAF/performance.now); not a headless unit instrument",
+   "owner": "R002F",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r002f_native.cjs",
+     "<playwright package>",
+     "<tree>",
+     "<fresh dir>",
+     "chromium,firefox,webkit"
+    ],
+    "protocol": "one JSON summary line per engine and poll phase {withdrawnAtMs, selectedAgainAtMs, deckBackAtMs, headerBackAtMs, withdrawnFramesShowNothing, identityKept, requestsRelativeToB, pageErrors}; per-run JSON with 4 fps samples and three PNG crops (docs/state-contracts/R002F.md 5.2); exit 0 when every run completed"
+   }
+  },
+  {
+   "path": "tools/qa/run_r002f_native_extra.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, candidate and baseline served trees, every non-loopback request route-stubbed from the recorded Aladhan fixture and a floor-to-15-min Open-Meteo stub; mocked clock, one real-time cell); not a headless unit instrument",
+   "owner": "R002F",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r002f_native_extra.cjs",
+     "<playwright package>",
+     "<candidate tree>",
+     "<baseline tree>",
+     "<fresh dir>",
+     "chromium,firefox,webkit",
+     "hidden,crops,preview,notimetable,pixeldiff,motion"
+    ],
+    "protocol": "one JSON line per engine and cell (hidden, crops, preview, notimetable, pixeldiff, motion) with PNG hashes; exit 0 when every cell completed (docs/state-contracts/R002F.md 5.2a)"
+   }
+  },
+  {
+   "path": "tests/r002f-renewal-matrix.cjs",
+   "reason": "pre-merge evidence instrument: compares the candidate's built entry with main's built entry read from git (origin/main or R002F_MATRIX_MAIN_REF) over 9 skew/lag values x 45 poll phases x 2 kinds; ~35 min; meaningless after R002F is merged into that ref",
+   "owner": "R002F",
+   "recipe": {
+    "argv": [
+     "node",
+     "--test",
+     "tests/r002f-renewal-matrix.cjs"
+    ],
+    "protocol": "node:test, two tests; each prints a diagnostic table of mean gaps and fails with every counterexample (candidate gap > main gap) listed (docs/state-contracts/R002F.md 1a)"
    }
   }
  ]

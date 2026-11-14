@@ -80,7 +80,7 @@ function harness(options={}){
   run('"use strict";\n'+slice('// ---- config:',"// ---- weather (Open-Meteo:")+"\n"+
     "let weather=null,weatherTrack=null,weatherRadar=null,lastWxAt=0,lastWxTry=0,lastRadarAt=0,wxBusy=false,radarBusy=false,_wxRetry={weather:null,radar:null};\n"+
     "const moonSky={_min:-1};\n"+
-    "function loadWx(){} function fetchWeather(){} function fetchRadar(){} function syncWeather(){}\n"+
+    "function loadWx(){} function fetchWeather(){} function fetchRadar(){} function syncWeather(){} function renewWeather(){}\n"+   // R002F: the loop's renewal opportunity (same boundary double)
     // Header withdrawal is now independent of prayer readiness. These are
     // weather-boundary doubles, like fetchWeather above; actual header/effects
     // are exercised by hotfix-prayer-weather and the full-runtime browser tests.

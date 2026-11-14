@@ -314,10 +314,27 @@ dew point alone is not a water-droplet column and cannot enable a corona.
   "Live motion".) The fragment's `timeScale` sets the explicit scene clock rate; `timeScale=1` remains an anchored 1× preview. A query-only `?timeScale=` is ignored. reduced-motion paints one frozen frame.
 - **Lighting**: warm sun rim / silver lining on the sun-facing side, cool moonlit edges at night, leaden
   undersides in storm, lit tops / shaded bases for volume; rain/fog diffuse.
-- **Continuity**: the cloud field has a **stable identity** (`_cloudFieldSeed` = location + day + optional
-  `?seed`) and is never reseeded on a weather refresh or render. Live coverage **eases** toward its target so a
-  15-minute refetch grows/erodes the existing deck smoothly (snapping only on first establishment and under
-  fast-forward) — no "slideshow".
+- **Continuity**: the cloud field is keyed by `_cloudFieldSeed` (location + the optional fragment `seed`); a
+  scene's population adds the civil day on which that scene identity began. Neither is reseeded by a weather refresh, a renewal, a withdrawal or a render.
+  Motion integrates **monotonic** elapsed frame time (`performance.now`): a **signed** frame interval moves the
+  clouds only when it is positive and at most **two seconds**; a zero, negative or longer interval (hidden card,
+  reduced motion, missed frames) is suspension, not a travel backlog. A newly accepted wind is installed only after
+  the elapsed interval has been integrated at the **old wind**. **Empty decks** (no coverage, including a withdrawn
+  deck) keep integrating motion with an unchanged population, so a returning deck continues from its phase. An
+  **explicit seek** or rate change of the native clock starts a new scene identity (phases restart); the live
+  wall clock never does.
+- **Coverage across a provider step** (R002F): healthy coverage **eases** toward each new target (0.08 per paint;
+  fast-forward snaps) — no "slideshow". A live current record, however, lapses exactly when its 15-minute provider
+  step ends: the deck, particles and header are withdrawn on that frame (freshness is not traded for continuity).
+  The widget then requests the next record about 3 s after the step ends (an assumed margin, see "Weather
+  truthfulness"), and the admitted record re-establishes the deck at once — a snap, not an ease — with the same
+  field seed, population and motion. The blink lasts about the margin plus the request time. If provider lag or a
+  device clock ahead by more than the margin makes that answer repeat the old step, it is an early-renewal miss: it
+  opens no retry spacing, and the ordinary ~30 s poll then behaves exactly as it would have without renewal (the gap
+  ends at that poll if the provider has caught up, otherwise 60–90 s later, as on main). A genuine failure keeps
+  R000D's 60 s spacing. While a valid record and the hourly track are both held no refetch happens, so a live deck
+  is not eased across a provider step (without a track a request can happen while the record is still selected,
+  the R000B healthy handoff, and that replacement eases).
 - **Rain** originates from the actual cloud columns (`_colDens`), fading before the prayer list, and scales by
   WMO code / amount (drizzle → showers → steady → heavy → thunder).
 - **Lightning** is a **procedural branching channel** (midpoint-displacement stepped leader + forks from the
@@ -327,9 +344,13 @@ dew point alone is not a water-droplet column and cannot enable a corona.
 ### Weather truthfulness (critical)
 
 Open-Meteo `current=` is a current MODEL ESTIMATE, not a direct local observation.
-The owner's PR42 policy supersedes both the old observed/nowcast wording and the
-later policy that suppressed all model precipitation when no observation adapter
-was connected. One admitted decision supplies icon, temperature, condition,
+The owner's PR42 policy supersedes both the old wording that treated the model as an
+observed nowcast and the later policy that suppressed all model precipitation when no
+observation adapter was connected. Without a local observation, nearby evidence or an
+arrival interval the live header is still useful: it shows the labelled current model
+estimate (condition, temperature, amount), model rain/snow particles follow the decision's `visualPermissions`,
+and the nearby and approach lines state that no qualified nearby source or arrival
+interval is available instead of inferring one. One admitted decision supplies icon, temperature, condition,
 effect permissions and provenance. A usable condition survives a missing
 temperature or amount; no old temperature survives a rejected record.
 
@@ -354,6 +375,31 @@ and receipt ages must each satisfy **0 through 900000 ms inclusive** (15 minutes
 evaluated again at each real-time use. There is no future-skew allowance: +1 ms
 is ineligible. A skewed client clock can therefore withhold otherwise useful data.
 
+Renewal at the provider step (R002F, owner decision D-2F-1 B). The provider stamps
+`current.time` at the start of its 15-minute step (`interval` 900 s), so a record
+becomes ineligible exactly when the next step is first served, and the fresh-data
+shortcut never requests while a record is selected. The visible render loop therefore
+evaluates a pure renewal derivation on every frame that does not already poll: once the
+step of a record that was eligible when received has ended plus an assumed margin of
+3 s, the ordinary request is made through the existing retry gate (request owner,
+target, mode and R000D's 60 s elapsed spacing still decide; adoption is unchanged).
+Early-renewal miss (owner decision: option D with 3 s, a narrow amendment of R000D's
+retry spacing): a renewal answer that is admitted and valid but whose step has not
+advanced past the held record's is neither an acquisition (it is not adopted, cached or
+counted as a receipt) nor a failure: the 60 s spacing it opened is restored to its
+previous value, so the next ordinary poll proceeds. It happens at most once per provider
+step (once per document while the provider never advances), so at most 2 weather requests
+fall within 60 s around one miss; otherwise the 60 s spacing holds. Every genuine failure (HTTP, timeout, cancel, malformed or rejected response,
+obsolete generation) still opens R000D's 60 s spacing.
+Renewal never extends freshness (it is due only after the record has lapsed), adds no
+timer, does nothing in SIM or clock preview, and requests nothing while the card is
+hidden. A record whose `interval` is not 900 s or whose `current.time` is off the
+15-minute UTC grid, or one that was future or already expired when received (clock
+disagreement or publication lag), is left to the ordinary ~30 s poll and 60 s spacing;
+`qaState().wxTruth.retry.renewal` reports the stage, the margin and its basis, and the
+sign of a clock disagreement (diagnostic only, D-2F-3 A). The 3 s margin is an
+assumption (owner decision); its adequacy against the live provider is unverified.
+
 RainViewer `past[].time` becomes `frameGeneratedAt`, `generated` becomes
 `indexGeneratedAt`, and completed acquisition has its own `retrievedAt`.
 Both seconds inputs must be raw finite nonnegative numbers whose derived
@@ -372,6 +418,16 @@ authority yields an em dash, blank temperature, and no unsupported cloud,
 precipitation or lightning effects. The neutral sky remains decorative; hourly
 data cannot substitute for live current. Prayer-cache stale state remains separate,
 and cache retention is not an offline-app guarantee.
+
+The simulation-fixture lane (`synthetic-present-v1`, R0024) is QA-only. It is read only
+in an explicit preview and only from `weatherSynthetic`, which no product path writes: no
+provider response, fragment flag or `trusted:true` field is mapped into it. The live
+lane and this lane are exclusive — live real time never consults it. A fixture belongs
+to one target generation and expires on its own clock; at expiry, or in an outage
+(rejected or missing fixture), its present permissions are withdrawn at once (the
+decision cache ends at the fixture's expiry) and only the underlying current model
+estimate remains, with the rejection disclosed. Visible provenance of diagnostic
+overrides belongs to R0036.
 
 Weather withdrawal does not depend on prayer availability. The cloud consumer
 records the exact admitted record, target generation and lane used for its
@@ -403,6 +459,11 @@ state, writer and qualification map.
   unqualified. `observedPresent` is false for the current model lane.
 - Hourly forecasts remain forecast/preview data, never a live-current replacement.
   Existing source-age, receipt-age, unit, target and generation fences remain.
+- An explicit preview (fast-forward or clock control) substitutes the hourly
+  interpolation only inside the admitted track, first to last hourly point inclusive
+  (R002F, D-2F-4 A). Before the first or after the last point the preview current
+  record is unavailable — em dash, preview clouds withdrawn, no particles — never the
+  endpoint held. Each render (once per simulated second, or when dirty) re-evaluates it.
 - RainViewer palette alpha is unitless imagery, never millimetres or local
   observation authority. A newly fetched mosaic cannot renew old source evidence.
 
@@ -424,7 +485,8 @@ radar alpha never imply an ETA. Live local observation, nearby and arrival adapt
 remain unavailable.
 
 Source validity, approach and forecast intervals use absolute target-zone times.
-Current model precipitation describes the preceding declared interval; mm/h is
+Current model precipitation is a `preceding-interval` amount over the declared interval,
+and hourly forecast precipitation is a `preceding-hour` amount; mm/h is
 labelled an interval average, never an instantaneous measurement. Null and zero
 remain distinct. Forecast text retains provider/product, amount kind/units and
 valid interval. Probability requires the exact precipitation event/window; actual
