@@ -45,14 +45,14 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
-    // R0030 (issue 97) settings Reset authority at 53d5be76 on main 516d8cc8: authored source 946ffb36 and the
-    // legacy-Moon structural control of its generated index ef374c04. Settings block only; every entry below remains
+    // R0030 (issue 97) settings Reset authority at f6c87158 on main 516d8cc8: authored source 01f43830 and the
+    // legacy-Moon structural control of its generated index 59eb223c. Settings block only; every entry below remains
     // admitted unchanged. Re-bind again when rebuilt on a later main.
-    '946ffb36695f4d0c5da7dec48f535c38049c911272e69935b526139e0420d333':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'53d5be767b85078193eaac8e9760505e210f2383',path:'src/native/index.html',layout:'config,native'}),
-    'cbf0bdaceedeea94a13faf10e59080640176db9839ee4e9d6826cf7792489757':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'53d5be767b85078193eaac8e9760505e210f2383',path:'index.html',
-      parentSha256:'ef374c04e89fbd1c73b4ed4e40de8cdbd22112f878962be870235465e308d7f6',
+    '01f438302a1e48c712ef7a26d1d245d8b287e7e8479e6cc4716cbf6c350f4142':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'f6c871587d511b1dc00e51edf343a74980ed7d0b',path:'src/native/index.html',layout:'config,native'}),
+    '1c71ca12501fe14436afcbc812a21c38c31fa9b9ec988f8c7b1854fbe2d12764':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'f6c871587d511b1dc00e51edf343a74980ed7d0b',path:'index.html',
+      parentSha256:'59eb223cff9f7ffb7c68f5653abcd28d6eaa40014ba7555d320ddf6ab1eb2e0b',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0034 (issue 101) refined-sky identity candidate 1f13b185 on main 664ebe22: the authored native body is unchanged

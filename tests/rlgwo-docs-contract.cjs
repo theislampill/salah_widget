@@ -281,12 +281,12 @@ function mentions(name, tokens) {
       // render/loop/boot containment, not the force block, helper, clamp or call pinned above.
       // R002E re-bind (issue 95, merge 421a44a9): body bc11c040... -> ae528330..., entry 531bea69... -> 3a93bfc9...;
       // R002E changes only the prayer status writer, the .cn fit key and one comment, not the pinned block, helper, clamp or call.
-      // R0030 re-bind (issue 97): body ae528330... -> 595ea97f..., entry dbc77c67... -> ef374c04...; R0030 changes only the
+      // R0030 re-bind (issue 97): body ae528330... -> cae13e29..., entry dbc77c67... -> 59eb223c...; R0030 changes only the
       // settings block (Reset authority, close-commit, apply-failure report), not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"595ea97fa21ba3302252c0e1ac34acafeff6d12e2f693d06beff50c39ca16d99",'delegated native script changed');
+      assert.equal(digest(body),"cae13e2932a815ee45e04544abecedea76c78c39645a660b17cfcb2ec93ec9a4",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"ef374c04e89fbd1c73b4ed4e40de8cdbd22112f878962be870235465e308d7f6",'delegated current generated entry changed');
+      assert.equal(digest(source),"59eb223cff9f7ffb7c68f5653abcd28d6eaa40014ba7555d320ddf6ab1eb2e0b",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
