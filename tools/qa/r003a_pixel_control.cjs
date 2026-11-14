@@ -9,7 +9,7 @@
 // Modes: --mode pixel (default; --dpr 1|2): healthy-scene A/B/A2 stills, pass rule diff(A2,B) <= diff(A,A2) and equal optics.
 //        --mode fault  (R3A-01.8): broken low-Sun scene with visible .godray, then in page today=tomorrow=null and render(), with a .c setProperty
 //                      wrapper throwing for --rain-op, _renderDirty=true; .godray opacity and crops at 0/2.5/5 s; no-fault control.
-//        --mode motion (R3A-02.5): default real-time page, broken cloud, 60 s; alpha-weighted centroid of the cloud painter
+//        --mode motion (R3A-02.5): real-time page (no simTime) with &simWx=2&simCloud=50, 60 s; alpha-weighted centroid of the cloud painter
 //                      canvas at 0/10/60 s (never the qaState hash); runs A, B, A2 default and B under OS reduced motion with and
 //                      without &motion=full.
 // Usage: node tools/qa/r003a_pixel_control.cjs --root <tree> --index-a <main index.html> --index-b <branch index.html>
@@ -66,7 +66,7 @@ async function faultRun(browser,base,inject){const o=await open(browser,base,LOW
   today=null;tomorrow=null;_renderDirty=true;render();},inject);
  const frames=[];for(const ms of [0,2500,5000]){if(ms)await o.page.waitForTimeout(2500);frames.push({ms,state:await o.page.evaluate(STATE),png:await o.page.screenshot({clip:{x:0,y:0,width:200,height:200}})});}
  await o.ctx.close();return {before,frames,errors:o.errors};}
-async function motionRun(browser,base,suffix,reduced){const o=await open(browser,base,'&debugMotion=1'+suffix,true,{reduced,wx:{code:2,cloud:50,isDay:1}});
+async function motionRun(browser,base,suffix,reduced){const o=await open(browser,base,'&debugMotion=1&simWx=2&simCloud=50'+suffix,true,{reduced});
  await o.page.waitForTimeout(3000);const pts=[];const t0=Date.now();for(const at of [0,10000,60000]){while(Date.now()-t0<at)await o.page.waitForTimeout(250);pts.push({ms:Date.now()-t0,c:await o.page.evaluate(CENTROID)});}
  await o.ctx.close();
  const dx=i=>pts[i].c&&pts[0].c&&pts[i].c.x!=null&&pts[0].c.x!=null?+(pts[i].c.x-pts[0].c.x).toFixed(3):null;

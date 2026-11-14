@@ -257,8 +257,8 @@ lighting; its former broad CSS background/veil layers are not painted twice.
   *around the sun you can see*. (Previously they bound to the arc-sun azimuth `--sunx/--suny`, which sweeps
   mid-card, so the halo rendered detached center-screen — that was a bug.) Only the **diffuse, azimuthal** cues
   stay on `--sunx`/`--antix`: the **horizon scatter** band (`.scatter`, pools under the sun's azimuth — left at
-  dawn, right at dusk) and the anti-solar **Belt of Venus** (`.belt`) / **anticrepuscular** rays. The generated
-  stylesheet hides `.scatter`, `.belt` and `.anticrep` in every shipped entry (see "Known approximations").
+  dawn, right at dusk) and the anti-solar **Belt of Venus** (`.belt`) / **anticrepuscular** rays. The anticrepuscular
+  element is computed and published but hidden by the generated stylesheet (see "Known approximations").
 - **Optical phenomena are condition-gated, never random** (ice-crystal vs water-droplet, low-sun + broken-cloud,
   etc.). See "Known approximations". *Known stylization:* the corner-sun body stays top-left in all states (the
   moon owns top-right and the header owns the centre); at dusk the warm directional glow correctly pools on the
@@ -313,14 +313,25 @@ dew point alone is not a water-droplet column and cannot enable a corona.
   screen-px/min; gentle in calm air, fast in a gale), with a slower in-place grow/erode on top. (Earlier rates
   were ~100× too slow → the deck read as a frozen wallpaper even though the QA hash "changed" every frame — see
   "Live motion".) The fragment's `timeScale` sets the explicit scene clock rate; `timeScale=1` remains an anchored 1× preview. A query-only `?timeScale=` is ignored. reduced-motion paints one frozen frame.
-- **Wind drift is horizontal and decorative in calm air** (R003A). `advanceCloudMotion` moves each deck by
-  `wx·wspd·dt·(0.024+0.006·deck)`, with `wx = −sin(windDir)` and `wspd = 0.06 + 0.6·wind`, where `wind` ramps
-  0→1 over 0.5–14 m/s (`wxDrivers`, `applyCloudState`). Calm air therefore still drifts at the 0.06 floor. With no
-  admitted record `wxDrivers` returns `windX −0.7`; a record without a direction uses 225°, i.e. `+0.707`, the
-  opposite sign. `cloudState.wy` (`cos windDir`) is written and read by no renderer, `qaState()` field, debug
-  readout or URL parameter; it is kept because the pinned R000B native fixture records it and an accepted r0025
-  mutation anchors on its assignment (`tests/r003a-cloud-wind-truth.test.cjs` shows that changing it moves no
-  cloud). The lifecycle morph and wander advance with time regardless of wind.
+- **Wind drift is one-dimensional and continues in calm air** (R003A). `advanceCloudMotion` subtracts
+  `wx·wspd·dt·(0.024+0.006·deck)` from each deck's phase, with `wx = −sin(windDir)` (`windDir` = direction the
+  10 m wind blows FROM) and `wspd = 0.06 + 0.6·wind`, where `wind = clamp((m/s − 0.5)/13.5)` (`wxDrivers`,
+  `applyCloudState`). Calm air therefore still drifts at the 0.06 floor. With no admitted record `wxDrivers` returns
+  `windX −0.7`, wind 0; a record without a direction uses 225°, i.e. `windX = +0.7071`, the opposite sign; the initial
+  `cloudState` is `wx −0.7, wspd 0.15`. The lifecycle morph and wander advance with time regardless of wind.
+- **`cloudState.wy` is retained, written and unread** (owner decision G1, issue 124). `atmosphere()` emits
+  `windUY = cos(windDir ?? 225°)` and `applyCloudState` copies it to `cloudState.wy`. It is the north–south
+  horizontal component of the unit "from" direction (with the opposite sign to the conventional `v = −cos`), **not**
+  a vertical wind; no renderer, `qaState()` field, debug readout or URL parameter reads it, so cloud motion is
+  horizontal-only on the card. It is kept pending the owner's wind-vector research; `tests/r003a-cloud-wind-truth.test.cjs`
+  pins its census and shows that changing it moves no cloud.
+- **Open finding (G5): cloud drift and rain slant disagree in source.** For `windX > 0` the deck phase decreases
+  (`advanceCloudMotion`, `phase[d] −= …`), and `paintClouds` places clusters at `x ∝ … + phase`, so clusters move
+  toward smaller x; the rain slant is `windX·wind·120 px` (`atmosphere()` `rainSlant`, `--rain-slant`) and the fog
+  drift uses `--wind-dir = sign(windX)` toward larger x. The `paint()` comment "wind FROM the west ⇒ clouds drift
+  east(+)" describes `--wind-dir`, not the canvas deck. Source-derived only, not measured on screen; the card has no
+  declared compass orientation, so no direction is claimed and nothing is changed (investigation coordinated with
+  the wind-vector research).
 - **Lighting**: warm sun rim / silver lining on the sun-facing side, cool moonlit edges at night, leaden
   undersides in storm, lit tops / shaded bases for volume; rain/fog diffuse.
 - **Continuity**: the cloud field has a **stable identity** (`_cloudFieldSeed` = location + day + optional
@@ -684,21 +695,23 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   (believable, not photometric)**; the moon's halo/pillar may show as partial arcs because the halo radius exceeds
   the (mostly in-frame) disc. The **corner-sun body stays top-left** in all states (a layout stylization — the moon
   owns top-right); the azimuthal horizon glow correctly moves left→right dawn→dusk.
-- **What ships versus what is computed (R003A).** `atmosphere()` still computes the anticrepuscular rays
-  (`antiCrep = 0.5·ray`, forceable with `debugOptic=anticrep`) and the Belt of Venus, and `paint()` publishes
-  `--anticrep`/`--belt`, but the generated stylesheet (`tools/build_native.py`, rule
-  `.atmo .airglow,.atmo .aurora,.atmo .scatter,.atmo .belt,.atmo .anticrep,.atmo>.sun{display:none!important}`,
-  in `real-sky/native-sky.css` and inlined in `offline.html`) hides both, with airglow, aurora and the horizon
-  scatter band, in every shipped entry. The rule arrived with the CP9 integration (`7fe3ba1d`) under the comment
-  "Broad sky radiance is now physical"; no record says whether hiding the anticrepuscular element (a discrete optic,
-  not broad radiance) was intended. Whether to show it is an owner decision (R003B, issue 125).
+- **Anticrepuscular rays: computed, not shown (R003A).** `atmosphere()` computes `antiCrep = 0.5·ray` (forceable with
+  `debugOptic=anticrep` → 0.8) and `paint()` publishes `--anticrep = 0.8·antiCrep`, but the generated stylesheet rule
+  `.atmo .anticrep{display:none!important}` (part of the hide list in `tools/build_native.py`, emitted in
+  `real-sky/native-sky.css` and inlined in `offline.html`) hides the element in every shipped entry. The rule arrived
+  with the CP9 integration (`7fe3ba1d`) under the comment "Broad sky radiance is now physical. Native discs and
+  discrete optical presentations stay native."; no record says hiding this discrete optic was intended. Whether it is
+  shown is decided in R003B (issue 125); if it is enabled, this sentence and the OPTICS.md heading change with it.
 - **Sky-stage approximations, classified (R003A).** Defect = demonstrated implementation defect; simplification =
   deliberate, accepted model simplification; limitation = affects a known observable; possibility = unverified,
   future improvement.
-  - *Defect, corrected (demonstrated only under an injected fault, not observed in a natural scene):* the
-    no-timetable painter (`paintCelestialWithoutTimetable`) did not zero `--ray`/`--anticrep` itself; when the
-    `weather-withdrawal` stage was made to throw (test injection: a `--rain-op` write throws) earlier-scene shaft
-    values survived. In normal operation that stage zeroes them first. The painter now zeroes them with the other optics.
+  - *Defect, corrected (demonstrated only under an injected fault, not observed in a natural scene):* without a
+    timetable, if both attempts of the `weather-withdrawal` stage throw (test injection: a `--rain-op` write throws),
+    earlier-scene `--ray`/`--anticrep` stayed published on every render while the fault recurred, and all five solar
+    optics (`--ray`, `--anticrep`, `--sunhalo`, `--sundogs`, `--sunpillar`) stayed when the painter's guard also
+    returned (no physical Sun hook or unknown observer). `paintCelestialWithoutTimetable` now writes all five as 0
+    first, before its guard and every fallible call (owner gate G4 b); healthy scenes are unchanged (the healthy
+    withdrawal already wrote 0 in the same render).
   - *Simplification:* the crepuscular gate is a heuristic product, not shadowed-beam radiative transfer:
     `min(0.5, clamp(e/8)·broken(mid)·(1−0.8·low)·clamp(0.3+0.7·humid)·(1−cloud²)·(fog?0.25:1))` (`atmosphere()`).
     *Limitation:* `clamp(e/8)` is 0 for a Sun at or below the horizon, so twilight crepuscular rays (Sun just below
@@ -706,10 +719,13 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   - *Simplification:* the corner `.rays` are a radiant-body presentation, not atmospheric shafts. Their opacity is
     `--sunamt·(0.10+0.30·clamp(e/30))·T_cloud` with `T_cloud` from the per-class table in `nativeSolarPresentation`;
     no other weather gate, and the painted-cloud mask obstructs them with the body.
-  - *Simplification:* limb darkening uses the linear law `I(μ)/I(1) = 1 − u(1−μ)`, `u = 0.6` (the implementation's value;
-    no literature calibration is claimed), in the radial profile of
-    `nativeSolarPresentation`, at full weight up to 10° elevation and blended out by 40°; above 40° the body keeps
-    its earlier flat-core profile (35 % fall-off beyond 60 % radius). The disc is enlarged and not an angular radiance.
+  - *Simplification and limitation:* the scene-referred radial profile in `nativeSolarPresentation` uses the linear
+    limb law `I(μ)/I(1) = 1 − u(1−μ)` with `u = 0.6` (the implementation's value; no literature calibration is claimed),
+    at full weight up to 10° elevation, blended into the older profile `1 − 0.35·clamp((r−0.6)/0.36)` by 40°. The
+    profile is then ACES tone-mapped, which compresses it channel-dependently: recomputed from the code with
+    `nativeSolarPresentation(e,{haze:0,cloud:0},"clear")`, the displayed r = 0.96 / r = 0 code ratio is 0.92/0.79/0.68
+    (R/G/B) at e = 2° against a scene ratio of 0.57, and 0.96/0.94/0.90 at e = 10°. The displayed limb is therefore
+    not a u = 0.6 contrast. The disc is enlarged and not an angular radiance.
   - *Simplification and limitation:* refraction flattening is presentational: `--sunflat = 1 − 0.20·clamp((4−e)/8)·
     clamp((e+3)/4)` (`paintSolarPresentation`) compresses the body by at most 7.7 % (scale 0.923 at e = 0.5°, none at
     e ≤ −3° or ≥ 4°). Bennett's (1982) refraction formula gives about 0.84 for a disc whose lower limb touches the

@@ -1039,7 +1039,7 @@ Original audit: **new (NEW-B-06 + NEW-D-01)** · Lane papers: [B](docs/audit/pos
 - **Hypotheses.** mechanism behind the recorded "refined sky can stay pending at `timeScale` ≥ 2" observation
 - **Unknowns.** native worker durations by device
 - **Findings.** [PRA-F-10](docs/audit/post-rlgwo/FINDINGS.md#pra-f-10), [PRA-F-25](docs/audit/post-rlgwo/FINDINGS.md#pra-f-25)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** Churn interface only: the interpolated record is unchanged (R002F owns track age); the refined identity now consumes only `src`, `temp` (°C) and `vis` (aerosol term), so interpolation of `rh`/`cloud`/`wind`/`code` cannot starve the refined sky, and a consumed-input churn is reported as `target-churn` instead of "refining…" ([R0034](docs/state-contracts/R0034.md) §1.1-1.2). Proposed status (effective on acceptance): codes unchanged; interface documented.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** Churn interface only: the interpolated record is unchanged (R002F owns track age); the refined identity now consumes only `src`, `temp` (°C) and `vis` (aerosol term), so interpolation of `rh`/`cloud`/`wind`/`code` cannot starve the refined sky, and a consumed-input churn is reported as `target-churn` instead of "refining…" ([R0034](docs/state-contracts/R0034.md) §1.1-1.2). Proposed status (effective on acceptance): codes unchanged; interface documented.
 
 <a id="ism-wx-010"></a>
 ### ISM-WX-010 — Coarse location provider cascade and whole-body deadline
@@ -1511,7 +1511,7 @@ Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/a
 - **Observed facts.** README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); values agree across modules at baseline (OM-06)
 - **Status accepted (R0037, issue 104).** Owner decision DG2 (amendment R0037-A1): the frozen V1 README snippet stays 330×534, V1's card-plus-drop-shadow footprint (native comparison: 3,102 pixels differ inside the card box at 325×530); the 325×530 rule applies to the current widget. On the R0037 slice-2 branch the README states the current-version size and no longer says "change only `src`", AGENTS.md names the V1 snippet as the documented exception, and the R000F `invariants` scenario asserts the current-version size statement. This removes the contradiction that made D DWE; status accepted on R0037's acceptance ([R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360)): D / I / V **PEX / PEX / PEX** (the renderer-literal census OM-06 stays with R0034).
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** Renderer-literal facet only: `tests/real-sky/native-geometry-census.test.mjs` pins every `325`/`530` literal per renderer module against the `.c` 325×530 card rule and rejects near-miss literals (mutant M8 killed). Builder/README/preset contract unchanged (R000F; README V1 snippet is R0037). Proposed status (effective on acceptance): codes unchanged for the other facets; renderer-literal facet V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** Renderer-literal facet only: `tests/real-sky/native-geometry-census.test.mjs` pins every `325`/`530` literal per renderer module against the `.c` 325×530 card rule and rejects near-miss literals (mutant M8 killed). Builder/README/preset contract unchanged (R000F; README V1 snippet is R0037). Proposed status (effective on acceptance): codes unchanged for the other facets; renderer-literal facet V EEV.
 
 <a id="ism-cfg-011"></a>
 ### ISM-CFG-011 — Diagnostic-input override surface (`sim*`, `debug*`, `qa`, `timeScale`, `motion`)
@@ -1680,18 +1680,16 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
     dirty under reduced motion.
   - Lighting, capture and transfer: ISM-SKY-034. Tests for the wind constants: none found (gap).
 - **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
-  Re-anchored on main `516d8cc8`: `wxDrivers` L1614-1631, `advanceCloudMotion` L2812-2839 (travel L2831),
-  `applyCloudState` write L3281. `cloudState.wy` decision (CI-06): **retained, documented**. Exhaustive search: no
-  reader in `src/native/index.html`, `real-sky/native-*.mjs`, `native-host-hooks.js`, `moon/src/*` or `tools/`; not in
-  `qaState()`, any debug readout or URL parameter. Test-harness consumers: the hash-pinned R000B native fixture
-  `tests/rlgwo/r000b-no-timetable-fixture.html` records it in its wind snapshot (its driver asserts only `wx`/`wspd`),
-  `tests/r0025-mutations.cjs` (`new-wind-before-elapsed`) anchors on the exact assignment text, and whole-object
-  snapshots (`r0025-context`, `native-weather-withdrawal`, `weather-native/native-controls.js`) copy it. Removal would
-  change an accepted mutation anchor and a pinned fixture's output, which the issue does not name, so it is kept.
-  Documented in DESIGN.md › "Cloud & weather engine" (wind drift bullet). Verified by
-  `tests/r003a-cloud-wind-truth.test.cjs` (one write, no read; changing `wy` moves no phase while a `wx` change does;
-  fallbacks `windX −0.7` / `+0.707`, `wspd = 0.06 + 0.6·wind`). No change to drift, motion or wind behaviour.
-  Proposed status (effective on acceptance): D EIV / I PEX / V PEX (wind constants now unit-pinned; native unchanged).
+  `cloudState.wy` (owner gate G1): **retained and documented**, not removed. `windUY = cos(windDir ?? 225°)` is the
+  north–south horizontal component of the unit "from" direction (opposite sign to the conventional `v = −cos`), not a
+  vertical wind; it is written by `applyCloudState` and read by no renderer, `qaState()` field, debug readout or URL
+  parameter; drift uses only `wx·wspd`. Census (`tests/r003a-cloud-wind-truth.test.cjs`): consumer-class hits are the
+  authored producer and its two generated copies, the r0025 mutation anchor and the R000B fixture's unasserted wind
+  snapshot; three whole-object copy sites. Drift trajectories (100 cases × 60 steps, `tools/qa/r003a_drift_matrix.cjs`)
+  byte-identical to main. Retention pending the owner's wind-vector research. *Open finding (G5):* for `windX > 0` the
+  deck phase decreases (clusters toward smaller x, `paintClouds` `ux ∝ … + phase`) while `rainSlant = windX·wind·120 px`
+  and `--wind-dir` (fog) point toward larger x; the `paint()` comment "clouds drift east(+)" describes `--wind-dir`.
+  Source-derived, not measured; no direction claimed or changed. Proposed status (effective on acceptance): D EIV / I PEX / V PEX.
 
 <a id="ism-sky-004"></a>
 ### ISM-SKY-004 — Precipitation population, cloud-origin gating and lightning bucket
@@ -1799,7 +1797,7 @@ Original audit: **R01** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-lifecycle.test.mjs:13–30; tests/real-sky/native-rate-availability.test.mjs:12–50; parent aggregate275 existing renderer cases PASS
   - Original remaining risk: Epoch/clock/currentness correctness inspected and exercised by existing mocks. Native event-loop stalls and high-rate visible continuity require native capture, not flags.
 - **Findings.** [PRA-F-10](docs/audit/post-rlgwo/FINDINGS.md#pra-f-10)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`; R003A row R3A-09 corrected the earlier "not merged" wording).** Documented: [R0034](docs/state-contracts/R0034.md) §1.1-1.2. Enforced: the identity carries weather only as the job's consumed values `[source, visibilityFactor, temperatureC]` (shared `nativeWeatherInputs` with `nativeJob`); `rh`, `cloud`, `code`, `wind` and any `vis >= 20000` no longer change identity; jobs byte-identical to main except the label (40,000-snapshot differential). New availability `unavailable(target-churn)` after two dropped results (superseded or rejected) under a moving identity with an unchanged sceneIdentity; never overwrites `rate-throughput`; cleared by acceptance, scene change, pause, dispose; `lifecycle.churn` diagnostic; `status.last.weather` reports consumed values. Verified by: `tests/real-sky/native-identity-minimality.test.mjs` ES34-01..05 (RED on main for 01/03/04), mutants M1-M4, M9 killed; audit probe D now equals its constant control in every cell. Native: `tools/qa/r0034_native_cells.cjs` lanes (main never accepts in any preview lane, 3 engines; branch accepts at 2×/10×/clock preview, reports `rate-throughput` at 60× and `target-churn` for a visibility-varying track) and neutral (refined canvas byte-identical to main, 15/15 frozen scenes); live probe: a humidity/wind-only adoption withdraws the refined frame on main (1.45 s Firefox, 2.6 s Chromium of "refining…"), not on the branch. Unresolved: residual withdraw/re-accept oscillation when a consumed input varies but results keep up (G1 B/C, owner). Proposed status (effective on acceptance): D EIV / I EEV / V EEV (V EIV only after independent review and the native preview-lane cells ES34-17).
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** Documented: [R0034](docs/state-contracts/R0034.md) §1.1-1.2. Enforced: the identity carries weather only as the job's consumed values `[source, visibilityFactor, temperatureC]` (shared `nativeWeatherInputs` with `nativeJob`); `rh`, `cloud`, `code`, `wind` and any `vis >= 20000` no longer change identity; jobs byte-identical to main except the label (40,000-snapshot differential). New availability `unavailable(target-churn)` after two dropped results (superseded or rejected) under a moving identity with an unchanged sceneIdentity; never overwrites `rate-throughput`; cleared by acceptance, scene change, pause, dispose; `lifecycle.churn` diagnostic; `status.last.weather` reports consumed values. Verified by: `tests/real-sky/native-identity-minimality.test.mjs` ES34-01..05 (RED on main for 01/03/04), mutants M1-M4, M9 killed; audit probe D now equals its constant control in every cell. Native: `tools/qa/r0034_native_cells.cjs` lanes (main never accepts in any preview lane, 3 engines; branch accepts at 2×/10×/clock preview, reports `rate-throughput` at 60× and `target-churn` for a visibility-varying track) and neutral (refined canvas byte-identical to main, 15/15 frozen scenes); live probe: a humidity/wind-only adoption withdraws the refined frame on main (1.45 s Firefox, 2.6 s Chromium of "refining…"), not on the branch. Unresolved: residual withdraw/re-accept oscillation when a consumed input varies but results keep up (G1 B/C, owner). Proposed status (effective on acceptance): D EIV / I EEV / V EEV (V EIV only after independent review and the native preview-lane cells ES34-17).
 - **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged).** Weather inputs consumed by
   the job versus copied into the snapshot are tabulated in ISM-SKY-032; with R0034 merged (main `bf79d00f`) the
   identity carries only the consumed weather terms. It still includes `reducedMotion`, so an OS reduced-motion toggle
@@ -1896,7 +1894,7 @@ Original audit: **R04** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-assets.test.mjs:14–21; tests/real-sky/cp9-page-lifecycle.test.mjs:9; tests/real-sky/native-preview-host.test.mjs:258–270
   - Original remaining risk: Browser script execution after element removal may assign a global pinned pack; all generations fetch identical pinned bytes, so semantic stale-target publication was not proved.
 - **Findings.** [PRA-F-22](docs/audit/post-rlgwo/FINDINGS.md#pra-f-22)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** Correction: the "persisted restore only synthetic" statement quotes an earlier R0021 section; the R0021 completion ledger (R0021.md L1017-1047) and final certificate record a real back/forward-cache restore in headed Chromium (`pageshow.persisted: true`). Firefox and WebKit restores remain unexercised. No code change. Proposed status (effective on acceptance): codes unchanged.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** Correction: the "persisted restore only synthetic" statement quotes an earlier R0021 section; the R0021 completion ledger (R0021.md L1017-1047) and final certificate record a real back/forward-cache restore in headed Chromium (`pageshow.persisted: true`). Firefox and WebKit restores remain unexercised. No code change. Proposed status (effective on acceptance): codes unchanged.
 
 <a id="ism-sky-010"></a>
 ### ISM-SKY-010 — Reference worker client boot, RPC deadlines and fallback mode
@@ -2053,7 +2051,7 @@ Original audit: **R10** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-host-composition.test.mjs:14–149; tests/real-sky/cp9-presentation-cache.test.mjs:4–9; evidence/probes/rendering/protocol-probes.mjs constructorFailure
   - Original remaining risk: Synthetic2D context failure demonstrates unowned nodes; real browser frequency, DOM paint impact and failed offscreen allocation schedules are unmeasured.
 - **Findings.** [PRA-F-34](docs/audit/post-rlgwo/FINDINGS.md#pra-f-34)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** PRA-F-34 measurement gate: no compose/allocation change; measured in three engines (60 s × 5 scenes × 2 repeats, [R0034](docs/state-contracts/R0034.md) §1.6): Chromium shows about 15 unattributed long tasks per minute (up to 337 ms, ~5% busy) in daytime scenes and ~700 data-URL encodes per minute under cloud; attribution and any optimisation are a separate owner proposal; the proposed 8 ms p95 budget is not adopted (G3). Proposed status (effective on acceptance): codes unchanged.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** PRA-F-34 measurement gate: no compose/allocation change; measured in three engines (60 s × 5 scenes × 2 repeats, [R0034](docs/state-contracts/R0034.md) §1.6): Chromium shows about 15 unattributed long tasks per minute (up to 337 ms, ~5% busy) in daytime scenes and ~700 data-URL encodes per minute under cloud; attribution and any optimisation are a separate owner proposal; the proposed 8 ms p95 budget is not adopted (G3). Proposed status (effective on acceptance): codes unchanged.
 
 <a id="ism-sky-016"></a>
 ### ISM-SKY-016 — Solar cloud-mask decode-before-publish transaction
@@ -2089,7 +2087,7 @@ Original audit: **R11** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-solar-publication.test.mjs:17–91; tests/real-sky/native-preview-host.test.mjs:70,90,96; tests/real-sky/native-host-composition.test.mjs:89–120
   - Original remaining risk: No evidence that shipped browser Image.decode remains pending indefinitely. Native reproduction or platform guarantee is the decision-changing discriminator.
 - **Findings.** [PRA-F-36](docs/audit/post-rlgwo/FINDINGS.md#pra-f-36)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** PRA-F-36 / RF04 disposition RETAINED — UNVERIFIED (R0021 owner decision kept, G4). Scope: R0021 declined a mandatory timeout, it did not adjudicate the hazard. Derived bound (source): advancing clock — cancelled by the 30 accepted-second fence; frozen clock — unbounded. Reconsideration trigger: a native observation of a decode pending > 30 s wall time or a compose blocked on `solarPublication.pending`. No timeout code added ([R0034](docs/state-contracts/R0034.md) §1.7). Proposed status (effective on acceptance): codes unchanged.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** PRA-F-36 / RF04 disposition RETAINED — UNVERIFIED (R0021 owner decision kept, G4). Scope: R0021 declined a mandatory timeout, it did not adjudicate the hazard. Derived bound (source): advancing clock — cancelled by the 30 accepted-second fence; frozen clock — unbounded. Reconsideration trigger: a native observation of a decode pending > 30 s wall time or a compose blocked on `solarPublication.pending`. No timeout code added ([R0034](docs/state-contracts/R0034.md) §1.7). Proposed status (effective on acceptance): codes unchanged.
 
 <a id="ism-sky-017"></a>
 ### ISM-SKY-017 — Preview base, pending paint, current display and shared DOM handoff
@@ -2123,7 +2121,7 @@ Original audit: **R12** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-preview-host.test.mjs:41–270; tests/real-sky/native-startup-handoff.test.cjs; tests/real-sky/native-head-handoff.cjs
   - Original remaining risk: Shared DOM ownership remains distributed across flags and global closures. Native sun flicker needs frame/class/mask trace and pixel capture; mocks do not establish visibility continuity.
 - **Findings.** [PRA-F-22](docs/audit/post-rlgwo/FINDINGS.md#pra-f-22)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** Documented: [R0034](docs/state-contracts/R0034.md) §1.3 (state list, effect table). Enforced: awaiting-input has one entry (full withdrawal once); re-entry repeats only the cloud reconcile when the recorded receipt is no longer current, the Moon-detail clear when the detail owner/renders/visibility changed, and first-paint retirement while a head exists; `dispose()` is the single idempotent terminal transition that runs the instance's owned releases and releases the registry slot and ready class only while registered. Verified by: `tests/real-sky/native-preview-lifecycle.test.mjs` ES34-08/09/10 (RED on main), mutants M5, M6, M10 killed; `native-preview-host`, `native-construction-ownership` unchanged and green. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** Documented: [R0034](docs/state-contracts/R0034.md) §1.3 (state list, effect table). Enforced: awaiting-input has one entry (full withdrawal once); re-entry repeats only the cloud reconcile when the recorded receipt is no longer current, the Moon-detail clear when the detail owner/renders/visibility changed, and first-paint retirement while a head exists; `dispose()` is the single idempotent terminal transition that runs the instance's owned releases and releases the registry slot and ready class only while registered. Verified by: `tests/real-sky/native-preview-lifecycle.test.mjs` ES34-08/09/10 (RED on main), mutants M5, M6, M10 killed; `native-preview-host`, `native-construction-ownership` unchanged and green. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-sky-018"></a>
 ### ISM-SKY-018 — Asynchronous preview catalogue admission revision
@@ -2173,7 +2171,7 @@ Original audit: **R14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-first-paint.test.mjs; tests/real-sky/native-celestial-startup.test.mjs; tests/real-sky/native-startup-critical-path.test.mjs; tests/real-sky/moon_build_guard_test.py:77
   - Original remaining risk: Source order/assertions and DOM mocks do not establish first actual browser paint, all native startup sizes, or sun/cloud flicker.
 - **Findings.** [PRA-F-37](docs/audit/post-rlgwo/FINDINGS.md#pra-f-37)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** Enforced parity: native camera rule (blank → refusal; a non-finite camera installs no head), temporal owners `simTime`/`timeScale` parity-tested (`simDate` kept head-less: dropping it changes an accepted moon test; owner sub-choice G1), reduced-motion expression equal to `isMotionReduced`. Verified by: four ES34-11 tests in `tests/real-sky/native-first-paint.test.mjs` (identity parity for Riyadh, London and the default zone; R002D owns the zone element), mutant M7 killed. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** Enforced parity: native camera rule (blank → refusal; a non-finite camera installs no head), temporal owners `simTime`/`timeScale` parity-tested (`simDate` kept head-less: dropping it changes an accepted moon test; owner sub-choice G1), reduced-motion expression equal to `isMotionReduced`. Verified by: four ES34-11 tests in `tests/real-sky/native-first-paint.test.mjs` (identity parity for Riyadh, London and the default zone; R002D owns the zone element), mutant M7 killed. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-sky-020"></a>
 ### ISM-SKY-020 — Native snapshot adapter and single paint-hook installation
@@ -2460,7 +2458,7 @@ Original audit: **new (NEW-D-03)** · Lane papers: [D](docs/audit/post-rlgwo/lan
 - **Tests.** `tests/real-sky/cp9-page-lifecycle.test.mjs`
 - **Unknowns.** bfcache
 - **Findings.** [PRA-F-22](docs/audit/post-rlgwo/FINDINGS.md#pra-f-22)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to main as `bf79d00f`, pull request 121; R003A corrected the earlier "not merged" wording).** Fan-out table documented ([R0034](docs/state-contracts/R0034.md) §1.4); no preview page-lifecycle listener (G2 default). Unit regression: ES34-10 (120 paused `present` calls → zero renders/publishes; withdrawal once). Native: cites the R0021 final certificate (0 rAF after a trusted `pagehide`, incl. a real headed-Chromium bfcache restore) — correcting the earlier "only synthetic" statement. Proposed status (effective on acceptance): D EIV / I PEX (unchanged code) / V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged to `main` as `bf79d00f`, pull request 121; issue 101 open).** Fan-out table documented ([R0034](docs/state-contracts/R0034.md) §1.4); no preview page-lifecycle listener (G2 default). Unit regression: ES34-10 (120 paused `present` calls → zero renders/publishes; withdrawal once). Native: cites the R0021 final certificate (0 rAF after a trusted `pagehide`, incl. a real headed-Chromium bfcache restore) — correcting the earlier "only synthetic" statement. Proposed status (effective on acceptance): D EIV / I PEX (unchanged code) / V EEV.
 
 <a id="ism-sky-031"></a>
 ### ISM-SKY-031 — Diagnostic telemetry state (debugMotion history, qaState)
@@ -2723,22 +2721,21 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   anticrepuscular; gates inline in `atmosphere()`; state-only tests).
 - **Risks routed.** anticrepuscular visibility discrepancy and anchor lead → unowned.
 - **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
-  *Correction of the "Failure and recovery" fact above:* in the only caller (`render()`, no-timetable branch
-  ~L3612-3613 on `516d8cc8`) the `weather-withdrawal` stage runs `withdrawWeatherEffects` (key list ~L2770 includes
-  `--ray`, `--anticrep`) in the same synchronous turn before `paintCelestialWithoutTimetable`; no frame window exists in
-  normal operation. The residual case was a failing withdrawal stage (both bounded attempts throw): the celestial stage
-  still ran and left `--ray`/`--anticrep` at earlier-scene values. Enforced: the painter's existing optic key list now
-  includes both (`src/native/index.html` `paintCelestialWithoutTimetable`). Verified by
-  `tests/weather-no-timetable-withdrawal.test.cjs` R3A-01 (failed-withdrawal case RED on main, GREEN on branch; every
-  solar-optic write in a withdrawn render is 0; a rendered timetable never enters the painter); mutants restoring the
-  omission (both, `--ray` only, `--anticrep` only), a transient non-zero write, extra zeroing of `--sunvx`/`--sunray`
-  and altered healthy `--ray`/`--anticrep` are killed. The defect is demonstrated only under an injected withdrawal
-  fault, not observed in a natural scene; three-engine pixel
-  control shows no healthy-scene change ([R003A](docs/state-contracts/R003A.md)). Documented: OPTICS.md now labels
-  anticrepuscular rays (and Belt of Venus, aurora) computed but hidden in the shipped build, states the full
-  crepuscular gate (`directional = 1 − cloud²`) and the corner-ray gate; the hide rule dates from `7fe3ba1d` with no
-  decision record (display decision: R003B, issue 125). Proposed status (effective on acceptance): D EIV / I IMS / V EEV
-  (gates remain inline in `atmosphere()`; the withdrawal row has unit, mutation and native-control evidence).
+  *Correction of the "Failure and recovery" fact above (re-derived on `516d8cc8`):* no scene reset is involved and the
+  window is not one frame. Without a timetable, `render()` runs stage `weather-withdrawal` (`withdrawWeatherEffects`,
+  key list includes `--ray`, `--anticrep`, halo, sundogs, pillar) with one bounded retry, then `paintCelestialWithoutTimetable`.
+  If both attempts throw before their optic writes, `--ray`/`--anticrep` stayed published on **every** render while the
+  fault recurred (the painter never wrote them; `withdrawCloudState` re-runs the effects only on a changed receipt),
+  and all five solar optics stayed when the painter's guard also returned (no physical Sun hook or null scene
+  identity). Demonstrated only under injected faults; no natural trigger known. Enforced (owner gate G4 b): the
+  painter writes `"0"` for `--ray`, `--anticrep`, `--sunhalo`, `--sundogs`, `--sunpillar` first, before its guard and every
+  fallible call; lunar optics unchanged; guard behaviour (no epoch, no body, `sky-pending` kept) unchanged, accepted
+  guard tests unedited. Verified by `tests/weather-no-timetable-withdrawal.test.cjs` rows R3A-01.1-01.6 and 01.9 (one
+  G4 test per optic and guard, RED on main) and mutants (per-optic drops, M1-M13) all killed; native fault witness
+  and healthy-scene pixel control in [R003A](docs/state-contracts/R003A.md). Documented: OPTICS.md crepuscular gate
+  (`directional = 1 − cloud²`, `humid` from dew point), corner-ray gate, anticrepuscular "computed, hidden".
+  Residual routed to R002C: a throw in `weatherDecision()` returns before any withdrawal. Proposed status (effective on
+  acceptance): D EIV / I IMS / V EEV (gates remain inline in `atmosphere()`).
 
 <a id="ism-sky-036"></a>
 ### ISM-SKY-036 — Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction)
@@ -2862,9 +2859,9 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Risks routed.** canvas scaling, preview/refined handoff → R0034; glass CSS → unowned (native UI glass, outside
   R0034's owners per its §5).
 - **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
-  OPTICS.md and DESIGN.md now state the generated hide rule (`.atmo .airglow/.aurora/.scatter/.belt/.anticrep`,
-  `.atmo>.sun`) and that those layers are computed but not shipped; the rule dates from `7fe3ba1d` (CP9 integration).
-  No CSS change. Proposed status (effective on acceptance): D / I / V **PEX / IMS / PEX** (unchanged).
+  Owner gate G2 (a): OPTICS.md and DESIGN.md now say that the anticrepuscular element is computed and published but
+  hidden by `.atmo .anticrep{display:none!important}` (generated stylesheet, rule from `7fe3ba1d`); the other hidden
+  layers are not re-documented. No CSS change. Proposed status (effective on acceptance): D / I / V **PEX / IMS / PEX** (unchanged).
 
 ## Moon pipeline (`ISM-MOON`)
 
