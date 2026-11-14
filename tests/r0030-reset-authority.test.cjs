@@ -233,6 +233,63 @@ test("F3 a stale successful apply does not withdraw a newer apply's failure line
   assert.match(live(f),/could not be applied/);f.sandbox.bindConfig=real;
   f.calls.prayer[0].resolve();await drain();await drain();assert.match(live(f),/could not be applied/,"A's stale success leaves B's failure reported");
 });
+// ---- owner clarification of G2(i), 2026-11-14: an unresolved search query is not a display-name edit ----
+const searchFor=async(f,q,result)=>{f.input("set-label",q);f.key("set-label","Enter");if(result!==undefined)await f.resolveCall("search",f.calls.search.length-1,result);};
+const UNCHANGED=/This search did not change the location or its name\./;
+test("Q1 Reset, no-match search, close: the Reset-selected site keeps its name; nothing saved",T,async()=>{
+  const f=make();f.click("set-reset");await searchFor(f,"Nowhere",[]);
+  assert.match(status(f),/Couldn’t find “Nowhere”\./);assert.match(status(f),UNCHANGED);
+  f.click("setClose");await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  assert.deepEqual([f.config().lat,f.config().label],[24.47,"Madinah"]);assert.equal(stored(f),null,"no location identity persisted");
+});
+test("Q2 no Reset, no-match search, close: name and location unchanged (an unchanged record may be re-saved, as any close-save)",T,async()=>{
+  const f=make();await searchFor(f,"Nowhere",[]);f.click("setClose");await settlePrayer(f);
+  assert.deepEqual([f.config().label,stored(f).label,stored(f).lat],["London","London",51.5]);assert.equal(f.calls.prayer.length,0,"nothing re-acquired: the proposal equals the accepted config");
+});
+test("Q3 Reset, search unavailable, close: the Reset target keeps its name",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-label","Berlin");f.key("set-label","Enter");f.calls.search[0].reject(new Error("down"));await drain();await drain();
+  assert.match(status(f),/^Saved settings cleared\.\nSearch unavailable/);assert.match(status(f),UNCHANGED);
+  f.click("setClose");await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);assert.equal(f.config().label,"Madinah");assert.equal(stored(f),null);
+});
+test("Q4 Reset, candidate shown, then a no-match search, close: the shown place and its name are kept",T,async()=>{
+  const f=make();f.click("set-reset");await searchFor(f,"Berlin",BERLIN);await searchFor(f,"Nowhere",[]);f.click("setClose");
+  await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  const saved=stored(f);assert.deepEqual([saved.lat,saved.label],[52.52,"Berlin"]);assert.equal(f.config().label,"Berlin");
+});
+test("Q5 Reset, candidate shown and kept, close: the name follows the accepted candidate",T,async()=>{
+  const f=make();f.click("set-reset");await searchFor(f,"Berl",BERLIN);f.click("setClose");await settlePrayer(f);
+  const saved=stored(f);assert.deepEqual([saved.lat,saved.label],[52.52,"Berlin"]);
+});
+test("Q6 a genuine rename typed without searching is still saved (G2-i), with and without Reset",T,async()=>{
+  const f=make();f.input("set-label","Home");f.click("setClose");await settlePrayer(f);assert.equal(stored(f).label,"Home");
+  const g=make();g.click("set-reset");g.input("set-label","Home");g.click("setClose");await g.resolveCall("coarse",0,DETECTED);await settlePrayer(g);
+  assert.deepEqual([stored(g).lat,stored(g).label],[24.47,"Home"]);
+});
+test("Q7 editing the field again after a failed search makes it an intentional name",T,async()=>{
+  const f=make();f.click("set-reset");await searchFor(f,"Nowhere",[]);f.input("set-label","Home");f.click("setClose");
+  await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);assert.deepEqual([stored(f).lat,stored(f).label],[24.47,"Home"]);
+});
+test("Q8 Shift+Enter explicitly keeps a failed search text as the name",T,async()=>{
+  const f=make();await searchFor(f,"Nowhere",[]);f.key("set-label","Enter",true);f.click("setClose");await settlePrayer(f);
+  assert.deepEqual([stored(f).label,f.config().label],["Nowhere","Nowhere"]);
+});
+test("Q9 a search still pending at close is an unresolved query, with and without Reset",T,async()=>{
+  const f=make();await searchFor(f,"Nowhere");f.click("setClose");await settlePrayer(f);assert.equal(f.config().label,"London");assert.equal(stored(f).label,"London");
+  const g=make();g.click("set-reset");await searchFor(g,"Nowhere");g.click("setClose");await g.resolveCall("coarse",0,DETECTED);await settlePrayer(g);
+  assert.equal(g.config().label,"Madinah");assert.equal(stored(g),null);
+});
+test("Q10 no-match search, then a second Reset: the second target keeps its name; nothing saved",T,async()=>{
+  const f=make();f.click("set-reset");await searchFor(f,"Nowhere",[]);f.click("set-reset");await f.resolveCall("coarse",1,DETECTED);await settlePrayer(f);
+  assert.equal(f.config().label,"Madinah");f.click("setClose");await settlePrayer(f);assert.equal(stored(f),null);
+});
+test("Q11 Reset lands in the open panel after a no-match search: close saves nothing and keeps the target name",T,async()=>{
+  const f=make();f.click("set-reset");await searchFor(f,"Nowhere",[]);await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  f.click("setClose");await settlePrayer(f);assert.equal(f.config().label,"Madinah");assert.equal(stored(f),null);
+});
+test("Q12 a no-match search plus a real edit after Reset: the edit is saved, the query is not the name",T,async()=>{
+  const f=make();f.click("set-reset");await searchFor(f,"Nowhere",[]);f.input("set-units","f","change");f.click("setClose");
+  await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);const saved=stored(f);assert.deepEqual([saved.lat,saved.units,saved.label],[24.47,"f","Madinah"]);
+});
 // ---- fresh review N1/N2/N3 ----
 test("F3 symmetric: a stale failed apply does not overwrite a newer apply's success",T,async()=>{
   const f=make();f.sandbox.console={...console,error(){}};
