@@ -51,3 +51,32 @@ test('unknown weather cannot become an observed clear condition and gated overla
  h.at(901000);h.run('render()');const v=h.read();assert.equal(v.header.icon,'—');assert.match(v.header.label,/Weather unavailable/);assert.equal(v.qa.wxTruth.displayCondition,'unavailable');
  for(const name of ['--ray','--anticrep','--heat','--warm','--cool','--frost'])assert.equal(+h.select('.c').style.getPropertyValue(name),0,name);
 });
+// R003A R3A-01 (CI-07). The no-timetable celestial painter owns withdrawing every prior-scene solar optic itself,
+// so a failed effects withdrawal cannot leave crepuscular or anticrepuscular light from an earlier scene shown.
+const SOLAR_OPTICS=['--ray','--anticrep','--sunhalo','--sundogs','--sunpillar'];
+function recordOpticWrites(h,failKey){
+ const style=h.select('.c').style,original=style.setProperty,writes=[],faults={count:0};
+ style.setProperty=function(key,value){if(key===failKey){faults.count++;throw Error('R003A injected effects-withdrawal fault');}
+  if(SOLAR_OPTICS.includes(key))writes.push([key,String(value)]);return original.call(this,key,value);};
+ return {writes,faults,restore(){style.setProperty=original;}};
+}
+test('R3A-01 no-timetable celestial paint withdraws crepuscular and anticrepuscular optics even when the effects withdrawal fails',async()=>{
+ const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');
+ h.at(901000);const probe=recordOpticWrites(h,'--rain-op');h.run('render()');probe.restore();
+ assert(probe.faults.count>=2,'the effects withdrawal and its bounded retry both failed');
+ for(const name of SOLAR_OPTICS)assert.equal(+h.select('.c').style.getPropertyValue(name),0,name);
+ for(const [key,value] of probe.writes)assert.equal(+value,0,'no non-zero solar-optic write while withdrawn: '+key+'='+value);
+ assert.equal(h.read().independent.pending,false,'the independent bodies were still published');
+});
+test('R3A-01 the healthy no-timetable sequence writes only zero solar optics, never transient light',async()=>{
+ const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');
+ h.at(901000);const probe=recordOpticWrites(h,null);h.run('render()');probe.restore();
+ assert(probe.writes.length>0,'the withdrawn sequence wrote solar optics');
+ for(const [key,value] of probe.writes)assert.equal(+value,0,key+'='+value);
+ for(const name of SOLAR_OPTICS)assert.equal(+h.select('.c').style.getPropertyValue(name),0,name);
+});
+test('R3A-01 a rendered timetable never enters the no-timetable celestial painter',async()=>{
+ const h=await fixture();h.run('globalThis.__r003aCelestial=0;const __r003aPaint=paintCelestialWithoutTimetable;paintCelestialWithoutTimetable=function(...a){__r003aCelestial++;return __r003aPaint.apply(this,a);}');
+ h.run('render()');assert(h.read().model);assert.equal(h.run('__r003aCelestial'),0);
+ h.at(901000);h.run('render()');assert.equal(h.run('__r003aCelestial'),1,'control: the wrapped painter is reachable');
+});

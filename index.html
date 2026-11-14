@@ -6504,7 +6504,7 @@ function paintSolarPresentation(c,A,_REDUCED){
     c.style.setProperty("--sunvy",(sunLiftPx/530*100).toFixed(1)+"%");
     c.style.setProperty("--sunray",((0.10+0.30*clamp(e/30))*A.sunCloudT).toFixed(3));  // rays fade via TRANSMITTANCE (cloud transmittance from atmosphere), not a grey mix
     c.style.setProperty("--sunpulse",(_REDUCED?1:1+(0.045+0.035*A.heat)*Math.sin(simNow()/1000/23)+0.015*Math.sin(simNow()/1000/6.5)+(1-noon)*0.16).toFixed(4));  // slow coronal breathing + a faint faster ray flicker + broader corona at low sun (all simTime-driven)
-    c.style.setProperty("--sunflat",(1-0.20*clamp((4-e)/8)*clamp((e+3)/4)).toFixed(3));   // atmospheric REFRACTION oblateness (~0.8 at the horizon, 1 above ~5°)
+    c.style.setProperty("--sunflat",(1-0.20*clamp((4-e)/8)*clamp((e+3)/4)).toFixed(3));   // presentational REFRACTION oblateness: min ≈0.923 at e=0.5°, 1 at e≤−3° and e≥4° (not a refraction model)
 }
 function nativeLunarPresentation(moon,solarElevation,surfaceFailed){
   const mFrac=clamp(moon.frac),moonUp=clamp((moon.alt+2)/6);
@@ -6544,7 +6544,9 @@ function paintCelestialWithoutTimetable(decision=weatherDecision()){
   // Optional cloud optics need the current complete atmosphere's condition
   // gates. Until that state is admitted, withdraw every prior-scene optical
   // permission; the current physical bodies remain independently available.
-  for(const key of ["--sunhalo","--sundogs","--sunpillar"])c.style.setProperty(key,"0");
+  // Crepuscular/anticrepuscular too: normally withdrawWeatherEffects zeroed them earlier this render; this keeps
+  // them withdrawn when that stage failed (R003A, CI-07). Never reached while a timetable is rendered.
+  for(const key of ["--ray","--anticrep","--sunhalo","--sundogs","--sunpillar"])c.style.setProperty(key,"0");
   for(const key of ["--mhalo","--mcorona","--mparhelia"])paintLunarOptic(c,key,"0");
   c.style.setProperty("--moonfeat","1");c.style.setProperty("--moonocc","1");
   c.style.setProperty("--moongrp",a.moonShow.toFixed(3));c.style.setProperty("--moonbeam",(0.6*a.moonlight).toFixed(3));
