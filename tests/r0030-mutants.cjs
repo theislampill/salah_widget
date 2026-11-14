@@ -15,7 +15,7 @@ const MUTANTS={
   "stale-storage-marker":['if(CONFIG&&CONFIG.source==="localStorage"&&CONFIG.origin) CONFIG={...CONFIG,source:CONFIG.origin,savedAt:null};',""],
   "drop-apply-catch":["applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null),_settleSettingsApply);","applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null));"],
   "drop-reset-catch":["try{ await applyConfig(c,{save:false,reset:true}); }catch(e){ fault=e; }","await applyConfig(c,{save:false,reset:true});"],
-  "unconditional-detect":["if(policy&&policy.cfg&&!policy.needsDetect){","if(false){"],
+  "unconditional-detect":['if(policy&&policy.mode==="preferLocal"&&policy.cfg&&!policy.needsDetect){',"if(false){"],
   "reopen-loses-pending-edits":["if(pending){ for(const key in pending)","if(false){ for(const key in pending)"],
   "held-never-released":['if(reset.phase!=="applied"&&reset.phase!=="failed"){ if(reset.release) reset.release(); return; }','if(reset.phase!=="applied"&&reset.phase!=="failed"){ return; }'],
   "failure-reopens-form-authority":['else { reset.phase="failed"; if(!_setOpen) _commitSettings(); }','else { _setReset=null; }'],

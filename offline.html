@@ -8288,10 +8288,11 @@ async function _resetLocal(){
   _setDirty=false;
   if(CONFIG&&CONFIG.source==="localStorage"&&CONFIG.origin) CONFIG={...CONFIG,source:CONFIG.origin,savedAt:null};
   _setLocationSaved=false; _setPin(_locSource);
-  // G5-a: the target is what the resolver selects with storage cleared; only a needed detection asks the IP.
+  // G5-a: in preferLocal mode the target is what the resolver selects with storage cleared (the hash site),
+  // so only a needed detection asks the IP; local mode always needs detection once storage is empty.
   const policy=window.SalahConfig?SalahConfig.resolve(location.hash):null;
   let d=null;
-  if(policy&&policy.cfg&&!policy.needsDetect){ d={ok:true,cfg:policy.cfg,site:true}; _setStatus(""); }
+  if(policy&&policy.mode==="preferLocal"&&policy.cfg&&!policy.needsDetect){ d={ok:true,cfg:policy.cfg,site:true}; _setStatus(""); }
   else { _setStatus("Detecting your area…"); try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){} }
   if(_setReset!==reset) return;
   if(d&&d.ok){
