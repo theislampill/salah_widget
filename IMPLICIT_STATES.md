@@ -1660,8 +1660,9 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Wind source: Open-Meteo `wind_speed_10m`/`wind_direction_10m` in m/s (current block; hourly track only in
     explicit preview, ISM-WX-009), projected by `wxDrivers` (ISM-SKY-032). Drift speed `wspd = 0.06 + 0.6·wind`,
     where wind = r(m/s, 0.5, 14); direction enters only as `wx = windX = −sin(dir)` (`applyCloudState` ~L3279).
-    `cloudState.wy` (`cos dir`) is written and never read: drift is horizontal only. Without a record the fallback
-    `windX = −0.7`, wind 0 still yields `0.06·−0.7` travel (decorative calm drift); the initial `cloudState` is
+    `cloudState.wy` (`cos dir`) is written and never read: drift is horizontal only. Without a record `wxDrivers`
+    returns `windX = −0.7`, wind 0, so travel is `0.06·−0.7`; with a record but no `windDir` the 225° fallback gives
+    `windX = −sin 225° = +0.707` (opposite sign) (decorative calm drift either way); the initial `cloudState` is
     `wx −0.7, wspd 0.15` until the first `applyCloudState`.
   - Travel per deck = wind·dt·(0.024 + 0.006·deck) in wrap units (period 1.25 card widths), dt = elapsed × rate
     (1 in wall mode, `TIMESCALE` otherwise); life and wander advance with dt regardless of wind.
@@ -2540,7 +2541,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   | Mie phase | Henyey–Greenstein, g = 0.76 (`aerosolG`) | core default; never set natively |
   | Aerosol single-scattering albedo | 0.9 (`aerosolAlbedo`) | core default |
   | Grey absorbing τ | 0 | core default |
-  | Cloud transmission / glow in the refined job | 1 / 0 cd m⁻² (enforced: `native-engine.mjs` L177 throws otherwise) | `nativeJob` |
+  | Cloud transmission / glow in the refined job | 1 / 0 cd m⁻² (enforced: `native-engine.mjs` L12 throws otherwise) | `nativeJob` |
   | Light pollution | `LPOLL` × 0.003 cd m⁻² (physical) | `nativeJob` |
   | Residual night | assumed non-stellar 0.00014 cd m⁻² zenith | `nativeJob` |
   | Exposure | nominal 24, auto: E = 24 / (1 + 24·meanY/0.5) | `nativeJob`, core L61, preview L352 |
@@ -2561,9 +2562,9 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   belongs to ISM-MOON.
 - **Sampling lattices (observed).** Preview: atmosphere sampled on 25×41 nodes (`grid` 24×40) bilinearly
   interpolated per 325×530 pixel (cell ≈ 13.5 × 13.25 px); above |timeScale| 10: 12×20 grid on a 65×106 raster later
-  upscaled ×5 by `drawImage` (`native-preview-host.mjs` ~L168-175). Refined: `backgroundStepCss: 8`
+  upscaled ×5 by `drawImage` (`native-preview-host.mjs` ~L174-175). Refined: `backgroundStepCss: 8`
   (`native-contract.mjs` L32) → 42×68 nodes (gx = ⌈325/8⌉ = 41, gy = ⌈530/8⌉ = 67), cell ≈ 7.93 × 7.91 px, bilinear
-  (core L47-53); the worker's night decomposition uses the same 41×67 grid (`native-engine.mjs` L185). Bilinear
+  (core L47-53); the worker's night decomposition uses the same 41×67 grid (`native-engine.mjs` L19-20). Bilinear
   interpolation is continuous but its derivative jumps on node lines.
 - **Display adaptations (observed, labelled display-only in source).** Solar aerosol aureole re-registered to the
   native Sun slot when the Sun is above 10° (`nativeSolarRegistration`, active gate: alt > 10°, camera view, anchor
@@ -2615,7 +2616,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   ISM-MOON-020 eligibility). No subsurface or volumetric scattering exists; "SSS" is this display rim only.
 - **Cloud albedo (observed).** None physical. Deck colour = display tint mixed by wetness/overcast/day factor
   (`cloudBase`, ~L3146-3157); alpha = painted coverage. The refined job's cloud transmission is fixed at 1; painted
-  alpha is the sole cloud transmission owner (`nativeForeground` diagnostics, `native-engine.mjs` L177).
+  alpha is the sole cloud transmission owner (`nativeForeground` diagnostics, `native-engine.mjs` L12).
 - **Capture and transfer (observed).** `capture(rows)`: `reconcileClouds()` first (write effect, PRA-F-15); draws the
   144×232 painter into 325×530 with `ctx.filter = blur(0.55·325/rect.width px)` (non-integer up-scale ×2.257/×2.284,
   browser resampling filter), then the vertical mask (stops 0/0.03/0.24/0.34) with `destination-in`. Refined: cloud
@@ -2654,7 +2655,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 
   | Optic | Value | Anchor | Shown in generated app |
   |---|---|---|---|
-  | crepuscular `--ray` (`.wfx .godray`) | min(0.5, clamp(e/8)·broken(clM)·(1−0.8clL)·clamp(0.3+0.7humid)·(1−cloud²)·(fog?0.25:1)) | `--sunvx/--sunvy` | yes |
+  | crepuscular `--ray` (`.wfx .godray`) | min(0.5, clamp(e/8)·broken(clM)·(1−0.8clL)·clamp(0.3+0.7humid)·(1−cloud²)·(fog?0.25:1)); `humid` from dew point, `cloud` = total cover | `--sunvx/--sunvy` | yes |
   | anticrepuscular `--anticrep` | 0.8·(ray·0.5) | `--antix` = 100 − arc-sun x | **no** (`.atmo .anticrep{display:none!important}`) |
   | 22° halo `--sunhalo` | 0.85·cirrus·clamp((e+1)/6) | `--sunvx/--sunvy` | yes |
   | sundogs `--sundogs` | 0.9·cirrus·sunUp·clamp((12−e)/12) | `--sunvx/--sunvy` | yes |
@@ -2676,9 +2677,12 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Invariants (observed).** Halo, sundogs, pillar and godray share the visible-sun anchor `--sunvx = 20/325`,
   `--sunvy = sunLift/530` (AGENTS gate C); corner rays and body move with the `.suncorner` transform.
 - **Observed facts.** (1) Anticrepuscular rays are computed, forceable and documented as production in `OPTICS.md`
-  §"Anticrepuscular rays", but never displayed in either generated entry (DWE). (2) `--sunvx/--sunvy` are written at
-  the target position immediately, while `.suncorner`/`.sunbody` ease their `transform` over 2.4 s, so during a lift
-  change the halo/dogs/pillar/godray anchor leads the drawn body. (3) The corner `.rays` have no weather gate beyond
+  §"Anticrepuscular rays", but never displayed in either generated entry (DWE). (2) `--sunvx/--sunvy` are registered
+  `<length-percentage>` properties (~L46-47) that ease 1.1 s linear (`.c` transition, ~L48-50, only under
+  `prefers-reduced-motion: no-preference`), while `.suncorner`/`.sunbody` ease their `transform` 2.4 s in every motion
+  mode (~L71, ~L220); during a lift change the halo/dogs/pillar/godray anchor therefore leads the drawn body without
+  jumping, and under OS reduced motion (no `.c` transition; `motion=full` does not restore it) the anchor jumps while
+  the body still eases. (3) The corner `.rays` have no weather gate beyond
   transmittance scaling; they show whenever the Sun is up. (4) Gates are memoryless: no hysteresis; visible changes
   are smoothed only by CSS transitions.
 - **Failure and recovery.** After a scene change without a timetable, `--ray`/`--anticrep` keep their previous values
@@ -2687,7 +2691,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Tests.** `tests/rlgwo-docs-contract.cjs` (six force branches; state only), `tests/r0022-baseline-balance.cjs`,
   `tests/weather-no-timetable-withdrawal.test.cjs`, `tests/real-sky/native-solar-startup.test.cjs`. Gaps: no pixel
   evidence that any optic rings the visible Sun; no test that the anticrepuscular element is displayed.
-- **Hypotheses.** none beyond the transient anchor lead in fact (2).
+- **Hypotheses.** none beyond the transient anchor lead (and the reduced-motion jump) in fact (2).
 - **Unknowns.** whether the owner intends anticrepuscular rays hidden in the physical-sky build.
 - **Proposed status (effective on acceptance).** D / I / V **DWE / IMS / PEX** (documentation contradicted for
   anticrepuscular; gates inline in `atmosphere()`; state-only tests).
@@ -2705,7 +2709,8 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   `real-sky/native-host-hooks.js` `solarAnchor` ~L29-37; `real-sky/native-composition.mjs` `prepareSolarMask`.
 - **Stateless projection with eased presentation.** Pure function of solar elevation `e`, `D.haze`, `D.cloud` and the
   weather class; time-varying only through `--sunpulse` (simTime sines, held at 1 under reduced motion) and CSS
-  transitions (opacity 1.5 s, transform 2.4 s, background 1.6 s).
+  transitions (opacity 1.5 s, transform 2.4 s, background 1.6 s); `--sunvx/--sunvy` themselves ease 1.1 s linear only
+  without OS reduced motion (~L48-50).
 - **Observed facts.**
   - Elevation: physical `cloudLighting.sun.altDeg` when the hook is available, else the prayer-arc fit
     (`solarElevationDeg`).
@@ -2718,7 +2723,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   - Size `--sundisc = 1.10 − 0.24·noon`; refraction flattening `--sunflat = 1 − 0.20·clamp((4−e)/8)·clamp((e+3)/4)`
     (presentation only; astrometry is geometric, ISM-SKY-033).
   - Position: x fixed at 20 px; y = 40 + (horizon − 40)(1 − clamp(e/40)), the horizon measured from `.arc .horizon`
-    or the arc box at 104/180, else 216 px. `--sunvx/--sunvy` = that target. Presence `--sunamt = clamp((e+1.5)/7)`,
+    or the arc box at 104/180, else 216 px. `--sunvx/--sunvy` = that target, eased 1.1 s (ISM-SKY-035 fact 2). Presence `--sunamt = clamp((e+1.5)/7)`,
     body `--sunbodyamt = clamp((e+1.5)/1.5)`.
   - Cloud: cloud transmittance `_Tcloud` from a per-class LUT scales only `--sunray`; the body is obstructed by the
     painted-cloud mask `--native-sun-cloud-mask` on `.sun-cloud-mask` (ISM-SKY-016, ISM-SKY-034).
@@ -2740,7 +2745,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Scope and decision.** What the browser composites, in which order and at which scale, from the worker/preview
   byte frames to screen pixels; which visibility classes and CSS rules decide that; and where noise, dithering,
   blur and reduced motion enter. Frame acceptance/lifecycle stay in ISM-SKY-006/015/017/030.
-- **Sources.** `real-sky/native-preview-host.mjs` canvas L13-21, fast up-scale ~L168-175, `present` ~L184-190;
+- **Sources.** `real-sky/native-preview-host.mjs` canvas L13-21, fast up-scale ~L174-175, `present` ~L184-190;
   `real-sky/native-host.mjs` canvas L74-76, compose ~L130-205, `animate` L253, request timer L252;
   `real-sky/native-encoding.mjs`, `native-host.mjs` encoders (ISM-SKY-023); `src/native/index.html` `.c` ~L24-33,
   `*{box-sizing:border-box}` L13, `.atmo` L56, `.grain` CSS L127 and markup ~L554-559, `.p` glass L422, header straps
@@ -2766,11 +2771,15 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   | refined `clear`/dispose | — | composed removed, refined hidden → preview (if ready) or card background |
   | visibility hidden / offscreen | — | loop `stop()`, `paused` class (ISM-SKY-030) |
   | reduced motion | not `motion=full` | refined compose every 250 ms (else 50 ms); cloud travel off; `--sunpulse`, `--mrad` = 1; CSS animations of stars/glints/fog/drops/flakes/flash/bolt/sun/scatter/milky way off |
-- **Scaling (observed from CSS; not measured in a browser in this pass).** Both sky canvases have a 325×530 backing
-  store, ignore `devicePixelRatio`, and are sized `inset:0; width/height:100%` inside `.c`. Because `.c` is
-  325×530 border-box with a 1 px border, its padding box (the canvases' containing block) is 323×528 CSS px, so each
-  canvas is displayed at ≈0.994×0.996 of its backing size before the DPR factor (device-pixel ratio = 0.994·DPR,
-  never exactly 1). `NativeForegroundCapture` and `solarAnchor` already rescale by `rect.width/325`. No
+- **Scaling (measured).** Both sky canvases have a 325×530 backing store, ignore `devicePixelRatio`, and are sized
+  `inset:0; width/height:100%` inside `.c` (325×530 border-box, 1 px border). Measured with
+  `tools/qa/r0034_canvas_geometry.cjs` (global Playwright, DPR 1, loopback only, every other request aborted):
+  `getBoundingClientRect()` of both canvases is 323×528 in Chromium 148, Firefox 150 and WebKit 26.4, backing/rect
+  ratio 1.00619 × 1.00379, computed `image-rendering: auto`
+  ([evidence](docs/state-contracts/evidence/R0034/sky-physics-registry/canvas-geometry.json)). Arithmetic only, no
+  cause claimed: resample phase drift period 161.5 px (x) / 264 px (y); displayed lattices ≈7.88 px (refined) and
+  ≈13.46×13.20 px (preview); the preview lattice's third harmonic ≈4.40–4.49 px lies in the owner-reported 4.1–4.5 px
+  band with or without the scaling. `NativeForegroundCapture` and `solarAnchor` already rescale by `rect.width/325`. No
   `image-rendering` or `imageSmoothingEnabled` is set (browser default smoothing). Above |timeScale| 10 the preview
   raster is 65×106, up-scaled ×5 by `drawImage`. The Moon detail canvas is DPR-aware (`moon/src/moon-detail.mjs` L56,
   ISM-MOON-013).
@@ -2791,11 +2800,11 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   canvas never reaches the screen directly.
 - **Tests.** `tests/real-sky/native-preview-host.test.mjs`, `native-host-composition.test.mjs`,
   `native-preview-lifecycle.test.mjs` (R0034), `native-geometry-census.test.mjs` (R0034; asserts the `.c`
-  rule, not the canvas display size), `cp9-page-lifecycle.test.mjs`, `tests/r001d-lifecycle.cjs`. Gaps: no test or
-  native measurement of the canvas CSS size versus backing size; no test that the generated stylesheet hides `.grain`.
+  rule, not the canvas display size), `cp9-page-lifecycle.test.mjs`, `tests/r001d-lifecycle.cjs`. Gaps: no regression test of the
+  canvas CSS size versus backing size (one native measurement above); no test that the generated stylesheet hides `.grain`.
 - **Hypotheses (R0034 artifact; none claimed as cause).** See the ownership table in
   [R0034-sky-physics-registry.md](docs/state-contracts/R0034-sky-physics-registry.md): browser gradient dithering,
-  glass blur over the canvas, canvas resampling at ≈0.994·DPR, display colour management lie in the browser/GPU or
+  glass blur over the canvas, canvas resampling at backing/rect 1.00619 × 1.00379 (×DPR), display colour management lie in the browser/GPU or
   display; the page-side inputs are the layers listed above.
 - **Unknowns.** the owner's compositor path (WebRender hardware/software), browser zoom and OS scale; real canvas
   rect in the owner's embed; backdrop-filter implementation resolution.
