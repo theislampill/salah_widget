@@ -388,7 +388,8 @@ retry spacing): a renewal answer that is admitted and valid but whose step has n
 advanced past the held record's is neither an acquisition (it is not adopted, cached or
 counted as a receipt) nor a failure: the 60 s spacing it opened is restored to its
 previous value, so the next ordinary poll proceeds. It happens at most once per provider
-step; every genuine failure (HTTP, timeout, cancel, malformed or rejected response,
+step (once per document while the provider never advances), so at most 2 weather requests
+fall within 60 s around one miss; otherwise the 60 s spacing holds. Every genuine failure (HTTP, timeout, cancel, malformed or rejected response,
 obsolete generation) still opens R000D's 60 s spacing.
 Renewal never extends freshness (it is due only after the record has lapsed), adds no
 timer, does nothing in SIM or clock preview, and requests nothing while the card is

@@ -62,6 +62,13 @@ const cases=[
   ['l renewal ignores the busy slot',[['const r=weatherRenewal(now); if(!r.due||wxBusy) return false;','const r=weatherRenewal(now); if(!r.due) return false;']],async src=>{
     let release=null; const s=await F.scene({source:src,phaseMs:2900,hold:r=>release===true?new Promise(res=>{release=()=>res(r);}):r});
     await s.run(B+2900-FRAME); release=true; await s.run(B+6000); assert.equal(s.h.run('_wxRenewal'),null); release(); await F.flush(); }],
+  ['n6 a failed renewal (no admitted current: unit mismatch) treated as a miss',[[
+    'const miss=!!(renewal&&current&&renewal.outcome===null&&wxNumber(current.currentValidAt)!=null&&current.currentIntervalSec>0&&\n      current.currentValidAt<=renewal.step&&',
+    'const miss=!!(renewal&&renewal.outcome===null&&(!current||wxNumber(current.currentValidAt)!=null&&current.currentIntervalSec>0&&\n      current.currentValidAt<=renewal.step)&&']],
+    async src=>{ const win=h=>h.clock.wall>=B&&h.clock.wall<B+5000;
+      for(const mutate of [(h,b)=>win(h)?{...b,current_units:{temperature_2m:'°F'}}:undefined,(h,b)=>win(h)?{...b,current:undefined}:undefined]){
+        const s=await F.scene({source:src,phaseMs:17000,mutate}); await s.run(B+50000);
+        assert.deepEqual(s.requestTimes().filter(t=>t>0),[M],'a failed renewal keeps R000D spacing'); } }],
   ['f renewal through a timer',[[LOOP,'else setTimeout(()=>renewWeather(),0);']],structure],
   ['f2 renewal timer inside the weather owner',[['function renewWeather(now=Date.now()){','function renewWeather(now=Date.now()){ setTimeout(()=>{},0);']],structure],
 ];

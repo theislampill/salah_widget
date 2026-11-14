@@ -63,3 +63,31 @@ test('an ordinary poll in flight when the renewal becomes due: no second request
   assert.equal(s.h.run('retryDiagnostics().renewal.stage'),'due','renewal stays due while another attempt owns the slot');
   release(); await F.flush(); await s.run(B+6500); assert.equal(s.h.run('!!selectedWeather()'),true);
 });
+
+// Request-rate bound under option D (independent-review correction): at most one extra opportunity per provider
+// step, so at most 2 requests within 60 s around one miss; a third within that window is impossible.
+async function neverAdvancing(source,phaseMs){ const s=await F.scene({source,phaseMs,maxStep:B-STEP,frame:500}); await s.run(B+2*3600000); return after(s,0); }
+function maxInWindow(t,w=60000){ let m=0; for(let i=0;i<t.length;i++){ let n=0; for(let j=i;j<t.length&&t[j]-t[i]<w;j++) n++; m=Math.max(m,n); } return m; }
+test('rate bound: a provider that never advances allows at most 2 requests within 60 s (miss + ordinary poll), never 3',async()=>{
+  for(const phaseMs of [17000,29500]){
+    const t=await neverAdvancing(undefined,phaseMs);
+    assert.equal(t[0],M); assert.equal(t[1],phaseMs,'the ordinary poll right after the miss');
+    assert.equal(maxInWindow(t),2,'at most 2 within any 60 s window');
+    const close=t.slice(1).map((x,i)=>x-t[i]).filter(d=>d<60000); assert.equal(close.length,1,'exactly one pair closer than 60 s: the miss and the poll');
+    assert(t[2]-t[1]>=60000,'the next attempt keeps R000D spacing after the ordinary poll');
+  }
+});
+// Genuine failures at the renewal never take the exemption (reviewer mutant n6).
+const window=h=>h.clock.wall>=B&&h.clock.wall<B+5000;
+const failures={
+  'malformed body':(h,b)=>window(h)?{error:true}:undefined,
+  'JSON body throws':(h,b)=>window(h)?'throw':undefined,
+  'unit mismatch':(h,b)=>window(h)?{...b,current_units:{temperature_2m:'°F'}}:undefined,
+  'timezone mismatch':(h,b)=>window(h)?{...b,timezone:'Europe/London'}:undefined,
+};
+async function failureSpacing(source,name){
+  const s=await F.scene({source,phaseMs:17000,mutate:failures[name]}); const frames=await s.run(B+50000); const t=after(s,0);
+  assert.equal(t[0],M,name+': the renewal request was made'); assert.equal(t.length,1,name+': the ordinary poll at B + 17 s is held by R000D spacing ('+JSON.stringify(t)+')');
+  assert(frames.every(f=>f.renewal.stage!=='early-renewal-miss'),name+': never classified as a miss'); assert.equal(s.h.run('!!selectedWeather()'),false);
+}
+for(const name of Object.keys(failures)) test('genuine failure at renewal keeps the 60 s spacing and takes no exemption: '+name,async()=>failureSpacing(undefined,name));

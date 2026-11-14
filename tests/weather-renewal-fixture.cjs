@@ -13,7 +13,8 @@ const iso=(ms,zoneOffset=3*3600000)=>new Date(ms+zoneOffset).toISOString().slice
 const flush=async()=>{for(let i=0;i<6;i++)await new Promise(r=>setImmediate(r));};
 // skewMs > 0: the device clock is AHEAD of the provider's clock by skewMs (server = device - skewMs).
 // maxStep: the provider never serves a step after it (a provider that stops advancing). fail(h): true -> HTTP 503.
-function provider({lagMs=0,skewMs=0,interval=900,offsetMs=0,code=95,precipitation=2,hold=null,maxStep=Infinity,fail=null}={}){
+// mutate(h,body): may return a replacement body, or the string 'throw' (the JSON body read throws).
+function provider({lagMs=0,skewMs=0,interval=900,offsetMs=0,code=95,precipitation=2,hold=null,maxStep=Infinity,fail=null,mutate=null}={}){
   code??=95; precipitation??=2;
   return async(u,init,h,payload)=>{
     if(u.hostname==='api.aladhan.com')return new Promise(()=>{});
@@ -24,15 +25,16 @@ function provider({lagMs=0,skewMs=0,interval=900,offsetMs=0,code=95,precipitatio
     const body=payload({time:iso(q),interval,weather_code:code,precipitation});
     body.hourly={time:[iso(hr-3600000),iso(hr),iso(hr+3600000),iso(hr+7200000)],temperature_2m:[24,23,22,21],weather_code:[code,code,code,code],
       cloud_cover:[95,90,85,80],precipitation:[precipitation,precipitation,precipitation,precipitation]};
-    const response={ok:true,status:200,json:async()=>body};
+    const m=mutate?mutate(h,body):undefined, final=m===undefined?body:m;
+    const response={ok:true,status:200,json:async()=>{ if(final==='throw') throw Error('contained malformed JSON'); return final; }};
     return hold?hold(response):response;
   };
 }
 // One scene: a record fetched at B+fetchAt (by default the step ending at B), then the real loop started so that its
 // 30 s poll falls `phaseMs` after B. Wall and elapsed clocks advance together by `frame` ms per frame.
 async function scene({phaseMs=10000,lagMs=0,skewMs=0,interval=900,offsetMs=0,source,hash='',reduced=false,hold=null,code,precipitation,
-  fetchAt=-120000,frame=FRAME,maxStep,fail}={}){
-  const h=await fixture({source,hash,reduced,fetch:provider({lagMs,skewMs,interval,offsetMs,hold,code,precipitation,maxStep,fail})});
+  fetchAt=-120000,frame=FRAME,maxStep,fail,mutate}={}){
+  const h=await fixture({source,hash,reduced,fetch:provider({lagMs,skewMs,interval,offsetMs,hold,code,precipitation,maxStep,fail,mutate})});
   const s={wall:B+fetchAt,perf:1e6}, skip=h.calls.length;   // the fixture's own setup fetch is not part of the scene
   const set=()=>{h.clock.wall=s.wall;h.clock.now=s.perf;};
   set();h.run('weather=null;weatherTrack=null;lastWxAt=0;lastWxTry=0;_wxRetry.weather=null;_wxDecisionCache=null;if(SIM.wx!=null)startWeather(true);');
