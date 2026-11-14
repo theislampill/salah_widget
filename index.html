@@ -6195,7 +6195,7 @@ let _cloudReady=false;   // false until the deck is first established (then cove
 // covLow/Mid/High are the LIVE coverages the renderer uses; tgt* are the targets from the latest weather. The live
 // values EASE toward the targets (paint) so a coverage change (15-min refetch) grows/erodes the deck smoothly
 // instead of popping clusters in/out (no "slideshow").
-let cloudState={covLow:0,covMid:0,covHigh:0,tgtLow:0,tgtMid:0,tgtHigh:0,wx:-0.7,wy:0.2,wspd:0.15,
+let cloudState={covLow:0,covMid:0,covHigh:0,tgtLow:0,tgtMid:0,tgtHigh:0,wx:-0.7,wspd:0.15,
   tLow:[208,214,226],tMid:[232,236,243],tHi:[233,238,247],sunX:0.5,sunY:0.3,sunUp:0,
   sunCol:[255,247,232],moonCol:[206,220,246],moonX:0.84,moonY:0.1,moonLit:0};
 let _cloudCv=null,_cloudCtx=null,_cloudImg=null,_cloudDirty=true,_colDens=null;
@@ -6535,6 +6535,9 @@ function paintCelestialWithoutTimetable(decision=weatherDecision()){
   const identity=skySceneIdentity(),sun=window.SalahNativeSkyHost?.cloudLighting?.()?.sun;
   if(identity===null||!Number.isFinite(sun?.altDeg))return;
   if(identity!==_skySceneKey){beginSkyScene(_skyInitialDocument);_skySceneKey=identity;}
+  // R003A (CI-07): the crepuscular/anticrepuscular permissions are withdrawn here, before any fallible body call, so
+  // neither a failed weather-withdrawal stage nor a throw below can leave earlier shafts published. Unreached with a timetable.
+  for(const key of ["--ray","--anticrep"])$(".c").style.setProperty(key,"0");
   const n=nowParts();if(moonGeometryObservation({nowMin:n.h*60+n.mi+n.s/60}).fresh!==true)renderMoon();
   projectStars(simDate());
   const a=lunarPresentation(sun.altDeg),c=$(".c");
@@ -6544,9 +6547,7 @@ function paintCelestialWithoutTimetable(decision=weatherDecision()){
   // Optional cloud optics need the current complete atmosphere's condition
   // gates. Until that state is admitted, withdraw every prior-scene optical
   // permission; the current physical bodies remain independently available.
-  // Crepuscular/anticrepuscular too: normally withdrawWeatherEffects zeroed them earlier this render; this keeps
-  // them withdrawn when that stage failed (R003A, CI-07). Never reached while a timetable is rendered.
-  for(const key of ["--ray","--anticrep","--sunhalo","--sundogs","--sunpillar"])c.style.setProperty(key,"0");
+  for(const key of ["--sunhalo","--sundogs","--sunpillar"])c.style.setProperty(key,"0");
   for(const key of ["--mhalo","--mcorona","--mparhelia"])paintLunarOptic(c,key,"0");
   c.style.setProperty("--moonfeat","1");c.style.setProperty("--moonocc","1");
   c.style.setProperty("--moongrp",a.moonShow.toFixed(3));c.style.setProperty("--moonbeam",(0.6*a.moonlight).toFixed(3));
@@ -6720,7 +6721,7 @@ function atmosphere(M){
     // —— clouds: layered coverage (low/mid/high) + wind VELOCITY vector for the canvas density field's advection ——
     cloudLayerLow: clLow, cloudLayerMid: clMid, cloudLayerHigh: clHigh,
     cloudSunCol, cloudMoonCol, cloudMoonX: (moonSky.sx!=null?moonSky.sx:0.84), cloudMoonY: (moonSky.sy!=null?moonSky.sy:0.1), cloudMoonLit: moonlight,
-    windUX: D.windX, windUY: Math.cos((current&&current.windDir!=null?current.windDir:225)*Math.PI/180), windSpeedNorm: D.wind,
+    windUX: D.windX, windSpeedNorm: D.wind,
     // —— light shafts + post / finish ——
     rayIntensity: ray, grainStrength: grain,
     // descriptors (renderer contract): scattering/aerial values the colour math already encodes
@@ -6751,7 +6752,7 @@ function applyCloudState(A){
   // 15-min refetch grows/erodes the EXISTING deck smoothly — no popping/slideshow. Fast-forward snaps (must track).
   else if(!_cloudReady && (CS.tgtLow+CS.tgtMid+CS.tgtHigh)>0.05){ CS.covLow=CS.tgtLow; CS.covMid=CS.tgtMid; CS.covHigh=CS.tgtHigh; _cloudReady=true; }
   else { const ce=ADVANCING?1:0.08; CS.covLow+=(CS.tgtLow-CS.covLow)*ce; CS.covMid+=(CS.tgtMid-CS.covMid)*ce; CS.covHigh+=(CS.tgtHigh-CS.covHigh)*ce; }
-  CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;
+  CS.wx=A.windUX; CS.wspd=0.06+0.6*A.windSpeedNorm;
   CS.tLow=A.cloudTint2; CS.tMid=A.cloudTint; CS.tHi=A.cloudTintHi;
   CS.sunX=A.sunX/100; CS.sunY=A.sunY/100; CS.sunUp=clamp(((A.cloudElevation??A.solarElevationDeg)+1)/5);CS.physicalLight=A.cloudLighting;CS.warmth=A.cloudWarmth;
   CS.sunCol=A.cloudSunCol; CS.moonCol=A.cloudMoonCol; CS.moonX=A.cloudMoonX; CS.moonY=A.cloudMoonY; CS.moonLit=A.cloudMoonLit;

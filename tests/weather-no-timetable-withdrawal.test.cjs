@@ -75,6 +75,40 @@ test('R3A-01 the healthy no-timetable sequence writes only zero solar optics, ne
  for(const [key,value] of probe.writes)assert.equal(+value,0,key+'='+value);
  for(const name of SOLAR_OPTICS)assert.equal(+h.select('.c').style.getPropertyValue(name),0,name);
 });
+test('R3A-01.1 the faults stay recorded under their stages and no scene reset is involved',async()=>{
+ const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');
+ h.run('globalThis.__r003aBegin=0;const __r003aB=beginSkyScene;beginSkyScene=function(...a){__r003aBegin++;return __r003aB.apply(this,a);}');
+ const key=h.run('_skySceneKey');h.at(901000);const probe=recordOpticWrites(h,'--rain-op');h.run('render()');probe.restore();
+ const faults=JSON.parse(h.run('JSON.stringify(Object.keys(renderFaultSnapshot()))'));
+ assert(faults.includes('weather-withdrawal')&&faults.includes('weather-effects'),'both attempts recorded: '+faults);
+ assert.equal(h.run('__r003aBegin'),0,'same scene identity: beginSkyScene is not part of this sequence');assert.equal(h.run('_skySceneKey'),key);
+ for(const name of SOLAR_OPTICS)assert.equal(+h.select('.c').style.getPropertyValue(name),0,name);
+});
+test('R3A-01.2 with the fault kept for five loop frames the shafts stay withdrawn on every frame',async()=>{
+ const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');
+ h.at(900500);const loop=loopDriver(h);const probe=recordOpticWrites(h,'--rain-op');const seen=[];
+ for(let i=1;i<=5;i++){h.at(900500+1000*i);h.run('_renderDirty=true');loop.frame();seen.push(['--ray','--anticrep'].map(k=>+h.select('.c').style.getPropertyValue(k)));}
+ probe.restore();assert(probe.faults.count>=10,'fault recurred on every frame');assert.deepEqual(seen,Array(5).fill([0,0]));
+});
+test('R3A-01.4 guard early return keeps the accepted publish-nothing contract (gate G4 default: registered residual)',async()=>{
+ for(const guard of ['window.SalahNativeSkyHost={cloudLighting:()=>null}','skySceneIdentity=()=>null']){
+  const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');h.run(guard);
+  h.at(901000);const probe=recordOpticWrites(h,'--rain-op');h.run('render()');probe.restore();
+  for(const name of SOLAR_OPTICS)assert.equal(h.select('.c').style.getPropertyValue(name),'.5',guard+' '+name+' (open risk, not withdrawn)');
+ }
+});
+const BODY_CALLS=['renderMoon','projectStars','lunarPresentation','wxDrivers','nativeSolarPresentation','paintSolarPresentation'];
+for(const fn of BODY_CALLS)test('R3A-01.9 a throw in painter body call '+fn+' cannot leave the shafts published',async()=>{
+ const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');
+ h.at(901000);h.run('withdrawWeatherEffects(weatherDecision(),"r003a")');
+ h.run('globalThis.__r003aCalled=0;const __o=moonGeometryObservation;moonGeometryObservation=function(...a){return {...__o.apply(this,a),fresh:false};};'+
+  fn+'=function(){__r003aCalled++;throw Error("R003A injected '+fn+' fault");};');
+ for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');
+ const probe=recordOpticWrites(h,'--rain-op');h.run('_renderFaults.clear();render()');probe.restore();
+ assert(h.run('__r003aCalled')>=1,fn+' was forced to run');
+ assert(JSON.parse(h.run('JSON.stringify(Object.keys(renderFaultSnapshot()))')).includes('celestial'),'body fault recorded under celestial');
+ for(const name of ['--ray','--anticrep'])assert.equal(+h.select('.c').style.getPropertyValue(name),0,fn+' '+name);
+});
 test('R3A-01 a healthy timetable scene keeps its computed crepuscular and anticrepuscular values',async()=>{
  const h=await fixture({hash:'&simWx=2&simCloud=50&simHumid=80'});
  h.run('window.SalahNativeSkyHost={cloudLighting:()=>({sun:{altDeg:20,azDeg:120},utcMs:simNow(),sample:()=>null})}');
