@@ -140,17 +140,97 @@ test("ES30-05 coordinate edit during detection supersedes Reset; close saves the
   const f=make();f.click("set-reset");f.input("set-lat","30");f.input("set-lon","31");await f.resolveCall("coarse",0,DETECTED);
   assert.equal(f.calls.prayer.length,0);f.click("setClose");await settlePrayer(f);assert.deepEqual([stored(f).lat,stored(f).lon],[30,31]);
 });
-test("ES30-05 place search and GPS request during detection supersede Reset",T,async()=>{
-  for(const op of ["search","gps"]){
-    const f=make();f.click("set-reset");
-    if(op==="search"){f.input("set-label","Berlin");f.key("set-label","Enter");}else f.click("set-pin");
-    await f.resolveCall("coarse",0,DETECTED);assert.equal(f.calls.prayer.length,0,op);assert.equal(f.config().lat,51.5,op);
-  }
+// D1 per the issue's table: a place-search CANDIDATE SHOWN and a GPS SUCCESS supersede Reset; the search
+// start and the pin click do not, so a failed or empty lookup leaves the Reset target to land.
+const BERLIN=[{lat:52.52,lon:13.41,name:"Berlin",norm:"Berlin, Germany",cc:"de"}];
+const FIX={coords:{latitude:48.85,longitude:2.35,accuracy:25},timestamp:Date.now()};
+const gpsFail=async f=>{f.calls.gps.at(-1).reject({code:1,message:"denied"});await drain();await drain();};
+test("ES30-05 D1 a shown place-search candidate supersedes Reset; close saves the chosen place",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-label","Berlin");f.key("set-label","Enter");
+  await f.resolveCall("search",0,BERLIN);await f.resolveCall("coarse",0,DETECTED);
+  assert.equal(f.calls.prayer.length,0,"stale Reset target not applied");f.click("setClose");await settlePrayer(f);
+  assert.deepEqual([stored(f).lat,stored(f).label],[52.52,"Berlin"]);
+});
+test("ES30-05 D1 a place search with no match does not end Reset; the target lands",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-label","Nowhere");f.key("set-label","Enter");
+  await f.resolveCall("search",0,[]);await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  assert.equal(f.config().lat,24.47,"Reset target landed");assert.equal(f.elements.get("set-lat").value,"24.47");
+});
+test("ES30-05 D1 a GPS fix supersedes Reset; close saves the fix",T,async()=>{
+  const f=make();f.click("set-reset");f.click("set-pin");await f.resolveCall("gps",0,FIX);await drain();
+  await f.resolveCall("coarse",0,DETECTED);assert.equal(f.calls.prayer.length,0,"stale Reset target not applied");
+  f.click("setClose");await settlePrayer(f);assert.deepEqual([stored(f).lat,stored(f).lon],[48.85,2.35]);
+});
+test("ES30-05 D1 a denied GPS request does not end Reset; the target lands",T,async()=>{
+  const f=make();f.click("set-reset");f.click("set-pin");await gpsFail(f);
+  await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);assert.equal(f.config().lat,24.47);
 });
 test("ES30-05 another Reset owns: the first detection result is discarded",T,async()=>{
   const f=make();f.click("set-reset");f.click("set-reset");assert.equal(f.calls.coarse.length,2);
   await f.resolveCall("coarse",0,{ok:true,cfg:{...DETECTED.cfg,lat:10,lon:10,label:"Stale"}});assert.equal(f.calls.prayer.length,0);
   await f.resolveCall("coarse",1,DETECTED);await settlePrayer(f);assert.equal(f.config().label,"Madinah");
+});
+// ---- review F1: a post-Reset edit survives close, reopen and a later lookup / Reset ----
+test("F1 Reset, edit, close, reopen, denied GPS click, close: the edit is saved on the Reset target",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-method","2","change");f.click("setClose");f.buckle.dispatch("click");
+  assert.equal(f.elements.get("set-method").value,"2");f.click("set-pin");await gpsFail(f);f.click("setClose");
+  await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  assert.deepEqual([f.config().lat,f.config().method],[24.47,"2"]);const saved=stored(f);assert.ok(saved,"edit saved");assert.deepEqual([saved.lat,saved.method],[24.47,"2"]);
+});
+test("F1 Reset, edit, close, reopen, GPS fix, close: the fix is saved with the edit",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-method","2","change");f.click("setClose");f.buckle.dispatch("click");
+  f.click("set-pin");await f.resolveCall("gps",0,FIX);await drain();f.click("setClose");await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  const saved=stored(f);assert.deepEqual([saved.lat,saved.method],[48.85,"2"]);
+});
+test("F1 Reset, edit, close, reopen, place candidate, close: the place is saved with the edit",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-method","2","change");f.click("setClose");f.buckle.dispatch("click");
+  f.input("set-label","Berlin");f.key("set-label","Enter");await f.resolveCall("search",0,BERLIN);f.click("setClose");
+  await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  const saved=stored(f);assert.deepEqual([saved.lat,saved.method,saved.label],[52.52,"2","Berlin"]);
+});
+test("F1 Reset, edit, close, reopen, second Reset: the edit predates the second Reset and is discarded (accepted rule)",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-method","2","change");f.click("setClose");f.buckle.dispatch("click");
+  f.click("set-reset");await f.resolveCall("coarse",1,DETECTED);await settlePrayer(f);
+  assert.deepEqual([f.config().lat,f.config().method],[24.47,"4"]);assert.equal(f.run("_setDirty"),false);f.click("setClose");assert.equal(stored(f),null);
+});
+test("F1 a second Reset whose clear fails leaves the first Reset and its recorded edit in force",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-method","2","change");f.click("setClose");f.buckle.dispatch("click");
+  f.sandbox.localStorage.removeItem=security;f.click("set-reset");assert.equal(f.calls.coarse.length,1,"failed clear starts no detection");
+  f.click("setClose");await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  const saved=stored(f);assert.deepEqual([saved.lat,saved.method],[24.47,"2"]);
+});
+// ---- review F2: survivors x20, x02, x18, x34, x32 ----
+test("F2 a held target released by a newer coordinate intent is not applied",T,async()=>{
+  const f=make();f.click("set-reset");f.click("setClose");f.buckle.dispatch("click");await f.resolveCall("coarse",0,DETECTED);
+  f.input("set-lat","30");f.input("set-lon","31");await settlePrayer(f);
+  assert.equal(f.calls.prayer.length,0,"stale held target not applied");assert.equal(f.config().lat,51.5);
+  f.click("setClose");await settlePrayer(f);assert.deepEqual([f.config().lat,stored(f).lat],[30,30]);
+});
+test("F2 close during a pending Reset leaves no uncommitted dirtiness behind",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-units","c","change");f.click("setClose");assert.equal(f.run("_setDirty"),false);
+});
+test("F2 after a closed-panel detection failure the form owns location again: a later close saves",T,async()=>{
+  const f=make();f.click("set-reset");f.input("set-units","c","change");f.click("setClose");await f.resolveCall("coarse",0,{ok:false});await settlePrayer(f);
+  f.buckle.dispatch("click");f.input("set-time","12","change");f.click("setClose");await settlePrayer(f);
+  const saved=stored(f);assert.ok(saved,"visible-form close-save");assert.deepEqual([saved.lat,saved.units,saved.time],[51.5,"c","12"]);
+});
+test("F2 the closed-panel failure notice is shown on the next open only",T,async()=>{
+  const f=make();f.click("set-reset");f.click("setClose");await f.resolveCall("coarse",0,{ok:false});
+  f.buckle.dispatch("click");assert.match(status(f),/Enter your location\./);f.click("setClose");f.buckle.dispatch("click");assert.doesNotMatch(status(f),/Enter your location\./);
+});
+test("F2 limit: a Reset apply fault with the panel closed drops the owner and saves nothing (no pre-Reset re-persist)",T,async()=>{
+  const f=make();f.sandbox.console={...console,error(){}};f.click("set-reset");f.input("set-units","c","change");f.click("setClose");
+  f.sandbox.bindConfig=()=>{throw new TypeError("injected bindConfig");};await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  assert.equal(stored(f),null,"nothing persisted, in particular not the pre-Reset site");assert.match(live(f),/Settings could not be applied \(TypeError\)/);
+  assert.equal(f.config().units,"f","documented limit: the recorded edit is not applied");
+});
+// ---- review F3: a stale successful apply cannot withdraw a newer failure ----
+test("F3 a stale successful apply does not withdraw a newer apply's failure line",T,async()=>{
+  const f=make(),real=f.sandbox.bindConfig;f.sandbox.console={...console,error(){}};
+  f.input("set-units","c","change");f.click("setClose");assert.equal(f.calls.prayer.length,1,"apply A pending on prayer");
+  f.buckle.dispatch("click");f.sandbox.bindConfig=()=>{throw new TypeError("injected B");};f.input("set-lat","30");f.input("set-lon","31");f.click("setClose");await drain();
+  assert.match(live(f),/could not be applied/);f.sandbox.bindConfig=real;
+  f.calls.prayer[0].resolve();await drain();await drain();assert.match(live(f),/could not be applied/,"A's stale success leaves B's failure reported");
 });
 // ---- ES30-13: duplicate / concurrent / interrupted ----
 test("ES30-13 close, reopen, close during detection: commit takes location from the Reset owner; edits of both sessions kept",T,async()=>{
