@@ -59,12 +59,23 @@ test("every R0030 mutant has a killer and every target is unique in authored and
     }
   }
 });
-for(const [name,killer] of Object.entries(KILLERS)){
-  test(`mutant ${name} is killed by "${killer}"`,{timeout:120000},()=>{
+// Mutant children run in a bounded pool (each is an independent process on its own mutated copy in memory), so
+// the file fits the registered runner's per-command bound; each case below still judges exactly one mutant.
+const {spawn}=require("node:child_process"),POOL=Math.max(2,Math.min(6,require("node:os").cpus().length-1));
+function runMutant(name){
+  return new Promise(resolve=>{
     // A fresh runner: drop the parent's NODE_TEST_CONTEXT so the child reports its own TAP lines.
     const env={...process.env,R0030_MUTANT:name,R0030_REF:""};delete env.NODE_TEST_CONTEXT;
-    const r=spawnSync(process.execPath,["--test","--test-reporter=tap",suite],{cwd:root,encoding:"utf8",env});
-    const out=r.stdout+r.stderr;
+    const child=spawn(process.execPath,["--test","--test-reporter=tap",suite],{cwd:root,env});let out="";
+    child.stdout.on("data",d=>out+=d);child.stderr.on("data",d=>out+=d);child.on("close",status=>resolve({status,out}));
+  });
+}
+const results=(()=>{const names=Object.keys(KILLERS),done={};let next=0;
+  const worker=async()=>{while(next<names.length){const n=names[next++];done[n]=await runMutant(n);}};
+  const all=Promise.all(Array.from({length:POOL},worker)).then(()=>done);return all;})();
+for(const [name,killer] of Object.entries(KILLERS)){
+  test(`mutant ${name} is killed by "${killer}"`,{timeout:300000},async()=>{
+    const r=(await results)[name],out=r.out;
     assert.notEqual(r.status,0,name+" must fail the behaviour suite");
     assert.ok(out.split("\n").some(line=>/^not ok \d+ - /.test(line)&&line.includes(killer)),name+" did not reach "+killer+"\n"+out.slice(0,4000));
     assert.doesNotMatch(out,/SyntaxError|ReferenceError|boundary missing/,"bootstrap failure is not mutation evidence");
