@@ -90,12 +90,16 @@ test('R3A-01.2 with the fault kept for five loop frames the shafts stay withdraw
  for(let i=1;i<=5;i++){h.at(900500+1000*i);h.run('_renderDirty=true');loop.frame();seen.push(['--ray','--anticrep'].map(k=>+h.select('.c').style.getPropertyValue(k)));}
  probe.restore();assert(probe.faults.count>=10,'fault recurred on every frame');assert.deepEqual(seen,Array(5).fill([0,0]));
 });
-test('R3A-01.4 guard early return keeps the accepted publish-nothing contract (gate G4 default: registered residual)',async()=>{
- for(const guard of ['window.SalahNativeSkyHost={cloudLighting:()=>null}','skySceneIdentity=()=>null']){
-  const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');h.run(guard);
-  h.at(901000);const probe=recordOpticWrites(h,'--rain-op');h.run('render()');probe.restore();
-  for(const name of SOLAR_OPTICS)assert.equal(h.select('.c').style.getPropertyValue(name),'.5',guard+' '+name+' (open risk, not withdrawn)');
- }
+// R3A-01.4 under owner gate G4 (b): every one of the five solar optics is withdrawn by the painter even when its guard
+// returns (unknown observer or no physical Sun) under a failed effects withdrawal. One named test per optic and guard.
+const GUARDS={'sun hook null':'window.SalahNativeSkyHost={cloudLighting:()=>null}','identity null':'skySceneIdentity=()=>null'};
+for(const optic of SOLAR_OPTICS)for(const [label,guard] of Object.entries(GUARDS))test('R3A-01.4 G4 '+optic+' withdrawn on guard return ('+label+') under a failed withdrawal',async()=>{
+ const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');h.run(guard);
+ const pending=h.run('document.querySelector(".c").classList.contains("sky-pending")');
+ h.at(901000);const probe=recordOpticWrites(h,'--rain-op');h.run('render()');probe.restore();
+ assert(probe.faults.count>=2,'withdrawal failed on both attempts');
+ assert.equal(+h.select('.c').style.getPropertyValue(optic),0,optic);
+ assert.equal(h.run('document.querySelector(".c").classList.contains("sky-pending")'),pending,'guard keeps its sky-pending state');
 });
 const BODY_CALLS=['renderMoon','projectStars','lunarPresentation','wxDrivers','nativeSolarPresentation','paintSolarPresentation'];
 for(const fn of BODY_CALLS)test('R3A-01.9 a throw in painter body call '+fn+' cannot leave the shafts published',async()=>{

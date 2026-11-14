@@ -22,12 +22,10 @@ function run(name,suite,file){
 for(const suite of Object.keys(counts)){
   const control=run('healthy-'+suite,suite,sourcePath);assert.equal(control.exit,0);assert.equal(control.terminal.fail,0);controls.push(control);
 }
-// R003A (issue 124): new-wind-before-elapsed re-bound to the assignment line without the removed, never-read north–south
-// field; same mutant intent (install the new wind before integrating elapsed time) and same kill set.
 // R0028: the undecoded-surface seam follows readiness to the Moon runtime surface owner
 // (dbc0387b replaced _pbrReady with window.SalahMoonRuntime?.surface()); same mutant intent.
 const definitions=[
-  ['new-wind-before-elapsed','r0025-continuity',html=>change(change(html,'\n  advanceCloudMotion(simNow()/1000);\n','\n'),'  CS.wx=A.windUX; CS.wspd=0.06+0.6*A.windSpeedNorm;','  CS.wx=A.windUX; CS.wspd=0.06+0.6*A.windSpeedNorm;\n  advanceCloudMotion(simNow()/1000);')],
+  ['new-wind-before-elapsed','r0025-continuity',html=>change(change(html,'\n  advanceCloudMotion(simNow()/1000);\n','\n'),'  CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;','  CS.wx=A.windUX; CS.wy=A.windUY; CS.wspd=0.06+0.6*A.windSpeedNorm;\n  advanceCloudMotion(simNow()/1000);')],
   ['ordinary-daily-reseed','r0025-continuity',html=>change(html,'const _cs=_cloudMotion.population;','const _cs=(_cloudFieldSeed+Math.floor(t/86400)*3.13)%617;')],
   ['frozen-visual-interval','r0025-continuity',html=>change(html,'dt=elapsed*rate;','dt=0;')],
   ['empty-deck-skips-time','r0025-lifecycle',html=>change(html,'  if(!advanceCloudMotion(t)){ _cloudDirty=false; return; }\n  if(S.covLow+S.covMid+S.covHigh<0.02){ _cloudDirty=false; return; }','  if(S.covLow+S.covMid+S.covHigh<0.02){ _cloudDirty=false; return; }\n  if(!advanceCloudMotion(t)){ _cloudDirty=false; return; }')],
