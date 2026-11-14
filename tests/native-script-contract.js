@@ -37,7 +37,7 @@
   // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06): R0021 a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819
   // -> 1ba361b6 (R0021 body plus the same spectral transform).
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'1ba361b60f46ac631f70315b2542018c151013cb83c6b4e0f458da63ed55769e',
+    'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
     'moon-initial':'d5e648ac08b80a8291140eddbd73dc7305aa7d40f38ebcbea71e239d5be54f16',
     'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
   });
@@ -45,6 +45,14 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0034 (issue 101) refined-sky identity candidate 1f13b185 on main 664ebe22: the authored native body is unchanged
+    // (no new authored entry); legacy-Moon structural control of its generated index dbc77c67. Every entry below,
+    // including R002E's 3c80fd51 and 3c1f1a0a, remains admitted unchanged. Re-bind again when rebuilt on a later main.
+    '9bbec5832f3a6c4cd13e731a41ea59f5e0996988a5da07400238ac80a9ad071f':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'1f13b185dc82ff4319aaf2d1311af114e9137e4f',path:'index.html',
+      parentSha256:'dbc77c678d45c83f73297808cba729258b82903df7d0b771164a988465865190',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R002E (issue 95) prayer presentation residuals merged with main 885d5a31 at 421a44a9: authored source 3c80fd51
     // and the legacy-Moon structural control of its generated index 3a93bfc9. Every entry below, including R002C's
     // 88eade13 and 78079b51, remains admitted unchanged.

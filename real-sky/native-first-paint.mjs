@@ -9,15 +9,21 @@ import {joinNativeStarPreview} from './native-star-preview.mjs';
  * temporal previews are left to the existing native temporal owner. */
 export function prepareNativeFirstPaint(){
  const params=new URLSearchParams(location.hash.slice(1));
+ // R0034 (ISM-SKY-019) parse parity with the native owners: the native clock reads
+ // simTime and timeScale; simDate has no native owner but stays head-less (accepted
+ // moon/tests head-producer contract; dropping it is an open owner sub-choice, G1).
+ // Camera values use the native rule (present but blank is a refusal, never 0) and
+ // a refused camera installs no head.
  if(['simTime','simDate','timeScale'].some(k=>params.has(k)))return;
  const resolved=window.SalahConfig?.resolve(location.hash),c=resolved?.cfg;
  if(!c||!Number.isFinite(c.lat)||!Number.isFinite(c.lon))return;
- const number=(key,fallback)=>params.has(key)?Number(params.get(key)):fallback;
+ const number=(key,fallback)=>params.has(key)?(params.get(key).trim()===''?NaN:Number(params.get(key))):fallback;
  const capturedAt=performance.now();
  const snapshot={utcMs:Date.now(),lat:c.lat,lon:c.lon,heightM:0,elevationSource:'default zero; no bound eligible weather height',elevationOwner:null,
   generation:0,sceneIdentity:[c.lat,c.lon,c.tz||'America/New_York','wall'].join('|'),tz:c.tz||'America/New_York',timeScale:1,units:c.units,lp:c.lp||0,dpr:Math.max(.5,Math.min(4,devicePixelRatio||1)),
-  reducedMotion:params.get('motion')!=='full'&&matchMedia('(prefers-reduced-motion: reduce)').matches,paused:false,
+  reducedMotion:(params.get('motion')||'')!=='full'&&!!(globalThis.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches),paused:false,
   camera:{azDeg:number('skyAz',180),altDeg:number('skyAlt',45),fovYDeg:number('skyFov',90),rollDeg:number('skyRoll',0)},allowEstimates:params.get('skyEstimates')!=='off',weather:null};
+ if(![snapshot.camera.azDeg,snapshot.camera.altDeg,snapshot.camera.fovYDeg,snapshot.camera.rollDeg].every(Number.isFinite))return;
  try{
   let p=renderNativeBackgroundPreview(snapshot);
   const cv=document.createElement('canvas');cv.width=325;cv.height=530;
