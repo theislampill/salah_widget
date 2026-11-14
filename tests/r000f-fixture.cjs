@@ -76,7 +76,7 @@ function environment() {
   function initializeTag(element,tag){for(const [,name,value]of tag.matchAll(/([\w:-]+)="([^"]*)"/g))element.setAttribute(name,value);}
   const localStorage={getItem:key=>storage.get(key)??null,
     setItem:(key,value)=>storage.set(key,String(value)),removeItem:key=>storage.delete(key)};
-  const sandbox={console, URL, URLSearchParams, Intl, Date, document, localStorage,
+  const sandbox={console, URL, URLSearchParams, AbortController, Intl, Date, document, localStorage,
     location:{href:"https://example.test/widget/builder.html"},
     navigator:{language:"en-US",platform:"Win32",userAgent:"controlled"},
     requestAnimationFrame:callback=>{const id=++frameId;frames.set(id,setImmediate(()=>{frames.delete(id);callback(time);}));return id;},
@@ -113,7 +113,7 @@ function fixture(kind,options={}) {
   const sources={config:readSource("config.js",options.ref), page:readSource(kind==="builder"?"builder.html":"index.html",options.ref)};
   run(sources.config);
   const queues={search:[],coarse:[],gps:[],reverse:[],permission:[]};
-  const calls={search:[],reverse:[],copy:[],fallback:[],applied:[]};
+  const calls={search:[],reverse:[],reverseInit:[],copy:[],fallback:[],applied:[]};
   function queue(name,args) { const d=deferred(); queues[name].push(d); if(calls[name])calls[name].push(args); return d.promise; }
   sandbox.SalahConfig.geocodeSearch=(q,opts)=>queue("search",{q,homeCC:opts.homeCC});
   // R0026: the actual consumers read the detailed outcome. An array resolution stands for the engine's
@@ -123,7 +123,11 @@ function fixture(kind,options={}) {
   sandbox.SalahConfig.geolocate=()=>queue("gps",{});
   sandbox.SalahConfig.permissionState=()=> options.deferPermission ? queue("permission",{}) : Promise.resolve("granted");
   sandbox.navigator.geolocation={getCurrentPosition:(ok,bad,opts)=>{ queue("gps",{opts}).then(ok,bad); }};
-  sandbox.fetch=url=>{ const d=deferred(); queues.reverse.push(d); calls.reverse.push(url); return Promise.resolve({json:()=>d.promise}); };
+  // Reverse double: headers are an OK 200 by default (R0031: the builder now reads r.ok); options.reverseResponse
+  // ({ok,status} or index=>{ok,status}) overrides them. The body stays the queued deferred; the init is recorded.
+  sandbox.fetch=(url,init)=>{ const d=deferred(); queues.reverse.push(d); calls.reverse.push(url); calls.reverseInit.push(init);
+    const head=typeof options.reverseResponse==="function"?options.reverseResponse(calls.reverse.length-1):options.reverseResponse;
+    return Promise.resolve({ok:true,status:200,...head,json:()=>d.promise}); };
   sandbox.navigator.clipboard={writeText:text=>{calls.copy.push(text); return options.clipboard?options.clipboard(text):Promise.resolve();}};
   env.document.execCommand=command=>{ calls.fallback.push({command,text:env.document.lastSelected?.value}); return options.fallback?options.fallback(command):false; };
   if(options.platform)sandbox.navigator.platform=options.platform;

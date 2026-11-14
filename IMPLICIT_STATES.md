@@ -1086,6 +1086,8 @@ Original audit: **C03** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weathe
   - Original evidence: evidence/probes/configuration/results.json (source-bound VM doubles; no native browser/network/install qualification)
   - Original remaining risk: Candidate range/finite validation is weak like C02; current fixtures do not establish provider or accessibility behavior.
 - **Findings.** [PRA-F-30](docs/audit/post-rlgwo/FINDINGS.md#pra-f-30)
+- **R0031 (issue 98).** D: [R0031 contract](docs/state-contracts/R0031.md) §2 records the `jsonv2` field name from Nominatim documentation and server source at `edbe8c7d` (not observation). I: `_nomCands` reads `category` only when `class` is absent (D-31-4 A); a `class`-carrying item ranks as before; status/coverage/admission unchanged. V: `R31-08` rows (city selected with either key; RED with `category` at `91c60ed2`) and the class-only mutant. Unresolved: the deployed service's actual bytes.
+- **Proposed status (effective on acceptance).** D / I / V **EIV / HRS / HRS** (unchanged codes; PRA-F-30 remedied at documentation-level evidence).
 
 <a id="ism-wx-012"></a>
 ### ISM-WX-012 — Browser location and permission request completion
@@ -1122,6 +1124,8 @@ Original audit: **C04** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weathe
   - Original evidence: Parent intent/reset cohorts; static callback review
   - Original remaining risk: No native permission prompt, hardware position, iframe permissions or secure-context test.
 - **Findings.** [PRA-F-29](docs/audit/post-rlgwo/FINDINGS.md#pra-f-29)
+- **R0031 (issue 98).** D: [R0031 contract](docs/state-contracts/R0031.md) §3 documents the dependency; decision D-31-3 is **pending with the owner**. I: unchanged — `_usePrecise` still awaits `permissionState()` before publishing (option A needs `src/native/index.html` L4256-L4258 at `91c60ed2`). V: injected-fault todo witness `R31-07 (D-31-3 pending)` fails on current source; the settling control passes. Unresolved: the decision; no browser is known to leave the query unsettled.
+- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / EEV** (unchanged pending D-31-3).
 
 ## Configuration, settings and builder (`ISM-CFG`)
 
@@ -1378,6 +1382,7 @@ Original audit: **C05** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
   - Original evidence: evidence/probes/configuration/results.json (source-bound VM doubles; no native browser/network/install qualification); Parent radio8/8, effects3/3, intent21/21; read preferences tests
   - Original remaining risk: The navigation count is measured in a DOM double; bandwidth/CPU savings and visual behavior are projections requiring native validation.
 - **Findings.** [PRA-F-08](docs/audit/post-rlgwo/FINDINGS.md#pra-f-08)
+- **R0031 (issue 98) note.** Export consumer only: in local mode a builder coordinate edit or GPS fix no longer reaches the reverse lookup, so it cannot change the exported method (D-31-1 A; [R0031 contract](docs/state-contracts/R0031.md)). Serialiser, preview issuance and the 325×530 wrapper are unchanged.
 
 <a id="ism-cfg-008"></a>
 ### ISM-CFG-008 — Builder edit ownership, candidate cycle and automatic fills (reverse geocode)
@@ -1414,6 +1419,8 @@ Original audit: **C06** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
   - Original evidence: Parent intent21/21/reset9/9; source ordering inspection
   - Original remaining risk: Provider requests persist after invalidation. Bounded transport cancellation could reduce work but must preserve the ownership checks.
 - **Findings.** [PRA-F-05](docs/audit/post-rlgwo/FINDINGS.md#pra-f-05)
+- **R0031 (issue 98) — documented / enforced / verified.** D: [R0031 contract](docs/state-contracts/R0031.md) §1 (machine RV: request, outcome, per-field admission, mode epoch, transitions, invariants I1-I5). I: `admitReverse` + `fillNameFromCoords` require `r.ok===true`, a plain-object body within one 8 s aborting deadline, and admit label / two-letter `countryCode` / `/^[A-Z]{2}$/` `continentCode` separately (policy NA → 2 else 4 unchanged); local mode sends no reverse request and a mode change supersedes a pending one; the R000F `ownsLookup` gate is unchanged. V: `tests/builder-reverse-admission.test.cjs` (RED 36 failures at `91c60ed2`, GREEN on the candidate) and 9 killed mutants in `tests/builder-reverse-admission-mutations.test.cjs` (including both mode-epoch halves); native builder cells PASS in Chromium, Firefox and WebKit, with the `91c60ed2` control failing the non-OK, empty-body and local-mode cells (`tools/qa/run_r0031_native.cjs`, `docs/state-contracts/evidence/R0031/native/`). Unresolved: independent acceptance; real provider error bodies (not needed: admission is positive-only).
+- **Proposed status (effective on acceptance).** D / I / V **EIV / HRS / EEV**; the cells above stay at the audit baseline until independent review and acceptance.
 
 <a id="ism-cfg-009"></a>
 ### ISM-CFG-009 — Clipboard attempts, fallback and expiring feedback

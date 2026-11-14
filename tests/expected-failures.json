@@ -274,6 +274,20 @@
    "trigger": "R0033 writes the documentation after verifying the behaviour; the case then passes and this entry is retired in that change"
   },
   {
+   "id": "R31-L01",
+   "status": "active",
+   "kind": "case-not-executed",
+   "command": "native-test-glob",
+   "case": "R31-07 (D-31-3 pending) a never-settling permission query does not block a valid GPS fix",
+   "messagePrefix": "# TODO",
+   "firstRed": "todo witness added with R0031 (issue 98); fails on every commit up to and including the R0031 candidate (injected never-settling permissions.query)",
+   "causeClass": "unadopted-contract",
+   "evidence": "tests/builder-reverse-admission.test.cjs; docs/state-contracts/R0031.md section 3 and gate D-31-3",
+   "owner": "R0031",
+   "disposition": "decision-gated (D-31-3 pending with the owner): settings GPS publication still awaits the permission diagnostic in src/native/index.html _usePrecise; never counted as a pass",
+   "trigger": "the owner decides D-31-3; under A or B the change lands, the todo is removed and this entry is retired in that change; under C the witness is removed and the no-action decision recorded"
+  },
+  {
    "id": "R28-R10",
    "status": "retired",
    "kind": "case-fail",

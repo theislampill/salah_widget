@@ -10,6 +10,8 @@
  "nativeTestGlob": [
   "tests/builder-preview-publication-mutations.test.cjs",
   "tests/builder-preview-publication.test.cjs",
+  "tests/builder-reverse-admission-mutations.test.cjs",
+  "tests/builder-reverse-admission.test.cjs",
   "tests/config-effects-mutations.test.cjs",
   "tests/config-effects-state.test.cjs",
   "tests/hotfix-prayer-weather.test.cjs",
@@ -1549,6 +1551,26 @@
      "chromium,firefox,webkit"
     ],
     "protocol": "per-engine discriminator counts in <out> (R002D D-06/D-13/D-15; docs/state-contracts/R002D.md)"
+   }
+  },
+  {
+   "path": "tools/qa/run_r0031_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, loopback-served generated tree, every provider routed to a fixture or aborted, stubbed geolocation, mocked clock); not a headless unit instrument",
+   "owner": "R0031",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r0031_native.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engines",
+     "chromium,firefox,webkit",
+     "--playwright",
+     "<path to the playwright package>"
+    ],
+    "protocol": "per-engine cell PASS/FAIL in <out>/report.json (R31-13 builder cells, R31-09 wrapper; docs/state-contracts/evidence/R0031/native)"
    }
   },
   {
