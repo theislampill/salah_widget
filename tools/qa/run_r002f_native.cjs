@@ -44,7 +44,7 @@ async function run(engine,base,phaseS){
     if(u.includes('api.rainviewer.com')) return r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"radar":{"past":[]}}'});
     return r.abort();});
   const p=await c.newPage(); page=p; const errors=[]; p.on('pageerror',e=>errors.push(String(e)));
-  await p.clock.install({time:new Date(T0)});
+  await p.clock.install({time:new Date(T0)}); await p.clock.pauseAt(new Date(T0+1000));   // paused: only runFor advances time (deterministic)
   await p.goto(base+'/index.html#lat=24.47&lon=39.61&label=Madinah&method=4&seed=1&tz=Asia%2FRiyadh');
   const step=async ms=>{await p.clock.runFor(ms);pageNow=await p.evaluate(()=>Date.now());};
   for(let i=0;i<40&&!(await p.evaluate(()=>{try{return window.eval('_loopStarted&&!!selectedWeather()')}catch(e){return false}}));i++) await step(250);

@@ -45,15 +45,14 @@ test('R2F-04 lag or device-ahead skew below m: one request, gap <= m + 2 frames'
     assert(onAt<=M+2*FRAME,JSON.stringify(opts)+' gap '+onAt); assert.equal(wxRequestsIn(s,0,120000),1,JSON.stringify(opts));
   }
 });
-test('R2F-04 lag or device-ahead skew above m: old step, then R000D spacing — no storm, <= 1 request per 60 s',async()=>{
+test('R2F-04 lag or device-ahead skew above m: early-renewal miss, then the ordinary poll proceeds (owner option D)',async()=>{
   for(const opts of [{lagMs:5000},{skewMs:5000}]){
     const {s,frames,onAt}=await boundary({phaseMs:25000,...opts}), times=s.requestTimes().filter(t=>t>0);
-    assert.equal(times[0],M,JSON.stringify(opts)+': the renewal request is made at B + m');
-    for(let i=1;i<times.length;i++) assert(times[i]-times[i-1]>=60000,JSON.stringify(opts)+': R000D 60 s spacing kept');
-    assert(onAt>60000&&onAt<=M+60000+30000+2*FRAME,JSON.stringify(opts)+': about one 60 s spacing later (gap '+onAt+')');
+    assert.deepEqual(times,[M,25000],JSON.stringify(opts)+': renewal at B + m (miss), then the ordinary poll at B + phase');
+    assert.equal(onAt,25000,JSON.stringify(opts)+': gap equals the poll phase, as on main (no 60 s penalty)');
     const after=frames.find(f=>f.t===M+FRAME);
-    assert.equal(after.renewal.stage,'disagreement-fallback','the old step admitted at B + m is not renewed again early');
-    assert.equal(after.renewal.clockAgreement,'disagreeing-expired-at-receipt'); assert.equal(after.renewal.lastOutcome,'settled-not-advanced: provider returned no later step');
+    assert.equal(after.renewal.stage,'early-renewal-miss'); assert.match(after.renewal.lastOutcome,/^early-renewal-miss/);
+    assert.equal(after.renewal.clockAgreement,'agreeing','the miss record was not adopted: the held (agreeing) record remains');
     assertWithdrawn(frames,0,onAt);
   }
 });

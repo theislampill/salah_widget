@@ -50,6 +50,7 @@
   "tests/weather-no-timetable-handoff.test.cjs",
   "tests/weather-no-timetable-withdrawal.test.cjs",
   "tests/weather-preview-range.test.cjs",
+  "tests/weather-renewal-miss.test.cjs",
   "tests/weather-renewal-mutations.test.cjs",
   "tests/weather-renewal-state.test.cjs",
   "tests/weather-retry-clock-mutations.test.cjs",
@@ -1880,6 +1881,19 @@
      "hidden,crops,preview,notimetable,pixeldiff,motion"
     ],
     "protocol": "one JSON line per engine and cell (hidden, crops, preview, notimetable, pixeldiff, motion) with PNG hashes; exit 0 when every cell completed (docs/state-contracts/R002F.md 5.2a)"
+   }
+  },
+  {
+   "path": "tests/r002f-renewal-matrix.cjs",
+   "reason": "pre-merge evidence instrument: compares the candidate's built entry with main's built entry read from git (origin/main or R002F_MATRIX_MAIN_REF) over 9 skew/lag values x 45 poll phases x 2 kinds; ~35 min; meaningless after R002F is merged into that ref",
+   "owner": "R002F",
+   "recipe": {
+    "argv": [
+     "node",
+     "--test",
+     "tests/r002f-renewal-matrix.cjs"
+    ],
+    "protocol": "node:test, two tests; each prints a diagnostic table of mean gaps and fails with every counterexample (candidate gap > main gap) listed (docs/state-contracts/R002F.md 1a)"
    }
   }
  ]

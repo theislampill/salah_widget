@@ -67,6 +67,21 @@ test('R2F-12b frozen out-of-track preview: no frame presents a condition for 2 m
     s.h.run('lastWxAt=0'); }});   // keep the fresh-data shortcut off so live records keep arriving
   assert(s.requests()-before>=2,'live records were fetched during the frozen preview ('+(s.requests()-before)+')'); assert(adopted>=1,'a live record was adopted between frames');
 });
+async function previewRequests(source,fresh){
+  const {s,last}=await preview(source); s.h.run(`SalahClock.set({rate:0,utcMs:${last+3600000}})`); const before=s.requests();
+  await s.run(s.h.clock.wall+5*60000,{onFrame:()=>{ if(fresh) s.h.run('lastWxAt=Date.now()-60000'); else s.h.run('lastWxAt=0'); }});
+  return s.requests()-before;
+}
+test('preview-lane fresh-data shortcut (retryGate line): out-of-track frozen preview requests nothing while the track is fresh, <= 1/60 s when stale',async()=>{
+  assert.equal(await previewRequests(undefined,true),0,'fresh lastWxAt + track: the held preview object keeps the shortcut');
+  const n=await previewRequests(undefined,false); assert(n>=2&&n<=6,'stale: ordinary R000D cadence ('+n+' in 5 min)');
+});
+test('mutation: removing the preview-lane shortcut line is detected',async()=>{
+  const from='  if(kind==="weather"&&(ADVANCING||_clockPreview)&&weather&&'; assert.equal(SOURCE.split(from).length,2);
+  const line=SOURCE.slice(SOURCE.indexOf(from),SOURCE.indexOf(String.fromCharCode(10),SOURCE.indexOf(from))+1);
+  const mutant=SOURCE.replace(line,'');
+  await assert.rejects(async()=>assert.equal(await previewRequests(mutant,true),0),e=>e instanceof assert.AssertionError);
+});
 test('R2F-15e mutation: restoring the endpoint hold in the preview lane is detected',async()=>{
   const from='if(range==="before-first"||range==="after-last"){'; assert.equal(SOURCE.split(from).length,2);
   const discriminator=async src=>{ const {s,last}=await preview(src); s.h.run(`SalahClock.set({rate:0,utcMs:${last+86400000}})`); assertUnavailable(state(s),'after-last'); };

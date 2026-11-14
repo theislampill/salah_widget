@@ -40,7 +40,8 @@ async function open(engine,srv,{scene='thunder',prayer='ok',clock=B-150000,real=
     if(u.includes('api.rainviewer.com')) return json({radar:{past:[]}});
     return r.abort();});
   const p=await c.newPage(); page=p; const errors=[]; p.on('pageerror',e=>errors.push(String(e)));
-  await p.clock.install({time:new Date(clock)}); if(real) await p.clock.resume();   // real: the mocked clock then flows in real time
+  await p.clock.install({time:new Date(clock)}); await p.clock.pauseAt(new Date(clock+1000));   // paused: only runFor advances time
+  if(real) await p.clock.resume();   // real: the mocked clock then flows at wall rate
   await p.goto(srv.base+'/index.html#lat=24.47&lon=39.61&label=Madinah&method=4&seed=1&tz=Asia%2FRiyadh');
   const now=()=>p.evaluate(()=>Date.now()), look=()=>p.evaluate(LOOK);
   const until=async(ms,step=250)=>{ while(await now()<ms) await p.clock.runFor(step); };

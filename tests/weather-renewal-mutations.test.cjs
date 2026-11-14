@@ -38,12 +38,30 @@ const structure=async src=>{
   const calls=src.split('\n').filter(l=>/renewWeather\(/.test(l)&&!/function renewWeather/.test(l));
   assert.equal(calls.length,1); assert.match(calls[0],/^    else runRenderStage\("weather-renewal",\(\)=>renewWeather\(\)\);/);
 };
+// Early-renewal miss discriminators (owner option D).
+const missGap=async src=>{ const s=await F.scene({source:src,phaseMs:20000,lagMs:6000}); const held=s.h.run('weather.retrievedAt');
+  const frames=await s.run(B+19000); assert.equal(s.h.run('weather.retrievedAt'),held,'the miss record is not adopted');
+  for(const f of frames.filter(f=>f.t>0)){ assert.equal(f.sel,false,'nothing presented after the miss ('+f.t+')'); assert.equal(f.header.state,'unavailable'); }
+  await s.run(B+21000); assert.deepEqual(s.requestTimes().filter(t=>t>0),[M,20000],'the ordinary poll proceeds'); assert.equal(s.h.run('!!selectedWeather()'),true); };
+const failureSpacing=async src=>{ const s=await F.scene({source:src,phaseMs:20000,fail:h=>h.clock.wall>=B&&h.clock.wall<B+5000}); await s.run(B+50000);
+  assert.deepEqual(s.requestTimes().filter(t=>t>0),[M],'a failed renewal keeps R000D spacing: no request at the B + 20 s poll'); };
+const oncePerStep=async src=>{ const s=await F.scene({source:src,phaseMs:29000,lagMs:40000}); await s.run(B+28000);
+  assert.deepEqual(s.requestTimes().filter(t=>t>0),[M],'one renewal per step'); };
 const cases=[
   ['a remove the renewal condition',[[LOOP,'void 0;']],healthyGap],
   ['b renewal due while still selected',[['const dueAt=step+_WX_CURRENT_TTL+_WX_RENEWAL_MARGIN;','const dueAt=step+_WX_CURRENT_TTL-5000;'],
     ['if(now<dueAt||weatherEligibility(record,now).eligible) return out("not-due"','if(now<dueAt) return out("not-due"']],healthyGap],
   ['c margin 0 with the device 1 s ahead',[['_WX_RENEWAL_MARGIN=3000','_WX_RENEWAL_MARGIN=0']],skewGap],
   ['d accept sourceAge <= TTL + m',[['sourceAge>=0&&sourceAge<=_WX_CURRENT_TTL&&receiptAge','sourceAge>=0&&sourceAge<=_WX_CURRENT_TTL+_WX_RENEWAL_MARGIN&&receiptAge']],healthyGap],
+  ['g exemption applied to failures',[['const priorSpacing=_wxRetry.weather;','const priorSpacing=_wxRetry.weather; if(renewal) Promise.resolve().then(()=>{ _wxRetry.weather=priorSpacing; });']],failureSpacing],
+  ['h exemption more than once per step',[['if(miss){ renewal.outcome="early-renewal-miss"; ','if(miss){ ']],oncePerStep],
+  ['i miss treated as acquisition',[['if(current&&!miss&&attemptEligible(op,a)','if(current&&attemptEligible(op,a)']],missGap],
+  ['j stale record published after a miss',[['if(miss){ renewal.outcome="early-renewal-miss"; ','if(miss){ current.currentValidAt=ctx.retrievedAt-1000; weather=current; lastWxAt=ctx.retrievedAt; renewal.outcome="early-renewal-miss"; ']],missGap],
+  ['k renewal evaluated in preview',[['  if(SIM.wx!=null||ADVANCING||_clockPreview) return out("suppressed-by-mode"','  if(SIM.wx!=null) return out("suppressed-by-mode"']],async src=>{ const s=await F.scene({source:src,phaseMs:25000}); s.h.run('SalahClock.set({rate:0})');
+    const frames=await s.run(B+20000); assert(frames.every(f=>f.renewal.stage==='suppressed-by-mode')); }],
+  ['l renewal ignores the busy slot',[['const r=weatherRenewal(now); if(!r.due||wxBusy) return false;','const r=weatherRenewal(now); if(!r.due) return false;']],async src=>{
+    let release=null; const s=await F.scene({source:src,phaseMs:2900,hold:r=>release===true?new Promise(res=>{release=()=>res(r);}):r});
+    await s.run(B+2900-FRAME); release=true; await s.run(B+6000); assert.equal(s.h.run('_wxRenewal'),null); release(); await F.flush(); }],
   ['f renewal through a timer',[[LOOP,'else setTimeout(()=>renewWeather(),0);']],structure],
   ['f2 renewal timer inside the weather owner',[['function renewWeather(now=Date.now()){','function renewWeather(now=Date.now()){ setTimeout(()=>{},0);']],structure],
 ];
