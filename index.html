@@ -7544,9 +7544,10 @@ function _persistenceMessage(){
     : status==="reset-failed" ? "Could not clear saved settings ("+error+"). Your saved settings remain."
     : status==="saved" ? "Settings saved in this browser." : "Saved settings cleared.";
 }
-// Persistence fact plus, only after a rejected settings apply, the G3 failure line (R0030 PRA-F-33).
+// Persistence fact plus, only after a rejected settings apply, the G3 failure line (R0030 PRA-F-33). The line is
+// plain language; the sanitised error name stays in _setApplyFault and the console (diagnostics only).
 function _outcomeMessage(){
-  return [_persistenceMessage(),_setApplyFault?"Settings could not be applied ("+_setApplyFault+"). Reload the widget to try again.":""].filter(Boolean).join("\n");
+  return [_persistenceMessage(),_setApplyFault?"Your changes could not be applied. Reload the widget to try again.":""].filter(Boolean).join("\n");
 }
 function _renderSettingsStatus(){
   const s=_byId("set-status"), message=_outcomeMessage();
@@ -7829,7 +7830,7 @@ async function _resetLocal(){
     _populateSettingsForm();
     Object.entries(prefs).forEach(([key,value])=>{ _byId(_SET_PREF_IDS[key]).value=value; });
     _syncDateFromBox(); _setDirty=Object.keys(prefs).length>0;
-    if(!fault) _setStatus(d.site ? "Using configured site: "+(c.label||"") : "Using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
+    if(!fault) _setStatus(d.site ? "Using the location this widget was set up with"+(c.label?": "+c.label:".") : "Using estimated area: "+(d.cfg.area||d.cfg.label||"")); }
   else if(_setOpen&&_setSession===reset.session){ _setReset=null; _setStatus("Enter your location.",true); }   // G1b-a: the visible form owns location again
   else { reset.phase="failed"; if(!_setOpen) _commitSettings(); }  // G1a-A1: no reopen; deferred edits are session-only; the next open says so
 }

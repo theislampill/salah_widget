@@ -13,7 +13,9 @@
 // session-only warning (closed). Differences are counted per pixel over the 325x530 card.
 //
 // Usage: node tools/qa/run_r0030_native.cjs --root <branch tree> --main <main tree> --out <fresh dir>
-//        [--engines chromium,firefox,webkit] [--playwright <path to the playwright package>]
+//        [--engines chromium,firefox,webkit] [--mainRuns N (>=2)] [--branchRuns M] [--playwright <path to the playwright package>]
+// Pixel diffs: main-a against every other main run (noise) and against every branch run, with the first
+// differing pixel coordinates (x, y within the 325x530 card) and their max channel delta.
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http'), crypto = require('node:crypto');
 const argv = process.argv.slice(2), args = {};
 for (let i = 0; i < argv.length; i++) if (argv[i].startsWith('--')) args[argv[i].slice(2)] = argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[++i] : true;
@@ -129,7 +131,7 @@ async function engineRun(name, root, base, cells, shots, tag) {
     await page.fill('#set-lat', '30'); await page.fill('#set-lon', '31'); await close(page); await page.waitForTimeout(800);
     const r12 = await page.evaluate(() => ({ unhandled: window.__r0030.unhandled, live: document.getElementById('settings-persistence-status').textContent }));
     rb = await readback();
-    cell('ES30-12', r12.unhandled === 0 && /Settings saved in this browser\.\nSettings could not be applied \(TypeError\)/.test(r12.live) && rb && rb.lat === 30, { ...r12, readbackLat: rb && rb.lat, pageErrors: errors }); await page.close();
+    cell('ES30-12', r12.unhandled === 0 && /^Settings saved in this browser\.\nYour changes could not be applied\. Reload the widget to try again\.$/.test(r12.live) && rb && rb.lat === 30, { ...r12, readbackLat: rb && rb.lat, pageErrors: errors }); await page.close();
   }
   // Pixel scenes (healthy). Same steps on every tree; the card is clipped at its own box.
   async function shot(page, scene) {
@@ -154,9 +156,9 @@ async function diff(name, a, b) {
     const load = src => new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = bad; i.src = src; });
     const [p, q] = await Promise.all([load(x), load(y)]), w = p.width, h = p.height;
     const px = img => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.drawImage(img, 0, 0); return g.getImageData(0, 0, w, h).data; };
-    const A = px(p), B = px(q); let n = 0, max = 0;
-    for (let i = 0; i < A.length; i += 4) { const d = Math.max(Math.abs(A[i] - B[i]), Math.abs(A[i + 1] - B[i + 1]), Math.abs(A[i + 2] - B[i + 2])); if (d) n++; if (d > max) max = d; }
-    return { width: w, height: h, sameSize: p.width === q.width && p.height === q.height, differingPixels: n, maxChannelDelta: max };
+    const A = px(p), B = px(q); let n = 0, max = 0; const at = [];
+    for (let i = 0; i < A.length; i += 4) { const d = Math.max(Math.abs(A[i] - B[i]), Math.abs(A[i + 1] - B[i + 1]), Math.abs(A[i + 2] - B[i + 2])); if (d) { n++; if (at.length < 12) at.push([(i / 4) % w, Math.floor(i / 4 / w), d]); } if (d > max) max = d; }
+    return { width: w, height: h, sameSize: p.width === q.width && p.height === q.height, differingPixels: n, maxChannelDelta: max, firstDifferences: at };
   }, [data(a), data(b)]);
   await browser.close(); return { engine: name, a, b, ...r };
 }
@@ -166,15 +168,17 @@ async function diff(name, a, b) {
     playwright: require((args.playwright || 'playwright') + '/package.json').version, engines: {}, cells: [], shots: [], diffs: [] };
   if (mainRoot) report.inputs.main = Object.fromEntries(['index.html', 'config.js'].map(f => [f, sha(fs.readFileSync(path.join(mainRoot, f)))]));
   for (const name of engines) {
-    const runs = [['branch', branchRoot]]; if (mainRoot) runs.unshift(['main-a', mainRoot], ['main-b', mainRoot]);
+    const mainRuns = mainRoot ? Math.max(2, +(args.mainRuns || 2)) : 0, branchRuns = Math.max(1, +(args.branchRuns || 1));
+    const mains = Array.from({ length: mainRuns }, (_, i) => 'main-' + String.fromCharCode(97 + i)), branches = Array.from({ length: branchRuns }, (_, i) => i ? 'branch-' + (i + 1) : 'branch');
+    const runs = [...mains.map(t => [t, mainRoot]), ...branches.map(t => [t, branchRoot])];
     for (const [tag, root] of runs) {
       const { server, base } = await serve(root);
       try { const r = await engineRun(name, root, base, report.cells, report.shots, tag); report.engines[name] = r.version; report[name + '-' + tag + '-external'] = r.external; }
       finally { server.close(); }
     }
     if (mainRoot) for (const scene of ['closed', 'open', 'reset-complete', 'session-only']) {
-      report.diffs.push({ kind: 'noise main-a vs main-b', scene, ...(await diff(name, `${name}-main-a-${scene}.png`, `${name}-main-b-${scene}.png`)) });
-      report.diffs.push({ kind: 'main-a vs branch', scene, ...(await diff(name, `${name}-main-a-${scene}.png`, `${name}-branch-${scene}.png`)) });
+      for (let i = 1; i < mains.length; i++) report.diffs.push({ kind: 'noise main-a vs ' + mains[i], scene, ...(await diff(name, `${name}-main-a-${scene}.png`, `${name}-${mains[i]}-${scene}.png`)) });
+      for (const b of branches) report.diffs.push({ kind: 'main-a vs ' + b, scene, ...(await diff(name, `${name}-main-a-${scene}.png`, `${name}-${b}-${scene}.png`)) });
     }
   }
   report.allPass = report.cells.every(c => c.pass);

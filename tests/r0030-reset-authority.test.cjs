@@ -130,6 +130,7 @@ test("ES30-10 N1: preferLocal hash site Reset makes no coarse request and applie
   assert.equal(f.calls.coarse.length,0,"no IP request");
   assert.deepEqual([f.config().lat,f.config().source],[21.4225,"hash"]);assert.equal(stored(f),null);
   assert.doesNotMatch(status(f),/Detecting your area|estimated area/);
+  assert.equal(status(f),"Saved settings cleared.\nUsing the location this widget was set up with: Makkah");
   assert.equal(f.json('SalahConfig.resolve(location.hash).cfg.lat'),21.4225,"runtime equals what reload would select");
 });
 test("ES30-10 control: local mode without a saved record still detects on Reset",T,async()=>{
@@ -221,7 +222,7 @@ test("F2 the closed-panel failure notice is shown on the next open only",T,async
 test("F2 limit: a Reset apply fault with the panel closed drops the owner and saves nothing (no pre-Reset re-persist)",T,async()=>{
   const f=make();f.sandbox.console={...console,error(){}};f.click("set-reset");f.input("set-units","c","change");f.click("setClose");
   f.sandbox.bindConfig=()=>{throw new TypeError("injected bindConfig");};await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
-  assert.equal(stored(f),null,"nothing persisted, in particular not the pre-Reset site");assert.match(live(f),/Settings could not be applied \(TypeError\)/);
+  assert.equal(stored(f),null,"nothing persisted, in particular not the pre-Reset site");assert.match(live(f),/Your changes could not be applied\. Reload the widget to try again\./);
   assert.equal(f.config().units,"f","documented limit: the recorded edit is not applied");
 });
 // ---- review F3: a stale successful apply cannot withdraw a newer failure ----
@@ -270,15 +271,15 @@ for(const callee of CALLEES){
     const seen=unhandled.length;f.input("set-lat","30");f.input("set-lon","31");f.click("setClose");await settlePrayer(f);
     assert.equal(unhandled.length,seen,"no unhandled rejection");
     assert.equal(stored(f).lat,30,"successful save is not rolled back");assert.equal(f.run("_persistOutcome.status"),"saved");
-    assert.match(live(f),/Settings saved in this browser\.\nSettings could not be applied \(TypeError\)\. Reload the widget to try again\./);
+    assert.equal(live(f),"Settings saved in this browser.\nYour changes could not be applied. Reload the widget to try again.");assert.doesNotMatch(live(f),/TypeError|injected/,"no raw error in user text");assert.equal(f.run("_setApplyFault"),"TypeError","sanitised name kept for diagnostics");
     assert.equal(errors.length,1,"reported once");
-    f.buckle.dispatch("click");assert.match(status(f),/Settings could not be applied/);assert.equal(f.elements.get("set-status").classList.contains("err"),true);
+    f.buckle.dispatch("click");assert.match(status(f),/Your changes could not be applied\./);assert.equal(f.elements.get("set-status").classList.contains("err"),true);
   });
 }
 test("ES30-12 Reset apply fault is observed and reported in the dispatching session",T,async()=>{
   const f=make();f.sandbox.bindConfig=()=>{throw new TypeError("injected bindConfig");};f.sandbox.console={...console,error(){}};
   const seen=unhandled.length;f.click("set-reset");await f.resolveCall("coarse",0,DETECTED);await drain();
-  assert.equal(unhandled.length,seen);assert.match(status(f),/Saved settings cleared\.\nSettings could not be applied \(TypeError\)/);
+  assert.equal(unhandled.length,seen);assert.match(status(f),/^Saved settings cleared\.\nYour changes could not be applied\. Reload the widget to try again\./);
   assert.doesNotMatch(status(f),/Using estimated area/,"no claim that the target applied");assert.equal(f.calls.loop,0,"no loop started");
 });
 test("ES30-12 a later successful apply withdraws the failure report",T,async()=>{
