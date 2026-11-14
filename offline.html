@@ -5347,13 +5347,18 @@ function retryDiagnostics(){
 // the margin, the ordinary request is asked for through retryGate/fetchWeather (same owner, spacing and adoption).
 // "Due" implies the record is already ineligible: renewal never extends freshness and the withdrawal at expiry is
 // unchanged. No timer; nothing in SIM/preview; nothing hidden (the loop does not run). _WX_RENEWAL_MARGIN is an
-// ASSUMED parameter (owner decision D-2F-7 (a), 3 s) covering provider publication lag plus device-ahead clock
-// error below 3 s; above that the response repeats the old step and R000D's 60 s spacing applies. Its adequacy
-// against the live provider is unverified. A record outside the step contract (interval != 900 s or a time not on
-// a 15-minute UTC boundary) or one future/expired when received (clock disagreement, PRA-F-24: diagnostic only)
-// is not renewed early: the baseline poll governs it.
+// ASSUMED parameter (owner decision: option D with 3 s) covering provider publication lag plus device-ahead clock
+// error below 3 s; its adequacy against the live provider is unverified. A record outside the step contract
+// (interval != 900 s or a time not on a 15-minute UTC boundary) or one future/expired when received (clock
+// disagreement, PRA-F-24: diagnostic only) is not renewed early: the baseline poll governs it.
+// EARLY-RENEWAL MISS (owner decision D-2F-7 option D, narrow R000D amendment, issue 96 / issue 13): a renewal
+// response that is admitted and valid but whose step has NOT advanced past the held record's is neither an
+// acquisition (the record is not adopted, cached or counted as a receipt) nor a failure: the 60 s spacing that the
+// renewal attempt opened is restored to its previous value, so the next ORDINARY scheduled poll proceeds exactly as
+// it would without the renewal. Once per step (the stage then stays "early-renewal-miss", never due again); every
+// genuine failure (HTTP, timeout, cancel, malformed or rejected response, obsolete generation) keeps R000D spacing.
 const _WX_STEP_MS=900*1000, _WX_RENEWAL_MARGIN=3000;
-let _wxRenewal=null;   // {step,generation}: the last renewal request issued in this document (once per step; diagnostics)
+let _wxRenewal=null;   // {step,generation,outcome}: the last renewal request issued in this document (once per step)
 function weatherClockAgreement(w){
   if(!w||w.src!=="current"||wxNumber(w.currentValidAt)==null||wxNumber(w.retrievedAt)==null) return null;
   return w.currentValidAt>w.retrievedAt?"disagreeing-future":w.retrievedAt-w.currentValidAt>_WX_CURRENT_TTL?"disagreeing-expired-at-receipt":"agreeing";
@@ -5370,19 +5375,22 @@ function weatherRenewal(now=Date.now(),record=weather){
   const dueAt=step+_WX_CURRENT_TTL+_WX_RENEWAL_MARGIN;
   if(now<dueAt||weatherEligibility(record,now).eligible) return out("not-due",null,step,dueAt);
   const mine=_wxRenewal&&_wxRenewal.step===step&&_wxRenewal.generation===(record.target?record.target.generation:null);
+  if(mine&&_wxRenewal.outcome==="early-renewal-miss") return out("early-renewal-miss","renewal answered with the same provider step: the ordinary poll governs; this miss opened no R000D spacing",step,dueAt);
   return out(!mine?"due":wxBusy?"requested":"settled-not-advanced",null,step,dueAt);
 }
 // The loop's per-frame renewal opportunity: a due renewal asks for the ordinary request (retryGate still decides).
 function renewWeather(now=Date.now()){
   const r=weatherRenewal(now); if(!r.due||wxBusy) return false;
-  fetchWeather(); if(!wxBusy) return false;            // gate held it (cooldown, target, mode): nothing was requested
-  _wxRenewal={step:r.step,generation:currentWeatherTarget().generation}; return true;
+  const renewal={step:r.step,generation:currentWeatherTarget().generation,outcome:null};
+  fetchWeather(renewal); if(!wxBusy) return false;     // gate held it (cooldown, target, mode): nothing was requested
+  _wxRenewal=renewal; return true;
 }
 function weatherRenewalDiagnostics(){            // pure read: no adoption, publication or request
   const now=Date.now(), r=weatherRenewal(now), last=_wxRenewal, step=weather&&weather.src==="current"?wxNumber(weather.currentValidAt):null;
   const outcome=!last?null:wxBusy&&step===last.step?"requested":step!=null&&step>last.step?"settled-advanced":
+    last.outcome==="early-renewal-miss"?"early-renewal-miss: same provider step, not adopted; R000D spacing not opened":
     _wxRequests.weather&&_wxRequests.weather.reason?"settled-not-advanced: "+_wxRequests.weather.reason:"settled-not-advanced: provider returned no later step";
-  return {stage:r.stage,reason:r.reason,marginMs:_WX_RENEWAL_MARGIN,marginBasis:"assumed (owner D-2F-7 a); adequacy against the live provider unverified",
+  return {stage:r.stage,reason:r.reason,marginMs:_WX_RENEWAL_MARGIN,marginBasis:"assumed (owner decision: option D, 3 s); adequacy against the live provider unverified",
     step:r.step,dueAt:r.dueAt,clockAgreement:weatherClockAgreement(weather),lastRequestStep:last?last.step:null,lastOutcome:outcome};
 }
 // HOURLY FORECAST TRACK (Open-Meteo). One fetch pulls `current=` (real-time mood) AND `hourly=` (a 3-day
@@ -5546,13 +5554,14 @@ function wxFetchJson(op,a,url){
     })().catch(()=>finish(null,stage+" error"));             // losing late rejection is always observed
   });
 }
-async function fetchWeather(){
+async function fetchWeather(renewal=null){            // renewal: only renewWeather's attempt record (R002F)
   const now=Date.now(), elapsed=_RAFNOW();
   if(retryGate("weather",now,elapsed)!=="eligible") return;   // simulated weather is never overwritten
   const op=beginRequest("weather"); if(!op) return;
   const captured={lat:op.lat,lon:op.lon,units:op.units,zone:op.requestZone,cacheKey:op.weatherCacheKey,
     target:captureWeatherTarget(op.generation,op.lat,op.lon)};
   const a=beginAttempt(op,_WX_BODY_WAIT); if(!a){ finishRequest(op); return; }
+  const priorSpacing=_wxRetry.weather;                        // restored only by an early-renewal miss (R002F)
   lastWxTry=now; _wxRetry.weather={startedAt:elapsed,clock:retryClockDomain()}; wxBusy=true;
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
   try{
@@ -5568,7 +5577,12 @@ async function fetchWeather(){
     // Publication must wake the native consumer even at a frozen clock or
     // between the loader's completed paint and its first animation callback.
     if((current||track)&&elevation!=null){ siteElev=elevation; _renderDirty=true; }
-    if(current&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
+    // EARLY-RENEWAL MISS: an admitted, valid renewal answer for a step not after the held one. Not adopted; the
+    // spacing this attempt opened is restored (only if it is still this attempt's record), once per step.
+    const miss=!!(renewal&&current&&renewal.outcome===null&&wxNumber(current.currentValidAt)!=null&&current.currentIntervalSec>0&&
+      current.currentValidAt<=renewal.step&&renewal.generation===op.generation&&attemptEligible(op,a));
+    if(miss){ renewal.outcome="early-renewal-miss"; if(_wxRetry.weather&&_wxRetry.weather.startedAt===elapsed) _wxRetry.weather=priorSpacing; }
+    if(current&&!miss&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
       weather=current; _renderDirty=true;
       if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
       try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
