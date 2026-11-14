@@ -153,3 +153,23 @@ test('ES34-05 guards: another scene, a paused owner or a disposed lifecycle neve
  lc.dispose();lc.dropped({native:{sceneIdentity:'B',identity:'m'}},'rejected');lc.dropped({native:{sceneIdentity:'B',identity:'m'}},'rejected');
  assert.equal(lc.availability.reason,'disposed','disposed lifecycle');
 });
+
+// Review advisories (R0034 review): the churn threshold is exactly two drops, and drops rejected at completion
+// (the onResult path, not only queue supersession) count toward it.
+function controlled(){
+ let state={...scene(2,{src:'forecast',temp:20,rh:40,vis:12000,cloud:30,code:2,wind:3}),timeScale:0},mono=0,vis=12000;const jobs=[];
+ const lc=new NativeSkyLifecycle({capture:()=>state,now:()=>mono,execute:job=>new Promise(resolve=>jobs.push(resolve))});
+ const settle=async()=>{for(let i=0;i<12;i++)await Promise.resolve();};
+ return {lc,jobs,settle,move(){vis+=100;state={...state,weather:{...state.weather,vis}};mono+=1000;}};
+}
+test('churn threshold is exactly two drops: one rejected completion never reports, the second does',async()=>{
+ const h=controlled();
+ h.lc.request();h.move();h.jobs[0]({status:'ready',raster:{}});await h.settle();
+ assert.equal(h.lc.state.rejected,1);assert.equal(h.lc.state.superseded,0,'rejected at completion, not superseded');
+ assert.equal(h.lc.state.churn.drops,1);assert.notEqual(h.lc.availability.reason,'target-churn','one drop is an ordinary single change');
+ h.lc.request();h.move();h.jobs[1]({status:'ready',raster:{}});await h.settle();
+ assert.equal(h.lc.state.churn.drops,2);assert.equal(h.lc.availability.reason,'target-churn');assert.equal(h.lc.availability.last,'rejected');
+ assert.equal(h.lc.availability.drops,2);
+ h.lc.request();h.jobs[2]({status:'ready',raster:{}});await h.settle();
+ assert.equal(h.lc.availability.reason,'current-frame','acceptance clears it');assert.equal(h.lc.state.churn.drops,0);h.lc.dispose();
+});

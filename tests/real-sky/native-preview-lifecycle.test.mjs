@@ -85,3 +85,10 @@ test('ES34-09 dispose releases its registry slot only while registered, is idemp
  old.dispose();
  assert.equal(g.s.window.SalahSkyPreview,successor);assert.ok(g.classes.has('real-sky-preview-ready'),'successor class untouched');
 });
+
+test('R0034 review: no consumer reads SalahFirstPaint.error; a refused first paint (record undefined) boots the preview normally',()=>{
+ const files=['src/native/index.html','real-sky/native-preview-host.mjs','real-sky/native-host.mjs','real-sky/native-host-hooks.js',...fs.readdirSync(new URL('../../moon/src/',import.meta.url)).filter(f=>/\.(mjs|js)$/.test(f)).map(f=>'moon/src/'+f)];
+ for(const f of files){const t=fs.readFileSync(new URL('../../'+f,import.meta.url),'utf8');assert.doesNotMatch(t,/SalahFirstPaint\??\.error/,f);}
+ const h=fixture({snapshot:{utcMs:0,generation:1,timeScale:1,sceneIdentity:'A',lat:1,lon:2}});
+ assert.equal(h.preview.state.status,'ready','the preview publishes without a first-paint record');assert.equal(h.s.window.SalahFirstPaint??null,null);
+});
