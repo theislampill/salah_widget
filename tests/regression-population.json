@@ -1925,6 +1925,22 @@
     ],
     "protocol": "compare.json (geometry, element boxes, diffs, sharpness, glass effect, perf) and before/after crops; docs/state-contracts/R003B-S1.md"
    }
+  },
+  {
+   "path": "tools/qa/r003b_s1_dpr_cloud.py",
+   "reason": "offline analysis of r003b_s1_capture.cjs runs (Pillow, numpy, scipy): card-edge/corner changes at DPR != 1 and baked-cloud registration; needs captured PNGs from two trees, not a headless unit instrument",
+   "owner": "R003B",
+   "recipe": {
+    "argv": [
+     "python",
+     "tools/qa/r003b_s1_dpr_cloud.py",
+     "dpr|cloud",
+     "<before root>",
+     "<after root>",
+     "<out json>"
+    ],
+    "protocol": "dpr-edges-corners.json / cloud-registration.json; docs/state-contracts/R003B-S1.md §3.7"
+   }
   }
  ]
 }

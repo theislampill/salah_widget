@@ -11,11 +11,11 @@
 // handoff (layer visibility/display/opacity/z-order/DOM order, canvas hashes) with composited samples.
 // Usage: node tools/qa/r003b_s1_capture.cjs --root <tree> --out <dir> --engine firefox|chromium|webkit
 //   [--scene owner|day|fajr|night] [--dpr 1] [--headed 0|1] [--variants base,nopreview,...|all|min]
-//   [--ffdpp <layout.css.devPixelsPerPx>] [--wr hw|sw] [--hold 7000] [--tag <name>] [--playwright <pkg>]
+//   [--cloud <cover %, weather code 2>] [--ffdpp <layout.css.devPixelsPerPx>] [--wr hw|sw] [--hold 7000] [--tag <name>] [--playwright <pkg>]
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http');
 const a={};const v=process.argv.slice(2);for(let i=0;i<v.length;i+=2)a[v[i].slice(2)]=v[i+1];
 const PW=require(a.playwright||'playwright'),root=path.resolve(a.root),engine=a.engine||'firefox',hold=+(a.hold||7000),headed=a.headed==='1';
-const scene=a.scene||'owner',dpr=+(a.dpr||1),tag=a.tag||`${engine}-${scene}-dpr${dpr}${headed?'-headed':''}${a.ffdpp?'-ffdpp'+a.ffdpp:''}${a.wr?'-wr'+a.wr:''}`;
+const scene=a.scene||'owner',dpr=+(a.dpr||1),tag=a.tag||`${engine}-${scene}${a.cloud?'-cloud'+a.cloud:''}-dpr${dpr}${headed?'-headed':''}${a.ffdpp?'-ffdpp'+a.ffdpp:''}${a.wr?'-wr'+a.wr:''}`;
 const out=path.resolve(a.out,tag);fs.mkdirSync(out,{recursive:true});
 // Central Florida (the R0034 probe location), America/New_York. UTC instants on 2026-11-13/14.
 const SCENES={owner:{utc:'2026-11-13T20:15:00Z',isDay:1},day:{utc:'2026-11-13T17:30:00Z',isDay:1},
@@ -27,6 +27,8 @@ const VARIANTS={base:'',nopreview:'.real-sky-preview{visibility:hidden!important
  onetoone:`${SKY}{inset:-1px!important;width:calc(100% + 2px)!important;height:calc(100% + 2px)!important}`,
  pixelated:`${SKY}{image-rendering:pixelated!important}`};
 VARIANTS['nobackdrop+onetoone']=VARIANTS.nobackdrop+VARIANTS.onetoone;
+// Diagnostic: the hidden DOM cloud canvas shown alone (sky canvases hidden), to register baked clouds against it.
+VARIANTS.domclouds=`${SKY}{visibility:hidden!important}html body .c .wfx .cloudcanvas,html body .c.real-sky-composed .wfx .cloudcanvas{visibility:visible!important}`;
 const vlist=a.variants==='min'?['base','onetoone']:(!a.variants||a.variants==='all')?Object.keys(VARIANTS):a.variants.split(',');
 const ordinary=JSON.parse(fs.readFileSync(path.join(root,'tests/r0002-ordinary.json'),'utf8'));
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -45,9 +47,9 @@ const SHIM=`(()=>{const nf=window.fetch.bind(window),iso=ms=>new Date(ms-new Dat
  const json=v=>Promise.resolve(new Response(JSON.stringify(v),{status:200,headers:{'Content-Type':'application/json'}}));
  window.fetch=(input,init)=>{const u=String(input&&input.url||input);
   if(u.includes('api.open-meteo.com')){window.__calls.weather++;const w=Date.now(),m=Math.floor(w/60000)*60000,h=Math.floor(w/3600000)*3600000;
-   return json({timezone:'America/New_York',utc_offset_seconds:-new Date(w).getTimezoneOffset()*60,elevation:30,current:{time:iso(m),interval:900,weather_code:0,temperature_2m:70,apparent_temperature:70,
-    relative_humidity_2m:55,dew_point_2m:53,wind_speed_10m:5,wind_direction_10m:90,wind_gusts_10m:8,cloud_cover:0,precipitation:0,is_day:${S.isDay},visibility:24000},
-    hourly:{time:[iso(h),iso(h+3600000)],temperature_2m:[70,69],weather_code:[0,0],precipitation:[0,0],cloud_cover:[0,0]}});}
+   return json({timezone:'America/New_York',utc_offset_seconds:-new Date(w).getTimezoneOffset()*60,elevation:30,current:{time:iso(m),interval:900,weather_code:${a.cloud?2:0},temperature_2m:70,apparent_temperature:70,
+    relative_humidity_2m:55,dew_point_2m:53,wind_speed_10m:5,wind_direction_10m:90,wind_gusts_10m:8,cloud_cover:${+(a.cloud||0)},precipitation:0,is_day:${S.isDay},visibility:24000},
+    hourly:{time:[iso(h),iso(h+3600000)],temperature_2m:[70,69],weather_code:[${a.cloud?2:0},${a.cloud?2:0}],precipitation:[0,0],cloud_cover:[${+(a.cloud||0)},${+(a.cloud||0)}]}});}
   if(u.includes('api.rainviewer.com')){window.__calls.radar++;return Promise.reject(new TypeError('controlled radar unavailable'));}
   return nf(input,init);};
  if(window.top!==window){const start=performance.now(),HOLD=${hold};window.__hold={released:false};
