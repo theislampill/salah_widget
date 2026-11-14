@@ -45,6 +45,15 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R003A (issue 124) sky-stage hardening at 6de96906 on main 516d8cc8: authored source 4d5cc6aa (no-timetable optic
+    // withdrawal list and one comment) and the legacy-Moon structural control 038b1667 of its generated index 401e3472. Every entry below, including R0034's 9bbec583 and R002E's 3c80fd51, remains admitted unchanged.
+    '4d5cc6aae336f46e98d47eb5c0d15b0723f196b5803a23c03e3b936b17cd20e6':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'6de9690685f0bc3eabde3c2a6566f39186c30551',path:'src/native/index.html',layout:'config,native'}),
+    '038b1667838d448ac8a4cceda7459f2a0349c00ad9ae0fad7dbdc7f7d707f7e6':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'6de9690685f0bc3eabde3c2a6566f39186c30551',path:'index.html',
+      parentSha256:'401e34720bc29f6c77cf173f5689e0b6feb400d9cf43e55abd8b19a5ecaa130f',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0034 (issue 101) refined-sky identity candidate 1f13b185 on main 664ebe22: the authored native body is unchanged
     // (no new authored entry); legacy-Moon structural control of its generated index dbc77c67. Every entry below,
     // including R002E's 3c80fd51 and 3c1f1a0a, remains admitted unchanged. Re-bind again when rebuilt on a later main.
