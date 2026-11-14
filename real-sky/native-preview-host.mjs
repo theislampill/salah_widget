@@ -23,7 +23,7 @@ export function startNativeSkyPreview(){
  const foreground=new NativeForegroundCapture(canvas);
  const solarPublication=new NativeSolarMaskPublication();own(()=>solarPublication.dispose());
  const background=document.createElement('canvas'),back=background.getContext('2d');background.width=325;background.height=530;
- let value=null,pendingValue=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=window.SalahStarBootstrap??null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0,catalogueRequest=0;
+ let value=null,pendingValue=null,baseBytes=null,previewFrame=null,previousMoonBottom=0,disposed=false,lastPaint=-Infinity,raf,catalogue=window.SalahStarBootstrap??null,nativeDriven=false,catalogueRevision=0,paintedCatalogueRevision=0,catalogueRequest=0,awaiting=null,clearedReceipt=null;
  own(()=>{disposed=true;});
  // The retained final-rAF observer measured up to3.3ms after publication.
  // Reserve5ms of wall time inside (never beyond) the30 accepted-second fence.
@@ -44,7 +44,25 @@ export function startNativeSkyPreview(){
   status.retained=true;status.reason=reason;status.publication={utcMs:s.utcMs,ageMs:Math.abs(s.utcMs-first.utcMs),at:performance.now(),retained:true,source:'initial-head'};return true;
  }
  function retireFirstPaint(){document.querySelector('#native-first-paint')?.remove();window.SalahFirstPaint=null;}
- function clear(reason){host.reconcileClouds();solarPublication.cancel();pendingValue=null;if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
+ function clear(reason){clearedReceipt=host.reconcileClouds();solarPublication.cancel();pendingValue=null;if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
+ // R0034 (ISM-SKY-017) awaiting-input is a state with one entry. Entry runs the
+ // full withdrawal once. Re-entry (every frame while there are no coordinates, or
+ // while paused) repeats an effect only when its own input changed: the cloud
+ // reconcile when the recorded receipt is no longer current (a new publication),
+ // the Moon-detail clear when the detail owner was replaced or has rendered/become
+ // visible since entry, and first-paint retirement while a head still exists.
+ // Everything else clear() writes is already in its withdrawn value here.
+ function detailMark(){const d=window.SalahMoonDetail,st=d?.state;return {detail:d,renders:st?.renders,visible:st?.visible};}
+ function awaitInput(){
+  if(!awaiting){
+   clear('accepted target unavailable or hidden');card.classList.add('real-sky-awaiting-input');
+   awaiting={receipt:clearedReceipt,...detailMark()};return;
+  }
+  if(!host.cloudsCurrent(awaiting.receipt))awaiting.receipt=host.reconcileClouds();
+  const mark=detailMark();
+  if(mark.detail&&(mark.detail!==awaiting.detail||mark.renders===undefined||mark.renders!==awaiting.renders||mark.visible!==false)){mark.detail.clear();Object.assign(awaiting,detailMark());}
+  if(window.SalahFirstPaint)retireFirstPaint();
+ }
  function prepareForeground(){
   const bottom=foreground.bottom(),rows=nativeForegroundRows(530,bottom,previousMoonBottom),capture=foreground.capture(rows);
   let mask=null;
@@ -124,8 +142,8 @@ export function startNativeSkyPreview(){
   // Validate their original job as well as the candidate and current preview.
   const first=window.SalahFirstPaint?.value;
   if(first&&!nativeResultCurrent(first.job,s))retireFirstPaint();
-  if(!s.sceneIdentity||s.lat==null||s.lon==null||s.paused){clear('accepted target unavailable or hidden');card.classList.add('real-sky-awaiting-input');return;}
-  card.classList.remove('real-sky-awaiting-input');
+  if(!s.sceneIdentity||s.lat==null||s.lon==null||s.paused){awaitInput();return;}
+  awaiting=null;card.classList.remove('real-sky-awaiting-input');
   if(card.classList.contains('real-sky-composed')){solarPublication.cancel();return;}
   // Retry once with a fresh snapshot and real UTC, never relabel an old result.
   // An unchanged decoded mask supports same-turn recovery. A changed mask must
@@ -183,7 +201,13 @@ export function startNativeSkyPreview(){
    // new displayed catalogue. Avoid rebuilding a current sky before first paint.
    if(catalogue!==next){catalogue=next;catalogueRevision++;}
   }catch(error){if(!disposed&&revision===catalogueRequest)status.catalogueError=String(error.message??error);}
- },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){disposed=true;solarPublication.dispose();retireFirstPaint();catalogue=null;cancelAnimationFrame(raf);canvas.remove();card.classList.remove('real-sky-preview-ready');}};
+ },get frame(){return previewFrame;},get state(){return structuredClone(status);},dispose(){
+  // R0034 single idempotent terminal transition: the same owned releases as a
+  // failed construction (publication, canvas, registry slot and ready class only
+  // while this instance is registered), so a successor is never touched.
+  if(disposed)return;disposed=true;retireFirstPaint();catalogue=null;cancelAnimationFrame(raf);
+  let failure=null;while(owned.length){try{owned.pop()();}catch(error){failure??=error;}}if(failure)throw failure;
+ }};
  own(()=>{if(window.SalahSkyPreview===preview){window.SalahSkyPreview=undefined;card.classList.remove('real-sky-preview-ready');}});
  update();raf=requestAnimationFrame(tick);
  }catch(error){

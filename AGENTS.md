@@ -37,7 +37,7 @@ close N001/N002/N003 or authorize merge/deployment.
 `IMPLICIT_STATES.md` is the repository-wide implicit state-machine registry (`ISM-*`; audit: `docs/audit/post-rlgwo/REPORT.md`).
 For the installers (`ISM-INST-*`) it records states, guards, invariants, evidence and open findings for staging trust, artifact
 admission, cleanup, preview and manual hand-off. Consult it before changing that
-behaviour in `install.sh`/`install.ps1` or performing a consequential transition.
+behaviour in `install.sh`/`install.ps1` or performing a consequential transition; for any other family, consult the entry naming a mechanism before changing it.
 Record materially relevant discoveries there, linking the `docs/state-contracts/`
 contracts rather than duplicating them. It grants no execution authority and proves
 no runtime behaviour.

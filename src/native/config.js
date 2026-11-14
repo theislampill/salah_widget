@@ -379,7 +379,11 @@
       if (res && typeof res === "object" && admitCoordinates(res.lat, res.lon).ok) return true;
       rejected++; return false;
     });
-    var places = admitted.filter(function (r) { return r.class === "place" || r.class === "boundary"; });
+    // Place kind (R0031, D-31-4 A): Nominatim documents that format=jsonv2 (requested below) renames `class` to
+    // `category` (osm-search/Nominatim docs/api/Output.md, "JSONv2", at edbe8c7d); `class` is the json-format name.
+    // An item carrying `class` is read exactly as before; `category` is read only when `class` is absent.
+    function kind(r) { return r.class !== undefined ? r.class : r.category; }
+    var places = admitted.filter(function (r) { var k = kind(r); return k === "place" || k === "boundary"; });
     return { rejected: rejected, cands: (places.length ? places : admitted).map(function (res) {
       var a = res.address || {}, c = admitCoordinates(res.lat, res.lon);
       var place = a.city || a.town || a.village || a.hamlet || a.municipality || a.suburb || a.county || res.name || "";
