@@ -10964,7 +10964,10 @@ function startNativeSky(pack,workerSource,physical){
    // lunar/natural/local light through a differently interpolated decomposition.
    // The accepted L1 display needs that unchanged-grid lunar share in deep night;
    // original worker exposure/raw field and every acceptance fence stay intact.
-   const step=request.options.backgroundStepCss,grid=result.raster.physicalState.sun.altDeg<-3?[Math.ceil(325/step),Math.ceil(530/step)]:[24,40];
+   // R0034-A1: the same holds in daylight. The relocated solar aureole is
+   // removed from this worker field; sampling it on any other lattice leaves a
+   // bilinear crosshatch around the physical Sun (issue 101). Every altitude.
+   const step=request.options.backgroundStepCss,grid=[Math.ceil(325/step),Math.ceil(530/step)];
    // Below -20 degrees the existing worker supplies the bit-identical H1 lunar
    // display along with its raw physical fields. Never recompute that complete
    // pass in this UI callback. Twilight/day retain their existing decomposition.
