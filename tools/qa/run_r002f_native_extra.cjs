@@ -79,20 +79,35 @@ const cellsImpl={
   async notimetable(engine,cand){ const w=await open(engine,cand,{scene:'rain',prayer:'fail'}); const t0=await w.now(); const samples=[];
     for(let k=0;k<=8;k++){ await w.until(t0+k*15000,250); const s=await w.look(); samples.push({t:s.now-t0,sel:s.sel,ready:s.ready,painted:s.painted,wt:s.wt,precip:s.precip,left:s.left}); }
     const png0=await w.shot(`notimetable-${engine}-2min`); const r={samples,png:png0,pageErrors:w.errors}; await w.b.close(); return r; },
-  // R2F-14: fixed-clock frames with no boundary crossing (reduced motion, CSS animations disabled for the capture);
-  // baseline vs candidate, plus a same-tree repeat (noise floor).
-  async pixeldiff(engine,cand,base){ const shotAt=async(srv,tag)=>{ const w=await open(engine,srv,{clock:B-600000,reduced:true}); await w.ready(); await w.until(B-480000);
-      const f=path.join(out,`pixeldiff-${engine}-${tag}.png`); await w.p.screenshot({path:f,animations:'disabled'}); const r={png:sha(fs.readFileSync(f)).slice(0,16),file:f,errors:w.errors}; await w.b.close(); return r; };
-    const c1=await shotAt(cand,'candidate-1'), c2=await shotAt(cand,'candidate-2'), b1=await shotAt(base,'baseline-1'), b2=await shotAt(base,'baseline-2');
+  // R2F-14: fixed-clock frames with no boundary crossing, under a SAME-TREE CONTROL (R002F 5.2b): mocked clock paused
+  // (only runFor advances it), reduced motion, CSS animations disabled for the capture, then 20 x {300 ms of REAL time
+  // for the asynchronous sky workers, 16 ms of page time} so every capture is taken at the identical page instant after
+  // the real-sky presentation receipt has caught up; the receipt (presentationUtcMs) is recorded per capture and a
+  // capture whose receipt differs from the others is reported, never dropped. In the TEST PAGE only, the superseded
+  // first-paint sky preview canvas (.real-sky-preview), whose start instant depends on worker arrival, is hidden.
+  // N repeats per tree; all pairs within a tree and across trees are compared.
+  async pixeldiff(engine,cand,base){ const N=+(process.env.R002F_PIXEL_REPEATS||6);
+    const shotAt=async(srv,tag)=>{ const w=await open(engine,srv,{clock:B-600000,reduced:true}); await w.ready(); await w.until(B-480000);
+      for(let k=0;k<20;k++){ await new Promise(r=>setTimeout(r,300)); await w.p.clock.runFor(16); }
+      const receipt=await w.p.evaluate(()=>{const s=window.SalahRealSky&&window.SalahRealSky.state,v=window.SalahSkyPreview&&window.SalahSkyPreview.state;return {now:Date.now(),presentationUtcMs:s?s.presentationUtcMs:null,previewUtcMs:v?v.utcMs:null,status:s?s.status:null,
+        composed:document.querySelector('.c').classList.contains('real-sky-composed'),fonts:document.fonts.status};});
+      await w.p.addStyleTag({content:'.real-sky-preview{visibility:hidden!important}'});
+      const f=path.join(out,`pixeldiff-${engine}-${tag}.png`); await w.p.screenshot({path:f,animations:'disabled'});
+      const r={png:sha(fs.readFileSync(f)).slice(0,16),file:f,receipt,errors:w.errors}; await w.b.close(); return r; };
     const diff=async(f1,f2)=>{ const b=await pw.chromium.launch(), p=await b.newPage();
       const n=await p.evaluate(async([a,c])=>{const load=s=>new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.src=s;});const [x,y]=await Promise.all([load(a),load(c)]);
         const cv=document.createElement('canvas');cv.width=x.width;cv.height=x.height;const g=cv.getContext('2d');g.drawImage(x,0,0);const A=g.getImageData(0,0,cv.width,cv.height).data;
-        g.clearRect(0,0,cv.width,cv.height);g.drawImage(y,0,0);const C=g.getImageData(0,0,cv.width,cv.height).data;let px=0,max=0;
-        for(let i=0;i<A.length;i+=4){const d=Math.max(Math.abs(A[i]-C[i]),Math.abs(A[i+1]-C[i+1]),Math.abs(A[i+2]-C[i+2]));if(d){px++;if(d>max)max=d;}}return {px,max};},
+        g.clearRect(0,0,cv.width,cv.height);g.drawImage(y,0,0);const C=g.getImageData(0,0,cv.width,cv.height).data;let px=0,max=0;const cells={};
+        for(let i=0;i<A.length;i+=4){const d=Math.max(Math.abs(A[i]-C[i]),Math.abs(A[i+1]-C[i+1]),Math.abs(A[i+2]-C[i+2]));if(d){px++;if(d>max)max=d;const k=Math.floor((i/4)%cv.width/25)*25+','+Math.floor(i/4/cv.width/25)*25;cells[k]=(cells[k]||0)+1;}}
+        return {px,max,topCells:Object.entries(cells).sort((a,b)=>b[1]-a[1]).slice(0,4)};},
         ['data:image/png;base64,'+fs.readFileSync(f1).toString('base64'),'data:image/png;base64,'+fs.readFileSync(f2).toString('base64')]); await b.close(); return n; };
-    return {candidateRepeatIdentical:c1.png===c2.png,baselineRepeatIdentical:b1.png===b2.png,candidateVsBaselineIdentical:c1.png===b1.png,
-      noiseCandidate:await diff(c1.file,c2.file),noiseBaseline:await diff(b1.file,b2.file),cross1:await diff(c1.file,b1.file),cross2:await diff(c2.file,b2.file),
-      pngs:{candidate1:c1.png,candidate2:c2.png,baseline1:b1.png,baseline2:b2.png},pageErrors:[...c1.errors,...c2.errors,...b1.errors,...b2.errors]}; },
+    const C=[],Bs=[]; for(let i=0;i<N;i++) C.push(await shotAt(cand,'candidate-'+i)); for(let i=0;i<N;i++) Bs.push(await shotAt(base,'baseline-'+i));
+    const pairs=async(X,Y,same)=>{ const out=[]; for(let i=0;i<X.length;i++) for(let j=same?i+1:0;j<Y.length;j++) out.push({i,j,...await diff(X[i].file,Y[j].file)}); return out; };
+    const uniq=X=>[...new Set(X.map(x=>x.png))].length;
+    return {repeats:N,candidateDistinctPngs:uniq(C),baselineDistinctPngs:uniq(Bs),identicalAcross:C.some(c=>Bs.some(b=>b.png===c.png)),
+      receipts:{candidate:C.map(c=>c.receipt),baseline:Bs.map(b=>b.receipt)},pngs:{candidate:C.map(c=>c.png),baseline:Bs.map(b=>b.png)},
+      withinCandidate:await pairs(C,C,true),withinBaseline:await pairs(Bs,Bs,true),cross:await pairs(C,Bs,false),
+      pageErrors:[...C,...Bs].flatMap(x=>x.errors)}; },
   // AGENTS M0: real-time 30 s watch of the live widget (stubbed providers): cloud-canvas change at 15 s and 30 s,
   // against the change between two reads of one frame (noise floor). Real Date: no boundary is aimed at.
   async motion(engine,cand,base){ const one=async srv=>{ const w=await open(engine,srv,{real:true,clock:B-600000}); const isReady=await w.ready(); const state=await w.look();
