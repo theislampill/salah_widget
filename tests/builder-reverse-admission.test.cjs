@@ -18,6 +18,8 @@ const MUTANTS = {
   'no-deadline': ['builder', 'await Promise.race([work,deadline])', 'await work'],
   'local-request': ['builder', 'if(embedMode==="local") return;                  // D-31-1 A', '// mutant'],
   'mode-epoch': ['builder', 'epoch!==reverseModeEpoch || embedMode==="local"', 'false'],
+  'epoch-compare': ['builder', 'epoch!==reverseModeEpoch || ', ''],
+  'epoch-bump': ['builder', 'if(nextMode!==embedMode) reverseModeEpoch++;', ''],
   'loose-continent': ['builder', '/^[A-Z]{2}$/.test(j.continentCode)', '/^[A-Za-z ]{2,3}$/.test(j.continentCode)'],
   'class-only': ['config', 'return r.class !== undefined ? r.class : r.category;', 'return r.class;'],
 };
@@ -156,6 +158,12 @@ test('R31-06 switching back to portable issues no catch-up lookup; the next port
 test('R31-06 a mode change supersedes a pending portable lookup (no write after switching to local)', async () => {
   const f = await naDraft(); f.click('mode-local'); const before = observed(f);
   await f.resolve('reverse', 0, { city: 'Lisbon', countryCode: 'PT', continentCode: 'EU' }); assert.equal(observed(f), before);
+});
+test('R31-06 a portable → local → portable round trip supersedes the pending lookup (mode epoch)', async () => {
+  const f = await naDraft(); f.click('mode-local'); f.click('mode-portable'); assert.equal(f.run('embedMode'), 'portable');
+  const before = observed(f);
+  await f.resolve('reverse', 0, { city: 'Lisbon', countryCode: 'PT', continentCode: 'EU' }); assert.equal(observed(f), before);
+  assert.equal(f.tuple()[3], '2');
 });
 test('R31-06 a debounce scheduled in portable mode that fires after switching to local sends nothing', async () => {
   const f = builder(); f.input('lat', '40.7'); f.input('lon', '-74'); f.click('mode-local'); await f.advance(700);

@@ -17,6 +17,8 @@ const cases = {
   'no-deadline': 'R31-04 a body pending past 8 s settles once at the deadline',              // (c)
   'local-request': 'R31-06 local mode: coordinate edits and builder GPS send no reverse request', // (d)
   'mode-epoch': 'R31-06 a mode change supersedes a pending portable lookup',
+  'epoch-compare': 'R31-06 a portable → local → portable round trip supersedes the pending lookup',
+  'epoch-bump': 'R31-06 a portable → local → portable round trip supersedes the pending lookup',
   'loose-continent': 'R31-03a malformed continentCode "na" leaves the method',
   'class-only': 'R31-08 place preference selects the city for a category-keyed Springfield reply', // (f)
 };

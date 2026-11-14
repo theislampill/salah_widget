@@ -1545,6 +1545,26 @@
    }
   },
   {
+   "path": "tools/qa/run_r0031_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, loopback-served generated tree, every provider routed to a fixture or aborted, stubbed geolocation, mocked clock); not a headless unit instrument",
+   "owner": "R0031",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r0031_native.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engines",
+     "chromium,firefox,webkit",
+     "--playwright",
+     "<path to the playwright package>"
+    ],
+    "protocol": "per-engine cell PASS/FAIL in <out>/report.json (R31-13 builder cells, R31-09 wrapper; docs/state-contracts/evidence/R0031/native)"
+   }
+  },
+  {
    "path": "tools/qa/r0028_g12b_native.cjs",
    "reason": "native browser observation (Playwright Chromium/Firefox/WebKit, loopback-served tree, prayer fixture, every other request aborted, frozen clock); not a headless unit instrument",
    "owner": "R0028",
