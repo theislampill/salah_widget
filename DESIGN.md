@@ -328,10 +328,13 @@ dew point alone is not a water-droplet column and cannot enable a corona.
   step ends: the deck, particles and header are withdrawn on that frame (freshness is not traded for continuity).
   The widget then requests the next record about 3 s after the step ends (an assumed margin, see "Weather
   truthfulness"), and the admitted record re-establishes the deck at once — a snap, not an ease — with the same
-  field seed, population and motion. The blink lasts about the margin plus the request time; provider lag or a
-  device clock ahead by more than the margin makes the first answer repeat the old step, and R000D's 60 s spacing
-  then adds about a minute. No refetch happens while a record is valid, so an existing live deck is never eased
-  across a provider step.
+  field seed, population and motion. The blink lasts about the margin plus the request time. If provider lag or a
+  device clock ahead by more than the margin makes that answer repeat the old step, it is an early-renewal miss: it
+  opens no retry spacing, and the ordinary ~30 s poll then behaves exactly as it would have without renewal (the gap
+  ends at that poll if the provider has caught up, otherwise 60–90 s later, as on main). A genuine failure keeps
+  R000D's 60 s spacing. While a valid record and the hourly track are both held no refetch happens, so a live deck
+  is not eased across a provider step (without a track a request can happen while the record is still selected,
+  the R000B healthy handoff, and that replacement eases).
 - **Rain** originates from the actual cloud columns (`_colDens`), fading before the prayer list, and scales by
   WMO code / amount (drizzle → showers → steady → heavy → thunder).
 - **Lightning** is a **procedural branching channel** (midpoint-displacement stepped leader + forks from the
@@ -380,6 +383,13 @@ evaluates a pure renewal derivation on every frame that does not already poll: o
 step of a record that was eligible when received has ended plus an assumed margin of
 3 s, the ordinary request is made through the existing retry gate (request owner,
 target, mode and R000D's 60 s elapsed spacing still decide; adoption is unchanged).
+Early-renewal miss (owner decision: option D with 3 s, a narrow amendment of R000D's
+retry spacing): a renewal answer that is admitted and valid but whose step has not
+advanced past the held record's is neither an acquisition (it is not adopted, cached or
+counted as a receipt) nor a failure: the 60 s spacing it opened is restored to its
+previous value, so the next ordinary poll proceeds. It happens at most once per provider
+step; every genuine failure (HTTP, timeout, cancel, malformed or rejected response,
+obsolete generation) still opens R000D's 60 s spacing.
 Renewal never extends freshness (it is due only after the record has lapsed), adds no
 timer, does nothing in SIM or clock preview, and requests nothing while the card is
 hidden. A record whose `interval` is not 900 s or whose `current.time` is off the
@@ -387,7 +397,7 @@ hidden. A record whose `interval` is not 900 s or whose `current.time` is off th
 disagreement or publication lag), is left to the ordinary ~30 s poll and 60 s spacing;
 `qaState().wxTruth.retry.renewal` reports the stage, the margin and its basis, and the
 sign of a clock disagreement (diagnostic only, D-2F-3 A). The 3 s margin is an
-assumption (D-2F-7 a); its adequacy against the live provider is unverified.
+assumption (owner decision); its adequacy against the live provider is unverified.
 
 RainViewer `past[].time` becomes `frameGeneratedAt`, `generated` becomes
 `indexGeneratedAt`, and completed acquisition has its own `retrievedAt`.

@@ -357,8 +357,13 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   Model estimate freshness ends with each 15-minute provider step: at that moment
   the condition, temperature, clouds and weather effects are withdrawn, and the
   widget asks for the next record ≈3 seconds later (an assumed margin), so the gap
-  lasts about that margin plus the request time. Provider delay or a device clock
-  running ahead by more than the margin can stretch it to about a minute.
+  lasts about that margin plus the request time. If the provider is late or the
+  device clock runs ahead by more than the margin, that early request finds the old
+  record; it is not used and does not delay the ordinary poll (about every 30
+  seconds), so the gap is then exactly what it would be without the early request:
+  until that poll if the provider has caught up by then, otherwise 60–90 seconds.
+  A failed request (an error or timeout, not a stale answer) still waits the usual
+  60 seconds before the next attempt.
   Radar retains mosaic frame-generation, index-generation and retrieval times
   separately: frame and retrieval ages each have an inclusive **20-minute** limit,
   with no future allowance. Index time never replaces a missing frame time.
