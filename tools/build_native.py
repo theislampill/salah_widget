@@ -99,11 +99,15 @@ if s.count(config_tag)!=1:raise ValueError('Expected native config script bounda
 s=replace_exact(s,'</head>','<link rel="stylesheet" href="real-sky/native-sky.css">\n</head>','build_native </head> stylesheet link')
 s=replace_exact(s,config_tag,config_tag+'\n<script id="native-first-paint-code" data-sha256="'+hashlib.sha256(preview.encode()).hexdigest()+'">'+preview+'</script>','build_native config tag + first-paint script')
 s=replace_exact(s,'</body>','<script src="real-sky/native-sky.js"></script>\n</body>','build_native </body> native-sky script')
-css='''.real-sky-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}.real-sky-status{position:absolute;bottom:3px;left:0;width:100%;text-align:center;font:8px sans-serif;color:#aaa;z-index:3;pointer-events:none}.milkyway,.stars,.starglints{display:none!important}
+css='''.real-sky-canvas{position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}.real-sky-status{position:absolute;bottom:3px;left:0;width:100%;text-align:center;font:8px sans-serif;color:#aaa;z-index:3;pointer-events:none}.milkyway,.stars,.starglints{display:none!important}
 /* A valid accepted atmosphere owns the first visible sky. No timer or worker
    readiness can turn an accepted daytime target into a dark placeholder. */
 .c{background:#273445}
-.real-sky-preview{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}
+/* R003B S1 (CI-02): both sky canvases are 325x530 backing stores. The card is 325x530 border-box with a 1 px
+   border, so inset:0 showed them resampled into the 323x528 padding box. Extending each canvas under the border
+   (-1px) presents it 1:1 at DPR 1; the card's overflow:hidden still clips at the padding box, so the border, its
+   radius, the glass and the shadow are untouched and the outer 1 px ring of canvas pixels lies under the border. */
+.real-sky-preview{position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);z-index:0;pointer-events:none;border-radius:inherit;visibility:hidden}
 .c.real-sky-composed .real-sky-preview{display:none}
 .c.real-sky-preview-ready .sky .mphoto,.c.real-sky-preview-ready .sky .moccluder,.c.real-sky-preview-ready .sky .mbeam,.c.real-sky-preview-ready .sky .mglow{visibility:hidden!important}
 .wfx .cloudcanvas{visibility:hidden!important}
