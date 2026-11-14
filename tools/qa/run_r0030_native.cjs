@@ -90,8 +90,9 @@ async function engineRun(name, root, base, cells, shots, tag) {
     await open(page); await page.selectOption('#set-method', '2'); detect.hold = true; const n = detect.count;
     await page.click('#set-reset'); await page.waitForTimeout(300); await close(page); const afterClose = await stored(page);
     detect.hold = false; release(); await page.waitForTimeout(2500);
+    const coarseRequests = detect.count - n;   // counted before the readback page, whose own boot detects
     let c = await cfg(page), rb = await readback();
-    cell('R1', afterClose === null && rb === null && c.lat > 24 && c.lat < 25 && detect.count === n + 1, { afterClose, readback: rb, runtime: c, errors: errors.length }); await page.close();
+    cell('R1', afterClose === null && rb === null && c.lat > 24 && c.lat < 25 && coarseRequests === 1, { afterClose, readback: rb, runtime: c, coarseRequests, errors: errors.length }); await page.close();
     // R2: display-name edit during detection, close, release.
     ({ page, errors } = await fresh('#local=1', LONDON));
     await open(page); detect.hold = true; await page.click('#set-reset'); await page.fill('#set-label', 'Home'); await close(page);

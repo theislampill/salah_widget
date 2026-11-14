@@ -634,6 +634,17 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   `Enter`/`Space` work; not hover-dependent) **only in local/preferLocal mode** — hardcoded embeds are untouched.
   The panel overlays the prayer display inside the same 325×530 card (internal scroll; never resizes the iframe or
   clips header/footer). Precise geolocation is **only** called from the panel button (user gesture).
+- **Settings Reset and close (R0030, docs/state-contracts/R0030.md):** closing the panel is auto-save, never
+  cancel. Once Reset has cleared the saved record it owns the *location* until a newer explicit location intent
+  (typed coordinates, a place search, the GPS pin, another Reset); closing or reopening the panel and editing the
+  display name do not end it. Edits made before the Reset click are discarded; edits made after it stay the
+  user's and a close saves them on top of the Reset target once that lands (a target arriving while a later panel
+  session is open waits for that session to close). If detection fails with the panel still open, the visible form
+  (old site, "Enter your location.") is the location again; if it fails after close, later edits apply for the
+  session only, the panel does not reopen, and the next open says so. After a clear nothing claims the cleared
+  record. In `preferLocal` mode Reset selects what the resolver would (the hash site, no IP request). A settings
+  apply that throws is reported once in the status/live region ("Settings could not be applied …"); the saved or
+  session-only outcome already shown stays.
 - **`qaState().config`** exposes `configSource/configMode/autoDetectSource/autoDetectStatus/storageAvailable/
   storageError/geolocationPermissionState/geolocationLastError/lat/lon/tz/label/hashConfigOverridden/why`.
 - **Embed size = card size:** the iframe wrapper is **325×530** — exactly the widget card (`.c`) — in the builder
