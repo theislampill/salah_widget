@@ -235,6 +235,20 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-SKY-030](#ism-sky-030) | Page-lifecycle fan-out across sky owners | new | PEX | IMS | EEV | new |
 | [ISM-SKY-031](#ism-sky-031) | Diagnostic telemetry state (debugMotion history, qaState) | new | DWE | IMS | PEX | new |
 
+Proposed entries, pending acceptance (R0034 sky-physics registry pass, 2026-11-14; summary in
+[R0034-sky-physics-registry.md](docs/state-contracts/R0034-sky-physics-registry.md)). They are **not counted** in
+[Current counts](#current-counts) and carry no index code until accepted evidence admits them; the codes below are
+each entry's "Proposed status (effective on acceptance)".
+
+| Registry ID | Name | Original ID | Proposed Doc | Proposed Impl | Proposed Verif | Historical disposition |
+|---|---|---|---|---|---|---|
+| [ISM-SKY-032](#ism-sky-032) | Weather-to-sky driver projection and physical-input mapping | new | PEX | PEX | PEX | new (proposed) |
+| [ISM-SKY-033](#ism-sky-033) | Atmospheric scattering, albedo and ozone parameter contract; sampling lattices | new | PEX | PEX | PEX | new (proposed) |
+| [ISM-SKY-034](#ism-sky-034) | Cloud lighting (silver lining), foreground capture and display-linear transfer | new | PEX | PEX | PEX | new (proposed) |
+| [ISM-SKY-035](#ism-sky-035) | Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration | new | DWE | IMS | PEX | new (proposed) |
+| [ISM-SKY-036](#ism-sky-036) | Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction) | new | PEX | PEX | PEX | new (proposed) |
+| [ISM-SKY-037](#ism-sky-037) | Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion) | new | PEX | IMS | PEX | new (proposed) |
+
 ### Moon pipeline (`ISM-MOON`)
 
 | Registry ID | Name | Original ID | Doc | Impl | Verif | Historical disposition |
@@ -864,6 +878,21 @@ Original audit: **N10** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weathe
   - Original evidence: {'relevant_existing_files': ['tests/r000c-weather.test.cjs', 'tests/r000d-weather.test.cjs', 'tests/r0017-transport.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'No real cross-origin image/canvas behavior or provider host compromise test. Exact native resource reclamation after detachment remains a browser concern; no current product defect asserted.'}
   - Original remaining risk: No real cross-origin image/canvas behavior or provider host compromise test. Exact native resource reclamation after detachment remains a browser concern; no current product defect asserted. Wall-clock rollback can reject weather freshness while weather/radar retry gates remain closed; exact-source gates were exercised under XF02, without native browser/provider qualification.
 - **Findings.** [PRA-F-16](docs/audit/post-rlgwo/FINDINGS.md#pra-f-16)
+- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; effective on acceptance).**
+  Geographic calculation, from source on main `91c60ed2` (`fetchRadar` ~L1551-1583, `wxRadarSample` ~L1522-1550).
+  Current state recorded; owner decision D-32-1 A2 (disable live radar acquisition, R0032) is not yet implemented.
+  - Projection: Web Mercator tile at fixed zoom 6 (n = 64): fx = (lon + 180)/360·n,
+    fy = (1 − ln(tan φ + sec φ)/π)/2·n; tile (⌊fx⌋, ⌊fy⌋); URL `host + path + /256/6/x/y/2/1_1.png`.
+  - Sample window: pixel (⌊(fx−x)·256⌋, ⌊(fy−y)·256⌋), 7×7 neighbourhood clipped at the tile edge (no neighbour
+    tile is fetched, so `sampledCount` falls below 49 near edges); a pixel counts when alpha > 40; outputs
+    `{returnCount, sampledCount, coverage, meanAlpha}` only.
+  - Guards: only finiteness of fx/fy. Source arithmetic (not executed): latitudes beyond ±85.05° give a tile row
+    outside 0..63 (for example φ = 89° → row −17), and longitude 180 gives column 64; both are dispatched.
+  - Admission: same captured target (generation, lat, lon) and attempt eligibility before and after decode; TTL
+    20 min; no consumer beyond `qaState().wxTruth` (`radarPrecipNow()` is 0).
+  - Tests: `tests/r000c-weather.test.cjs` "R001E both real acquisitions preserve coordinate" (six mid-latitude tile
+    cases), `tests/r000d-weather.test.cjs`. Gaps: no polar/antimeridian tile case.
+  - Risks routed: R0032 (radar/storage).
 
 <a id="ism-wx-005"></a>
 ### ISM-WX-005 — Cloud publication authority receipt (weather → cloud consumers)
@@ -1624,6 +1653,22 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: {'relevant_existing_files': ['tests/r0024-cloud-expiry.test.cjs', 'tests/r0025-continuity.cjs', 'tests/r0025-lifecycle.cjs', 'tests/r0017-cloud-visibility.cjs', 'tests/r0024-particle-origin.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Probe establishes retained numeric coverage and raster-density calls, not native pixels. Real motion, wrap/lifetime continuity and coverage appearance still require the AGENTS native clip/visual contract.'}
   - Original remaining risk: Probe establishes retained numeric coverage and raster-density calls, not native pixels. Real motion, wrap/lifetime continuity and coverage appearance still require the AGENTS native clip/visual contract.
 - **Findings.** [PRA-F-03](docs/audit/post-rlgwo/FINDINGS.md#pra-f-03)
+- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; effective on acceptance).**
+  Wind and generation facts not recorded above, from source on main `91c60ed2`:
+  - Wind source: Open-Meteo `wind_speed_10m`/`wind_direction_10m` in m/s (current block; hourly track only in
+    explicit preview, ISM-WX-009), projected by `wxDrivers` (ISM-SKY-032). Drift speed `wspd = 0.06 + 0.6·wind`,
+    where wind = r(m/s, 0.5, 14); direction enters only as `wx = windX = −sin(dir)` (`applyCloudState` ~L3279).
+    `cloudState.wy` (`cos dir`) is written and never read: drift is horizontal only. Without a record the fallback
+    `windX = −0.7`, wind 0 still yields `0.06·−0.7` travel (decorative calm drift); the initial `cloudState` is
+    `wx −0.7, wspd 0.15` until the first `applyCloudState`.
+  - Travel per deck = wind·dt·(0.024 + 0.006·deck) in wrap units (period 1.25 card widths), dt = elapsed × rate
+    (1 in wall mode, `TIMESCALE` otherwise); life and wander advance with dt regardless of wind.
+  - Generation: three decks `[low, mid, high]` with cluster radii 31/26/20 px, band centres 0.205/0.135/0.07 of
+    the 232 px painter height, 7/6/5 slots, 13-puff template; active slots = clamp((cov·n·1.25 − i)·1.2); seed
+    `_cloudFieldSeed = wrap(lat·12.9 + lon·7.31 + seed·4.7, 617)`, population offset by the civil day index only at
+    an identity change. The painter repaints about every 76 ms when motion is allowed (loop ~L4023-4026), only when
+    dirty under reduced motion.
+  - Lighting, capture and transfer: ISM-SKY-034. Tests for the wind constants: none found (gap).
 
 <a id="ism-sky-004"></a>
 ### ISM-SKY-004 — Precipitation population, cloud-origin gating and lightning bucket
@@ -1731,6 +1776,11 @@ Original audit: **R01** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-lifecycle.test.mjs:13–30; tests/real-sky/native-rate-availability.test.mjs:12–50; parent aggregate275 existing renderer cases PASS
   - Original remaining risk: Epoch/clock/currentness correctness inspected and exercised by existing mocks. Native event-loop stalls and high-rate visible continuity require native capture, not flags.
 - **Findings.** [PRA-F-10](docs/audit/post-rlgwo/FINDINGS.md#pra-f-10)
+- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged).** Weather inputs consumed by
+  the job versus keyed by the identity are tabulated in ISM-SKY-032; the identity also includes `reducedMotion`, so
+  an OS reduced-motion toggle withdraws the refined frame. Cadence on main: a 500 ms request timer
+  (`native-host.mjs` L252) with lifecycle coalescing min(4 s, 15 s/rate) (`native-lifecycle.mjs` L82). The R0034
+  branch's narrowed identity is not merged.
 
 <a id="ism-sky-007"></a>
 ### ISM-SKY-007 — Latest-only serialised render queue
@@ -2196,6 +2246,20 @@ Original audit: **R18** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Recovery: Synchronous; initialization errors propagate; realm lifetime table bounded. No async reentrancy under JS single-threaded module execution.
   - Original evidence: tests/real-sky/native-host-encoding.test.mjs:14–35; tests/real-sky/native-host-streams.test.mjs:7–31; tests/real-sky/native-encoding.test.mjs
   - Original remaining risk: Exact byte equality is not perception, tone-calibration or native performance certification. Module copies in worker/UI retain their own bounded tables.
+- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; effective on acceptance).**
+  Tone map and output quantisation, from source on main `91c60ed2`:
+  - Tone map: code = round(255·sRGB_OETF(1 − exp(−E·L))) per channel (`nativeOracleCode`,
+    `native-encoding.mjs` L9); E = auto exposure (ISM-SKY-033). `encodeNativeFrame` (preview, L27-40) and
+    `encodeNativeDisplayInto` (refined, `native-host.mjs` L18-49) return the same codes; the refined path adds an
+    8192-bin bracket table and an equal-channel shortcut, never an approximation.
+  - Quantisation: plain 8-bit rounding at exact binary64 thresholds; **no dither, noise, blue-noise or ordered
+    table** in either encoder or in `nativeDisplayCode` (cloud join). Smooth gradients therefore produce 1-LSB
+    contour steps whose spacing follows the local gradient (R0034 round 4 measured canvas residual 0.22 grey
+    levels against an 8-bit control of 0.29).
+  - Lifetime: thresholds built once per realm on first encode; the refined bracket table once per module copy;
+    no invalidation is needed (exposure is an input, not a key).
+  - Tests: `tests/real-sky/native-encoding.test.mjs`, `native-host-encoding.test.mjs`, `native-host-streams.test.mjs`,
+    `cloud-transfer.test.mjs`. Ownership of the artifact hypotheses: ISM-SKY-037.
 
 <a id="ism-sky-024"></a>
 ### ISM-SKY-024 — Spectral selection and B–V fit retention
@@ -2382,6 +2446,354 @@ Original audit: **new (NEW-D-05; OM-05 adds sticky acquisition flags)** · Lane 
 - **Accepted evidence.** r001d-* (lifecycle only)
 - **Tests.** `tests/r001d-*.cjs`
 - **Findings.** [PRA-F-11](docs/audit/post-rlgwo/FINDINGS.md#pra-f-11), [PRA-F-15](docs/audit/post-rlgwo/FINDINGS.md#pra-f-15)
+
+### Proposed entries from the R0034 sky-physics registry pass
+
+Source reading on main `91c60ed2` (documentation only; no code, test, tool or generated file changed; nothing
+executed in a browser). Line numbers are approximate anchors into `src/native/index.html` unless another file is
+named. Each entry states observed facts, hypotheses and unknowns separately. None of them names a cause of the
+R0034 owner-reported artifact; the per-hypothesis ownership is in
+[R0034-sky-physics-registry.md](docs/state-contracts/R0034-sky-physics-registry.md).
+
+<a id="ism-sky-032"></a>
+### ISM-SKY-032 — Weather-to-sky driver projection and physical-input mapping
+
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+
+- **Scope and decision.** How one admitted weather record becomes the inputs every sky consumer reads: native CSS
+  atmosphere, cloud deck, wind drift, optics, and the refined/preview physical job. Admission, truth and expiry stay
+  with ISM-WX-001/002/005; preview substitution with ISM-WX-009; refined identity with ISM-SKY-006.
+- **Sources.** `wxDrivers` ~L1614-1631; `_coverCode`/`gateWeatherCode` ~L2655-2669; `wxClass` ~L2670-2681; `WX`
+  class table ~L2686-2695; `atmosphere` layer split ~L3178-3180; `real-sky/native-host-hooks.js` `capture` weather
+  copy ~L45; `real-sky/native-contract.mjs` `nativeJob` ~L10-23 (aerosol L14, temperature L15).
+- **Stateless projection.** Pure functions of `selectedWeather()` (or `decision.record`) plus `units`. The only
+  module state written is the diagnostic string `_wxDowngrade` (set by `gateWeatherCode`, read by `qaState`).
+- **Inputs → outputs (observed).**
+  - `wxDrivers`: heat r(feels °C, 27, 40); cold r(feels, 8, −8); wind r(speed m/s, 0.5, 14) (URL requests
+    `wind_speed_unit=ms`, ~L1485); gust; `windX = −sin(dir)` with direction fallback 225°; humid r(dew °C, 8, 22);
+    `rh` fallback 50 %; cloud = `cloud_cover`/100 (fallback 0); haze = 1 − r(visibility m, 1000, 20000).
+  - No record: `{heat 0, cold 0, wind 0, gust 0, windX −0.7, humid 0, rh 0.5, cloud 0, haze 0}` (decorative fallback;
+    the comment says it is never stored as measured wind).
+  - Category: `renderCode` from the decision; precipitation classes need ≥ 0.05 mm, thunder ≥ 0.8 mm, else
+    downgraded to `_coverCode` (cloud ≥ 85 % → 3, ≥ 22 % → 2, else 0).
+  - Cloud layers: `cloud_cover_low/mid/high` when the record has `cloudLow`; otherwise a fixed per-class split table
+    (e.g. cloud → 0.2/0.55/0.4, overcast → 0.92/0.85/0.5).
+  - Refined/preview job (`nativeJob`): consumes only `vis` (aerosol τ550 = 0.06 + 0.30·clamp01(1 − vis/20000) when
+    physical; 0.06 otherwise; vis absent → 20000), `temp` (°C, clamped −90..70; absent → 10), `src`, and record
+    presence. `rh`, `cloud`, `code`, `wind` are copied into the snapshot (`capture` ~L45) but not read by the job.
+- **Identity / recompute keying (observed on main).** `nativeIdentity` serialises the whole snapshot `weather`
+  object, so any change of `src`, `temp`, `rh`, `vis`, `cloud`, `code` or `wind` bumps the refined epoch and withdraws
+  the refined frame (ISM-SKY-006, PRA-F-10). Branch `claude/r0034-refined-sky-identity-20261113` (not merged)
+  narrows the identity to the consumed terms; see [R0034](https://github.com/theislampill/salah_widget/issues/101)
+  contract §1.1. Cloud pixels are fenced separately by the cloud receipt (ISM-WX-005), not by this identity.
+- **Invariants (observed).** One eligible record supplies every consumer in one `atmosphere()` call (`D` ~L3097);
+  forecast substitution only in explicit preview (`syncWeather`); a missing field takes a fixed fallback, never a
+  remembered earlier value.
+- **Failure and recovery.** None stateful: an unavailable decision zeroes clouds/effects through ISM-WX-005.
+- **Tests.** `tests/r000c-weather.test.cjs` (request fields incl. `wind_speed_unit=ms`), `tests/r0024-weather.test.cjs`,
+  `tests/hotfix-prayer-weather.test.cjs`, `tests/real-sky/native-contract.test.mjs` (job fields). Gaps: no test pins
+  the `wxDrivers` ramps or fallbacks, nor the per-class layer split table.
+- **Observed facts.** visibility ≥ 20 km saturates the aerosol term at 0.06; the `WX` table's `blur`, `st`, `mn`,
+  `gs`, `hs`, `ts` scale native CSS layers only (the refined sky ignores them).
+- **Hypotheses.** none.
+- **Unknowns.** provider semantics of `visibility` and layered cover per region (outside the repository).
+- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**: written here and in comments; one
+  central pure function; unit coverage of request fields and job, not of the ramps.
+- **Risks routed.** identity over-keying → R0034; record admission/renewal → R002F.
+
+<a id="ism-sky-033"></a>
+### ISM-SKY-033 — Atmospheric scattering, albedo and ozone parameter contract; sampling lattices
+
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+
+- **Scope and decision.** Which scattering physics, constants and per-scene parameters produce the refined and
+  preview sky radiance, and on which sampling lattice. The copied core is generated from `vendor/real-sky`
+  (immutable); this entry reads the copy `real-sky/core/src/*` and the native owners.
+- **Sources.** `real-sky/core/src/atmosphere.mjs` `normaliseAtmosphere` L8-22, `rayleighOpticalDepth` L23,
+  `aerosolOpticalDepth` L24, `phaseRayleigh` L33, `phaseHG` L36; `real-sky/core/src/sky-background.mjs`
+  `singleScatteredSun` L55-67, `createSkyModel` L72-96, `patatTwilight` L29-34, `moonSkyLuminance` L39-46;
+  `real-sky/core/src/physical-sky-renderer.mjs` `renderPhysicalSky` L39-75 (background grid L47-53, exposure L61);
+  `real-sky/native-contract.mjs` `nativeJob` L17-22; `real-sky/native-preview.mjs` `nativeAtmosphereFields`
+  L303-341, `renderNativeBackgroundPreview` L343-360, `nativeSkyPresentation` L132+, `nativeSolarRegistration` L39-64,
+  `lunarDisplayTarget` L86; native CSS sky `physSky` ~L2621-2646, `skyLum` ~L2613-2620.
+- **Stateless model with caches.** No flags or lifecycle. Per-object/per-model caches are registered elsewhere:
+  coefficient WeakMap (ISM-SKY-026), solar node grid (ISM-SKY-027), spectra (ISM-SKY-024/025), display geometry
+  (ISM-SKY-021), encoder table (ISM-SKY-023).
+- **Parameters (observed; supplied by `nativeJob` vs core default).**
+
+  | Quantity | Value | Origin |
+  |---|---|---|
+  | Rayleigh τ(λ) | 0.008569 λ⁻⁴(1 + 0.0113 λ⁻² + 0.00013 λ⁻⁴)·P/1013.25 | core formula |
+  | Station pressure P | standard atmosphere from `elevationM` (0 m unless a CP9-bound elevation exists, ISM-SKY-028) | core default |
+  | Rayleigh / aerosol scale heights | 8000 m / 1200 m | core default |
+  | Aerosol τ550 | 0.06 + 0.30·(1 − vis/20000), clamped (physical) | `nativeJob` (labelled "not measured AOD") |
+  | Ångström exponent | 1.3 | core default |
+  | Mie phase | Henyey–Greenstein, g = 0.76 (`aerosolG`) | core default; never set natively |
+  | Aerosol single-scattering albedo | 0.9 (`aerosolAlbedo`) | core default |
+  | Grey absorbing τ | 0 | core default |
+  | Cloud transmission / glow in the refined job | 1 / 0 cd m⁻² (enforced: `native-engine.mjs` L177 throws otherwise) | `nativeJob` |
+  | Light pollution | `LPOLL` × 0.003 cd m⁻² (physical) | `nativeJob` |
+  | Residual night | assumed non-stellar 0.00014 cd m⁻² zenith | `nativeJob` |
+  | Exposure | nominal 24, auto: E = 24 / (1 + 24·meanY/0.5) | `nativeJob`, core L61, preview L352 |
+  | Observer pressure for astrometry | 0 (geometric; no refraction) | `nativeJob` L17 |
+
+- **Scattering order (observed).** Single scattering only: spherical shell, 95 wavelength bins, 24 view × 12 solar
+  quadrature steps, Earth shadow per point (`singleScatteredSun`). **Multiple scattering is not modelled**; below the
+  horizon line the empirical Patat (2006) twilight excess fills only a luminance deficit, weighted by solar
+  depression 3..5° and rescaled by a first-order optical-depth ratio (L77-78). The core's own warning list states
+  "No full multiple scattering, polarisation, ozone bands" (L95).
+- **Ozone absorption (observed).** Not modelled anywhere in the shipped sky: no ozone term in `atmosphere.mjs`,
+  `sky-background.mjs`, the native owners or `moon/src/*`; the only occurrence is that warning string.
+- **Albedos (observed).** Ground albedo: none — directions below the horizon return black/`ground:true`; no surface
+  reflection term. Aerosol single-scattering albedo 0.9 (above); the preview evaluates a second model with
+  `aerosolAlbedo:0` when the Sun is above 10° to separate the aerosol share for display registration (L304). Lunar
+  scattering albedo (τR + τA·ω)/τ for the Krisciunas–Schaefer moonlight term (core L82, preview L402). Cloud albedo:
+  no physical parameter; clouds are a display-referred painting (ISM-SKY-034). Lunar surface albedo (LRO texture)
+  belongs to ISM-MOON.
+- **Sampling lattices (observed).** Preview: atmosphere sampled on 25×41 nodes (`grid` 24×40) bilinearly
+  interpolated per 325×530 pixel (cell ≈ 13.5 × 13.25 px); above |timeScale| 10: 12×20 grid on a 65×106 raster later
+  upscaled ×5 by `drawImage` (`native-preview-host.mjs` L150-157). Refined: `backgroundStepCss: 8`
+  (`native-contract.mjs` L20) → 42×68 nodes (gx = ⌈325/8⌉ = 41, gy = ⌈530/8⌉ = 67), cell ≈ 7.93 × 7.91 px, bilinear
+  (core L47-53); the worker's night decomposition uses the same 41×67 grid (`native-engine.mjs` L185). Bilinear
+  interpolation is continuous but its derivative jumps on node lines.
+- **Display adaptations (observed, labelled display-only in source).** Solar aerosol aureole re-registered to the
+  native Sun slot when the Sun is above 10° (`nativeSolarRegistration`, active gate: alt > 10°, camera view, anchor
+  inside the raster; weight smoothstep over 10..20°); twilight white-point gains below 10° (Patat B−V); lunar
+  soft shoulder K = 0.003, H = 0.020 (`lunarDisplayTarget`); per-pixel solid-angle normalisation of the display copy.
+- **Native CSS sky (generated app).** `physSky`/`skyLum` keyframe colours and the `WX` tint still feed `--g1..--g3`,
+  but the generated stylesheet sets `.c{background:#273445}` and hides `.atmo .scatter/.belt/.airglow/.aurora`, so
+  in the shipped app broad sky radiance comes from the canvases (ISM-SKY-037). `rayleighStrength`/`mieStrength` in
+  `atmosphere()` (~L3252) are descriptors only.
+- **Invariants (observed).** Validated, frozen atmosphere objects (`atmValidated` WeakSet); finite-range guards on
+  every parameter; no persistent cache keyed by time.
+- **Tests.** `tests/real-sky/native-preview.test.mjs` (preview fields, HG registration), `native-contract.test.mjs`,
+  `native-horizon.test.mjs`, `native-worker-lunar-display.test.mjs` (step grid), vendor oracle suite (not examined
+  here). Gaps: no repository test pins g, ω, Ångström or the absence of ozone/multiple scattering as a declared
+  limitation; no test of the refined 41×67 lattice geometry.
+- **Hypotheses.** The ~7.9 px refined lattice and ~13.5 px preview lattice are periodic structures in the frame;
+  R0034 round 4 found only the 13.5 px seams at ≤ 0.05 grey levels and no other peak in either canvas readback.
+  Neither is claimed to explain the owner's 4–9 px pattern.
+- **Unknowns.** vendor validation coverage of the copied constants; perceptual effect of derivative seams after 8-bit
+  quantisation.
+- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**.
+- **Risks routed.** lattice/quantisation interaction with the artifact → R0034; physics fidelity (ozone, multiple
+  scattering) → unowned.
+
+<a id="ism-sky-034"></a>
+### ISM-SKY-034 — Cloud lighting (silver lining), foreground capture and display-linear transfer
+
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+
+- **Scope and decision.** How painted cloud puffs are coloured and lit, captured from the hidden 144×232 painter
+  canvas and joined into the preview/refined frame. Population, seeding, wind travel and coverage easing stay in
+  ISM-SKY-003; the publication receipt in ISM-WX-005; mask decode in ISM-SKY-016.
+- **Sources.** `paintClouds` ~L2861-2921 (decks ~L2873-2877, puff loop ~L2902-2914, rim ~L2909-2912, column density
+  ~L2915-2916); `_drawPuff` ~L2846-2855; `atmosphere` cloud tints ~L3145-3161; `applyCloudState` ~L3266-3285;
+  `real-sky/native-preview.mjs` `nativeCloudSolarLighting` L71-79; `real-sky/native-composition.mjs`
+  `NativeForegroundCapture.capture` L130-162, `prepareSolarMask` L115-129, `nativeForeground` L70-91,
+  `nativeInverseCode` L8-15, `nativeCloudMaskAt` L16; `real-sky/native-cloud-transfer.mjs` L7-61; CSS `.cloudcanvas`
+  ~L210-212, generated `.wfx .cloudcanvas{visibility:hidden!important}`.
+- **State dimensions.** `cloudState` lighting fields `{sunX, sunY, sunUp, sunCol, moonCol, moonX, moonY, moonLit,
+  physicalLight, warmth, tLow/tMid/tHi}` (overwritten each `applyCloudState`); capture scratch canvases (325×rows);
+  module-lifetime lookup tables in `native-cloud-transfer.mjs` (256-entry sRGB→linear, 4097-entry guess, 256
+  boundaries). No other flags.
+- **Lighting (observed).** Per puff: vertical base/top shade (tint ×0.6 base, ×1.1–1.14 top); warm direct light
+  `mix(col, [255,166,102], 0.62·warmth·facing)`; **silver/gold lining** `rim = facing·sunUp·max(0, cosθ)·0.85` towards
+  `sunCol`; **moonlit edge** `mrim = ml·max(0, cosθ)·0.65` towards `moonCol`. `facing` and the rim direction come
+  from `SalahNativeCloudLighting(snapshot).sample(u,v)` (camera ray · physical Sun direction, tangent derivative);
+  without it, from the native arc-sun position (`A.sunX/sunY`, i.e. `--sunx/--suny`), not `--sunvx/--sunvy`.
+  Gates: `sunUp = clamp((elev+1)/5)`; warmth = clamp((18−elev)/16)·beam; `moonLit` = native moonlight (zero unless
+  ISM-MOON-020 eligibility). No subsurface or volumetric scattering exists; "SSS" is this display rim only.
+- **Cloud albedo (observed).** None physical. Deck colour = display tint mixed by wetness/overcast/day factor
+  (`cloudBase`, ~L3146-3157); alpha = painted coverage. The refined job's cloud transmission is fixed at 1; painted
+  alpha is the sole cloud transmission owner (`nativeForeground` diagnostics, `native-engine.mjs` L177).
+- **Capture and transfer (observed).** `capture(rows)`: `reconcileClouds()` first (write effect, PRA-F-15); draws the
+  144×232 painter into 325×530 with `ctx.filter = blur(0.55·325/rect.width px)` (non-integer up-scale ×2.257/×2.284,
+  browser resampling filter), then the vertical mask (stops 0/0.03/0.24/0.34) with `destination-in`. Refined: cloud
+  joined in display-linear light `−expm1(−E·base)(1−α) + sRGB⁻¹(code)·α`, mapped back through `−log1p(−x)/E` with a
+  1 − 2⁻¹⁷ clip, then the shared encoder. Preview: the same join on display bytes (`nativeCloudDisplayFrame`) with
+  exact half-code rounding `nativeDisplayCode`. Solar obstruction mask = 255 − cloud alpha, PNG data URL
+  (`toDataURL`, ~700/min under cloud per R0034 §1.6), or a CSS gradient when every alpha is 0.
+- **Invariants (observed).** One cloud application per frame; code 255 is saturation, not infinite radiance; a
+  non-`blur()`/non-`none` filter on the painter throws (`Unsupported native cloud filter`).
+- **Failure and recovery.** Capture throws if the canvas has no drawable bounds; host `failure` path (ISM-SKY-015).
+- **Tests.** `tests/real-sky/cloud-transfer.test.mjs`, `native-composition.test.mjs`, `native-host-composition.test.mjs`,
+  `native-cloud-unresolved.test.mjs`, `native-preview.test.mjs` (facing direction), `cp9-mask-performance.test.mjs`,
+  `tests/r0025-*.cjs`. Gaps: no test pins the rim coefficients or the arc-sun fallback direction.
+- **Hypotheses.** The fallback lining direction (arc sun) can disagree with the physical-light direction when the
+  lighting hook is unavailable; not observed.
+- **Unknowns.** browser resampling kernel for the ×2.26 painter up-scale (implementation-defined).
+- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**.
+- **Risks routed.** capture write effect → R0036 (per R0034 contract); compose allocation/data-URL rate → R0034 (G3
+  measurement, PRA-F-34).
+
+<a id="ism-sky-035"></a>
+### ISM-SKY-035 — Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration
+
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+
+- **Scope and decision.** When each discrete optical presentation may show, at what opacity, where it is anchored,
+  and how it is withdrawn. Generic CSS publication is ISM-SKY-005; this entry models the gate table.
+- **Sources.** `atmosphere` ~L3181-3201 (gates), `paint` ~L3333-3351 (publication), `paintLunarOptic` ~L3048-3060,
+  `withdrawWeatherEffects` ~L2766-2773, `paintCelestialWithoutTimetable` ~L3061-3084, `paintSolarPresentation`
+  `--sunvx/--sunvy` ~L3030-3031; CSS `.sunhalo/.sundogs/.sunpillar` ~L100-111, `.anticrep` ~L114-116, `.godray`
+  ~L227-231, `.suncorner .rays` ~L80-84; generated hide rules `tools/build_native.py` L102-118.
+- **State dimensions.** per optic: published custom property value (0..1), CSS opacity transition (1.4–2 s), lunar
+  optics' inline `visibility:inherit` latch (set when > 0, removed only after computed opacity reaches 0); input
+  `DEBUGOPTIC` (fragment, read once at boot).
+- **Gate table (observed; `clL/clM/clH` = layer cover, `e` = physical solar elevation).**
+
+  | Optic | Value | Anchor | Shown in generated app |
+  |---|---|---|---|
+  | crepuscular `--ray` (`.wfx .godray`) | min(0.5, clamp(e/8)·broken(clM)·(1−0.8clL)·clamp(0.3+0.7humid)·(1−cloud²)·(fog?0.25:1)) | `--sunvx/--sunvy` | yes |
+  | anticrepuscular `--anticrep` | 0.8·(ray·0.5) | `--antix` = 100 − arc-sun x | **no** (`.atmo .anticrep{display:none!important}`) |
+  | 22° halo `--sunhalo` | 0.85·cirrus·clamp((e+1)/6) | `--sunvx/--sunvy` | yes |
+  | sundogs `--sundogs` | 0.9·cirrus·sunUp·clamp((12−e)/12) | `--sunvx/--sunvy` | yes |
+  | pillar `--sunpillar` | 0.8·cold·clamp((6−e)/8)·clamp((e+5)/7)·(0.45+0.55cirrus) | `--sunvx/--sunvy` | yes |
+  | corner rays `--sunray` (`.suncorner .rays`) | (0.10+0.30·clamp(e/30))·T_cloud | sun body | yes, whenever `--sunamt` > 0 |
+  | lunar halo / corona / paraselenae | ISM-MOON-020 `moonLume` × cirrus / mid-cloud / cirrus·clamp((14−alt)/16) | Moon group | yes (not hidden) |
+
+  `cirrus = clamp((clH−0.06)/0.34)·clamp((0.72−clH)/0.42)·(1−clL)·(1−0.55clM)`; `broken = clamp(1−|clM−0.45|/0.42)`.
+- **Transitions.**
+
+  | Event | Guard | Effect |
+  |---|---|---|
+  | complete paint | — | every optic recomputed from the same `A` and written |
+  | `DEBUGOPTIC` ∈ {halo, sundogs, pillar, anticrep} | — | that value forced (0.95 / 0.95 / 0.9 / 0.8) |
+  | `DEBUGOPTIC` ∈ {paraselene, lunarhalo} | `moonLightEligible` | forced 0.9 / 0.95, else 0 |
+  | cloud withdrawal with a decision | receipt changed | `--ray`, `--anticrep`, `--sunhalo`, `--sundogs`, `--sunpillar`, lunar optics → 0 |
+  | no-timetable paint | — | halo/sundogs/pillar and lunar optics → 0; `--ray`, `--anticrep` not written |
+  | `beginSkyScene` | — | cloud receipt withdrawn with `decision=null`: no optic zeroed here; `sky-pending` hides `.atmo`/`.wfx` |
+- **Invariants (observed).** Halo, sundogs, pillar and godray share the visible-sun anchor `--sunvx = 20/325`,
+  `--sunvy = sunLift/530` (AGENTS gate C); corner rays and body move with the `.suncorner` transform.
+- **Observed facts.** (1) Anticrepuscular rays are computed, forceable and documented as production in `OPTICS.md`
+  §"Anticrepuscular rays", but never displayed in either generated entry (DWE). (2) `--sunvx/--sunvy` are written at
+  the target position immediately, while `.suncorner`/`.sunbody` ease their `transform` over 2.4 s, so during a lift
+  change the halo/dogs/pillar/godray anchor leads the drawn body. (3) The corner `.rays` have no weather gate beyond
+  transmittance scaling; they show whenever the Sun is up. (4) Gates are memoryless: no hysteresis; visible changes
+  are smoothed only by CSS transitions.
+- **Failure and recovery.** After a scene change without a timetable, `--ray`/`--anticrep` keep their previous values
+  until the next per-frame `reconcileCloudPublication` (~L4022) withdraws effects with a decision (source reading;
+  window believed ≤ 1 frame, not executed).
+- **Tests.** `tests/rlgwo-docs-contract.cjs` (six force branches; state only), `tests/r0022-baseline-balance.cjs`,
+  `tests/weather-no-timetable-withdrawal.test.cjs`, `tests/real-sky/native-solar-startup.test.cjs`. Gaps: no pixel
+  evidence that any optic rings the visible Sun; no test that the anticrepuscular element is displayed.
+- **Hypotheses.** none beyond the transient anchor lead in fact (2).
+- **Unknowns.** whether the owner intends anticrepuscular rays hidden in the physical-sky build.
+- **Proposed status (effective on acceptance).** D / I / V **DWE / IMS / PEX** (documentation contradicted for
+  anticrepuscular; gates inline in `atmosphere()`; state-only tests).
+- **Risks routed.** anticrepuscular visibility discrepancy and anchor lead → unowned.
+
+<a id="ism-sky-036"></a>
+### ISM-SKY-036 — Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction)
+
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+
+- **Scope and decision.** Colour, radial profile, size, oblateness, screen position and cloud obstruction of the
+  native corner Sun. The physical Sun in the refined frame is ISM-SKY-033; optic gates ISM-SKY-035.
+- **Sources.** `nativeSolarPresentation` ~L2953-2993; `paintSolarPresentation` ~L2994-3035; `atmosphere` elevation
+  source ~L3093-3095; CSS `.suncorner`/`.sunbody`/`.disc` ~L70-84, `.sun-cloud-mask` ~L60-62;
+  `real-sky/native-host-hooks.js` `solarAnchor` ~L29-37; `real-sky/native-composition.mjs` `prepareSolarMask`.
+- **Stateless projection with eased presentation.** Pure function of solar elevation `e`, `D.haze`, `D.cloud` and the
+  weather class; time-varying only through `--sunpulse` (simTime sines, held at 1 under reduced motion) and CSS
+  transitions (opacity 1.5 s, transform 2.4 s, background 1.6 s).
+- **Observed facts.**
+  - Elevation: physical `cloudLighting.sun.altDeg` when the hook is available, else the prayer-arc fit
+    (`solarElevationDeg`).
+  - Colour: Kasten–Young airmass; beam T = exp(−k(m−1)), k = 0.13 + 0.07·haze; CCT = 2000 + 3500·recovery against
+    40° (blackbody LUT 2000..6500 K); cloud warm white-balance mix toward [255,244,232]; de-gamma 2.2 → ACES
+    (Narkowicz) → gamma 1/2.2.
+  - Nucleus and limb: body radiance 6·(0.22 + 0.78T); below 40° a seven-stop radial profile blends an old 35 % edge
+    fall-off into linear limb darkening u = 0.6 (`0.4 + 0.6·√(1−r²)`), weight 1 − smoothstep((e−10)/30); at ≥ 40° the
+    CSS default gradient (core flat to 60 %, mid at 96 %).
+  - Size `--sundisc = 1.10 − 0.24·noon`; refraction flattening `--sunflat = 1 − 0.20·clamp((4−e)/8)·clamp((e+3)/4)`
+    (presentation only; astrometry is geometric, ISM-SKY-033).
+  - Position: x fixed at 20 px; y = 40 + (horizon − 40)(1 − clamp(e/40)), the horizon measured from `.arc .horizon`
+    or the arc box at 104/180, else 216 px. `--sunvx/--sunvy` = that target. Presence `--sunamt = clamp((e+1.5)/7)`,
+    body `--sunbodyamt = clamp((e+1.5)/1.5)`.
+  - Cloud: cloud transmittance `_Tcloud` from a per-class LUT scales only `--sunray`; the body is obstructed by the
+    painted-cloud mask `--native-sun-cloud-mask` on `.sun-cloud-mask` (ISM-SKY-016, ISM-SKY-034).
+- **Invariants (observed).** One spectrum for the whole body (no white CSS hot spot); obstruction applied once by the
+  mask; the low-left entry follows the measured horizon.
+- **Tests.** `tests/real-sky/native-solar-startup.test.cjs`, `native-celestial-startup.test.mjs`,
+  `native-head-handoff.cjs`, `native-solar-publication.test.mjs`, `tests/hotfix-prayer-weather.test.cjs`,
+  `tests/test_solar_continuity.py`. Gaps: no pixel evidence of nucleus/limb in this pass.
+- **Hypotheses.** none.
+- **Unknowns.** native rendering of the blurred (0.8 px) radial gradient body under the screen blend.
+- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**.
+- **Risks routed.** none.
+
+<a id="ism-sky-037"></a>
+### ISM-SKY-037 — Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion)
+
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+
+- **Scope and decision.** What the browser composites, in which order and at which scale, from the worker/preview
+  byte frames to screen pixels; which visibility classes and CSS rules decide that; and where noise, dithering,
+  blur and reduced motion enter. Frame acceptance/lifecycle stay in ISM-SKY-006/015/017/030.
+- **Sources.** `real-sky/native-preview-host.mjs` canvas L13-21, fast up-scale L150-157, `present` L166-172;
+  `real-sky/native-host.mjs` canvas L74-76, compose ~L130-205, `animate` L253, request timer L252;
+  `real-sky/native-encoding.mjs`, `native-host.mjs` encoders (ISM-SKY-023); `src/native/index.html` `.c` ~L24-33,
+  `*{box-sizing:border-box}` L13, `.atmo` L56, `.grain` CSS L127 and markup ~L554-559, `.p` glass L422, header straps
+  ~L291, settings ~L330, reduced-motion CSS ~L163-166, `isMotionReduced` L826, loop ~L4009-4033; generated stylesheet
+  `tools/build_native.py` L102-118 (linked into `index.html`, inlined into `offline.html`).
+- **State dimensions.** card classes `real-sky-preview-ready`, `real-sky-composed`, `real-sky-awaiting-input`,
+  `sky-pending`, `sky-initializing`, `paused`, `motionfull`; canvas inline `visibility` (hidden/visible) on
+  `.real-sky-preview` and `.real-sky-canvas`; `--native-sun-cloud-mask`; reduced-motion = `!MOTIONFULL &&
+  matchMedia(reduce)`, read per call.
+- **Layer stack (observed; bottom → top).** card background `#273445` (the generated rule replaces the source
+  160° `--g1..--g3` gradient) → refined canvas → preview canvas (both prepended to `.c`, `z-index:0`, `alpha:false`,
+  so the later-prepended refined canvas sits below the preview; preview `display:none` once `real-sky-composed`) →
+  markup layers: `.atmo` (`mix-blend-mode:screen`; scatter/belt/airglow/aurora/anticrep/`.sun` hidden), `.sky` SVG
+  (stars hidden; Moon photo/occluder/beam/glow hidden when preview-ready or composed), `.wfx` (cloud painter hidden;
+  fog/veil/sunhaze hidden; godray, rain, bolt, flash shown), scrim, prayer content with glass rows.
+- **Transitions.**
+
+  | Event | Guard | Effect |
+  |---|---|---|
+  | preview paint published | current, catalogue revision | preview `visibility:visible`, `real-sky-preview-ready` |
+  | preview `clear` | — | preview hidden, ready class removed |
+  | refined compose committed | currentness fences (ISM-SKY-015) | refined visible, `real-sky-composed` (preview display:none) |
+  | refined `clear`/dispose | — | composed removed, refined hidden → preview (if ready) or card background |
+  | visibility hidden / offscreen | — | loop `stop()`, `paused` class (ISM-SKY-030) |
+  | reduced motion | not `motion=full` | refined compose every 250 ms (else 50 ms); cloud travel off; `--sunpulse`, `--mrad` = 1; CSS animations of stars/glints/fog/drops/flakes/flash/bolt/sun/scatter/milky way off |
+- **Scaling (observed from CSS; not measured in a browser in this pass).** Both sky canvases have a 325×530 backing
+  store, ignore `devicePixelRatio`, and are sized `inset:0; width/height:100%` inside `.c`. Because `.c` is
+  325×530 border-box with a 1 px border, its padding box (the canvases' containing block) is 323×528 CSS px, so each
+  canvas is displayed at ≈0.994×0.996 of its backing size before the DPR factor (device-pixel ratio = 0.994·DPR,
+  never exactly 1). `NativeForegroundCapture` and `solarAnchor` already rescale by `rect.width/325`. No
+  `image-rendering` or `imageSmoothingEnabled` is set (browser default smoothing). Above |timeScale| 10 the preview
+  raster is 65×106, up-scaled ×5 by `drawImage`. The Moon detail canvas is DPR-aware (`moon/src/moon-detail.mjs` L56,
+  ISM-MOON-013).
+- **Quantisation, dithering and noise (observed).** Output bytes come from exact monotone rounding with no dither,
+  noise, blue-noise or ordered table (ISM-SKY-023). A noise layer exists in source: `.grain`, an SVG
+  `feTurbulence type=fractalNoise baseFrequency=0.8 numOctaves=2` rect, `mix-blend-mode:soft-light`, opacity
+  `--grain` = 0.34–0.78; it is a direct child of `.c` and the generated stylesheet removes it unconditionally
+  (`.c>.grain{display:none!important}`, also hidden while `sky-pending`). `.atmo .aurora` (a repeating linear
+  gradient) is likewise hidden. Remaining periodic CSS: `repeating-conic-gradient` in `.wfx .godray` (15° period,
+  blur 6 px, gated by `--ray`) and `.suncorner .rays` (17° period, blur 3 px, Sun up).
+- **Glass (observed).** `backdrop-filter` on `.p` prayer rows `blur(7px) saturate(135%)` over
+  `linear-gradient(160deg,#ffffff26,#ffffff0d)`; header straps `.e,.wt` `blur(8px) saturate(1.2)`; settings
+  `blur(10px) saturate(1.1)`; diagnostic overlays `blur(3px)` (hidden unless a debug flag). The filters sample
+  whatever is composited beneath, including either canvas.
+- **Colour management (observed).** Canvas contexts are created with `{alpha:false}` (sky) or
+  `{willReadFrequently:true}` (capture) and no `colorSpace` option; encoding targets sRGB codes.
+- **Invariants (observed).** Never both preview and refined visibly composed (display:none rule); a hidden painter
+  canvas never reaches the screen directly.
+- **Tests.** `tests/real-sky/native-preview-host.test.mjs`, `native-host-composition.test.mjs`,
+  `native-preview-lifecycle.test.mjs` (R0034 branch), `native-geometry-census.test.mjs` (R0034 branch; asserts the `.c`
+  rule, not the canvas display size), `cp9-page-lifecycle.test.mjs`, `tests/r001d-lifecycle.cjs`. Gaps: no test or
+  native measurement of the canvas CSS size versus backing size; no test that the generated stylesheet hides `.grain`.
+- **Hypotheses (R0034 artifact; none claimed as cause).** See the ownership table in
+  [R0034-sky-physics-registry.md](docs/state-contracts/R0034-sky-physics-registry.md): browser gradient dithering,
+  glass blur over the canvas, canvas resampling at ≈0.994·DPR, display colour management lie in the browser/GPU or
+  display; the page-side inputs are the layers listed above.
+- **Unknowns.** the owner's compositor path (WebRender hardware/software), browser zoom and OS scale; real canvas
+  rect in the owner's embed; backdrop-filter implementation resolution.
+- **Proposed status (effective on acceptance).** D / I / V **PEX / IMS / PEX** (distributed classes and CSS; unit
+  tests for class transitions only).
+- **Risks routed.** canvas scaling, preview/refined handoff → R0034; glass CSS → unowned (native UI glass, outside
+  R0034's owners per its §5).
 
 ## Moon pipeline (`ISM-MOON`)
 
