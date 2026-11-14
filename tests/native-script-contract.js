@@ -45,13 +45,13 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
-    // R003A reconciliation (issue 124 rewritten body) at f37678b9: authored source 4cb4d2ff (early --ray/--anticrep
-    // withdrawal; north-south wind field removed) and structural control 35d3e00b of its generated index e14520ff. Every entry below, including R003A's 4d5cc6aa/038b1667, remains admitted.
-    '4cb4d2ffec7e55a63200fa87764577f9d5b680b7c080378e44d1c3b167092b54':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'f37678b9fc645cfdf586d7889a2f4aeef31009e2',path:'src/native/index.html',layout:'config,native'}),
-    '35d3e00b9ec8a4e846af6aa5df4ebc6f57e74dc126cb7fb66f08fa0bdb591747':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'f37678b9fc645cfdf586d7889a2f4aeef31009e2',path:'index.html',
-      parentSha256:'e14520ffa709c5402011be92b2d8bb5a83cada19463b4344e8134184cce0819e',
+    // R003A reconciliation (issue 124 rewritten body) at a424a03d: authored source 646e8fdd (painter withdraws all five
+    // solar optics first, owner gate G4 b) and structural control 0931aedc of its generated index e808f07d. Every entry below, including R003A's 4d5cc6aa/038b1667, remains admitted.
+    '646e8fddcee9ab5970d785d751fea37dece28934ce6bd7fa855e9a1ff4cd9330':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'a424a03da01cef6e6feb54781bf43911b739910d',path:'src/native/index.html',layout:'config,native'}),
+    '0931aedc20211413bfca17482df6f706dfa95dc1d91330c55857153fe45aa011':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'a424a03da01cef6e6feb54781bf43911b739910d',path:'index.html',
+      parentSha256:'e808f07d4e41c6d9217033fcd67abfc00e6df8ba7b5d73cf1d5f792b8df9f8db',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R003A (issue 124) sky-stage hardening at 6de96906 on main 516d8cc8: authored source 4d5cc6aa (no-timetable optic
