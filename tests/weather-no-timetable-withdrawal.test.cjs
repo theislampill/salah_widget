@@ -75,6 +75,26 @@ test('R3A-01 the healthy no-timetable sequence writes only zero solar optics, ne
  for(const [key,value] of probe.writes)assert.equal(+value,0,key+'='+value);
  for(const name of SOLAR_OPTICS)assert.equal(+h.select('.c').style.getPropertyValue(name),0,name);
 });
+test('R3A-01 a healthy timetable scene keeps its computed crepuscular and anticrepuscular values',async()=>{
+ const h=await fixture({hash:'&simWx=2&simCloud=50&simHumid=80'});
+ h.run('window.SalahNativeSkyHost={cloudLighting:()=>({sun:{altDeg:20,azDeg:120},utcMs:simNow(),sample:()=>null})}');
+ h.run('render()');assert(h.read().model,'timetable rendered');const style=h.select('.c').style;
+ const A=JSON.parse(h.run('JSON.stringify((({rayIntensity,antiCrep})=>({rayIntensity,antiCrep}))(atmosphere(model())))'));
+ assert(A.rayIntensity>0&&A.antiCrep>0,'control: a broken-cloud low-ish Sun computes visible shafts');
+ assert.equal(style.getPropertyValue('--ray'),A.rayIntensity.toFixed(3));
+ assert.equal(style.getPropertyValue('--anticrep'),(0.8*A.antiCrep).toFixed(3));
+});
+test('R3A-01 the no-timetable reset zeroes exactly the listed optics and leaves the solar presentation intact',async()=>{
+ const h=await fixture();h.at(901000);h.run('withdrawWeatherEffects(weatherDecision(),"r003a probe")');
+ const style=h.select('.c').style,original=style.setProperty,writes=[];
+ style.setProperty=function(key,value){writes.push([key,String(value)]);return original.call(this,key,value);};
+ try{h.run('paintCelestialWithoutTimetable(weatherDecision())');}finally{style.setProperty=original;}
+ assert.deepEqual(writes.filter(([,value])=>value==='0').map(([key])=>key).sort(),
+  ['--anticrep','--mcorona','--mhalo','--mparhelia','--ray','--sundogs','--sunhalo','--sunpillar']);
+ const last=key=>writes.filter(([k])=>k===key).at(-1)?.[1];
+ for(const key of ['--sunvx','--sunvy','--sunray','--sunlift','--sundisc'])assert.equal(style.getPropertyValue(key),last(key),key+' is the solar presentation value');
+ assert.match(style.getPropertyValue('--sunvx'),/^[0-9.]+%$/);assert(+style.getPropertyValue('--sunray')>0,'--sunray keeps its transmittance value');
+});
 test('R3A-01 a rendered timetable never enters the no-timetable celestial painter',async()=>{
  const h=await fixture();h.run('globalThis.__r003aCelestial=0;const __r003aPaint=paintCelestialWithoutTimetable;paintCelestialWithoutTimetable=function(...a){__r003aCelestial++;return __r003aPaint.apply(this,a);}');
  h.run('render()');assert(h.read().model);assert.equal(h.run('__r003aCelestial'),0);

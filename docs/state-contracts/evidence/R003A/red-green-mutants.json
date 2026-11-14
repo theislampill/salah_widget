@@ -1,15 +1,92 @@
 {
  "schema": "r003a-red-green-mutants/1",
- "suite": "tests/weather-no-timetable-withdrawal.test.cjs (21 tests: 18 existing R000B + 3 R3A-01)",
+ "suite": "tests/weather-no-timetable-withdrawal.test.cjs (23 tests: 18 existing R000B + 5 R3A-01)",
  "sourceSwitch": "SALAH_WITHDRAWAL_SOURCE=<authored src/native/index.html copy>",
- "red": {"source": "origin/main 516d8cc8 src/native/index.html", "sha256": "3c80fd51023af712f4c20f86afbdb77811b0fc908bfb841165b3a2137975dcaf",
-  "result": "20 pass / 1 fail", "failing": "R3A-01 no-timetable celestial paint withdraws crepuscular and anticrepuscular optics even when the effects withdrawal fails", "assertion": "--ray: actual 0.5, expected 0"},
- "green": {"source": "branch 6de96906 src/native/index.html", "sha256": "4d5cc6aae336f46e98d47eb5c0d15b0723f196b5803a23c03e3b936b17cd20e6", "result": "21 pass / 0 fail"},
+ "red": {
+  "source": "origin/main 516d8cc8 src/native/index.html",
+  "sha256": "3c80fd51023af712f4c20f86afbdb77811b0fc908bfb841165b3a2137975dcaf",
+  "result": "21 pass / 2 fail",
+  "failing": [
+   "R3A-01 no-timetable celestial paint withdraws crepuscular and anticrepuscular optics even when the effects withdrawal fails",
+   "R3A-01 the no-timetable reset zeroes exactly the listed optics and leaves the solar presentation intact"
+  ],
+  "assertion": "--ray: actual 0.5, expected 0"
+ },
+ "green": {
+  "source": "branch 6de96906 src/native/index.html",
+  "sha256": "4d5cc6aae336f46e98d47eb5c0d15b0723f196b5803a23c03e3b936b17cd20e6",
+  "result": "23 pass / 0 fail (after review follow-up)"
+ },
  "mutants": [
-  {"id": "M1", "change": "painter key list restored to [--sunhalo,--sundogs,--sunpillar] (the omission)", "killedBy": ["R3A-01 ... even when the effects withdrawal fails"], "result": "1 fail"},
-  {"id": "M2", "change": "--anticrep dropped (--ray kept)", "killedBy": ["R3A-01 ... even when the effects withdrawal fails"], "result": "1 fail"},
-  {"id": "M3", "change": "--ray dropped (--anticrep kept)", "killedBy": ["R3A-01 ... even when the effects withdrawal fails"], "result": "1 fail"},
-  {"id": "M4", "change": "painter writes 0.5 instead of 0 for all five solar optics (transient false light)", "killedBy": ["R3A-01 ... even when the effects withdrawal fails", "R3A-01 the healthy no-timetable sequence writes only zero solar optics, never transient light"], "result": "3 fail (two named R3A-01 tests shown; third failing test name not captured in the summary log)"}
+  {
+   "id": "M1",
+   "change": "painter key list restored to [--sunhalo,--sundogs,--sunpillar] (the omission)",
+   "killedBy": [
+    "R3A-01 ... even when the effects withdrawal fails"
+   ],
+   "result": "1 fail",
+   "resultAfterFollowUp": "2 fail"
+  },
+  {
+   "id": "M2",
+   "change": "--anticrep dropped (--ray kept)",
+   "killedBy": [
+    "R3A-01 ... even when the effects withdrawal fails"
+   ],
+   "result": "1 fail",
+   "resultAfterFollowUp": "2 fail"
+  },
+  {
+   "id": "M3",
+   "change": "--ray dropped (--anticrep kept)",
+   "killedBy": [
+    "R3A-01 ... even when the effects withdrawal fails"
+   ],
+   "result": "1 fail",
+   "resultAfterFollowUp": "2 fail"
+  },
+  {
+   "id": "M4",
+   "change": "painter writes 0.5 instead of 0 for all five solar optics (transient false light)",
+   "killedBy": [
+    "R3A-01 ... even when the effects withdrawal fails",
+    "R3A-01 the healthy no-timetable sequence writes only zero solar optics, never transient light"
+   ],
+   "result": "3 fail (two named R3A-01 tests shown; third failing test name not captured in the summary log)",
+   "resultAfterFollowUp": "4 fail"
+  },
+  {
+   "id": "M7",
+   "change": "painter also zeroes --sunvx",
+   "killedBy": [
+    "R3A-01 the no-timetable reset zeroes exactly the listed optics ..."
+   ],
+   "result": "1 fail"
+  },
+  {
+   "id": "M8",
+   "change": "painter also zeroes --sunray",
+   "killedBy": [
+    "R3A-01 the no-timetable reset zeroes exactly the listed optics ..."
+   ],
+   "result": "1 fail"
+  },
+  {
+   "id": "M9",
+   "change": "healthy paint writes --ray 0",
+   "killedBy": [
+    "R3A-01 a healthy timetable scene keeps its computed crepuscular and anticrepuscular values"
+   ],
+   "result": "1 fail"
+  },
+  {
+   "id": "M10",
+   "change": "healthy paint writes --anticrep +0.2",
+   "killedBy": [
+    "R3A-01 a healthy timetable scene keeps its computed crepuscular and anticrepuscular values"
+   ],
+   "result": "1 fail"
+  }
  ],
  "mutationScope": "disposable copies under the worker scratch directory; never committed"
 }

@@ -695,8 +695,10 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
 - **Sky-stage approximations, classified (R003A).** Defect = demonstrated implementation defect; simplification =
   deliberate, accepted model simplification; limitation = affects a known observable; possibility = unverified,
   future improvement.
-  - *Defect, corrected:* the no-timetable painter (`paintCelestialWithoutTimetable`) did not zero `--ray`/`--anticrep`
-    itself, so a failed effects withdrawal could leave earlier-scene shafts; it now zeroes them with the other optics.
+  - *Defect, corrected (demonstrated only under an injected fault, not observed in a natural scene):* the
+    no-timetable painter (`paintCelestialWithoutTimetable`) did not zero `--ray`/`--anticrep` itself; when the
+    `weather-withdrawal` stage was made to throw (test injection: a `--rain-op` write throws) earlier-scene shaft
+    values survived. In normal operation that stage zeroes them first. The painter now zeroes them with the other optics.
   - *Simplification:* the crepuscular gate is a heuristic product, not shadowed-beam radiative transfer:
     `min(0.5, clamp(e/8)·broken(mid)·(1−0.8·low)·clamp(0.3+0.7·humid)·(1−cloud²)·(fog?0.25:1))` (`atmosphere()`).
     *Limitation:* `clamp(e/8)` is 0 for a Sun at or below the horizon, so twilight crepuscular rays (Sun just below
@@ -704,8 +706,8 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   - *Simplification:* the corner `.rays` are a radiant-body presentation, not atmospheric shafts. Their opacity is
     `--sunamt·(0.10+0.30·clamp(e/30))·T_cloud` with `T_cloud` from the per-class table in `nativeSolarPresentation`;
     no other weather gate, and the painted-cloud mask obstructs them with the body.
-  - *Simplification:* limb darkening uses the linear law `I(μ)/I(1) = 1 − u(1−μ)`, `u = 0.6`, close to the measured
-    visible-band solar value (about 0.6 near 550 nm, Allen's Astrophysical Quantities), in the radial profile of
+  - *Simplification:* limb darkening uses the linear law `I(μ)/I(1) = 1 − u(1−μ)`, `u = 0.6` (the implementation's value;
+    no literature calibration is claimed), in the radial profile of
     `nativeSolarPresentation`, at full weight up to 10° elevation and blended out by 40°; above 40° the body keeps
     its earlier flat-core profile (35 % fall-off beyond 60 % radius). The disc is enlarged and not an angular radiance.
   - *Simplification and limitation:* refraction flattening is presentational: `--sunflat = 1 − 0.20·clamp((4−e)/8)·
@@ -713,8 +715,13 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
     e ≤ −3° or ≥ 4°). Bennett's (1982) refraction formula gives about 0.84 for a disc whose lower limb touches the
     apparent horizon, so the presentation understates the real flattening. Sky astrometry has no refraction
     (observer pressure 0 in `nativeJob`); the prayer arc's fit absorbs refraction separately (above).
-  - *Limitation:* there is no ground albedo: the refined/preview sky is single scattering with no surface-reflection
-    term, so the near-horizon sky over bright ground (snow, sand) is not brightened; magnitude not measured here.
+  - *Limitation:* there is no ground albedo. The refined/preview sky radiance (`createSkyModel`,
+    `real-sky/core/src/sky-background.mjs`) is spectral single-scattered sunlight in a spherical shell with Earth
+    shadow (`singleScatteredSun`), plus three empirical terms: the Patat (2006) twilight excess below the horizon
+    (fills only a luminance deficit, solar depression 3–5° weighting), Krisciunas–Schaefer moonlight
+    (`moonSkyLuminance`) and a natural/local-light background; directions below the horizon return black. None has
+    a surface-reflection term, and multiple scattering is not modelled, so the near-horizon sky over bright ground
+    (snow, sand) is not brightened; magnitude not measured here.
   - *Simplification:* there is no cloud albedo or optical depth: cloud colour is a display tint and cloud alpha the
     painted coverage (`paintClouds`, ISM-SKY-034); the refined job's cloud transmission is fixed at 1.
   - *Possibility:* a ground-reflection term and twilight crepuscular rays are unverified future improvements.
