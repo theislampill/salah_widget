@@ -281,10 +281,12 @@ function mentions(name, tokens) {
       // render/loop/boot containment, not the force block, helper, clamp or call pinned above.
       // R002E re-bind (issue 95, merge 421a44a9): body bc11c040... -> ae528330..., entry 531bea69... -> 3a93bfc9...;
       // R002E changes only the prayer status writer, the .cn fit key and one comment, not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"ae528330310292ad38706c9410471319cc31532bff58deb1c4a036ffd72de14e",'delegated native script changed');
+      // R002F re-bind (issue 96): body ae528330... -> d21282d7..., entry dbc77c67... (main 516d8cc8) -> 226266a2...;
+      // R002F changes only the weather gate/renewal/preview-range region and one loop line, not the pinned block, helper, clamp or call.
+      assert.equal(digest(body),"d21282d7454e13b6d7152a0792f0f9bb5c9603a7dfb50f9084bba139221bc404",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"dbc77c678d45c83f73297808cba729258b82903df7d0b771164a988465865190",'delegated current generated entry changed');
+      assert.equal(digest(source),"226266a2b8d4862df980e76744d6ab3a833e11f8cf7392efed5297ccf45a231c",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
