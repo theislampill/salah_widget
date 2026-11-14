@@ -184,7 +184,8 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
   `cloudSunCol`, `moonLume` are declared partway down. New code that uses them must be placed *after* their
   declarations or you get "Cannot access 'X' before initialization" (this exact bug was hit + fixed).
 - **`simTime` without `timeScale` sets TIMESCALE=0 → the clock is frozen**, so cloud drift/animation won't show
-  in a still test. Use real-time, a `timeScale` value, or a direct `paintClouds(t1)` vs `paintClouds(t2)` probe.
+  in a still test. Use real-time or a `timeScale` value. Painting at two different `t` values directly shows no
+  drift: motion integrates elapsed frame time (`performance.now`); `t` only seeds a new scene's population and phases.
 - The preview browser sometimes reports `prefers-reduced-motion: reduce`, which **freezes the cloud canvas at a
   fixed time** — another reason a still can look static. Check `matchMedia(...).matches`.
 - The preview **viewport occasionally zooms** mid-session; reset with `preview_resize` to ~390×600 to see the

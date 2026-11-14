@@ -200,7 +200,7 @@ function loadLifecycle(r, block = lifecycle, {autoTimings=true} = {}) {
     _rolloverNextTry:0, _ROLLOVER_RETRY_MS:60000,
     buildStars(){calls.stars++;}, buildWeather(){calls.weatherBuild++;},
     renderMoon(){calls.moon++;}, startWeather(){calls.weatherStart++;},
-    fetchWeather(){}, fetchRadar(){}, isMotionReduced:()=>false,
+    fetchWeather(){}, fetchRadar(){}, renewWeather(){}, isMotionReduced:()=>false,   // renewWeather: R002F loop renewal double
     paintClouds(){calls.cloud++;}, tieRainToClouds(){},
     MessageChannel:class{constructor(){this.port1={close(){}};this.port2={close(){},postMessage:()=>tasks.push(()=>this.port1.onmessage())};}},
     requestAnimationFrame(callback){const id=++rafId; pending.set(id,callback); calls.raf++; return id;},
