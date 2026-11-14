@@ -1,0 +1,2927 @@
+{
+ "scope": "R0034 owner-artifact probe (stipple in \"Sky preview · refining…\"): not detected by the scalar high-pass metric (no periodicity test; see R0034.md section 5 round 4)",
+ "scene": "Central Florida 28.5383,-81.3792, America/New_York, 2026-11-13 15:15 local (20:15Z), clear day 70F fixture; real-time clock (Playwright clock installed at that instant, then resumed)",
+ "embedding": "325x530 iframe on a textured page; viewport 400x600",
+ "network": "prayer fulfilled from tests/r0002-ordinary.json; weather answered in-page from a fixture; radar rejected; every other non-loopback request aborted (only fonts.googleapis.com was attempted)",
+ "recipe": "node tools/qa/r0034_stipple_probe.cjs --root <tree> --out <dir> --engine <e> --dpr <d> --seconds 8 --playwright <global playwright>",
+ "trees": {
+  "main": "664ebe22 (origin/main generated files)",
+  "branch": "claude/r0034-refined-sky-identity-20261113"
+ },
+ "engines": "chromium 148.0.7778.96, firefox, webkit (Playwright 1.60.0, headless)",
+ "dprs": [
+  1,
+  1.25,
+  1.5,
+  2
+ ],
+ "loads": 24,
+ "secondsPerLoad": 8,
+ "metric": "high-pass (pixel minus 5x5 box blur) luminance std in grey levels, device pixels; regions in CSS px: A between \"until Asr\" and the rows (20,282)-(310,290); B right of header (260,40)-(318,70); C right edge over rows (300,300)-(318,470)",
+ "result": {
+  "flatSkyHighPassStd_A": "0.24-0.47 grey levels in every engine/DPR, preview-only and refined alike; within 0.03 between main and branch; unchanged with backdrop-filter disabled",
+  "visibleStipple": false,
+  "refiningBadgeAfterLoad": "shown from about 1 s until the first refined frame at 2.0-5.8 s in every run (first-refinement latency; the fixture weather is constant, so no adoption-driven withdrawal)"
+ },
+ "notTried": [
+  "headed / GPU-accelerated compositing (the owner capture is likely Chromium/Edge on Windows with a GPU and fractional display scale)",
+  "the owner browser, OS, GPU and display scale",
+  "live provider weather with successive adoptions",
+  "DPR 1.75"
+ ],
+ "rows": [
+  {
+   "tree": "main",
+   "engine": "chromium",
+   "dpr": 1.25,
+   "firstRefinedMs": 2598,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6732177215189892,
+    "currentNoBackdrop": 0.6732177215189892,
+    "previewOnly": 0.6732177215189892,
+    "previewNoBackdrop": 0.6732177215189892
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.378,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.077,
+     "peakPeriod": [
+      3.8,
+      17.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.891,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.364,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.041,
+     "peakPeriod": [
+      3.3,
+      6.8
+     ],
+     "peakRatio": 2.0
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.886,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.355,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.065,
+     "peakPeriod": [
+      4.3,
+      34.0
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.887,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.375,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.08,
+     "peakPeriod": [
+      3.8,
+      17.0
+     ],
+     "peakRatio": 4.4
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.897,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.8
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "chromium",
+   "dpr": 1.5,
+   "firstRefinedMs": 5772,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6723596202531662,
+    "currentNoBackdrop": 0.6723596202531662,
+    "previewOnly": 0.6723596202531662,
+    "previewNoBackdrop": 0.6723596202531662
+   },
+   "refinedRasterHF": 0.6847622784810135,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.309,
+     "peakPeriod": [
+      null,
+      8.0
+     ],
+     "peakRatio": 5.5
+    },
+    "B_right_of_header": {
+     "hpStd": 0.051,
+     "peakPeriod": [
+      5.9,
+      10.2
+     ],
+     "peakRatio": 2.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.831,
+     "peakPeriod": [
+      5.8,
+      null
+     ],
+     "peakRatio": 10.0
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.285,
+     "peakPeriod": [
+      431.0,
+      8.0
+     ],
+     "peakRatio": 6.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      4.4,
+      20.5
+     ],
+     "peakRatio": 3.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.818,
+     "peakPeriod": [
+      5.8,
+      null
+     ],
+     "peakRatio": 9.9
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.305,
+     "peakPeriod": [
+      431.0,
+      8.0
+     ],
+     "peakRatio": 6.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.048,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 4.0
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.821,
+     "peakPeriod": [
+      3.8,
+      null
+     ],
+     "peakRatio": 10.6
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.308,
+     "peakPeriod": [
+      null,
+      8.0
+     ],
+     "peakRatio": 5.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.057,
+     "peakPeriod": [
+      4.2,
+      4.6
+     ],
+     "peakRatio": 3.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.826,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 10.4
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "chromium",
+   "dpr": 1,
+   "firstRefinedMs": 3863,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6732177215189892,
+    "currentNoBackdrop": 0.6732177215189892,
+    "previewOnly": 0.6732177215189892,
+    "previewNoBackdrop": 0.6732177215189892
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 5.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.084,
+     "peakPeriod": [
+      4.2,
+      8.7
+     ],
+     "peakRatio": 3.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.424,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.421,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.1,
+     "peakPeriod": [
+      4.2,
+      26.0
+     ],
+     "peakRatio": 4.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.426,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.3
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.423,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 5.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.038,
+     "peakPeriod": [
+      4.2,
+      5.2
+     ],
+     "peakRatio": 1.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.418,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.4
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 5.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.119,
+     "peakPeriod": [
+      4.2,
+      13.0
+     ],
+     "peakRatio": 5.0
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.409,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.4
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "chromium",
+   "dpr": 2,
+   "firstRefinedMs": 3899,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6841225949367102,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.244,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      6.6,
+      56.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.621,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 15.6
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.247,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 6.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.025,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 2.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.622,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 15.8
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.244,
+     "peakPeriod": [
+      192.0,
+      null
+     ],
+     "peakRatio": 6.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.025,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 2.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.616,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.6
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.245,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.052,
+     "peakPeriod": [
+      6.6,
+      null
+     ],
+     "peakRatio": 4.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.613,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "firefox",
+   "dpr": 1.25,
+   "firstRefinedMs": 2118,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6840540506329125,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.388,
+     "peakPeriod": [
+      179.5,
+      null
+     ],
+     "peakRatio": 6.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.08,
+     "peakPeriod": [
+      3.3,
+      null
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.193,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 11.1
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.378,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 7.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.077,
+     "peakPeriod": [
+      3.3,
+      34.0
+     ],
+     "peakRatio": 4.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.192,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.378,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 7.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.077,
+     "peakPeriod": [
+      3.3,
+      34.0
+     ],
+     "peakRatio": 4.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.191,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.383,
+     "peakPeriod": [
+      179.5,
+      null
+     ],
+     "peakRatio": 5.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.08,
+     "peakPeriod": [
+      3.3,
+      null
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.193,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 11.1
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "firefox",
+   "dpr": 1.5,
+   "firstRefinedMs": 2163,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6734792405063307,
+    "currentNoBackdrop": 0.6734792405063307,
+    "previewOnly": 0.6734792405063307,
+    "previewNoBackdrop": 0.6734792405063307
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.332,
+     "peakPeriod": [
+      143.7,
+      null
+     ],
+     "peakRatio": 4.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.082,
+     "peakPeriod": [
+      4.6,
+      10.2
+     ],
+     "peakRatio": 4.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.104,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 14.9
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.338,
+     "peakPeriod": [
+      43.1,
+      4.0
+     ],
+     "peakRatio": 5.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      3.5,
+      13.7
+     ],
+     "peakRatio": 3.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.106,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.0
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.338,
+     "peakPeriod": [
+      43.1,
+      4.0
+     ],
+     "peakRatio": 5.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      3.5,
+      13.7
+     ],
+     "peakRatio": 3.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.106,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.0
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.342,
+     "peakPeriod": [
+      22.7,
+      4.0
+     ],
+     "peakRatio": 5.2
+    },
+    "B_right_of_header": {
+     "hpStd": 0.091,
+     "peakPeriod": [
+      4.4,
+      41.0
+     ],
+     "peakRatio": 5.0
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.106,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 14.9
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "firefox",
+   "dpr": 1,
+   "firstRefinedMs": 3384,
+   "rasterHF": {
+    "refinedOrCurrent": 0.672246645569623,
+    "currentNoBackdrop": 0.672246645569623,
+    "previewOnly": 0.672246645569623,
+    "previewNoBackdrop": 0.672246645569623
+   },
+   "refinedRasterHF": 0.6854727848101274,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.404,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 6.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.116,
+     "peakPeriod": [
+      3.4,
+      13.0
+     ],
+     "peakRatio": 4.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.617,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.3
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.415,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 5.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.092,
+     "peakPeriod": [
+      4.2,
+      26.0
+     ],
+     "peakRatio": 4.4
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.622,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.1
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.408,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 6.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.107,
+     "peakPeriod": [
+      3.6,
+      13.0
+     ],
+     "peakRatio": 4.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.622,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.1
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.401,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 6.7
+    },
+    "B_right_of_header": {
+     "hpStd": 0.119,
+     "peakPeriod": [
+      3.9,
+      26.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.61,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.3
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "firefox",
+   "dpr": 2,
+   "firstRefinedMs": 2054,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6840540506329125,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.313,
+     "peakPeriod": [
+      33.9,
+      4.0
+     ],
+     "peakRatio": 6.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.062,
+     "peakPeriod": [
+      3.9,
+      14.0
+     ],
+     "peakRatio": 4.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.757,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.4
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.301,
+     "peakPeriod": [
+      57.6,
+      6.0
+     ],
+     "peakRatio": 6.7
+    },
+    "B_right_of_header": {
+     "hpStd": 0.056,
+     "peakPeriod": [
+      3.9,
+      18.7
+     ],
+     "peakRatio": 5.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.747,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.4
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.301,
+     "peakPeriod": [
+      57.6,
+      6.0
+     ],
+     "peakRatio": 7.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.044,
+     "peakPeriod": [
+      3.5,
+      18.7
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.747,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.4
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.305,
+     "peakPeriod": [
+      33.9,
+      4.0
+     ],
+     "peakRatio": 7.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.062,
+     "peakPeriod": [
+      4.1,
+      18.7
+     ],
+     "peakRatio": 5.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.753,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.5
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "webkit",
+   "dpr": 1.25,
+   "firstRefinedMs": 4170,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6732989873417735,
+    "currentNoBackdrop": 0.6732989873417735,
+    "previewOnly": 0.6732989873417735,
+    "previewNoBackdrop": 0.6732989873417735
+   },
+   "refinedRasterHF": 0.6828231012658239,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.361,
+     "peakPeriod": [
+      71.8,
+      null
+     ],
+     "peakRatio": 5.5
+    },
+    "B_right_of_header": {
+     "hpStd": 0.113,
+     "peakPeriod": [
+      3.4,
+      11.3
+     ],
+     "peakRatio": 4.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.776,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.1
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.353,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.115,
+     "peakPeriod": [
+      2.9,
+      11.3
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.786,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.7
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.339,
+     "peakPeriod": [
+      10.9,
+      6.0
+     ],
+     "peakRatio": 5.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.115,
+     "peakPeriod": [
+      5.3,
+      11.3
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.785,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.7
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.36,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 5.5
+    },
+    "B_right_of_header": {
+     "hpStd": 0.113,
+     "peakPeriod": [
+      3.4,
+      11.3
+     ],
+     "peakRatio": 4.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.776,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.1
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "webkit",
+   "dpr": 1.5,
+   "firstRefinedMs": 4269,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6732989873417735,
+    "currentNoBackdrop": 0.6732989873417735,
+    "previewOnly": 0.6732989873417735,
+    "previewNoBackdrop": 0.6732989873417735
+   },
+   "refinedRasterHF": 0.6839626582278492,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.327,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.087,
+     "peakPeriod": [
+      3.0,
+      41.0
+     ],
+     "peakRatio": 4.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.761,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.325,
+     "peakPeriod": [
+      215.5,
+      null
+     ],
+     "peakRatio": 7.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.107,
+     "peakPeriod": [
+      3.5,
+      20.5
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.764,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.1
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.33,
+     "peakPeriod": [
+      215.5,
+      null
+     ],
+     "peakRatio": 7.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.1,
+     "peakPeriod": [
+      4.2,
+      20.5
+     ],
+     "peakRatio": 4.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.764,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.1
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.326,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.103,
+     "peakPeriod": [
+      3.6,
+      13.7
+     ],
+     "peakRatio": 4.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.76,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "webkit",
+   "dpr": 1,
+   "firstRefinedMs": 3666,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6840972151898743,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.466,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.144,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.557,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.9
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 10.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.146,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.548,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 10.2
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 10.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.146,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.548,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 10.2
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.466,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.144,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.556,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.9
+    }
+   }
+  },
+  {
+   "tree": "main",
+   "engine": "webkit",
+   "dpr": 2,
+   "firstRefinedMs": 4102,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6733903797468366,
+    "currentNoBackdrop": 0.6733903797468366,
+    "previewOnly": 0.6733903797468366,
+    "previewNoBackdrop": 0.6733903797468366
+   },
+   "refinedRasterHF": 0.6840972151898743,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.279,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.2
+    },
+    "B_right_of_header": {
+     "hpStd": 0.061,
+     "peakPeriod": [
+      3.9,
+      28.0
+     ],
+     "peakRatio": 4.0
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.606,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.1
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.281,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.2
+    },
+    "B_right_of_header": {
+     "hpStd": 0.061,
+     "peakPeriod": [
+      12.4,
+      8.0
+     ],
+     "peakRatio": 3.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.598,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.285,
+     "peakPeriod": [
+      288.0,
+      4.0
+     ],
+     "peakRatio": 6.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.059,
+     "peakPeriod": [
+      5.3,
+      5.1
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.598,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.277,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 8.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.071,
+     "peakPeriod": [
+      3.9,
+      11.2
+     ],
+     "peakRatio": 4.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.604,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "chromium",
+   "dpr": 1.25,
+   "firstRefinedMs": 2178,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6730806329113944,
+    "currentNoBackdrop": 0.6730806329113944,
+    "previewOnly": 0.6730806329113944,
+    "previewNoBackdrop": 0.6730806329113944
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.378,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.077,
+     "peakPeriod": [
+      3.8,
+      17.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.891,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.364,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.041,
+     "peakPeriod": [
+      3.3,
+      6.8
+     ],
+     "peakRatio": 2.0
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.886,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.355,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.065,
+     "peakPeriod": [
+      4.3,
+      34.0
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.887,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.378,
+     "peakPeriod": [
+      359.0,
+      null
+     ],
+     "peakRatio": 6.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.077,
+     "peakPeriod": [
+      3.8,
+      17.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.897,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.8
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "chromium",
+   "dpr": 1.5,
+   "firstRefinedMs": 2193,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6730806329113944,
+    "currentNoBackdrop": 0.6730806329113944,
+    "previewOnly": 0.6730806329113944,
+    "previewNoBackdrop": 0.6730806329113944
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.31,
+     "peakPeriod": [
+      431.0,
+      null
+     ],
+     "peakRatio": 5.7
+    },
+    "B_right_of_header": {
+     "hpStd": 0.064,
+     "peakPeriod": [
+      4.6,
+      41.0
+     ],
+     "peakRatio": 3.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.833,
+     "peakPeriod": [
+      5.8,
+      null
+     ],
+     "peakRatio": 9.9
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.301,
+     "peakPeriod": [
+      431.0,
+      8.0
+     ],
+     "peakRatio": 5.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.034,
+     "peakPeriod": [
+      4.0,
+      8.2
+     ],
+     "peakRatio": 2.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.822,
+     "peakPeriod": [
+      5.8,
+      null
+     ],
+     "peakRatio": 9.9
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.285,
+     "peakPeriod": [
+      431.0,
+      8.0
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      4.4,
+      20.5
+     ],
+     "peakRatio": 3.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.822,
+     "peakPeriod": [
+      3.8,
+      null
+     ],
+     "peakRatio": 10.5
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.309,
+     "peakPeriod": [
+      null,
+      8.0
+     ],
+     "peakRatio": 5.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.069,
+     "peakPeriod": [
+      4.9,
+      null
+     ],
+     "peakRatio": 4.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.83,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 10.4
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "chromium",
+   "dpr": 1,
+   "firstRefinedMs": 2618,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6730806329113944,
+    "currentNoBackdrop": 0.6730806329113944,
+    "previewOnly": 0.6730806329113944,
+    "previewNoBackdrop": 0.6730806329113944
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 5.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.084,
+     "peakPeriod": [
+      4.2,
+      8.7
+     ],
+     "peakRatio": 3.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.424,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.421,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.1,
+     "peakPeriod": [
+      4.2,
+      26.0
+     ],
+     "peakRatio": 4.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.426,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.3
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.423,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 5.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.038,
+     "peakPeriod": [
+      4.2,
+      5.2
+     ],
+     "peakRatio": 1.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.418,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.4
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      286.0,
+      4.0
+     ],
+     "peakRatio": 5.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.084,
+     "peakPeriod": [
+      4.2,
+      8.7
+     ],
+     "peakRatio": 3.1
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.409,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.4
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "chromium",
+   "dpr": 2,
+   "firstRefinedMs": 2228,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6730806329113944,
+    "currentNoBackdrop": 0.6730806329113944,
+    "previewOnly": 0.6730806329113944,
+    "previewNoBackdrop": 0.6730806329113944
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.241,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.2
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      6.6,
+      56.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.62,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 15.6
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.241,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 6.5
+    },
+    "B_right_of_header": {
+     "hpStd": 0.025,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 2.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.623,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 15.8
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.248,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.025,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 2.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.615,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.5
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.241,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.2
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      6.6,
+      56.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.612,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "firefox",
+   "dpr": 1.25,
+   "firstRefinedMs": 2100,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.388,
+     "peakPeriod": [
+      179.5,
+      null
+     ],
+     "peakRatio": 6.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.08,
+     "peakPeriod": [
+      3.3,
+      null
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.194,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 11.1
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.378,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 7.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.077,
+     "peakPeriod": [
+      3.3,
+      34.0
+     ],
+     "peakRatio": 4.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.192,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.378,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 7.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.077,
+     "peakPeriod": [
+      3.3,
+      34.0
+     ],
+     "peakRatio": 4.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.191,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 10.9
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.38,
+     "peakPeriod": [
+      179.5,
+      null
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.095,
+     "peakPeriod": [
+      3.3,
+      17.0
+     ],
+     "peakRatio": 3.8
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.19,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 11.0
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "firefox",
+   "dpr": 1.5,
+   "firstRefinedMs": 2154,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6853439873417732,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.331,
+     "peakPeriod": [
+      22.7,
+      4.0
+     ],
+     "peakRatio": 4.8
+    },
+    "B_right_of_header": {
+     "hpStd": 0.082,
+     "peakPeriod": [
+      4.6,
+      10.2
+     ],
+     "peakRatio": 4.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.103,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 14.9
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.338,
+     "peakPeriod": [
+      43.1,
+      4.0
+     ],
+     "peakRatio": 5.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.054,
+     "peakPeriod": [
+      3.5,
+      13.7
+     ],
+     "peakRatio": 3.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.106,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.0
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.343,
+     "peakPeriod": [
+      25.4,
+      4.0
+     ],
+     "peakRatio": 5.2
+    },
+    "B_right_of_header": {
+     "hpStd": 0.08,
+     "peakPeriod": [
+      4.2,
+      20.5
+     ],
+     "peakRatio": 6.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.106,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.0
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.336,
+     "peakPeriod": [
+      22.7,
+      4.0
+     ],
+     "peakRatio": 4.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.082,
+     "peakPeriod": [
+      4.6,
+      10.2
+     ],
+     "peakRatio": 4.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.103,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 14.9
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "firefox",
+   "dpr": 1,
+   "firstRefinedMs": 2485,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6732989873417735,
+    "currentNoBackdrop": 0.6732989873417735,
+    "previewOnly": 0.6732989873417735,
+    "previewNoBackdrop": 0.6732989873417735
+   },
+   "refinedRasterHF": 0.6862746835443044,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.403,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 6.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.116,
+     "peakPeriod": [
+      3.4,
+      13.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.618,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.3
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.412,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 6.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.092,
+     "peakPeriod": [
+      4.2,
+      26.0
+     ],
+     "peakRatio": 4.4
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.623,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.1
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.408,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.107,
+     "peakPeriod": [
+      3.6,
+      13.0
+     ],
+     "peakRatio": 4.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.623,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.1
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.403,
+     "peakPeriod": [
+      95.3,
+      null
+     ],
+     "peakRatio": 6.4
+    },
+    "B_right_of_header": {
+     "hpStd": 0.116,
+     "peakPeriod": [
+      3.4,
+      13.0
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.62,
+     "peakPeriod": [
+      3.5,
+      null
+     ],
+     "peakRatio": 10.2
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "firefox",
+   "dpr": 2,
+   "firstRefinedMs": 2632,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6745379113924069,
+    "currentNoBackdrop": 0.6745379113924069,
+    "previewOnly": 0.6745379113924069,
+    "previewNoBackdrop": 0.6745379113924069
+   },
+   "refinedRasterHF": 0.6830972784810138,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.313,
+     "peakPeriod": [
+      33.9,
+      4.0
+     ],
+     "peakRatio": 6.7
+    },
+    "B_right_of_header": {
+     "hpStd": 0.062,
+     "peakPeriod": [
+      3.9,
+      14.0
+     ],
+     "peakRatio": 4.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.757,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.4
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.301,
+     "peakPeriod": [
+      57.6,
+      6.0
+     ],
+     "peakRatio": 6.7
+    },
+    "B_right_of_header": {
+     "hpStd": 0.056,
+     "peakPeriod": [
+      3.9,
+      18.7
+     ],
+     "peakRatio": 5.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.747,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.4
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.301,
+     "peakPeriod": [
+      57.6,
+      6.0
+     ],
+     "peakRatio": 6.7
+    },
+    "B_right_of_header": {
+     "hpStd": 0.056,
+     "peakPeriod": [
+      3.9,
+      18.7
+     ],
+     "peakRatio": 5.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.747,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.4
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.311,
+     "peakPeriod": [
+      32.0,
+      4.0
+     ],
+     "peakRatio": 6.9
+    },
+    "B_right_of_header": {
+     "hpStd": 0.062,
+     "peakPeriod": [
+      3.9,
+      14.0
+     ],
+     "peakRatio": 4.9
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.757,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 15.4
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "webkit",
+   "dpr": 1.25,
+   "firstRefinedMs": 4111,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6841225949367102,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.36,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 5.5
+    },
+    "B_right_of_header": {
+     "hpStd": 0.113,
+     "peakPeriod": [
+      3.4,
+      11.3
+     ],
+     "peakRatio": 4.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.776,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.1
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.353,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 6.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.115,
+     "peakPeriod": [
+      2.9,
+      11.3
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.786,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.7
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.339,
+     "peakPeriod": [
+      10.9,
+      6.0
+     ],
+     "peakRatio": 5.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.115,
+     "peakPeriod": [
+      5.3,
+      11.3
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.785,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.7
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.36,
+     "peakPeriod": [
+      119.7,
+      null
+     ],
+     "peakRatio": 5.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.113,
+     "peakPeriod": [
+      3.4,
+      11.3
+     ],
+     "peakRatio": 4.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.776,
+     "peakPeriod": [
+      4.8,
+      null
+     ],
+     "peakRatio": 7.1
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "webkit",
+   "dpr": 1.5,
+   "firstRefinedMs": 4205,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6727765189873438,
+    "currentNoBackdrop": 0.6727765189873438,
+    "previewOnly": 0.6727765189873438,
+    "previewNoBackdrop": 0.6727765189873438
+   },
+   "refinedRasterHF": 0.6856746202531656,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.326,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.087,
+     "peakPeriod": [
+      3.0,
+      41.0
+     ],
+     "peakRatio": 4.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.759,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.324,
+     "peakPeriod": [
+      215.5,
+      null
+     ],
+     "peakRatio": 7.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.107,
+     "peakPeriod": [
+      3.5,
+      20.5
+     ],
+     "peakRatio": 4.3
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.764,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.329,
+     "peakPeriod": [
+      215.5,
+      null
+     ],
+     "peakRatio": 7.2
+    },
+    "B_right_of_header": {
+     "hpStd": 0.094,
+     "peakPeriod": [
+      4.2,
+      20.5
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.764,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.326,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.103,
+     "peakPeriod": [
+      3.6,
+      13.7
+     ],
+     "peakRatio": 4.2
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.761,
+     "peakPeriod": [
+      4.6,
+      null
+     ],
+     "peakRatio": 9.2
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "webkit",
+   "dpr": 1,
+   "firstRefinedMs": 4041,
+   "rasterHF": {
+    "refinedOrCurrent": 0.673433544303799,
+    "currentNoBackdrop": 0.673433544303799,
+    "previewOnly": 0.673433544303799,
+    "previewNoBackdrop": 0.673433544303799
+   },
+   "refinedRasterHF": 0.6839626582278492,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.466,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.144,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.557,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.9
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 10.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.146,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.548,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 10.2
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.437,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 10.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.146,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.548,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 10.2
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.466,
+     "peakPeriod": [
+      null,
+      4.0
+     ],
+     "peakRatio": 7.6
+    },
+    "B_right_of_header": {
+     "hpStd": 0.144,
+     "peakPeriod": [
+      3.6,
+      26.0
+     ],
+     "peakRatio": 3.5
+    },
+    "C_right_edge_rows": {
+     "hpStd": 3.556,
+     "peakPeriod": [
+      4.7,
+      null
+     ],
+     "peakRatio": 9.9
+    }
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "webkit",
+   "dpr": 2,
+   "firstRefinedMs": 4264,
+   "rasterHF": {
+    "refinedOrCurrent": 0.6730324050632923,
+    "currentNoBackdrop": 0.6730324050632923,
+    "previewOnly": 0.6730324050632923,
+    "previewNoBackdrop": 0.6730324050632923
+   },
+   "refinedRasterHF": 0.6832699367088617,
+   "current": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.277,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.3
+    },
+    "B_right_of_header": {
+     "hpStd": 0.061,
+     "peakPeriod": [
+      3.9,
+      28.0
+     ],
+     "peakRatio": 4.0
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.607,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.1
+    }
+   },
+   "preview-only": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.282,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 7.1
+    },
+    "B_right_of_header": {
+     "hpStd": 0.062,
+     "peakPeriod": [
+      5.3,
+      56.0
+     ],
+     "peakRatio": 3.6
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.597,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   },
+   "preview-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.278,
+     "peakPeriod": [
+      288.0,
+      4.0
+     ],
+     "peakRatio": 7.7
+    },
+    "B_right_of_header": {
+     "hpStd": 0.067,
+     "peakPeriod": [
+      5.3,
+      56.0
+     ],
+     "peakRatio": 3.8
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.597,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   },
+   "current-nobackdrop": {
+    "A_between_asr_and_rows": {
+     "hpStd": 0.276,
+     "peakPeriod": [
+      288.0,
+      null
+     ],
+     "peakRatio": 8.0
+    },
+    "B_right_of_header": {
+     "hpStd": 0.071,
+     "peakPeriod": [
+      3.9,
+      11.2
+     ],
+     "peakRatio": 4.7
+    },
+    "C_right_edge_rows": {
+     "hpStd": 2.604,
+     "peakPeriod": [
+      4.0,
+      null
+     ],
+     "peakRatio": 16.3
+    }
+   }
+  }
+ ],
+ "secondRound": {
+  "why": "owner detail: Firefox, 100% scaling (DPR 1), iframe on a new-tab page",
+  "fixture": "valid current record (local times, utc_offset_seconds); the header shows the admitted temperature",
+  "adoptionProbe": "after the first refined frame, the accepted weather record is replaced in-page with rh+7 and wind+2 only (as fetchWeather assigns it); 8 s sampled every 250 ms",
+  "runs": [
+   {
+    "tree": "main",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "dpr": 1,
+    "firstRefinedMs": 2355,
+    "refiningBadgeMs": [
+     884,
+     2014
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": true,
+     "refiningSamples": 5,
+     "recomposedMs": 1451,
+     "invalidationsDelta": 0
+    },
+    "weatherHeader": "☀️"
+   },
+   {
+    "tree": "main",
+    "engine": "chromium",
+    "version": "148.0.7778.96",
+    "dpr": 1,
+    "firstRefinedMs": 4436,
+    "refiningBadgeMs": [
+     1225,
+     4045
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": true,
+     "refiningSamples": 9,
+     "recomposedMs": 2633,
+     "invalidationsDelta": 1
+    },
+    "weatherHeader": "☀️"
+   },
+   {
+    "tree": "branch",
+    "engine": "firefox",
+    "version": "150.0.2",
+    "dpr": 1,
+    "firstRefinedMs": 2654,
+    "refiningBadgeMs": [
+     808,
+     2234
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": false,
+     "refiningSamples": 0,
+     "recomposedMs": null,
+     "invalidationsDelta": 0
+    },
+    "weatherHeader": "☀️"
+   },
+   {
+    "tree": "branch",
+    "engine": "chromium",
+    "version": "148.0.7778.96",
+    "dpr": 1,
+    "firstRefinedMs": 2449,
+    "refiningBadgeMs": [
+     880,
+     2078
+    ],
+    "adoptionOfUnconsumedFields": {
+     "adopted": true,
+     "withdrawn": false,
+     "refiningSamples": 0,
+     "recomposedMs": null,
+     "invalidationsDelta": 0
+    },
+    "weatherHeader": "☀️"
+   }
+  ],
+  "flatSkyHighPassStd_DPR1": "Firefox 0.40-0.42 and Chromium 0.43-0.44 grey levels, preview-only and refined, with and without backdrop-filter, main and branch; canvas readback high-frequency 0.67 (preview) / 0.68 (refined) on both trees: no stipple in canvas pixels or in composited headless frames",
+  "finding": "On main an rh/wind-only adoption withdraws the refined frame and shows \"Sky preview · refining…\" again (Firefox 1.45 s, Chromium 2.6 s until recomposition); on the branch the refined frame is not withdrawn. The owner frame is a \"refining…\" frame seconds after load, consistent with this withdrawal (PRA-F-10, D-F02 half). The stipple itself was not detected headless by this metric."
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "scope": "R0034 headed probe (tools/qa/r0034_headed_probe.cjs): stipple not detected by the scalar high-pass metric (no periodicity test; see R0034.md section 5 round 4)",
+ "setup": "headed Playwright, DPR 1, 325x530 iframe over a textured page, real-time clock at 2026-11-13 15:15 America/New_York, clear fixture weather, every non-loopback request aborted; refined owner re-invalidated every 400 ms for 9 s so the preview with \"Sky preview · refining…\" stays on screen, then released",
+ "firefoxPrefs": {
+  "gfx.webrender.all": true,
+  "gfx.webrender.software": false,
+  "layers.acceleration.force-enabled": true
+ },
+ "caveats": [
+  "the compositor type (hardware vs software WebRender) cannot be read from page script; WebGL reports a hardware ANGLE/NVIDIA renderer",
+  "Playwright page.screenshot in Firefox captures through the browser snapshot path, not the OS window",
+  "first headed Firefox launch of each tree stayed paused (window not yet visible); re-run once and recorded"
+ ],
+ "runs": [
+  {
+   "tree": "main",
+   "engine": "firefox",
+   "version": "150.0.2",
+   "headed": true,
+   "gpu": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+    "devicePixelRatio": 1,
+    "webglRenderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 980 Direct3D11 vs_5_0 ps_5_0), or similar",
+    "webglVendor": "Google Inc. (NVIDIA)"
+   },
+   "firstRefiningBadgeMs": 342,
+   "firstComposedMs": 9815,
+   "flatSkyHighPassStd": {
+    "preview": 0.412,
+    "refined": 0.409,
+    "preview-nobackdrop": 0.412,
+    "preview-pixelated": 0.401,
+    "preview-nopreviewcanvas": 0.322,
+    "refined-nobackdrop": 0.397,
+    "preview-canvas": 0.042,
+    "refined-canvas": 0.072
+   },
+   "canvasReadbackHF": {
+    "preview": 0.4429600694444538,
+    "refined": 0.46955370370370947
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "firefox",
+   "version": "150.0.2",
+   "headed": true,
+   "gpu": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:150.0) Gecko/20100101 Firefox/150.0",
+    "devicePixelRatio": 1,
+    "webglRenderer": "ANGLE (NVIDIA, NVIDIA GeForce GTX 980 Direct3D11 vs_5_0 ps_5_0), or similar",
+    "webglVendor": "Google Inc. (NVIDIA)"
+   },
+   "firstRefiningBadgeMs": 374,
+   "firstComposedMs": 9919,
+   "flatSkyHighPassStd": {
+    "preview": 0.408,
+    "refined": 0.409,
+    "preview-nobackdrop": 0.412,
+    "preview-pixelated": 0.401,
+    "preview-nopreviewcanvas": 0.322,
+    "refined-nobackdrop": 0.409,
+    "preview-canvas": 0.042,
+    "refined-canvas": 0.072
+   },
+   "canvasReadbackHF": {
+    "preview": 0.4429600694444538,
+    "refined": 0.46882476851852434
+   }
+  },
+  {
+   "tree": "branch",
+   "engine": "chromium",
+   "version": "148.0.7778.96",
+   "headed": true,
+   "gpu": {
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
+    "devicePixelRatio": 1,
+    "webglRenderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 5070 Ti (0x00002C05) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "webglVendor": "Google Inc. (NVIDIA)"
+   },
+   "firstRefiningBadgeMs": 655,
+   "firstComposedMs": 9899,
+   "flatSkyHighPassStd": {
+    "preview": 0.514,
+    "refined": 0.512,
+    "preview-nobackdrop": 0.517,
+    "preview-pixelated": 0.517,
+    "preview-nopreviewcanvas": 0.225,
+    "refined-nobackdrop": 0.512,
+    "preview-canvas": 0.066,
+    "refined-canvas": 0.084
+   },
+   "canvasReadbackHF": {
+    "preview": 0.447045254629638,
+    "refined": 0.4735052083333393
+   }
+  }
+ ]
+}

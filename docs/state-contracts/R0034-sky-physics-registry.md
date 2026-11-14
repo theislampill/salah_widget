@@ -2,7 +2,7 @@
 
 Documentation only. Context: the owner-reported refined-sky artifact tracked under R0034 (issue 101) and the owner's
 instruction to make every materially relevant sky/weather machine explicit in the registry. Source read on main
-`91c60ed2`. No product, test, tool or generated file changed; nothing was executed in a browser. The entries are
+`91c60ed2` and re-checked on main `bf79d00f` (R0034 merged) for the files R0034 changed. No product, test, tool or generated file changed; nothing was executed in a browser. The entries are
 proposals: index codes and count tables in `IMPLICIT_STATES.md` are unchanged, and each new entry carries a
 "Proposed status (effective on acceptance)" line, as the registry rule requires.
 
@@ -10,7 +10,7 @@ proposals: index codes and count tables in `IMPLICIT_STATES.md` are unchanged, a
 
 | # | Stage | Entry | Kind | One-line finding |
 |---|---|---|---|---|
-| 1 | Weather record → sky inputs; refined identity | [ISM-SKY-032](../../IMPLICIT_STATES.md#ism-sky-032) new; [ISM-SKY-006](../../IMPLICIT_STATES.md#ism-sky-006) updated; ISM-WX-001/002/005/009 linked | stateless projection | the job reads `vis`, `temp`, `src`; the main identity keys the whole weather copy (`rh`, `cloud`, `code`, `wind` too) |
+| 1 | Weather record → sky inputs; refined identity | [ISM-SKY-032](../../IMPLICIT_STATES.md#ism-sky-032) new; [ISM-SKY-006](../../IMPLICIT_STATES.md#ism-sky-006) updated; ISM-WX-001/002/005/009 linked | stateless projection | the job reads `vis`, `temp`, `src`; `91c60ed2` keyed the whole weather copy, `bf79d00f` (R0034) keys only those |
 | 2 | Clouds: generation, seeding, drift, lighting, transfer, albedo | [ISM-SKY-003](../../IMPLICIT_STATES.md#ism-sky-003) updated; [ISM-SKY-034](../../IMPLICIT_STATES.md#ism-sky-034) new; ISM-WX-005, ISM-SKY-016 linked | stateful (003) + stateless transfer | cloud albedo is not physical; painted alpha is the only cloud transmission |
 | 3 | Wind | ISM-SKY-003 updated; ISM-SKY-032 | stateless projection into stateful integrator | horizontal drift only; `cloudState.wy` written, never read; calm fallback still drifts |
 | 4 | Godrays, crepuscular/anticrepuscular | [ISM-SKY-035](../../IMPLICIT_STATES.md#ism-sky-035) new | memoryless gates + CSS latch | anticrepuscular computed and forceable but hidden in both generated entries |
@@ -35,9 +35,9 @@ Stateless stages (pure functions of inputs, with only registered caches or modul
 | Display or colour management | none (no `colorSpace` option; sRGB codes) | OS/display colour management, panel dithering |
 | A noise layer | `.grain` feTurbulence layer exists in source, removed by `.c>.grain{display:none!important}` in both generated entries (ISM-SKY-037); no encoder noise (ISM-SKY-023) | none |
 
-Correction to the R0034 contract §5 wording ("a noise layer (none found in code)", "shown at the card's CSS size"):
-a noise layer exists in source but is hidden in the shipped app; the canvases are shown in the card's padding box,
-not its border box (derived from CSS, not measured).
+Corrections: the working hypothesis list for this pass said "a noise layer (none found in code)" — a noise layer
+exists in source but is hidden in the shipped app. The R0034 contract §5 says canvases are "shown at the card's CSS
+size" — they are shown in the card's padding box, not its border box (derived from CSS, not measured).
 
 ## 3. Unknowns
 
@@ -61,7 +61,7 @@ row is a proposal for a future, separately authorised change; none is made here.
 
 | ID | Entry | Class | Evidence (F = fact from source, H = hypothesis) | Smallest change | Blast radius | Pixels | Owner | Verification |
 |---|---|---|---|---|---|---|---|---|
-| CI-01 | ISM-SKY-032 / 006 | defect | F: main identity keys `rh`, `cloud`, `code`, `wind` that the job never reads; refined frame withdrawn on such updates (`native-contract.mjs` L8) | merge the R0034 branch's consumed-input identity | `real-sky/native-contract.mjs`, lifecycle | no (frames byte-identical) | R0034 | existing ES34-01..05 tests; R0034 native lanes |
+| CI-01 | ISM-SKY-032 / 006 | defect (addressed in code) | F: `91c60ed2` keyed `rh`, `cloud`, `code`, `wind`; R0034 merged in `bf79d00f` narrows the identity (`native-contract.mjs` L9-21) | none further: complete R0034 acceptance | — | no | R0034 | ES34-01..05; R0034 native lanes |
 | CI-02 | ISM-SKY-037 | presentation / defect candidate | F (derived): canvases 325×530 shown in a 323×528 padding box (L13, L24-33); H: contributes resampling softness | measure the real rect first; if confirmed, size canvases to the border box (e.g. `inset:-1px`) or the backing to the rect | preview/refined hosts, capture scaling, `.c` CSS | yes (slight) | R0034 | native rect probe at DPR 1/1.25; crop diff at the card edge |
 | CI-03 | ISM-SKY-035 | defect (doc/code mismatch) | F: `.atmo .anticrep{display:none!important}` in the generated stylesheet (`tools/build_native.py` L112) vs OPTICS.md "production" | decide: show it (drop it from the hide list) or document it as retired | `tools/build_native.py` CSS, OPTICS.md, DESIGN.md | yes if shown | unowned | forced `&debugOptic=anticrep` crop; docs contract |
 | CI-04 | ISM-SKY-035/036 | transition clarity | F: `--sunvx/--sunvy` written at target, `.suncorner` transform eases 2.4 s (L71, L3030) | derive the optic anchor from the same eased position or ease the optics' anchor identically | native CSS/paint | yes during lift changes | unowned | sunrise `&simTime=05:50&timeScale=…` clip; halo crop rings the body |
