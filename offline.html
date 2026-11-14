@@ -8029,7 +8029,7 @@ let _setLocationEvidence=null, _setLocationOrigin="manual", _setLocationSaved=fa
 // the panel and display-name edits do not end it (owner G1-A, G2-i). Fields edited after dispatch stay
 // the user's: a close commits only them, merged into the Reset target when it lands. Shape:
 // {prefOwner, session, phase: detecting|held|applying|applied|failed, save, release}.
-let _setReset=null, _setResetFailed=false, _setApplyFault=null;
+let _setReset=null, _setResetFailed=false, _setApplyFault=null, _setApplySeq=0;
 const _SET_PREF_IDS={method:"set-method",school:"set-school",time:"set-time",units:"set-units",datefmt:"set-datefmt",appearance:"set-appearance",label:"set-label"};
 try{ _setHomeCC=(new Intl.Locale(navigator.language).region||"").toLowerCase(); }catch(e){}
 const _byId=id=>document.getElementById(id);
@@ -8064,11 +8064,13 @@ function _publishPersistence(operation,result){
   _renderPersistenceAffordance(); _renderSettingsStatus();
 }
 // A settings apply that rejects is observed and reported once; the persistence fact already published
-// stays, nothing is retried or rolled back. A later settled apply withdraws the report (R0030 G3-a).
-function _settleSettingsApply(error){
+// stays, nothing is retried or rolled back. Only the latest settings apply (by issue order, `id`) writes
+// the report, so a stale success cannot withdraw a newer failure (R0030 G3-a).
+function _settleSettingsApply(error,id){
+  if(error!=null){ try{ console.error("Settings could not be applied",error); }catch(e){} }
+  if(id!==_setApplySeq) return;
   if(error==null){ if(!_setApplyFault) return; _setApplyFault=null; }
-  else { try{ console.error("Settings could not be applied",error); }catch(e){}
-    _setApplyFault=String(error&&error.name||"error").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,40)||"error"; }
+  else _setApplyFault=String(error&&error.name||"error").replace(/[^a-zA-Z0-9_.-]/g,"").slice(0,40)||"error";
   const live=_byId("settings-persistence-status"); if(live) live.textContent=_outcomeMessage();
   _renderSettingsStatus();
 }
@@ -8077,8 +8079,16 @@ function _setStatus(msg,isErr){ _setHint={msg:msg||"",isErr:!!isErr}; _renderSet
 // place search. Query/coordinate equality cannot distinguish A → B → A.
 function _invalidateSetLocation(){ _setEdit++; _setSearchSeq++; _setCands=[]; _setCandOwner=null; }
 // Reset's location authority has its own owner (R0030): only a newer explicit location intent —
-// coordinates, a place search, the GPS pin, another Reset — ends it; open/close/name edits do not.
-function _dropReset(){ const reset=_setReset; _setReset=null; _setResetFailed=false; if(reset&&reset.release) reset.release(); }
+// typed coordinates, a shown place-search candidate, a GPS fix, another Reset — ends it; open/close/name
+// edits do not. Post-dispatch edits a close recorded (`save`) are still in the form: they become the
+// form's dirtiness again so the next close commits them with the new location (I3).
+function _dropReset(){ const reset=_setReset; _setReset=null; _setResetFailed=false; if(reset&&reset.save) _setDirty=true; if(reset&&reset.release) reset.release(); }
+// The GPS pin ends a pending Reset only when the fix is adopted. _usePrecise (R0031's owner) is not
+// edited: adoption is observed from outside as its owned lookup still current with new device evidence.
+function _usePreciseFromPin(){
+  const evidence=_setLocationEvidence, done=_usePrecise(), owner={session:_setSession,edit:_setEdit,seq:_setSearchSeq};
+  return Promise.resolve(done).then(()=>{ if(_setReset&&_ownsSetLookup(owner)&&_setLocationEvidence!==evidence&&_setLocationOrigin==="browser-geolocation") _dropReset(); });
+}
 function _captureSetLookup(){ return {session:_setSession,edit:_setEdit,seq:++_setSearchSeq}; }
 function _ownsSetLookup(owner){ return _setOpen && owner.session===_setSession && owner.edit===_setEdit && owner.seq===_setSearchSeq; }
 function _recordSetEdit(e){
@@ -8111,7 +8121,6 @@ function _setPin(src){
 // an unavailable search and partial provider coverage get distinct feedback. Resolves to the detailed status,
 // or "superseded" when a newer session/edit/lookup owns the form (then nothing is touched).
 async function _runSetSearch(q){
-  _dropReset();                                                // a place search is a newer location intent (R0030)
   const owner=_captureSetLookup(), bias=_setHomeCC;
   _setStatus("Searching…");
   let r=null;
@@ -8128,6 +8137,7 @@ async function _runSetSearch(q){
 function _showSetCand(){
   if(!_setCandOwner || !_ownsSetLookup(_setCandOwner)) return;
   const c=_setCands[_setCandIdx]; if(!c) return;
+  _dropReset();                                                // a shown candidate is a newer location intent (R0030)
   _byId("set-lat").value=(+c.lat).toFixed(5);
   _byId("set-lon").value=(+c.lon).toFixed(5);
   if(c.name) _byId("set-label").value=c.name;                 // display name follows the chosen place (override later with Shift+Enter)
@@ -8182,8 +8192,7 @@ function _populateSettingsForm(){
 function _wireSettings(){
   if(_setWired) return; _setWired=true;
   _byId("setClose").addEventListener("click",_closeSettings);
-  _byId("set-pin").addEventListener("click",_dropReset);      // the GPS pin is a newer location intent (R0030)
-  _byId("set-pin").addEventListener("click",_usePrecise);     // one-shot browser position (asks permission)
+  _byId("set-pin").addEventListener("click",_usePreciseFromPin);   // one-shot browser position (asks permission)
   _byId("set-reset").addEventListener("click",_resetLocal);
   // AUTO-SAVE (no Save button): any edit marks the form dirty → committed on close. Esc closes; Tab is trapped.
   const panel=_byId("settings");
@@ -8255,7 +8264,8 @@ function _commitSettings(){
   _applySettings(cfg,true);
 }
 function _applySettings(cfg,save){
-  applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null),_settleSettingsApply);   // persist + re-fetch + re-render; a rejection is observed (G3)
+  const id=++_setApplySeq;                                     // persist + re-fetch + re-render; a rejection is observed (G3)
+  applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null,id),e=>_settleSettingsApply(e,id));
 }
 async function _usePrecise(){    // the map-pin button → precise GPS (only place getCurrentPosition is called)
   _invalidateSetLocation(); const owner=_captureSetLookup();
@@ -8275,12 +8285,13 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
       "Browser location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the selected location.", true); }
 }
 async function _resetLocal(){
-  _invalidateSetLocation(); _dropReset(); const prefOwner={..._setPrefVersions};
+  _invalidateSetLocation(); const prefOwner={..._setPrefVersions};
   const r=window.SalahConfig?SalahConfig.clearLocal():{ok:false,error:"unavailable"};
   _publishPersistence("reset",r);
   if(!r.ok){
     _setStatus("Enter to search a place · Shift+Enter to keep the typed name."); return; // the reset also cancelled any pending lookup
   }
+  _dropReset();                                                // only a cleared Reset supersedes an earlier one (a failed clear leaves the owner unchanged)
   // Cleared: Reset now owns the location (see _setReset). Edits made before the click are discarded, as a
   // completed Reset always did, and nothing may still claim the cleared record (OM-04): the storage marker
   // reverts to the record's own origin, which the classifier compares (origin||source), so it is neutral.
@@ -8302,9 +8313,9 @@ async function _resetLocal(){
     // Reset still owns the detected location, while preferences edited since
     // dispatch (or during apply's await) own their fields and their close-save.
     Object.assign(c,_newerSetPrefs(prefOwner));
-    reset.phase="applying"; let fault=null;
+    reset.phase="applying"; let fault=null; const applyId=++_setApplySeq;
     try{ await applyConfig(c,{save:false,reset:true}); }catch(e){ fault=e; }     // an explicit Reset resets even when values are equal (R0003 D1)
-    _settleSettingsApply(fault);
+    _settleSettingsApply(fault,applyId);
     if(_setReset!==reset) return;
     reset.phase="applied";
     if(!_setOpen){ if(fault) _setReset=null; else _commitSettings(); return; }   // the closed panel's deferred commit

@@ -12,17 +12,29 @@ const KILLERS={
   "close-ends-reset":"ES30-02 R1: pre-dispatch edit + Reset + close during detection",
   "label-ends-reset":"ES30-03 R2: display-name edit during detection then close",
   "coordinate-keeps-reset":"ES30-05 coordinate edit during detection supersedes Reset",
-  "search-keeps-reset":"ES30-05 place search and GPS request during detection supersede Reset",
-  "pin-keeps-reset":"ES30-05 place search and GPS request during detection supersede Reset",
+  "candidate-keeps-reset":"ES30-05 D1 a shown place-search candidate supersedes Reset",
+  "search-start-ends-reset":"ES30-05 D1 a place search with no match does not end Reset",
+  "gps-fix-keeps-reset":"ES30-05 D1 a GPS fix supersedes Reset",
+  "gps-click-ends-reset":"F1 Reset, edit, close, reopen, denied GPS click, close",
+  "second-reset-drops-before-clear":"F1 a second Reset whose clear fails leaves the first Reset",
   "drop-deferred-edits":"ES30-03 R2: display-name edit during detection then close",
+  "close-keeps-dirty":"F2 close during a pending Reset leaves no uncommitted dirtiness behind",
+  "failed-owner-kept":"F2 after a closed-panel detection failure the form owns location again",
+  "failed-notice-repeats":"F2 the closed-panel failure notice is shown on the next open only",
   "stale-storage-marker":"ES30-06 R3: after a successful clear no surface claims a saved position",
   "drop-apply-catch":"ES30-12 close-save: injected bindConfig fault is observed",
+  "stale-success-clears-fault":"F3 a stale successful apply does not withdraw a newer apply's failure line",
   "drop-reset-catch":"ES30-12 Reset apply fault is observed and reported",
+  "commit-after-reset-fault":"F2 limit: a Reset apply fault with the panel closed drops the owner",
   "unconditional-detect":"ES30-10 N1: preferLocal hash site Reset makes no coarse request",
-  "reopen-loses-pending-edits":"ES30-13 close, reopen, close during detection",
+  "reopen-loses-pending-edits":"F1 Reset, edit, close, reopen, denied GPS click, close",
   "held-never-released":"ES30-13 detection lands while a later session is open",
+  "held-no-owner-check":"F2 a held target released by a newer coordinate intent is not applied",
   "failure-reopens-form-authority":"ES30-08a G1-A/G1a(A1): detection fails after close",
 };
+// Equivalent under the current callers (stated, not counted): every `_dropReset` caller either sets the form
+// dirty itself (coordinate input, shown candidate, GPS fix) or clears it by design (a cleared second Reset), so
+// removing the `reset.save` -> `_setDirty` re-arm in `_dropReset` is not observable today; it stays as a guard.
 test("every R0030 mutant has a killer and every target is unique in authored and generated source",()=>{
   assert.deepEqual(Object.keys(KILLERS).sort(),Object.keys(MUTANTS).sort());
   for(const file of ["src/native/index.html","index.html"]){
