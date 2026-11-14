@@ -22,6 +22,11 @@ const MUTANTS={
   "stale-storage-marker":['if(CONFIG&&CONFIG.source==="localStorage"&&CONFIG.origin) CONFIG={...CONFIG,source:CONFIG.origin,savedAt:null};',""],
   "drop-apply-catch":["applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null,id),e=>_settleSettingsApply(e,id));","applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null,id));"],
   "stale-success-clears-fault":["  if(id!==_setApplySeq) return;\n",""],
+  // Fresh review (05a91ab1) survivors n02, n08, n07, n10:
+  "gps-adoption-ignores-evidence":['_ownsSetLookup(owner)&&_setLocationEvidence!==evidence&&_setLocationOrigin==="browser-geolocation"','_ownsSetLookup(owner)&&_setLocationOrigin==="browser-geolocation"'],
+  "stale-failure-writes-fault":["  if(id!==_setApplySeq) return;\n","  if(id!==_setApplySeq&&error==null) return;\n"],
+  "reset-apply-unordered":["const applyId=++_setApplySeq;","const applyId=_setApplySeq;"],
+  "site-line-empty-label":['(c.label?": "+c.label:".")','": "+(c.label||"")'],
   "drop-reset-catch":["try{ await applyConfig(c,{save:false,reset:true}); }catch(e){ fault=e; }","await applyConfig(c,{save:false,reset:true});"],
   "commit-after-reset-fault":["if(!_setOpen){ if(fault) _setReset=null; else _commitSettings(); return; }","if(!_setOpen){ _commitSettings(); return; }"],
   "unconditional-detect":['if(policy&&policy.mode==="preferLocal"&&policy.cfg&&!policy.needsDetect){',"if(false){"],

@@ -233,6 +233,33 @@ test("F3 a stale successful apply does not withdraw a newer apply's failure line
   assert.match(live(f),/could not be applied/);f.sandbox.bindConfig=real;
   f.calls.prayer[0].resolve();await drain();await drain();assert.match(live(f),/could not be applied/,"A's stale success leaves B's failure reported");
 });
+// ---- fresh review N1/N2/N3 ----
+test("F3 symmetric: a stale failed apply does not overwrite a newer apply's success",T,async()=>{
+  const f=make();f.sandbox.console={...console,error(){}};
+  f.input("set-units","c","change");f.click("setClose");assert.equal(f.calls.prayer.length,1,"apply A pending on prayer");
+  f.buckle.dispatch("click");f.input("set-time","12","change");f.click("setClose");await drain();
+  assert.equal(live(f),"Settings saved in this browser.","newer apply B succeeded");
+  f.calls.prayer[0].reject(new TypeError("late A"));await drain();await drain();
+  assert.equal(live(f),"Settings saved in this browser.","A's stale failure does not overwrite B's outcome");
+});
+test("F3 the Reset apply is ordered too: an older close-save success does not withdraw a newer Reset apply failure",T,async()=>{
+  const f=make();f.sandbox.console={...console,error(){}};
+  f.input("set-units","c","change");f.click("setClose");assert.equal(f.calls.prayer.length,1,"close-save A pending on prayer");
+  f.buckle.dispatch("click");f.click("set-reset");f.sandbox.bindConfig=()=>{throw new TypeError("injected Reset");};
+  await f.resolveCall("coarse",0,DETECTED);assert.match(status(f),/Your changes could not be applied\./);
+  f.calls.prayer[0].resolve();await drain();await drain();assert.match(live(f),/Your changes could not be applied\./,"A's stale success leaves the Reset failure reported");
+});
+test("N1 an earlier adopted GPS fix does not make a later denied GPS click end a Reset",T,async()=>{
+  const f=make();f.click("set-pin");await f.resolveCall("gps",0,FIX);await drain();
+  assert.equal(f.run("_setLocationOrigin"),"browser-geolocation","control: a fix was adopted before the Reset");
+  f.click("set-reset");f.click("set-pin");await gpsFail(f);
+  await f.resolveCall("coarse",0,DETECTED);await settlePrayer(f);
+  assert.equal(f.config().lat,24.47,"the Reset target still lands");assert.equal(f.elements.get("set-lat").value,"24.47");
+});
+test("N3 preferLocal Reset to a hash site without a label ends its line with a full stop",T,async()=>{
+  const f=make({hash:"#preferLocal=1&lat=21.4225&lon=39.8262"});f.click("set-reset");await settlePrayer(f);
+  assert.equal(f.calls.coarse.length,0);assert.equal(status(f),"Saved settings cleared.\nUsing the location this widget was set up with.");
+});
 // ---- ES30-13: duplicate / concurrent / interrupted ----
 test("ES30-13 close, reopen, close during detection: commit takes location from the Reset owner; edits of both sessions kept",T,async()=>{
   const f=make();f.click("set-reset");f.input("set-method","2","change");f.click("setClose");f.buckle.dispatch("click");

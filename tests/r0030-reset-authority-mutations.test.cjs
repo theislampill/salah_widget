@@ -25,6 +25,10 @@ const KILLERS={
   "drop-apply-catch":"ES30-12 close-save: injected bindConfig fault is observed",
   "stale-success-clears-fault":"F3 a stale successful apply does not withdraw a newer apply's failure line",
   "drop-reset-catch":"ES30-12 Reset apply fault is observed and reported",
+  "gps-adoption-ignores-evidence":"N1 an earlier adopted GPS fix does not make a later denied GPS click end a Reset",
+  "stale-failure-writes-fault":"F3 symmetric: a stale failed apply does not overwrite a newer apply's success",
+  "reset-apply-unordered":"F3 the Reset apply is ordered too",
+  "site-line-empty-label":"N3 preferLocal Reset to a hash site without a label",
   "commit-after-reset-fault":"F2 limit: a Reset apply fault with the panel closed drops the owner",
   "unconditional-detect":"ES30-10 N1: preferLocal hash site Reset makes no coarse request",
   "reopen-loses-pending-edits":"F1 Reset, edit, close, reopen, denied GPS click, close",
@@ -35,6 +39,9 @@ const KILLERS={
 // Equivalent under the current callers (stated, not counted): every `_dropReset` caller either sets the form
 // dirty itself (coordinate input, shown candidate, GPS fix) or clears it by design (a cleared second Reset), so
 // removing the `reset.save` -> `_setDirty` re-arm in `_dropReset` is not observable today; it stays as a guard.
+// Fresh-review n11 (`_dropReset` keeps the failed-notice flag) is unobservable too: the flag is armed only by a
+// close (`_commitSettings`, phase failed) and consumed by the next open, and no drop can happen while closed.
+// n01/n03/n17 (redundant adoption guards) and n14 (no-op snapshot) are equivalent under current callers.
 test("every R0030 mutant has a killer and every target is unique in authored and generated source",()=>{
   assert.deepEqual(Object.keys(KILLERS).sort(),Object.keys(MUTANTS).sort());
   for(const file of ["src/native/index.html","index.html"]){
