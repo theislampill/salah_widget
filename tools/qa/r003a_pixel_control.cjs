@@ -13,7 +13,7 @@
 //                      canvas at 0/10/60 s (never the qaState hash); runs A, B, A2 default and B under OS reduced motion with and
 //                      without &motion=full.
 // Usage: node tools/qa/r003a_pixel_control.cjs --root <tree> --index-a <main index.html> --index-b <branch index.html>
-//        --out <fresh dir> --engine chromium|firefox|webkit [--mode pixel|fault|motion] [--dpr 1|2] [--playwright <pkg>]
+//        --out <fresh dir> --engine chromium|firefox|webkit [--mode pixel|fault|motion] [--dpr 1|2] [--scenes a,b] [--playwright <pkg>]
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),crypto=require('node:crypto');
 const a={};const v=process.argv.slice(2);for(let i=0;i<v.length;i+=2)a[v[i].slice(2)]=v[i+1];
 const PW=require(a.playwright||'playwright'),root=path.resolve(a.root),out=path.resolve(a.out),engine=a.engine||'chromium',mode=a.mode||'pixel',dpr=+(a.dpr||1);
@@ -80,7 +80,7 @@ async function diff(browser,x,y){const ctx=await browser.newContext();const page
  const runs={A:path.resolve(a['index-a']),B:path.resolve(a['index-b']),A2:path.resolve(a['index-a'])};
  const browser=await PW[engine].launch({headless:true});const results=[];const meta={engine,mode,dpr,version:browser.version(),indexA:sha(fs.readFileSync(runs.A)),indexB:sha(fs.readFileSync(runs.B))};
  try{
-  if(mode==='pixel'){for(const scene of SCENES){const shot={};
+  if(mode==='pixel'){for(const scene of SCENES.filter(s=>!a.scenes||a.scenes.split(',').includes(s[0]))){const shot={};
    for(const [run,file] of Object.entries(runs)){indexFile=file;shot[run]=await shoot(browser,base,scene);fs.writeFileSync(path.join(out,`${engine}-dpr${dpr}-${scene[0]}-${run}.png`),shot[run].png);}
    const noise=await diff(browser,shot.A.png,shot.A2.png),change=await diff(browser,shot.A2.png,shot.B.png),optics=Object.fromEntries(Object.entries(shot).map(([k,o])=>[k,o.state.optics]));
    const row={scene:scene[0],engine,dpr,sha:Object.fromEntries(Object.entries(shot).map(([k,o])=>[k,sha(o.png)])),noiseAvsA2:noise,changeA2vsB:change,changeAvsB:await diff(browser,shot.A.png,shot.B.png),
@@ -93,6 +93,6 @@ async function diff(browser,x,y){const ctx=await browser.newContext();const page
    results.push(row);console.log(JSON.stringify(row));}}
   else if(mode==='motion'){for(const [run,file,suffix,reduced] of [['A',runs.A,'',false],['B',runs.B,'',false],['A2',runs.A,'',false],['B-reduced',runs.B,'',true],['B-reduced-full',runs.B,'&motion=full',true]]){
    indexFile=file;const r=await motionRun(browser,base,suffix,reduced);const row={run,...r};results.push(row);console.log(JSON.stringify({run,delta10:r.delta10,delta60:r.delta60,mass:r.points[0].c?.mass??null,errors:r.errors.length}));}}
-  fs.writeFileSync(path.join(out,`${mode}-${engine}${mode==='pixel'?'-dpr'+dpr:''}.json`),JSON.stringify({...meta,results},null,1));
+  fs.writeFileSync(path.join(out,`${mode}-${engine}${mode==='pixel'?'-dpr'+dpr+(a.scenes?'-'+a.scenes.split(',')[0]:''):''}.json`),JSON.stringify({...meta,scenes:a.scenes||'all',results},null,1));
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

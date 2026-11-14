@@ -95,11 +95,31 @@ test('R3A-01.2 with the fault kept for five loop frames the shafts stay withdraw
 const GUARDS={'sun hook null':'window.SalahNativeSkyHost={cloudLighting:()=>null}','identity null':'skySceneIdentity=()=>null'};
 for(const optic of SOLAR_OPTICS)for(const [label,guard] of Object.entries(GUARDS))test('R3A-01.4 G4 '+optic+' withdrawn on guard return ('+label+') under a failed withdrawal',async()=>{
  const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');h.run(guard);
- const pending=h.run('document.querySelector(".c").classList.contains("sky-pending")');
+ // Start pending (as after a scene reset) so that a guard which removed sky-pending would be detected (review X7).
+ h.select('.c').classList.add('sky-pending');
  h.at(901000);const probe=recordOpticWrites(h,'--rain-op');h.run('render()');probe.restore();
  assert(probe.faults.count>=2,'withdrawal failed on both attempts');
  assert.equal(+h.select('.c').style.getPropertyValue(optic),0,optic);
- assert.equal(h.run('document.querySelector(".c").classList.contains("sky-pending")'),pending,'guard keeps its sky-pending state');
+ assert.equal(h.select('.c').classList.contains('sky-pending'),true,'guard return keeps sky-pending');
+});
+// Review X1: the five are already withdrawn before the guard expression itself runs; a throw in either guard input
+// (scene identity or the physical-Sun hook) cannot leave them published.
+const GUARD_THROWS={'skySceneIdentity throws':'skySceneIdentity=()=>{throw Error("R003A injected identity fault");}',
+ 'cloudLighting throws':'window.SalahNativeSkyHost={cloudLighting(){throw Error("R003A injected sun-hook fault");}}'};
+for(const [label,inject] of Object.entries(GUARD_THROWS))test('R3A-01.9 zeroing precedes the guard inputs: '+label,async()=>{
+ const h=await fixture();for(const name of SOLAR_OPTICS)h.select('.c').style.setProperty(name,'.5');
+ h.at(901000);h.run(inject);const probe=recordOpticWrites(h,'--rain-op');h.run('_renderFaults.clear();render()');probe.restore();
+ assert(JSON.parse(h.run('JSON.stringify(Object.keys(renderFaultSnapshot()))')).includes('celestial'),'guard-input fault recorded under celestial');
+ for(const name of SOLAR_OPTICS)assert.equal(h.select('.c').style.getPropertyValue(name),'0',name);
+});
+// Review X3: a healthy timetable scene keeps its computed halo, sundogs and pillar (forced so each is non-zero).
+const FORCED={'--sunhalo':['halo','sunHalo',0.85],'--sundogs':['sundogs','sunDogs',0.9],'--sunpillar':['pillar','sunPillar',0.8]};
+for(const [key,[force,field,gain]] of Object.entries(FORCED))test('R3A-01.6 healthy timetable scene keeps computed '+key,async()=>{
+ const h=await fixture({hash:'&simWx=2&simCloud=50&debugOptic='+force});
+ h.run('window.SalahNativeSkyHost={cloudLighting:()=>({sun:{altDeg:3,azDeg:120},utcMs:simNow(),sample:()=>null})}');
+ h.run('render()');assert(h.read().model,'timetable rendered');
+ const value=h.run('atmosphere(model()).'+field);assert(value>0,'control: forced '+force+' is non-zero');
+ assert.equal(h.select('.c').style.getPropertyValue(key),(gain*value).toFixed(3));
 });
 const BODY_CALLS=['renderMoon','projectStars','lunarPresentation','wxDrivers','nativeSolarPresentation','paintSolarPresentation'];
 for(const fn of BODY_CALLS)test('R3A-01.9 a throw in painter body call '+fn+' cannot leave the shafts published',async()=>{
