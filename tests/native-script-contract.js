@@ -115,6 +115,15 @@
       parentSha256:'dbc77c678d45c83f73297808cba729258b82903df7d0b771164a988465865190',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0031 GPS slice (issue 98) merged with main 48ba76db (R0032) at 83b9b5df: authored source 27500ed5 and the
+    // legacy-Moon structural control of its generated index 78c3ae8a. Every entry below remains admitted.
+    '27500ed5c462451f6685915b9d9ee40f3171516ee09144de6ca4e549fa78f070':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'83b9b5df52678fffd01318e18f5c1530ded48aee',path:'src/native/index.html',layout:'config,native'}),
+    '08800e5a9c882880c83a6640fd30d94328b2d36c0b701ef2208bfc1619ae2a78':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'83b9b5df52678fffd01318e18f5c1530ded48aee',path:'index.html',
+      parentSha256:'78c3ae8a01a9c1398682f92a463d95a6bfd076f427c9af8042cb7ec1d3ec6bd0',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0032 (issue 99) review round merged with main 93f7c262 (R003A) on R0032 tip 3162f303: authored source 074bdc2a and the
     // legacy-Moon structural control of its generated index a2336574. Every entry below remains admitted.
     '074bdc2a599ffa02cab61b463800ad96991bbbde631b808d0991afa5993fbbd2':Object.freeze({
