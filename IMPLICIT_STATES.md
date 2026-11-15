@@ -1691,6 +1691,17 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
     an identity change. The painter repaints about every 76 ms when motion is allowed (loop ~L4023-4026), only when
     dirty under reduced motion.
   - Lighting, capture and transfer: ISM-SKY-034. Tests for the wind constants: none found (gap).
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+  `cloudState.wy` (owner gate G1): **retained and documented**, not removed. `windUY = cos(windDir ?? 225°)` is the
+  north–south horizontal component of the unit "from" direction (opposite sign to the conventional `v = −cos`), not a
+  vertical wind; it is written by `applyCloudState` and read by no renderer, `qaState()` field, debug readout or URL
+  parameter; drift uses only `wx·wspd`. Census (`tests/r003a-cloud-wind-truth.test.cjs`): consumer-class hits are the
+  authored producer and its two generated copies, the r0025 mutation anchor and the R000B fixture's unasserted wind
+  snapshot; three whole-object copy sites. Drift trajectories (100 cases × 60 steps, `tools/qa/r003a_drift_matrix.cjs`)
+  byte-identical to main. Retention pending the owner's wind-vector research. *Open finding (G5):* for `windX > 0` the
+  deck phase decreases (clusters toward smaller x, `paintClouds` `ux ∝ … + phase`) while `rainSlant = windX·wind·120 px`
+  and `--wind-dir` (fog) point toward larger x; the `paint()` comment "clouds drift east(+)" describes `--wind-dir`.
+  Source-derived, not measured; no direction claimed or changed. Proposed status (effective on acceptance): D EIV / I PEX / V PEX.
 
 <a id="ism-sky-004"></a>
 ### ISM-SKY-004 — Precipitation population, cloud-origin gating and lightning bucket
@@ -1784,9 +1795,9 @@ Original audit: **R01** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 - **Actors and ownership.** refined host
 - **Effects.** refined frame availability
 - **Invariants.** no result for another epoch/identity is accepted
-- **Invalid, duplicate, stale or concurrent risks.** identity includes `rh`, `cloud`, `code`, `wind`, which `nativeJob` never reads (it reads `vis`, `temp`, `src`); identity faster than one render never accepts and is not reported (PRA-F-10)
+- **Invalid, duplicate, stale or concurrent risks.** identity includes `rh`, `cloud`, `code`, `wind`, which `nativeJob` never reads (it reads `vis`, `temp`, `src`); identity faster than one render never accepts and is not reported (PRA-F-10) — audit-time text; since R0034 merged (`bf79d00f`) the identity carries only the consumed terms (R0034 bullet below)
 - **Status evidence.** D: comments · I: single fenced class · V: unit + one native throughput record
-- **Work orders.** none (files unchanged)
+- **Work orders.** none at audit time; R0034 (issue 101) since changed these files (merged `bf79d00f`)
 - **Accepted evidence.** `tests/real-sky/native-lifecycle.test.mjs`, `native-contract.test.mjs`; R0027 native run1 recorded `rate-throughput` at 120×
 - **Tests.** `tests/real-sky/native-lifecycle.test.mjs`
 - **Observed facts.** integrator grep of `nativeJob`: only `w.vis`, `w.temp`, `w.src`
@@ -2677,6 +2688,12 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**.
 - **Risks routed.** capture write effect → R0036 (per R0034 contract); compose allocation/data-URL rate → R0034 (G3
   measurement recorded, PRA-F-34, no budget adopted; attribution open).
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+  Documented in DESIGN.md › "Known approximations": no cloud albedo or optical depth (deliberate simplification) and
+  no ground albedo in the sky radiance model (single-scattered sunlight plus empirical twilight, moonlight and
+  background terms; limitation, magnitude not measured), each citing its source owner. No
+  code change. Proposed status (effective on acceptance): D PEX / I PEX / V PEX (unchanged; the rim coefficients are
+  still unpinned).
 
 <a id="ism-sky-035"></a>
 ### ISM-SKY-035 — Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration
@@ -2713,7 +2730,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   | `DEBUGOPTIC` ∈ {halo, sundogs, pillar, anticrep} | — | that value forced (0.95 / 0.95 / 0.9 / 0.8) |
   | `DEBUGOPTIC` ∈ {paraselene, lunarhalo} | `moonLightEligible` | forced 0.9 / 0.95, else 0 |
   | cloud withdrawal with a decision | receipt changed | `--ray`, `--anticrep`, `--sunhalo`, `--sundogs`, `--sunpillar`, lunar optics → 0 |
-  | no-timetable paint | — | halo/sundogs/pillar and lunar optics → 0; `--ray`, `--anticrep` not written |
+  | no-timetable paint | — | halo/sundogs/pillar and lunar optics → 0; `--ray`, `--anticrep` not written (main `516d8cc8`; R003A adds both) |
   | `beginSkyScene` | — | cloud receipt withdrawn with `decision=null`: no optic zeroed here; `sky-pending` hides `.atmo`/`.wfx` |
 - **Invariants (observed).** Halo, sundogs, pillar and godray share the visible-sun anchor `--sunvx = 20/325`,
   `--sunvy = sunLift/530` (AGENTS gate C); corner rays and body move with the `.suncorner` transform.
@@ -2737,6 +2754,22 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **DWE / IMS / PEX** (documentation contradicted for
   anticrepuscular; gates inline in `atmosphere()`; state-only tests).
 - **Risks routed.** anticrepuscular visibility discrepancy → R003C (issue 126, disposition) with its documentation half in R003A (issue 124); anchor lead → R003B (issue 125).
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+  *Correction of the "Failure and recovery" fact above (re-derived on `516d8cc8`):* no scene reset is involved and the
+  window is not one frame. Without a timetable, `render()` runs stage `weather-withdrawal` (`withdrawWeatherEffects`,
+  key list includes `--ray`, `--anticrep`, halo, sundogs, pillar) with one bounded retry, then `paintCelestialWithoutTimetable`.
+  If both attempts throw before their optic writes, `--ray`/`--anticrep` stayed published on **every** render while the
+  fault recurred (the painter never wrote them; `withdrawCloudState` re-runs the effects only on a changed receipt),
+  and all five solar optics stayed when the painter's guard also returned (no physical Sun hook or null scene
+  identity). Demonstrated only under injected faults; no natural trigger known. Enforced (owner gate G4 b): the
+  painter writes `"0"` for `--ray`, `--anticrep`, `--sunhalo`, `--sundogs`, `--sunpillar` first, before its guard and every
+  fallible call; lunar optics unchanged; guard behaviour (no epoch, no body, `sky-pending` kept) unchanged, accepted
+  guard tests unedited. Verified by `tests/weather-no-timetable-withdrawal.test.cjs` rows R3A-01.1-01.6 and 01.9 (one
+  G4 test per optic and guard, RED on main) and mutants (per-optic drops, M1-M13) all killed; native fault witness
+  and healthy-scene pixel control in [R003A](docs/state-contracts/R003A.md). Documented: OPTICS.md crepuscular gate
+  (`directional = 1 − cloud²`, `humid` from dew point), corner-ray gate, anticrepuscular "computed, hidden".
+  Residual routed to R002C: a throw in `weatherDecision()` returns before any withdrawal. Proposed status (effective on
+  acceptance): D EIV / I IMS / V EEV (gates remain inline in `atmosphere()`).
 
 <a id="ism-sky-036"></a>
 ### ISM-SKY-036 — Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction)
@@ -2777,6 +2810,12 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Unknowns.** native rendering of the blurred (0.8 px) radial gradient body under the screen blend.
 - **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**.
 - **Risks routed.** none.
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+  Documented as classified approximations in DESIGN.md › "Known approximations" and OPTICS.md: linear limb darkening
+  `u = 0.6` (full weight to 10°, blended out by 40°); refraction flattening presentational, at most 7.7 % (scale 0.923 at
+  e = 0.5°) against about 0.84 from Bennett's formula; corner rays gated only by presence and the per-class `T_cloud`.
+  The inline `--sunflat` comment ("~0.8 at the horizon, 1 above ~5°") contradicted its own formula and now states the
+  coded bounds. No value changed. Proposed status (effective on acceptance): D EIV / I PEX / V PEX.
 
 <a id="ism-sky-037"></a>
 ### ISM-SKY-037 — Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion)
@@ -2856,6 +2895,10 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Risks routed.** canvas scaling (323×528 display of the 325×530 backing; CI-02) → R003B (issue 125); glass, shadow, stroke
   and font CSS (CI-08, CI-17) → not to be changed by owner decision (R003B standing prohibition); preview/refined handoff →
   R0034 (closed, accepted).
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+  Owner gate G2 (a): OPTICS.md and DESIGN.md now say that the anticrepuscular element is computed and published but
+  hidden by `.atmo .anticrep{display:none!important}` (generated stylesheet, rule from `7fe3ba1d`); the other hidden
+  layers are not re-documented. No CSS change. Proposed status (effective on acceptance): D / I / V **PEX / IMS / PEX** (unchanged).
 
 ## Moon pipeline (`ISM-MOON`)
 
