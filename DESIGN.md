@@ -292,6 +292,28 @@ dew point alone is not a water-droplet column and cannot enable a corona.
   the parallactic bright-limb angle `χ−q`, which made the disc visibly **spin** over time and mismatch the emoji —
   removed 2026-06-16. The trade-off is the moon is the upright N-hemisphere view, not tilted "as seen from your
   exact location" — consistent with the upright emoji, and the right call for a corner widget.)
+- **Opaque calendar disc vs atmospheric moonlight (R0022, R0033).** Two separate permissions. The presented V5
+  disc keeps its material and Earthshine on every night it is shown, including near-new and below-horizon, and its
+  opacity never depends on light permission. The `stellar-background` group (stars, glints, Milky Way) is masked by
+  the `#stellar-cutout` disc, which switches on with the same reveal as the surface (`.moon-mask-disc.mask-on`), so
+  the cutout follows the opaque disc and no star shows through it. Atmospheric moonlight (sky lift, cloud light,
+  local star wash, beam, glow, halo, corona, paraselenae) is gated by one `moonLightEligible` decision, zero with the
+  reason `near-new`, `below-horizon`, `daylight` or `surface-unavailable`. Since R0033 that decision also requires a
+  presented Moon surface (the runtime's pure `presentable` predicate, the published image and an established sky
+  scene), not the dormant legacy PBR decode flag, so a missing surface can never cast light; the lunarhalo
+  and paraselene diagnostic forces obey the same gate. `qaState().moonTruth.lunarLight` reports the decision and reason.
+- **Neutral initial reveal and the separate texture-failure state (R0021, R0033).** The card starts as the neutral
+  pending surface (`sky-pending`). The scene commits only when the consumed Moon geometry is fresh, the matching
+  stellar projection belongs to the same scene, and the lunar-light decision computed for that frame still holds;
+  a surface adopted during that paint defers the commit to the next, consistent render rather than committing an
+  unlit frame that would then brighten. The Moon is revealed only from a current V5 presentation (initial tier,
+  terrain preview or refinement); decoded legacy maps are never readiness and are never shown. A refinement-worker
+  failure is a separate state: the runtime keeps the opaque initial disc, retries automatically at most three times
+  (30 s, 2 min, 10 min; never while hidden; recovery revalidates cached assets) and then stays `exhausted`. If the
+  Moon runtime itself cannot be constructed (an unproven, injected-only fault path; owner decision DG-1 = B), the
+  slot is unavailable: no disc, no moonlight (`surface-unavailable`), the error in `SalahMoonConstructionError`,
+  never the legacy Moon. This is the one documented exception to "never an empty Moon slot"; see
+  `docs/state-contracts/R0033.md`.
 - **Earthshine**: a smooth curve `es = 0.09 + 0.34·(1−frac)^1.7` (steeper-than-linear toward full) × albedo —
   moderate ashen glow at thin crescent (the lit crescent still dominates), faint **textured** terrain at gibbous
   (never a black cutout), a small floor at full.
@@ -621,6 +643,11 @@ Common hash options:
 - `simWx=<wmo code>` — force a weather class; `simPrecip=<mm>` — force synthetic preview precip (to QA the precip gate,
   e.g. `simWx=95&simPrecip=0` ⇒ dry forecast-thunder ⇒ downgraded). `simTemp`, `simFeels`, `simWind`,
   `simWindDir`, `simHumid`, `simCloud`, `simMoon`, `simWax`, `simMoonAlt`, `simMoonH`.
+  Limitation (R0033, owner decision DG-5): the four `simMoon*` overrides drive the native disc, native lunar light
+  and the Moon worker scene only. The refined physical sky's lunar scattering (KS1991) is computed from the real
+  ephemeris for the scene's UTC and location and is not overridden, so a simulated phase can disagree with it (for
+  example a simulated new Moon on a date with a bright real Moon). Treat sky-brightness evidence from such scenes as
+  physical-sky evidence for the real Moon, or choose a date whose real phase is near the simulated one.
 - `qa=1` + `window.qaState()` — a structured snapshot (incl. `wxTruth`).
 - `debugLayers=1`, `debugMoon=1`, `debugMotion=1` — on-card readouts (layers / moon / live-motion telemetry).
   `debugDawn=…` — **deprecated no-op** (dawn is not a painted overlay; nothing to force).

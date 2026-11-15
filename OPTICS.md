@@ -163,6 +163,12 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 - **Gate:** `sunDogs = cirrus·sunUpO·clamp((12−e)/12)`.
 - **NOT:** vertical; a full ring; saturated blobs; present at high sun.  **Verdict:** keep.
 
+**Lunar light gate (all lunar optics).** Every lunar optic above and below multiplies by the one
+`moonLightEligible` decision (`moonLume` is zero when it is false), and the `lunarhalo`/`paraselene` forces apply
+only when it is true. It is false near-new, below the horizon, by day, and with no presented Moon surface
+(`surface-unavailable`, R0033). Earthshine is not a light permission: it belongs to the opaque disc's material and
+stays visible on the calendar Moon when `moonLightEligible` is false.
+
 ### Paraselenae / moondogs — *production + `&debugOptic=paraselene`*
 - **Gate:** `moonParhelia = cirrus·moonLume·clamp((14−moonSky.alt)/16)` — rare; bright moon + cirrus + low moon.
 - **NOT:** vertical; a ring; rainbow.  **Verdict:** keep.
