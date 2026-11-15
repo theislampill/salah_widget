@@ -45,8 +45,9 @@ Rules:
 | R0029 | #90 | FINAL-DELIVERED | 6860166513 | `<!-- R0029-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0029.md |
 | R002E | #95 | FINAL-DELIVERED | 6861511641 | `<!-- R002E-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R002E.md |
 | R0039 | #106 | FINAL-DELIVERED | 6862449283 | `<!-- R0039-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0039.md |
+| R0034 | #101 | FINAL-DELIVERED | 6889716103 | `<!-- R0034-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0034.md |
 
-Kind `FINAL-DELIVERED` marks a final certificate whose first line carries no commit SHA (the eight rows
+Kind `FINAL-DELIVERED` marks a final certificate whose first line carries no commit SHA (the rows
 above, work orders closed after the R0028 population was drafted). Its bound commits, pull requests and
 trees are stated in the certificate's own "Source" section and copied into the next table. The test and
 the readback tool still require a SHA in the first line for kind `FINAL` only, so these rows are checked
@@ -70,6 +71,13 @@ stated tree in the repository. "Main commit" is the merge commit on `main` that 
 | R0029 | #108 `1f22c96dfe04f953fa0dce4d699ce9b6b9dcd666` | `c696b39ff1a3481c3b3dcf763fae0a6f62deb555` | `0d95d9bf9df292ae8c47cf64905fa653b99ab221` |
 | R002E | #118 `b9ba16044aa144f11a021ae125f870da9c9134cd` | `cb603de4f8b5250cc3bbf8e7befa224e1541a90e` | `cfa8f1c1462dba10a27e2829b2c1d935e0939357` |
 | R0039 | #119 `60431d5e2ea3a8050c22d1d79900b8b27aa9cfd8` plus one documentation-only commit, merged head `c71406affe05dc94c7b5d97f4918660f71f0b36d` | `664ebe22720a64a6e6e0014cee4c2dc22774b3c7` | `f8b3e1b977d003ddfdfb9d00b0017d0de35e1cae` |
+| R0034 | #121 `fc2084762d5eda9c0cb472659b847c39ce1b5b9f` | `bf79d00f11f8837dd9a13456ffcdb68a0ae5f196` | `9e1db9967e043d750802ed69861c8005b7232f1c` |
+| R0034 | #122 (documentation: sky-physics registry) `5f60152a3bf74136b817e7de0849d6bc950b1565` | `516d8cc8a79ff2b4e3f24fd77f00d962d28278c9` | `4616726cdeeecef78400435c1de1dfe756fae872` |
+| R0034 | #132 (amendment R0034-A1) reviewed head `cb41e59863699a4dd40967f5f2ad7bcc750ef01c`; merged head `cf5d25cf5115615225a7f1fdaa0cff98539b197e` (runner-only delta, independently confirmed) | `90cccd2f29ff779838631493c1cb7f3ff9b8cbc6` | `0fe3df8aeaecfb5c24c8434562e1422124c4c2c8` |
+
+The R0034 certificate is dated 2026-11-15; the two Pages readback runs it cites are 43598595161 (`bf79d00f`) and
+43679602224 (`90cccd2f`), each `VERDICT identical`, 128 served files. Its contract text is updated in
+`docs/state-contracts/R0034.md` and `docs/state-contracts/R0034-A1.md` in the same documentation change.
 
 ## Withdrawals, corrections and reopenings
 

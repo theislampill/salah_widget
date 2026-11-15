@@ -2,9 +2,14 @@
 
 Documentation only. Context: the owner-reported refined-sky artifact tracked under R0034 (issue 101) and the owner's
 instruction to make every materially relevant sky/weather machine explicit in the registry. Source read on main
-`91c60ed2` and re-checked on main `bf79d00f` (R0034 merged) for the files R0034 changed. No product, test, tool or generated file changed; nothing was executed in a browser. The entries are
-proposals: index codes and count tables in `IMPLICIT_STATES.md` are unchanged, and each new entry carries a
-"Proposed status (effective on acceptance)" line, as the registry rule requires.
+`91c60ed2` and re-checked on main `bf79d00f` (R0034 merged) for the files R0034 changed. No product, test, tool or generated file changed; nothing was executed in a browser.
+
+**Status at acceptance.** The six new entries (ISM-SKY-032 to 037) and the four updates were approved by the owner (issue
+101 comment 6878230967) and are admitted to the `IMPLICIT_STATES.md` index and count tables on the [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)
+(issue 101, comment 6889716103). This document is otherwise the registry-pass record as written, with two corrections made
+at acceptance: the artifact-hypothesis table (section 2) is marked superseded by the established cause, and stage 12
+(the aureole-removal grid) is added to the stage table. Candidate improvement CI-01 is done; the others are not, and now
+point at their work orders (issues 124 to 128; section 5).
 
 ## 1. Stages traced and entries
 
@@ -21,11 +26,19 @@ proposals: index codes and count tables in `IMPLICIT_STATES.md` are unchanged, a
 | 9 | Silver lining / SSS | ISM-SKY-034 | stateless display rim | display rim only; no subsurface or volumetric term |
 | 10 | Radar geographic calculation | [ISM-WX-004](../../IMPLICIT_STATES.md#ism-wx-004) updated | stateful transport (existing) | zoom-6 Web Mercator; no tile-range check beyond finiteness |
 | 11 | Presentation/compositing chain | [ISM-SKY-037](../../IMPLICIT_STATES.md#ism-sky-037) new | class/CSS-distributed | canvases 325×530 backing shown at 323×528 (measured, three engines); `.grain` noise exists but is hidden |
+| 12 | Host display decomposition: solar aerosol aureole removed at the physical Sun's projected position (`accept()` in `real-sky/native-host.mjs` and `nativeSkyPresentation`) | [ISM-SKY-033](../../IMPLICIT_STATES.md#ism-sky-033) (sampling lattices, daytime aureole-removal grid) | stateless; two sampling lattices | **grid mismatch (added at acceptance, not found by this pass):** until `90cccd2f` the removed aureole was sampled on 24×40 above −3° solar altitude while the field it was subtracted from was sampled by the worker on 41×67, leaving soft vertical and horizontal ridges near the Sun (the owner-reported bars); since `90cccd2f` both use the worker grid at every altitude (R0034-A1; `tests/real-sky/r0034-a1-aureole-lattice.test.mjs`) |
 
 Stateless stages (pure functions of inputs, with only registered caches or module tables): 1 (projection), 5, 6,
 7, 8 (apart from CSS transitions), 9, and the cloud transfer in 2.
 
-## 2. Artifact hypotheses: ownership (hypotheses, not findings)
+## 2. Artifact hypotheses: ownership (hypotheses, not findings) — SUPERSEDED, kept as history
+
+**Superseded at acceptance.** The owner-reported bars were caused by none of the hypotheses below. The established cause is
+the aureole-removal grid mismatch of stage 12 (24×40 against the worker's 41×67 above −3° solar altitude, fixed by
+amendment R0034-A1 in main `90cccd2f`; verified independently; the owner assessed the artifact as resolved, issue 101
+comment 6889661578). The table records what this pass could and could not attribute at the time; each lattice, scaling and
+glass observation remains a valid measurement, not a cause of the bars. The preview-lattice third-harmonic arithmetic in
+the third row did not explain them.
 
 | Hypothesis | Page-side owner (registered machine) | Outside the page |
 |---|---|---|
@@ -56,27 +69,29 @@ installers; any live browser or provider behaviour.
 
 Ranked by expected value for the owner's purposes (bug fixing, explicit machines, motion/transition clarity, PBR gaps,
 presentation), smallest first where value is similar. "Pixels" = whether a healthy existing scene would change. Every
-row is a proposal for a future, separately authorised change; none is made here.
+row other than CI-01 is a proposal for a future, separately authorised change; none is made here. The Owner column
+names the work order that now carries each candidate (issues 124 to 128, and R0032 for CI-05); a work order owning a
+candidate does not mean the candidate is done.
 
 | ID | Entry | Class | Evidence (F = fact from source, H = hypothesis) | Smallest change | Blast radius | Pixels | Owner | Verification |
 |---|---|---|---|---|---|---|---|---|
-| CI-01 | ISM-SKY-032 / 006 | defect (addressed in code) | F: `91c60ed2` keyed `rh`, `cloud`, `code`, `wind`; R0034 merged in `bf79d00f` narrows the identity (`native-contract.mjs` L9-21) | none further: complete R0034 acceptance | — | no | R0034 | ES34-01..05; R0034 native lanes |
-| CI-02 | ISM-SKY-037 | presentation / defect candidate (status: measured) | F (measured, 3 engines, DPR 1): backing 325×530 shown at 323×528, ratio 1.00619 × 1.00379, `image-rendering: auto` (L13, L24-33; evidence JSON); H: contributes resampling softness | if wanted, size canvases to the border box (e.g. `inset:-1px`) or the backing to the rect | preview/refined hosts, capture scaling, `.c` CSS | yes (slight) | R0034 | native rect probe at DPR 1/1.25; crop diff at the card edge |
-| CI-03 | ISM-SKY-035 | defect (doc/code mismatch) | F: `.atmo .anticrep{display:none!important}` in the generated stylesheet (`tools/build_native.py` L112) vs OPTICS.md "production" | decide: show it (drop it from the hide list) or document it as retired | `tools/build_native.py` CSS, OPTICS.md, DESIGN.md | yes if shown | unowned | forced `&debugOptic=anticrep` crop; docs contract |
-| CI-04 | ISM-SKY-035/036 | transition clarity | F: `--sunvx/--sunvy` ease 1.1 s linear (L46-50), `.suncorner` transform eases 2.4 s (L71); the anchor leads the body, and jumps under OS reduced motion (no `.c` transition) | derive the optic anchor from the same eased position or ease the optics' anchor identically | native CSS/paint | yes during lift changes | unowned | sunrise `&simTime=05:50&timeScale=…` clip with and without reduced motion; halo crop rings the body |
-| CI-05 | ISM-WX-004 | defect (edge) | F: tile row/column unchecked beyond finiteness (φ > 85.05°, lon 180) | reject or wrap out-of-range tiles before dispatch, or rely on R0032 disabling acquisition | `fetchRadar` | no | R0032 | unit cases at ±86°, lon 180 |
-| CI-06 | ISM-SKY-003 | implicit-machine hardening | F: `cloudState.wy` written, never read; calm fallback drifts (no record: `windX −0.7`; record without `windDir`: +0.707 from 225°) | document as decorative (DESIGN) or remove the dead field | native cloud state | no (removal) | unowned | `r0025-*` continuity tests unchanged |
-| CI-07 | ISM-SKY-035 | hardening | F: `--ray`/`--anticrep` not zeroed by `beginSkyScene`/no-timetable paint; zeroed by the next reconcile | zero them with the other optics in `paintCelestialWithoutTimetable` | native paint | no (≤1 frame) | unowned | `weather-no-timetable-withdrawal` extension |
-| CI-08 | ISM-SKY-037 | presentation | F: `.p` `blur(7px) saturate(135%)`, `.e,.wt` `blur(8px) saturate(1.2)` sample the canvases; H: amplifies 1-LSB contours | owner check of §5 step (2) of the R0034 contract before any change | native glass CSS | unknown | unowned | owner DevTools toggle; headed Firefox crop |
-| CI-09 | ISM-SKY-023 | PBR/presentation gap | F: 8-bit rounding, no dither; H: contours visible on some displays | an ordered/blue-noise ±0.5 LSB dither in the encoders, behind an owner decision (visual change) | both encoders, byte-pinned tests | yes | owner decision first (then R0034) | encoding tests rebound; periodicity analysis; crops |
-| CI-10 | ISM-SKY-033 | PBR gap (missing) | F: no ozone absorption anywhere (core warning L95) | Chappuis-band ozone τ(λ) term in the copied core — requires a vendor/core transform decision | copied core, vendor policy | yes (twilight blue) | unowned | vendor oracle; sunset/twilight crops |
-| CI-11 | ISM-SKY-033 | PBR gap (approximated) | F: single scattering + Patat empirical twilight residual; no multiple scattering | none small; a precomputed multiple-scattering LUT would be a core change | copied core | yes | unowned | vendor oracle; near-Fajr crop (gate F) |
-| CI-12 | ISM-SKY-033 | PBR (modelled, fixed) | F: Mie HG g = 0.76, ω = 0.9, Ångström 1.3 core defaults; aerosol τ from visibility only | none required; optionally derive g/ω from humidity — owner decision | `nativeJob` | yes | unowned | preview tests; hazy-day crop |
-| CI-13 | ISM-SKY-034 | PBR gap (approximated) | F: silver lining = display rim `0.85·facing·sunUp·cosθ`; no forward-scattering phase or SSS | phase-based rim weight using the same HG g | `paintClouds` | yes | unowned | broken-cloud low-sun crop |
-| CI-14 | ISM-SKY-035 | gating clarity | F: crepuscular gate = min(0.5, clamp(e/8)·broken(mid cover)·(1−0.8·low cover)·clamp(0.3+0.7·humid)·(1−total cover²)·(fog?0.25:1)) (~L3190-3191); corner rays have no weather gate beyond transmittance | document; optionally gate rays by transmittance only | native atmosphere | yes if changed | unowned | `&simWx=2&simCloud=50` low-sun crop |
-| CI-15 | ISM-SKY-033/034 | PBR (missing, by design) | F: no ground albedo; no cloud albedo; aerosol ω only | none unless a ground-reflection term is wanted | core | yes | unowned | — |
-| CI-16 | ISM-SKY-036 | PBR (approximated) | F: limb darkening u = 0.6 below 40°, flat core above; refraction flattening presentational | none; record as approximation | — | no | unowned | sunrise/apex crops (gates A, B) |
-| CI-17 | ISM-SKY-037 | presentation (shadows, strokes, fonts) | F: `.c` `box-shadow 0 18px 50px #0008`, 1 px border `color-mix(accent 30%)`; `.p` 1 px `#ffffff2e` stroke + `--glass` inset shadows; fonts via `--font-body` and the optional web-font gate (ISM-PRAY-008) | none identified from source alone | native CSS | — | unowned | UI judge crops (gate J) |
+| CI-01 | ISM-SKY-032 / 006 | defect (**done**) | F: `91c60ed2` keyed `rh`, `cloud`, `code`, `wind`; R0034 merged in `bf79d00f` (pull request 121) narrows the identity (`native-contract.mjs` L9-21). The aureole-lattice defect that produced the reported bars was found afterwards and fixed in `90cccd2f` (R0034-A1) | none: R0034 accepted and closed ([R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103), issue 101, comment 6889716103) | — | no | R0034 (done) | ES34-01..05; R0034 native lanes; `r0034-a1-aureole-lattice.test.mjs` |
+| CI-02 | ISM-SKY-037 | presentation / defect candidate (status: measured) | F (measured, 3 engines, DPR 1): backing 325×530 shown at 323×528, ratio 1.00619 × 1.00379, `image-rendering: auto` (L13, L24-33; evidence JSON); H: contributes resampling softness | if wanted, size canvases to the border box (e.g. `inset:-1px`) or the backing to the rect | preview/refined hosts, capture scaling, `.c` CSS | yes (slight) | R003B (issue 125) | native rect probe at DPR 1/1.25; crop diff at the card edge |
+| CI-03 | ISM-SKY-035 | defect (doc/code mismatch) | F: `.atmo .anticrep{display:none!important}` in the generated stylesheet (`tools/build_native.py` L112) vs OPTICS.md "production" | decide: show it (drop it from the hide list) or document it as retired | `tools/build_native.py` CSS, OPTICS.md, DESIGN.md | yes if shown | R003C (issue 126) disposition; documentation half R003A (issue 124) | forced `&debugOptic=anticrep` crop; docs contract |
+| CI-04 | ISM-SKY-035/036 | transition clarity | F: `--sunvx/--sunvy` ease 1.1 s linear (L46-50), `.suncorner` transform eases 2.4 s (L71); the anchor leads the body, and jumps under OS reduced motion (no `.c` transition) | derive the optic anchor from the same eased position or ease the optics' anchor identically | native CSS/paint | yes during lift changes | R003B (issue 125) | sunrise `&simTime=05:50&timeScale=…` clip with and without reduced motion; halo crop rings the body |
+| CI-05 | ISM-WX-004 | defect (edge) | F: tile row/column unchecked beyond finiteness (φ > 85.05°, lon 180) | reject or wrap out-of-range tiles before dispatch, or rely on R0032 disabling acquisition | `fetchRadar` | no | R0032 (issue 99) | unit cases at ±86°, lon 180 |
+| CI-06 | ISM-SKY-003 | implicit-machine hardening | F: `cloudState.wy` written, never read; calm fallback drifts (no record: `windX −0.7`; record without `windDir`: +0.707 from 225°) | document as decorative (DESIGN) or remove the dead field | native cloud state | no (removal) | R003A (issue 124) | `r0025-*` continuity tests unchanged |
+| CI-07 | ISM-SKY-035 | hardening | F: `--ray`/`--anticrep` not zeroed by `beginSkyScene`/no-timetable paint; zeroed by the next reconcile | zero them with the other optics in `paintCelestialWithoutTimetable` | native paint | no (≤1 frame) | R003A (issue 124) | `weather-no-timetable-withdrawal` extension |
+| CI-08 | ISM-SKY-037 | presentation | F: `.p` `blur(7px) saturate(135%)`, `.e,.wt` `blur(8px) saturate(1.2)` sample the canvases; H: amplifies 1-LSB contours | no change authorised (owner decision); the owner check of §5 step (2) of the R0034 contract is superseded now the bars' cause is established | native glass CSS | unknown | not to be changed (owner decision; R003B standing prohibition, issue 125) | owner DevTools toggle; headed Firefox crop |
+| CI-09 | ISM-SKY-023 | PBR/presentation gap | F: 8-bit rounding, no dither; H: contours visible on some displays | an ordered/blue-noise ±0.5 LSB dither in the encoders, behind an owner decision (visual change) | both encoders, byte-pinned tests | yes | R003D (issue 127; evaluation only, no product change) | encoding tests rebound; periodicity analysis; crops |
+| CI-10 | ISM-SKY-033 | PBR gap (missing) | F: no ozone absorption anywhere (core warning L95) | Chappuis-band ozone τ(λ) term in the copied core — requires a vendor/core transform decision | copied core, vendor policy | yes (twilight blue) | R003E (issue 128; assessment only) | vendor oracle; sunset/twilight crops |
+| CI-11 | ISM-SKY-033 | PBR gap (approximated) | F: single scattering + Patat empirical twilight residual; no multiple scattering | none small; a precomputed multiple-scattering LUT would be a core change | copied core | yes | R003E (issue 128; assessment only) | vendor oracle; near-Fajr crop (gate F) |
+| CI-12 | ISM-SKY-033 | PBR (modelled, fixed) | F: Mie HG g = 0.76, ω = 0.9, Ångström 1.3 core defaults; aerosol τ from visibility only | none required; optionally derive g/ω from humidity — owner decision | `nativeJob` | yes | R003E (issue 128; assessment only) | preview tests; hazy-day crop |
+| CI-13 | ISM-SKY-034 | PBR gap (approximated) | F: silver lining = display rim `0.85·facing·sunUp·cosθ`; no forward-scattering phase or SSS | phase-based rim weight using the same HG g | `paintClouds` | yes | R003C (issue 126) | broken-cloud low-sun crop |
+| CI-14 | ISM-SKY-035 | gating clarity | F: crepuscular gate = min(0.5, clamp(e/8)·broken(mid cover)·(1−0.8·low cover)·clamp(0.3+0.7·humid)·(1−total cover²)·(fog?0.25:1)) (~L3190-3191); corner rays have no weather gate beyond transmittance | document; optionally gate rays by transmittance only | native atmosphere | yes if changed | R003A (issue 124) | `&simWx=2&simCloud=50` low-sun crop |
+| CI-15 | ISM-SKY-033/034 | PBR (missing, by design) | F: no ground albedo; no cloud albedo; aerosol ω only | none unless a ground-reflection term is wanted | core | yes | R003A (issue 124) | — |
+| CI-16 | ISM-SKY-036 | PBR (approximated) | F: limb darkening u = 0.6 below 40°, flat core above; refraction flattening presentational | none; record as approximation | — | no | R003A (issue 124) | sunrise/apex crops (gates A, B) |
+| CI-17 | ISM-SKY-037 | presentation (shadows, strokes, fonts) | F: `.c` `box-shadow 0 18px 50px #0008`, 1 px border `color-mix(accent 30%)`; `.p` 1 px `#ffffff2e` stroke + `--glass` inset shadows; fonts via `--font-body` and the optional web-font gate (ISM-PRAY-008) | none identified from source alone | native CSS | — | not to be changed (owner decision; R003B standing prohibition, issue 125) | UI judge crops (gate J) |
 
 Physics status in one line each: ozone absorption **missing**; multiple scattering **missing** (empirical twilight
 residual instead); Mie anisotropy **modelled** (HG, fixed g); silver lining **approximated** (display rim); godray
