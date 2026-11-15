@@ -14,7 +14,7 @@
 //              cold B load with the same storage; crops must be equal (base recorded for reference)
 //
 // Usage: node tools/qa/run_r0032_native.cjs --root <candidate tree> --base <base tree> --out <fresh dir>
-//        [--engines chromium,firefox,webkit] [--cells requests,pixels,elevation] [--playwright <package path>]
+//        [--engines chromium,firefox,webkit] [--cells requests,pixels,elevation] [--scenes live-night,noon,...] [--playwright <package path>]
 const fs = require('node:fs'), path = require('node:path'), http = require('node:http'), crypto = require('node:crypto');
 const argv = process.argv.slice(2), args = {};
 for (let i = 0; i < argv.length; i++) if (argv[i].startsWith('--')) args[argv[i].slice(2)] = argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[++i] : true;
@@ -67,7 +67,8 @@ const json = (route, status, body) => route.fulfill({ status, contentType: 'appl
     async function open(which, hash, opts = {}) {
       const log = [], context = opts.context || await browser.newContext({ viewport: { width: 420, height: 620 }, deviceScaleFactor: 1, timezoneId: 'Asia/Riyadh', locale: 'en-US', reducedMotion: 'reduce' });
       await context.route('**/*', route => {
-        const url = route.request().url(); if (url.startsWith(bases.cand) || (bases.base && url.startsWith(bases.base))) return route.continue();
+        const url = route.request().url(); if (/^(data|blob):/.test(url)) return route.continue();   // in-page resources (WebKit routes them)
+        if (url.startsWith(bases.cand) || (bases.base && url.startsWith(bases.base))) return route.continue();
         const u = new URL(url); log.push({ host: u.hostname, path: u.pathname });
         const m = url.match(/\/timings\/([^/?]+)/);
         if (u.hostname === 'api.aladhan.com' && m && /^\d{2}-\d{2}-\d{4}$/.test(m[1])) return json(route, 200, { code: 200, status: 'OK', data: record(m[1]) });
@@ -108,7 +109,7 @@ const json = (route, status, body) => route.fulfill({ status, contentType: 'appl
 
     if (cells.includes('requests')) {
       const s = await open('cand', LIVE), phases = {};
-      let mark = 0; const phase = id => { const slice = s.log.slice(mark); mark = s.log.length; phases[id] = { radar: count(slice, /rainviewer/), weather: count(slice, /open-meteo/), unexpected: slice.filter(x => x.unexpected).length }; };
+      let mark = 0; const phase = id => { const slice = s.log.slice(mark); mark = s.log.length; phases[id] = { radar: count(slice, /rainviewer/), weather: count(slice, /open-meteo/), unexpected: slice.filter(x => x.unexpected).length, unexpectedHosts: [...new Set(slice.filter(x => x.unexpected).map(x => x.host))] }; };
       await settle(s.page, 6000); await s.page.waitForFunction(() => document.querySelector('#wt') && /\d/.test(document.querySelector('#wt').textContent), null, { timeout: 15000 }).catch(() => {});
       await settle(s.page, 61000); phase('load');
       await s.page.clock.fastForward('16:00'); await settle(s.page, 31000); phase('renewal');
@@ -124,12 +125,22 @@ const json = (route, status, body) => route.fulfill({ status, contentType: 'appl
     if (cells.includes('pixels') && bases.base) {
       const scenes = [['live-night', LIVE], ['noon', LIVE + '&simTime=12:30'], ['sunset', LIVE + '&simTime=18:20'], ['broken', LIVE + '&simTime=10:00&simWx=2&simCloud=50'],
         ['rain', LIVE + '&simTime=15:00&simWx=63'], ['crescent', LIVE + '&simTime=21:30&simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42']];
-      for (const [id, hash] of scenes) {
+      // Deterministic capture: pause the context clock at one fixed instant, run a second of frames, let CSS
+      // transitions finish in real time. Two base and two candidate pages per scene; base-vs-base is the noise floor.
+      const FIX = Date.parse(INSTANT) + 20000;
+      const only = args.scenes ? args.scenes.split(',') : null;
+      for (const [id, hash] of scenes.filter(([id]) => !only || only.includes(id))) {
         const shots = {};
-        for (const [k, which] of [['base1', 'base'], ['base2', 'base'], ['cand', 'cand']]) { const s = await open(which, hash); await settle(s.page, 8000); shots[k] = await crop(s.page, name + '-' + id + '-' + k + '.png'); shots.page = shots.page || s; if (k !== 'cand') await s.context.close(); else shots.last = s; }
-        const repeat = await diff(shots.last.page, shots.base1, shots.base2), cand = await diff(shots.last.page, shots.base1, shots.cand), cand2 = await diff(shots.last.page, shots.base2, shots.cand);
-        await shots.last.context.close();
-        cell(name, 'pixels:' + id, Math.max(cand.differing, cand2.differing) <= repeat.differing || (cand.differing === 0 || cand2.differing === 0), { baseVsBase: repeat, base1VsCand: cand, base2VsCand: cand2 });
+        let keep = null;
+        for (const [k, which] of [['base1', 'base'], ['base2', 'base'], ['cand1', 'cand'], ['cand2', 'cand']]) {
+          const s = await open(which, hash); await s.page.waitForTimeout(6000); await s.page.clock.pauseAt(FIX); await s.page.clock.runFor(1000); await s.page.waitForTimeout(2500);
+          shots[k] = await crop(s.page, name + '-' + id + '-' + k + '.png');
+          if (keep) await keep.context.close(); keep = s;
+        }
+        const d = {}; for (const [x, y] of [['base1', 'base2'], ['cand1', 'cand2'], ['base1', 'cand1'], ['base2', 'cand2'], ['base1', 'cand2'], ['base2', 'cand1']]) d[x + '~' + y] = await diff(keep.page, shots[x], shots[y]);
+        await keep.context.close();
+        const noise = Math.max(d['base1~base2'].differing, d['cand1~cand2'].differing), cross = Math.min(d['base1~cand1'].differing, d['base2~cand2'].differing, d['base1~cand2'].differing, d['base2~cand1'].differing);
+        cell(name, 'pixels:' + id, cross <= noise, Object.fromEntries(Object.entries(d).map(([k, v]) => [k, [v.differing, v.maxChannel]])));
       }
     }
     if (cells.includes('elevation')) {
