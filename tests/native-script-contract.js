@@ -45,6 +45,14 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R003A merged with main 2722590f (R0034-A1, R0030) at d2b31fa1: authored source 07bbcaf9, structural control 4273983a of its generated index cccd79a0. Every entry below remains admitted.
+    '07bbcaf9bdfa86d71ff6ea4690b7ca571139732d519c22c0c97cce775a3906a1':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'d2b31fa127343362ad8c8298bd85ffe450a5ce00',path:'src/native/index.html',layout:'config,native'}),
+    '4273983a9376b60e51f0aed8b26863b4156c5d32ae2fe4544a74404b107bdad7':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'d2b31fa127343362ad8c8298bd85ffe450a5ce00',path:'index.html',
+      parentSha256:'cccd79a0b040a6a218779b90c29c316e760e680a672ba2fbfbc09592d0966823',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R003A merged with main 9d903d6b (R002F) at 4ccf24c3: authored source 3cb56719, structural control 76ecda80 of its generated index c5fd54fc. Every entry below, including R002F's
     // and R003A's earlier entries, remains admitted unchanged.
     '3cb56719084e8f9bf11ad61b42089ef3aa47109c831d6b2d7aaad4c79c701f80':Object.freeze({

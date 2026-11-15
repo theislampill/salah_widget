@@ -57,7 +57,8 @@ const sourceProfiles={actual:{scriptCount:actualScripts.length,firstPaint:!!firs
     // R0034 refined-sky identity 1f13b185 on main 664ebe22: previous parent 421a44a9/3a93bfc9 (structural 3c1f1a0a, retained).
     // R002F weather renewal (merged with main 516d8cc8): previous parent 1f13b185/dbc77c67 (R0034, structural 9bbec583, retained).
     // R0030 settings Reset authority 2969319f merged with main 9d903d6b (R002F): previous parent f7e35be7/226266a2 (structural 580a0ee3, retained).
-    parentCommit:'2969319fda7ab49b9b349faf2ffe22065b860aed',parentSha256:'7c2175b281e3f441ca803f4f63f2396a3fa70cea9e33b1235eeebba6eb6b9ffa',
+    // R003A merged with main 2722590f at d2b31fa1: previous parent 2969319f/7c2175b2 (main, retained).
+    parentCommit:'d2b31fa127343362ad8c8298bd85ffe450a5ce00',parentSha256:'cccd79a0b040a6a218779b90c29c316e760e680a672ba2fbfbc09592d0966823',
     transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.'}};
 async function setup(mode="healthy",options={}){
   let sourceCalls=0,realStorageCalls=0;const errorEl={};
@@ -226,7 +227,7 @@ async function main(){
   });
   await check("legacy Moon structural branch admits its exact positive source before parser stop",async()=>{
     assert.equal(legacySource.split('src="moon/moon-host.js"').length-1,1,"legacy host is absent or ambiguous");
-    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'605f9d68658c7cd9b0f8e8496f6a71969f0eff3f2eb8f60c8c8e0234399ab9a5','retained structural input must be explicitly rebound on source change');
+    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'4273983a9376b60e51f0aed8b26863b4156c5d32ae2fe4544a74404b107bdad7','retained structural input must be explicitly rebound on source change');
     const h=await setup('healthy',{source:legacySource});assert.match(h.report.error,/Controlled parser stop/);
     assert.equal(h.report.storageIsolated,true);assert.equal(h.realStorageCalls,0);
     assert.equal(h.report.sourceSha256,sourceProfiles.legacyMoon.sourceSha256);
