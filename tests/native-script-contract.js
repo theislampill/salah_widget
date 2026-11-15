@@ -50,6 +50,14 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0033 re-bind after merging main 48ba76db (R0032): authored source ed528a43 and the legacy-Moon structural control 09cf6f64 of its generated index d526dd35. Every entry below remains admitted.
+    'ed528a4344a10f1dbc8fa260027e22edd80bfad5dba76ed78a7cc367a2eda217':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'978d4be9966e6ce3677960d6023b916feb94677f',path:'src/native/index.html',layout:'config,native'}),
+    '09cf6f641bbe3bf7b2ec010411c7f2998e8badb9d192b5f84c3f83f094f2bd01':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'978d4be9966e6ce3677960d6023b916feb94677f',path:'index.html',
+      parentSha256:'d526dd35e4117bd46f9c8d060b63ed2ded1326f486766d85c0b2ab703a11c354',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0033 (issue 100) Moon recovery and light eligibility, branch claude/r0033-moon-recovery-20261115 merged with main
     // ebb2704e: authored source 7bd8ed2f and the legacy-Moon structural control of its generated index 18395d51.
     // Every entry below remains admitted unchanged. Re-bind again when rebuilt on a later main.
