@@ -1,6 +1,7 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {load,prayerForDate}=require('./r001d-harness.cjs');
+const {presentSurface}=require('./r0033-presented-surface.cjs');
 const path=require('node:path');
 const sourcePath=process.env.SALAH_HOTFIX_SOURCE||path.join(__dirname,'../src/native/index.html');
 const make=()=>load({sourcePath,hash:'#lat=24.47&lon=39.61&tz=Asia/Riyadh&units=c&method=4'});
@@ -24,7 +25,8 @@ test('native celestial presence follows the accepted physical Sun, not timetable
 });
 
 test('lunar droplet corona needs admitted water cloud or fog, not humidity alone',()=>{
- const h=make();h.run('sunMetrics=()=>({x:20,y:20,altN:0,altDeg:-20});moonSky={frac:.5,alt:25,H:42};_pbrFailed=false;');
+ // R0033 (issue 100, M4): eligibility now requires a presented surface, not _pbrFailed=false.
+ const h=presentSurface(make());h.run('sunMetrics=()=>({x:20,y:20,altN:0,altDeg:-20});moonSky={frac:.5,alt:25,H:42};_pbrFailed=false;');
  for(const [code,mid,expect] of [[0,0,false],[2,35,true],[45,0,true]]){
   h.run(`__fixtureWeatherCurrent.weather_code=${code};__fixtureWeatherCurrent.relative_humidity_2m=95;__fixtureWeatherCurrent.dew_point_2m=23;__fixtureWeatherCurrent.cloud_cover_low=0;__fixtureWeatherCurrent.cloud_cover_mid=${mid};__fixtureWeatherCurrent.cloud_cover_high=0;weather=admitWeatherRecord(__fixtureWeatherCurrent,{lat,lon,units:'c',zone:tz,retrievedAt:Date.now()});`);
   const a=h.run('atmosphere(model())');

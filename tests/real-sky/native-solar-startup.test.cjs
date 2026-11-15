@@ -2,6 +2,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const path=require('node:path');
 const {load}=require('../r001d-harness.cjs');
+const {presentSurface}=require('../r0033-presented-surface.cjs');
 const sourcePath=process.env.SALAH_SOLAR_SOURCE||path.join(__dirname,'../../src/native/index.html');
 const create=()=>load({sourcePath,hash:'#lat=24.47&lon=39.61&tz=Asia/Riyadh&units=c&method=4'});
 const acceptedSun=(h,e)=>h.run(`window.SalahNativeSkyHost={cloudLighting:()=>({sun:{altDeg:${e},azDeg:90},utcMs:simNow(),sample:()=>null})}`);
@@ -46,7 +47,8 @@ test('pending and settled prayer data publish the same solar vector and horizon 
 });
 
 for(const lunar of [false,true])test('pending celestial scene withdraws old cloud-gated '+(lunar?'lunar':'solar')+' optics',()=>{
-  const h=create();acceptedSun(h,lunar?-20:2);
+  // R0033 (issue 100, M4): the positive prior-scene lunar control needs a presented surface.
+  const h=lunar?presentSurface(create()):create();acceptedSun(h,lunar?-20:2);
   h.run('__fixtureWeatherCurrent.weather_code=2;__fixtureWeatherCurrent.cloud_cover=35;__fixtureWeatherCurrent.cloud_cover_low=0;__fixtureWeatherCurrent.cloud_cover_mid=20;__fixtureWeatherCurrent.cloud_cover_high=30;__fixtureWeatherCurrent.apparent_temperature=-5;weather=admitWeatherRecord(__fixtureWeatherCurrent,{lat,lon,units:"c",zone:tz,retrievedAt:Date.now()});moonSky={frac:.8,alt:10,H:0};paint(atmosphere(model()))');
   const optics=lunar?['--mhalo','--mcorona','--mparhelia']:['--sunhalo','--sundogs','--sunpillar'];
   for(const key of optics)assert.ok(+h.select('.c').style.getPropertyValue(key)>0,'positive prior-scene control '+key);

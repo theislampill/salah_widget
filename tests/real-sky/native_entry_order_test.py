@@ -9,7 +9,8 @@ R=Path(__file__).resolve().parents[2]
 class NativeEntryOrder(unittest.TestCase):
  def test_complete_initial_producer_group_follows_markup_in_both_entries(self):
   host=(R/'moon/moon-host.js').read_text(encoding='utf-8')
-  boundary='window.SalahMoonRuntime.installWorkerSource('
+  # R0033 (issue 100, EF-E04): optional call, so an empty Moon slot cannot throw a TypeError.
+  boundary='window.SalahMoonRuntime?.installWorkerSource('
   self.assertEqual(host.count(boundary),1)
   initial,refinement=host.split(boundary);refinement=boundary+refinement
   for name in ['index.html','offline.html']:

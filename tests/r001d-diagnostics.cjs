@@ -1,13 +1,15 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {load,makeElement,syntheticDisc,sha}=require('./r001d-harness.cjs');
+const {presentSurface}=require('./r0033-presented-surface.cjs');
 const sourcePath=process.argv[2];
 let pass=0,fail=0;
 function test(name,fn){try{fn();pass++;console.log('PASS '+name);}catch(e){fail++;console.log('FAIL '+name+' :: '+e.message);}}
 function fixture(opts={}){return load({sourcePath,...opts});}
 
 test('positive actual render reaches paint and strict fresh smoke',()=>{
-  const h=fixture(); h.run('render()');
+  // R0033 (issue 100, M4): positive moonlight needs a presented surface (stub runtime).
+  const h=presentSurface(fixture()); h.run('render()');
   assert.equal(h.run('qaState().moonTruth.moonSkyFresh===true'),true);
   assert.equal(h.select('.c').dataset.fx,'cloud');
   assert.ok(+h.select('.c').style.getPropertyValue('--moonbeam')>0);

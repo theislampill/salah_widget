@@ -36,15 +36,46 @@
   // 645b53cc5d04d35444f6da0e27bf5a5b6b11ce67 rebound be62ab92 (R000B) -> 8817c6599ff3958574b8d34f0cf9355368522ce03a6bc4e70fa5adfcedddcd8b;
   // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06): R0021 a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819
   // -> 1ba361b6 (R0021 body plus the same spectral transform).
+  // R0033 rebind (issue 100, branch claude/r0033-moon-recovery-20261115 over main 90cccd2f):
+  // moon-initial d5e648ac -> f233b816 (moon-native.mjs bounded recovery, initial-tier
+  // eligibility, presence predicate and throw guards; build_moon.py construction-failure
+  // head rule); moon-refinement d4f90ac3 -> 93afaebd (optional-call tail and the worker's
+  // recovery cache mode). Both await independent source review with the R0033 candidate.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'d5e648ac08b80a8291140eddbd73dc7305aa7d40f38ebcbea71e239d5be54f16',
-    'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
+    'moon-initial':'f233b8168a4f7411a6c11a376e2ee0265a27b1883699bce0690ca3a778ad9c10',
+    'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0033 re-bind after merging main 8990c36d (R0031): authored source 90b0f642 and the legacy-Moon structural control e0acbaae of its generated index 3615841c. Every entry below remains admitted.
+    '90b0f642789a8ff0acf34a980f63a0625464d4cf0253571e227907d5fafb4bb8':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'0329221a249e588ec198115a4fe291cac4461180',path:'src/native/index.html',layout:'config,native'}),
+    'e0acbaae2779808d4572d6e1c7086f0def471295c69180b02630f0d8638d9347':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'0329221a249e588ec198115a4fe291cac4461180',path:'index.html',
+      parentSha256:'3615841cf332bec531b9d8756c6b53ced60e34e5052b0ebf62aafda303e9c608',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0033 re-bind after merging main 48ba76db (R0032): authored source ed528a43 and the legacy-Moon structural control 09cf6f64 of its generated index d526dd35. Every entry below remains admitted.
+    'ed528a4344a10f1dbc8fa260027e22edd80bfad5dba76ed78a7cc367a2eda217':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'978d4be9966e6ce3677960d6023b916feb94677f',path:'src/native/index.html',layout:'config,native'}),
+    '09cf6f641bbe3bf7b2ec010411c7f2998e8badb9d192b5f84c3f83f094f2bd01':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'978d4be9966e6ce3677960d6023b916feb94677f',path:'index.html',
+      parentSha256:'d526dd35e4117bd46f9c8d060b63ed2ded1326f486766d85c0b2ab703a11c354',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0033 (issue 100) Moon recovery and light eligibility, branch claude/r0033-moon-recovery-20261115 merged with main
+    // ebb2704e: authored source 7bd8ed2f and the legacy-Moon structural control of its generated index 18395d51.
+    // Every entry below remains admitted unchanged. Re-bind again when rebuilt on a later main.
+    '7bd8ed2f48e187bcb4b6322e8fc48d17b297816f050bec62c562e64e7e2423ce':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'claude/r0033-moon-recovery-20261115',path:'src/native/index.html',layout:'config,native'}),
+    'a46c55335e63e14da44c106e0c1bc0bf5b778c07e94f915e9bfe9ccc9201d671':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'claude/r0033-moon-recovery-20261115',path:'index.html',
+      parentSha256:'18395d5126091807a11dca66df462bd3fa9556ae4bc7e52ffc34eb3dc70bfbe9',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0031 GPS slice (issue 98, D-31-3 A) merged with main 93f7c262 at 100b7946: authored source 41f0dac6, structural control cbf30d6b of its generated index 1c79fc29. Every entry below remains admitted.
     '41f0dac66ed4ddfc2e6d520c8989bfe798d371b351b00d0d6887b7b9e0bcd013':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'100b79462a58cb3067d2d2915ead50bd35151c93',path:'src/native/index.html',layout:'config,native'}),

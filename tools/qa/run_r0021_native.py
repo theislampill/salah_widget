@@ -667,12 +667,17 @@ def run(engine, root, out, headed, selected=CELLS, cycles_wait=200, cycles_fresh
             # A REALISTIC Moon failure: the fixture answers 404 for the Moon worker's terrain/colour assets, on a clear
             # night in a fresh context (no browser cache). Observes the registered runtime's own failure path, the
             # visible calendar/fallback Moon, the card, and bounded retry; then assets return and one retry recovers.
+            # R0033 (issue 100): the runtime now also recovers AUTOMATICALLY (first attempt 30 s after a failure).
+            # Each explicit retry below starts within seconds of the previous failure and cancels the pending
+            # automatic attempt, so the driver path stays what this cell measures; every recorded state carries
+            # `recovery` (attempts, state, last class) to ACCOUNT for any automatic attempt that does occur.
+            # Automatic recovery itself is qualified by tools/qa/r0033_native_cells.cjs (recover1/recover3/exhaust).
             mctx = new_context()
             if not in_page_prayer:
                 mctx.add_init_script(prayer_script)
             blocked.update(MOON_ASSET_PATHS); served_log.clear()
             moon_state = """()=>{const m=window.SalahMoonRuntime,R=window.__r0021,s=m?.state;return {registered:!!m,disposed:m?.disposed??null,status:s?.status??null,
-              errors:(s?.errors??[]).slice(-3),retryCount:s?.retryCount??null,workerAlive:s?.workerAlive??null,visibleSource:s?.visibleSource??null,current:s?.current??null,
+              errors:(s?.errors??[]).slice(-3),retryCount:s?.retryCount??null,recovery:s?.recovery??null,workerAlive:s?.workerAlive??null,visibleSource:s?.visibleSource??null,current:s?.current??null,
               moonReady:document.querySelector('.c').classList.contains('moon-ready'),moonVisibility:getComputedStyle(document.querySelector('.moon')).visibility,
               moonVisListeners:R.moonVis,moonIntervalsLive:R.moonIntervals.size,detailCanvases:document.querySelectorAll('.moon-detail-canvas').length,
               nonSkyWorkersLive:(R.workers.made-R.workers.ended)-(R.workers.skyMade-R.workers.skyEnded)}}"""
