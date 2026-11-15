@@ -56,8 +56,10 @@ async function open(browser,base,hash,{construction=false}={}){
  const aborted=[];await ctx.route('**/*',route=>{const u=route.request().url();if(u.startsWith(base)||u.startsWith('data:')||u.startsWith('blob:'))return route.continue();
   const m=/api\.aladhan\.com\/v1\/timings\/(\d{2}-\d{2}-\d{4})/.exec(u);
   if(m)return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({code:200,status:'OK',data:prayer(m[1])})});aborted.push(new URL(u).host);return route.abort();});
- await ctx.addInitScript(SHIM);if(construction)await ctx.addInitScript(CONSTRUCTION);
+ await ctx.addInitScript(SHIM);
  const page=await ctx.newPage();await page.clock.install({time:Date.parse('2026-09-08T19:00:00Z')});await page.clock.resume();
+ // After the clock: its own init script replaces setInterval, so the fault wrapper must wrap the clock's version.
+ if(construction)await page.addInitScript(CONSTRUCTION);
  const errors=[];page.on('pageerror',e=>errors.push(String(e.message).slice(0,160)));
  await page.goto(base+'/index.html'+hash);return {ctx,page,aborted,errors};}
 const facts=page=>page.evaluate(FACTS);

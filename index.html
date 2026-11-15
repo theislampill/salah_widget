@@ -5879,7 +5879,10 @@ function beginSkyScene(initialDocument=false){
 // Decoded legacy maps are never terrain readiness.
 function updateSkySurface(){
   const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
-  const ready=!!(window.SalahMoonRuntime?.surface() && photo && photo.getAttribute("href") && _skySceneKey!==null);
+  // R0033: reveal the disc only in a frame whose lunar light was computed WITH this
+  // surface, so the Moon and its moonlight appear together (never an unlit disc that
+  // then brightens the sky). A newly adopted surface marks the render that reveals it.
+  const ready=!!(window.SalahMoonRuntime?.surface() && photo && photo.getAttribute("href") && _skySceneKey!==null && _moonLightSurface===true);
   if(c) c.classList.toggle("moon-ready",ready);
   if(mask) mask.classList.toggle("mask-on",ready && _skyMoonPresence>0);
 }
@@ -6709,6 +6712,10 @@ function paintCelestialWithoutTimetable(decision=weatherDecision()){
   c.style.setProperty("--moonfeat","1");c.style.setProperty("--moonocc","1");
   c.style.setProperty("--moongrp",a.moonShow.toFixed(3));c.style.setProperty("--moonbeam",(0.6*a.moonlight).toFixed(3));
   _skyMoonPresence=a.moonShow;window.SalahMoonRuntime?.request();updateSkySurface();
+  // R0033: a surface this request adopted changes lunar-light eligibility after `a` was
+  // computed; repaint this call's one lunar light property with it, then reveal, so the
+  // disc and its moonlight appear in the same frame.
+  if(moonSurfacePresentable()!==_moonLightSurface){c.style.setProperty("--moonbeam",(0.6*lunarPresentation(sun.altDeg).moonlight).toFixed(3));updateSkySurface();}
   // Publish the native body and matching real catalogue in this synchronous
   // turn. No prayer surrogate, sleep, fade or whole-card loading gate.
   c.classList.remove("sky-pending");

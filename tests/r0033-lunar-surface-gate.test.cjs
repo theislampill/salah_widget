@@ -18,7 +18,8 @@ function presenting(h,value=true,{adoptOnRequest=false}={}){
   { const cv=document.createElement('canvas');
     window.SalahMoonRuntime={get presentable(){__r33.reads.presentable++;return __r33.value;},
      surface(){__r33.reads.surface++;return __r33.value?cv:null;},
-     request(){__r33.reads.request++;if(__r33.adopt&&!__r33.value){__r33.value=true;SalahMoonHost.publish(cv);}return __r33.value;},
+     // Like the real runtime: the initial tier adopts only once the native scene warrants it.
+     request(){__r33.reads.request++;const q=SalahMoonHost.capture();if(__r33.adopt&&!__r33.value&&q.presentationReady&&q.initialWarranted){__r33.value=true;SalahMoonHost.publish(cv);}return __r33.value;},
      get state(){__r33.reads.state++;return {status:'ready',visibleSource:'refined-terrain',quality:'empirical-adaptive',accepted:{identity:'stub'}};},
      get detailEnabled(){__r33.reads.detailEnabled++;return false;},invalidate(){},finishInitialDocument(){},presentationUp:1,disposed:false}; }
   document.querySelector('.mphoto').setAttribute('href','data:image/png;base64,STUB');`);
@@ -87,4 +88,19 @@ test('R33-18 a surface adopted during paint defers the sky commit to the consist
  await microtasks();assert.equal(h.run('_renderDirty'),true);
  h.run('_renderDirty=false;render();');
  assert.equal(h.run('_skyCommitted'),true);assert.ok(css(h,'--moonbeam')>0);
+});
+
+test('R33-18 coherence: without a timetable, a surface adopted by the celestial paint is revealed WITH its moonlight in the same call',()=>{
+ const h=presenting(night(),false,{adoptOnRequest:true});
+ h.run('window.SalahNativeSkyHost={cloudLighting:()=>({sun:{altDeg:-40,azDeg:90},utcMs:simNow(),sample:()=>null})};today=null;tomorrow=null;render();');
+ assert.equal(h.run('model()'),null,'no-timetable path');
+ assert.equal(h.select('.c').classList.contains('moon-ready'),true,'disc revealed');
+ assert.ok(css(h,'--moonbeam')>0,'with its light in the same call, never an unlit disc that later brightens');
+});
+
+test('R33-18 coherence: the disc is never revealed in a frame whose light was computed without it',()=>{
+ const h=presenting(night(),false,{adoptOnRequest:true});h.run('render();');
+ assert.equal(h.select('.c').classList.contains('moon-ready'),false,'withheld until the consistent render');
+ h.run('_renderDirty=false;render();');
+ assert.equal(h.select('.c').classList.contains('moon-ready'),true);assert.ok(css(h,'--moonbeam')>0);
 });
