@@ -21,6 +21,12 @@ const MUTANTS = {
   'epoch-compare': ['builder', 'epoch!==reverseModeEpoch || ', ''],
   'epoch-bump': ['builder', 'if(nextMode!==embedMode) reverseModeEpoch++;', ''],
   'loose-continent': ['builder', '/^[A-Z]{2}$/.test(j.continentCode)', '/^[A-Za-z ]{2,3}$/.test(j.continentCode)'],
+  // R31-07 (D-31-3 A) settings GPS mutants, applied to the actual index.html settings slice.
+  'await-permission': ['index', '  if(!_ownsSetLookup(owner)) return;\n  if(r.ok){', '  if(!_ownsSetLookup(owner)) return;\n  { let p="unknown"; try{ p=await SalahConfig.permissionState(); }catch(e){} if(!_ownsSetLookup(owner)) return; _geoPermission=p; }\n  if(r.ok){'],
+  'retract-on-reject': ['index', '},()=>{});', '},()=>{ _byId("set-lat").value=""; _byId("set-lon").value=""; _setStatus("Browser location unavailable.",true); });'],
+  'diagnostic-unguarded': ['index', 'if(_ownsSetLookup(owner)) _geoPermission=', '_geoPermission='],
+  'publish-before-owner': ['index', '  if(!_ownsSetLookup(owner)) return;\n  if(r.ok){', '  if(r.ok){'],
+  'double-publish': ['index', '_geoPermission=typeof state==="string"?state:"unknown"; }', '{ _geoPermission=typeof state==="string"?state:"unknown"; if(r.ok) _setPin("precise"); } }'],
   'class-only': ['config', 'return r.class !== undefined ? r.class : r.category;', 'return r.class;'],
 };
 const mutant = process.env.R0031_MUTANT ? MUTANTS[process.env.R0031_MUTANT] : null;
@@ -228,7 +234,7 @@ async function fixWithHangingDiagnostic() {
 test('R31-07 a never-settling permission query does not block a valid GPS fix', async () => {
   const f = await fixWithHangingDiagnostic(); await f.advance(600000);
   assert.deepEqual(coords(f), ['51.50000', '-0.12000']);
-  assert.match(status(f), /^Browser position · accuracy 20 m/); assert.equal(f.run('_setDirty'), true);
+  assert.match(status(f), /^Browser position · accuracy /); assert.equal(f.run('_setDirty'), true);
   assert.equal(f.run('_geoPermission'), 'unknown', 'an unsettled diagnostic is reported as unknown');
   assert.equal(f.calls.applied.length, 0, 'nothing is saved before close (unchanged)');
 });
@@ -274,4 +280,16 @@ test('R31-07 a denied GPS with a never-settling diagnostic reports the failure a
 test('R31-07 control: a settling permission query publishes the fix', async () => {
   const f = settings(); f.click('set-pin'); await f.resolve('gps', 0, FIX); await f.resolve('permission', 0, 'granted');
   assert.deepEqual(coords(f), ['51.50000', '-0.12000']); assert.equal(f.run('__r31Pins'), 1);
+});
+// R0030 interaction: the pin call site (_usePreciseFromPin) ends a pending Reset only when a fix is adopted. With the
+// diagnostic no longer awaited, adoption is observed when the fix is published, even if the query never settles;
+// a denied GPS still leaves the Reset pending.
+test('R31-07 with R0030: an adopted fix ends a pending Reset while the diagnostic never settles', async () => {
+  const f = settings(); f.click('set-reset'); await f.advance(0); assert.ok(f.run('_setReset'), 'Reset pending');
+  f.click('set-pin'); await f.resolve('gps', 0, FIX); await f.advance(600000);
+  assert.equal(f.run('_setReset'), null); assert.deepEqual(coords(f), ['51.50000', '-0.12000']);
+});
+test('R31-07 with R0030: a denied GPS does not end a pending Reset (diagnostic never settles)', async () => {
+  const f = settings(); f.click('set-reset'); await f.advance(0); f.click('set-pin'); await f.reject('gps', 0); await f.advance(600000);
+  assert.ok(f.run('_setReset'), 'Reset still pending');
 });

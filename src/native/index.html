@@ -4399,9 +4399,6 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
   _setStatus("Requesting browser location…");
   let r; try{ r=await SalahConfig.geolocate({}); }catch(e){ r={ok:false,error:"unavailable"}; }
   if(!_ownsSetLookup(owner)) return;
-  let permission=_geoPermission; try{ permission=await SalahConfig.permissionState(); }catch(e){}
-  if(!_ownsSetLookup(owner)) return;
-  _geoPermission=permission;
   if(r.ok){ _byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5); _geoLastError=null;
     _setLocationEvidence=r.locationEvidence||SalahConfig.normalize({source:"browser-geolocation"}).locationEvidence; _setLocationOrigin="browser-geolocation"; _setLocationSaved=false;
     _setPin("precise"); _setDirty=true;
@@ -4409,6 +4406,13 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
   else { _geoLastError=r.error||"denied";
     _setStatus(r.error==="unsupported" ? "Geolocation isn't available in this browser/iframe." :
       "Browser location unavailable ("+(r.error||"denied")+"). Type a place + Enter, or keep the selected location.", true); }
+  // R0031 / owner decision D-31-3 = A (issue 98): the permission state is a diagnostic read AFTER the outcome is
+  // published, for reporting only (qaState). It is never awaited here, so a slow or never-settling query cannot hold
+  // back a fix (nor the pin call site's adoption check); until it settles the state is "unknown". A rejection or an
+  // unsupported API is "unknown"; no diagnostic result ever retracts the fix, and a newer location intent discards it.
+  _geoPermission="unknown";
+  let diagnostic=null; try{ diagnostic=SalahConfig.permissionState(); }catch(e){}
+  Promise.resolve(diagnostic).then(state=>{ if(_ownsSetLookup(owner)) _geoPermission=typeof state==="string"?state:"unknown"; },()=>{});
 }
 async function _resetLocal(){
   _invalidateSetLocation(); const prefOwner={..._setPrefVersions};
