@@ -8119,8 +8119,9 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
   if(!window.SalahConfig){ _setStatus("Browser location unavailable.",true); return; }
   _setStatus("Requesting browser location…");
   let r; try{ r=await SalahConfig.geolocate({}); }catch(e){ r={ok:false,error:"unavailable"}; }
-  if(!_ownsSetLookup(owner)){ if(!_geoAttempt||_geoAttempt.attempt<attempt) _geoAttempt={attempt,owner,outcome:"superseded",error:null,at:Date.now()}; return; }
-  _geoAttempt={attempt,owner,outcome:r.ok?"ok":"error",error:r.ok?null:(r.error||"denied"),at:Date.now()};   // R0036 diagnostic record
+  // R0036 diagnostic record of this attempt (no product reader); the owner check below is unchanged.
+  if(!_geoAttempt||_geoAttempt.attempt<attempt) _geoAttempt={attempt,owner,outcome:!_ownsSetLookup(owner)?"superseded":r.ok?"ok":"error",error:_ownsSetLookup(owner)&&!r.ok?(r.error||"denied"):null,at:Date.now()};
+  if(!_ownsSetLookup(owner)) return;
   if(r.ok){ _byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5); _geoLastError=null;
     _setLocationEvidence=r.locationEvidence||SalahConfig.normalize({source:"browser-geolocation"}).locationEvidence; _setLocationOrigin="browser-geolocation"; _setLocationSaved=false;
     _setPin("precise"); _setDirty=true;
