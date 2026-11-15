@@ -49,8 +49,13 @@ class RunnerLifecycleTests(unittest.TestCase):
 
     def run_fixture(self, output=JSON_PASS, code=0, *, named=(), fault=None,
                     historical=None, history_inputs=None, history_available=False,
-                    classification_fault=False, source_changed=False):
+                    classification_fault=False, source_changed=False, population=None):
         self.counter += 1
+        self.timeouts = []
+        if population is not None:
+            manifest = {"schema": runner.POPULATION_SCHEMA, "commands": [], "modules": [], "exclusions": [],
+                        "nativeTestGlob": ["tests/probe.test.cjs"], **population}
+            (self.root / runner.POPULATION_FILE).write_text(json.dumps(manifest))
         out = self.root / ("run-" + str(self.counter))
         for name in named:
             (self.root / "tests" / name).write_text("// controlled child boundary\n")
@@ -58,6 +63,7 @@ class RunnerLifecycleTests(unittest.TestCase):
 
         def child(command, **kwargs):
             calls.append(command)
+            self.timeouts.append(kwargs["timeout"])
             kwargs["stdout"].write(output)
             kwargs["stdout"].flush()
             if fault == "timeout":
@@ -281,6 +287,38 @@ class RunnerLifecycleTests(unittest.TestCase):
         self.assertEqual(result["commands"][1]["status"], "INCOMPLETE")
         self.assertEqual(result["commands"][1]["execution"]["state"], "not-started")
 
+    def test_glob_declared_bound_is_applied_and_recorded_in_the_receipt(self):
+        result, out, _ = self.run_fixture(population={"nativeTestGlobTimeoutSeconds": 600})
+        self.assertEqual(self.timeouts, [600])
+        self.assertEqual(result["commands"][0]["name"], "native-test-glob")
+        self.assertEqual(result["commands"][0]["boundSeconds"], 600)
+        self.assertEqual(json.loads((out / "results.json").read_text())["commands"][0]["boundSeconds"], 600)
+
+    def test_glob_exceeding_its_declared_bound_is_incomplete_and_stops_later_launches(self):
+        result, _, calls = self.run_fixture("PASS partial case\n", fault="timeout", named=("later.cjs",),
+                                            population={"nativeTestGlobTimeoutSeconds": 600})
+        row = result["commands"][0]
+        self.assertEqual(row["execution"]["state"], "timed-out")
+        self.assertEqual(row["status"], "INCOMPLETE")
+        self.assertIn("child exceeded 600 second bound", row["reason"])
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(result["commands"][1]["execution"]["state"], "not-started")
+        self.assertEqual(result["status"], "INCOMPLETE")
+
+    def test_other_commands_keep_the_default_bound_and_glob_without_declaration_inherits_it(self):
+        self.run_fixture(named=("later.cjs",), population={"nativeTestGlobTimeoutSeconds": 600})
+        self.assertEqual(self.timeouts, [600, 180])
+        result, _, _ = self.run_fixture(named=("later.cjs",), population={})
+        self.assertEqual(self.timeouts, [180, 180])
+        self.assertEqual([row["boundSeconds"] for row in result["commands"]], [180, 180])
+
+    def test_invalid_declared_glob_bound_is_a_setup_error_not_a_pass(self):
+        for bad in (0, -5, "600", None, True):
+            with self.subTest(bad=bad):
+                result, _, _ = self.run_fixture(population={"nativeTestGlobTimeoutSeconds": bad})
+                self.assertEqual(result["status"], "INCOMPLETE")
+                self.assertTrue(any("nativeTestGlobTimeoutSeconds" in e for e in result["setupErrors"]))
+
     def test_launch_failure_has_one_terminal_record_and_cause(self):
         result, out, calls = self.run_fixture("", fault="launch", named=("later.cjs",))
         row = result["commands"][0]
@@ -438,6 +476,18 @@ class RunnerMutationTests(unittest.TestCase):
              "    elif stop_reason or row['setup']['status'] != 'READY':\n        row['reason'] = stop_reason or row['setup']['reason']",
              "    elif stop_reason or row['setup']['status'] != 'READY':\n        row['reason'] = stop_reason or row['setup']['reason']\n        row['status'] = 'PASS'",
              ("test_missing_history_is_incomplete_without_current_substitution",)),
+            ("glob-bound-ignored",
+             "        glob_options['timeout'] = manifest['nativeTestGlobTimeoutSeconds']",
+             "        pass",
+             ("test_glob_declared_bound_is_applied_and_recorded_in_the_receipt",
+              "test_glob_exceeding_its_declared_bound_is_incomplete_and_stops_later_launches",
+              "test_other_commands_keep_the_default_bound_and_glob_without_declaration_inherits_it")),
+            ("glob-bound-applied-to-all",
+             "    timeout = options.get('timeout', timeout)\n    log =",
+             "    timeout = options.get('timeout', timeout)\n    timeout = max(timeout, 600)\n    log =",
+             ("test_other_commands_keep_the_default_bound_and_glob_without_declaration_inherits_it",)),
+            ("bound-not-in-receipt", " 'boundSeconds': timeout,", "",
+             ("test_glob_declared_bound_is_applied_and_recorded_in_the_receipt",)),
         ]
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

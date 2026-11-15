@@ -159,8 +159,13 @@ def history_input(root, locator):
 
 def build_plan(root, selected=None, out=None, manifest=None):
     glob = tuple(str(path.relative_to(root)) for path in sorted((root / 'tests').glob('*.test.cjs')))
+    # The glob is one command whose population grows with the suite; its bound is declared in the
+    # population manifest (nativeTestGlobTimeoutSeconds), not inherited from the 180 s default.
+    glob_options = {}
+    if manifest and 'nativeTestGlobTimeoutSeconds' in manifest:
+        glob_options['timeout'] = manifest['nativeTestGlobTimeoutSeconds']
     specs = [('native-test-glob', ('node', '--test', '--test-reporter=tap',
-              '--test-concurrency=1', *glob), glob, 'auto', None)]
+              '--test-concurrency=1', *glob), glob, 'auto', None, glob_options)]
     overrides = (manifest or {}).get('protocols', {})
     for filename in NAMED:
         argv = ('node', '--test-reporter=tap', 'tests/' + filename)
@@ -474,6 +479,10 @@ def census(root, plan, manifest):
     else:
         errors += ['registered glob member missing: ' + path for path in sorted(set(expected) - set(glob))]
         errors += ['glob member not registered in nativeTestGlob: ' + path for path in sorted(set(glob) - set(expected))]
+    bound = manifest.get('nativeTestGlobTimeoutSeconds')
+    if 'nativeTestGlobTimeoutSeconds' in manifest and (
+            type(bound) not in (int, float) or not math.isfinite(bound) or bound <= 0):
+        errors.append('nativeTestGlobTimeoutSeconds must be a finite positive number of seconds')
     return errors
 
 
@@ -816,7 +825,7 @@ def execute_command(root, out, spec, timeout, stop_reason=None):
     options = spec[5] if len(spec) > 5 else {}
     timeout = options.get('timeout', timeout)
     log = out / (name + '.log')
-    row = {'name': name, 'command': list(argv), 'exitCode': None, 'seconds': 0.0,
+    row = {'name': name, 'command': list(argv), 'exitCode': None, 'seconds': 0.0, 'boundSeconds': timeout,
            'counts': {}, 'log': log.name, 'explicitExclusions': [], 'caseExclusions': [], 'status': 'INCOMPLETE',
            'execution': {'state': 'not-started', 'returnCode': None}, 'lifecycle': ['selected']}
     row['setup'] = check_setup(root, spec)
