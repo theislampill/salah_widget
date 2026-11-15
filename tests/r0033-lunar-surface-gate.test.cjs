@@ -54,7 +54,7 @@ test('R33-18 the eligibility path reads only the pure predicate (no surface(), s
  const h=presenting(night());h.run('render();');
  h.run('for(const k in __r33.reads)__r33.reads[k]=0;');
  const p=h.run('lunarPresentation(-40)');assert.equal(p.moonLightEligible,true);
- assert.deepEqual(h.run('({...__r33.reads})'),{presentable:1,surface:0,state:0,detailEnabled:0,request:0});
+ assert.deepEqual(JSON.parse(h.run('JSON.stringify(__r33.reads)')),{presentable:1,surface:0,state:0,detailEnabled:0,request:0});
 });
 
 test('R33-18 static: no production path grants native lunar light without the presence predicate',()=>{

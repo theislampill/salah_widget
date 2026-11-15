@@ -132,16 +132,24 @@ def plan_moon(root,entries):
  initial_boot='\ntry{const text=atob('+json.dumps(base64.b64encode(compact).decode('ascii'))+'),packed=new Uint8Array(text.length);for(let i=0;i<text.length;i++)packed[i]=text.charCodeAt(i);const bytes=decodeCompactReceivers(packed,'+json.dumps(encoding,separators=(',',':'))+');window.SalahMoonInitial=createInitialMoon(bytes,'+json.dumps(decoded_pin,separators=(',',':'))+');}catch(error){window.SalahMoonInitialError=String(error.message??error);}\n'
  worker_pin={'bytes':len(worker.encode()),'sha256':sha(worker.encode())}
  head_owner='''
+}catch(error){moonConstructionError=error;window.SalahMoonConstructionError=String(error?.message??error);}
+// R0033 DG-1=B: after a construction failure no runtime owns the slot, so the head is
+// given no initial receiver and cannot present a Moon that would then vanish; the sky
+// first paint is still prepared, and the construction error is rethrown (stays loud).
+const moonHeadInitial=moonConstructionError?null:window.SalahMoonInitial;
 window.SalahMoonHead={
  compose(preview,snapshot,sim,encode){return composeNativeHeadMoon(preview,snapshot,sim,
   {snapshot:nativeLunarSnapshot,presentation:nativeLunarPresentation,scene:nativeCalendarMoonScene},
-  {initial:window.SalahMoonInitial,profile:MOON_DEFAULT_PROFILE,phaseQuantum,canonicalFraction,prefixSurface,boxSurface,sampleField,joinLunarPixel,encode});},
+  {initial:moonHeadInitial,profile:MOON_DEFAULT_PROFILE,phaseQuantum,canonicalFraction,prefixSurface,boxSurface,sampleField,joinLunarPixel,encode});},
  backgroundRule:nativeHeadMoonBackgroundRule
 };
 window.SalahPrepareFirstPaint?.();
+if(moonConstructionError)throw moonConstructionError;
 '''
- host='(function(){\n'+cloud+'\nconst MOON_DEFAULT_PROFILE='+json.dumps(PROFILE,separators=(',',':'))+';\nlet MOON_WORKER_SOURCE=null;\nconst MOON_WORKER_PIN='+json.dumps(worker_pin,separators=(',',':'))+';\nconst MOON_OFFLINE_CHUNKS='+json.dumps(chunks,separators=(',',':'))+';\n'+concat(HOST_UNITS)+'\n'+native_owner+initial_boot+concat(['moon-native.mjs'])+head_owner+'\n})();\n'
- refinement='window.SalahMoonRuntime.installWorkerSource('+json.dumps(worker)+');\n'
+ host='(function(){\n'+cloud+'\nconst MOON_DEFAULT_PROFILE='+json.dumps(PROFILE,separators=(',',':'))+';\nlet MOON_WORKER_SOURCE=null;\nconst MOON_WORKER_PIN='+json.dumps(worker_pin,separators=(',',':'))+';\nconst MOON_OFFLINE_CHUNKS='+json.dumps(chunks,separators=(',',':'))+';\n'+concat(HOST_UNITS)+'\n'+native_owner+initial_boot+'let moonConstructionError=null;\ntry{\n'+concat(['moon-native.mjs'])+head_owner+'\n})();\n'
+ # R0033 EF-E04: an empty slot (construction failure) is a no-op, not a TypeError; a
+ # live runtime still refuses a source-identity mismatch loudly in installWorkerSource.
+ refinement='window.SalahMoonRuntime?.installWorkerSource('+json.dumps(worker)+');\n'
  write(moon/'moon-host.js',host+refinement)
  write(moon/'assets/initial-compact.bin',compact)
  write(moon/'initial-compact-manifest.json',json.dumps(encoding,indent=2)+'\n')

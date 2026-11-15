@@ -254,7 +254,8 @@ function mentions(name, tokens) {
     if (source.includes('function nativeLunarPresentation(')) {
       // Bind the exact current delegated owner; embedded first-paint helpers
       // are separate lexical owners. Script ordinal alone grants no authority.
-      const wrapper = "function lunarPresentation(solarElevation){ return nativeLunarPresentation(moonSky,solarElevation,_pbrFailed); }";
+      // R0033 (issue 100, M4): the wrapper passes the presented-surface predicate, not _pbrFailed.
+      const wrapper = "function lunarPresentation(solarElevation){ const presented=moonSurfacePresentable(); _moonLightSurface=presented; return nativeLunarPresentation(moonSky,solarElevation,!presented); }";
       const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)];
       const owners = scripts.filter(match => match[2].includes(wrapper));
       assert.equal(owners.length,1,'unique delegated lunar script owner required');
@@ -283,10 +284,13 @@ function mentions(name, tokens) {
       // R002E changes only the prayer status writer, the .cn fit key and one comment, not the pinned block, helper, clamp or call.
       // R002F re-bind (issue 96): body ae528330... -> d21282d7..., entry dbc77c67... (main 516d8cc8) -> 226266a2...;
       // R002F changes only the weather gate/renewal/preview-range region and one loop line, not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"d21282d7454e13b6d7152a0792f0f9bb5c9603a7dfb50f9084bba139221bc404",'delegated native script changed');
+      // R0033 re-bind (issue 100): body d21282d7... -> d458b258..., entry 226266a2... -> 93d64096...; R0033 changes the
+      // lunar wrapper (presence predicate), the Moon host hooks, the sky commit guard and one legacy-loader comment,
+      // not the pinned force block, helper, clamp or atmosphere call.
+      assert.equal(digest(body),"d458b25855123376a0a8bd52ea18528f879d9e54db75f4d75a343a5b68525e56",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"226266a2b8d4862df980e76744d6ab3a833e11f8cf7392efed5297ccf45a231c",'delegated current generated entry changed');
+      assert.equal(digest(source),"93d640964d04e39e9b063c34cbda245a7184b29196091747074ce9aabbfbb018",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
@@ -317,7 +321,8 @@ function mentions(name, tokens) {
     }
     const forced = (name, moonSky={frac:0.98,alt:20}, sm={altDeg:-18}, pbrFailed=false) => vm.runInNewContext(
       `${clampLine}\n${eligibility}\nlet sunHalo=0,sunDogs=0,sunPillar=0,antiCrep=0,moonParhelia=0,lunarHalo=0;\n${forceBlock}\n[sunHalo,sunDogs,sunPillar,antiCrep,moonParhelia,lunarHalo]`,
-      {DEBUGOPTIC:name, moonSky, sm, _pbrFailed:pbrFailed});
+      // R0033: an unavailable presented surface is the predicate's false value (the old _pbrFailed=true).
+      {DEBUGOPTIC:name, moonSky, sm, _pbrFailed:pbrFailed, moonSurfacePresentable:()=>!pbrFailed});
     for (const [index,name] of forceNames.entries()) {
       const flags = parsed(`${base}&simTime=12:30&debugOptic=${name}`); assert.equal(flags.DEBUGOPTIC,name);
       const expected = [0,0,0,0,0,0]; expected[index]=[0.95,0.95,0.9,0.8,0.9,0.95][index];

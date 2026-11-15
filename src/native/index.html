@@ -2003,6 +2003,9 @@ const _MTW=160,_MTH=80,_MN=300,_MR=144,_RELIEF=1.9,_EXPO=1.55;   // _MN 300: hea
 let _mAlb=null,_mNrm=null,_moonCv=null,_moonCtx=null,_moonOut=null,_pbrReady=false,_pbrPending=null,_lastPbrFrac=-1,_lastPbrWax=null;
 let _pbrFailed=false,_moonFallbackReady=false,_lastCalendarFrac=-1,_lastCalendarWax=null,_lastCalendarAlb=null,_lastCalendarUp=-1;
 (function loadMoonMaps(){
+  // R0033 DG-1=B: this dormant legacy owner is never revealed (no legacy
+  // substitution, even with no registered runtime) and _pbrFailed only drives its
+  // own unrevealed renderer; light eligibility reads moonSurfacePresentable().
   // The generated V5 owner is installed before these image callbacks run.
   // Its foreground never consumes the legacy maps; reading them back from the
   // GPU can block its first complete scene despite the image being discarded.
@@ -2354,6 +2357,10 @@ function updateSkySurface(){
 }
 function commitSkyScene(A){
   if(_skyCommitted || _skySceneKey===null || !A.moonObservation || A.moonObservation.fresh!==true || _starProjectionKey!==_skySceneKey) return;
+  // R0033 M4: a surface adopted during this paint changes light eligibility after
+  // atmosphere() computed A. Never commit (and so animate from) that unlit/lit
+  // mismatch: the consistent next render commits instead.
+  if(_moonLightSurface!==moonSurfacePresentable()){ _renderDirty=true; Promise.resolve().then(()=>{ _renderDirty=true; }); return; }
   paintClouds(simNow()/1000); tieRainToClouds();
   const c=$(".c");
   // Resolve both transform twins and typed sky colours before restoring transitions.
@@ -3124,7 +3131,25 @@ function nativeLunarPresentation(moon,solarElevation,surfaceFailed){
   const moonlight=moonObject*(0.35+0.65*mFrac),moonShow=clamp(darkness*1.8);
   return {mFrac,moonUp,darkness,phaseVis,moonObject,moonLightEligible,moonLightReason,moonLocalWash,moonGlow,moonlight,moonStrength:moonlight,moonShow,moonPresence:moonShow};
 }
-function lunarPresentation(solarElevation){ return nativeLunarPresentation(moonSky,solarElevation,_pbrFailed); }
+function lunarPresentation(solarElevation){ const presented=moonSurfacePresentable(); _moonLightSurface=presented; return nativeLunarPresentation(moonSky,solarElevation,!presented); }
+// R0033 M4: native physical-light eligibility is bound to the PRESENTED Moon surface,
+// never to the dormant legacy decode flag. The terms are updateSkySurface's minus
+// adoption: the runtime's pure `presentable` predicate (no surface()/state/
+// detailEnabled/request(), so no adoption or publication), the published href and an
+// established sky scene. No registered runtime (DG-1=B construction failure) is
+// "surface-unavailable": zero light everywhere; the calendar disc opacity is unaffected.
+let _moonLightSurface=null;
+function moonSurfacePresentable(){
+  try{ return !!(window.SalahMoonRuntime?.presentable && $(".mphoto")?.getAttribute("href") && _skySceneKey!==null); }catch(e){ return false; }
+}
+// Presentability also changes outside render() (adoption, failure, withdrawal). Mark a
+// render only on a CHANGE of the decision, so a frozen-clock scene cannot keep a stale
+// eligibility and no render loop forms. The microtask re-marks after a loader turn that
+// clears _renderDirty synchronously after its own render.
+function noteMoonSurfaceChange(){
+  if(_moonLightSurface===null || moonSurfacePresentable()===_moonLightSurface) return false;
+  _renderDirty=true; Promise.resolve().then(()=>{ _renderDirty=true; }); return true;
+}
 function paintLunarOptic(c,key,opacity){
   c.style.setProperty(key,opacity);
   const el=$("."+key.slice(2));if(!el)return;
@@ -4402,11 +4427,12 @@ window.SalahMoonHost=Object.freeze({
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
    paused:document.hidden||!!$('.c')?.classList.contains('paused')};
  },
- publish(canvas){const ph=$('.mphoto');if(ph)ph.setAttribute('href',canvas.toDataURL());updateSkySurface();},
+ publish(canvas){const ph=$('.mphoto');if(ph)ph.setAttribute('href',canvas.toDataURL());updateSkySurface();noteMoonSurfaceChange();},
  fallback(){
-  // Resilience means a usable widget and retry, not silently substituting the
-  // old Moon. The mask follows the same admission as the material surface.
-  updateSkySurface();
+  // Resilience means a usable widget and the runtime's own bounded recovery
+  // (R0033), not silently substituting the old Moon. The mask follows the same
+  // admission as the material surface; light eligibility follows the same change.
+  updateSkySurface();noteMoonSurfaceChange();
  },
 });
 

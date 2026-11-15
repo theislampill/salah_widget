@@ -30,7 +30,7 @@ function rig({initial=false,file=false,embedded=true,deferWorker=false,initialTh
   startMoonDetail:()=>detail,blendCalendarBytes:a=>{if(faults.blend)throw new RangeError(faults.blend);return a;},setTimeout:(f,ms)=>{const n=++id;jobs.set(n,{f,ms});return n},clearTimeout:n=>jobs.delete(n),setInterval:()=>++id,clearInterval:()=>{},
   MOON_DEFAULT_PROFILE:{profile_id:'calendar-neutral-v5-01',mode:'calendar'},MOON_WORKER_SOURCE:'',MOON_WORKER_PIN:{bytes:10,sha256:digest('testworker')},MOON_OFFLINE_CHUNKS:[{name:'dem',index:0,last:true},{name:'colour',index:0,last:true}]});
  c.requestAnimationFrame=f=>{const n=++id;frames.set(n,f);return n;};c.cancelAnimationFrame=n=>frames.delete(n);
- if(file)c.MOON_OFFLINE_CHUNKS=[0,1].map(index=>({name:'assets/dem.bin.gz',index,path:`file-data/dem-${String(index).padStart(3,'0')}.js`,last:index===1}));
+ if(file)c.MOON_OFFLINE_CHUNKS=[0,1].map(index=>({name:'assets/dem.bin.gz',index,path:`file-data/dem-${String(index).padStart(3,'0')}.js`,last:false}));
  const frame=()=>{const callbacks=[...frames.values()];frames.clear();callbacks.forEach(f=>f(clock));};
  vm.runInContext(fs.readFileSync(path.join(src,'moon-precision.mjs'),'utf8')+'\n'+fs.readFileSync(path.join(src,'moon-native.mjs'),'utf8'),c);
  if(!deferWorker){frame();frame();}

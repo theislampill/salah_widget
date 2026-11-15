@@ -36,15 +36,30 @@
   // 645b53cc5d04d35444f6da0e27bf5a5b6b11ce67 rebound be62ab92 (R000B) -> 8817c6599ff3958574b8d34f0cf9355368522ce03a6bc4e70fa5adfcedddcd8b;
   // R0027 stacked on the R0021 candidate 68891b4f (main 32f97b06): R0021 a0f86bc427d9708befb520439dbaac78af16a21ef2be7825643f2c6ccc198819
   // -> 1ba361b6 (R0021 body plus the same spectral transform).
+  // R0033 rebind (issue 100, branch claude/r0033-moon-recovery-20261115 over main 90cccd2f):
+  // moon-initial d5e648ac -> f233b816 (moon-native.mjs bounded recovery, initial-tier
+  // eligibility, presence predicate and throw guards; build_moon.py construction-failure
+  // head rule); moon-refinement d4f90ac3 -> 93afaebd (optional-call tail and the worker's
+  // recovery cache mode). Both await independent source review with the R0033 candidate.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'d5e648ac08b80a8291140eddbd73dc7305aa7d40f38ebcbea71e239d5be54f16',
-    'moon-refinement':'d4f90ac35284f19e4675b6314ae60b0fc4ad441be54b1b78c74c173b1d80d7a4'
+    'moon-initial':'f233b8168a4f7411a6c11a376e2ee0265a27b1883699bce0690ca3a778ad9c10',
+    'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0033 (issue 100) Moon recovery and light eligibility, branch claude/r0033-moon-recovery-20261115 on main
+    // 90cccd2f: authored source c26d239f and the legacy-Moon structural control of its generated index 93d64096.
+    // Every entry below remains admitted unchanged. Re-bind again when rebuilt on a later main.
+    'c26d239f866dac3ff2922d47cc920c15a7630c07fcf816ce878e68660f96f484':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'claude/r0033-moon-recovery-20261115',path:'src/native/index.html',layout:'config,native'}),
+    '4a08180b2063a370ea121b91552f5781e2972930d2752e22bfaa75f069f4c57d':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'claude/r0033-moon-recovery-20261115',path:'index.html',
+      parentSha256:'93d640964d04e39e9b063c34cbda245a7184b29196091747074ce9aabbfbb018',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0034 (issue 101) refined-sky identity candidate 1f13b185 on main 664ebe22: the authored native body is unchanged
     // (no new authored entry); legacy-Moon structural control of its generated index dbc77c67. Every entry below,
     // including R002E's 3c80fd51 and 3c1f1a0a, remains admitted unchanged. Re-bind again when rebuilt on a later main.

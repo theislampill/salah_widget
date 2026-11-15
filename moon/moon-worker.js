@@ -606,8 +606,10 @@ class MoonPool {
 
 
 let enginePromise=null,latest=null,running=false,serial=0,shardEngine=null,shardSerial=0;const offlineParts=new Map();
-async function read(url,maxBytes){
- const r=await fetch(url,{cache:'force-cache'});if(!r.ok)throw new Error('Moon asset HTTP '+r.status);
+// R0033 DG-3: the first boot prefers the cache; a recovery attempt revalidates
+// (no-cache), so a heuristically cached error or stale body cannot pin a failure.
+async function read(url,maxBytes,cache){
+ const r=await fetch(url,{cache:cache==='no-cache'?'no-cache':'force-cache'});if(!r.ok)throw new Error('Moon asset HTTP '+r.status);
  const reader=r.body.getReader(),data=new Uint8Array(maxBytes);let at=0;
  try{for(;;){const {done,value}=await reader.read();if(done)break;if(at+value.length>maxBytes)throw new Error('Moon asset size');data.set(value,at);at+=value.length;}}finally{await reader.cancel();}
  if(at!==maxBytes)throw new Error('Moon asset truncated');return data;
@@ -615,7 +617,7 @@ async function read(url,maxBytes){
 function unbase64(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
 async function boot(m){
  const manifest=MOON_ASSET_MANIFEST;
- const from=(name,max)=>m.offline?new Promise((resolve,reject)=>offlineParts.set(name,{resolve,reject,bytes:new Uint8Array(max),at:0,index:0})):m.embedded?Promise.resolve(unbase64(m.embedded[name])):read(new URL(name,m.base),max);
+ const from=(name,max)=>m.offline?new Promise((resolve,reject)=>offlineParts.set(name,{resolve,reject,bytes:new Uint8Array(max),at:0,index:0})):m.embedded?Promise.resolve(unbase64(m.embedded[name])):read(new URL(name,m.base),max,m.cache);
  const wasm=unbase64(MOON_WASM_BASE64),[dem,colour]=await Promise.all([from(manifest.assets.dem.path,manifest.assets.dem.bytes),from(manifest.assets.colour.path,manifest.assets.colour.bytes)]);
  return MoonPool.create({wasm,dem,colour,manifest},m.workerSource);
 }
