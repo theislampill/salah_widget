@@ -1541,6 +1541,14 @@
   {
    "path": "tests/weather-renewal-fixture.cjs",
    "reason": "imported harness/fixture module, not an instrument"
+  },
+  {
+   "path": "tools/qa/precip_eval_lib.cjs",
+   "reason": "imported harness module of the precipitation evaluation recipes (loopback server, stubbed providers, loopback guard), not an instrument"
+  },
+  {
+   "path": "tools/qa/precip_eval_levers.js",
+   "reason": "browser-injected evaluation overlay read by precip_eval_capture.cjs (experiment levers L1-L5); not product code and not an instrument"
   }
  ],
  "exclusions": [
@@ -2012,6 +2020,51 @@
      "tests/r002f-renewal-matrix.cjs"
     ],
     "protocol": "node:test, two tests; each prints a diagnostic table of mean gaps and fails with every counterexample (candidate gap > main gap) listed (docs/state-contracts/R002F.md 1a)"
+   }
+  },
+  {
+   "path": "tools/qa/precip_eval_capture.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, served generated tree, catch-all route installed before any page, only loopback continued, fails on any non-loopback escape, mocked clock); precipitation clip capture; not a headless unit instrument",
+   "owner": "precipitation-presentation evaluation (research-only evidence; docs/audit/precipitation-presentation-20261115/README.md)",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/precip_eval_capture.cjs",
+     "--pw",
+     "<playwright package dir>",
+     "--root",
+     "<tree>",
+     "--out",
+     "<bulk dir outside the repository>",
+     "--engine",
+     "chromium",
+     "--only",
+     "<regex on cell id>",
+     "--variant",
+     "base",
+     "--mode",
+     "stepped"
+    ],
+    "protocol": "per-clip frame PNGs + meta.json under <out>/<engine>/<cell>--<variant>--<mode>; exit 0, exit 2 if any non-loopback request was continued"
+   }
+  },
+  {
+   "path": "tools/qa/precip_eval_report.py",
+   "reason": "offline analysis of the precipitation clips (Pillow/numpy): streak, tile, spectrum, repeat and scene metrics, contact sheets, animations; not a headless unit instrument",
+   "owner": "precipitation-presentation evaluation (research-only evidence; docs/audit/precipitation-presentation-20261115/README.md)",
+   "recipe": {
+    "argv": [
+     "python",
+     "tools/qa/precip_eval_report.py",
+     "analyze",
+     "--bulk",
+     "<bulk dir>",
+     "--engine",
+     "chromium",
+     "--out",
+     "<metrics.json>"
+    ],
+    "protocol": "writes a metrics JSON keyed by clip; exit 0"
    }
   }
  ]
