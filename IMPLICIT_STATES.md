@@ -103,30 +103,32 @@ certificate or contract; it is cited as such and not upgraded to human review.
 
 ### Current counts
 
+The 118 entries are the 112 of the audit baseline plus ISM-SKY-032 to 037, admitted on accepted evidence (owner approval of the six entries, issue 101 comment 6878230967; R0034 final certificate, issue 101 comment 6889716103). Counts are recomputed from the index tables below.
+
 Entries by status value and dimension (all entries, installer entries included):
 
 | Status value | Code | Documentation | Implementation | Verification |
 |---|---|---|---|---|
-| implicit and materially significant | IMS | 33 | 31 | 3 |
-| partially explicit | PEX | 48 | 45 | 49 |
-| explicitly documented but weakly enforced | DWE | 4 | 0 | 0 |
-| explicitly enforced but insufficiently verified | EEV | 0 | 25 | 21 |
-| explicit, enforced and independently verified | EIV | 27 | 0 | 14 |
+| implicit and materially significant | IMS | 31 | 32 | 3 |
+| partially explicit | PEX | 51 | 48 | 53 |
+| explicitly documented but weakly enforced | DWE | 5 | 0 | 0 |
+| explicitly enforced but insufficiently verified | EEV | 0 | 27 | 23 |
+| explicit, enforced and independently verified | EIV | 31 | 0 | 14 |
 | historically problematic but demonstrably resolved | HRS | 0 | 11 | 10 |
 | unknown or insufficient evidence | UNK | 0 | 0 | 15 |
-| **Total** | | 112 | 112 | 112 |
+| **Total** | | 118 | 118 | 118 |
 
 | Domain | Entries | of which new |
 |---|---|---|
 | Prayer, time and calendar (`ISM-PRAY`) | 11 | 3 |
 | Weather, radar and location acquisition (`ISM-WX`) | 12 | 6 |
 | Configuration, settings and builder (`ISM-CFG`) | 11 | 3 |
-| Sky, cloud, star and optical rendering (`ISM-SKY`) | 31 | 2 |
+| Sky, cloud, star and optical rendering (`ISM-SKY`) | 37 | 8 |
 | Moon pipeline (`ISM-MOON`) | 20 | 5 |
 | Build, deployment and qualification (`ISM-BLD`) | 10 | 7 |
 | Frozen v1 compatibility snapshot (`ISM-V1`) | 9 | 0 |
 | Installer workflows (`ISM-INST`) | 8 | 1 |
-| **Total** | 112 | 27 |
+| **Total** | 118 | 33 |
 
 ### Field coverage
 
@@ -208,7 +210,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-SKY-003](#ism-sky-003) | Cloud population, motion integration, coverage and paint cache | N15 | PEX | PEX | PEX | implemented but not fully verified |
 | [ISM-SKY-004](#ism-sky-004) | Precipitation population, cloud-origin gating and lightning bucket | N16 | PEX | IMS | PEX | implemented but not fully verified |
 | [ISM-SKY-005](#ism-sky-005) | Atmosphere publication, optical fade state and last-consumed diagnostics | N17 | PEX | PEX | PEX | partly resolved |
-| [ISM-SKY-006](#ism-sky-006) | Native sky snapshot identity, epoch, freshness and throughput admission | R01 | IMS | EEV | EEV | implemented but not fully verified |
+| [ISM-SKY-006](#ism-sky-006) | Native sky snapshot identity, epoch, freshness and throughput admission | R01 | EIV | EEV | EEV | implemented but not fully verified |
 | [ISM-SKY-007](#ism-sky-007) | Latest-only serialised render queue | R02 | IMS | EEV | UNK | implemented but not fully verified |
 | [ISM-SKY-008](#ism-sky-008) | Native asset loader generation, timeout, suspension and retry | R03 | PEX | EEV | EIV | implemented but not fully verified |
 | [ISM-SKY-009](#ism-sky-009) | Native asset script, inline pack and page-lifecycle ownership | R04 | PEX | PEX | EEV | implemented but not fully verified |
@@ -219,9 +221,9 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-SKY-014](#ism-sky-014) | Engine binding selection, load keys and declared physical fallback | R09 | PEX | IMS | UNK | still implicit or vulnerable |
 | [ISM-SKY-015](#ism-sky-015) | Refined sky construction, accepted frame, displayed frame and DOM commit | R10 | PEX | HRS | HRS | resolved and independently verified |
 | [ISM-SKY-016](#ism-sky-016) | Solar cloud-mask decode-before-publish transaction | R11 | PEX | PEX | PEX | partly resolved |
-| [ISM-SKY-017](#ism-sky-017) | Preview base, pending paint, current display and shared DOM handoff | R12 | PEX | PEX | PEX | partly resolved |
+| [ISM-SKY-017](#ism-sky-017) | Preview base, pending paint, current display and shared DOM handoff | R12 | EIV | EEV | EEV | partly resolved |
 | [ISM-SKY-018](#ism-sky-018) | Asynchronous preview catalogue admission revision | R13 | IMS | IMS | PEX | still implicit or vulnerable |
-| [ISM-SKY-019](#ism-sky-019) | Document head background and initial lunar CSS lease (first paint) | R14 | IMS | IMS | PEX | still implicit or vulnerable |
+| [ISM-SKY-019](#ism-sky-019) | Document head background and initial lunar CSS lease (first paint) | R14 | EIV | EEV | EEV | still implicit or vulnerable |
 | [ISM-SKY-020](#ism-sky-020) | Native snapshot adapter and single paint-hook installation | R15 | IMS | IMS | PEX | implemented but not fully verified |
 | [ISM-SKY-021](#ism-sky-021) | Bounded camera/lunar sampling geometry memoisation | R16 | IMS | IMS | PEX | still implicit or vulnerable |
 | [ISM-SKY-022](#ism-sky-022) | Preview raster private-byte custody and lazy fields | R17 | IMS | IMS | PEX | still implicit or vulnerable |
@@ -232,22 +234,14 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-SKY-027](#ism-sky-027) | Per-physical-model solar sample grid lifetime | R34 | IMS | IMS | UNK | still implicit or vulnerable |
 | [ISM-SKY-028](#ism-sky-028) | Native target-elevation acceptance lease | R35 | IMS | PEX | PEX | still implicit or vulnerable |
 | [ISM-SKY-029](#ism-sky-029) | Catalogue-bound diffuse resource capability | R36 | IMS | PEX | UNK | still implicit or vulnerable |
-| [ISM-SKY-030](#ism-sky-030) | Page-lifecycle fan-out across sky owners | new | PEX | IMS | EEV | new |
+| [ISM-SKY-030](#ism-sky-030) | Page-lifecycle fan-out across sky owners | new | EIV | IMS | EEV | new |
 | [ISM-SKY-031](#ism-sky-031) | Diagnostic telemetry state (debugMotion history, qaState) | new | DWE | IMS | PEX | new |
-
-Proposed entries, pending acceptance (R0034 sky-physics registry pass, 2026-11-14; summary in
-[R0034-sky-physics-registry.md](docs/state-contracts/R0034-sky-physics-registry.md)). They are **not counted** in
-[Current counts](#current-counts) and carry no index code until accepted evidence admits them; the codes below are
-each entry's "Proposed status (effective on acceptance)".
-
-| Registry ID | Name | Original ID | Proposed Doc | Proposed Impl | Proposed Verif | Historical disposition |
-|---|---|---|---|---|---|---|
-| [ISM-SKY-032](#ism-sky-032) | Weather-to-sky driver projection and physical-input mapping | new | PEX | PEX | PEX | new (proposed) |
-| [ISM-SKY-033](#ism-sky-033) | Atmospheric scattering, albedo and ozone parameter contract; sampling lattices | new | PEX | PEX | PEX | new (proposed) |
-| [ISM-SKY-034](#ism-sky-034) | Cloud lighting (silver lining), foreground capture and display-linear transfer | new | PEX | PEX | PEX | new (proposed) |
-| [ISM-SKY-035](#ism-sky-035) | Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration | new | DWE | IMS | PEX | new (proposed) |
-| [ISM-SKY-036](#ism-sky-036) | Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction) | new | PEX | PEX | PEX | new (proposed) |
-| [ISM-SKY-037](#ism-sky-037) | Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion) | new | PEX | IMS | PEX | new (proposed) |
+| [ISM-SKY-032](#ism-sky-032) | Weather-to-sky driver projection and physical-input mapping | new | PEX | PEX | PEX | new |
+| [ISM-SKY-033](#ism-sky-033) | Atmospheric scattering, albedo and ozone parameter contract; sampling lattices | new | PEX | PEX | PEX | new |
+| [ISM-SKY-034](#ism-sky-034) | Cloud lighting (silver lining), foreground capture and display-linear transfer | new | PEX | PEX | PEX | new |
+| [ISM-SKY-035](#ism-sky-035) | Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration | new | DWE | IMS | PEX | new |
+| [ISM-SKY-036](#ism-sky-036) | Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction) | new | PEX | PEX | PEX | new |
+| [ISM-SKY-037](#ism-sky-037) | Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion) | new | PEX | IMS | PEX | new |
 
 ### Moon pipeline (`ISM-MOON`)
 
@@ -881,7 +875,7 @@ Original audit: **N10** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weathe
   - Original evidence: {'relevant_existing_files': ['tests/r000c-weather.test.cjs', 'tests/r000d-weather.test.cjs', 'tests/r0017-transport.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'No real cross-origin image/canvas behavior or provider host compromise test. Exact native resource reclamation after detachment remains a browser concern; no current product defect asserted.'}
   - Original remaining risk: No real cross-origin image/canvas behavior or provider host compromise test. Exact native resource reclamation after detachment remains a browser concern; no current product defect asserted. Wall-clock rollback can reject weather freshness while weather/radar retry gates remain closed; exact-source gates were exercised under XF02, without native browser/provider qualification.
 - **Findings.** [PRA-F-16](docs/audit/post-rlgwo/FINDINGS.md#pra-f-16)
-- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; effective on acceptance).**
+- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; accepted, issue 101, [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).**
   Geographic calculation, from source on main `91c60ed2` (`fetchRadar` ~L1551-1583, `wxRadarSample` ~L1522-1550).
   Current state recorded; owner decision D-32-1 A2 (disable live radar acquisition, R0032) is not yet implemented.
   - Projection: Web Mercator tile at fixed zoom 6 (n = 64): fx = (lon + 180)/360·n,
@@ -1044,7 +1038,7 @@ Original audit: **new (NEW-B-06 + NEW-D-01)** · Lane papers: [B](docs/audit/pos
 - **Unknowns.** native worker durations by device
 - **Findings.** [PRA-F-10](docs/audit/post-rlgwo/FINDINGS.md#pra-f-10), [PRA-F-25](docs/audit/post-rlgwo/FINDINGS.md#pra-f-25)
  - **R002F preview-range rows (issue 96), branch `claude/r002f-weather-renewal-20261113` (not merged; independent review of `95a17e08` MERGE-READY with advisories, folded in; the option D round awaits re-review).** Documented: [R002F contract](docs/state-contracts/R002F.md) §3 and DESIGN (preview bullet). Enforced: `wxTrackRange`; `syncWeather` replaces the substitute with an explicit unavailable marker (`code:null`, `previewRange`, `src:"forecast"`) before the first or after the last hourly point; the preview branch of `selectedWeather` never presents it; a preview-lane shortcut line in `retryGate` keeps preview request counts as before; `wxAt` itself unchanged. Verified by: `tests/weather-preview-range.test.cjs` (R2F-12 inside bit-identical / before-first / after-last / running past the end; R2F-12a live return requests in the same call; R2F-12b frozen out-of-track 2 min; mutant 15e killed). Residuals: the last in-track value stays presented until the next render (< 1 simulated second); between frames a frozen preview's poll may hold a live record in `weather` that no frame presents; a preview without any track keeps the accepted R0024 behaviour (current record shown). Identity churn stays R0034. Proposed status (effective on acceptance) for the range rows: D EIV / I EEV / V EEV.
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Churn interface only: the interpolated record is unchanged (R002F owns track age); the refined identity now consumes only `src`, `temp` (°C) and `vis` (aerosol term), so interpolation of `rh`/`cloud`/`wind`/`code` cannot starve the refined sky, and a consumed-input churn is reported as `target-churn` instead of "refining…" ([R0034](docs/state-contracts/R0034.md) §1.1-1.2). Proposed status (effective on acceptance): codes unchanged; interface documented.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** Churn interface only: the interpolated record is unchanged (R002F owns track age); the refined identity now consumes only `src`, `temp` (°C) and `vis` (aerosol term), so interpolation of `rh`/`cloud`/`wind`/`code` cannot starve the refined sky, and a consumed-input churn is reported as `target-churn` instead of "refining…" ([R0034](docs/state-contracts/R0034.md) §1.1-1.2). Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): codes unchanged; interface documented.
 
 <a id="ism-wx-010"></a>
 ### ISM-WX-010 — Coarse location provider cascade and whole-body deadline
@@ -1516,7 +1510,7 @@ Original audit: **new (NEW-C-02; extended by OM-06)** · Lane papers: [C](docs/a
 - **Observed facts.** README L570 `width:330px;height:534px`, L575 "change only `src`" (integrator check); values agree across modules at baseline (OM-06)
 - **Status accepted (R0037, issue 104).** Owner decision DG2 (amendment R0037-A1): the frozen V1 README snippet stays 330×534, V1's card-plus-drop-shadow footprint (native comparison: 3,102 pixels differ inside the card box at 325×530); the 325×530 rule applies to the current widget. On the R0037 slice-2 branch the README states the current-version size and no longer says "change only `src`", AGENTS.md names the V1 snippet as the documented exception, and the R000F `invariants` scenario asserts the current-version size statement. This removes the contradiction that made D DWE; status accepted on R0037's acceptance ([R0037 final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360)): D / I / V **PEX / PEX / PEX** (the renderer-literal census OM-06 stays with R0034).
 - **Findings.** [PRA-F-18](docs/audit/post-rlgwo/FINDINGS.md#pra-f-18)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Renderer-literal facet only: `tests/real-sky/native-geometry-census.test.mjs` pins every `325`/`530` literal per renderer module against the `.c` 325×530 card rule and rejects near-miss literals (mutant M8 killed). Builder/README/preset contract unchanged (R000F; README V1 snippet is R0037). Proposed status (effective on acceptance): codes unchanged for the other facets; renderer-literal facet V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** Renderer-literal facet only: `tests/real-sky/native-geometry-census.test.mjs` pins every `325`/`530` literal per renderer module against the `.c` 325×530 card rule and rejects near-miss literals (mutant M8 killed). Builder/README/preset contract unchanged (R000F; README V1 snippet is R0037). Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): codes unchanged for the other facets; renderer-literal facet V EEV. The machine-level codes of this entry are unchanged.
 
 <a id="ism-cfg-011"></a>
 ### ISM-CFG-011 — Diagnostic-input override surface (`sim*`, `debug*`, `qa`, `timeScale`, `motion`)
@@ -1668,7 +1662,7 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original remaining risk: Probe establishes retained numeric coverage and raster-density calls, not native pixels. Real motion, wrap/lifetime continuity and coverage appearance still require the AGENTS native clip/visual contract.
 - **Findings.** [PRA-F-03](docs/audit/post-rlgwo/FINDINGS.md#pra-f-03)
  - **R002F establishment rows (issue 96), branch `claude/r002f-weather-renewal-20261113` (not merged; independent review of `95a17e08` MERGE-READY with advisories, folded in; the option D round awaits re-review).** Documented: DESIGN "Continuity" and "Coverage across a provider step" now state the actual policy (ease 0.08 per paint while ready; withdraw at the provider step; snap on re-establishment; the false "15-minute refetch eases the deck" sentence removed) and the verified R0025 motion contract (signed/monotonic intervals, two-second suspension, old wind, empty decks, explicit seek). Enforced: unchanged (Option C not selected). Verified by: R2F-09 (seed/population equal), stage-1 baseline rows. Proposed status: D EIV; I and V unchanged.
-- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; effective on acceptance).**
+- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; accepted, issue 101, [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).**
   Wind and generation facts not recorded above, from source on main `91c60ed2`:
   - Wind source: Open-Meteo `wind_speed_10m`/`wind_direction_10m` in m/s (current block; hourly track only in
     explicit preview, ISM-WX-009), projected by `wxDrivers` (ISM-SKY-032). Drift speed `wspd = 0.06 + 0.6·wind`,
@@ -1761,7 +1755,7 @@ Original audit: **N17** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 <a id="ism-sky-006"></a>
 ### ISM-SKY-006 — Native sky snapshot identity, epoch, freshness and throughput admission
 
-Original audit: **R01** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **IMS / EEV / EEV** · Historical disposition: *implemented but not fully verified*
+Original audit: **R01** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Which refined-sky worker result may be accepted and displayed.
 - **Sources.** `real-sky/native-lifecycle.mjs` ~L8-93 (rate-throughput guard ~L24-26); `real-sky/native-contract.mjs` `nativeIdentity` ~L3-9, `nativeJob` ~L10-23; `real-sky/native-host-hooks.js` `capture` ~L20-49
@@ -1793,7 +1787,7 @@ Original audit: **R01** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-lifecycle.test.mjs:13–30; tests/real-sky/native-rate-availability.test.mjs:12–50; parent aggregate275 existing renderer cases PASS
   - Original remaining risk: Epoch/clock/currentness correctness inspected and exercised by existing mocks. Native event-loop stalls and high-rate visible continuity require native capture, not flags.
 - **Findings.** [PRA-F-10](docs/audit/post-rlgwo/FINDINGS.md#pra-f-10)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Documented: [R0034](docs/state-contracts/R0034.md) §1.1-1.2. Enforced: the identity carries weather only as the job's consumed values `[source, visibilityFactor, temperatureC]` (shared `nativeWeatherInputs` with `nativeJob`); `rh`, `cloud`, `code`, `wind` and any `vis >= 20000` no longer change identity; jobs byte-identical to main except the label (40,000-snapshot differential). New availability `unavailable(target-churn)` after two dropped results (superseded or rejected) under a moving identity with an unchanged sceneIdentity; never overwrites `rate-throughput`; cleared by acceptance, scene change, pause, dispose; `lifecycle.churn` diagnostic; `status.last.weather` reports consumed values. Verified by: `tests/real-sky/native-identity-minimality.test.mjs` ES34-01..05 (RED on main for 01/03/04), mutants M1-M4, M9 killed; audit probe D now equals its constant control in every cell. Native: `tools/qa/r0034_native_cells.cjs` lanes (main never accepts in any preview lane, 3 engines; branch accepts at 2×/10×/clock preview, reports `rate-throughput` at 60× and `target-churn` for a visibility-varying track) and neutral (refined canvas byte-identical to main, 15/15 frozen scenes); live probe: a humidity/wind-only adoption withdraws the refined frame on main (1.45 s Firefox, 2.6 s Chromium of "refining…"), not on the branch. Unresolved: residual withdraw/re-accept oscillation when a consumed input varies but results keep up (G1 B/C, owner). Proposed status (effective on acceptance): D EIV / I EEV / V EEV (V EIV only after independent review and the native preview-lane cells ES34-17).
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** Documented: [R0034](docs/state-contracts/R0034.md) §1.1-1.2. Enforced: the identity carries weather only as the job's consumed values `[source, visibilityFactor, temperatureC]` (shared `nativeWeatherInputs` with `nativeJob`); `rh`, `cloud`, `code`, `wind` and any `vis >= 20000` no longer change identity; jobs byte-identical to main except the label (40,000-snapshot differential). New availability `unavailable(target-churn)` after two dropped results (superseded or rejected) under a moving identity with an unchanged sceneIdentity; never overwrites `rate-throughput`; cleared by acceptance, scene change, pause, dispose; `lifecycle.churn` diagnostic; `status.last.weather` reports consumed values. Verified by: `tests/real-sky/native-identity-minimality.test.mjs` ES34-01..05 (RED on main for 01/03/04), mutants M1-M4, M9 killed; audit probe D now equals its constant control in every cell. Native: `tools/qa/r0034_native_cells.cjs` lanes (main never accepts in any preview lane, 3 engines; branch accepts at 2×/10×/clock preview, reports `rate-throughput` at 60× and `target-churn` for a visibility-varying track) and neutral (refined canvas byte-identical to main, 15/15 frozen scenes); live probe: a humidity/wind-only adoption withdraws the refined frame on main (1.45 s Firefox, 2.6 s Chromium of "refining…"), not on the branch. Unresolved: residual withdraw/re-accept oscillation when a consumed input varies but results keep up (G1 B/C, owner). Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): D EIV / I EEV / V EEV. V is not recorded as EIV: the independent post-merge review judged the native preview-lane cells (ES34-17) consistent with the code but did not re-run the browser cells, which rest on the author's runs.
 - **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged).** Weather inputs consumed by
   the job versus copied into the snapshot are tabulated in ISM-SKY-032; with R0034 merged (main `bf79d00f`) the
   identity carries only the consumed weather terms. It still includes `reducedMotion`, so an OS reduced-motion toggle
@@ -1890,7 +1884,7 @@ Original audit: **R04** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-assets.test.mjs:14–21; tests/real-sky/cp9-page-lifecycle.test.mjs:9; tests/real-sky/native-preview-host.test.mjs:258–270
   - Original remaining risk: Browser script execution after element removal may assign a global pinned pack; all generations fetch identical pinned bytes, so semantic stale-target publication was not proved.
 - **Findings.** [PRA-F-22](docs/audit/post-rlgwo/FINDINGS.md#pra-f-22)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Correction: the "persisted restore only synthetic" statement quotes an earlier R0021 section; the R0021 completion ledger (R0021.md L1017-1047) and final certificate record a real back/forward-cache restore in headed Chromium (`pageshow.persisted: true`). Firefox and WebKit restores remain unexercised. No code change. Proposed status (effective on acceptance): codes unchanged.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** Correction: the "persisted restore only synthetic" statement quotes an earlier R0021 section; the R0021 completion ledger (R0021.md L1017-1047) and final certificate record a real back/forward-cache restore in headed Chromium (`pageshow.persisted: true`). Firefox and WebKit restores remain unexercised. No code change. Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): codes unchanged.
 
 <a id="ism-sky-010"></a>
 ### ISM-SKY-010 — Reference worker client boot, RPC deadlines and fallback mode
@@ -2047,7 +2041,7 @@ Original audit: **R10** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-host-composition.test.mjs:14–149; tests/real-sky/cp9-presentation-cache.test.mjs:4–9; evidence/probes/rendering/protocol-probes.mjs constructorFailure
   - Original remaining risk: Synthetic2D context failure demonstrates unowned nodes; real browser frequency, DOM paint impact and failed offscreen allocation schedules are unmeasured.
 - **Findings.** [PRA-F-34](docs/audit/post-rlgwo/FINDINGS.md#pra-f-34)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** PRA-F-34 measurement gate: no compose/allocation change; measured in three engines (60 s × 5 scenes × 2 repeats, [R0034](docs/state-contracts/R0034.md) §1.6): Chromium shows about 15 unattributed long tasks per minute (up to 337 ms, ~5% busy) in daytime scenes and ~700 data-URL encodes per minute under cloud; attribution and any optimisation are a separate owner proposal; the proposed 8 ms p95 budget is not adopted (G3). Proposed status (effective on acceptance): codes unchanged.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** PRA-F-34 measurement gate: no compose/allocation change; measured in three engines (60 s × 5 scenes × 2 repeats, [R0034](docs/state-contracts/R0034.md) §1.6): Chromium shows about 15 unattributed long tasks per minute (up to 337 ms, ~5% busy) in daytime scenes and ~700 data-URL encodes per minute under cloud; attribution and any optimisation are a separate owner proposal; the proposed 8 ms p95 budget is not adopted (G3). Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): codes unchanged.
 
 <a id="ism-sky-016"></a>
 ### ISM-SKY-016 — Solar cloud-mask decode-before-publish transaction
@@ -2083,12 +2077,12 @@ Original audit: **R11** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-solar-publication.test.mjs:17–91; tests/real-sky/native-preview-host.test.mjs:70,90,96; tests/real-sky/native-host-composition.test.mjs:89–120
   - Original remaining risk: No evidence that shipped browser Image.decode remains pending indefinitely. Native reproduction or platform guarantee is the decision-changing discriminator.
 - **Findings.** [PRA-F-36](docs/audit/post-rlgwo/FINDINGS.md#pra-f-36)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** PRA-F-36 / RF04 disposition RETAINED — UNVERIFIED (R0021 owner decision kept, G4). Scope: R0021 declined a mandatory timeout, it did not adjudicate the hazard. Derived bound (source): advancing clock — cancelled by the 30 accepted-second fence; frozen clock — unbounded. Reconsideration trigger: a native observation of a decode pending > 30 s wall time or a compose blocked on `solarPublication.pending`. No timeout code added ([R0034](docs/state-contracts/R0034.md) §1.7). Proposed status (effective on acceptance): codes unchanged.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** PRA-F-36 / RF04 disposition RETAINED — UNVERIFIED (R0021 owner decision kept, G4). Scope: R0021 declined a mandatory timeout, it did not adjudicate the hazard. Derived bound (source): advancing clock — cancelled by the 30 accepted-second fence; frozen clock — unbounded. Reconsideration trigger: a native observation of a decode pending > 30 s wall time or a compose blocked on `solarPublication.pending`. No timeout code added ([R0034](docs/state-contracts/R0034.md) §1.7). Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): codes unchanged.
 
 <a id="ism-sky-017"></a>
 ### ISM-SKY-017 — Preview base, pending paint, current display and shared DOM handoff
 
-Original audit: **R12** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *partly resolved*
+Original audit: **R12** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *partly resolved*
 
 - **Scope and decision.** The synchronous numerical preview that bridges to the refined sky.
 - **Sources.** `real-sky/native-preview-host.mjs` ~L10-194 (`update` ~L120-128, `present`/`tick` ~L166-167, `dispose` ~L186, registry release ~L187 only via the constructor catch ~L190)
@@ -2117,7 +2111,7 @@ Original audit: **R12** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-preview-host.test.mjs:41–270; tests/real-sky/native-startup-handoff.test.cjs; tests/real-sky/native-head-handoff.cjs
   - Original remaining risk: Shared DOM ownership remains distributed across flags and global closures. Native sun flicker needs frame/class/mask trace and pixel capture; mocks do not establish visibility continuity.
 - **Findings.** [PRA-F-22](docs/audit/post-rlgwo/FINDINGS.md#pra-f-22)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Documented: [R0034](docs/state-contracts/R0034.md) §1.3 (state list, effect table). Enforced: awaiting-input has one entry (full withdrawal once); re-entry repeats only the cloud reconcile when the recorded receipt is no longer current, the Moon-detail clear when the detail owner/renders/visibility changed, and first-paint retirement while a head exists; `dispose()` is the single idempotent terminal transition that runs the instance's owned releases and releases the registry slot and ready class only while registered. Verified by: `tests/real-sky/native-preview-lifecycle.test.mjs` ES34-08/09/10 (RED on main), mutants M5, M6, M10 killed; `native-preview-host`, `native-construction-ownership` unchanged and green. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** Documented: [R0034](docs/state-contracts/R0034.md) §1.3 (state list, effect table). Enforced: awaiting-input has one entry (full withdrawal once); re-entry repeats only the cloud reconcile when the recorded receipt is no longer current, the Moon-detail clear when the detail owner/renders/visibility changed, and first-paint retirement while a head exists; `dispose()` is the single idempotent terminal transition that runs the instance's owned releases and releases the registry slot and ready class only while registered. Verified by: `tests/real-sky/native-preview-lifecycle.test.mjs` ES34-08/09/10 (RED on main), mutants M5, M6, M10 killed; `native-preview-host`, `native-construction-ownership` unchanged and green. Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): D EIV / I EEV / V EEV.
 
 <a id="ism-sky-018"></a>
 ### ISM-SKY-018 — Asynchronous preview catalogue admission revision
@@ -2145,7 +2139,7 @@ Original audit: **R13** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 <a id="ism-sky-019"></a>
 ### ISM-SKY-019 — Document head background and initial lunar CSS lease (first paint)
 
-Original audit: **R14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **IMS / IMS / PEX** · Historical disposition: *still implicit or vulnerable*
+Original audit: **R14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md), [G](docs/audit/post-rlgwo/lanes/G-omission-pass.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *still implicit or vulnerable*
 
 - **Scope and decision.** Head-time background before the native scene exists.
 - **Sources.** `real-sky/native-first-paint.mjs` ~L10-50 (identity `[lat,lon,c.tz||'America/New_York','wall']` ~L18; `Number(params.get(k))` ~L15); retirement `native-preview-host.mjs` ~L39-46
@@ -2167,7 +2161,7 @@ Original audit: **R14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/native-first-paint.test.mjs; tests/real-sky/native-celestial-startup.test.mjs; tests/real-sky/native-startup-critical-path.test.mjs; tests/real-sky/moon_build_guard_test.py:77
   - Original remaining risk: Source order/assertions and DOM mocks do not establish first actual browser paint, all native startup sizes, or sun/cloud flicker.
 - **Findings.** [PRA-F-37](docs/audit/post-rlgwo/FINDINGS.md#pra-f-37)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Enforced parity: native camera rule (blank → refusal; a non-finite camera installs no head), temporal owners `simTime`/`timeScale` parity-tested (`simDate` kept head-less: dropping it changes an accepted moon test; owner sub-choice G1), reduced-motion expression equal to `isMotionReduced`. Verified by: four ES34-11 tests in `tests/real-sky/native-first-paint.test.mjs` (identity parity for Riyadh, London and the default zone; R002D owns the zone element), mutant M7 killed. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** Enforced parity: native camera rule (blank → refusal; a non-finite camera installs no head), temporal owners `simTime`/`timeScale` parity-tested (`simDate` kept head-less: dropping it changes an accepted moon test; owner sub-choice G1), reduced-motion expression equal to `isMotionReduced`. Verified by: four ES34-11 tests in `tests/real-sky/native-first-paint.test.mjs` (identity parity for Riyadh, London and the default zone; R002D owns the zone element), mutant M7 killed. Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): D EIV / I EEV / V EEV.
 
 <a id="ism-sky-020"></a>
 ### ISM-SKY-020 — Native snapshot adapter and single paint-hook installation
@@ -2269,7 +2263,7 @@ Original audit: **R18** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Recovery: Synchronous; initialization errors propagate; realm lifetime table bounded. No async reentrancy under JS single-threaded module execution.
   - Original evidence: tests/real-sky/native-host-encoding.test.mjs:14–35; tests/real-sky/native-host-streams.test.mjs:7–31; tests/real-sky/native-encoding.test.mjs
   - Original remaining risk: Exact byte equality is not perception, tone-calibration or native performance certification. Module copies in worker/UI retain their own bounded tables.
-- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; effective on acceptance).**
+- **R0034 sky-physics registry pass (2026-11-14; documentation only, codes unchanged; accepted, issue 101, [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).**
   Tone map and output quantisation, from source on main `91c60ed2`:
   - Tone map: code = round(255·sRGB_OETF(1 − exp(−E·L))) per channel (`nativeOracleCode`,
     `native-encoding.mjs` L9); E = auto exposure (ISM-SKY-033). `encodeNativeFrame` (preview, L27-40) and
@@ -2432,7 +2426,7 @@ Original audit: **R36** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 <a id="ism-sky-030"></a>
 ### ISM-SKY-030 — Page-lifecycle fan-out across sky owners
 
-Original audit: **new (NEW-D-03)** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **PEX / IMS / EEV** · Historical disposition: *new*
+Original audit: **new (NEW-D-03)** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **EIV / IMS / EEV** · Historical disposition: *new*
 
 - **Scope and decision.** What each sky owner does on pagehide, hide/offscreen and persisted pageshow.
 - **Sources.** `real-sky/native-assets.mjs` ~L70-72; `src/native/index.html` L3891-3895; `real-sky/native-host.mjs` ~L255; `real-sky/native-lifecycle.mjs` ~L55; `real-sky/native-preview-host.mjs` (no lifecycle listener)
@@ -2454,7 +2448,7 @@ Original audit: **new (NEW-D-03)** · Lane papers: [D](docs/audit/post-rlgwo/lan
 - **Tests.** `tests/real-sky/cp9-page-lifecycle.test.mjs`
 - **Unknowns.** bfcache
 - **Findings.** [PRA-F-22](docs/audit/post-rlgwo/FINDINGS.md#pra-f-22)
-- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (not merged; no independent review yet).** Fan-out table documented ([R0034](docs/state-contracts/R0034.md) §1.4); no preview page-lifecycle listener (G2 default). Unit regression: ES34-10 (120 paused `present` calls → zero renders/publishes; withdrawal once). Native: cites the R0021 final certificate (0 rAF after a trusted `pagehide`, incl. a real headed-Chromium bfcache restore) — correcting the earlier "only synthetic" statement. Proposed status (effective on acceptance): D EIV / I PEX (unchanged code) / V EEV.
+- **R0034 (issue 101), branch `claude/r0034-refined-sky-identity-20261113` (merged as pull request 121, main `bf79d00f`; independently reviewed).** Fan-out table documented ([R0034](docs/state-contracts/R0034.md) §1.4); no preview page-lifecycle listener (G2 default). Unit regression: ES34-10 (120 paused `present` calls → zero renders/publishes; withdrawal once). Native: cites the R0021 final certificate (0 rAF after a trusted `pagehide`, incl. a real headed-Chromium bfcache restore) — correcting the earlier "only synthetic" statement. Status accepted (R0034, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103); the branch above was merged as pull request 121 and delivered, main `bf79d00f`): D EIV / I IMS (unchanged: R0034 changed no code for the fan-out; the proposal read "I PEX (unchanged code)", but this entry's I is IMS, so no change is recorded) / V EEV (unchanged).
 
 <a id="ism-sky-031"></a>
 ### ISM-SKY-031 — Diagnostic telemetry state (debugMotion history, qaState)
@@ -2471,18 +2465,18 @@ Original audit: **new (NEW-D-05; OM-05 adds sticky acquisition flags)** · Lane 
 - **Tests.** `tests/r001d-*.cjs`
 - **Findings.** [PRA-F-11](docs/audit/post-rlgwo/FINDINGS.md#pra-f-11), [PRA-F-15](docs/audit/post-rlgwo/FINDINGS.md#pra-f-15)
 
-### Proposed entries from the R0034 sky-physics registry pass
+### Entries from the R0034 sky-physics registry pass
 
-Source reading on main `91c60ed2`, re-checked on main `bf79d00f` (R0034 merged) for the files R0034 changed
+Admitted to the index and counts on accepted evidence: the owner approved the six entries on issue 101 ([comment 6878230967](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6878230967)) and the [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103) (issue 101, comment 6889716103) records the registry pass (pull request 122, main `516d8cc8`) as part of the accepted scope. Source reading on main `91c60ed2`, re-checked on main `bf79d00f` (R0034 merged) for the files R0034 changed
 (documentation only; no code, test, tool or generated file changed; nothing executed in a browser). Line numbers are approximate anchors into `src/native/index.html` unless another file is
-named. Each entry states observed facts, hypotheses and unknowns separately. None of them names a cause of the
-R0034 owner-reported artifact; the per-hypothesis ownership is in
+named. Each entry states observed facts, hypotheses and unknowns separately. When these entries were written none of them named a cause of the
+R0034 owner-reported artifact; the cause was established afterwards (ISM-SKY-033, amendment R0034-A1) and the per-hypothesis ownership, kept as history, is in
 [R0034-sky-physics-registry.md](docs/state-contracts/R0034-sky-physics-registry.md).
 
 <a id="ism-sky-032"></a>
 ### ISM-SKY-032 — Weather-to-sky driver projection and physical-input mapping
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** How one admitted weather record becomes the inputs every sky consumer reads: native CSS
   atmosphere, cloud deck, wind drift, optics, and the refined/preview physical job. Admission, truth and expiry stay
@@ -2521,14 +2515,14 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   `gs`, `hs`, `ts` scale native CSS layers only (the refined sky ignores them).
 - **Hypotheses.** none.
 - **Unknowns.** provider semantics of `visibility` and layered cover per region (outside the repository).
-- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**: written here and in comments; one
+- **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**: written here and in comments; one
   central pure function; unit coverage of request fields and job, not of the ramps.
-- **Risks routed.** identity keying → R0034 (merged; acceptance pending); record admission/renewal → R002F.
+- **Risks routed.** identity keying → R0034 (closed: merged as pull request 121, main `bf79d00f`, accepted by the certificate); record admission/renewal → R002F.
 
 <a id="ism-sky-033"></a>
 ### ISM-SKY-033 — Atmospheric scattering, albedo and ozone parameter contract; sampling lattices
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** Which scattering physics, constants and per-scene parameters produce the refined and
   preview sky radiance, and on which sampling lattice. The copied core is generated from `vendor/real-sky`
@@ -2580,6 +2574,19 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   (`native-contract.mjs` L32) → 42×68 nodes (gx = ⌈325/8⌉ = 41, gy = ⌈530/8⌉ = 67), cell ≈ 7.93 × 7.91 px, bilinear
   (core L47-53); the worker's night decomposition uses the same 41×67 grid (`native-engine.mjs` L19-20). Bilinear
   interpolation is continuous but its derivative jumps on node lines.
+- **Daytime aureole-removal grid (observed; established cause of the owner-reported bars).** Until main `90cccd2f`
+  (pull request 132, amendment R0034-A1) the host decomposition in `accept()` (`real-sky/native-host.mjs`) chose its
+  lattice as `altDeg < -3 ? worker grid : [24,40]`. Above −3° solar altitude the solar aerosol aureole that
+  `nativeSkyPresentation` removes at the physical Sun's projected position was therefore sampled on 24×40 while the
+  field it was subtracted from (`skyBackgroundLinear`) was sampled by the worker on 41×67, so the display carried the
+  difference of two interpolations: soft vertical and horizontal ridges around the physical Sun (up to about +9 / −6
+  grey levels at the reproduced scene). The expression was introduced in `dbc0387b` (2026-10-07) with no recorded
+  rationale; it was not an intended optical effect and is not diffraction. Since `90cccd2f` both use the worker's
+  lattice `[⌈325/step⌉, ⌈530/step⌉]` at every solar altitude the host decomposes (−20° and above; deep night keeps the
+  worker-prepared lunar display and runs no host decomposition). The fix is one authored expression and a four-line
+  comment in `real-sky/native-host.mjs`; the copied core is untouched. The preview keeps its own `[24,40]` (`[12,20]`
+  for fast clocks), where background and aureole share one lattice and cancel. Contract:
+  [R0034-A1](docs/state-contracts/R0034-A1.md); accepted by the [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103).
 - **Display adaptations (observed, labelled display-only in source).** Solar aerosol aureole re-registered to the
   native Sun slot when the Sun is above 10° (`nativeSolarRegistration`, active gate: alt > 10°, camera view, anchor
   inside the raster; weight smoothstep over 10..20°); twilight white-point gains below 10° (Patat B−V); lunar
@@ -2592,21 +2599,29 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   every parameter; no persistent cache keyed by time.
 - **Tests.** `tests/real-sky/native-preview.test.mjs` (preview fields, HG registration), `native-contract.test.mjs`,
   `native-horizon.test.mjs`, `native-worker-lunar-display.test.mjs` (step grid), vendor oracle suite (not examined
-  here). Gaps: no repository test pins g, ω, Ångström or the absence of ozone/multiple scattering as a declared
-  limitation; no test of the refined 41×67 lattice geometry.
-- **Hypotheses.** The ~7.9 px refined lattice and ~13.5 px preview lattice are periodic structures in the frame;
-  R0034 round 4 found only the 13.5 px seams at ≤ 0.05 grey levels and no other peak in either canvas readback.
-  Neither is claimed to explain the owner's 4–9 px pattern.
+  here). `tests/real-sky/r0034-a1-aureole-lattice.test.mjs` (registered `real-sky-r0034-a1-aureole-lattice`, 7 tests)
+  pins the lattice: the worker lattice at every non-deep-night altitude (steps 8 and 6), independence from azimuth,
+  anchor and registration, one decomposition for all replaced fields, node coincidence of the host's solar background
+  with the worker's (≤ 1e-12 relative; the old 24×40 lattice gave 3.3e-2), the preview's own lattice, no host
+  decomposition at deep night, and the owner-scene ridge bound. Gaps: no repository test pins g, ω, Ångström or the
+  absence of ozone/multiple scattering as a declared limitation.
+- **Hypotheses (superseded for the owner-reported bars).** The ~7.9 px refined lattice and ~13.5 px preview lattice
+  are periodic structures in the frame; R0034 round 4 found only the 13.5 px seams at ≤ 0.05 grey levels and no other
+  peak in either canvas readback, and neither explained the owner's 4–9 px pattern. The bars were instead caused by
+  the aureole/field lattice mismatch recorded above (verified independently; fixed by R0034-A1). These lattices
+  remain periodic structures of the frame, recorded as measurements.
 - **Unknowns.** vendor validation coverage of the copied constants; perceptual effect of derivative seams after 8-bit
   quantisation.
-- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**.
-- **Risks routed.** lattice/quantisation interaction with the artifact → R0034; physics fidelity (ozone, multiple
-  scattering) → unowned.
+- **Status accepted (R0034 registry pass and amendment R0034-A1, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**: the lattice pin
+  above is enforced and tested, but the scattering parameters themselves remain undeclared as limitations in tests.
+- **Risks routed.** lattice/quantisation interaction with the artifact → R0034 (closed: cause established and fixed under
+  A1; the owner assessed the reported artifact as resolved, issue 101 comment 6889661578); physics fidelity (ozone,
+  multiple scattering, aerosol/Mie parameters) → R003E (issue 128, assessment only).
 
 <a id="ism-sky-034"></a>
 ### ISM-SKY-034 — Cloud lighting (silver lining), foreground capture and display-linear transfer
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** How painted cloud puffs are coloured and lit, captured from the hidden 144×232 painter
   canvas and joined into the preview/refined frame. Population, seeding, wind travel and coverage easing stay in
@@ -2647,14 +2662,14 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Hypotheses.** The fallback lining direction (arc sun) can disagree with the physical-light direction when the
   lighting hook is unavailable; not observed.
 - **Unknowns.** browser resampling kernel for the ×2.26 painter up-scale (implementation-defined).
-- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**.
+- **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**.
 - **Risks routed.** capture write effect → R0036 (per R0034 contract); compose allocation/data-URL rate → R0034 (G3
-  measurement, PRA-F-34).
+  measurement recorded, PRA-F-34, no budget adopted; attribution open).
 
 <a id="ism-sky-035"></a>
 ### ISM-SKY-035 — Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **DWE / IMS / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** When each discrete optical presentation may show, at what opacity, where it is anchored,
   and how it is withdrawn. Generic CSS publication is ISM-SKY-005; this entry models the gate table.
@@ -2707,14 +2722,14 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   evidence that any optic rings the visible Sun; no test that the anticrepuscular element is displayed.
 - **Hypotheses.** none beyond the transient anchor lead (and the reduced-motion jump) in fact (2).
 - **Unknowns.** whether the owner intends anticrepuscular rays hidden in the physical-sky build.
-- **Proposed status (effective on acceptance).** D / I / V **DWE / IMS / PEX** (documentation contradicted for
+- **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **DWE / IMS / PEX** (documentation contradicted for
   anticrepuscular; gates inline in `atmosphere()`; state-only tests).
-- **Risks routed.** anticrepuscular visibility discrepancy and anchor lead → unowned.
+- **Risks routed.** anticrepuscular visibility discrepancy → R003C (issue 126, disposition) with its documentation half in R003A (issue 124); anchor lead → R003B (issue 125).
 
 <a id="ism-sky-036"></a>
 ### ISM-SKY-036 — Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction)
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** Colour, radial profile, size, oblateness, screen position and cloud obstruction of the
   native corner Sun. The physical Sun in the refined frame is ISM-SKY-033; optic gates ISM-SKY-035.
@@ -2748,13 +2763,13 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   `tests/test_solar_continuity.py`. Gaps: no pixel evidence of nucleus/limb in this pass.
 - **Hypotheses.** none.
 - **Unknowns.** native rendering of the blurred (0.8 px) radial gradient body under the screen blend.
-- **Proposed status (effective on acceptance).** D / I / V **PEX / PEX / PEX**.
+- **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**.
 - **Risks routed.** none.
 
 <a id="ism-sky-037"></a>
 ### ISM-SKY-037 — Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion)
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **not counted; proposed below** · Historical disposition: *new (proposed)*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **PEX / IMS / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** What the browser composites, in which order and at which scale, from the worker/preview
   byte frames to screen pixels; which visibility classes and CSS rules decide that; and where noise, dithering,
@@ -2793,7 +2808,9 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   ([evidence](docs/state-contracts/evidence/R0034/sky-physics-registry/canvas-geometry.json)). Arithmetic only, no
   cause claimed: resample phase drift period 161.5 px (x) / 264 px (y); displayed lattices ≈7.88 px (refined) and
   ≈13.46×13.20 px (preview); the preview lattice's third harmonic ≈4.40–4.49 px lies in the owner-reported 4.1–4.5 px
-  band with or without the scaling. `NativeForegroundCapture` and `solarAnchor` already rescale by `rect.width/325`. No
+  band with or without the scaling. This arithmetic is a measurement only: the owner-reported bars were later traced to
+  a different cause, the daytime aureole/field lattice mismatch in ISM-SKY-033 (fixed by R0034-A1), and the third
+  harmonic did not explain them. `NativeForegroundCapture` and `solarAnchor` already rescale by `rect.width/325`. No
   `image-rendering` or `imageSmoothingEnabled` is set (browser default smoothing). Above |timeScale| 10 the preview
   raster is 65×106, up-scaled ×5 by `drawImage`. The Moon detail canvas is DPR-aware (`moon/src/moon-detail.mjs` L56,
   ISM-MOON-013).
@@ -2816,16 +2833,17 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   `native-preview-lifecycle.test.mjs` (R0034), `native-geometry-census.test.mjs` (R0034; asserts the `.c`
   rule, not the canvas display size), `cp9-page-lifecycle.test.mjs`, `tests/r001d-lifecycle.cjs`. Gaps: no regression test of the
   canvas CSS size versus backing size (one native measurement above); no test that the generated stylesheet hides `.grain`.
-- **Hypotheses (R0034 artifact; none claimed as cause).** See the ownership table in
+- **Hypotheses (R0034 artifact; superseded: none was the cause of the reported bars, see ISM-SKY-033).** See the ownership table in
   [R0034-sky-physics-registry.md](docs/state-contracts/R0034-sky-physics-registry.md): browser gradient dithering,
   glass blur over the canvas, canvas resampling at backing/rect 1.00619 × 1.00379 (×DPR), display colour management lie in the browser/GPU or
   display; the page-side inputs are the layers listed above.
 - **Unknowns.** the owner's compositor path (WebRender hardware/software), browser zoom and OS scale; real canvas
   rect in the owner's embed; backdrop-filter implementation resolution.
-- **Proposed status (effective on acceptance).** D / I / V **PEX / IMS / PEX** (distributed classes and CSS; unit
+- **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / IMS / PEX** (distributed classes and CSS; unit
   tests for class transitions only).
-- **Risks routed.** canvas scaling, preview/refined handoff → R0034; glass CSS → unowned (native UI glass, outside
-  R0034's owners per its §5).
+- **Risks routed.** canvas scaling (323×528 display of the 325×530 backing; CI-02) → R003B (issue 125); glass, shadow, stroke
+  and font CSS (CI-08, CI-17) → not to be changed by owner decision (R003B standing prohibition); preview/refined handoff →
+  R0034 (closed, accepted).
 
 ## Moon pipeline (`ISM-MOON`)
 
