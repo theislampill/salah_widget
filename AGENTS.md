@@ -63,6 +63,34 @@ census always covers the whole tree, and any `setupErrors` (unregistered or miss
 - **Physics gates the art.** Optical phenomena must be condition-gated (ice vs droplet, low-sun + broken cloud,
   humidity, etc.), never random or always-on.
 
+## Atmospheric coherence and perceptual fidelity (owner design standard)
+
+Owner design standard, 2026-11-15. It adds to every work order's own acceptance rows; it does not replace them.
+
+- **Target.** Physically grounded atmospheric art direction, perceptual fidelity and temporal coherence in a
+  glanceable ambient interface. The sky and weather read as ONE coherent, continuously evolving environment, not a
+  collection of independently calculated or animated effects.
+- **Relationships that must hold together:** time-of-day colour progression, solar elevation, scattering, haze,
+  cloud coverage and illumination, precipitation, wind, visibility, twilight, moonlight and colour balance. Each
+  weather condition has a distinct but physically credible atmospheric identity — never an icon or a uniform
+  overlay.
+- **Software transitions are not weather events.** An abrupt software-state transition must not be presented as an
+  abrupt environmental event. Evidence authority and factual claims (temperature, condition, precipitation
+  statements) change at the instant authority changes; cloud motion, illumination and presentation keep temporal
+  continuity.
+- **Two evaluation criteria, neither substituting for the other.** *Physical fidelity:* defensible inputs and
+  relationships, weather provenance, illumination, atmospheric behaviour, stated limitations. *Experiential
+  fidelity:* coherent tonal composition, convincing environmental mood, legible weather differentiation, spatial
+  and temporal continuity, absence of rendering artifacts, restrained motion, readable prayer information.
+- **Judge the whole experience** across representative times of day and weather conditions, INCLUDING
+  TRANSITIONS, from clips or frame sequences — not isolated effects or stills alone. A technically safe or
+  pixel-neutral result is not thereby the best result; pixel-neutrality is proof for behaviour-only changes, not a
+  goal.
+- **Boundaries.** Not authorisation for a redesign, a major renderer refactor, vendored/copied-core changes or
+  additional atmospheric phenomena without evidence and owner approval. Preserve the established glass treatment,
+  geometry, typography, shadows and prayer-display hierarchy. Richness comes from coherent rendering, accurate
+  information and art direction, not visual complexity.
+
 ## Subagent roles & what each reviews
 
 - **GitHub/source auditor** — confirms the committed `index.html` matches what's served; lists the relevant
@@ -116,6 +144,9 @@ A cycle PASSES only when, with **screenshot/clip evidence**:
   drift/morph, stars scintillate, sky breathes). Proven by a real watch / `&debugMotion=1` Δ, NEVER the qaState
   hash. Accessibility: `prefers-reduced-motion` reduces it by default; `&motion=full` overrides.**
 - K/L/M — DESIGN.md + AGENTS.md + HANDOFF.md current; high-value comments present; approximations stated honestly.
+- Fidelity verdicts — for any change affecting sky, weather, clouds, Moon, solar optics or presentation, reviewers and
+  visual judges give separate verdicts on physical fidelity and experiential fidelity, with transition clips where
+  motion or state transitions are involved (see "Atmospheric coherence and perceptual fidelity").
 
 ## Evidence requirements (per cycle)
 
