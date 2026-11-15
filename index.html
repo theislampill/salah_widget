@@ -4734,8 +4734,13 @@ function saveCache(dateStr,data,key=cacheKey()){
 // read for the current configuration (cacheKey(), wxKey()) whatever their age, other prefixes, future-dated prayer
 // records. Each entry is re-read before removal (a concurrent writer's fresh bytes are kept); every storage
 // exception is contained. Reset does not call this and does not erase caches (D-32-3 A).
-const _CACHE_EVICT_MAX=256;
-let _cacheEvictionRan=false;
+// Ownership: only keys of the exact shape cacheKey()/wxKey() build are this widget's; anything else under the two
+// prefixes (another page on a shared origin, a malformed or legacy key) is foreign and never read or removed.
+// Bounds: at most 256 removals and 1024 entry reads per pass; key enumeration itself is one key(i) call per key.
+const _CACHE_EVICT_MAX=256, _CACHE_EVICT_READ_MAX=1024;
+const _OWN_PRAYER_KEY=/^salah:-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|[A-Za-z][A-Za-z0-9_+\/-]*\|\d{1,2}\|[01]$/;   // cacheKey(): lat|lon|zone|method|school
+const _OWN_WX_KEY=/^salahwx:-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|[cf]$/;                                       // wxKey(): lat|lon|units
+let _cacheEvictionRan=false, _cacheEviction=null;   // diagnostic report of the single pass (pure data)
 function locationCacheExpired(k,raw,now){
   let j; try{ j=JSON.parse(raw); }catch(e){ return true; }
   if(k.startsWith("salahwx:")){
@@ -4752,17 +4757,19 @@ function evictUnusableLocationCaches(){
   try{
     const now=Date.now(), keep=new Set([cacheKey(),wxKey()]), keys=[];
     for(let i=0,n=localStorage.length;i<n;i++){ const k=localStorage.key(i); if(typeof k==="string") keys.push(k); }
-    let removed=0;
+    const r=_cacheEviction={keys:keys.length,read:0,removed:0,foreign:0,protected:0,bounded:false};
     for(const k of keys){
-      if(removed>=_CACHE_EVICT_MAX) break;
-      if(!(k.startsWith("salah:")||k.startsWith("salahwx:"))||keep.has(k)) continue;
+      if(!(k.startsWith("salah:")||k.startsWith("salahwx:"))) continue;
+      if(!(_OWN_PRAYER_KEY.test(k)||_OWN_WX_KEY.test(k))){ r.foreign++; continue; }   // not this widget's: untouched
+      if(keep.has(k)){ r.protected++; continue; }
+      if(r.removed>=_CACHE_EVICT_MAX||r.read>=_CACHE_EVICT_READ_MAX){ r.bounded=true; break; }
       try{
-        const raw=localStorage.getItem(k); if(raw==null||!locationCacheExpired(k,raw,now)) continue;
+        r.read++; const raw=localStorage.getItem(k); if(raw==null||!locationCacheExpired(k,raw,now)) continue;
         if(localStorage.getItem(k)!==raw) continue;              // rewritten meanwhile: not the classified entry
-        localStorage.removeItem(k); removed++;
+        localStorage.removeItem(k); r.removed++;
       }catch(e){}
     }
-  }catch(e){}
+  }catch(e){ _cacheEviction={failed:true}; }
 }
 async function fetchTimings(dateStr,operation=null){
   // I-3 (R002D): no provider request for an unresolved civil day (null / non-calendar string), before any slot.
@@ -6662,7 +6669,7 @@ function paintSolarPresentation(c,A,_REDUCED){
     c.style.setProperty("--sunvy",(sunLiftPx/530*100).toFixed(1)+"%");
     c.style.setProperty("--sunray",((0.10+0.30*clamp(e/30))*A.sunCloudT).toFixed(3));  // rays fade via TRANSMITTANCE (cloud transmittance from atmosphere), not a grey mix
     c.style.setProperty("--sunpulse",(_REDUCED?1:1+(0.045+0.035*A.heat)*Math.sin(simNow()/1000/23)+0.015*Math.sin(simNow()/1000/6.5)+(1-noon)*0.16).toFixed(4));  // slow coronal breathing + a faint faster ray flicker + broader corona at low sun (all simTime-driven)
-    c.style.setProperty("--sunflat",(1-0.20*clamp((4-e)/8)*clamp((e+3)/4)).toFixed(3));   // atmospheric REFRACTION oblateness (~0.8 at the horizon, 1 above ~5°)
+    c.style.setProperty("--sunflat",(1-0.20*clamp((4-e)/8)*clamp((e+3)/4)).toFixed(3));   // presentational REFRACTION oblateness: min ≈0.923 at e=0.5°, 1 at e≤−3° and e≥4° (not a refraction model)
 }
 function nativeLunarPresentation(moon,solarElevation,surfaceFailed){
   const mFrac=clamp(moon.frac),moonUp=clamp((moon.alt+2)/6);
@@ -6690,6 +6697,11 @@ function paintLunarOptic(c,key,opacity){
   }
 }
 function paintCelestialWithoutTimetable(decision=weatherDecision()){
+  // R003A (CI-07, owner gate G4 b): this painter owns withdrawing every prior-scene solar optic in the no-timetable
+  // branch. It does so first, before its guard and every fallible call, so neither a failed weather-withdrawal stage,
+  // a guard return (unknown observer / no physical Sun) nor a later throw can leave earlier shafts, halo, sundogs or
+  // pillar shown. Writing "0" withdraws; it publishes no celestial body. Unreached while a timetable is rendered.
+  for(const key of ["--ray","--anticrep","--sunhalo","--sundogs","--sunpillar"])$(".c").style.setProperty(key,"0");
   const identity=skySceneIdentity(),sun=window.SalahNativeSkyHost?.cloudLighting?.()?.sun;
   if(identity===null||!Number.isFinite(sun?.altDeg))return;
   if(identity!==_skySceneKey){beginSkyScene(_skyInitialDocument);_skySceneKey=identity;}
@@ -6702,7 +6714,6 @@ function paintCelestialWithoutTimetable(decision=weatherDecision()){
   // Optional cloud optics need the current complete atmosphere's condition
   // gates. Until that state is admitted, withdraw every prior-scene optical
   // permission; the current physical bodies remain independently available.
-  for(const key of ["--sunhalo","--sundogs","--sunpillar"])c.style.setProperty(key,"0");
   for(const key of ["--mhalo","--mcorona","--mparhelia"])paintLunarOptic(c,key,"0");
   c.style.setProperty("--moonfeat","1");c.style.setProperty("--moonocc","1");
   c.style.setProperty("--moongrp",a.moonShow.toFixed(3));c.style.setProperty("--moonbeam",(0.6*a.moonlight).toFixed(3));
@@ -7316,6 +7327,7 @@ window.qaState=function(){
         downgradeReason:decision.lane==="live"?decision.permissions.reason:decision.modelDowngrade||decision.permissions.reason,
         modelGateReason:decision.modelDowngrade||null,advancing:ADVANCING,cloudFieldSeed:_cloudFieldSeed }; })(),
     // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──
+    cacheRetention:typeof _cacheEviction!=="undefined"&&_cacheEviction?{..._cacheEviction}:null,   // R0032: the single eviction pass's counts (null until it runs)
     cache:(()=>{ const eligibility=weatherEligibility(weather), wxAge=eligibility.receiptAgeMs==null?null:Math.round(eligibility.receiptAgeMs/1000);
       return { weatherSource: weather?(weather.src||"current"):"none", weatherAgeSec:wxAge, weatherSourceAgeSec:eligibility.sourceAgeMs==null?null:Math.round(eligibility.sourceAgeMs/1000),
         weatherStale:(SIM.wx!=null||ADVANCING||_clockPreview)?false:!eligibility.eligible, currentEligible:eligibility.eligible, currentUnavailableReason:eligibility.reason,

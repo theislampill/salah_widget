@@ -110,3 +110,45 @@ test('R32-09 D-32-3 A: Reset (clearLocal) removes only salah_widget:config:v1; c
   assert.equal(vm.runInContext('SalahConfig.clearLocal().ok',ctx),true);
   for(const [k,v] of before){if(k==='salah_widget:config:v1')assert.equal(store.has(k),false);else assert.equal(store.get(k),v,k);}
 });
+
+// ---- R0032 review round: key ownership, bounds and outer containment --------------------------------------------
+const FOREIGN=[['salah:something-else','{not json'],['salah:1|2|UTC|4','{not json'],['salahwx:1|2|k','nope'],
+  ['salah:24.47|39.61|4|0',P('01-09-2026')],['salahwx:24.47|39.61|c|extra',W(WALL-9*H)]];
+test('R32-08 ownership: only keys of the exact cacheKey()/wxKey() shape are evicted; foreign or malformed keys under the prefixes survive',async()=>{
+  const {r,gates}=await heldBoot({storage:[...seeded(),...FOREIGN]});
+  gates.weather.resolve(okWeather(r.clock.wall));await flush(12);
+  assert.deepEqual([...r.removes].sort(),EVICTED);
+  for(const [k,v] of FOREIGN)assert.equal(r.storage.get(k),v,'foreign key untouched: '+k);
+  const rep=r.run('qaState().cacheRetention');assert.equal(rep.removed,EVICTED.length);assert.equal(rep.foreign,FOREIGN.length);
+  assert.equal(rep.protected,2);assert.equal(rep.bounded,false);
+});
+test('R32-08 bound: at most 256 removals per pass, and the report says the pass was bounded',async()=>{
+  const many=Array.from({length:300},(_,i)=>['salahwx:'+(10+i)+'|5|c',W(WALL-9*H)]);
+  const {r,gates}=await heldBoot({storage:many});gates.weather.resolve(okWeather(r.clock.wall));await flush(12);
+  assert.equal(r.removes.length,256);assert.equal(r.run('qaState().cacheRetention.bounded'),true);
+  assert.equal([...r.storage.keys()].filter(k=>k.startsWith('salahwx:')&&k!==WSEL).length,44);
+});
+test('R32-08 bound: at most 1024 entry reads per pass however many own entries exist',async()=>{
+  const many=Array.from({length:1500},(_,i)=>['salahwx:'+(10+i)+'|5|c',W(WALL-H)]);
+  const {r,gates}=await heldBoot({storage:many});const before=r.reads.length;
+  gates.weather.resolve(okWeather(r.clock.wall));await flush(12);
+  const passReads=r.reads.slice(before).filter(k=>k!==WSEL&&k!==SEL).length;
+  assert.equal(passReads,1024);assert.deepEqual(r.removes,[]);assert.equal(r.run('qaState().cacheRetention.read'),1024);
+});
+test('R32-08 outer containment: a storage whose enumeration throws breaks neither the prayer write, renewal nor a settings change',async()=>{
+  const {r,gates}=await heldBoot();
+  Object.defineProperty(r.ctx.localStorage,'length',{get(){throw Error('contained access-denied enumeration');}});
+  const unhandled=[];const on=e=>unhandled.push(e);process.on('unhandledRejection',on);
+  try{
+    gates.prayer.resolve(okPrayer('08-09-2026'));await flush(16);   // the prayer write is the first trigger
+    assert.equal(r.run('today&&today.date.gregorian.date'),'08-09-2026','prayer adoption completed');
+    assert.ok(r.storage.get(SEL).includes('08-09-2026'),'prayer cache written');
+    gates.weather.resolve(okWeather(r.clock.wall));await flush(12);assert.equal(r.run('weather&&weather.temp'),24);
+    assert.deepEqual(r.removes,[]);assert.equal(r.run('qaState().cacheRetention.failed'),true);
+    r.ctx.__cfg={lat:21.42,lon:39.83,tz:'Asia/Riyadh',label:'Makkah',method:'4',school:'0',time:'24',units:'c',datefmt:'YYYY-MM-DD',source:'manual'};
+    let done=false;r.run('applyConfig(__cfg)').then(()=>{done=true;},()=>{done=true;});
+    for(let i=0;i<200&&!done;i++){await flush(2);if(!r.advanceTask()&&!r.advanceFrame())r.advanceTimer();}
+    assert.ok(done,'settings change settled');assert.equal(r.run('lat'),21.42);
+  }finally{process.off('unhandledRejection',on);}
+  assert.deepEqual(unhandled,[]);
+});

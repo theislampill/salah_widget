@@ -41,7 +41,7 @@ function runtime({hash=LIVE,source,route=null,storage=[]}={}){
   // Enumerable storage double (the harness double has no key()/length); every effect is recorded.
   const ls={getItem(k){reads.push(k);return h.storage.has(k)?h.storage.get(k):null;},setItem(k,v){h.storage.set(k,String(v));},
     removeItem(k){removes.push(k);h.storage.delete(k);},key(i){enumerations.count++;return [...h.storage.keys()][i]??null;}};
-  Object.defineProperty(ls,'length',{get(){enumerations.count++;return h.storage.size;}});
+  Object.defineProperty(ls,'length',{configurable:true,get(){enumerations.count++;return h.storage.size;}});
   h.ctx.localStorage=ls;
   h.ctx.fetch=async(url)=>{
     const u=new URL(String(url));log.push({host:u.hostname,path:u.pathname,url:String(url),at:h.clock.wall});

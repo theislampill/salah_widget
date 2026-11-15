@@ -120,3 +120,15 @@ test('CI-05 control: longitude -180 keeps column 0 and an in-range latitude keep
 test('CI-05 longitude outside [-180, 180] is rejected, not wrapped',async()=>{
   for(const lo of [180.5,-181]){const f=fixture({lat:24.47,lon:lo});await f.fetchRadar();assert.deepEqual(f.images,[],String(lo));}
 });
+
+// Unit cases on the retained tile-index function itself (the coordinate admission upstream hides out-of-domain
+// longitudes from fetchRadar, so the guard is discriminated directly). Bound from the generated entry.
+const generated=fs.readFileSync(process.env.SALAH_WEATHER_SOURCE||path.join(__dirname,'..','index.html'),'utf8');
+function tileIndexFn(){const a=generated.indexOf('function radarTileIndex(');if(a<0)return null;
+  const b=generated.indexOf('\n}\n',a);return new Function(generated.slice(a,b+2)+'\nreturn radarTileIndex;')();}
+test('CI-05 unit: longitude outside [-180, 180] is rejected, never wrapped to a valid column',()=>{
+  const f=tileIndexFn();assert.equal(typeof f,'function','radarTileIndex present');
+  for(const lo of [190,-190,180.5,-180.5,360,NaN,Infinity])assert.equal(f(24.47,lo,6),null,String(lo));
+  assert.equal(f(24.47,180,6).xt,0);assert.equal(f(24.47,-180,6).xt,0);assert.equal(f(24.47,39.61,6).xt,39);
+  for(const la of [86,-86,90,-90])assert.equal(f(la,39.61,6),null,String(la));
+});

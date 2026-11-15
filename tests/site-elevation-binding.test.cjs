@@ -66,3 +66,11 @@ test('R32-06 atmosphere: A → B with B served from its cache and B\'s refresh f
   const pick=r=>JSON.parse(r.run('(()=>{const A=atmosphere(model());return JSON.stringify({stars:A.starOpacity,haze:A.aerosolDensity,blur:A.starBlur??null});})()'));
   assert.equal(readout(warm),readout(cold));assert.deepEqual(pick(warm),pick(cold));
 });
+test('R32-06 the binding uses both coordinates: a longitude-only move with failing weather reads 0 m',async()=>{
+  const r=runtime({hash:HASH,route:route({'24.47':2500})});await r.boot();assert.equal(readout(r),2500);
+  failWeather(r);await apply(r,cfg(24.47,40.5));assert.equal(r.run('lon'),40.5);assert.equal(readout(r),0);
+});
+test('R32-06 the binding uses both coordinates: a latitude-only move with failing weather reads 0 m',async()=>{
+  const r=runtime({hash:HASH,route:route({'24.47':2500})});await r.boot();
+  failWeather(r);await apply(r,cfg(25.5,39.61));assert.equal(readout(r),0);
+});

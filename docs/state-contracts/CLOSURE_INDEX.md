@@ -46,6 +46,8 @@ Rules:
 | R002E | #95 | FINAL-DELIVERED | 6861511641 | `<!-- R002E-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R002E.md |
 | R0039 | #106 | FINAL-DELIVERED | 6862449283 | `<!-- R0039-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0039.md |
 | R0034 | #101 | FINAL-DELIVERED | 6889716103 | `<!-- R0034-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0034.md |
+| R0030 | #97 | FINAL-DELIVERED | 6889975516 | `<!-- R0030-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0030.md |
+| R003A | #124 | FINAL-DELIVERED | 6892806875 | `<!-- R003A-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R003A.md |
 
 Kind `FINAL-DELIVERED` marks a final certificate whose first line carries no commit SHA (the rows
 above, work orders closed after the R0028 population was drafted). Its bound commits, pull requests and
@@ -74,6 +76,8 @@ stated tree in the repository. "Main commit" is the merge commit on `main` that 
 | R0034 | #121 `fc2084762d5eda9c0cb472659b847c39ce1b5b9f` | `bf79d00f11f8837dd9a13456ffcdb68a0ae5f196` | `9e1db9967e043d750802ed69861c8005b7232f1c` |
 | R0034 | #122 (documentation: sky-physics registry) `5f60152a3bf74136b817e7de0849d6bc950b1565` | `516d8cc8a79ff2b4e3f24fd77f00d962d28278c9` | `4616726cdeeecef78400435c1de1dfe756fae872` |
 | R0034 | #132 (amendment R0034-A1) reviewed head `cb41e59863699a4dd40967f5f2ad7bcc750ef01c`; merged head `cf5d25cf5115615225a7f1fdaa0cff98539b197e` (runner-only delta, independently confirmed) | `90cccd2f29ff779838631493c1cb7f3ff9b8cbc6` | `0fe3df8aeaecfb5c24c8434562e1422124c4c2c8` |
+| R0030 | #129 reviewed head `9f428524`; merged head `126620c737874e7d831eeb5ad97d8601c18349d2` (merge-only delta plus contract wording, independently confirmed) | `2722590f8352931d13272e2a11bdf81374d7ff08` | `762ef9db62558a596c760983198596590a876480` |
+| R003A | #135 reviewed head `6f2a7290`; merged head `a96ebae3c63ccdd0a2b80d9504b863d02e92bfdf` (merges of `main` and three added tests, independently confirmed) | `ebb2704eb35ea2427df4ad6508b459719ff4e6a2` | `a8d6dcaf5cfe47366cafff6544e116945a8e23c4` |
 
 The R0034 certificate is dated 2026-11-15; the two Pages readback runs it cites are 43598595161 (`bf79d00f`) and
 43679602224 (`90cccd2f`), each `VERDICT identical`, 128 served files. Its contract text is updated in
