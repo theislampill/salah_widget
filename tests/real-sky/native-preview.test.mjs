@@ -43,7 +43,8 @@ test('preview and refined atmosphere share daylight identity within a display-co
  for(const stamp of ['2026-10-07T15:09:00Z','2026-10-07T23:10:00Z','2026-10-08T03:30:00Z']){
   const s=state(stamp),j=nativeJob(s,true),p=renderNativeBackgroundPreview(s);
   const raw=renderPhysicalSky([],{...j.options,observer:j.observer,diffuse:null,atmosphere:{...j.options.atmosphere,nightZenithVMag:luminanceToSurfaceMagnitude(.00014)}});
-  const fields=nativeAtmosphereFields(raw.physicalState,j.options.atmosphere,j.options.view,j.options.diffuse.residualNight);
+  // R0034-A1: the refined host decomposes on the worker background lattice at every solar altitude (native-host accept()).
+  const fields=nativeAtmosphereFields(raw.physicalState,j.options.atmosphere,j.options.view,j.options.diffuse.residualNight,Math.ceil(325/j.options.backgroundStepCss),Math.ceil(530/j.options.backgroundStepCss));
   raw.solarAerosolLinear=fields.solarAerosolLinear;raw.solarBackgroundLinear=fields.solarBackgroundLinear;raw.twilightDisplay=fields.twilightDisplay;
   const r=nativeSkyPresentation(raw);
   const a=encodeNativeFrame(p.raster.linear,p.raster.effectiveExposure),b=encodeNativeFrame(r.linear,r.effectiveExposure),errors=[];

@@ -72,6 +72,25 @@
       parentSha256:'401e34720bc29f6c77cf173f5689e0b6feb400d9cf43e55abd8b19a5ecaa130f',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0030 (issue 97) candidate 2969319f merged with main 9d903d6b (R002F): authored source fc353bf6 and the legacy-Moon
+    // structural control of its generated index 7c2175b2. Every entry below, including R002F's and the earlier R0030 ones, remains admitted.
+    'fc353bf6562ef4fadc34a82366ef7f80587e8a3f977d9f6dc6a83ad29661a490':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'2969319fda7ab49b9b349faf2ffe22065b860aed',path:'src/native/index.html',layout:'config,native'}),
+    '605f9d68658c7cd9b0f8e8496f6a71969f0eff3f2eb8f60c8c8e0234399ab9a5':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'2969319fda7ab49b9b349faf2ffe22065b860aed',path:'index.html',
+      parentSha256:'7c2175b281e3f441ca803f4f63f2396a3fa70cea9e33b1235eeebba6eb6b9ffa',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
+    // R0030 (issue 97) settings Reset authority at 02451947 on main 516d8cc8: authored source 87619166 and the
+    // legacy-Moon structural control of its generated index f475f8ca. Settings block only; every entry below remains
+    // admitted unchanged. Re-bind again when rebuilt on a later main.
+    '87619166e79e2b50300b43002bd1acfda907aba25b4ef56424f6e36ae34ea211':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'024519475b45c468e94eb39c2b1eb5b2275ab468',path:'src/native/index.html',layout:'config,native'}),
+    '364b384e0407c772b1493d3cb7d76657116dbf9ef5d988fe592d8021e1e982e9':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'024519475b45c468e94eb39c2b1eb5b2275ab468',path:'index.html',
+      parentSha256:'f475f8ca0576b3d3e11c8c3bd957c1d0e85d2e035587203c4a4aa3757378243f',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0034 (issue 101) refined-sky identity candidate 1f13b185 on main 664ebe22: the authored native body is unchanged
     // (no new authored entry); legacy-Moon structural control of its generated index dbc77c67. Every entry below,
     // including R002E's 3c80fd51 and 3c1f1a0a, remains admitted unchanged. Re-bind again when rebuilt on a later main.
