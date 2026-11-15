@@ -12,6 +12,8 @@
 //        --mode motion (R3A-02.5): real-time page (no simTime) with &simWx=2&simCloud=50, 60 s; alpha-weighted centroid of the cloud painter
 //                      canvas at 0/10/60 s (never the qaState hash); runs A, B, A2 default and B under OS reduced motion with and
 //                      without &motion=full.
+//        --mode moonprobe: --scene <name> --plan MB,BM,MM,... [--tag x]; per capture full PNG, Moon-box crop sha, Moon runtime
+//                      state, .c class timeline and every load-time write of the five optics and Moon custom properties (JSONL).
 // Usage: node tools/qa/r003a_pixel_control.cjs --root <tree> --index-a <main index.html> --index-b <branch index.html>
 //        --out <fresh dir> --engine chromium|firefox|webkit [--mode pixel|fault|motion] [--dpr 1|2] [--scenes a,b] [--playwright <pkg>]
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),crypto=require('node:crypto');
@@ -71,6 +73,23 @@ async function motionRun(browser,base,suffix,reduced){const o=await open(browser
  await o.ctx.close();
  const dx=i=>pts[i].c&&pts[0].c&&pts[i].c.x!=null&&pts[0].c.x!=null?+(pts[i].c.x-pts[0].c.x).toFixed(3):null;
  return {points:pts,delta10:dx(1),delta60:dx(2),errors:o.errors};}
+const PROBE=`(()=>{const W=['--ray','--anticrep','--sunhalo','--sundogs','--sunpillar','--moongrp','--moonbeam','--moonfeat','--moonocc'];
+ const L=window.__r3aLog=[];const sp=CSSStyleDeclaration.prototype.setProperty;
+ CSSStyleDeclaration.prototype.setProperty=function(k,v,...r){try{const c=document.querySelector('.c');if(c&&this===c.style&&W.includes(k))L.push([+performance.now().toFixed(1),k,String(v)]);}catch{}return sp.call(this,k,v,...r);};
+ document.addEventListener('DOMContentLoaded',()=>{const c=document.querySelector('.c');if(!c)return;L.push([+performance.now().toFixed(1),'class',c.className]);
+  new MutationObserver(()=>L.push([+performance.now().toFixed(1),'class',c.className])).observe(c,{attributes:true,attributeFilter:['class']});});})();`;
+async function probeShot(browser,base,suffix,prayer,file){indexFile=file;
+ const ctx=await browser.newContext({viewport:{width:325,height:530},deviceScaleFactor:dpr,timezoneId:TZ,locale:'en-US',reducedMotion:'reduce'});
+ await ctx.route('**/*',route=>{const u=route.request().url();if(u.startsWith(base)||u.startsWith('data:')||u.startsWith('blob:'))return route.continue();
+  const m=/api\.aladhan\.com\/v1\/timings\/(\d{2}-\d{2}-\d{4})/.exec(u);
+  if(m&&prayer)return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({code:200,status:'OK',data:record(m[1])})});return route.abort();});
+ await ctx.addInitScript(shim({code:0,cloud:0,isDay:1}));await ctx.addInitScript(PROBE);
+ const page=await ctx.newPage();await page.clock.install({time:Date.parse(INSTANT)});await page.clock.resume();
+ const t0=Date.now();await page.goto(base+'/index.html'+BASE+suffix);const s=await settle(page);const readyMs=Date.now()-t0;
+ const png=await page.screenshot();const moon=await page.screenshot({clip:{x:200,y:0,width:125,height:120}});
+ const info=await page.evaluate(()=>{const c=document.querySelector('.c'),rt=window.SalahMoonRuntime;let st=null;try{st=JSON.parse(JSON.stringify(rt?.state??null));}catch{st='unserialisable';}
+  return {classes:c?.className,moonState:st,surface:!!rt?.surface?.(),log:window.__r3aLog};});
+ await ctx.close();return {png,moon,state:s,readyMs,...info};}
 async function diff(browser,x,y){const ctx=await browser.newContext();const page=await ctx.newPage();
  const r=await page.evaluate(async([p,q])=>{const load=async s=>{const i=new Image();i.src='data:image/png;base64,'+s;await i.decode();const c=document.createElement('canvas');c.width=i.width;c.height=i.height;const g=c.getContext('2d');g.drawImage(i,0,0);return g.getImageData(0,0,i.width,i.height);};
   const A=await load(p),B=await load(q);if(A.width!==B.width||A.height!==B.height)return {sizeMismatch:true};let n=0,max=0;
@@ -87,12 +106,17 @@ async function diff(browser,x,y){const ctx=await browser.newContext();const page
     pass:change.differing<=noise.differing&&change.maxChannelDelta<=noise.maxChannelDelta&&JSON.stringify(optics.A2)===JSON.stringify(optics.B),
     composed:Object.fromEntries(Object.entries(shot).map(([k,o])=>[k,o.state.composed])),optics,errors:Object.fromEntries(Object.entries(shot).map(([k,o])=>[k,o.errors])),aborted:[...new Set(Object.values(shot).flatMap(o=>o.aborted))]};
    results.push(row);console.log(JSON.stringify({scene:row.scene,dpr,noise:[noise.differing,noise.maxChannelDelta],change:[change.differing,change.maxChannelDelta],pass:row.pass,ray:optics.B['--ray'],anticrep:optics.B['--anticrep'],errors:row.errors.B.length}));}}
+  else if(mode==='moonprobe'){const scene=SCENES.find(s=>s[0]===a.scene),plan=a.plan.split(','),jl=path.join(out,`moonprobe-${engine}-${a.scene}.jsonl`);
+   for(let i=0;i<plan.length;i++){const trial=plan[i];for(let j=0;j<trial.length;j++){const tree=trial[j],r=await probeShot(browser,base,scene[1],scene[2],tree==='M'?runs.A:runs.B);
+    const name=`${engine}-${a.scene}-${a.tag||'t'}${i}-${j}${tree}`;fs.writeFileSync(path.join(out,name+'.png'),r.png);
+    const row={name,trial,pos:j,tree,sha:sha(r.png),moonSha:sha(r.moon),readyMs:r.readyMs,composed:r.state.composed,classes:r.classes,surface:r.surface,moonState:r.moonState,log:r.log};
+    fs.appendFileSync(jl,JSON.stringify(row)+String.fromCharCode(10));console.log(JSON.stringify({name,moonSha:row.moonSha.slice(0,10),readyMs:r.readyMs,surface:r.surface}));}}}
   else if(mode==='fault'){for(const [run,file] of [['A',runs.A],['B',runs.B]])for(const inject of [true,false]){indexFile=file;const r=await faultRun(browser,base,inject);
    r.frames.forEach(f=>fs.writeFileSync(path.join(out,`${engine}-fault-${run}-${inject?'injected':'control'}-${f.ms}ms.png`),f.png));
    const row={run,inject,before:{ray:r.before.optics['--ray'],godray:r.before.godrayOpacity},frames:r.frames.map(f=>({ms:f.ms,ray:f.state.optics['--ray'],godray:f.state.godrayOpacity,cropSha256:sha(f.png)})),errors:r.errors};
    results.push(row);console.log(JSON.stringify(row));}}
   else if(mode==='motion'){for(const [run,file,suffix,reduced] of [['A',runs.A,'',false],['B',runs.B,'',false],['A2',runs.A,'',false],['B-reduced',runs.B,'',true],['B-reduced-full',runs.B,'&motion=full',true]]){
    indexFile=file;const r=await motionRun(browser,base,suffix,reduced);const row={run,...r};results.push(row);console.log(JSON.stringify({run,delta10:r.delta10,delta60:r.delta60,mass:r.points[0].c?.mass??null,errors:r.errors.length}));}}
-  fs.writeFileSync(path.join(out,`${mode}-${engine}${mode==='pixel'?'-dpr'+dpr+(a.scenes?'-'+a.scenes.split(',')[0]:''):''}.json`),JSON.stringify({...meta,scenes:a.scenes||'all',results},null,1));
+  if(mode!=='moonprobe')fs.writeFileSync(path.join(out,`${mode}-${engine}${mode==='pixel'?'-dpr'+dpr+(a.scenes?'-'+a.scenes.split(',')[0]:''):''}.json`),JSON.stringify({...meta,scenes:a.scenes||'all',results},null,1));
  }finally{await browser.close();server.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
