@@ -109,9 +109,9 @@ It is an affirmative design, research and improvement objective, not only a stri
   transition clips where motion or state transitions are involved.
 - **Pursue improvements.** Where the implementation falls meaningfully short of this standard, investigate and
   propose the improvement: under the owning work order where one exists, otherwise through a researched,
-  independently reviewed work order — never by silently expanding unrelated work. A new phenomenon, model or treatment may be researched and evaluated
-  experimentally; research, experimental implementation, production adoption and final visual acceptance are
-  separate authorisations.
+  independently reviewed work order — never by silently expanding unrelated work. A new phenomenon, model or
+  treatment may be researched and evaluated experimentally; research, experimental implementation, production
+  adoption and final visual acceptance are separate authorisations.
 - **Interface identity is preserved; rendering defects are not.** Fixed: the 325×530 card geometry, glass and
   translucent presentation, header and footer, drop shadow, typography and prayer hierarchy, established
   interactions and accessibility. Not frozen: sky colours, atmospheric coefficients, approximations, transitions
