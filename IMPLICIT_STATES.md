@@ -103,17 +103,17 @@ certificate or contract; it is cited as such and not upgraded to human review.
 
 ### Current counts
 
-The 118 entries are the 112 of the audit baseline plus ISM-SKY-032 to 037, admitted on accepted evidence (owner approval of the six entries, issue 101 comment 6878230967; R0034 final certificate, issue 101 comment 6889716103). Counts are recomputed from the index tables below.
+The 118 entries are the 112 of the audit baseline plus ISM-SKY-032 to 037, admitted on accepted evidence (owner approval of the six entries, issue 101 comment 6878230967; R0034 final certificate, issue 101 comment 6889716103). Counts are recomputed from the index tables below. Changed on accepted evidence by the R0030 (issue 97) and R003A (issue 124) final certificates: ISM-CFG-003, ISM-CFG-004, ISM-CFG-005, ISM-CFG-006, ISM-SKY-003, ISM-SKY-035 and ISM-SKY-036 (the entries' own proposals, except where the entry text records a lower applied code).
 
 Entries by status value and dimension (all entries, installer entries included):
 
 | Status value | Code | Documentation | Implementation | Verification |
 |---|---|---|---|---|
 | implicit and materially significant | IMS | 31 | 32 | 3 |
-| partially explicit | PEX | 51 | 48 | 53 |
-| explicitly documented but weakly enforced | DWE | 5 | 0 | 0 |
-| explicitly enforced but insufficiently verified | EEV | 0 | 27 | 23 |
-| explicit, enforced and independently verified | EIV | 31 | 0 | 14 |
+| partially explicit | PEX | 46 | 46 | 51 |
+| explicitly documented but weakly enforced | DWE | 3 | 0 | 0 |
+| explicitly enforced but insufficiently verified | EEV | 0 | 29 | 24 |
+| explicit, enforced and independently verified | EIV | 38 | 0 | 15 |
 | historically problematic but demonstrably resolved | HRS | 0 | 11 | 10 |
 | unknown or insufficient evidence | UNK | 0 | 0 | 15 |
 | **Total** | | 118 | 118 | 118 |
@@ -191,10 +191,10 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 |---|---|---|---|---|---|---|
 | [ISM-CFG-001](#ism-cfg-001) | Configuration resolution, effect classification, apply generation and boot sequence | N01 | EIV | EEV | EIV | implemented but not fully verified |
 | [ISM-CFG-002](#ism-cfg-002) | Configuration persistence and mode resolution | C01 | PEX | PEX | PEX | partly resolved |
-| [ISM-CFG-003](#ism-cfg-003) | Settings disclosure, focus, dirty form and close-save | N20 | PEX | PEX | PEX | implemented but not fully verified |
-| [ISM-CFG-004](#ism-cfg-004) | Settings place search, GPS, candidate cycling and Reset intent | N21 | DWE | PEX | EEV | partly resolved |
-| [ISM-CFG-005](#ism-cfg-005) | Persistence outcome and persistent warning publication | N22 | PEX | EEV | EEV | implemented but not fully verified |
-| [ISM-CFG-006](#ism-cfg-006) | Document-hash direct reads parallel to the resolved CONFIG (seed, diagnostics) | new | PEX | IMS | IMS | new |
+| [ISM-CFG-003](#ism-cfg-003) | Settings disclosure, focus, dirty form and close-save | N20 | EIV | EEV | EIV | implemented but not fully verified |
+| [ISM-CFG-004](#ism-cfg-004) | Settings place search, GPS, candidate cycling and Reset intent | N21 | EIV | EEV | EEV | partly resolved |
+| [ISM-CFG-005](#ism-cfg-005) | Persistence outcome and persistent warning publication | N22 | EIV | EEV | EEV | implemented but not fully verified |
+| [ISM-CFG-006](#ism-cfg-006) | Document-hash direct reads parallel to the resolved CONFIG (seed, diagnostics) | new | EIV | IMS | IMS | new |
 | [ISM-CFG-007](#ism-cfg-007) | Builder mode, form, serialisation and preview publication | C05 | EIV | HRS | HRS | resolved and independently verified |
 | [ISM-CFG-008](#ism-cfg-008) | Builder edit ownership, candidate cycle and automatic fills (reverse geocode) | C06 | PEX | PEX | PEX | partly resolved |
 | [ISM-CFG-009](#ism-cfg-009) | Clipboard attempts, fallback and expiring feedback | C07 | PEX | EEV | EEV | implemented but not fully verified |
@@ -207,7 +207,7 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 |---|---|---|---|---|---|---|
 | [ISM-SKY-001](#ism-sky-001) | Sky scene identity, first-document warrant and renderer-surface commit | N13 | PEX | PEX | EIV | implemented but not fully verified |
 | [ISM-SKY-002](#ism-sky-002) | Star projection / catalogue contract and held appearance | N14 | DWE | PEX | PEX | still implicit or vulnerable |
-| [ISM-SKY-003](#ism-sky-003) | Cloud population, motion integration, coverage and paint cache | N15 | PEX | PEX | PEX | implemented but not fully verified |
+| [ISM-SKY-003](#ism-sky-003) | Cloud population, motion integration, coverage and paint cache | N15 | EIV | PEX | PEX | implemented but not fully verified |
 | [ISM-SKY-004](#ism-sky-004) | Precipitation population, cloud-origin gating and lightning bucket | N16 | PEX | IMS | PEX | implemented but not fully verified |
 | [ISM-SKY-005](#ism-sky-005) | Atmosphere publication, optical fade state and last-consumed diagnostics | N17 | PEX | PEX | PEX | partly resolved |
 | [ISM-SKY-006](#ism-sky-006) | Native sky snapshot identity, epoch, freshness and throughput admission | R01 | EIV | EEV | EEV | implemented but not fully verified |
@@ -239,8 +239,8 @@ Status columns use the codes defined in [Status vocabulary](#status-vocabulary-f
 | [ISM-SKY-032](#ism-sky-032) | Weather-to-sky driver projection and physical-input mapping | new | PEX | PEX | PEX | new |
 | [ISM-SKY-033](#ism-sky-033) | Atmospheric scattering, albedo and ozone parameter contract; sampling lattices | new | PEX | PEX | PEX | new |
 | [ISM-SKY-034](#ism-sky-034) | Cloud lighting (silver lining), foreground capture and display-linear transfer | new | PEX | PEX | PEX | new |
-| [ISM-SKY-035](#ism-sky-035) | Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration | new | DWE | IMS | PEX | new |
-| [ISM-SKY-036](#ism-sky-036) | Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction) | new | PEX | PEX | PEX | new |
+| [ISM-SKY-035](#ism-sky-035) | Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration | new | EIV | IMS | EEV | new |
+| [ISM-SKY-036](#ism-sky-036) | Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction) | new | EIV | PEX | PEX | new |
 | [ISM-SKY-037](#ism-sky-037) | Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion) | new | PEX | IMS | PEX | new |
 
 ### Moon pipeline (`ISM-MOON`)
@@ -766,6 +766,7 @@ Original audit: **N08** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weathe
   - Original remaining risk: Provider service availability/coverage and native CORS/storage behavior were not qualified. Response-size cap is a bounded architectural risk, not a demonstrated failure. NF02 concerns cloud consumer withdrawal, not freshness admission. Wall-clock rollback can reject weather freshness while weather/radar retry gates remain closed; exact-source gates were exercised under XF02, without native browser/provider qualification.
 - **Findings.** [PRA-F-03](docs/audit/post-rlgwo/FINDINGS.md#pra-f-03), [PRA-F-15](docs/audit/post-rlgwo/FINDINGS.md#pra-f-15), [PRA-F-17](docs/audit/post-rlgwo/FINDINGS.md#pra-f-17)
  - **R002F renewal rows (issue 96), branch `claude/r002f-weather-renewal-20261113` (not merged; independent review of `95a17e08` MERGE-READY with advisories, folded in; the option D round awaits re-review).** Documented: [R002F contract](docs/state-contracts/R002F.md) §1 (machine RN) and DESIGN "Weather truthfulness" (renewal paragraph). Enforced: `weatherRenewal` (pure; due iff the selected record's provider step has ended plus the assumed 3 s margin, so due implies already ineligible), `renewWeather` called from the existing loop tick on frames that do not poll, through the unchanged `retryGate`/`fetchWeather`/N03/R000D path; contract guard (interval 900 s, 15-minute UTC grid) and clock-disagreement fallback to the baseline poll. Verified by: `tests/weather-renewal-state.test.cjs` (R2F-02..09, R2F-11; RED on the R002E source: gaps 10 000 / 25 000 ms) and `tests/weather-renewal-mutations.test.cjs` (stage-1 baseline facts; mutants a-d, f killed). Unresolved: margin adequacy against the live provider (assumed, D-2F-7 a); OS sleep (R000D limit); native evidence §5 of the contract. Proposed status (effective on acceptance) for the renewal dimension: D EIV / I EEV / V EEV; other rows and the entry's current codes unchanged. PRA-F-03: authority gap shortened to about the margin plus latency (cannot be zero by B.2).
+- **R0032 retention rows (issue 99), branch `claude/r0032-location-retention-20261115` (not merged; no independent review yet).** Weather cache *read* selection (`loadWx`, six-hour window) is unchanged; records the read would reject by receipt (outside six hours or future) or unreadable are now removed by the single post-write retention pass (ISM-CFG-002, [R0032](docs/state-contracts/R0032.md) §3), never the selected `wxKey()`. Verified by: `tests/cache-retention.test.cjs`. Proposed status: codes unchanged; retention documented and enforced.
 
 <a id="ism-wx-002"></a>
 ### ISM-WX-002 — Weather truth/decision, information text and header publication
@@ -890,6 +891,7 @@ Original audit: **N10** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weathe
   - Tests: `tests/r000c-weather.test.cjs` "R001E both real acquisitions preserve coordinate" (six mid-latitude tile
     cases), `tests/r000d-weather.test.cjs`. Gaps: no polar/antimeridian tile case.
   - Risks routed: R0032 (radar/storage).
+- **R0032 (issue 99), branch `claude/r0032-location-retention-20261115` (not merged; no independent review yet).** Owner decision D-32-1 = A2 (issue 99 comment of 2026-11-12) and registry candidate CI-05 (comment of 2026-11-14). Documented: [R0032](docs/state-contracts/R0032.md) §1 (machine RA) and DESIGN "Radar acquisition is disabled in the product". Enforced: `fetchRadar()` is the product gate, evaluating `radarAcquisitionEnabled()` (the literal `RADAR_ACQUISITION.enabled=false`, read by no URL, fragment or configuration field) before `retryGate("radar")`; the three product callers (boot, `startWeather`, loop poll) are unchanged and issue zero RainViewer requests. The acquisition is retained as `acquireRadar()` for test harnesses only (the r000c fixture binds it explicitly); on that path host admission (exact allowlisted origin `https://tilecache.rainviewer.com`, seeded from repository fixtures and unverified against the provider; frame path one `/v2/radar/<id>` segment, never `.`/`..`) and tile-index validation (longitude +180 wraps to column 0; longitude outside [-180, 180] and rows/columns outside [0, 64) rejected) settle `rejected` with a reason and dispatch no Image. `qaState().wxTruth` reports `radarAcquisition {enabled:false, reason}`. Verified by: `tests/radar-acquisition-scope.test.cjs` (R32-02 boot + 60 modelled minutes + location change + 3 h idle: 0 radar requests; R32-03 fragment/config negatives and source search; R32-04 ten host and ten frame-path rejections; CI-05 ±86°, +180, ±180 pair, out-of-domain; RED on the base tree for 29 of 32) and mutants a, b, b2, f, f2 killed; native request log in the contract §6. Unresolved: allowlist unverified against the provider; the frozen V1 page keeps its own radar requests (out of scope). Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-wx-005"></a>
 ### ISM-WX-005 — Cloud publication authority receipt (weather → cloud consumers)
@@ -978,8 +980,8 @@ Original audit: **new (NEW-B-04)** · Lane papers: [B](docs/audit/post-rlgwo/lan
 - **Observed facts.** a backward wall correction demotes a saved browser fix to unknown time on every normalise (fail-closed) (lane B)
 - **Hypotheses.** none (lane B)
 - **Findings.** [PRA-F-04](docs/audit/post-rlgwo/FINDINGS.md#pra-f-04)
-- **R0030 storage-marker row (issue 97, OM-04), branch `claude/r0030-settings-reset-authority-20261114` (not merged; first independent review REQUIRED CORRECTIONS, addressed in contract §8; re-review pending).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2. Enforced: after a successful Reset clear the runtime marker `CONFIG.source==="localStorage"` reverts to the record's `origin` with `savedAt:null` (classifier-neutral: `origin||source` unchanged), so `_setLocationSaved`, the pin name/ARIA and `qaState().config.configSource` stop claiming the cleared record until a later successful save. Verified by: ES30-06 (incl. classifier `none`), mutant `stale-storage-marker` killed, native cell R3 (3 engines). The entry's evidence-normalisation rows are not this work order's and keep their status. Codes unchanged.
-  - Proposed status (effective on acceptance): the marker row documented and enforced; other rows unchanged.
+- **R0030 storage-marker row (issue 97, OM-04), branch `claude/r0030-settings-reset-authority-20261114` (merged as pull request 129, main `2722590f`; accepted, issue 97, [R0030 final certificate](https://github.com/theislampill/salah_widget/issues/97#issuecomment-6889975516)).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2. Enforced: after a successful Reset clear the runtime marker `CONFIG.source==="localStorage"` reverts to the record's `origin` with `savedAt:null` (classifier-neutral: `origin||source` unchanged), so `_setLocationSaved`, the pin name/ARIA and `qaState().config.configSource` stop claiming the cleared record until a later successful save. Verified by: ES30-06 (incl. classifier `none`), mutant `stale-storage-marker` killed, native cell R3 (3 engines). The entry's evidence-normalisation rows are not this work order's and keep their status. Codes unchanged.
+  - Status accepted (R0030 final certificate): the marker row documented and enforced; other rows and the codes unchanged.
 
 <a id="ism-wx-008"></a>
 ### ISM-WX-008 — Site elevation dual custody
@@ -1010,6 +1012,7 @@ Original audit: **new (NEW-B-05)** · Lane papers: [B](docs/audit/post-rlgwo/lan
 - **Hypotheses.** visual effect small
 - **Unknowns.** visual magnitude
 - **Findings.** [PRA-F-17](docs/audit/post-rlgwo/FINDINGS.md#pra-f-17)
+- **R0032 (issue 99), branch `claude/r0032-location-retention-20261115` (not merged; no independent review yet).** Documented: [R0032](docs/state-contracts/R0032.md) §2 (machine EL). Enforced: the legacy `siteElev` is bound to the coordinates of the response that carried it (`_siteElevAt`); the legacy atmosphere (`altClarity`) and the debug read-out read `siteElevation()`, which is 0 m (the documented default) while the current coordinates differ. Units/method changes at unchanged coordinates keep the value (P2). Binding rule A → B → A: A's own admitted value is read again at A while the slot still holds it; once B was admitted, A reads 0 m until A is re-admitted. The CP9 `acceptedElevation` lease is untouched (P4). Verified by: `tests/site-elevation-binding.test.cjs` (seven cases; RED on main for four) incl. atmosphere equality of A → B (B cached, refresh failing) with a cold B load; mutants c, c2 killed; `tests/real-sky/cp9-elevation.test.mjs` unchanged and green. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-wx-009"></a>
 ### ISM-WX-009 — Forecast-track preview substitution, live return and sky-identity churn
@@ -1199,8 +1202,8 @@ Original audit: **N01** · Lane papers: [A](docs/audit/post-rlgwo/lanes/A-prayer
   - Original remaining risk: No real browser scheduling or first-painted-pixel proof. Legacy module-missing configuration differs from normalized path. Parent owns broad-reset defect decision; no duplicate finding asserted here.
 - **Findings.** [PRA-F-20](docs/audit/post-rlgwo/FINDINGS.md#pra-f-20), [PRA-F-33](docs/audit/post-rlgwo/FINDINGS.md#pra-f-33)
 - **R002C boot/apply continuation (issue 93), branch `claude/r002c-prayer-isolation-20261113` (not merged; no independent review yet).** Documented: [R002C contract](docs/state-contracts/R002C.md) §1.3 (B-1..B-4). Enforced: the optional calls in `boot` (scene begin, scene builders, Moon geometry, weather start, first render, preview), `resetForNewLocation` (header, scene begin, builders, Moon geometry), the weather start and incomplete-entry render of the settings apply, the loader's first renders, and `SalahClock.set` (real-sky invalidate, preview clear, scene begin, render, notify) are contained and recorded; `finishInitialSkyDocument` contains its Moon call and still retires the initial head before the first await. R0003 classification and generation abandonment unchanged. Verified by: R2C-04, R2C-07, mutant m5 killed; r0003-ownership, r0011, config-effects-state, native-first-paint, native-startup-critical-path unchanged. Codes unchanged.
-- **R0030 commit-failure row (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (not merged; first independent review REQUIRED CORRECTIONS, addressed in contract §8; re-review pending).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §3. Enforced: the settings close-save and the deferred Reset commits go through `_applySettings`, which observes the `applyConfig` promise; `_resetLocal` awaits its apply in `try/catch`; a rejection is logged once and reported in the existing status/live region (G3-a) while the published persistence outcome stays. Classifier, `CONFIG_EFFECTS` and `applyConfig` unchanged. Verified by: `tests/r0030-reset-authority.test.cjs` ES30-12 (five injected callees on close-save, one on Reset, withdrawal), the ES30-11 table in the contract, mutants `drop-apply-catch`/`drop-reset-catch` killed, native cell ES30-12; config-effects-state, config-effects-mutations, r0003-ownership unchanged. Codes unchanged.
-  - Proposed status (effective on acceptance): EIV / EEV / EIV with the failure row "commit rejection observed" added.
+- **R0030 commit-failure row (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (merged as pull request 129, main `2722590f`; accepted, issue 97, [R0030 final certificate](https://github.com/theislampill/salah_widget/issues/97#issuecomment-6889975516)).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §3. Enforced: the settings close-save and the deferred Reset commits go through `_applySettings`, which observes the `applyConfig` promise; `_resetLocal` awaits its apply in `try/catch`; a rejection is logged once and reported in the existing status/live region (G3-a) while the published persistence outcome stays. Classifier, `CONFIG_EFFECTS` and `applyConfig` unchanged. Verified by: `tests/r0030-reset-authority.test.cjs` ES30-12 (five injected callees on close-save, one on Reset, withdrawal), the ES30-11 table in the contract, mutants `drop-apply-catch`/`drop-reset-catch` killed, native cell ES30-12; config-effects-state, config-effects-mutations, r0003-ownership unchanged. Codes unchanged.
+  - Status accepted (R0030 final certificate): the failure row "commit rejection observed" added; codes unchanged (already EIV / EEV / EIV).
 
 <a id="ism-cfg-002"></a>
 ### ISM-CFG-002 — Configuration persistence and mode resolution
@@ -1239,11 +1242,12 @@ Original audit: **C01** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
   - Original evidence: Parent: intent21/21, reset9/9, preferences cohort has fixture drift; read tests/r0010-preferences.cjs for saved-preference precedence
   - Original remaining risk: Native storage restrictions and multi-document concurrent writes were not exercised; invalid numeric source admission must be fixed at boundaries without changing legacy normalization indiscriminately.
 - **Findings.** [PRA-F-17](docs/audit/post-rlgwo/FINDINGS.md#pra-f-17)
+- **R0032 retention dimension (issue 99), branch `claude/r0032-location-retention-20261115` (not merged; no independent review yet).** Owner decisions D-32-2 = B and D-32-3 = A (issue 99 comment of 2026-11-12). Documented: [R0032](docs/state-contracts/R0032.md) §3 (machine CR); README "Cache retention" (the "without scanning, purging" sentence amended per D-32-2 B). Enforced: `evictUnusableLocationCaches()` runs at most once per document, only after the first successful fresh prayer (`saveCache`) or weather cache write, never on the boot selection path; prefix-exact `salah:`/`salahwx:`; removes unreadable entries, weather receipts outside six hours or in the future, prayer records dated before UTC day − 2; never the selected `cacheKey()`/`wxKey()`, other prefixes, V1 keys or `salah_widget:config:v1`; re-reads before removal; at most 256 removals; every storage exception contained. Reset (`clearLocal`) unchanged: caches survive (D-32-3 A; any Reset integration is R0030's). Verified by: `tests/cache-retention.test.cjs` (eight cases; RED on main for five) and mutants d, e, e2, g, h, i killed; R0004/r0011 storage suites green. Unresolved: a cross-tab writer between re-read and removal (narrowed, not excluded); usable entries for other locations persist until they expire. Proposed status (effective on acceptance) for the retention dimension: D EIV / I EEV / V EEV; other dimensions unchanged.
 
 <a id="ism-cfg-003"></a>
 ### ISM-CFG-003 — Settings disclosure, focus, dirty form and close-save
 
-Original audit: **N20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
+Original audit: **N20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **EIV / EEV / EIV** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Opening, editing and auto-saving the in-widget settings panel.
 - **Sources.** `src/native/index.html` `_enableSettingsAffordance` ~L4008, `_wireSettings` ~L4044-4094, `_commitSettings` L4097-4104, `_openSettings`/`_closeSettings` ~L4145-4164
@@ -1277,13 +1281,13 @@ Original audit: **N20** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
   - Original evidence: {'relevant_existing_files': ['tests/r000f-intent.cjs', 'tests/r0010-preferences.cjs', 'tests/r0011-storage.cjs', 'tests/r000f-reset.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'No native tab-order, screen-reader announcement, zoom, delayed focus or incomplete-form usability proof. Native screenshots cannot be inferred from DOM mocks.'}
   - Original remaining risk: No native tab-order, screen-reader announcement, zoom, delayed focus or incomplete-form usability proof. Native screenshots cannot be inferred from DOM mocks.
 - **Findings.** [PRA-F-04](docs/audit/post-rlgwo/FINDINGS.md#pra-f-04)
-- **R0030 (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (not merged; first independent review REQUIRED CORRECTIONS, addressed in contract §8; re-review pending).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2. Enforced: a successful Reset clear clears `_setDirty` (pre-dispatch edits discarded, as the completed Reset already did); while Reset owns the location, close commits only post-dispatch field edits, merged into the Reset target once it lands (G1-A); a target that lands during a later panel session is held until that session closes; reopen overlays pending post-dispatch edits; a denied clear keeps `_setDirty`. Verified by: ES30-02/04/08/13 cases; mutants `keep-pre-dispatch-dirty`, `dirty-cleared-before-clear-result`, `close-ends-reset`, `drop-deferred-edits`, `reopen-loses-pending-edits`, `held-never-released`, `later-session-rewrite` killed; r000f-reset 9/9 and r000f-intent 21/21 unchanged; r0011-storage 18/18 with one amended case (contract §5); native cells R1, R2. PRA-F-04 corrected on the candidate. Codes unchanged.
-  - Proposed status (effective on acceptance): EIV / EEV / EIV.
+- **R0030 (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (merged as pull request 129, main `2722590f`; accepted, issue 97, [R0030 final certificate](https://github.com/theislampill/salah_widget/issues/97#issuecomment-6889975516)).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2. Enforced: a successful Reset clear clears `_setDirty` (pre-dispatch edits discarded, as the completed Reset already did); while Reset owns the location, close commits only post-dispatch field edits, merged into the Reset target once it lands (G1-A); a target that lands during a later panel session is held until that session closes; reopen overlays pending post-dispatch edits; a denied clear keeps `_setDirty`. Verified by: ES30-02/04/08/13 cases; mutants `keep-pre-dispatch-dirty`, `dirty-cleared-before-clear-result`, `close-ends-reset`, `drop-deferred-edits`, `reopen-loses-pending-edits`, `held-never-released`, `later-session-rewrite` killed; r000f-reset 9/9 and r000f-intent 21/21 unchanged; r0011-storage 18/18 with one amended case (contract §5); native cells R1, R2. PRA-F-04 corrected on the candidate. Codes unchanged.
+  - Status accepted (R0030 final certificate): D EIV / I EEV / V EIV (settings disclosure, dirty form and close-save rows; review was by a separate model context, evidence VM-level and native with every provider stubbed).
 
 <a id="ism-cfg-004"></a>
 ### ISM-CFG-004 — Settings place search, GPS, candidate cycling and Reset intent
 
-Original audit: **N21** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weather-location.md), [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **DWE / PEX / EEV** · Historical disposition: *partly resolved*
+Original audit: **N21** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weather-location.md), [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *partly resolved*
 
 - **Scope and decision.** Lookup ownership and the last-explicit-intent rule for location in the settings panel.
 - **Sources.** `src/native/index.html` state ~L3907-3911, `_invalidateSetLocation`/`_captureSetLookup`/`_ownsSetLookup` ~L3942-3946, `_runSetSearch` ~L3976, `_showSetCand` ~L3990, label input L4063-4066, `_usePrecise` ~L4105-4121, `_resetLocal` L4122-4144
@@ -1317,13 +1321,13 @@ Original audit: **N21** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weathe
   - Original evidence: {'relevant_existing_files': ['tests/r000f-intent.cjs', 'tests/r000f-reset.cjs', 'tests/r0010-preferences.cjs', 'tests/r0003-ownership.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Browser permission prompts, geolocation denial timing, real geocoder results and native focus during reset unverified. Physical cancellation and evidence normalization are cross-lane dependencies.'}
   - Original remaining risk: Browser permission prompts, geolocation denial timing, real geocoder results and native focus during reset unverified. Physical cancellation and evidence normalization are cross-lane dependencies.
 - **Findings.** [PRA-F-04](docs/audit/post-rlgwo/FINDINGS.md#pra-f-04)
-- **R0030 (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (not merged; first independent review REQUIRED CORRECTIONS, addressed in contract §8; re-review pending).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2. Enforced: Reset has its own owner `_setReset`, ended only by a newer explicit location intent (coordinate input, a shown place-search candidate, an adopted GPS fix, another Reset whose clear succeeded); display-name edits (G2-i), close and reopen keep it; result adoption keeps the `{session,edit,seq}` guards; in `preferLocal` mode the Reset target follows `SalahConfig.resolve` with storage cleared, so a hash site makes no coarse request (G5-a, N1); detection failure returns authority to the visible form when the dispatching panel is open (G1b-a), otherwise applies recorded edits session-only with no reopen (G1a-A1). Review round: the search start, an empty search, the pin click and a refused GPS request leave Reset in force (issue table; contract §8); `_usePrecise` is unchanged. Owner clarification of G2-i (2026-11-14): text submitted as a search stays an unresolved query, never persisted as the display name, until a candidate is shown, the field is edited again or Shift+Enter keeps it (contract §8; cases Q1–Q13; the same rename on the non-Reset close-save path is fixed by the same change). Verified by: ES30-03/05/08a/10 cases; mutants `label-ends-reset`, `coordinate-keeps-reset`, `candidate-keeps-reset`, `search-start-ends-reset`, `gps-fix-keeps-reset`, `gps-click-ends-reset`, `held-no-owner-check`, `unconditional-detect`, `failure-reopens-form-authority` killed; native cells R2, N1, ES30-08a. Codes unchanged.
-  - Proposed status (effective on acceptance): EIV / EEV / EIV.
+- **R0030 (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (merged as pull request 129, main `2722590f`; accepted, issue 97, [R0030 final certificate](https://github.com/theislampill/salah_widget/issues/97#issuecomment-6889975516)).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2. Enforced: Reset has its own owner `_setReset`, ended only by a newer explicit location intent (coordinate input, a shown place-search candidate, an adopted GPS fix, another Reset whose clear succeeded); display-name edits (G2-i), close and reopen keep it; result adoption keeps the `{session,edit,seq}` guards; in `preferLocal` mode the Reset target follows `SalahConfig.resolve` with storage cleared, so a hash site makes no coarse request (G5-a, N1); detection failure returns authority to the visible form when the dispatching panel is open (G1b-a), otherwise applies recorded edits session-only with no reopen (G1a-A1). Review round: the search start, an empty search, the pin click and a refused GPS request leave Reset in force (issue table; contract §8); `_usePrecise` is unchanged. Owner clarification of G2-i (2026-11-14): text submitted as a search stays an unresolved query, never persisted as the display name, until a candidate is shown, the field is edited again or Shift+Enter keeps it (contract §8; cases Q1–Q13; the same rename on the non-Reset close-save path is fixed by the same change). Verified by: ES30-03/05/08a/10 cases; mutants `label-ends-reset`, `coordinate-keeps-reset`, `candidate-keeps-reset`, `search-start-ends-reset`, `gps-fix-keeps-reset`, `gps-click-ends-reset`, `held-no-owner-check`, `unconditional-detect`, `failure-reopens-form-authority` killed; native cells R2, N1, ES30-08a. Codes unchanged.
+  - Status accepted (R0030 final certificate): D EIV / I EEV / V EEV. The proposed V EIV is not applied: place search, GPS and geocoder behaviour were exercised only against stubs (no real provider, permission prompt or geolocation), and the GPS function is reserved for R0031.
 
 <a id="ism-cfg-005"></a>
 ### ISM-CFG-005 — Persistence outcome and persistent warning publication
 
-Original audit: **N22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / EEV / EEV** · Historical disposition: *implemented but not fully verified*
+Original audit: **N22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **EIV / EEV / EEV** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Never claim persistence after a failed save, nor clearing after a failed reset.
 - **Sources.** `src/native/index.html` `_persistenceMessage` ~L3915 … `_publishPersistence` ~L3934-3940
@@ -1354,13 +1358,13 @@ Original audit: **N22** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config
   - Original evidence: {'relevant_existing_files': ['tests/r0011-storage.cjs', 'tests/r000f-reset.cjs', 'tests/native-appearance-currentness.test.cjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Actual blocked/quota storage and closed-panel accessibility rendering were not exercised in a native browser. Config module persistence implementation is separately audited.'}
   - Original remaining risk: Actual blocked/quota storage and closed-panel accessibility rendering were not exercised in a native browser. Config module persistence implementation is separately audited.
 - **Findings.** [PRA-F-04](docs/audit/post-rlgwo/FINDINGS.md#pra-f-04), [PRA-F-15](docs/audit/post-rlgwo/FINDINGS.md#pra-f-15)
-- **R0030 (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (not merged; first independent review REQUIRED CORRECTIONS, addressed in contract §8; re-review pending).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2–3. Enforced: after Reset + close the runtime no longer keeps the old site with a storage claim: the target lands after close, or the next open reports "Enter your location."; the outcome text composes the persistence fact with the G3 failure line; R0011 semantics (actual storage results, session-only warning, failed clear keeps bytes) unchanged. Verified by: ES30-08a/09/12 cases; native cells ES30-09, ES30-08a, ES30-12. The `qaState` storage-probe row stays R0036's. Codes unchanged.
-  - Proposed status (effective on acceptance): EIV / EEV / EIV for the Reset/close outcome rows.
+- **R0030 (issue 97), branch `claude/r0030-settings-reset-authority-20261114` (merged as pull request 129, main `2722590f`; accepted, issue 97, [R0030 final certificate](https://github.com/theislampill/salah_widget/issues/97#issuecomment-6889975516)).** Documented: [R0030 contract](docs/state-contracts/R0030.md) §2–3. Enforced: after Reset + close the runtime no longer keeps the old site with a storage claim: the target lands after close, or the next open reports "Enter your location."; the outcome text composes the persistence fact with the G3 failure line; R0011 semantics (actual storage results, session-only warning, failed clear keeps bytes) unchanged. Verified by: ES30-08a/09/12 cases; native cells ES30-09, ES30-08a, ES30-12. The `qaState` storage-probe row stays R0036's. Codes unchanged.
+  - Status accepted (R0030 final certificate): D EIV / I EEV / V EEV. The proposed V EIV is not applied: the Reset/close outcome rows are independently verified, but the persistence rows were exercised only against stubbed storage (no real quota or storage failure), so the entry stays at EEV for V.
 
 <a id="ism-cfg-006"></a>
 ### ISM-CFG-006 — Document-hash direct reads parallel to the resolved CONFIG (seed, diagnostics)
 
-Original audit: **new (NEW-C-01)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **PEX / IMS / IMS** · Historical disposition: *new*
+Original audit: **new (NEW-C-01)** · Lane papers: [C](docs/audit/post-rlgwo/lanes/C-config-builder.md) · Status D / I / V: **EIV / IMS / IMS** · Historical disposition: *new*
 
 - **Scope and decision.** Consumers that read `URLSearchParams(location.hash)` instead of `CONFIG`.
 - **Sources.** `src/native/index.html` `q` ~L677; `seed` reads ~L2190, ~L2759, ~L2772; SIM/debug flags ~L770ff
@@ -1382,7 +1386,7 @@ Original audit: **new (NEW-C-01)** · Lane papers: [C](docs/audit/post-rlgwo/lan
 - **Hypotheses.** low materiality: the form always proposes `CONFIG.seed`
 - **Findings.** [PRA-F-20](docs/audit/post-rlgwo/FINDINGS.md#pra-f-20)
 - **R0030 decision record (issue 97, owner G4 = retain).** `units`/`lp`/`seed` stay on the broad path (R0003 D3/D4); the two `seed` authorities (renderers read the fragment, settings carry `CONFIG.seed`) are recorded with the reconsideration trigger in [R0030 contract](docs/state-contracts/R0030.md) §5. No product change, no performance claim. Codes unchanged.
-  - Proposed status (effective on acceptance): D: EIV; I and V unchanged.
+  - Status accepted (R0030 final certificate): D: EIV; I and V unchanged.
 
 <a id="ism-cfg-007"></a>
 ### ISM-CFG-007 — Builder mode, form, serialisation and preview publication
@@ -1637,7 +1641,7 @@ Original audit: **N14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 <a id="ism-sky-003"></a>
 ### ISM-SKY-003 — Cloud population, motion integration, coverage and paint cache
 
-Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *implemented but not fully verified*
+Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **EIV / PEX / PEX** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Procedural cloud deck: population identity, wind integration, coverage easing/withdrawal, raster and density.
 - **Sources.** `src/native/index.html` `_cloudMotion` ~L2756, `cloudSceneIdentity` ~L2757-2761, `advanceCloudMotion` ~L2768-2795, `paintClouds` ~L2817-2877, `applyCloudState` ~L3222-3241, loop ~L3881-3884
@@ -1691,7 +1695,7 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
     an identity change. The painter repaints about every 76 ms when motion is allowed (loop ~L4023-4026), only when
     dirty under reduced motion.
   - Lighting, capture and transfer: ISM-SKY-034. Tests for the wind constants: none found (gap).
-- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (merged as pull request 135, main `ebb2704e`; accepted, issue 124, [R003A final certificate](https://github.com/theislampill/salah_widget/issues/124#issuecomment-6892806875)).**
   `cloudState.wy` (owner gate G1): **retained and documented**, not removed. `windUY = cos(windDir ?? 225°)` is the
   north–south horizontal component of the unit "from" direction (opposite sign to the conventional `v = −cos`), not a
   vertical wind; it is written by `applyCloudState` and read by no renderer, `qaState()` field, debug readout or URL
@@ -1701,7 +1705,7 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   byte-identical to main. Retention pending the owner's wind-vector research. *Open finding (G5):* for `windX > 0` the
   deck phase decreases (clusters toward smaller x, `paintClouds` `ux ∝ … + phase`) while `rainSlant = windX·wind·120 px`
   and `--wind-dir` (fog) point toward larger x; the `paint()` comment "clouds drift east(+)" describes `--wind-dir`.
-  Source-derived, not measured; no direction claimed or changed. Proposed status (effective on acceptance): D EIV / I PEX / V PEX.
+  Source-derived, not measured; no direction claimed or changed. Status accepted (R003A final certificate): D EIV / I PEX / V PEX. `cloudState.wy` stays a retained, documented, unused north-south component; its final disposition (and whether rain, snow and fog direction should agree with cloud drift) is with the owner, not resolved.
 
 <a id="ism-sky-004"></a>
 ### ISM-SKY-004 — Precipitation population, cloud-origin gating and lightning bucket
@@ -2422,6 +2426,7 @@ Original audit: **R35** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
   - Original evidence: tests/real-sky/cp9-elevation.test.mjs
   - Original remaining risk: Network elevation provider acceptance itself is outside this lane. Static source labels do not establish correctness of measured terrain elevation.
 - **Findings.** [PRA-F-17](docs/audit/post-rlgwo/FINDINGS.md#pra-f-17)
+- **R0032 (issue 99), branch `claude/r0032-location-retention-20261115` (not merged; no independent review yet).** Note only: the CP9 elevation lease (`real-sky/native-host-hooks.js`, injected writer in `tools/build_native.py`) is preserved byte-for-byte; the legacy custody is now coordinate-bound as well (ISM-WX-008), so the two custodies no longer disagree on location binding. Proposed status: codes unchanged.
 
 <a id="ism-sky-029"></a>
 ### ISM-SKY-029 — Catalogue-bound diffuse resource capability
@@ -2688,17 +2693,16 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**.
 - **Risks routed.** capture write effect → R0036 (per R0034 contract); compose allocation/data-URL rate → R0034 (G3
   measurement recorded, PRA-F-34, no budget adopted; attribution open).
-- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (merged as pull request 135, main `ebb2704e`; accepted, issue 124, [R003A final certificate](https://github.com/theislampill/salah_widget/issues/124#issuecomment-6892806875)).**
   Documented in DESIGN.md › "Known approximations": no cloud albedo or optical depth (deliberate simplification) and
   no ground albedo in the sky radiance model (single-scattered sunlight plus empirical twilight, moonlight and
   background terms; limitation, magnitude not measured), each citing its source owner. No
-  code change. Proposed status (effective on acceptance): D PEX / I PEX / V PEX (unchanged; the rim coefficients are
-  still unpinned).
+  code change. Status accepted (R003A final certificate): D PEX / I PEX / V PEX (unchanged; the rim coefficients are still unpinned).
 
 <a id="ism-sky-035"></a>
 ### ISM-SKY-035 — Discrete optic gates (halo, sundogs, pillar, crepuscular, anticrepuscular, lunar) and visible-sun registration
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **DWE / IMS / PEX** · Historical disposition: *new*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **EIV / IMS / EEV** · Historical disposition: *new*
 
 - **Scope and decision.** When each discrete optical presentation may show, at what opacity, where it is anchored,
   and how it is withdrawn. Generic CSS publication is ISM-SKY-005; this entry models the gate table.
@@ -2730,7 +2734,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   | `DEBUGOPTIC` ∈ {halo, sundogs, pillar, anticrep} | — | that value forced (0.95 / 0.95 / 0.9 / 0.8) |
   | `DEBUGOPTIC` ∈ {paraselene, lunarhalo} | `moonLightEligible` | forced 0.9 / 0.95, else 0 |
   | cloud withdrawal with a decision | receipt changed | `--ray`, `--anticrep`, `--sunhalo`, `--sundogs`, `--sunpillar`, lunar optics → 0 |
-  | no-timetable paint | — | halo/sundogs/pillar and lunar optics → 0; `--ray`, `--anticrep` not written (main `516d8cc8`; R003A adds both) |
+  | no-timetable paint | — | halo/sundogs/pillar and lunar optics → 0; `--ray`, `--anticrep` not written (main `516d8cc8`; R003A, merged as main `ebb2704e`, adds both) |
   | `beginSkyScene` | — | cloud receipt withdrawn with `decision=null`: no optic zeroed here; `sky-pending` hides `.atmo`/`.wfx` |
 - **Invariants (observed).** Halo, sundogs, pillar and godray share the visible-sun anchor `--sunvx = 20/325`,
   `--sunvy = sunLift/530` (AGENTS gate C); corner rays and body move with the `.suncorner` transform.
@@ -2754,7 +2758,7 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **DWE / IMS / PEX** (documentation contradicted for
   anticrepuscular; gates inline in `atmosphere()`; state-only tests).
 - **Risks routed.** anticrepuscular visibility discrepancy → R003C (issue 126, disposition) with its documentation half in R003A (issue 124); anchor lead → R003B (issue 125).
-- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (merged as pull request 135, main `ebb2704e`; accepted, issue 124, [R003A final certificate](https://github.com/theislampill/salah_widget/issues/124#issuecomment-6892806875)).**
   *Correction of the "Failure and recovery" fact above (re-derived on `516d8cc8`):* no scene reset is involved and the
   window is not one frame. Without a timetable, `render()` runs stage `weather-withdrawal` (`withdrawWeatherEffects`,
   key list includes `--ray`, `--anticrep`, halo, sundogs, pillar) with one bounded retry, then `paintCelestialWithoutTimetable`.
@@ -2768,13 +2772,12 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
   G4 test per optic and guard, RED on main) and mutants (per-optic drops, M1-M13) all killed; native fault witness
   and healthy-scene pixel control in [R003A](docs/state-contracts/R003A.md). Documented: OPTICS.md crepuscular gate
   (`directional = 1 − cloud²`, `humid` from dew point), corner-ray gate, anticrepuscular "computed, hidden".
-  Residual routed to R002C: a throw in `weatherDecision()` returns before any withdrawal. Proposed status (effective on
-  acceptance): D EIV / I IMS / V EEV (gates remain inline in `atmosphere()`).
+  Residual routed to R002C: a throw in `weatherDecision()` returns before any withdrawal. Status accepted (R003A final certificate): D EIV / I IMS / V EEV (gates remain inline in `atmosphere()`). V stays at EEV: the withdrawal defect is demonstrated only under an injected fault, review was by a separate model context, and the full registered runner was run by the author only. Whether anticrepuscular rays are shown is undecided and belongs to R003C (issue 126); they are documented as computed, published and hidden.
 
 <a id="ism-sky-036"></a>
 ### ISM-SKY-036 — Solar disc presentation (nucleus, limb, refraction flattening, visible-sun anchor, cloud obstruction)
 
-Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **PEX / PEX / PEX** · Historical disposition: *new*
+Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: **EIV / PEX / PEX** · Historical disposition: *new*
 
 - **Scope and decision.** Colour, radial profile, size, oblateness, screen position and cloud obstruction of the
   native corner Sun. The physical Sun in the refined frame is ISM-SKY-033; optic gates ISM-SKY-035.
@@ -2810,12 +2813,12 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Unknowns.** native rendering of the blurred (0.8 px) radial gradient body under the screen blend.
 - **Status accepted (R0034 registry pass, issue 101; [R0034 final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103)).** D / I / V **PEX / PEX / PEX**.
 - **Risks routed.** none.
-- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (merged as pull request 135, main `ebb2704e`; accepted, issue 124, [R003A final certificate](https://github.com/theislampill/salah_widget/issues/124#issuecomment-6892806875)).**
   Documented as classified approximations in DESIGN.md › "Known approximations" and OPTICS.md: linear limb darkening
   `u = 0.6` (full weight to 10°, blended out by 40°); refraction flattening presentational, at most 7.7 % (scale 0.923 at
   e = 0.5°) against about 0.84 from Bennett's formula; corner rays gated only by presence and the per-class `T_cloud`.
   The inline `--sunflat` comment ("~0.8 at the horizon, 1 above ~5°") contradicted its own formula and now states the
-  coded bounds. No value changed. Proposed status (effective on acceptance): D EIV / I PEX / V PEX.
+  coded bounds. No value changed. Status accepted (R003A final certificate): D EIV / I PEX / V PEX.
 
 <a id="ism-sky-037"></a>
 ### ISM-SKY-037 — Presentation and compositing chain from frame to pixels (canvases, scaling, layers, glass, noise, motion)
@@ -2895,10 +2898,10 @@ Original audit: **new (R0034 sky-physics registry pass)** · Status D / I / V: *
 - **Risks routed.** canvas scaling (323×528 display of the 325×530 backing; CI-02) → R003B (issue 125); glass, shadow, stroke
   and font CSS (CI-08, CI-17) → not to be changed by owner decision (R003B standing prohibition); preview/refined handoff →
   R0034 (closed, accepted).
-- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (not merged; no independent review yet).**
+- **R003A (issue 124), branch `claude/r003a-sky-stage-hardening-20261114` (merged as pull request 135, main `ebb2704e`; accepted, issue 124, [R003A final certificate](https://github.com/theislampill/salah_widget/issues/124#issuecomment-6892806875)).**
   Owner gate G2 (a): OPTICS.md and DESIGN.md now say that the anticrepuscular element is computed and published but
   hidden by `.atmo .anticrep{display:none!important}` (generated stylesheet, rule from `7fe3ba1d`); the other hidden
-  layers are not re-documented. No CSS change. Proposed status (effective on acceptance): D / I / V **PEX / IMS / PEX** (unchanged).
+  layers are not re-documented. No CSS change. Status accepted (R003A final certificate): D / I / V **PEX / IMS / PEX** (unchanged).
 
 ## Moon pipeline (`ISM-MOON`)
 

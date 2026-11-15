@@ -5272,7 +5272,55 @@ function loadCache(dateStr,key=cacheKey()){
 }
 function saveCache(dateStr,data,key=cacheKey()){
   const admitted=admitPrayerRecord(data,dateStr); if(!admitted.ok) return;
-  try{ localStorage.setItem(key,JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){}
+  try{ localStorage.setItem(key,JSON.stringify({date:dateStr,data:admitted.data})); }catch(e){ return; }
+  evictUnusableLocationCaches();
+}
+// R0032 machine CR (owner decisions D-32-2 = B, D-32-3 = A). Per-location cache keys name their coordinates, so
+// entries no instance can use are removed by ONE bounded pass per document, run only after this document's first
+// successful fresh cache write (prayer saveCache or the weather write) — never on the boot cache-selection path, which
+// still reads only the selected keys. Prefix-exact namespaces "salah:" and "salahwx:" only (never salah_widget:*,
+// V1 keys or the saved configuration). Removed: unreadable entries (prayer: no admissible record; weather: no
+// numeric receipt), weather receipts outside the six-hour loadWx window or in the future, and prayer records dated
+// before (UTC civil day − 2), which no zone can hold as current or next. Never removed: the protected keys boot may
+// read for the current configuration (cacheKey(), wxKey()) whatever their age, other prefixes, future-dated prayer
+// records. Each entry is re-read before removal (a concurrent writer's fresh bytes are kept); every storage
+// exception is contained. Reset does not call this and does not erase caches (D-32-3 A).
+// Ownership: only keys of the exact shape cacheKey()/wxKey() build are this widget's; anything else under the two
+// prefixes (another page on a shared origin, a malformed or legacy key) is foreign and never read or removed.
+// Bounds: at most 256 removals and 1024 entry reads per pass; key enumeration itself is one key(i) call per key.
+const _CACHE_EVICT_MAX=256, _CACHE_EVICT_READ_MAX=1024;
+const _OWN_PRAYER_KEY=/^salah:-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|[A-Za-z][A-Za-z0-9_+\/-]*\|\d{1,2}\|[01]$/;   // cacheKey(): lat|lon|zone|method|school
+const _OWN_WX_KEY=/^salahwx:-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|-?\d+(?:\.\d+)?(?:e[-+]?\d+)?\|[cf]$/;                                       // wxKey(): lat|lon|units
+let _cacheEvictionRan=false, _cacheEviction=null;   // diagnostic report of the single pass (pure data)
+function locationCacheExpired(k,raw,now){
+  let j; try{ j=JSON.parse(raw); }catch(e){ return true; }
+  if(k.startsWith("salahwx:")){
+    const receipt=j&&typeof j==="object"?wxNumber(j.ts):null;
+    return receipt==null||now-receipt<0||now-receipt>=_WX_CACHE_RETENTION;
+  }
+  if(!recordObject(j)) return true;
+  const admitted=admitPrayerRecord(j.data,j.date); if(!admitted.ok) return true;
+  const m=/^(\d{2})-(\d{2})-(\d{4})$/.exec(admitted.date), d=new Date(now);
+  return !m||Date.UTC(+m[3],+m[2]-1,+m[1])<Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()-2);
+}
+function evictUnusableLocationCaches(){
+  if(_cacheEvictionRan) return; _cacheEvictionRan=true;
+  try{
+    const now=Date.now(), keep=new Set([cacheKey(),wxKey()]), keys=[];
+    for(let i=0,n=localStorage.length;i<n;i++){ const k=localStorage.key(i); if(typeof k==="string") keys.push(k); }
+    const r=_cacheEviction={keys:keys.length,read:0,removed:0,foreign:0,protected:0,bounded:false};
+    for(const k of keys){
+      if(!(k.startsWith("salah:")||k.startsWith("salahwx:"))) continue;
+      if(!(_OWN_PRAYER_KEY.test(k)||_OWN_WX_KEY.test(k))){ r.foreign++; continue; }   // not this widget's: untouched
+      if(keep.has(k)){ r.protected++; continue; }
+      if(r.removed>=_CACHE_EVICT_MAX||r.read>=_CACHE_EVICT_READ_MAX){ r.bounded=true; break; }
+      try{
+        r.read++; const raw=localStorage.getItem(k); if(raw==null||!locationCacheExpired(k,raw,now)) continue;
+        if(localStorage.getItem(k)!==raw) continue;              // rewritten meanwhile: not the classified entry
+        localStorage.removeItem(k); r.removed++;
+      }catch(e){}
+    }
+  }catch(e){ _cacheEviction={failed:true}; }
 }
 async function fetchTimings(dateStr,operation=null){
   // I-3 (R002D): no provider request for an unresolved civil day (null / non-calendar string), before any slot.
@@ -5498,6 +5546,11 @@ function weatherRenewalDiagnostics(){            // pure read: no adoption, publ
 // clock shows a coherent future weather cycle, not frozen current weather under a moving sun.
 let weatherTrack=null;   // {ep:[epoch…], temperature_2m:[…], cloud_cover:[…], weather_code:[…], …}
 let siteElev=0;          // surface elevation (m), from the Open-Meteo response — high, thin-air sites read sharper/darker
+// R0032 machine EL: the value is bound to the coordinates of the response that carried it. Readers use
+// siteElevation(), which yields the documented default 0 m while the current coordinates differ, so a location
+// change never carries A's height to B; a change at unchanged coordinates (units, method) keeps it.
+let _siteElevAt=null;
+function siteElevation(){ return _siteElevAt&&_siteElevAt.lat===lat&&_siteElevAt.lon===lon?siteElev:0; }
 function wxKey(){ return "salahwx:"+[lat,lon,units].join("|"); }   // function (not const): reflects runtime config changes
 const _WX_CURRENT_TTL=15*60*1000, _WX_CACHE_RETENTION=6*3600e3;
 const _WX_CODES=new Set([0,1,2,3,45,48,51,53,55,56,57,61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,99]);
@@ -5676,7 +5729,7 @@ async function fetchWeather(renewal=null){            // renewal: only renewWeat
     if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization
     // Publication must wake the native consumer even at a frozen clock or
     // between the loader's completed paint and its first animation callback.
-    if((current||track)&&elevation!=null){ siteElev=elevation; _renderDirty=true; }
+    if((current||track)&&elevation!=null){ siteElev=elevation; _siteElevAt={lat:captured.lat,lon:captured.lon}; _renderDirty=true; }
     // EARLY-RENEWAL MISS: an admitted, valid renewal answer for a step not after the held one. Not adopted; the
     // spacing this attempt opened is restored (only if it is still this attempt's record), once per step.
     const miss=!!(renewal&&current&&renewal.outcome===null&&wxNumber(current.currentValidAt)!=null&&current.currentIntervalSec>0&&
@@ -5685,7 +5738,7 @@ async function fetchWeather(renewal=null){            // renewal: only renewWeat
     if(current&&!miss&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
       weather=current; _renderDirty=true;
       if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
-      try{ if(attemptEligible(op,a)) localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); }catch(e){}
+      try{ if(attemptEligible(op,a)){ localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); evictUnusableLocationCaches(); } }catch(e){}
     }
     if(track&&attemptEligible(op,a)){ weatherTrack=track; _renderDirty=true; }
     // CP9 elevation custody: notify only after this operation's eligible native weather adoption.
@@ -5706,6 +5759,38 @@ function radarEvidence(now=Date.now()){
     frameAge>=0&&frameAge<=_RADAR_TTL&&receiptAge>=0&&receiptAge<=_RADAR_TTL),frameAgeMs:frameAge,receiptAgeMs:receiptAge};
 }
 function radarPrecipNow(){ return 0; }              // compatibility shim: unsupported quantitative evidence contributes nothing
+// R0032 machine RA (owner decision D-32-1 = A2): live radar acquisition is OFF in every product configuration. The
+// radar has no product consumer (header, label, data-*, particle, optic and permission ignore it), so the product makes
+// no location-derived tile request. This literal is the one enablement; no URL, fragment or configuration field reads
+// or writes it. The acquisition code below, its host admission and its diagnostics are retained for test harnesses,
+// which call the authored acquisition function acquireRadar directly (see docs/state-contracts/R0032.md).
+const RADAR_ACQUISITION=Object.freeze({enabled:false,reason:"disabled in the product (R0032 D-32-1 A2; retained for tests only)"});
+function radarAcquisitionEnabled(){ return RADAR_ACQUISITION.enabled===true; }
+// Every product caller (boot, startWeather/apply, the loop poll) calls this gate; the predicate is evaluated before
+// retryGate("radar"), so spacing, request ownership and the 600 s cadence are unchanged wherever radar still runs.
+async function fetchRadar(){ if(!radarAcquisitionEnabled()) return; return acquireRadar(); }
+// Host admission for the retained path. The allowlist's only seed is the repository fixtures' host: it is unverified
+// against the provider. An exact origin match rejects other schemes, hosts, userinfo, ports, paths, queries and
+// fragments; the frame path must be the relative /v2/radar/<id> shape (one segment, never . or ..). Diagnostic-only, so a wrong list can only make
+// radar unavailable to a test.
+const _RADAR_TILE_ORIGINS=["https://tilecache.rainviewer.com"];
+function radarTileBase(host,path){
+  if(typeof host!=="string"||!_RADAR_TILE_ORIGINS.includes(host.replace(/\/$/,""))) return {reason:"radar tile host not admitted"};
+  if(typeof path!=="string"||!/^\/v2\/radar\/(?!\.\.?$)[A-Za-z0-9._-]+$/.test(path)) return {reason:"radar frame path not admitted"};
+  return {base:host.replace(/\/$/,"")+path};
+}
+// Web-Mercator tile indices (registry candidate CI-05). Longitude outside [-180, 180] is rejected; +180 is the same
+// meridian as -180 and wraps to column 0; a row or column outside [0, 2^z) (latitude beyond about ±85.0511°, or a pole)
+// is rejected before any tile request.
+function radarTileIndex(la,lo,z){
+  const n=Math.pow(2,z);
+  if(typeof la!=="number"||typeof lo!=="number"||!(Math.abs(lo)<=180)) return null;
+  const latRad=la*Math.PI/180, fx=((lo+180)/360*n)%n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
+  if(!Number.isFinite(fx)||!Number.isFinite(fy)) return null;  // Web Mercator does not cover the poles
+  const xt=Math.floor(fx), yt=Math.floor(fy);
+  if(xt<0||xt>=n||yt<0||yt>=n) return null;
+  return {fx,fy,xt,yt};
+}
 // Application cancellation detaches handlers; it does not claim physical cancellation of an Image download.
 function wxRadarSample(op,a,url,fx,fy,xt,yt){
   return new Promise(resolve=>{
@@ -5736,7 +5821,7 @@ function wxRadarSample(op,a,url,fx,fy,xt,yt){
     try{ im.src=url; }catch(e){ finish(null,"image unavailable"); }
   });
 }
-async function fetchRadar(){
+async function acquireRadar(){                       // retained acquisition (test harnesses only while RADAR_ACQUISITION is off)
   const now=Date.now(), elapsed=_RAFNOW();
   if(retryGate("radar",now,elapsed)!=="eligible") return;   // real mode only; radar updates ~10 min
   const op=beginRequest("radar"); if(!op) return;
@@ -5747,17 +5832,17 @@ async function fetchRadar(){
     const result=await wxFetchJson(op,a,"https://api.rainviewer.com/public/weather-maps.json");
     if(!result.ok||!attemptEligible(op,a)) return;
     const j=result.data, host=j&&j.host, past=j&&j.radar&&j.radar.past;
-    if(typeof host==="string"&&Array.isArray(past)&&past.length){
+    if(Array.isArray(past)&&past.length){
       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
       if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
       const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
       // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
       if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
-      const z=_RADAR_Z, n=Math.pow(2,z), latRad=captured.lat*Math.PI/180;
-      const fx=(captured.lon+180)/360*n, fy=(1-Math.log(Math.tan(latRad)+1/Math.cos(latRad))/Math.PI)/2*n;
-      if(!Number.isFinite(fx)||!Number.isFinite(fy)) return;  // Web Mercator does not cover the poles
-      const xt=Math.floor(fx), yt=Math.floor(fy);
-      const url=host+fr.path+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
+      const z=_RADAR_Z, idx=radarTileIndex(captured.lat,captured.lon,z);
+      if(!idx){ wxAttemptState(op,a,"rejected","radar tile index outside Web Mercator"); return; }
+      const admitted=radarTileBase(host,fr.path);          // R0032: no tile request to a non-admitted origin or path
+      if(!admitted.base){ wxAttemptState(op,a,"rejected",admitted.reason); return; }
+      const {fx,fy,xt,yt}=idx, url=admitted.base+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
       if(!attemptEligible(op,a)) return;
       finishAttempt(op,a); a=beginAttempt(op,_RADAR_IMAGE_WAIT); if(!a) return;
       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
@@ -7261,7 +7346,7 @@ function atmosphere(M){
   // star VISIBILITY envelope (limiting magnitude): dark sky (S.stars) × weather class × moon wash × aerosol
   // extinction (haze/low-visibility) × humidity × LIGHT POLLUTION. High thin-air sites (altClarity) thin the
   // aerosol column, so haze bites less. Faint stars drown first under haze/moisture/sky-glow.
-  const altClarity=clamp(siteElev/3000);
+  const altClarity=clamp(siteElevation()/3000);
   // faint stars COME AND GO with the slow transparency drift (×0.84..1.06) — a clear night is never frozen.
   const stars=S.stars*w.st*(1-0.55*moonlight)*(1-0.45*D.haze*(1-0.55*altClarity))*(1-0.16*D.humid)*(1-0.5*LPOLL)*(0.84+0.22*airDrift);
   const moon =1;   // .mfeatures + occluder are FULLY opaque within the group; the group (--moongrp=moonShow) carries the night fade. The Moon is OPAQUE — no stars show through the disc
@@ -7500,7 +7585,7 @@ function paint(A){
         +`moon beam ${A.moonBeam.toFixed(2)} disc ${A.moonDisc.toFixed(2)} lunarCorona ${(A.lunarCorona||0).toFixed(2)}\n`
         +`cloud L/M/H ${A.cloudLayerLow.toFixed(2)}/${A.cloudLayerMid.toFixed(2)}/${A.cloudLayerHigh.toFixed(2)}\n`
         +`haze ${A.aerosolDensity.toFixed(2)} ray ${A.rayIntensity.toFixed(2)} grain ${A.grainStrength.toFixed(2)}\n`
-        +`lp ${LPOLL.toFixed(2)}  elev ${siteElev|0}m`;
+        +`lp ${LPOLL.toFixed(2)}  elev ${siteElevation()|0}m`;
     }
   }
   commitSkyScene(A);
@@ -7806,7 +7891,8 @@ window.qaState=function(){
     wxTruth:(()=>{ const decision=_lastWeatherEffects?.decision||candidate,current=decision.record,raw=current?current.code:null, p=current?wxNumber(current.precip,0):null, radar=radarEvidence();
       const fc=(()=>{ try{ const w=weatherTrack?wxAt(simNow()):null; return w?w.code:null; }catch(e){ return null; } })();
       return { currentWeatherSource: current?(current.src||"current")+(current.src==="sim"?" (simulation)":" (Open-Meteo model estimate)"):"none (current unavailable)", forecastTrackSource: weatherTrack?"Open-Meteo hourly (forecast; particles in explicit preview only)":"none",
-        radarSource: weatherRadar?weatherRadar.source:"none (RainViewer unavailable / simulation)", radarPrecipMm:0, radarAgeSec:radar.receiptAgeMs==null?null:Math.round(radar.receiptAgeMs/1000),
+        radarSource: weatherRadar?weatherRadar.source:radarAcquisitionEnabled()?"none (RainViewer unavailable / simulation)":"none (radar acquisition disabled in the product)",
+        radarAcquisition:{enabled:radarAcquisitionEnabled(),reason:RADAR_ACQUISITION.reason}, radarPrecipMm:0, radarAgeSec:radar.receiptAgeMs==null?null:Math.round(radar.receiptAgeMs/1000),
         radarFrameAgeSec:radar.frameAgeMs==null?null:Math.round(radar.frameAgeMs/1000), radarAvailable:radar.available, radarConfirming:false,
         radarDiagnostic:weatherRadar?weatherRadar.sample:null, radarQuantitativeReason:"unavailable: uncalibrated palette/alpha; no on-site precipitation or lightning authority",
         requests:{weather:_wxRequests.weather,radar:_wxRequests.radar},retry:retryDiagnostics(),
@@ -7821,6 +7907,7 @@ window.qaState=function(){
         downgradeReason:decision.lane==="live"?decision.permissions.reason:decision.modelDowngrade||decision.permissions.reason,
         modelGateReason:decision.modelDowngrade||null,advancing:ADVANCING,cloudFieldSeed:_cloudFieldSeed }; })(),
     // ── CACHE / STALE-STATE diagnostics (BASE): what may be stale and how old ──
+    cacheRetention:typeof _cacheEviction!=="undefined"&&_cacheEviction?{..._cacheEviction}:null,   // R0032: the single eviction pass's counts (null until it runs)
     cache:(()=>{ const eligibility=weatherEligibility(weather), wxAge=eligibility.receiptAgeMs==null?null:Math.round(eligibility.receiptAgeMs/1000);
       return { weatherSource: weather?(weather.src||"current"):"none", weatherAgeSec:wxAge, weatherSourceAgeSec:eligibility.sourceAgeMs==null?null:Math.round(eligibility.sourceAgeMs/1000),
         weatherStale:(SIM.wx!=null||ADVANCING||_clockPreview)?false:!eligibility.eligible, currentEligible:eligibility.eligible, currentUnavailableReason:eligibility.reason,

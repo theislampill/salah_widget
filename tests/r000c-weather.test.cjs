@@ -166,7 +166,9 @@ function fixture(options = {}) {
     let _hashCfg={}, _cfgMode='hardcoded', CONFIG=opts.config||null, label='', _autoDetectSource=null, _autoDetectStatus='idle';
     let _storageErr=null, _geoPermission='unknown', _geoLastError=null;
   ` + runtime + `
-    globalThis.api={fetchWeather,fetchRadar,loadWx,wxAt,syncWeather,wxDrivers,gateWeatherCode,wxClass,radarPrecipNow,
+    // R0032 (D-32-1 A2): the product fetchRadar is gated off; this retained-path fixture opts in explicitly by
+    // binding the authored acquisition function (older sources without the gate bind fetchRadar unchanged).
+    globalThis.api={fetchWeather,fetchRadar:typeof acquireRadar==='function'?acquireRadar:fetchRadar,loadWx,wxAt,syncWeather,wxDrivers,gateWeatherCode,wxClass,radarPrecipNow,
       beginRuntimeGeneration:typeof beginRuntimeGeneration==='function'?beginRuntimeGeneration:null,
       read:()=>({weather,weatherTrack,weatherRadar,lastWxAt,lastWxTry,wxBusy,radarBusy,siteElev}),
       set:(values)=>{if('lat' in values)lat=values.lat;if('lon' in values)lon=values.lon;if('units' in values)units=values.units;
