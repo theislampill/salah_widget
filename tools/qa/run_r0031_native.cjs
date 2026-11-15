@@ -12,7 +12,7 @@
 //   empty       edit 40.9, HTTP 200 {} -> export unchanged (method 2)
 //   local       self-configuring mode, coordinate edit and pin (fixture position) -> zero BigDataCloud requests
 //   wrapper     #pv bounding box, snippet iframe style, builder crop (R31-09)
-// Settings GPS with a never-settling permission query is NOT a cell: decision D-31-3 is pending.
+// Settings GPS cells (owner decision D-31-3 = A) run with --cells gps; see gpsCells below.
 //
 // Usage: node tools/qa/run_r0031_native.cjs --root <tree> --out <fresh dir> [--engines chromium,firefox,webkit]
 //        [--playwright <path to the playwright package>]
@@ -44,6 +44,97 @@ const GEO_INIT = `(()=>{const g=window.__r0031Geo={calls:0,perm:0};
  Object.defineProperty(Navigator.prototype,'geolocation',{get(){return geo;},configurable:true});
  if(navigator.permissions){const q=navigator.permissions.query.bind(navigator.permissions);
   navigator.permissions.query=d=>{if(d&&d.name==='geolocation'){g.perm++;return Promise.resolve({state:'granted'});}return q(d);};}})();`;
+function finish(report) {
+  server.close();
+  report.allPass = report.cells.every(c => c.pass);
+  fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 1) + '\n');
+  console.log(JSON.stringify(report.cells.map(c => [c.engine, c.cell, c.pass ? 'PASS' : 'FAIL'])));
+  if (!report.allPass) process.exitCode = 1;
+}
+// ---- settings GPS cells (--cells gps; owner decision D-31-3 = A, issue 98 comment 6878230757) ---------------------
+// Per engine and permission-diagnostic variant, a fresh context whose init script stubs navigator.geolocation (one
+// fix 51.5/-0.12, accuracy 20 m, after 50 ms) and overrides navigator.permissions.query: never settles, rejects,
+// absent (no navigator.permissions), or resolves granted/denied/prompt. The widget is served in local mode with a saved Madinah config;
+// the cell opens settings, clicks the pin and samples the status line every 100 ms for 3 s (no flicker: the
+// distinct statuses are only "Requesting browser location…" then one "Browser position …"). Expected qaState
+// geolocation permission state: "unknown" for never/reject/absent, else the resolved state. Cell reset-gps-never:
+// a saved Cairo config in local mode, Reset with detection held, then a fix while the diagnostic never settles; the
+// pin call site must end the Reset on adoption (R0030), so after close and release the fix is the configuration.
+const VARIANTS = { never: '()=>new Promise(()=>{})', reject: '()=>Promise.reject(new Error("fixture"))', absent: null,
+  granted: '()=>Promise.resolve({state:"granted"})', denied: '()=>Promise.resolve({state:"denied"})', prompt: '()=>Promise.resolve({state:"prompt"})' };
+const gpsInit = v => `(()=>{const g=window.__r0031Geo={calls:0,perm:0};
+ const geo={getCurrentPosition(ok){g.calls++;setTimeout(()=>ok({coords:{latitude:51.5,longitude:-0.12,accuracy:20},timestamp:Date.now()}),50);},watchPosition(){return 0;},clearWatch(){}};
+ Object.defineProperty(Navigator.prototype,'geolocation',{get(){return geo;},configurable:true});
+ ${VARIANTS[v] === null ? "Object.defineProperty(Navigator.prototype,'permissions',{get(){return undefined;},configurable:true});"
+    : `if(navigator.permissions){const q=navigator.permissions.query.bind(navigator.permissions),f=${VARIANTS[v]};navigator.permissions.query=d=>{if(d&&d.name==='geolocation'){g.perm++;return f();}return q(d);};}`}})();`;
+async function gpsCells(base, report) {
+  for (const name of engines) {
+    const browser = await PW[name].launch({ headless: true }); report.engines[name] = browser.version();
+    const external = new Set();
+    async function ctx(variant, detect) {
+      const context = await browser.newContext({ viewport: { width: 420, height: 640 }, deviceScaleFactor: 1, timezoneId: 'Asia/Riyadh', locale: 'en-US', reducedMotion: 'reduce' });
+      await context.addInitScript(gpsInit(variant));
+      await context.route('**/*', async route => {
+        const url = route.request().url(); if (url.startsWith(base)) return route.continue();
+        const u = new URL(url); external.add(u.hostname + u.pathname);
+        if (u.hostname === 'get.geojs.io' || u.hostname === 'ipinfo.io') {
+          if (detect && detect.hold) await new Promise(r => detect.waiting.push(r));
+          return u.hostname === 'get.geojs.io' ? json(route, 200, { latitude: '24.4672', longitude: '39.6142', city: 'Madinah', country_code: 'SA', timezone: 'Asia/Riyadh' })
+            : json(route, 200, { loc: '24.4672,39.6142', city: 'Madinah', country: 'SA', timezone: 'Asia/Riyadh' });
+        }
+        if (u.hostname === 'nominatim.openstreetmap.org') return json(route, 200, []);
+        if (u.hostname === 'api.zippopotam.us') return json(route, 404, {});
+        if (u.hostname === 'api.bigdatacloud.net') return json(route, 503, {});
+        const m = url.match(/\/timings\/([^/?]+)/);
+        if (u.hostname === 'api.aladhan.com' && m && /^\d{2}-\d{2}-\d{4}$/.test(m[1])) return json(route, 200, { code: 200, status: 'OK', data: record(m[1]) });
+        if (/open-meteo\.com$|rainviewer\.com$|fonts\.(googleapis|gstatic)\.com$/.test(u.hostname)) return route.fulfill({ status: 503, body: '' });
+        return route.abort();
+      });
+      const page = await context.newPage(), errors = [];
+      page.on('pageerror', e => errors.push(String(e).slice(0, 200)));
+      await page.clock.install({ time: new Date(INSTANT) });
+      return { context, page, errors };
+    }
+    const sample = async page => { const seq = []; for (let i = 0; i < 30; i++) { const t = await page.evaluate(() => document.getElementById('set-status').textContent.split('\n').pop()); if (seq[seq.length - 1] !== t) seq.push(t); await page.waitForTimeout(100); } return seq; };
+    // --variants never,reject,... and --reset 0 split a slow engine's run into shorter invocations.
+    for (const variant of (args.variants || Object.keys(VARIANTS).join(',')).split(',').filter(v => v in VARIANTS)) {
+      const { context, page, errors } = await ctx(variant);
+      await page.goto(base + '/index.html#local=1'); await page.waitForFunction(() => !!window.SalahConfig, null, { timeout: 20000 });
+      await page.evaluate(() => { localStorage.removeItem('salah_widget:config:v1'); SalahConfig.saveLocal({ lat: 24.47, lon: 39.61, label: 'Madinah', method: '4', source: 'manual', tz: 'Asia/Riyadh' }); });
+      await page.reload(); await page.waitForFunction(() => document.querySelector('.buckle.interactive'), null, { timeout: 20000 }); await page.waitForTimeout(1000);
+      await page.click('.buckle'); await page.waitForFunction(() => document.querySelector('.c').classList.contains('settings-open'));
+      await page.click('#set-pin'); const seq = await sample(page);
+      const st = await page.evaluate(() => ({ lat: document.getElementById('set-lat').value, lon: document.getElementById('set-lon').value,
+        permission: qaState().config.geolocationPermissionState, geo: window.__r0031Geo }));
+      const want = ['never', 'reject', 'absent'].includes(variant) ? 'unknown' : variant;
+      const statuses = seq.filter(t => t);
+      const steady = statuses.length >= 1 && /^Browser position/.test(statuses[statuses.length - 1])
+        && statuses.every(t => /^(Requesting browser location|Browser position)/.test(t)) && statuses.filter(t => /^Browser position/.test(t)).length === 1;
+      const pass = st.lat === '51.50000' && st.lon === '-0.12000' && steady && st.permission === want && st.geo.calls === 1;
+      report.cells.push({ engine: name, cell: 'gps-' + variant, pass, statuses, form: [st.lat, st.lon], permission: st.permission, expected: want,
+        geoCalls: st.geo.calls, permissionQueries: st.geo.perm, pageErrors: errors.length });
+      await context.close();
+    }
+    if (args.reset !== '0') { // reset-gps-never: R0030 Reset, then a GPS fix while the diagnostic never settles
+      const detect = { hold: false, waiting: [] }, { context, page, errors } = await ctx('never', detect);
+      await page.goto(base + '/index.html#local=1');
+      await page.waitForFunction(() => !!window.SalahConfig, null, { timeout: 20000 });
+      await page.evaluate(() => { localStorage.removeItem('salah_widget:config:v1'); SalahConfig.saveLocal({ lat: 30.04, lon: 31.24, label: 'Cairo', method: '5', units: 'c', source: 'manual', tz: 'Africa/Cairo' }); });
+      await page.reload(); await page.waitForFunction(() => document.querySelector('.buckle.interactive'), null, { timeout: 20000 }); await page.waitForTimeout(1000);
+      await page.click('.buckle'); detect.hold = true; await page.click('#set-reset'); await page.waitForTimeout(300);
+      await page.click('#set-pin'); await page.waitForTimeout(1500);
+      const pending = await page.evaluate(() => !!_setReset);
+      await page.click('#setClose'); detect.hold = false; detect.waiting.splice(0).forEach(r => r()); await page.waitForTimeout(3000);
+      const c = await page.evaluate(() => ({ lat: CONFIG.lat, lon: CONFIG.lon, source: CONFIG.source, saved: SalahConfig.loadLocal() }));
+      const pass = !pending && c.lat === 51.5 && c.lon === -0.12 && !!c.saved && c.saved.lat === 51.5;
+      report.cells.push({ engine: name, cell: 'reset-gps-never', pass, resetPendingAfterFix: pending, runtime: { lat: c.lat, lon: c.lon, source: c.source },
+        savedLat: c.saved && c.saved.lat, pageErrors: errors.length });
+      await context.close();
+    }
+    report[name + 'External'] = [...external].sort();
+    await browser.close();
+  }
+}
 const json = (route, status, body) => route.fulfill({ status, contentType: 'application/json', headers: { 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify(body) });
 
 (async () => {
@@ -52,6 +143,7 @@ const json = (route, status, body) => route.fulfill({ status, contentType: 'appl
   const report = { scope: 'R0031 builder reverse-admission native cells; every external request routed to a fixture or aborted; mocked running clock at ' + INSTANT + '; zone Asia/Riyadh',
     inputs: Object.fromEntries(['builder.html', 'config.js', 'index.html'].map(f => [f, sha(fs.readFileSync(path.join(root, f)))])),
     playwright: require((args.playwright || 'playwright') + '/package.json').version, engines: {}, cells: [] };
+  if (args.cells === 'gps') { await gpsCells(base, report); finish(report); return; }
   for (const name of engines) {
     const browser = await PW[name].launch({ headless: true }), external = [], bdc = [];
     report.engines[name] = browser.version();
@@ -115,9 +207,5 @@ const json = (route, status, body) => route.fulfill({ status, contentType: 'appl
     report[name + 'External'] = [...new Set(external)].sort();
     await context.close(); await browser.close();
   }
-  server.close();
-  report.allPass = report.cells.every(c => c.pass);
-  fs.writeFileSync(path.join(out, 'report.json'), JSON.stringify(report, null, 1) + '\n');
-  console.log(JSON.stringify(report.cells.map(c => [c.engine, c.cell, c.pass ? 'PASS' : 'FAIL'])));
-  if (!report.allPass) process.exitCode = 1;
+  finish(report);
 })().catch(e => { console.error(e); server.close(); process.exitCode = 1; });

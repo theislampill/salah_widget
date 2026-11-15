@@ -2,7 +2,7 @@
 // R0031 mutation controls (R31-10). Each mutant is a disposable in-memory edit of the generated builder.html or
 // config.js applied inside builder-reverse-admission.test.cjs (R0031_MUTANT); nothing is written to disk. A mutant is
 // killed only when its named discriminator fails (behaviour), never by a bootstrap or anchor error.
-// D-31-3 (mutant e, "restore the permission await") has no mutant: GPS publication is unchanged pending the owner.
+// Mutant (e) of the issue is `await-permission` (owner decision D-31-3 = A, issue 98 comment 6878230757).
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { spawnSync } = require('node:child_process');
@@ -20,6 +20,11 @@ const cases = {
   'epoch-compare': 'R31-06 a portable → local → portable round trip supersedes the pending lookup',
   'epoch-bump': 'R31-06 a portable → local → portable round trip supersedes the pending lookup',
   'loose-continent': 'R31-03a malformed continentCode "na" leaves the method',
+  'await-permission': 'R31-07 a never-settling permission query does not block a valid GPS fix',                 // (e)
+  'retract-on-reject': 'R31-07 a rejected diagnostic is unknown and never retracts the fix',
+  'diagnostic-unguarded': 'R31-07 a diagnostic settling after a newer location intent is not written',
+  'publish-before-owner': 'R31-07 a fix arriving after a newer location intent is not published',
+  'double-publish': 'R31-07 the diagnostic is read after publication and only reported',
   'class-only': 'R31-08 place preference selects the city for a category-keyed Springfield reply', // (f)
 };
 for (const [mutant, discriminator] of Object.entries(cases))
