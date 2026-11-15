@@ -102,8 +102,9 @@ It is an affirmative design, research and improvement objective, not only a stri
   `motion=full` (in the URL fragment) overrides. The continuity requirement above is judged in the full-motion
   presentation; the reduced presentation must still be truthful and must not flash.
 - **For workers.** State in the contract how the change affects the coherence of the whole scene, not only the
-  effect changed, across at least day / twilight / night and clear / cloudy / precipitating conditions, and across
-  the transitions the change can trigger.
+  effect changed. Use day / twilight / night and clear / cloudy / precipitating conditions, and the transitions
+  the change can trigger, as the coverage guide: coverage is comprehensive but risk-proportionate — every
+  materially affected scene and transition is qualified; combinations a change cannot affect need not be.
 - **Fidelity verdicts.** For any change affecting sky, weather, clouds, Moon, solar optics or presentation,
   reviewers and visual judges give separate verdicts on physical fidelity and on experiential fidelity, with
   transition clips where motion or state transitions are involved.
