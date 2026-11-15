@@ -68,8 +68,8 @@ census always covers the whole tree, and any `setupErrors` (unregistered or miss
 Owner design standard, 2026-11-15. It adds to every work order's own acceptance rows; it does not replace them.
 It is an affirmative design, research and improvement objective, not only a stricter review threshold.
 
-- **First-class goal.** Atmospheric art direction and perceptual fidelity are engineering goals of the same rank
-  as state correctness. Physical credibility and evidence truthfulness stay non-negotiable; temporal continuity
+- **First-class goal.** Atmospheric art direction and perceptual fidelity are first-class engineering goals.
+  Physical credibility and evidence truthfulness stay non-negotiable; temporal continuity
   and visual composition are part of correctness at the presentation boundary.
 - **Target.** Physically grounded atmospheric art direction, perceptual fidelity and temporal coherence in a
   glanceable ambient interface. The sky and weather read as ONE coherent, continuously evolving environment, not a
@@ -86,7 +86,8 @@ It is an affirmative design, research and improvement objective, not only a stri
   abrupt environmental event. Evidence authority and factual claims (temperature, condition, precipitation
   statements) change at the instant authority changes; cloud motion, illumination and presentation keep temporal
   continuity.
-- **Two evaluation criteria, neither substituting for the other, and their composition.** *Physical fidelity:* defensible inputs and
+- **Two evaluation criteria, neither substituting for the other, and their composition.** *Physical fidelity:*
+  defensible inputs and
   relationships, weather provenance, illumination, atmospheric behaviour, stated limitations. *Experiential
   fidelity:* coherent tonal composition, convincing environmental mood, legible weather differentiation, spatial
   and temporal continuity, absence of rendering artifacts, restrained motion, readable prayer information. The
@@ -108,7 +109,7 @@ It is an affirmative design, research and improvement objective, not only a stri
   transition clips where motion or state transitions are involved.
 - **Pursue improvements.** Where the implementation falls meaningfully short of this standard, investigate and
   propose the improvement: under the owning work order where one exists, otherwise through a researched,
-  independently reviewed work order. A new phenomenon, model or treatment may be researched and evaluated
+  independently reviewed work order — never by silently expanding unrelated work. A new phenomenon, model or treatment may be researched and evaluated
   experimentally; research, experimental implementation, production adoption and final visual acceptance are
   separate authorisations.
 - **Interface identity is preserved; rendering defects are not.** Fixed: the 325×530 card geometry, glass and
@@ -117,7 +118,8 @@ It is an affirmative design, research and improvement objective, not only a stri
   or artifacts that are demonstrably deficient. Visual conservatism is risk management, not an aesthetic goal: do
   not optimise for zero changed pixels when the existing pixels are the problem, and do not assume more effects,
   complexity or contrast is better.
-- **Gates that stay in force.** No major renderer refactor or redesign; no vendored/copied-core change; owner
+- **Gates that stay in force.** No major renderer refactor or redesign; no vendored/copied-core change without owner
+  authority; owner
   approval for production visual changes, scientific-core changes and anything a work order reserves to the
   owner. Prayer correctness, weather truthfulness, source authority and privacy are hard constraints. Richness
   comes from coherent rendering, accurate information and art direction, not visual complexity.
