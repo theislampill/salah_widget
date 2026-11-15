@@ -74,6 +74,42 @@ test('R33-02 persistent failure stops at three automatic attempts with the decla
  assert.equal(r.rt().presentable,true);
 });
 
+test('R33-02 the automatic budget is per page lifetime: a successful recovery neither restores it nor resets the backoff step (DG-2)',()=>{
+ const r=rig();r.workers[0].emit({kind:'boot-error',error:'Moon asset HTTP 503'});
+ const attemptAfter=(n,ms)=>{r.tick(ms);assert.equal(r.workers.length,n+1,'attempt '+n+' started after its declared backoff');};
+ for(let n=1;n<=3;n++){
+  assert.equal(r.rt().state.recovery.state,'scheduled');
+  assert.equal(r.rt().state.recovery.attempts,n-1);
+  attemptAfter(n,BACKOFF[n-1]);
+  ready(r);r.rt().refresh();r.workers.at(-1).emit(r.response());
+  const ok=r.rt().state;assert.equal(ok.recovery.outcome,'recovered');assert.equal(ok.recovery.attempts,n,'success keeps the spent attempts');
+  r.workers.at(-1).onerror({message:'crash after recovery'});
+ }
+ const s=r.rt().state;assert.equal(s.recovery.state,'exhausted','three attempts spent over the page lifetime, with successes between, exhaust the budget');
+ assert.equal(s.recovery.attempts,3);assert.equal(s.recovery.nextAt,null);
+ const n=r.workers.length;r.tick(4*3600*1000,60000);assert.equal(r.workers.length,n,'no fourth automatic attempt, however long the wait');
+});
+
+test('R33-02 after a recovery the next failure uses the NEXT backoff step, not the first',()=>{
+ const r=rig();r.workers[0].emit({kind:'boot-error',error:'Moon asset HTTP 503'});
+ r.tick(BACKOFF[0]);ready(r);r.rt().refresh();r.workers[1].emit(r.response());
+ const t=r.clock;r.workers[1].onerror({message:'crash'});
+ assert.equal(r.rt().state.recovery.nextAt,t+BACKOFF[1],'second failure of the page lifetime waits 2 min');
+});
+
+test('R33-02 exhaustion leaves the initial disc presented: surface, presence and the host are untouched',()=>{
+ const r=rig({initial:true});r.rt().request();assert.equal(r.rt().state.visibleSource,'initial-v5');
+ const fb=r.fallbacks;assert.ok(r.rt().surface(),'initial disc has a surface before the faults');
+ r.workers[0].emit({kind:'boot-error',error:'Moon asset HTTP 503'});
+ for(let i=0;i<3;i++){r.tick(BACKOFF[i]);r.workers.at(-1).emit({kind:'boot-error',error:'Moon asset HTTP 503'});}
+ assert.equal(r.rt().state.recovery.state,'exhausted');
+ assert.equal(r.workers.length,4);
+ assert.equal(r.fallbacks,fb,'exhaustion never calls the host fallback (never hides the disc)');
+ assert.ok(r.rt().surface(),'the initial disc still has a surface after exhaustion');
+ assert.equal(r.rt().presentable,true);assert.equal(r.rt().state.current,true);assert.equal(r.rt().state.legacyFallback,false);
+ assert.equal(r.rt().state.visibleSource,'initial-v5');
+});
+
 const CLASSES=[
  ['boot-error','boot',true,r=>r.workers[0].emit({kind:'boot-error',error:'Moon asset HTTP 404'})],
  ['worker crash (onerror)','crash',true,r=>r.workers[0].onerror({message:'crash'})],
