@@ -3992,6 +3992,8 @@ try{
  // otherwise identical result through the interval before the next host poll.
  const sameScope=(record,s)=>!!record&&!!s&&!s.paused&&!clockDiscontinuous(s)&&record.epoch===epoch&&record.scope===scope(s);
  const matches=(record,s)=>sameScope(record,s)&&phaseError(record,s)<=PHASE_POSITION_BUDGET;
+ // R0033 M4 presence predicate (named so the diagnostic observation reuses it; no second predicate).
+ const presentableAt=s=>!!s&&(matches(accepted,s)||(!!waitingPreview&&matches(waitingPreview.record,s)));
  function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;try{window.SalahMoonHost?.fallback();}catch(error){note(error);}detail.clear();}
  function revokeInitialHead(){initialHeadEligible=false;if(window.SalahFirstPaint?.moon)window.SalahFirstPaint.moon.result=null;}
  function clear(reason,initialDocument=false){
@@ -4247,7 +4249,14 @@ try{
   // (a matching accepted surface or a matching queued preview), computed from capture()
   // WITHOUT presentation(), adopt, syncTexture or publish. Native light eligibility
   // reads only this; diagnostics (R0036) may reuse it.
-  get presentable(){if(disposed)return false;const s=capture(!!(accepted||waitingPreview));return !!s&&(matches(accepted,s)||(!!waitingPreview&&matches(waitingPreview.record,s)));},
+  get presentable(){if(disposed)return false;return presentableAt(capture(!!(accepted||waitingPreview)));},
+  // R0036 I-D2: the side-effect-free diagnostic observation (qaState().moonTruth, the CP9 wrapper, smoke). It reuses
+  // the presence predicate above and never calls presentation(), adopt, syncTexture or publish, so a reader cannot
+  // advance a reveal. current = the accepted surface is presented now; wouldPresent = presentable (a matching queued
+  // preview would be adopted by the next production read). surface is the backing canvas only when current, unsynced.
+  // Geometry (and so layout) is read only when a candidate surface exists.
+  observe(){const s=disposed?null:capture(!!(accepted||waitingPreview)),current=!!s&&matches(accepted,s),wouldPresent=!disposed&&presentableAt(s);
+   return {accepted:!!accepted,waitingPreview:!!waitingPreview,current,wouldPresent,detailAvailable:wouldPresent&&!!detail.available,surface:current?canvas:null,state:snapshot(s,current)};},
   get presentationUp(){return profileMode==='reference'?1:Math.max(0,Math.min(1,capture()?.up??1));},
   get detailEnabled(){return presentation(capture())&&!!detail.available;},get disposed(){return disposed;},
   invalidate(reason='native invalidation',options){clear(reason,options?.initialDocument===true);},
@@ -4255,9 +4264,10 @@ try{
   setProfile(mode){if(!['calendar','reference'].includes(mode))throw new RangeError('Moon profile');if(mode===profileMode)return;profileMode=mode;clear('profile changed');poll();},
   setReferenceScene(value){referenceScene=value===null?null:admitReference(value);clear('reference view changed');poll();},
   retry(){if(disposed||worker||typeof MOON_WORKER_SOURCE!=='string'||retryCount>=3)return false;retryCount++;start();return true;},
-  get state(){const s=capture(),current=presentation(s),target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});},
+  get state(){const s=capture(),current=presentation(s);return snapshot(s,current);},
   dispose(){if(disposed)return;clear('disposed');disposed=true;recovery.state='idle';recovery.nextAt=null;clearInterval(timer);clearTimeout(deadline);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;document.removeEventListener('visibilitychange',visibility);closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status='disposed';}
  };
+ function snapshot(s,current){const target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});}
  registered=window.SalahMoonRuntime;
  timer=setInterval(()=>poll(),250);
  // Full asset/decode/row preparation must not compete with the synchronous
@@ -4305,6 +4315,10 @@ let lat=null, lon=null, tz="America/New_York", label="", method="2", school="0",
 let _cacheTz="America/New_York";   // tz FROZEN into the prayer-cache key at resolve time (the old const captured the boot-time tz; the live `tz` is later overwritten by the API's meta zone, but the cache key must stay stable across reloads)
 let CONFIG=null, _cfgMode="bare", _needsDetect=false, _hashCfg={}, _cfgFlags={local:false,preferLocal:false};
 let _autoDetectSource=null, _autoDetectStatus="idle", _geoPermission="unknown", _geoLastError=null, _storageErr=null;
+// R0036 acquisition records (diagnostic only; no product reader). _resetDetect: the latest Reset-driven coarse
+// detection {attempt,status,source,at}. _geoAttempt: the latest settled GPS attempt and the lookup owner it
+// belonged to; whether a newer location intent has replaced it is computed at read time, never written by a read.
+let _resetDetect=null, _geoAttempt=null, _acquisitionSerial=0;
 // ---- R002D live-zone authority (docs/state-contracts/R002D.md, ISM-PRAY-009) ----
 // `tz` = the adopted location zone (admitted prayer metadata: cache/network/current-day record) when one is
 // adopted, else the configured EFFECTIVE HINT. `_cacheTz` IS that effective hint (frozen at binding), so it
@@ -5181,8 +5195,23 @@ function loadWx(){
 }
 const _WX_BODY_WAIT=10000, _RADAR_BODY_WAIT=10000, _RADAR_IMAGE_WAIT=10000;
 const _wxRequests={weather:null,radar:null};                  // last small attempt result; never a freshness/coverage grant
+// R0036 machine OUT: `state` keeps R000D's transport meaning; `admission` (closed vocabulary, DESIGN.md) is the outcome
+// of the admission decision, written once per attempt after that decision. Transport stages carry "pending"; a transport
+// failure "transport-unavailable"; a cancelled/obsolete/expired attempt "superseded"; a host/path/tile rejection "rejected".
+function wxTransportAdmission(state,reason){
+  if(state==="rejected") return "rejected";
+  if(state==="unavailable") return /^(cancelled|obsolete or expired)/.test(reason||"")?"superseded":"transport-unavailable";
+  return "pending";
+}
 function wxAttemptState(op,a,state,reason=null){
-  if(requestEligible(op)) _wxRequests[op.kind]={generation:op.generation,operationId:op.operationId,attemptId:a.attemptId,state,reason};
+  const admission=wxTransportAdmission(state,reason);
+  if(requestEligible(op)) _wxRequests[op.kind]={generation:op.generation,operationId:op.operationId,attemptId:a.attemptId,state,reason,admission};
+  else if(admission==="superseded") wxAdmission(op,a,admission);   // an obsolete attempt may label only its own record
+}
+// Labels only the record this exact attempt wrote; never another attempt's or a newer operation's record.
+function wxAdmission(op,a,admission,adopted=null){
+  const r=a&&_wxRequests[op.kind];
+  if(r&&r.operationId===op.operationId&&r.attemptId===a.attemptId) _wxRequests[op.kind]={...r,admission,...(adopted?{adopted}:{})};
 }
 // Exactly one fetch+JSON settlement. Abort is cleanup; this promise also settles if the transport ignores it.
 // Keep the owning attempt until the caller's final candidate guard, including an absolute elapsed deadline.
@@ -5222,15 +5251,16 @@ async function fetchWeather(renewal=null){            // renewal: only renewWeat
   lastWxTry=now; _wxRetry.weather={startedAt:elapsed,clock:retryClockDomain()}; wxBusy=true;
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
   try{
-    const result=await wxFetchJson(op,a,u); if(!result.ok||!attemptEligible(op,a)) return;
+    const result=await wxFetchJson(op,a,u); if(!result.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
     const j=result.data;
-    if(!j||typeof j!=="object"||Array.isArray(j)||j.error===true) return;
+    if(!j||typeof j!=="object"||Array.isArray(j)){ wxAdmission(op,a,"malformed-body"); return; }
+    if(j.error===true){ wxAdmission(op,a,"provider-error"); return; }
     if(!wxResponseZoneMatches(j,captured.zone)){
-      wxAttemptState(op,a,"unavailable","response timezone unavailable or contradicts captured request"); return;
+      wxAttemptState(op,a,"unavailable","response timezone unavailable or contradicts captured request"); wxAdmission(op,a,"zone-rejected"); return;
     }
     const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
     const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
-    if(!attemptEligible(op,a)) return;                     // includes delayed-timer absolute expiry after normalization
+    if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }   // includes delayed-timer absolute expiry after normalization
     // Publication must wake the native consumer even at a frozen clock or
     // between the loader's completed paint and its first animation callback.
     if((current||track)&&elevation!=null){ siteElev=elevation; _siteElevAt={lat:captured.lat,lon:captured.lon}; _renderDirty=true; }
@@ -5239,15 +5269,18 @@ async function fetchWeather(renewal=null){            // renewal: only renewWeat
     const miss=!!(renewal&&current&&renewal.outcome===null&&wxNumber(current.currentValidAt)!=null&&current.currentIntervalSec>0&&
       current.currentValidAt<=renewal.step&&renewal.generation===op.generation&&attemptEligible(op,a));
     if(miss){ renewal.outcome="early-renewal-miss"; if(_wxRetry.weather&&_wxRetry.weather.startedAt===elapsed) _wxRetry.weather=priorSpacing; }
+    let adoptedCurrent=false;
     if(current&&!miss&&attemptEligible(op,a)&&(weatherEligibility(current,ctx.retrievedAt).eligible||!weatherEligibility(weather,ctx.retrievedAt).eligible)){
-      weather=current; _renderDirty=true;
+      weather=current; _renderDirty=true; adoptedCurrent=true;
       if(weatherEligibility(current,ctx.retrievedAt).eligible) lastWxAt=ctx.retrievedAt;
       try{ if(attemptEligible(op,a)){ localStorage.setItem(captured.cacheKey,JSON.stringify({w:current,ts:ctx.retrievedAt})); evictUnusableLocationCaches(); } }catch(e){}
     }
     if(track&&attemptEligible(op,a)){ weatherTrack=track; _renderDirty=true; }
     // CP9 elevation custody: notify only after this operation's eligible native weather adoption.
     if((current||track)&&elevation!=null&&attemptEligible(op,a)&&selectedWeather()) window.SalahNativeSkyHost?.acceptedElevation(elevation,op.generation,captured.lat,captured.lon);
-  }catch(e){}
+    const adoptedTrack=!!track&&attemptEligible(op,a);
+    wxAdmission(op,a,adoptedCurrent?"admitted":miss?"early-renewal-miss":current?"retained-current":adoptedTrack?"admitted-track":"no-admissible-record",{current:adoptedCurrent,track:adoptedTrack});
+  }catch(e){ wxAdmission(op,a,"admission-error"); }
   finally{ finishAttempt(op,a); if(finishRequest(op)) wxBusy=false; }
 }
 // RainViewer tiles retain mosaic provenance and UNIT-LESS pixel diagnostics only. Alpha/density is not rainfall,
@@ -5334,28 +5367,31 @@ async function acquireRadar(){                       // retained acquisition (te
   lastRadarAt=now; _wxRetry.radar={startedAt:elapsed,clock:retryClockDomain()}; radarBusy=true;
   try{
     const result=await wxFetchJson(op,a,"https://api.rainviewer.com/public/weather-maps.json");
-    if(!result.ok||!attemptEligible(op,a)) return;
+    if(!result.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
     const j=result.data, host=j&&j.host, past=j&&j.radar&&j.radar.past;
+    if(!Array.isArray(past)) wxAdmission(op,a,"malformed-manifest");
+    else if(!past.length) wxAdmission(op,a,"no-frame");
     if(Array.isArray(past)&&past.length){
       const fr=past[past.length-1];                           // mosaic generation time, not each contributing radar observation
-      if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null) return;
+      if(!fr||typeof fr.path!=="string"||wxNumber(fr.time,0)==null||wxNumber(j.generated,0)==null){ wxAdmission(op,a,"malformed-manifest"); return; }
       const frameGeneratedAt=fr.time*1000, indexGeneratedAt=j.generated*1000;
       // Finite seconds can overflow milliseconds or Date's epoch range. Reject before Image dispatch/install.
-      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())) return;
+      if(!Number.isFinite(new Date(frameGeneratedAt).getTime())||!Number.isFinite(new Date(indexGeneratedAt).getTime())){ wxAdmission(op,a,"malformed-manifest"); return; }
       const z=_RADAR_Z, idx=radarTileIndex(captured.lat,captured.lon,z);
       if(!idx){ wxAttemptState(op,a,"rejected","radar tile index outside Web Mercator"); return; }
       const admitted=radarTileBase(host,fr.path);          // R0032: no tile request to a non-admitted origin or path
       if(!admitted.base){ wxAttemptState(op,a,"rejected",admitted.reason); return; }
       const {fx,fy,xt,yt}=idx, url=admitted.base+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
-      if(!attemptEligible(op,a)) return;
+      if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
       finishAttempt(op,a); a=beginAttempt(op,_RADAR_IMAGE_WAIT); if(!a) return;
       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
-      if(!image.ok||!attemptEligible(op,a)) return;
+      if(!image.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
       const retrievedAt=Date.now();
       weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
         indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
+      wxAdmission(op,a,"admitted");
     }
-  }catch(e){ /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
+  }catch(e){ wxAdmission(op,a,"admission-error"); /* network/parse error → keep the prior frame (its TTL expires it); fail closed */ }
   finally{ finishAttempt(op,a); if(finishRequest(op)) radarBusy=false; }
 }
 // linear-interpolate the forecast track at an arbitrary epoch (numeric fields lerp; wind direction via
@@ -7372,7 +7408,16 @@ function updateSimClock(n){       // debug fast-forward read-out (only shown whe
 // QA frame-diff metrics (always exposed; &qa=1 resets boot weather timestamps): a state snapshot for measuring temporal LIFE — call window.qaState() at intervals
 // and diff. cloudHash is position-weighted so it detects SHAPE change (not just translation); a hash that repeats
 // over a long watch would reveal a loop (the FBM z=simTime is monotonic, so it shouldn't).
+// R0036 machine DIAG-READ (docs/state-contracts/R0036.md): a diagnostic read observes without acting. It performs no
+// storage write, no Moon adoption/publication, no cloud withdrawal, header paint or DOM write and no request. The weather
+// decision/target/information memos the read path may fill are restored on exit (I-D3: a read leaves them exactly as it
+// found them), so polling at any rate, including debugMotion's 1 Hz, yields the product trace of no polling.
 window.qaState=function(){
+  let memo=null; try{ memo=[_wxDecisionCache,_wxDowngrade,_wxTargetCache,_weatherInformationCache]; }catch(e){}
+  try{ return _qaStateRead(); }
+  finally{ if(memo){ _wxDecisionCache=memo[0]; _wxDowngrade=memo[1]; _wxTargetCache=memo[2]; _weatherInformationCache=memo[3]; } }
+};
+function _qaStateRead(){
   let cloudHash=0, cloudAlpha=0;
   try{ const cv=document.querySelector(".cloudcanvas"), x=cv.getContext("2d"), d=x.getImageData(0,0,cv.width,cv.height).data;
     for(let i=3;i<d.length;i+=4){ cloudAlpha+=d[i]; cloudHash=(cloudHash + d[i]*((((i>>2)*2654435761)>>>20)&2047))%2147483647; } }catch(e){}
@@ -7418,7 +7463,19 @@ window.qaState=function(){
         lastWeatherRefresh: lastWxAt?new Date(lastWxAt).toISOString():null, forecastTrackLoaded: !!weatherTrack,
         prayerDate: lastDate||null, prayerLoaded: !!today, tomorrowLoaded: !!tomorrow,
         prayerStale: _prayerStale, rolloverPendingMs: (_prayerStale ? Math.max(0, _rolloverNextTry-_RAFNOW()) : null),
-        simulated:(SIM.wx!=null||SIM.time!=null||SIM.moon!=null) }; })(),
+        // R0036 N2: every EFFECTIVE override (owner decision G1 = A: provenance stays here, in title/ARIA and in the
+        // diagnostics; no visible badge). A present parameter whose consumer ignores it is listed as inert, not simulated.
+        ...(()=>{ const on=[],inert=[],has=v=>v!=null;
+          const wxParts=[["temp","simTemp"],["feels","simFeels"],["wind","simWind"],["windDir","simWindDir"],["humid","simHumid"],["cloud","simCloud"],["precip","simPrecip"]];
+          if(has(SIM.wx)) on.push("simWx"); for(const [k,name] of wxParts) if(has(SIM[k])) (has(SIM.wx)?on:inert).push(name);
+          if(has(SIM.time)) on.push("simTime");
+          if(has(SIM.moon)) on.push("simMoon"); if(has(SIM.wax)) (has(SIM.moon)?on:inert).push("simWax");
+          if(has(SIM.moonAlt)) on.push("simMoonAlt"); if(has(SIM.moonH)) (has(SIM.moonAlt)?on:inert).push("simMoonH");
+          const optic=typeof DEBUGOPTIC!=="undefined"?DEBUGOPTIC:null;
+          if(has(optic)) (["halo","sundogs","pillar","anticrep","paraselene","lunarhalo"].includes(optic)?on:inert).push("debugOptic");
+          if(typeof _tsParam!=="undefined"&&has(_tsParam)) on.push("timeScale");
+          if(typeof _clockPreview!=="undefined"&&_clockPreview) on.push("clockControl");
+          return {simulated:on.length>0,overrides:on,inertOverrides:inert}; })() }; })(),
     // ── CONFIG diagnostics: how the WidgetConfig was resolved + persistence/permission state ──
     config:(()=>{
       const hashHadCoords = _hashCfg && _hashCfg.lat!=null && _hashCfg.lon!=null;
@@ -7427,8 +7484,21 @@ window.qaState=function(){
         configSource: (CONFIG&&CONFIG.source)||null,
         configMode: _cfgMode,                                     // hardcoded | local | preferLocal | bare
         autoDetectSource: _autoDetectSource, autoDetectStatus: _autoDetectStatus,
-        storageAvailable: (window.SalahConfig?SalahConfig.storageAvailable().ok:false), storageError: _storageErr,
+        // R0036 G2 = (a): storageAvailable keeps its key with NON-WRITING semantics (a read-only access check); the
+        // last real write/clear outcome (R0011) is reported beside it. SalahConfig.storageAvailable() (a write probe)
+        // stays an explicit API for its callers and is never called by a diagnostic read.
+        ...(()=>{ let readable=false,reason=null;
+          try{ const ls=window.localStorage; if(ls&&typeof ls.getItem==="function"){ ls.getItem("__sw_probe__"); readable=true; } else reason="localStorage unavailable"; }
+          catch(e){ reason=String(e&&e.name||e); }
+          const last=typeof _persistOutcome!=="undefined"&&_persistOutcome?{operation:_persistOutcome.operation,status:_persistOutcome.status,error:_persistOutcome.error}:null;
+          return {storageAvailable:readable,storage:{readable,reason,basis:"read-only access check (getItem); no write probe",lastWrite:last,
+            lastWriteState:last?"attempted":"not-attempted-in-this-document"}}; })(),
+        storageError: _storageErr,
+        // R0036 (e): boot detection ends ok | failed | superseded; Reset detection and the GPS attempt keep their own records.
+        resetDetect: typeof _resetDetect!=="undefined"&&_resetDetect?{..._resetDetect}:null,
         geolocationPermissionState: _geoPermission, geolocationLastError: _geoLastError,
+        ...(()=>{ const g=typeof geolocationAttemptView==="function"?geolocationAttemptView():null;
+          return {geolocationAttempt:g,geolocationLastErrorCurrent:_geoLastError!=null&&!!g&&g.outcome==="error"&&!g.superseded}; })(),
         lat: lat, lon: lon, tz: tz, label: label, method:method, units:units,
         locationEvidence: CONFIG&&CONFIG.locationEvidence||null,
         fixAgeMs: CONFIG&&CONFIG.locationEvidence&&CONFIG.locationEvidence.acquiredAt!=null&&CONFIG.locationEvidence.acquiredAt<=Date.now() ? Date.now()-CONFIG.locationEvidence.acquiredAt : null,
@@ -7451,12 +7521,14 @@ window.qaState=function(){
     // Visible owner, not legacy decode status. Current terrain preview and final
     // accepted physical and below-horizon calendar presentations remain distinct.
     moonTruth:(()=>{ const mp=moonNow(), alt=(A.moonAltitude!=null?A.moonAltitude:moonSky.alt), up=alt>-0.5;
-      const runtime=window.SalahMoonRuntime,refined=!!runtime?.surface(),lunarState=runtime?.state;
+      // R0036 I-D2: the non-adopting observation (R0033's presence predicate); never surface()/state/detailEnabled.
+      const runtime=window.SalahMoonRuntime,observation=typeof runtime?.observe==="function"?runtime.observe():null,refined=!!observation?.surface,lunarState=observation?.state;
       const initial=lunarState?.visibleSource==="initial-v5";
       const surfaceStatus=refined?(initial?"v5-initial":"v5-terrain"):lunarState?.status??"pending";
       const surfaceVisible=$(".c").classList.contains("moon-ready"),grp=+(A.moonGrp||0),disc=+(A.moonDisc||0);
       const phys=refined && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
+        observation:observation?{accepted:observation.accepted,waitingPreview:observation.waitingPreview,current:observation.current,wouldPresent:observation.wouldPresent,detailAvailable:observation.detailAvailable}:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
         surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?(initial?"V5-derived receivers and canonical terrain horizons; full refinement pending":"V5 DEM intersections, terrain shadows and colour"):"unavailable"},
@@ -7467,7 +7539,7 @@ window.qaState=function(){
         reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
-};
+}
 
 // debugMotion telemetry (extracted from boot for readability; &debugMotion=1 only). Pure helpers + the overlay
 // renderer; the loop's rate counters stay in boot and are passed in, so the boot lifecycle / rAF scheduling /
@@ -7658,7 +7730,7 @@ async function boot(){
       // local / preferLocal with no saved config → coarse, PERMISSION-FREE area auto-detect.
       _autoDetectStatus="pending";
       let det=null; try{ det=await SalahConfig.coarseDetect(); }catch(e){ det={ok:false}; }
-      if(generation!==_runtimeGeneration) return;
+      if(generation!==_runtimeGeneration){ if(_autoDetectStatus==="pending") _autoDetectStatus="superseded"; return; }   // R0036: a newer generation abandoned this detection
       if(det && det.ok){
         bindConfig(SalahConfig.applyHashPrefs(det.cfg,_hashCfg));
         _autoDetectStatus="ok"; _autoDetectSource=det.provider||det.source||"coarse-ip";
@@ -8043,11 +8115,12 @@ function _applySettings(cfg,save){
   applyConfig(cfg,{save}).then(()=>_settleSettingsApply(null,id),e=>_settleSettingsApply(e,id));
 }
 async function _usePrecise(){    // the map-pin button → precise GPS (only place getCurrentPosition is called)
-  _invalidateSetLocation(); const owner=_captureSetLookup();
+  _invalidateSetLocation(); const owner=_captureSetLookup(), attempt=++_acquisitionSerial;
   if(!window.SalahConfig){ _setStatus("Browser location unavailable.",true); return; }
   _setStatus("Requesting browser location…");
   let r; try{ r=await SalahConfig.geolocate({}); }catch(e){ r={ok:false,error:"unavailable"}; }
-  if(!_ownsSetLookup(owner)) return;
+  if(!_ownsSetLookup(owner)){ if(!_geoAttempt||_geoAttempt.attempt<attempt) _geoAttempt={attempt,owner,outcome:"superseded",error:null,at:Date.now()}; return; }
+  _geoAttempt={attempt,owner,outcome:r.ok?"ok":"error",error:r.ok?null:(r.error||"denied"),at:Date.now()};   // R0036 diagnostic record
   if(r.ok){ _byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5); _geoLastError=null;
     _setLocationEvidence=r.locationEvidence||SalahConfig.normalize({source:"browser-geolocation"}).locationEvidence; _setLocationOrigin="browser-geolocation"; _setLocationSaved=false;
     _setPin("precise"); _setDirty=true;
@@ -8062,6 +8135,12 @@ async function _usePrecise(){    // the map-pin button → precise GPS (only pla
   _geoPermission="unknown";
   let diagnostic=null; try{ diagnostic=SalahConfig.permissionState(); }catch(e){}
   Promise.resolve(diagnostic).then(state=>{ if(_ownsSetLookup(owner)) _geoPermission=typeof state==="string"?state:"unknown"; },()=>{});
+}
+// R0036: pure diagnostic view of the latest GPS attempt (qaState). superseded = a newer location intent (an edit, a
+// search, a Reset, another pin press, closing or reopening the panel) has replaced that attempt's lookup owner.
+function geolocationAttemptView(){
+  const g=_geoAttempt; if(!g) return null;
+  return {attempt:g.attempt,outcome:g.outcome,error:g.error,at:g.at,superseded:g.outcome==="superseded"||!_ownsSetLookup(g.owner)};
 }
 async function _resetLocal(){
   _invalidateSetLocation(); const prefOwner={..._setPrefVersions};
@@ -8082,8 +8161,11 @@ async function _resetLocal(){
   // so only a needed detection asks the IP; local mode always needs detection once storage is empty.
   const policy=window.SalahConfig?SalahConfig.resolve(location.hash):null;
   let d=null;
-  if(policy&&policy.mode==="preferLocal"&&policy.cfg&&!policy.needsDetect){ d={ok:true,cfg:policy.cfg,site:true}; _setStatus(""); }
+  const detect=_resetDetect={attempt:++_acquisitionSerial,status:"pending",source:null,at:null};   // R0036: Reset's own detection record
+  if(policy&&policy.mode==="preferLocal"&&policy.cfg&&!policy.needsDetect){ d={ok:true,cfg:policy.cfg,site:true}; _setStatus(""); Object.assign(detect,{status:"not-needed",source:"configured-site",at:Date.now()}); }
   else { _setStatus("Detecting your area…"); try{ if(window.SalahConfig) d=await SalahConfig.coarseDetect(); }catch(e){} }
+  if(detect.status==="pending") Object.assign(detect,_setReset!==reset?{status:"superseded",at:Date.now()}:
+    {status:d&&d.ok?"ok":"failed",source:d&&d.ok?(d.provider||d.source||"coarse-ip"):null,at:Date.now()});
   if(_setReset!==reset) return;
   if(d&&d.ok){
     // A later panel session keeps the location it opened with; the target lands when that session closes.
@@ -8220,7 +8302,8 @@ if(typeof window.qaState==='function'){
   const original=nativeQA.apply(this,args);let realSky;
   try{const s=window.realSkyState?.();realSky=s?{checkpoint:s.checkpoint,status:s.status,renders:s.renders,frameUtcMs:s.last?.utcMs??null,catalogue:s.last?.catalogue??null,generation:s.last?.native?.generation??null,assumptions:s.last?.native?.assumptions??null,composition:s.last?.composition??null,errors:s.errors??[]}:{checkpoint:'9',status:'loading',frameUtcMs:null};}
   catch(e){realSky={checkpoint:'9',status:'unavailable',frameUtcMs:null,error:String(e?.message??e)};}
-  const m=window.SalahMoonRuntime?.state;
+  // R0036 I-D2: the non-adopting observation; the adopting production `state` getter is never read here.
+  const m=window.SalahMoonRuntime?.observe?.()?.state??null;
   const moonRenderer=m?{backend:m.backend,status:m.status,quality:m.quality,legacyFallback:m.legacyFallback,currentNativeFraction:m.currentNativeFraction,renderedFraction:m.accepted?.scene?.fraction??null,calendarProxyWeight:m.calendarProxyWeight,profile:m.accepted?.profile??null,errors:m.errors}:null;
   return {...original,realSky,moonRenderer,legacySyntheticStarTelemetry:{active:false,replacement:'realSky; raster diagnostics, not old synthetic DOM arrays'}};
  };

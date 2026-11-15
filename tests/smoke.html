@@ -147,8 +147,9 @@ async function calendarScene(hash,name,fn,extraReady){
         owner && owner.run===smokeRun && owner.attempt===attempt && owner.documentId===f.documentId && owner.hash===want && owner.sourceSha256===f.sourceSha256;
       if(!sameOwner || (doc && (ww.document!==doc || f.documentId!==id)))return false;
       if(!doc){doc=ww.document;id=f.documentId;}
-       const q=ww.qaState(),api=ww.SalahMoonRuntime,runtime=api?.state,surface=q?.moonTruth?.surface,card=doc.querySelector(".c"),r=fr.getBoundingClientRect();
-       const native=ww.SalahMoonHost?.capture?.(),backing=api?.surface?.(),photo=doc.querySelector(".mphoto"),cv=doc.querySelector(".moon-detail-canvas"),detail=ww.SalahMoonDetail?.state;
+       // R0036: the instrument observes without adopting (observe() never calls the adopting state/surface()).
+       const q=ww.qaState(),api=ww.SalahMoonRuntime,observed=api?.observe?.(),runtime=observed?.state,surface=q?.moonTruth?.surface,card=doc.querySelector(".c"),r=fr.getBoundingClientRect();
+       const native=ww.SalahMoonHost?.capture?.(),backing=observed?.surface??null,photo=doc.querySelector(".mphoto"),cv=doc.querySelector(".moon-detail-canvas"),detail=ww.SalahMoonDetail?.state;
        const href=photo?.getAttribute("href")||"",contentPublished=!!backing && href.length>50 && href===backing.toDataURL();
        let visibleOwner=false,opaqueVisiblePixels=0,nonopaqueVisiblePixels=0;
        if(cv?.isConnected && ww.SalahMoonDetail?.available && detail?.visible===true && detail.renders>0 &&
@@ -165,7 +166,7 @@ async function calendarScene(hash,name,fn,extraReady){
            }
          }
        }
-       const nativeAfter=ww.SalahMoonHost?.capture?.(),after=api?.state;
+       const nativeAfter=ww.SalahMoonHost?.capture?.(),after=api?.observe?.()?.state;
       s={sameOwner:true,run:f.run,attempt:f.attempt,documentId:f.documentId,hash:f.hash,sourceSha256:f.sourceSha256,
         elapsedMs:performance.now()-started,prayerReady:prayerReady(ww),parentVisible:document.visibilityState==="visible",childVisible:doc.visibilityState==="visible",
         frameInView:r.right>0 && r.bottom>0 && r.left<innerWidth && r.top<innerHeight,frameWidth:r.width,frameHeight:r.height,

@@ -64,7 +64,8 @@ if(typeof window.qaState==='function'){
   const original=nativeQA.apply(this,args);let realSky;
   try{const s=window.realSkyState?.();realSky=s?{checkpoint:s.checkpoint,status:s.status,renders:s.renders,frameUtcMs:s.last?.utcMs??null,catalogue:s.last?.catalogue??null,generation:s.last?.native?.generation??null,assumptions:s.last?.native?.assumptions??null,composition:s.last?.composition??null,errors:s.errors??[]}:{checkpoint:'9',status:'loading',frameUtcMs:null};}
   catch(e){realSky={checkpoint:'9',status:'unavailable',frameUtcMs:null,error:String(e?.message??e)};}
-  const m=window.SalahMoonRuntime?.state;
+  // R0036 I-D2: the non-adopting observation; the adopting production `state` getter is never read here.
+  const m=window.SalahMoonRuntime?.observe?.()?.state??null;
   const moonRenderer=m?{backend:m.backend,status:m.status,quality:m.quality,legacyFallback:m.legacyFallback,currentNativeFraction:m.currentNativeFraction,renderedFraction:m.accepted?.scene?.fraction??null,calendarProxyWeight:m.calendarProxyWeight,profile:m.accepted?.profile??null,errors:m.errors}:null;
   return {...original,realSky,moonRenderer,legacySyntheticStarTelemetry:{active:false,replacement:'realSky; raster diagnostics, not old synthetic DOM arrays'}};
  };
