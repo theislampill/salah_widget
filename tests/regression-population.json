@@ -48,6 +48,8 @@
   "tests/r0030-reset-authority-mutations.test.cjs",
   "tests/r0030-reset-authority.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
+  "tests/r003a-cloud-wind-truth.test.cjs",
+  "tests/r003a-docs-truth.test.cjs",
   "tests/render-liveness-containment.test.cjs",
   "tests/timezone-authority-state.test.cjs",
   "tests/v1_limitations.test.cjs",
@@ -1846,6 +1848,34 @@
      "<candidate index.html>"
     ],
     "protocol": "JSON on stdout {scenes, failures, rows[identical, candidateFaults]}; exit 1 on any difference (R2C-10)"
+   }
+  },
+  {
+   "path": "tools/qa/r003a_pixel_control.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, one served tree with only /index.html swapped, fixture prayer record, in-page weather fixture, every other non-loopback request aborted, forced zone, mocked clock, reduced motion); same-tree pixel control, not a headless unit instrument",
+   "owner": "R003A",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r003a_pixel_control.cjs",
+     "--root",
+     "<tree>",
+     "--index-a",
+     "<baseline index.html>",
+     "--index-b",
+     "<candidate index.html>",
+     "--out",
+     "<fresh dir>",
+     "--engine",
+     "chromium|firefox|webkit",
+     "--mode",
+     "pixel|fault|motion|moonprobe",
+     "--dpr",
+     "1|2",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "pixel: one JSON line per scene {noise A vs A2, change A2 vs B, pass, optics}; fault: .godray opacity and --ray at 0/2.5/5 s per tree with and without the injected withdrawal fault; motion: cloud-canvas centroid deltas at 10/60 s for A, B, A2, OS-reduced and motion=full; <out>/<mode>-<engine>[-dpr<n>].json (docs/state-contracts/R003A.md R3A-01.8, R3A-02.5, R3A-07.4)"
    }
   },
   {
