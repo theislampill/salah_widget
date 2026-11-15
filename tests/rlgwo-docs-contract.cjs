@@ -286,14 +286,16 @@ function mentions(name, tokens) {
       // R002F changes only the weather gate/renewal/preview-range region and one loop line, not the pinned block, helper, clamp or call.
       // R0030 re-bind (issue 97, merged with main 9d903d6b): body d21282d7... -> 78eb2f3a..., entry 226266a2... -> 7c2175b2...;
       // R0030 changes only the settings block, not the pinned block, helper, clamp or call.
-      // R0033 re-bind (issue 100, merged with main ab4a8751): body 78eb2f3a... -> 9a2fff4e..., entry 7c2175b2... -> 313bdddf...; R0033 changes the
+      // R003A re-bind after merging main 2722590f (issue 124): body 78eb2f3a... -> 23f30c5d..., entry 7c2175b2... -> cccd79a0...;
+      // R003A changes only the no-timetable solar-optic withdrawal and two comments, not the pinned block, helper, clamp or call.
+      // R0033 re-bind (issue 100, merged with main ebb2704e): body 23f30c5d... -> c6e66093..., entry cccd79a0... -> 97a723a5...; R0033 changes the
       // lunar wrapper (presence predicate), the Moon host hooks, the sky commit and reveal guards, the no-timetable
       // lunar repaint and one legacy-loader comment,
       // not the pinned force block, helper, clamp or atmosphere call.
-      assert.equal(digest(body),"9a2fff4eb2ca68039e90a2cba4f976375b1c91d828085108a9f3eb0abbfebf0a",'delegated native script changed');
+      assert.equal(digest(body),"c6e6609309236e6201c95e6e01766ae90491b9f4565beb0d9dd3a53ebaab5d48",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"313bdddf6bdf141a783b5bbfc82c44c32f4b2f1512c71a44691b5130ccd2bc9a",'delegated current generated entry changed');
+      assert.equal(digest(source),"97a723a5b38dd3c8a462107cc0474436f9acd7129b116401ed68923097f72714",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
