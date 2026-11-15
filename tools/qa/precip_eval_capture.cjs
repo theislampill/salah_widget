@@ -2,7 +2,7 @@
 // Precipitation-presentation evaluation (research only, 2026-11-15): controlled native clips of the widget's rain.
 //   node tools/qa/precip_eval_capture.cjs --pw <playwright package dir> --root <generated tree> --out <bulk dir>
 //        [--engine chromium|firefox|webkit] [--only <regex on cell id>] [--variant base|L1|L2|L2c|L3|L4|L5|combo|comboc]
-//        [--mode stepped|realtime] [--secs 10] [--fps 15] [--headed 1] [--list 1]
+//        [--mode stepped|realtime] [--secs 10] [--fps 15] [--headed 1] [--reduced 1 (OS reduced motion, no motion=full)] [--list 1]
 // stepped : mocked PAUSED clock advanced 1/fps per frame with clock.runFor; every CSS animation (drops, flash, stars,
 //           fog) is paused and its currentTime advanced by the same step, so frames are exact and repeatable. Per frame
 //           two lossless screenshots: the card, and the card with the streak layer hidden (the difference isolates the
@@ -14,7 +14,7 @@
 // --variant other than base injects tools/qa/precip_eval_levers.js (evaluation overlay; never product code).
 const L=require('./precip_eval_lib.cjs');const fs=L.fs,path=L.path;
 const a={};const v=process.argv.slice(2);for(let i=0;i<v.length;i+=2)a[v[i].slice(2)]=v[i+1];
-const engine=a.engine||'chromium',mode=a.mode||'stepped',variant=a.variant||'base',secs=+(a.secs||10),fps=+(a.fps||15);
+const engine=a.engine||'chromium',mode=(a.mode||'stepped'),RM=a.reduced==='1'?'-reduced':'',variant=a.variant||'base',secs=+(a.secs||10),fps=+(a.fps||15);
 const VARIANTS={base:null,L1:{levers:['L1']},L2:{levers:['L2'],sign:'map'},L2c:{levers:['L2'],sign:'cloud'},L3:{levers:['L3']},L4:{levers:['L4']},L5:{levers:['L5']},
   ctrl:{levers:[]},combo:{levers:['L1','L2','L3','L4','L5'],sign:'map'},comboc:{levers:['L1','L2','L3','L4','L5'],sign:'cloud'}};
 // ---- fixture conditions (Open-Meteo current record; wind m/s; temperature degF; precip = 15-min current amount, mm) ----
@@ -60,9 +60,9 @@ const STEP_ANIM=`(dt)=>{window.__peA=window.__peA||new WeakMap();for(const an of
   const ordinary=JSON.parse(fs.readFileSync(L.ordinaryPath,'utf8'));const levers=fs.readFileSync(path.join(__dirname,'precip_eval_levers.js'),'utf8');
   const {srv,base}=await L.serve(root);const opts={headless:a.headed!=='1'};if(engine==='chromium')opts.args=['--ignore-gpu-blocklist'];
   const browser=await pw[engine].launch(opts);let bad=0;
-  try{for(const c of list){const t0=Date.now(),site=L.SITES.madinah,id=`${c.id}--${variant}--${mode}`,dir=path.join(out,engine,id);
+  try{for(const c of list){const t0=Date.now(),site=L.SITES.madinah,id=`${c.id}--${variant}--${mode}${RM}`,dir=path.join(out,engine,id);
     fs.mkdirSync(dir,{recursive:true});for(const f of fs.readdirSync(dir))fs.unlinkSync(path.join(dir,f));
-    const s=await L.openScene(browser,base,ordinary,{site,utcMs:c.utcMs,wx:c.sim?null:c.wx,hash:(c.sim||'')+'&motion=full',clock:'running',video:mode==='realtime'?dir:null});
+    const s=await L.openScene(browser,base,ordinary,{site,utcMs:c.utcMs,wx:c.sim?null:c.wx,hash:(c.sim||'')+(a.reduced==='1'?'':'&motion=full'),reduced:a.reduced==='1',clock:'running',video:mode==='realtime'?dir:null});
     const meta={id,cell:c,engine,mode,variant,secs,fps,url:s.url,mockedStartUtc:new Date(c.utcMs).toISOString(),headed:a.headed==='1'};
     try{
       meta.ready=await L.waitReady(s.page,{maxMs:16000});
@@ -85,7 +85,7 @@ const STEP_ANIM=`(dt)=>{window.__peA=window.__peA||new WeakMap();for(const an of
           meta.frames.push({k,t:k*dt,geom:await s.page.evaluate(GEOM)});}
       }
       // perf probe (real time, own clock-independent counter): overlay frame cost
-      if(V&&mode==='realtime')meta.perf=await s.page.evaluate(()=>{const r=[];for(let i=0;i<60;i++){const t=performance.now();window.__peFrame(i*16);r.push(performance.now()-t);}r.sort((x,y)=>x-y);return {medianMs:r[30],p95Ms:r[57]};});
+      if(V&&mode==='realtime')meta.perf=await s.page.evaluate(()=>{const t=performance.now();for(let i=0;i<300;i++)window.__peFrame(i*16+0.5);const tot=performance.now()-t;return {meanMsPerFrame:tot/300,frames:300,note:'mocked clock running at wall rate; 1 ms granularity averaged over 300 frames'};});
     }catch(e){meta.error=String(e&&e.message||e).slice(0,300);}
     meta.providerLog=s.log.requests;meta.aborted=[...new Set(s.log.aborted)];meta.continuedExternal=s.log.continuedExternal;meta.errors=s.log.errors||[];
     const vid=s.page.video();await s.ctx.close();

@@ -89,7 +89,7 @@ const CORS={'access-control-allow-origin':'*'};
 // Opens a fresh context+page with all providers stubbed. opts:{engine browser, site, date, localTime|utcMs, wx:{...}|null, wxFn, hash(extra fragment), clock:'running'|'paused', reduced:bool}
 function siteFor(u,dflt){const m=/latitude=(-?[\d.]+)/.exec(u);if(!m)return dflt;for(const k in SITES)if(Math.abs(SITES[k].lat-parseFloat(m[1]))<0.01)return SITES[k];return dflt;}
 async function openScene(browser,base,ordinary,o){
-  const site=o.site,ctx=await browser.newContext({serviceWorkers:'block',viewport:{width:325,height:530},deviceScaleFactor:1,timezoneId:site.tz,locale:'en-US',reducedMotion:o.reduced?'reduce':'no-preference'});
+  const site=o.site,ctx=await browser.newContext({...(o.video?{recordVideo:{dir:o.video,size:{width:325,height:530}}}:{}),serviceWorkers:'block',viewport:{width:325,height:530},deviceScaleFactor:1,timezoneId:site.tz,locale:'en-US',reducedMotion:o.reduced?'reduce':'no-preference'});
   const log={aborted:[],requests:[],continuedExternal:[]};let page=null;
   await ctx.route('**/*',async r=>{const u=r.request().url();log.all=(log.all||0)+1;if(u.startsWith('data:')||u.startsWith('blob:'))return r.continue();
     if(u.startsWith(base)){const h=new URL(u).hostname;if(h!=='127.0.0.1'&&h!=='localhost'&&h!=='[::1]'){log.continuedExternal.push(u);return r.abort();}return r.continue();}   // loopback only

@@ -27,6 +27,10 @@
   const firstDrop=fx.querySelector('.drop')||fx.querySelector('.bolt');
   fx.insertBefore(veil,firstDrop);fx.insertBefore(cv,firstDrop);
   const g=cv.getContext('2d');
+  // curtains live on their own canvas (atmosphere, like the veil) so the measured streak layer is streaks only
+  const cv2=document.createElement('canvas');cv2.className='pe-curtain';cv2.width=325;cv2.height=530;
+  cv2.style.cssText='position:absolute;inset:0;width:100%;height:100%;pointer-events:none;filter:blur(5px)';fx.insertBefore(cv2,cv);
+  const g2=cv2.getContext('2d');
   // ---- deterministic hashing / value noise ----
   const h1=(a,b)=>{let n=Math.imul(a|0,374761393)+Math.imul(b|0,668265263)+1013904223;n=Math.imul(n^(n>>>13),1274126177);return ((n^(n>>>16))>>>0)/4294967295;};
   const vn=(x,s)=>{const i=Math.floor(x),f=x-i,u=f*f*(3-2*f);return h1(i,s)+(h1(i+1,s)-h1(i,s))*u;};
@@ -77,7 +81,7 @@
     const k=Math.min(I.col.length-1,Math.max(0,Math.floor(x/325*I.col.length)));return I.col[k]/mx; }
   let lastT=0;
   function frame(t){
-    lastT=t;const I=read(t);g.clearRect(0,0,325,530);
+    lastT=t;const I=read(t);g.clearRect(0,0,325,530);g2.clearRect(0,0,325,530);
     const rec={t,drops:[],veil:0,perm:I.perm};
     if(!I.perm||I.snow){veil.style.opacity='0';window.__PE_LAST=rec;return rec;}
     const P=params(I),ts=t/1000;
@@ -100,9 +104,9 @@
       // curtains: soft vertical shafts below the deck, weighted by column density and the advecting field
       const tc=I.tint.map(v=>Math.round(v*0.7));
       for(let x=0;x<325;x+=13){const d=colAt(I,x+6)*(on('L3')?0.35+0.65*field(x+6):1);if(d<0.25)continue;
-        const lean=k*70,grd=g.createLinearGradient(0,Y0+8,0,Y0+150);
+        const lean=k*70,grd=g2.createLinearGradient(0,Y0+8,0,Y0+150);
         grd.addColorStop(0,`rgba(${tc},0)`);grd.addColorStop(0.25,`rgba(${tc},${(0.16*ext*d).toFixed(3)})`);grd.addColorStop(1,`rgba(${tc},0)`);
-        g.fillStyle=grd;g.beginPath();g.moveTo(x,Y0+8);g.lineTo(x+15,Y0+8);g.lineTo(x+15+lean,Y0+150);g.lineTo(x+lean,Y0+150);g.closePath();g.fill();}
+        g2.fillStyle=grd;g2.beginPath();g2.moveTo(x,Y0+8);g2.lineTo(x+13,Y0+8);g2.lineTo(x+13+lean,Y0+150);g2.lineTo(x+lean,Y0+150);g2.closePath();g2.fill();}
     } else veil.style.opacity='0';
     // streaks: drops are seen by refracted background + forward scatter; against a bright sky they read as
     // darker neutral streaks, against a dark sky as lit streaks (L1 only; off = the current pale blue)
