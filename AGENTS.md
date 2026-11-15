@@ -73,7 +73,11 @@ Owner design standard, 2026-11-15. It adds to every work order's own acceptance 
 - **Relationships that must hold together:** time-of-day colour progression, solar elevation, scattering, haze,
   cloud coverage and illumination, precipitation, wind, visibility, twilight, moonlight and colour balance. Each
   weather condition has a distinct but physically credible atmospheric identity — never an icon or a uniform
-  overlay.
+  overlay. Expressive without being arbitrary; physically informed without being sterile: physical models set
+  the admissible relationships, composition, colour and motion make them convincing.
+- **Aspiration.** Exceed the perceptual quality and environmental coherence of well-art-directed legacy real-time
+  sky systems through better physical grounding, temporal behaviour, integration and information accuracy — not
+  by adding more effects.
 - **Software transitions are not weather events.** An abrupt software-state transition must not be presented as an
   abrupt environmental event. Evidence authority and factual claims (temperature, condition, precipitation
   statements) change at the instant authority changes; cloud motion, illumination and presentation keep temporal
