@@ -680,10 +680,6 @@ let lat=null, lon=null, tz="America/New_York", label="", method="2", school="0",
 let _cacheTz="America/New_York";   // tz FROZEN into the prayer-cache key at resolve time (the old const captured the boot-time tz; the live `tz` is later overwritten by the API's meta zone, but the cache key must stay stable across reloads)
 let CONFIG=null, _cfgMode="bare", _needsDetect=false, _hashCfg={}, _cfgFlags={local:false,preferLocal:false};
 let _autoDetectSource=null, _autoDetectStatus="idle", _geoPermission="unknown", _geoLastError=null, _storageErr=null;
-// R0036 acquisition records (diagnostic only; no product reader). _resetDetect: the latest Reset-driven coarse
-// detection {attempt,status,source,at}. _geoAttempt: the latest settled GPS attempt and the lookup owner it
-// belonged to; whether a newer location intent has replaced it is computed at read time, never written by a read.
-let _resetDetect=null, _geoAttempt=null, _acquisitionSerial=0;
 // ---- R002D live-zone authority (docs/state-contracts/R002D.md, ISM-PRAY-009) ----
 // `tz` = the adopted location zone (admitted prayer metadata: cache/network/current-day record) when one is
 // adopted, else the configured EFFECTIVE HINT. `_cacheTz` IS that effective hint (frozen at binding), so it
@@ -4317,6 +4313,10 @@ let _setWired=false, _setLastFocus=null, _setSearchSeq=0, _setCands=[], _setCand
 let _setSession=0, _setEdit=0, _setOpen=false, _setCandOwner=null, _setFocusTimer=0;
 let _setPrefSeq=0, _setPrefVersions={};
 let _persistOutcome=null, _setHint={msg:"",isErr:false};
+// R0036 acquisition records (diagnostic only; no product reader). _resetDetect: the latest Reset-driven coarse
+// detection {attempt,status,source,at}. _geoAttempt: the latest settled GPS attempt and the lookup owner it
+// belonged to; whether a newer location intent has replaced it is computed at read time, never written by a read.
+let _resetDetect=null, _geoAttempt=null, _acquisitionSerial=0;
 let _setLocationEvidence=null, _setLocationOrigin="manual", _setLocationSaved=false;
 // R0030 (docs/state-contracts/R0030.md). After a successful clear, Reset owns the LOCATION until a newer
 // explicit location intent (coordinates, a place search, the GPS pin, another Reset); closing/reopening
