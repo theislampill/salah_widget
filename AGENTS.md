@@ -63,6 +63,68 @@ census always covers the whole tree, and any `setupErrors` (unregistered or miss
 - **Physics gates the art.** Optical phenomena must be condition-gated (ice vs droplet, low-sun + broken cloud,
   humidity, etc.), never random or always-on.
 
+## Atmospheric coherence and perceptual fidelity (owner design standard)
+
+Owner design standard, 2026-11-15. It adds to every work order's own acceptance rows; it does not replace them.
+It is an affirmative design, research and improvement objective, not only a stricter review threshold.
+
+- **First-class goal.** Atmospheric art direction and perceptual fidelity are first-class engineering goals.
+  Physical credibility and evidence truthfulness stay non-negotiable; temporal continuity
+  and visual composition are part of correctness at the presentation boundary.
+- **Target.** Physically grounded atmospheric art direction, perceptual fidelity and temporal coherence in a
+  glanceable ambient interface. The sky and weather read as ONE coherent, continuously evolving environment, not a
+  collection of independently calculated or animated effects.
+- **Relationships that must hold together:** time-of-day colour progression, solar elevation, scattering, haze,
+  cloud coverage and illumination, precipitation, wind, visibility, twilight, moonlight and colour balance. Each
+  weather condition has a distinct but physically credible atmospheric identity — never an icon or a uniform
+  overlay. Expressive without being arbitrary; physically informed without being sterile: physical models set
+  the admissible relationships, composition, colour and motion make them convincing.
+- **Aspiration.** Exceed the perceptual quality and environmental coherence of well-art-directed legacy real-time
+  sky systems through better physical grounding, temporal behaviour, integration and information accuracy — not
+  by adding more effects.
+- **Software transitions are not weather events.** An abrupt software-state transition must not be presented as an
+  abrupt environmental event. Evidence authority and factual claims (temperature, condition, precipitation
+  statements) change at the instant authority changes; cloud motion, illumination and presentation keep temporal
+  continuity.
+- **Two evaluation criteria, neither substituting for the other, and their composition.** *Physical fidelity:*
+  defensible inputs and
+  relationships, weather provenance, illumination, atmospheric behaviour, stated limitations. *Experiential
+  fidelity:* coherent tonal composition, convincing environmental mood, legible weather differentiation, spatial
+  and temporal continuity, absence of rendering artifacts, restrained motion, readable prayer information. The
+  final judgment is on how they compose: subsystems that each pass can still interact into an implausible or
+  artificial scene. No numerical aesthetic score replaces that judgment.
+- **Judge the whole experience** across representative times of day and weather conditions, INCLUDING
+  TRANSITIONS, from clips or frame sequences — not isolated effects or stills alone. A technically safe or
+  pixel-neutral result is not thereby the best result, and a jarring but defensible behaviour is not to be
+  recommended as a permanent residual when a proportionate correction exists. Clips add to the stills listed under
+  "Evidence requirements"; they do not replace them, and "Screenshots override metrics" applies to clips equally.
+- **Reduced motion.** Under `prefers-reduced-motion` gate M0 governs: transitions are reduced by default and
+  `motion=full` (in the URL fragment) overrides. The continuity requirement above is judged in the full-motion
+  presentation; the reduced presentation must still be truthful and must not flash.
+- **For workers.** State in the contract how the change affects the coherence of the whole scene, not only the
+  effect changed. Use day / twilight / night and clear / cloudy / precipitating conditions, and the transitions
+  the change can trigger, as the coverage guide: coverage is comprehensive but risk-proportionate — every
+  materially affected scene and transition is qualified; combinations a change cannot affect need not be.
+- **Fidelity verdicts.** For any change affecting sky, weather, clouds, Moon, solar optics or presentation,
+  reviewers and visual judges give separate verdicts on physical fidelity and on experiential fidelity, with
+  transition clips where motion or state transitions are involved.
+- **Pursue improvements.** Where the implementation falls meaningfully short of this standard, investigate and
+  propose the improvement: under the owning work order where one exists, otherwise through a researched,
+  independently reviewed work order — never by silently expanding unrelated work. A new phenomenon, model or
+  treatment may be researched and evaluated experimentally; research, experimental implementation, production
+  adoption and final visual acceptance are separate authorisations.
+- **Interface identity is preserved; rendering defects are not.** Fixed: the 325×530 card geometry, glass and
+  translucent presentation, header and footer, drop shadow, typography and prayer hierarchy, established
+  interactions and accessibility. Not frozen: sky colours, atmospheric coefficients, approximations, transitions
+  or artifacts that are demonstrably deficient. Visual conservatism is risk management, not an aesthetic goal: do
+  not optimise for zero changed pixels when the existing pixels are the problem, and do not assume more effects,
+  complexity or contrast is better.
+- **Gates that stay in force.** No major renderer refactor or redesign; no vendored/copied-core change without owner
+  authority; owner
+  approval for production visual changes, scientific-core changes and anything a work order reserves to the
+  owner. Prayer correctness, weather truthfulness, source authority and privacy are hard constraints. Richness
+  comes from coherent rendering, accurate information and art direction, not visual complexity.
+
 ## Subagent roles & what each reviews
 
 - **GitHub/source auditor** — confirms the committed `index.html` matches what's served; lists the relevant
