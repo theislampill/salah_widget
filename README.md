@@ -271,7 +271,7 @@ Saved configuration uses this browser's storage. Local persistence does not prev
 | Builder coordinate reverse lookup | Eligible coordinate edits after 700 ms debounce, or permission-granted builder location acquisition, in the fixed-coordinate (portable) builder mode only. In self-configuring mode, coordinate edits and builder location acquisition make no reverse request, and switching back to portable mode sends none until the next coordinate edit. Stale/non-numeric coordinates and both automatic label/method controls off produce no request. | BigDataCloud `https://api.bigdatacloud.net/data/reverse-geocode-client` | `latitude`, `longitude`, `localityLanguage=en`, e.g. `51.5`/`-0.12`. This is the builder caller; in-widget browser location does not invoke builder reverse geocoding. |
 | Prayer requests | Eligible date-specific prayer acquisition, subject to existing cache/currentness rules. | Aladhan `https://api.aladhan.com/v1/timings/<date>` | `latitude`, `longitude`, `method`, `school`; requested date in the path. |
 | Weather requests | Eligible active current/hourly acquisition, subject to cache, simulation and currentness guards. | Open-Meteo `https://api.open-meteo.com/v1/forecast` | `latitude`, `longitude`, `timezone`, `temperature_unit` (celsius/fahrenheit), `wind_speed_unit=ms`, `forecast_days=3`, and the current/hourly field selections listed below. These requests do not establish direct local precipitation observation. |
-| Radar evidence requests | Eligible manifest, then returned latest-past frame/tile under existing weather guards. | RainViewer `https://api.rainviewer.com/public/weather-maps.json` and returned tile host/frame. | Returned host + frame path + `/256/<z>/<x>/<y>/2/1_1.png`; x/y indices derive from coordinates and disclose a location-derived area. The manifest has no coordinate query. Image alpha is not millimetres or direct local observation. |
+| Radar evidence requests | None. The current widget does not request radar in any configuration (owner decision D-32-1 A2, [R0032](docs/state-contracts/R0032.md)); no URL fragment, query or configuration field enables it. The retained acquisition code runs only in the repository's test harnesses, which stub every request. | RainViewer is not contacted by the current widget. The frozen V1 page at `/v1/` keeps its own radar requests. | Nothing is sent. On the retained test path the manifest has no coordinate query, and a tile is requested only from the allowlisted `https://tilecache.rainviewer.com` origin with a `/v2/radar/<id>` frame path plus `/256/<z>/<x>/<y>/2/1_1.png`, whose x/y derive from coordinates; latitudes outside Web Mercator are refused. Image alpha is not millimetres or direct local observation. |
 | Font loading | Page stylesheet/font loading, subject to cache/network policy. | Google Fonts stylesheet `fonts.googleapis.com` and font resources `fonts.gstatic.com`. | Family/style/weight stylesheet request and returned font-resource URLs; no widget location/search fields in these source URLs. Cache-dependent declarations do not mean every font is fetched on every load. |
 
 Open-Meteo's exact selected fields are:
@@ -364,7 +364,8 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   until that poll if the provider has caught up by then, otherwise 60–90 seconds.
   A failed request (an error or timeout, not a stale answer) still waits the usual
   60 seconds before the next attempt.
-  Radar retains mosaic frame-generation, index-generation and retrieval times
+  Radar (acquired only on the retained test path; the current widget makes no
+  radar request) retains mosaic frame-generation, index-generation and retrieval times
   separately: frame and retrieval ages each have an inclusive **20-minute** limit,
   with no future allowance. Index time never replaces a missing frame time.
   Valid timestamps do not establish local radar coverage or ground observation;
@@ -414,8 +415,19 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   current before refresh. Corrupt cache is a miss; healthy live recovery remains
   reachable. Valid wrong-day cache may resolve the zone but cannot be called current.
   Valid current data survives a failed refresh or denied persistence. Existing
-  `salah:lat|lon|_cacheTz|method|school` bytes remain compatible without scanning,
-  purging or migration; this is not an offline-application guarantee.
+  `salah:lat|lon|_cacheTz|method|school` bytes remain compatible without migration;
+  boot reads only the selected key, without scanning or purging. This is not an
+  offline-application guarantee.
+- **Cache retention** — after a page's first successful prayer or weather cache
+  write, one bounded pass removes `salah:` and `salahwx:` entries that no widget can
+  use: unreadable entries, weather records outside the six-hour window or dated in
+  the future, and prayer records dated more than two days before the current UTC
+  date (owner decision D-32-2 B, [R0032](docs/state-contracts/R0032.md)). It never
+  removes the current configuration's selected keys (whatever their age), other
+  storage keys, V1 keys or saved settings, and it never runs during boot. Usable
+  entries for other locations remain, so names containing earlier coordinates can
+  persist until they expire and a later page load removes them; Reset does not
+  remove them.
   The selected legacy key retains the configuration's initial zone component even
   after the location zone resolves. A zone-free key is not a replacement for it.
   With no usable cached zone, boot may request the hint's day first. Valid metadata
@@ -448,7 +460,8 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   settles without another correction; existing bounded recovery remains eligible.
   Accepted changes mark the prayer presentation dirty for the next visible render.
 - **Weather retry** — fetch plus JSON body consumption shares one 10-second application
-  attempt. A radar manifest fetch plus JSON body shares a separate 10-second
+  attempt. On the retained radar test path (the current widget makes no radar
+  request), a radar manifest fetch plus JSON body shares a separate 10-second
   attempt; once accepted, a new 10-second Image attempt covers dispatch and
   result consumption. The nominal combined radar application wait is at most
   20 seconds while JavaScript is runnable; this is not a hard wall-time recovery
@@ -481,7 +494,8 @@ hourly=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,clo
   The weather cache's six-hour retention window is storage compatibility, not
   live authority. Retained legacy records without valid source metadata remain
   unavailable until a healthy eligible response arrives; failed refreshes cannot
-  renew their source or receipt time. Prayer-cache rules are separate. These
+  renew their source or receipt time. Records outside that window are removed by
+  the bounded cache-retention pass. Prayer-cache rules are separate. These
   caches do not make the widget a self-contained offline app.
   On performance-clock hosts, the absolute elapsed attempt deadline is checked
   as well as the timer: a late fetch/body/Image completion is rejected even if
@@ -571,11 +585,12 @@ The [R0017 source-linked contract map](docs/state-contracts/R0017.md) records tr
 ## Credits
 
 Prayer time calculations by the [Aladhan API](https://aladhan.com/prayer-times-api),
-current-model and hourly forecast weather by [Open-Meteo](https://open-meteo.com),
-and unitless mosaic imagery by [RainViewer](https://www.rainviewer.com). These
-browser requests carry the configured location and request context. Settings
-and caches are stored in the browser when storage is available. Mosaic alpha is
-not a rainfall amount, direct local precipitation or lightning observation.
+and current-model and hourly forecast weather by [Open-Meteo](https://open-meteo.com).
+These browser requests carry the configured location and request context. Settings
+and caches are stored in the browser when storage is available. The current widget
+does not request [RainViewer](https://www.rainviewer.com) mosaic imagery; its retained
+radar code runs only in tests, and the frozen V1 page keeps its own radar requests.
+Mosaic alpha is not a rainfall amount, direct local precipitation or lightning observation.
 Provider retention or handling is not established by this widget-source description.
 
 ## Preserved V1 compatibility URL

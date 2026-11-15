@@ -1609,6 +1609,30 @@
    }
   },
   {
+   "path": "tools/qa/run_r0032_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, loopback-served candidate and base trees, every provider routed to a fixture, counted or aborted, mocked clock, forced zone); not a headless unit instrument",
+   "owner": "R0032",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r0032_native.cjs",
+     "--root",
+     "<candidate tree>",
+     "--base",
+     "<base tree>",
+     "--out",
+     "<fresh dir>",
+     "--engines",
+     "chromium,firefox,webkit",
+     "--cells",
+     "requests,pixels,elevation",
+     "--playwright",
+     "<path to the playwright package>"
+    ],
+    "protocol": "per-engine cell PASS/FAIL in <out>/report.json (R32-02 radar request log, R32-11 base-vs-candidate pixels with base-vs-base repeat, R32-06 elevation readers and probe; docs/state-contracts/R0032.md section 6)"
+   }
+  },
+  {
    "path": "tools/qa/r0028_g12b_native.cjs",
    "reason": "native browser observation (Playwright Chromium/Firefox/WebKit, loopback-served tree, prayer fixture, every other request aborted, frozen clock); not a headless unit instrument",
    "owner": "R0028",

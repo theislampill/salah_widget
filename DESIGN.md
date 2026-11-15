@@ -411,6 +411,32 @@ is retained separately, not used as the frame freshness clock. Mosaic generation
 does not date every contributing radar measurement or certify selected-site
 coverage, rain amount or direct observation.
 
+**Radar acquisition is disabled in the product (R0032, owner decision D-32-1 A2).**
+Radar has no product consumer, so `fetchRadar()` — still called by boot, `startWeather`
+(apply) and the loop poll — is a gate that returns before `retryGate("radar")` while the
+literal `RADAR_ACQUISITION.enabled` is `false`; no URL fragment, query or configuration
+field reads it. The timestamp rules above, the 600 s spacing and the request ownership
+are retained in `acquireRadar()`, which only test harnesses call. On that retained path
+the manifest host must be exactly the allowlisted `https://tilecache.rainviewer.com`
+origin (seeded from the repository fixtures, unverified against the provider) and the
+frame path a single `/v2/radar/<id>` segment, else the attempt settles `rejected` with a
+reason and no Image is dispatched. Tile indices are validated before any request:
+longitude +180 wraps to column 0, longitude outside [-180, 180] and any row or column
+outside [0, 2^z) (beyond about ±85.05° latitude) are rejected.
+`qaState().wxTruth.radarSource` reads `none (radar acquisition disabled in the product)`
+and `wxTruth.radarAcquisition` gives `{enabled:false, reason}`.
+
+**Location-bound legacy elevation and cache retention (R0032).** The legacy native
+atmosphere reads site elevation through `siteElevation()`, which returns the admitted
+value only while the current coordinates equal those of the response that carried it
+(0 m otherwise); units or method changes at the same coordinates keep it. The CP9
+elevation lease is separate and unchanged. Per-location `salah:`/`salahwx:` caches get one
+bounded eviction pass per document after the first successful fresh cache write (never
+on the boot selection path): unreadable entries, weather receipts outside six hours or in
+the future, and prayer records dated before UTC day − 2 are removed; the selected
+`cacheKey()`/`wxKey()` entries, other prefixes, V1 keys and saved settings are never
+touched, and Reset does not clear these caches (D-32-2 B, D-32-3 A).
+
 Six-hour weather-cache retention is distinct from live authority. Compatible
 legacy cache bytes may remain without usable source metadata; acquisition can
 replace them, while failed refreshes cannot renew them. Expired or invalid current
@@ -503,7 +529,8 @@ prove browser presentation or visible motion.
 
 `qaState().wxTruth.requests.weather` and `.radar` retain the last small attempt
 diagnostic: `generation`, `operationId`, `attemptId`, `state` and `reason`.
-The active stages are `fetch`, `body` and, for radar, `image`; an `unavailable`
+The active stages are `fetch`, `body` and, for radar (retained test path only), `image`;
+a radar attempt refused by host, frame-path or tile-index admission settles `rejected`; an `unavailable`
 result with `fetch timeout`, `body timeout` or `image timeout` identifies the
 bounded stage. `received` describes wrapper completion, not freshness or provider
 health. Slot release, retry eligibility and a healthy replacement consumer are
