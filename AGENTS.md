@@ -92,7 +92,7 @@ Owner design standard, 2026-11-15. It adds to every work order's own acceptance 
   recommended as a permanent residual when a proportionate correction exists. Clips add to the stills listed under
   "Evidence requirements"; they do not replace them, and "Screenshots override metrics" applies to clips equally.
 - **Reduced motion.** Under `prefers-reduced-motion` gate M0 governs: transitions are reduced by default and
-  `?motion=full` overrides. The continuity requirement above is judged in the full-motion presentation; the
+  `motion=full` (in the URL fragment) overrides. The continuity requirement above is judged in the full-motion presentation; the
   reduced presentation must still be truthful and must not flash.
 - **For workers.** State in the contract how the change affects the coherence of the whole scene, not only the
   effect changed, across at least day / twilight / night and clear / cloudy / precipitating conditions, and across
