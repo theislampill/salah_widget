@@ -51,8 +51,13 @@ test("search and reopen retain failure instead of replacing it with an ordinary 
 test("location edit abandons pending reset feedback and preserves newer form",async()=>{
   const f=make();f.click("set-reset");f.input("set-lat","30");f.input("set-lon","31");const before=status(f);await f.resolveCall("coarse",0,detected);assert.equal(status(f),before);assert.equal(f.elements.get("set-lat").value,"30");assert.equal(f.config().label,"London");assert.equal(f.calls.prayer.length,0);
 });
-test("close and new failed save supersede pending reset completion",async()=>{
-  const f=make();f.click("set-reset");f.sandbox.localStorage.setItem=security;f.input("set-units","c","change");f.click("setClose");f.buckle.dispatch("click");const before=status(f);await f.resolveCall("coarse",0,detected);assert.equal(status(f),before);warning(f,/session only/);assert.equal(f.config().units,"c");
+// Amended by R0030 (issue 97, owner gate G1-A; docs/state-contracts/R0030.md "Amended accepted assertions"):
+// close/reopen no longer supersedes a pending Reset. The close-save of the post-dispatch units edit is
+// deferred to the Reset target and fails as session-only there; the reopened session is still not
+// rewritten and the warning, units and nothing-written assertions are kept.
+test("close during pending reset defers the failed save to the reset target",async()=>{
+  const f=make(),key=f.sandbox.SalahConfig.KEY;f.click("set-reset");f.sandbox.localStorage.setItem=security;f.input("set-units","c","change");f.click("setClose");f.buckle.dispatch("click");const before=status(f);await f.resolveCall("coarse",0,detected);assert.equal(status(f),before);
+  f.click("setClose");await drain();f.calls.prayer[0].resolve();await drain();warning(f,/session only/);assert.equal(f.config().units,"c");assert.equal(f.config().label,"Madinah");assert.equal(f.storage.has(key),false);
 });
 test("save and reset leave unrelated cache and test keys unchanged",async()=>{
   const f=make();for(const k of ["prayer:fixture","weather:fixture","test:sentinel"])f.storage.set(k,k+":original");f.input("set-units","c","change");f.click("setClose");f.buckle.dispatch("click");f.click("set-reset");await f.resolveCall("coarse",0,{ok:false});for(const k of ["prayer:fixture","weather:fixture","test:sentinel"])assert.equal(f.storage.get(k),k+":original");
