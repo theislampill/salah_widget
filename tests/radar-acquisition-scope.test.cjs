@@ -58,17 +58,14 @@ test('R32-02 postcondition: qaState reports radar as not acquired with an explic
   assert.deepEqual({...t.radarAcquisition},{enabled:false,reason:'disabled in the product (R0032 D-32-1 A2; retained for tests only)'});
   assert.equal(t.radarAvailable,false);assert.equal(t.requests.radar,null);
 });
-test('R32-03 A2 source search: one predicate, a literal off, and every product radar caller goes through it',()=>{
-  const scripts=source.split('<script');
-  assert.match(source,/const RADAR_ACQUISITION=Object\.freeze\(\{enabled:false,/);
-  assert.equal(source.split('RADAR_ACQUISITION').length-1,3,'declaration, predicate and qa reason only');
-  // Every call of the authored acquisition function is inside the gate; the definition is the only other match.
-  const calls=[...source.matchAll(/fetchRadar\(/g)].map(m=>source.slice(Math.max(0,m.index-60),m.index+12));
-  assert.equal(calls.length,2,calls.join('\n'));
-  assert.ok(calls.some(c=>/async function fetchRadar\($/.test(c)));
-  assert.ok(calls.some(c=>/radarAcquisitionEnabled\(\)\)\s*return;?\s*return fetchRadar\($/.test(c)||/return fetchRadar\($/.test(c)));
-  assert.equal([...source.matchAll(/pollRadar\(\)/g)].length,4,'definition plus boot, startWeather and loop callers');
-  assert.ok(scripts.length>1);
+test('R32-03 A2 source search: one predicate, a literal off, and the product entry is the gate',()=>{
+  const code=source.replace(/\/\/[^\n]*/g,'');                           // identifiers in code, not in comments
+  assert.match(code,/const RADAR_ACQUISITION=Object\.freeze\(\{enabled:false,/);
+  assert.equal(code.split('RADAR_ACQUISITION').length-1,3,'declaration, predicate and qa reason only');
+  assert.match(code,/function radarAcquisitionEnabled\(\)\{ return RADAR_ACQUISITION\.enabled===true; \}/);
+  assert.match(code,/async function fetchRadar\(\)\{ if\(!radarAcquisitionEnabled\(\)\) return; return acquireRadar\(\); \}/);
+  assert.equal(code.split('acquireRadar(').length-1,2,'definition and the gate are the only references');
+  assert.equal(code.split('fetchRadar();').length-1,3,'boot, startWeather (apply) and the loop poll call the gate');
 });
 
 // ---- Retained (test-only) path: host admission R32-04 --------------------------------------------------------------
