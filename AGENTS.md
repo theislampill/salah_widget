@@ -88,8 +88,18 @@ Owner design standard, 2026-11-15. It adds to every work order's own acceptance 
   and temporal continuity, absence of rendering artifacts, restrained motion, readable prayer information.
 - **Judge the whole experience** across representative times of day and weather conditions, INCLUDING
   TRANSITIONS, from clips or frame sequences — not isolated effects or stills alone. A technically safe or
-  pixel-neutral result is not thereby the best result; pixel-neutrality is proof for behaviour-only changes, not a
-  goal.
+  pixel-neutral result is not thereby the best result, and a jarring but defensible behaviour is not to be
+  recommended as a permanent residual when a proportionate correction exists. Clips add to the stills listed under
+  "Evidence requirements"; they do not replace them, and "Screenshots override metrics" applies to clips equally.
+- **Reduced motion.** Under `prefers-reduced-motion` gate M0 governs: transitions are reduced by default and
+  `?motion=full` overrides. The continuity requirement above is judged in the full-motion presentation; the
+  reduced presentation must still be truthful and must not flash.
+- **For workers.** State in the contract how the change affects the coherence of the whole scene, not only the
+  effect changed, across at least day / twilight / night and clear / cloudy / precipitating conditions, and across
+  the transitions the change can trigger.
+- **Fidelity verdicts.** For any change affecting sky, weather, clouds, Moon, solar optics or presentation,
+  reviewers and visual judges give separate verdicts on physical fidelity and on experiential fidelity, with
+  transition clips where motion or state transitions are involved.
 - **Boundaries.** Not authorisation for a redesign, a major renderer refactor, vendored/copied-core changes or
   additional atmospheric phenomena without evidence and owner approval. Preserve the established glass treatment,
   geometry, typography, shadows and prayer-display hierarchy. Richness comes from coherent rendering, accurate
@@ -148,9 +158,6 @@ A cycle PASSES only when, with **screenshot/clip evidence**:
   drift/morph, stars scintillate, sky breathes). Proven by a real watch / `&debugMotion=1` Δ, NEVER the qaState
   hash. Accessibility: `prefers-reduced-motion` reduces it by default; `&motion=full` overrides.**
 - K/L/M — DESIGN.md + AGENTS.md + HANDOFF.md current; high-value comments present; approximations stated honestly.
-- Fidelity verdicts — for any change affecting sky, weather, clouds, Moon, solar optics or presentation, reviewers and
-  visual judges give separate verdicts on physical fidelity and experiential fidelity, with transition clips where
-  motion or state transitions are involved (see "Atmospheric coherence and perceptual fidelity").
 
 ## Evidence requirements (per cycle)
 
