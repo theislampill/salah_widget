@@ -31,6 +31,8 @@ const MUTANTS=[
   ['radar-malformed-unlabelled','index.html','if(!Array.isArray(past)) wxAdmission(op,a,"malformed-manifest");','if(!Array.isArray(past)) wxAdmission(op,a,"no-frame");',T.outcome,'R36-12'],
   ['reset-detect-unsettled','index.html','  if(detect.status==="pending") Object.assign(detect,','  if(false) Object.assign(detect,',T.flags,'R36-21'],
   ['geo-error-forever-current','index.html','superseded:g.outcome==="superseded"||!_ownsSetLookup(g.owner)}','superseded:g.outcome==="superseded"}',T.flags,'R36-22'],
+  ['construction-as-awaiting','index.html','const constructionError=!runtime&&typeof window.SalahMoonConstructionError==="string"?window.SalahMoonConstructionError:null;',
+    'const constructionError=null;',T.purity,'R36-08'],
   ['storage-write-quota-false','index.html','ls.getItem("__sw_probe__"); readable=true;','ls.setItem("__sw_probe__","1"); ls.removeItem("__sw_probe__"); readable=true;',T.purity,'R36-01'],
 ];
 const only=arg('--only'),work=arg('--work')||fs.mkdtempSync(path.join(os.tmpdir(),'r0036-mut-')),own=!arg('--work');

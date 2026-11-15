@@ -122,6 +122,18 @@ test('R36-06 N2: cache.simulated is true for each effective override and lists i
   }
 });
 
+// Truthful Moon outcome record (moonTruth, MOON-003 diagnostic row): a recorded construction failure (R0033 DG-1 = B)
+// is reported as that failure, never as "awaiting current terrain"; without the record the awaiting reason is unchanged.
+test('R36-08 moonTruth reports a recorded Moon construction failure instead of "awaiting"',()=>{
+  const h=boot();h.run('window.SalahMoonRuntime=null;');
+  const awaiting=h.run('qaState().moonTruth');
+  assert.equal(awaiting.reason,'awaiting current terrain; no legacy substitution');assert.equal(awaiting.surface.status,'pending');
+  h.run('window.SalahMoonConstructionError="injected construction fault";');
+  const t=h.run('qaState().moonTruth');
+  assert.equal(t.surface.status,'construction-failed');assert.equal(t.constructionError,'injected construction fault');
+  assert.match(t.reason,/construction failed.*no disc and no moonlight/);assert.equal(t.displayMode,'surface-unavailable');
+});
+
 // ES36-06(b), amendment R0036-A1: the capture-time reconcile is a deliberate R000B production step. This positive pin is
 // green at the baseline by design (the one exempt test); a mutant deleting the call must fail it (ES36-06(c)).
 test('R36-07 A1 pin: NativeForegroundCapture.capture() reconciles clouds exactly once, before the cloud canvas is read',async()=>{

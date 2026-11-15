@@ -3981,10 +3981,14 @@ function _qaStateRead(){
       // R0036 I-D2: the non-adopting observation (R0033's presence predicate); never surface()/state/detailEnabled.
       const runtime=window.SalahMoonRuntime,observation=typeof runtime?.observe==="function"?runtime.observe():null,refined=!!observation?.surface,lunarState=observation?.state;
       const initial=lunarState?.visibleSource==="initial-v5";
-      const surfaceStatus=refined?(initial?"v5-initial":"v5-terrain"):lunarState?.status??"pending";
+      // R0036: a construction failure recorded by the Moon builder's guard (R0033 DG-1 = B) is reported as such, not as
+      // "awaiting"; the slot is then empty, so the runtime status cannot say it.
+      const constructionError=!runtime&&typeof window.SalahMoonConstructionError==="string"?window.SalahMoonConstructionError:null;
+      const surfaceStatus=refined?(initial?"v5-initial":"v5-terrain"):constructionError!=null?"construction-failed":lunarState?.status??"pending";
       const surfaceVisible=$(".c").classList.contains("moon-ready"),grp=+(A.moonGrp||0),disc=+(A.moonDisc||0);
       const phys=refined && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
+        constructionError,
         observation:observation?{accepted:observation.accepted,waitingPreview:observation.waitingPreview,current:observation.current,wouldPresent:observation.wouldPresent,detailAvailable:observation.detailAvailable}:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
@@ -3993,7 +3997,7 @@ function _qaStateRead(){
         displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?(initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
         moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?(initial?"V5 material with initial Lambert Earth integral; full terrain refinement pending":"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only"):"surface unavailable",
-        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?"awaiting current terrain; no legacy substitution":phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
+        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?(constructionError!=null?"Moon runtime construction failed (R0033 DG-1 = B): no disc and no moonlight; no legacy substitution":"awaiting current terrain; no legacy substitution"):phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
 }
