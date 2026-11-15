@@ -299,6 +299,16 @@ Serve the folder statically and open `index.html#lat=24.47&lon=39.61&label=Madin
   faint **opaque** ashen calendar disc with `qaState().moonTruth.moonlightOpacity == 0`.
 - Readouts: `&debugLayers=1`, `&debugMoon=1`, `&debugMotion=1`, `&qa=1` then `window.qaState()` (incl. `wxTruth`,
   `moonTruth`). `&debugDawn=…` is a deprecated no-op (dawn is not painted).
+- **Diagnostic reads observe without acting (R0036).** `qaState()`, its CP9 wrapper, the `debugMotion` overlay and
+  the smoke instrument write no storage, adopt or publish no Moon texture (`SalahMoonRuntime.observe()` only), withdraw
+  no clouds, paint no header and issue no request, so polling them does not change what they measure. Never read the
+  adopting `SalahMoonRuntime.surface()`/`state`/`detailEnabled` from a new diagnostic. `qaState().cache.simulated` and
+  `cache.overrides` name every effective override; the weather/radar `requests.*.admission` field gives the admission
+  outcome beside the transport `state` (DESIGN.md).
+- **Diagnostic overrides are not visibly badged (owner decision G1 = A, issue 103).** Every `sim*`, `debugOptic`,
+  `timeScale` recipe above shows synthetic weather/clock/Moon/optics with provenance only in the header title/ARIA
+  label, the `.simclock` read-out of an advancing clock and `qaState()`. A crop from such a URL is simulation evidence:
+  say so in the evidence, and never copy such a URL into an embed, preset or README snippet.
 - Preview gotcha: `simTime` without `timeScale` freezes the clock (TIMESCALE 0), so cloud drift won't be visible
   in a still test — use a real-time / `timeScale` watch to see motion. Calling `paintClouds(t)` directly at two
   `t` values does not show drift: motion integrates elapsed frame time, not `t`.
