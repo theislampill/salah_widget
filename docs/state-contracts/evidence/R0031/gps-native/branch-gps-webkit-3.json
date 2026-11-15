@@ -1,0 +1,65 @@
+{
+ "scope": "R0031 builder reverse-admission native cells; every external request routed to a fixture or aborted; mocked running clock at 2026-09-07T09:00:00Z; zone Asia/Riyadh",
+ "inputs": {
+  "builder.html": "457aeff9f236923972f25bdee91cc1d42db8392ca81b6040d81d36b0dae34cd2",
+  "config.js": "685bb0f001502dc9f1afbf03b4eb173a8a5b4aaf35f4b85c16e1565a1335159f",
+  "index.html": "966ec21118ab90862fc561ff82822b5445f643c84f9d0800c96ee9734fafdd13"
+ },
+ "playwright": "1.60.0",
+ "engines": {
+  "webkit": "26.4"
+ },
+ "cells": [
+  {
+   "engine": "webkit",
+   "cell": "gps-denied",
+   "pass": true,
+   "statuses": [
+    "Requesting browser location…",
+    "Browser position · accuracy 20 m · fix 0 min old — click to refresh"
+   ],
+   "form": [
+    "51.50000",
+    "-0.12000"
+   ],
+   "permission": "denied",
+   "expected": "denied",
+   "geoCalls": 1,
+   "permissionQueries": 1,
+   "pageErrors": 0
+  },
+  {
+   "engine": "webkit",
+   "cell": "gps-prompt",
+   "pass": true,
+   "statuses": [
+    "Requesting browser location…",
+    "Browser position · accuracy 20 m · fix 0 min old — click to refresh"
+   ],
+   "form": [
+    "51.50000",
+    "-0.12000"
+   ],
+   "permission": "prompt",
+   "expected": "prompt",
+   "geoCalls": 1,
+   "permissionQueries": 1,
+   "pageErrors": 0
+  }
+ ],
+ "webkitExternal": [
+  "api.aladhan.com/v1/timings/07-09-2026",
+  "api.aladhan.com/v1/timings/08-09-2026",
+  "api.open-meteo.com/v1/forecast",
+  "api.rainviewer.com/public/weather-maps.json",
+  "fonts.googleapis.com/css2",
+  "get.geojs.io/v1/ip/geo.json",
+  "http://127.0.0.1:64280/97322ae3-e06f-483f-99b8-a1cceb19fe55",
+  "http://127.0.0.1:64280/9bf3af15-5b20-4634-88db-2457482d9ce6",
+  "http://127.0.0.1:64280/c47c2c36-0b0b-4516-9932-0b24014496f0",
+  "http://127.0.0.1:64280/d0c8c5ac-bfaa-4e44-973f-3481a7988eb0",
+  "http://127.0.0.1:64280/d8fc36b3-5e3f-4a8b-aaa6-e04608ab9ebf",
+  "http://127.0.0.1:64280/e14201b0-e47d-4670-b118-c869a5781947"
+ ],
+ "allPass": true
+}

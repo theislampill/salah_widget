@@ -1,0 +1,90 @@
+{
+ "scope": "R0031 builder reverse-admission native cells; every external request routed to a fixture or aborted; mocked running clock at 2026-09-07T09:00:00Z; zone Asia/Riyadh",
+ "inputs": {
+  "builder.html": "457aeff9f236923972f25bdee91cc1d42db8392ca81b6040d81d36b0dae34cd2",
+  "config.js": "685bb0f001502dc9f1afbf03b4eb173a8a5b4aaf35f4b85c16e1565a1335159f",
+  "index.html": "7c2175b281e3f441ca803f4f63f2396a3fa70cea9e33b1235eeebba6eb6b9ffa"
+ },
+ "playwright": "1.60.0",
+ "engines": {
+  "chromium": "148.0.7778.96"
+ },
+ "cells": [
+  {
+   "engine": "chromium",
+   "cell": "gps-granted",
+   "pass": true,
+   "statuses": [
+    "Requesting browser location…",
+    "Browser position · accuracy 20 m · fix 0 min old — click to refresh"
+   ],
+   "form": [
+    "51.50000",
+    "-0.12000"
+   ],
+   "permission": "granted",
+   "expected": "granted",
+   "geoCalls": 1,
+   "permissionQueries": 1,
+   "pageErrors": 0
+  },
+  {
+   "engine": "chromium",
+   "cell": "gps-denied",
+   "pass": true,
+   "statuses": [
+    "Requesting browser location…",
+    "Browser position · accuracy 20 m · fix 0 min old — click to refresh"
+   ],
+   "form": [
+    "51.50000",
+    "-0.12000"
+   ],
+   "permission": "denied",
+   "expected": "denied",
+   "geoCalls": 1,
+   "permissionQueries": 1,
+   "pageErrors": 0
+  },
+  {
+   "engine": "chromium",
+   "cell": "gps-prompt",
+   "pass": true,
+   "statuses": [
+    "Requesting browser location…",
+    "Browser position · accuracy 20 m · fix 0 min old — click to refresh"
+   ],
+   "form": [
+    "51.50000",
+    "-0.12000"
+   ],
+   "permission": "prompt",
+   "expected": "prompt",
+   "geoCalls": 1,
+   "permissionQueries": 1,
+   "pageErrors": 0
+  },
+  {
+   "engine": "chromium",
+   "cell": "reset-gps-never",
+   "pass": false,
+   "resetPendingAfterFix": true,
+   "runtime": {
+    "lat": 24.4672,
+    "lon": 39.6142,
+    "source": "coarse-ip"
+   },
+   "savedLat": null,
+   "pageErrors": 0
+  }
+ ],
+ "chromiumExternal": [
+  "api.aladhan.com/v1/timings/07-09-2026",
+  "api.aladhan.com/v1/timings/08-09-2026",
+  "api.open-meteo.com/v1/forecast",
+  "api.rainviewer.com/public/weather-maps.json",
+  "fonts.googleapis.com/css2",
+  "get.geojs.io/v1/ip/geo.json"
+ ],
+ "allPass": false
+}
