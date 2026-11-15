@@ -212,6 +212,16 @@ Islamically distinct — and represented honestly. **Neither false nor true dawn
 - `trueDawnTwilight` exists only as a 0..1 **diagnostic scalar** (qaState); it paints nothing.
 - Debug: `?debugDawn=…` is a **deprecated no-op** — there is no painted dawn layer to force.
 
+## Atmospheric coherence (owner design standard, 2026-11-15)
+
+The sky and weather are designed as ONE coherent, continuously evolving environment, not independent effects: time-of-day colour, solar elevation, scattering, haze, cloud coverage and illumination, precipitation, wind, visibility, twilight, moonlight and colour balance must hold together, and each weather condition has a distinct, physically credible identity (not an icon or a uniform overlay). Physical models set the admissible relationships; composition, colour and motion make them convincing. Richness comes from coherent rendering and accurate information, not visual complexity; the glass treatment, geometry, typography, shadows and prayer hierarchy are preserved.
+
+Four things are kept distinct and coherently related (owner decision on issue 96, comment 6889881125): **evidence authority** (which data may be trusted now), **physical presentation state** (the sky actually drawn), **presentation transition** (how the drawn sky moves between states), and **user-facing factual information** (temperature, condition, precipitation statements). Authority and factual claims change at the instant authority changes; cloud motion, illumination and presentation keep temporal continuity, so a software-state change is never shown as an abrupt environmental event.
+
+**What the ambition covers (design guidance).** Rich, coherent colour progression through day and night; distinctive, physically credible atmospheric conditions; natural relationships between sun elevation, light, haze, clouds, precipitation, wind and environmental colour; convincing golden hour, blue hour, twilight, night and storm; subtle, credible motion and transitions; consistent Moon, star and solar-optics presentation; an environment that feels alive rather than assembled; weather and time communicated without competing with the prayer information. The target is a living, realism-adjacent sky with deliberate, restrained art direction at the widget's actual scale — neither a sterile scientific visualisation nor indiscriminate photorealism. Sky colours, coefficients, approximations and transitions are open to justified, independently qualified improvement; the interface identity (card geometry, glass, header and footer, drop shadow, typography, prayer hierarchy, interactions, accessibility) is not.
+
+**Known gap (not achieved on main):** at a quarter-hour weather boundary the cloud deck, precipitation, temperature and weather tint are withdrawn in a single frame and, about three seconds later in the normal case, returned in a single frame; this is to be corrected under amendment R002F-A1 on issue 96 (in preparation). Evaluation rule (physical versus experiential fidelity, transition clips): see AGENTS.md, "Atmospheric coherence and perceptual fidelity (owner design standard)".
+
 ## Atmosphere state model
 
 There is one temporal API, `simNow()` / `simDate()` / `nowParts()`, with two authorities. With neither `simTime` nor `timeScale`, `simNow()` reads the current device `Date.now()` on every call; a timezone change reformats that instant. Explicit previews use a validated anchor plus independent elapsed time multiplied by `TIMESCALE`. An explicit `timeScale=1` remains a 1× anchored preview with ADVANCING, forecast weather, star reprojection and the SIM readout. `timeScale=60` advances 60×; `simTime=HH:MM` without a scale is frozen. Existing scale parsing preserves frozen behavior for zero, empty, invalid and clamped negative values. Independent elapsed behavior assumes a supported native `performance.now()` host; the existing `Date.now()` fallback has no separate wall-step guarantee. Injected wall corrections do not establish native sleep/wake or NTP behavior. Anchors have a kind (R002D): a URL `simTime`/`timeScale` **fragment** anchor is zone-relative and re-anchors when the location zone settles; a `SalahClock.set` **control** anchor is an absolute UTC instant that no zone adoption re-anchors; ordinary **wall** mode has no anchor. In wall mode the scene identity carries the configured effective hint zone (`_cacheTz`), not the live adopted zone, so adopting the provider zone does not restart the sky/Moon scene.
@@ -723,6 +733,21 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   `Enter`/`Space` work; not hover-dependent) **only in local/preferLocal mode** — hardcoded embeds are untouched.
   The panel overlays the prayer display inside the same 325×530 card (internal scroll; never resizes the iframe or
   clips header/footer). Precise geolocation is **only** called from the panel button (user gesture).
+- **Settings Reset and close (R0030, docs/state-contracts/R0030.md):** closing the panel is auto-save, never
+  cancel. Once Reset has cleared the saved record it owns the *location* until a newer explicit location intent
+  (typed coordinates, a chosen place-search result, a GPS fix, another Reset); starting a search or a GPS request,
+  an empty search or a refused GPS request, closing or reopening the panel and editing the
+  display name do not end it. Edits made before the Reset click are discarded; edits made after it stay the
+  user's and a close saves them on top of the Reset target once that lands (a target arriving while a later panel
+  session is open waits for that session to close). If detection fails with the panel still open, the visible form
+  (old site, "Enter your location.") is the location again; if it fails after close, later edits apply for the
+  session only, the panel does not reopen, and the next open says so. After a clear nothing claims the cleared
+  record. A place search that finds nothing (or is still pending at close) is not a rename: the name stays the
+  last accepted one unless the field is edited again or Shift+Enter keeps the text.
+  In `preferLocal` mode Reset selects what the resolver would (the hash site, no IP request). A settings
+  apply that throws is reported once in the status/live region ("Your changes could not be applied. Reload the
+  widget to try again."); the saved or
+  session-only outcome already shown stays.
 - **`qaState().config`** exposes `configSource/configMode/autoDetectSource/autoDetectStatus/storageAvailable/
   storageError/geolocationPermissionState/geolocationLastError/lat/lon/tz/label/hashConfigOverridden/why`.
 - **Embed size = card size:** the iframe wrapper is **325×530** — exactly the widget card (`.c`) — in the builder

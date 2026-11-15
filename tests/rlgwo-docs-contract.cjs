@@ -284,13 +284,16 @@ function mentions(name, tokens) {
       // R002E changes only the prayer status writer, the .cn fit key and one comment, not the pinned block, helper, clamp or call.
       // R002F re-bind (issue 96): body ae528330... -> d21282d7..., entry dbc77c67... (main 516d8cc8) -> 226266a2...;
       // R002F changes only the weather gate/renewal/preview-range region and one loop line, not the pinned block, helper, clamp or call.
-      // R0033 re-bind (issue 100): body d21282d7... -> b25e5f2e..., entry 226266a2... -> 6347eb0f...; R0033 changes the
-      // lunar wrapper (presence predicate), the Moon host hooks, the sky commit guard and one legacy-loader comment,
+      // R0030 re-bind (issue 97, merged with main 9d903d6b): body d21282d7... -> 78eb2f3a..., entry 226266a2... -> 7c2175b2...;
+      // R0030 changes only the settings block, not the pinned block, helper, clamp or call.
+      // R0033 re-bind (issue 100, merged with main ab4a8751): body 78eb2f3a... -> 9a2fff4e..., entry 7c2175b2... -> 313bdddf...; R0033 changes the
+      // lunar wrapper (presence predicate), the Moon host hooks, the sky commit and reveal guards, the no-timetable
+      // lunar repaint and one legacy-loader comment,
       // not the pinned force block, helper, clamp or atmosphere call.
-      assert.equal(digest(body),"b25e5f2e1e0bfe1ce786b75bfa78890870edfbcc1efc400f86538624794e0478",'delegated native script changed');
+      assert.equal(digest(body),"9a2fff4eb2ca68039e90a2cba4f976375b1c91d828085108a9f3eb0abbfebf0a",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"6347eb0f69d57f6791fbfdfee32566d1253bc19230bb18147c2dcb7e6d99322a",'delegated current generated entry changed');
+      assert.equal(digest(source),"313bdddf6bdf141a783b5bbfc82c44c32f4b2f1512c71a44691b5130ccd2bc9a",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
