@@ -87,7 +87,7 @@ for(const [name,host] of [['plain http',' http://tilecache.rainviewer.com'.trim(
 }
 for(const [name,p] of [['absolute URL path','https://tiles.example.net/v2/radar/1'],['protocol-relative path','//tiles.example.net/v2/radar/1'],
   ['dot-dot path','/v2/radar/../../x'],['trailing dot-dot','/v2/radar/1/..'],['query in path','/v2/radar/1?x=1'],
-  ['relative path','v2/radar/1'],['empty frame id','/v2/radar/'],['other prefix','/v3/tiles/1']]){
+  ['relative path','v2/radar/1'],['dot segment','/v2/radar/.'],['dot-dot segment','/v2/radar/..'],['empty frame id','/v2/radar/'],['other prefix','/v3/tiles/1']]){
   test('R32-04 frame path admission rejects '+name+': no image request',async()=>{
     const f=fixture({manifest:manifestWith(HOST,p)});await f.fetchRadar();
     assert.deepEqual(f.images,[]);

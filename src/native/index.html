@@ -1641,12 +1641,12 @@ function radarAcquisitionEnabled(){ return RADAR_ACQUISITION.enabled===true; }
 async function fetchRadar(){ if(!radarAcquisitionEnabled()) return; return acquireRadar(); }
 // Host admission for the retained path. The allowlist's only seed is the repository fixtures' host: it is unverified
 // against the provider. An exact origin match rejects other schemes, hosts, userinfo, ports, paths, queries and
-// fragments; the frame path must be the relative /v2/radar/<id> shape. Diagnostic-only, so a wrong list can only make
+// fragments; the frame path must be the relative /v2/radar/<id> shape (one segment, never . or ..). Diagnostic-only, so a wrong list can only make
 // radar unavailable to a test.
 const _RADAR_TILE_ORIGINS=["https://tilecache.rainviewer.com"];
 function radarTileBase(host,path){
   if(typeof host!=="string"||!_RADAR_TILE_ORIGINS.includes(host.replace(/\/$/,""))) return {reason:"radar tile host not admitted"};
-  if(typeof path!=="string"||!/^\/v2\/radar\/[A-Za-z0-9_-]+$/.test(path)) return {reason:"radar frame path not admitted"};
+  if(typeof path!=="string"||!/^\/v2\/radar\/(?!\.\.?$)[A-Za-z0-9._-]+$/.test(path)) return {reason:"radar frame path not admitted"};
   return {base:host.replace(/\/$/,"")+path};
 }
 // Web-Mercator tile indices (registry candidate CI-05). Longitude outside [-180, 180] is rejected; +180 is the same
