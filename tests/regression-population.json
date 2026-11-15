@@ -13,6 +13,7 @@
   "tests/builder-preview-publication.test.cjs",
   "tests/builder-reverse-admission-mutations.test.cjs",
   "tests/builder-reverse-admission.test.cjs",
+  "tests/cache-retention.test.cjs",
   "tests/config-effects-mutations.test.cjs",
   "tests/config-effects-state.test.cjs",
   "tests/hotfix-prayer-weather.test.cjs",
@@ -50,7 +51,9 @@
   "tests/r002b-pages-payload.test.cjs",
   "tests/r003a-cloud-wind-truth.test.cjs",
   "tests/r003a-docs-truth.test.cjs",
+  "tests/radar-acquisition-scope.test.cjs",
   "tests/render-liveness-containment.test.cjs",
+  "tests/site-elevation-binding.test.cjs",
   "tests/timezone-authority-state.test.cjs",
   "tests/v1_limitations.test.cjs",
   "tests/weather-effects-contract.test.cjs",
@@ -1508,6 +1511,10 @@
    "reason": "imported cloud fixture module (cloudFixture) used by r0025-continuity/lifecycle; prints nothing"
   },
   {
+   "path": "tests/r0032-fixture.cjs",
+   "reason": "imported harness/fixture module, not an instrument"
+  },
+  {
    "path": "tests/rlgwo/prayer-browser-fixture.cjs",
    "reason": "browser fixture module for native Playwright harnesses"
   },
@@ -1608,6 +1615,30 @@
      "<path to the playwright package>"
     ],
     "protocol": "per-engine cell PASS/FAIL in <out>/report.json (builder: R31-13 builder cells, R31-09 wrapper; --cells gps: settings GPS per permission-diagnostic variant and Reset-then-GPS; docs/state-contracts/evidence/R0031/native and gps-native)"
+   }
+  },
+  {
+   "path": "tools/qa/run_r0032_native.cjs",
+   "reason": "native browser recipe (Playwright Chromium/Firefox/WebKit, loopback-served candidate and base trees, every provider routed to a fixture, counted or aborted, mocked clock, forced zone); not a headless unit instrument",
+   "owner": "R0032",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/run_r0032_native.cjs",
+     "--root",
+     "<candidate tree>",
+     "--base",
+     "<base tree>",
+     "--out",
+     "<fresh dir>",
+     "--engines",
+     "chromium,firefox,webkit",
+     "--cells",
+     "requests,pixels,elevation",
+     "--playwright",
+     "<path to the playwright package>"
+    ],
+    "protocol": "per-engine cell PASS/FAIL in <out>/report.json (R32-02 radar request log, R32-11 base-vs-candidate pixels with base-vs-base repeat, R32-06 elevation readers and probe; docs/state-contracts/R0032.md section 6)"
    }
   },
   {

@@ -110,8 +110,8 @@ index.html" invariant is deliberately relaxed** (maintainer decision) to keep co
 is the *only* extracted module and `index.html` falls back to legacy hash parsing if it 404s. `builder.html` is the
 config/URL generator (portable + self-configuring snippets). **Deploys via GitHub Pages from `main`**, so a commit
 to `main` is a deploy — that's the user's established workflow. Repo: github.com/theislampill/salah_widget.
-Data: Aladhan (prayer times) + Open-Meteo (weather) + RainViewer (radar) + GeoJS/ipinfo (coarse IP geolocation,
-local mode only) — all keyless/CORS-safe, no secrets in the repo.
+Data: Aladhan (prayer times) + Open-Meteo (weather) + GeoJS/ipinfo (coarse IP geolocation,
+local mode only); the current widget sends nothing to RainViewer (R0032; the frozen V1 page still requests radar) — all keyless/CORS-safe, no secrets in the repo.
 
 ## Working state
 
@@ -220,7 +220,8 @@ What changed in the (committed `91d0fc1`) live-motion pass (all verified live in
 - Weather is an Open-Meteo **current model estimate**, with source-valid time in
   the captured request timezone, a preceding interval, and retrieval time kept
   separate. Both source and receipt must be 0–15 minutes old, inclusive; future
-  timestamps are ineligible. RainViewer frame-generation, index-generation and
+  timestamps are ineligible. On the retained radar test path (the current widget
+  requests no radar, R0032), RainViewer frame-generation, index-generation and
   receipt times are distinct; frame and receipt each use 0–20 minutes, inclusive.
   Missing frame time cannot borrow index time, and invalid derived epochs are
   rejected before Image dispatch. Retaining cache bytes for six hours does not

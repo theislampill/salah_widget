@@ -257,8 +257,7 @@ truthfulness gate, cloud continuity/advection, painted-dawn removal, opaque/cale
   (a throw would break the direct `atmosphere(model())` calls in `qaState`/debug).
 - Reduced-motion is unified behind one live `isMotionReduced()` (JS) + the native `@media`/`.motionfull` (CSS);
   both read the same signal, so the old three-site drift surface is closed.
-- Weather "current" is an Open-Meteo nowcast, now **cross-checked against RainViewer radar** (`fetchRadar` →
-  `gateWeatherCode(raw,w,radarMm)`): radar CONFIRMS a precip code the model missed (`max(nowcast, radar)`),
-  **fail-closed** (no radar / coverage gap / stale / sim → nowcast-only) and **confirm-only** (never fabricates
-  rain — the gate only gates DOWN). Residual: radar coverage has gaps (oceans/deserts/some regions) and the
-  mm proxy is coarse (alpha-density, not calibrated dBZ); both are handled by confirm-only + fail-closed.
+- Weather "current" is an Open-Meteo model estimate. The historical RainViewer radar cross-check (`fetchRadar` →
+  `gateWeatherCode`) no longer acquires anything: radar imagery became unitless with no quantitative authority
+  (R000E), and since R0032 (owner decision D-32-1 A2) the current widget sends no request to RainViewer at all;
+  the retained acquisition code (`acquireRadar`) runs only in tests. The frozen V1 page (`/v1/`) still requests it.
