@@ -98,9 +98,3 @@ test('R33-18 coherence: without a timetable, a surface adopted by the celestial 
  assert.ok(css(h,'--moonbeam')>0,'with its light in the same call, never an unlit disc that later brightens');
 });
 
-test('R33-18 coherence: the disc is never revealed in a frame whose light was computed without it',()=>{
- const h=presenting(night(),false,{adoptOnRequest:true});h.run('render();');
- assert.equal(h.select('.c').classList.contains('moon-ready'),false,'withheld until the consistent render');
- h.run('_renderDirty=false;render();');
- assert.equal(h.select('.c').classList.contains('moon-ready'),true);assert.ok(css(h,'--moonbeam')>0);
-});

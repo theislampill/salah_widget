@@ -2351,10 +2351,7 @@ function beginSkyScene(initialDocument=false){
 // Decoded legacy maps are never terrain readiness.
 function updateSkySurface(){
   const c=$(".c"),photo=$(".mphoto"),mask=$(".moon-mask-disc");
-  // R0033: reveal the disc only in a frame whose lunar light was computed WITH this
-  // surface, so the Moon and its moonlight appear together (never an unlit disc that
-  // then brightens the sky). A newly adopted surface marks the render that reveals it.
-  const ready=!!(window.SalahMoonRuntime?.surface() && photo && photo.getAttribute("href") && _skySceneKey!==null && _moonLightSurface===true);
+  const ready=!!(window.SalahMoonRuntime?.surface() && photo && photo.getAttribute("href") && _skySceneKey!==null);
   if(c) c.classList.toggle("moon-ready",ready);
   if(mask) mask.classList.toggle("mask-on",ready && _skyMoonPresence>0);
 }

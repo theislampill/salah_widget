@@ -51,13 +51,13 @@
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
     // R0033 (issue 100) Moon recovery and light eligibility, branch claude/r0033-moon-recovery-20261115 merged with main
-    // ebb2704e: authored source 28f4ff25 and the legacy-Moon structural control of its generated index 97a723a5.
+    // ebb2704e: authored source 7bd8ed2f and the legacy-Moon structural control of its generated index 18395d51.
     // Every entry below remains admitted unchanged. Re-bind again when rebuilt on a later main.
-    '28f4ff25254e56f00fa24ec48b2466e621056bc6f1aa0fa1a8e263f755d6bae5':Object.freeze({
+    '7bd8ed2f48e187bcb4b6322e8fc48d17b297816f050bec62c562e64e7e2423ce':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'claude/r0033-moon-recovery-20261115',path:'src/native/index.html',layout:'config,native'}),
-    '2c2ed91376a564728f057914801d494e542925c0329920f0bacf2bc67e42a393':Object.freeze({
+    'a46c55335e63e14da44c106e0c1bc0bf5b778c07e94f915e9bfe9ccc9201d671':Object.freeze({
       profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'claude/r0033-moon-recovery-20261115',path:'index.html',
-      parentSha256:'97a723a5b38dd3c8a462107cc0474436f9acd7129b116401ed68923097f72714',
+      parentSha256:'18395d5126091807a11dca66df462bd3fa9556ae4bc7e52ffc34eb3dc70bfbe9',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R003A merged with main 2722590f (R0034-A1, R0030) at d2b31fa1: authored source 07bbcaf9, structural control 4273983a of its generated index cccd79a0. Every entry below remains admitted.

@@ -288,14 +288,14 @@ function mentions(name, tokens) {
       // R0030 changes only the settings block, not the pinned block, helper, clamp or call.
       // R003A re-bind after merging main 2722590f (issue 124): body 78eb2f3a... -> 23f30c5d..., entry 7c2175b2... -> cccd79a0...;
       // R003A changes only the no-timetable solar-optic withdrawal and two comments, not the pinned block, helper, clamp or call.
-      // R0033 re-bind (issue 100, merged with main ebb2704e): body 23f30c5d... -> c6e66093..., entry cccd79a0... -> 97a723a5...; R0033 changes the
+      // R0033 re-bind (issue 100, merged with main ebb2704e): body 23f30c5d... -> 581755ed..., entry cccd79a0... -> 18395d51...; R0033 changes the
       // lunar wrapper (presence predicate), the Moon host hooks, the sky commit and reveal guards, the no-timetable
       // lunar repaint and one legacy-loader comment,
       // not the pinned force block, helper, clamp or atmosphere call.
-      assert.equal(digest(body),"c6e6609309236e6201c95e6e01766ae90491b9f4565beb0d9dd3a53ebaab5d48",'delegated native script changed');
+      assert.equal(digest(body),"581755eddbc305be489aba0a5c0d0d5a9c1f2efaacfb30ba091aa0895a635478",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"97a723a5b38dd3c8a462107cc0474436f9acd7129b116401ed68923097f72714",'delegated current generated entry changed');
+      assert.equal(digest(source),"18395d5126091807a11dca66df462bd3fa9556ae4bc7e52ffc34eb3dc70bfbe9",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
