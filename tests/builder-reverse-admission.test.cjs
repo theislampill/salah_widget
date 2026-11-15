@@ -207,18 +207,71 @@ test('R31-08 boundary via category is preferred; admission still precedes prefer
   assert.deepEqual(r.candidates.map(c => c.name), ['County']); assert.equal(r.attempts[0].reason, 'rejected 1');
 });
 
-// ---- R31-07: settings GPS publication versus the permission diagnostic (D-31-3 PENDING — todo witness) ---------
-// Under every D-31-3 option except C the fix must be applied while the diagnostic query never settles. Today the
-// publication awaits permissionState() (src/native/index.html _usePrecise); this witness stays a todo until the owner
-// decides (index.html is outside this lane). It is NOT acceptance evidence. These two always load the working-tree
-// index.html (unchanged by R0031; `git show` of the generated entry exceeds the fixture's buffer under R0031_REF).
-test('R31-07 (D-31-3 pending) a never-settling permission query does not block a valid GPS fix', { todo: 'D-31-3 owner decision pending; index.html _usePrecise' }, async () => {
-  const f = sourceFixture('settings', { deferPermission: true });
-  f.click('set-pin'); await f.resolve('gps', 0, { ok: true, lat: 51.5, lon: -0.12, accuracy: 20 }); await f.advance(600000);
-  assert.deepEqual(f.tuple().slice(1, 3), ['51.50000', '-0.12000']);
+// ---- R31-07: settings GPS publication first, permission diagnostic afterwards (owner decision D-31-3 = A) ------
+// Issue 98 comment 6878230757: an admitted fix is published without awaiting permissionState(); the diagnostic is
+// read afterwards for reporting only (`_geoPermission`, read by qaState), guarded by the same lookup owner, and a
+// rejected, unsupported or never-settling diagnostic is "unknown" and never retracts the fix. These rows load the
+// working-tree index.html (`git show` of the generated entry exceeds the fixture's buffer under R0031_REF).
+const mutateIndex = mutateOf('index');
+const FIX = { ok: true, lat: 51.5, lon: -0.12, accuracy: 20 };
+function settings(options = {}) {
+  const f = sourceFixture('settings', { deferPermission: true, mutate: mutateIndex, ...options });
+  // Count publications (each admitted fix lights the pin "precise" exactly once).
+  f.run('var __r31Pins=0; const __r31SetPin=_setPin; _setPin=function(src){ if(src==="precise") __r31Pins++; return __r31SetPin.apply(this,arguments); };');
+  return f;
+}
+const status = f => f.elements.get('set-status').textContent;
+const coords = f => f.tuple().slice(1, 3);
+async function fixWithHangingDiagnostic() {
+  const f = settings(); f.click('set-pin'); await f.resolve('gps', 0, FIX); return f;
+}
+test('R31-07 a never-settling permission query does not block a valid GPS fix', async () => {
+  const f = await fixWithHangingDiagnostic(); await f.advance(600000);
+  assert.deepEqual(coords(f), ['51.50000', '-0.12000']);
+  assert.match(status(f), /^Browser position · accuracy 20 m/); assert.equal(f.run('_setDirty'), true);
+  assert.equal(f.run('_geoPermission'), 'unknown', 'an unsettled diagnostic is reported as unknown');
+  assert.equal(f.calls.applied.length, 0, 'nothing is saved before close (unchanged)');
 });
-test('R31-07 control: a settling permission query publishes the fix (current behaviour)', async () => {
-  const f = sourceFixture('settings', { deferPermission: true });
-  f.click('set-pin'); await f.resolve('gps', 0, { ok: true, lat: 51.5, lon: -0.12, accuracy: 20 }); await f.resolve('permission', 0, 'granted');
-  assert.deepEqual(f.tuple().slice(1, 3), ['51.50000', '-0.12000']);
+test('R31-07 the diagnostic is read after publication and only reported; the status does not change when it settles', async () => {
+  const f = await fixWithHangingDiagnostic(); const published = f.snapshot();
+  assert.equal(f.queues.permission.length, 1, 'diagnostic requested once, after the fix');
+  await f.resolve('permission', 0, 'granted');
+  assert.equal(f.snapshot(), published, 'form, status, pin and dirtiness identical before and after the diagnostic');
+  assert.equal(f.run('_geoPermission'), 'granted'); assert.equal(f.run('__r31Pins'), 1, 'published exactly once');
+});
+for (const state of ['denied', 'prompt'])
+  test(`R31-07 a "${state}" diagnostic after an admitted fix is reported, never retracts it`, async () => {
+    const f = await fixWithHangingDiagnostic(); const published = f.snapshot();
+    await f.resolve('permission', 0, state);
+    assert.equal(f.snapshot(), published); assert.equal(f.run('_geoPermission'), state); assert.equal(f.run('__r31Pins'), 1);
+  });
+test('R31-07 a rejected diagnostic is unknown and never retracts the fix', async () => {
+  const f = await fixWithHangingDiagnostic(); const published = f.snapshot();
+  await f.reject('permission', 0);
+  assert.equal(f.snapshot(), published); assert.deepEqual(coords(f), ['51.50000', '-0.12000']);
+  assert.equal(f.run('_geoPermission'), 'unknown'); assert.equal(f.run('__r31Pins'), 1);
+});
+test('R31-07 an unsupported diagnostic (synchronous throw) is unknown and never retracts the fix', async () => {
+  const f = settings(); f.sandbox.SalahConfig.permissionState = () => { throw new TypeError('permissions unsupported'); };
+  f.click('set-pin'); await f.resolve('gps', 0, FIX); await f.advance(1000);
+  assert.deepEqual(coords(f), ['51.50000', '-0.12000']); assert.match(status(f), /^Browser position/);
+  assert.equal(f.run('_geoPermission'), 'unknown');
+});
+test('R31-07 a diagnostic settling after a newer location intent is not written', async () => {
+  const f = await fixWithHangingDiagnostic(); f.input('set-lat', '30'); const before = f.snapshot();
+  await f.resolve('permission', 0, 'denied');
+  assert.equal(f.snapshot(), before); assert.equal(f.run('_geoPermission'), 'unknown');
+});
+test('R31-07 a fix arriving after a newer location intent is not published (ownership precedes publication)', async () => {
+  const f = settings(); f.click('set-pin'); f.input('set-lat', '30'); const before = f.snapshot();
+  await f.resolve('gps', 0, FIX); await f.advance(1000);
+  assert.equal(f.snapshot(), before); assert.equal(f.run('__r31Pins'), 0); assert.equal(f.queues.permission.length, 0, 'no diagnostic for a superseded lookup');
+});
+test('R31-07 a denied GPS with a never-settling diagnostic reports the failure at once and keeps the location', async () => {
+  const f = settings(); const before = coords(f); f.click('set-pin'); await f.reject('gps', 0); await f.advance(600000);
+  assert.deepEqual(coords(f), before); assert.match(status(f), /^Browser location unavailable/); assert.equal(f.run('__r31Pins'), 0);
+});
+test('R31-07 control: a settling permission query publishes the fix', async () => {
+  const f = settings(); f.click('set-pin'); await f.resolve('gps', 0, FIX); await f.resolve('permission', 0, 'granted');
+  assert.deepEqual(coords(f), ['51.50000', '-0.12000']); assert.equal(f.run('__r31Pins'), 1);
 });
