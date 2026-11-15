@@ -11,10 +11,13 @@ statement, the correction is in the work order and summarised in [section 6](#6-
 verification and closure of each work order need a separate owner execution commission. Nothing here was
 implemented, and no acceptance row in any issue has been executed unless the issue says it was run while drafting.
 
-### Execution status (2026-11-13)
+### Execution status (2026-11-15)
 
-The Status paragraph above records the state at filing and is kept as written. Since then, eight work orders
-have been accepted and closed with final certificates:
+The Status paragraph above records the state at filing and is kept as written. The per-issue certificates and the
+issue tracker are authoritative; this portfolio does not restate their evidence. As of 2026-11-15 the issue tracker
+shows the following.
+
+**Accepted and closed with final certificates (nine):**
 
 - R0037 (issue 104): [final certificate](https://github.com/theislampill/salah_widget/issues/104#issuecomment-6844814360)
 - R002B (issue 92): [final certificate](https://github.com/theislampill/salah_widget/issues/92#issuecomment-6844979120)
@@ -24,10 +27,50 @@ have been accepted and closed with final certificates:
 - R0029 (issue 90): [final certificate](https://github.com/theislampill/salah_widget/issues/90#issuecomment-6860166513) (with its [evidence-pointer correction](https://github.com/theislampill/salah_widget/issues/90#issuecomment-6860222361))
 - R002E (issue 95): [final certificate](https://github.com/theislampill/salah_widget/issues/95#issuecomment-6861511641)
 - R0039 (issue 106): [final certificate](https://github.com/theislampill/salah_widget/issues/106#issuecomment-6862449283); Part A only, Part C not implemented
+- R0034 (issue 101): [final certificate](https://github.com/theislampill/salah_widget/issues/101#issuecomment-6889716103), covering the refined-sky identity correction (pull request 121, main `bf79d00f`), the registry pass (pull request 122) and amendment R0034-A1, which removed the owner-reported bars (pull request 132, main `90cccd2f`); the owner assessed the reported artifact as resolved (issue 101 comment 6889661578)
 
-The other ten remain open: R0028 (issue 89), R002F (issue 96), R0030 to R0036 (issues 97 to 103) and R0038
-(issue 105). The per-issue certificates are authoritative; this portfolio does not restate their evidence.
-The registry status codes that the eight certificates propose are applied in
+**Merged and delivered, issue still open (three):** R002F (issue 96), the R0031 builder/config slice (issue 98) and R0028
+(issue 89).
+
+**Open, not otherwise characterised here:** R0030, R0032, R0033, R0035, R0036 and R0038 (issues 97, 99, 100, 102, 103,
+105). Work on some of them is in progress; nothing further is stated about it in this portfolio.
+
+**Work orders filed after the portfolio (2026-11-14), all open.** They carry the candidate improvements of the
+sky-physics registry pass ([R0034-sky-physics-registry.md](../../state-contracts/R0034-sky-physics-registry.md) section 5).
+Their bodies are the authority for scope and for what is and is not authorised.
+
+| RLGWO | Issue | Scope and authority |
+|---|---|---|
+| R003A | [124](https://github.com/theislampill/salah_widget/issues/124) | No-timetable optic withdrawal (CI-07), the unread `cloudState.wy` field (CI-06), and truthful sky-stage documentation with a four-class approximation ledger (CI-14 to CI-16; documentation half of CI-03); registry hygiene. Healthy scenes stay pixel-neutral; showing the anticrepuscular rays and any visual change are held for the owner (R003B, R003C). |
+| R003B | [125](https://github.com/theislampill/salah_widget/issues/125) | Presentation registration: a controlled 1:1 canvas experiment (CI-02, merge not authorised without a new explicit owner approval) and optics-anchor synchronisation (CI-04, merge only after the owner approves normal and reduced-motion clips). Standing prohibition on changing the glass, shadow, strokes and fonts (CI-08, CI-17). No physics change. |
+| R003C | [126](https://github.com/theislampill/salah_widget/issues/126) | Physically gated optical producers: the owner chooses between two prepared dispositions of the anticrepuscular rays (CI-03), and an isolated experimental cloud-lining phase-weighting candidate (CI-13) with a legitimate research exit. Nothing ships without the owner's visual approval; the safe default is that nothing merges. |
+| R003D | [127](https://github.com/theislampill/salah_widget/issues/127) | Output quantisation and dithering (CI-09): a controlled evaluation only, with an evaluation record and offline instruments; no product change and no merge; the owner decides afterwards whether to commission an adoption order. |
+| R003E | [128](https://github.com/theislampill/salah_widget/issues/128) | Atmospheric-model scientific design assessment: ozone absorption (CI-10), multiple scattering (CI-11), aerosol/Mie parameters (CI-12). Research and decision only; experiments on out-of-tree copies; no merge, no vendored-core change. |
+
+**Registry candidates CI-01 to CI-17 and their owning work orders** (the candidate rows are in the registry-pass
+document; a candidate owned by a work order is not thereby done):
+
+| Candidate | Owner | State |
+|---|---|---|
+| CI-01 identity keying | R0034 | done (closed, accepted) |
+| CI-02 canvas 323×528 display of the 325×530 backing | R003B | open |
+| CI-03 anticrepuscular hide rule versus documentation | R003C (disposition); documentation half in R003A | open |
+| CI-04 optics anchor versus body easing | R003B | open |
+| CI-05 radar tile range | R0032 (issue 99) | open; the registry names R0032, and issue 99 lists ISM-WX-004 among the machines it affects |
+| CI-06 unread `cloudState.wy` | R003A | open |
+| CI-07 no-timetable optic withdrawal | R003A | open |
+| CI-08 glass `backdrop-filter` | none: not to be changed by owner decision (R003B standing prohibition) | not to be changed |
+| CI-09 output dithering | R003D | evaluation only |
+| CI-10 ozone absorption | R003E | assessment only |
+| CI-11 multiple scattering | R003E | assessment only |
+| CI-12 aerosol/Mie parameters | R003E | assessment only |
+| CI-13 cloud-lining phase weighting | R003C | open |
+| CI-14 crepuscular gating clarity | R003A | open |
+| CI-15 ground and cloud albedo | R003A (documented as an approximation) | open |
+| CI-16 solar-disc limb darkening | R003A (documented as an approximation) | open |
+| CI-17 shadows, strokes, fonts | none: not to be changed by owner decision (R003B standing prohibition) | not to be changed |
+
+The registry status codes that the certificates propose are applied in
 [IMPLICIT_STATES.md](../../../IMPLICIT_STATES.md), and each certificate is indexed in
 [CLOSURE_INDEX.md](../../state-contracts/CLOSURE_INDEX.md). The machine dispositions in section 3 keep the
 audit-baseline codes they were filed with.
