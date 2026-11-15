@@ -3,6 +3,8 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {execFileSync}=require('node:child_process');
 const {load,sha,root,prayerForDate}=require('./r001d-harness.cjs');
+// R0033 (issue 100, R33-16): every compared source runs with the same presented-surface stub.
+const {presentSurface}=require('./r0033-presented-surface.cjs');
 const path=require('node:path');
 const option=name=>process.argv.find(s=>s.startsWith('--'+name+'='))?.slice(name.length+3);
 const gitSource=(commit,file)=>execFileSync('git',['show',commit+':'+file],{cwd:root,encoding:'utf8',maxBuffer:4*1024*1024});
@@ -24,7 +26,7 @@ const protectedGainFields=['moonlightIntensity','moonBeam','moonGlow','moonLocal
 const acceptedSolarCss=new Set(['--suncore','--sunmid']);
 function plain(value){return JSON.parse(JSON.stringify(value));}
 function scene(source,fraction,altitude=20,time='22:00',waxing='1'){
-  const h=load({source});h.run('SIM.moon="'+fraction+'";SIM.moonAlt="'+altitude+'";SIM.wax="'+waxing+'";'+(time==='12:30'?'_simBase=Date.parse("2026-09-08T09:30:00Z");':'')+'renderMoon();render();');
+  const h=presentSurface(load({source}));h.run('SIM.moon="'+fraction+'";SIM.moonAlt="'+altitude+'";SIM.wax="'+waxing+'";'+(time==='12:30'?'_simBase=Date.parse("2026-09-08T09:30:00Z");':'')+'renderMoon();render();');
   const A=h.run('atmosphere(model())'),css={};
   for(const p of ['--sunamt','--suncore','--sunmid','--sunhalo','--sundogs','--sunpillar','--anticrep','--moonbeam','--mhalo','--mcorona','--mparhelia','--moongrp','--moonocc','--moonfeat','--g1','--g2','--g3','--stars','--mw'])css[p]=h.select('.c').style.getPropertyValue(p);
   const gains=plain(Object.fromEntries(protectedGainFields.map(k=>[k,A[k]])));
@@ -131,7 +133,8 @@ const moonBuild=JSON.parse(fs.readFileSync(path.join(candidateRoot,'moon/BUILD.j
 // not required). The host declares `let MOON_WORKER_SOURCE=null;` and its refinement tail installs
 // the worker once through installWorkerSource(<json>); the entry embeds the host as
 // moon-initial-code and that tail as moon-refinement-code instead of <script src=moon/moon-host.js>.
-const WORKER_INSTALL=/^window\.SalahMoonRuntime\.installWorkerSource\((.+)\);$/gm;
+// R0033 (issue 100, M3(d)/EF-E04): the tail is an optional call so an empty slot is a no-op.
+const WORKER_INSTALL=/^window\.SalahMoonRuntime\?\.installWorkerSource\((.+)\);$/gm;
 function boundWorker(host){
   const declarations=[...host.matchAll(WORKER_INSTALL)];
   assert.equal(declarations.length,1,'one actual worker payload in loaded host');
@@ -149,7 +152,7 @@ test('HTTP Moon consumer resolves the canonical host and its exact worker payloa
   assert.equal(candidate.split('<script id="moon-refinement-code">'+inline(tail)+'</script>').length,2,'entry embeds the exact refinement tail');
   assert.equal(sha(Buffer.from(moonHost)),moonBuild.hostSha256,'canonical generated host binding');
   assert.equal(boundWorker(moonHost),moonWorker);
-  assert.throws(()=>boundWorker(moonHost.replace(/^window\.SalahMoonRuntime\.installWorkerSource\(.+\);$/m,'window.SalahMoonRuntime.installWorkerSource("wrong worker");')),/worker/);
+  assert.throws(()=>boundWorker(moonHost.replace(/^window\.SalahMoonRuntime\?\.installWorkerSource\(.+\);$/m,'window.SalahMoonRuntime?.installWorkerSource("wrong worker");')),/worker/);
 });
 for(const file of ['moon/src/surface_v5.mjs','moon/src/moon-calendar.mjs','moon/src/moon-detail.mjs','moon/src/moon-precision.mjs'])test(file+' actual generated host/worker consumes the exact authored material once',()=>{
   const owner=fs.readFileSync(path.join(candidateRoot,file),'utf8');

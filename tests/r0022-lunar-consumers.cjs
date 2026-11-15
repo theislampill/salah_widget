@@ -1,11 +1,17 @@
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {load,sha}=require('./r001d-harness.cjs');
+const {presentSurface}=require('./r0033-presented-surface.cjs');
 const sourcePath=process.argv[2]?.startsWith("--")?undefined:process.argv[2];
 let pass=0,fail=0;
 const cp8SnapshotOnly=process.argv.includes("--cp8-snapshot-only"),cp8Synthetic=new Set(["glints release wash with held star projection", "ordinary render refreshes star appearance while held projection stays fixed"]);
 function test(name,fn){if(cp8SnapshotOnly&&cp8Synthetic.has(name)){console.log("SKIP_SUPERSEDED",name,"— real catalogue/physical compositor replaces synthetic arrays; see CP8 tests");return;}try{fn();pass++;console.log('PASS '+name);}catch(e){fail++;console.log('FAIL '+name+' :: '+e.message);}}
-function fixture(){return load({sourcePath});}
+// R0033 (issue 100, R33-16): light now requires a presented surface, so these cases run
+// with a registered runtime presenting a current surface; bareFixture() keeps the
+// runtime-absent legacy-raster path (and R0033's own runtime-absent negatives live in
+// tests/r0033-lunar-surface-gate.test.cjs).
+function fixture(){return presentSurface(load({sourcePath}));}
+function bareFixture(){return load({sourcePath});}
 // Ordinary elapsed time holds geometry; editing _simBase deliberately seeks the
 // explicit preview and now correctly invalidates its accepted projection.
 function ordinaryFixture(){return load({sourcePath,hash:'#lat=24.47&lon=39.61&tz=Asia%2FRiyadh&units=c&seed=1&simMoon=.5&simWax=1&simMoonAlt=20&simMoonH=42'});}
@@ -65,13 +71,13 @@ test('glints release wash with held star projection',()=>{
   assert.notEqual(h.run('JSON.stringify(_glintEls.map(e=>e.style.opacity))'),washed);
 });
 test('physical zero does not alter the opaque PBR calendar raster',()=>{
-  const h=fixture();h.run('_mAlb=new Uint8ClampedArray(_MTW*_MTH*4).fill(150);_mNrm=new Uint8ClampedArray(_MTW*_MTH*4).fill(128);_pbrReady=true;SIM.moon="0.01";render();');
+  const h=bareFixture();h.run('_mAlb=new Uint8ClampedArray(_MTW*_MTH*4).fill(150);_mNrm=new Uint8ClampedArray(_MTW*_MTH*4).fill(128);_pbrReady=true;SIM.moon="0.01";render();');
   assert.equal(h.run('_moonOut.data[(150*300+150)*4+3]'),255);
   assert.ok(h.run('_moonOut.data[(150*300+150)*4]')>0,'ashen surface remains, not black');
   assert.equal(+h.select('.c').style.getPropertyValue('--moonfeat'),1);
 });
 for(const optic of ['lunarhalo','paraselene'])test('forced '+optic+' cannot bypass physical-zero permission',()=>{
-  const h=load({sourcePath,extraHash:'&debugOptic='+optic});h.run('SIM.moon="0.01";render();');zeroConsumers(h,'near-new');
+  const h=presentSurface(load({sourcePath,extraHash:'&debugOptic='+optic}));h.run('SIM.moon="0.01";render();');zeroConsumers(h,'near-new');
 });
 for(const [name,low,mid,high,humidity,wantHalo,wantCorona] of [
   ['clear',0,0,0,55,false,false],['thin ice',0,8,28,55,true,false],['droplet',0,30,0,80,false,true],['overcast',100,100,100,55,false,false]]){

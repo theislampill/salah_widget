@@ -18,11 +18,19 @@ The phase-angle cache quantum .0004 rad has a small *geometric* movement bound;
 it does not prove every temporal shadow/radiance error. Worker refinement is
 expensive (tens of seconds to minutes on tested hosts), not a 60fps shader.
 
-The native PBR remains the labelled startup/failure fallback. After a valid
-terrain preview arrives it is replaced, then refined using increasing angular
-orders. `SalahMoonRuntime.state` reports preview/refinement/currentness/errors.
-One worker is used, with cancellation, startup/refinement deadlines and at most
-three explicit retries. `SalahMoonRuntime.retry()` retries a terminal failure.
+The startup and failure fallback is the V5 initial tier (the compact receiver
+surface), never the earlier native PBR: the legacy owner is dormant and never
+revealed (R0033, owner decision DG-1 = B). After a valid terrain preview arrives
+the initial tier is replaced, then refined using increasing angular orders.
+`SalahMoonRuntime.state` reports preview/refinement/currentness/errors and the
+`recovery` record. One worker is used, with cancellation and startup/refinement
+deadlines. After a worker failure the runtime itself starts a new worker at most
+three times per page lifetime (30 s, 2 min, 10 min; never while hidden; contract
+and transport-identity failures never retry); those attempts revalidate cached
+assets (`no-cache`), while the first boot prefers the cache. The QA driver's
+`SalahMoonRuntime.retry()` keeps its own bound of three explicit attempts. If the
+runtime cannot be constructed at all, no Moon is shown and no moonlight is cast
+(`SalahMoonConstructionError`); see `docs/state-contracts/R0033.md`.
 There is no UI-thread terrain fallback and no private astronomical clock.
 
 ## Data and outputs

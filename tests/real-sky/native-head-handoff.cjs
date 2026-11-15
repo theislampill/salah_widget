@@ -39,6 +39,9 @@ function setup(){
   nowParts:()=>({h:2,mi:0,s:0}),moonGeometryObservation:()=>({fresh:true}),
   renderMoon(){},projectStars(){},simDate:()=>new Date(),
   lunarPresentation:()=>({moonShow:1,moonlight:1}),simulationReady:()=>true,
+  // R0033 (issue 100): the celestial painter re-checks the presence decision after its
+  // own request; this fixture's double already computed light with the surface.
+  moonSurfacePresentable:()=>true,_moonLightSurface:true,
   // Optical sinks are outside this Moon handoff fixture; full inline-runtime
   // startup controls exercise their real shared owners separately.
   weatherDecision:()=>({record:null,renderCode:0}),wxDrivers:()=>({heat:0}),wxClass:()=>"clear",isMotionReduced:()=>false,

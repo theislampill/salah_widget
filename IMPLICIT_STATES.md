@@ -2929,6 +2929,7 @@ Original audit: **N11** · Lane papers: [E](docs/audit/post-rlgwo/lanes/E-moon.m
   - Original evidence: {'relevant_existing_files': ['tests/moon-fixture-anchors.test.cjs', 'tests/real-sky/moon_build_guard_test.py', 'tests/real-sky/native-lunar-component.test.mjs'], 'execution_scope': 'Relevant tests are pointers to existing coverage, not assertions that each file passed. Parent owns broad regression adjudication. Locally executed join probes are identified explicitly.', 'verification_gap': 'Standalone fallback pixels and failure recovery were not exercised. Modern runtime correctness belongs to rendering lane; no active defect assigned.'}
   - Original remaining risk: Standalone fallback pixels and failure recovery were not exercised. Modern runtime correctness belongs to rendering lane; no active defect assigned.
 - **Findings.** [PRA-F-13](docs/audit/post-rlgwo/FINDINGS.md#pra-f-13)
+- **R0033 rows (issue 100), branch `claude/r0033-moon-recovery-20261115` (not merged; awaiting independent review).** Documented: [R0033 contract](docs/state-contracts/R0033.md) §4 (DG-1 = B) and DESIGN "Neutral initial reveal". Enforced: unchanged dormant owner, never revealed; `_pbrFailed` no longer feeds light eligibility (ISM-MOON-020), it drives only this owner's unrevealed renderer. Verified by: `tests/r0033-lunar-surface-gate.test.cjs` (static: no `nativeLunarPresentation` call passes `_pbrFailed`); runtime-absent legacy raster still covered by `tests/r0022-lunar-consumers.cjs` (bareFixture). Unresolved: the wasted hidden decode after a construction failure remains (no product consequence). Proposed status (effective on acceptance): D PEX / I IMS / V PEX; role: dormant, documented as never-revealed.
 
 <a id="ism-moon-002"></a>
 ### ISM-MOON-002 — Native lunar geometry production and consumption receipts
@@ -3040,6 +3041,7 @@ Original audit: **R20** · Lane papers: [E](docs/audit/post-rlgwo/lanes/E-moon.m
   - Original evidence: tests/real-sky/moon_runtime_identity_test.py; tests/real-sky/moon_build_guard_test.py:58–103 protect generated duplicate/build boundaries; evidence/probes/rendering/protocol-probes.mjs runtimeReplacement
   - Original remaining risk: Build-time duplicate guards reduce likelihood of normal double execution; they do not make runtime replacement ordering correct. No production reinstallation frequency claimed.
 - **Findings.** [PRA-F-12](docs/audit/post-rlgwo/FINDINGS.md#pra-f-12), [PRA-F-13](docs/audit/post-rlgwo/FINDINGS.md#pra-f-13)
+- **R0033 rows (issue 100), branch `claude/r0033-moon-recovery-20261115` (not merged; awaiting independent review).** Documented: [R0033 contract](docs/state-contracts/R0033.md) §2 (M1 machine, failure classes, budget). Enforced: runtime-owned recovery record `idle|scheduled|exhausted` in `moon/src/moon-native.mjs` (`failed(error,class)`, `schedule`, `recoverIfDue` on the existing 4 Hz poll and the visible transition, no new timer); at most 3 automatic attempts per page at 30 s / 2 min / 10 min, never hidden/disposed/without source/with a live worker; contract and transport-identity classes never retry; budget not restored; explicit `retry()` keeps its own bound of 3; status never `paused` while visible with a dead worker; `state.recovery` diagnostic. Verified by: `moon/tests/r0033-recovery.test.cjs` R33-01/02/03 (14 classes)/06/07/08 and mutants (trigger removed, unbounded, start while hidden: all killed); native cells `tools/qa/r0033_native_cells.cjs` recover1/recover3/exhaust. Unresolved: EF-E11 (240 s deadline vs slow devices) unmeasured (M5). Proposed status (effective on acceptance): D EIV / I EEV / V EIV.
 
 <a id="ism-moon-005"></a>
 ### ISM-MOON-005 — One-shot initial-head eligibility and irreversible retirement
@@ -3074,6 +3076,7 @@ Original audit: **R21** · Lane papers: [E](docs/audit/post-rlgwo/lanes/E-moon.m
   - Original evidence: tests/real-sky/native-startup-handoff.test.cjs; tests/real-sky/initial_source_association_test.py; tests/real-sky/first_complete_scene_test.py
   - Original remaining risk: Native page-cache restore and visibility timing not exercised; one-shot eligibility intentionally sacrifices stale startup reuse after invalidation.
 - **Findings.** [PRA-F-08](docs/audit/post-rlgwo/FINDINGS.md#pra-f-08), [PRA-F-12](docs/audit/post-rlgwo/FINDINGS.md#pra-f-12)
+- **R0033 rows (issue 100), branch `claude/r0033-moon-recovery-20261115` (not merged; awaiting independent review).** Documented: [R0033 contract](docs/state-contracts/R0033.md) §3 (M2). Enforced: `status.initialError` is a record only; eligibility `initialRetry` (`idle|waiting|exhausted|permanent`): one re-attempt per new epoch or after 60 s, three render throws per page, receiver missing or `SalahMoonInitialError` permanent; head handoff unchanged. Verified by: `moon/tests/r0033-recovery.test.cjs` R33-10 (three cases), R33-11; mutant (sticky `initialError`) killed. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-moon-006"></a>
 ### ISM-MOON-006 — Offline chunk DOM/script transport lease
@@ -3374,6 +3377,7 @@ Original audit: **new (NEW-E-01; carries the RF01 resolution)** · Lane papers: 
 - **Observed facts.** integrator read L294-300
 - **Unknowns.** a natural (non-injected) construction failure
 - **Findings.** [PRA-F-13](docs/audit/post-rlgwo/FINDINGS.md#pra-f-13)
+- **R0033 rows (issue 100), branch `claude/r0033-moon-recovery-20261115` (not merged; awaiting independent review).** Documented: [R0033 contract](docs/state-contracts/R0033.md) §4. Enforced: construction unwind unchanged (ES21-02/04/05/07 GREEN); the generated wrapper (tools/build_moon.py) records `SalahMoonConstructionError`, installs the head with no initial receiver (DG-1 = B: no Moon that vanishes), prepares the sky first paint, then rethrows; the refinement tail is an optional call (no TypeError on an empty slot), a source-identity mismatch on a live runtime still throws. Verified by: `moon/tests/r0033-recovery.test.cjs` R33-13 (two cases), R33-14; mutant (unguarded tail) killed; native cell `construction`. Unresolved: no natural construction trigger is known (census in the contract §4). Proposed status (effective on acceptance): codes unchanged (EIV / HRS / HRS); consequence row added.
 
 <a id="ism-moon-017"></a>
 ### ISM-MOON-017 — Native Moon reveal gate (`moon-ready` / `mask-on`)
@@ -3401,6 +3405,7 @@ Original audit: **new (NEW-E-02)** · Lane papers: [E](docs/audit/post-rlgwo/lan
 - **Tests.** R0021 native cells
 - **Observed facts.** integrator read L2236-2241
 - **Findings.** [PRA-F-13](docs/audit/post-rlgwo/FINDINGS.md#pra-f-13)
+- **R0033 rows (issue 100), branch `claude/r0033-moon-recovery-20261115` (not merged; awaiting independent review).** Documented: [R0033 contract](docs/state-contracts/R0033.md) §4, DESIGN "Neutral initial reveal". Enforced: slot states `presented(initial|preview|refined)` / `withheld(day|scene pending|no current presentation)` / `unavailable(runtime absent)` under DG-1 = B; `updateSkySurface` unchanged; the no-timetable path repaints its lunar light when its own request adopts, and the sky commit waits for a frame whose light decision still holds (disc and moonlight appear together). Verified by: `tests/r0033-lunar-surface-gate.test.cjs` commit and no-timetable coherence cases (two mutants killed) and native `startup`/`construction` frame sequences on three engines. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-moon-018"></a>
 ### ISM-MOON-018 — Moon worker asset HTTP acquisition and browser-cache admission
@@ -3428,6 +3433,7 @@ Original audit: **new (NEW-E-03)** · Lane papers: [E](docs/audit/post-rlgwo/lan
 - **Hypotheses.** reload may also not recover
 - **Unknowns.** Chromium behaviour; production `Cache-Control` on errors
 - **Findings.** [PRA-F-12](docs/audit/post-rlgwo/FINDINGS.md#pra-f-12)
+- **R0033 rows (issue 100), branch `claude/r0033-moon-recovery-20261115` (not merged; awaiting independent review).** Documented: [R0033 contract](docs/state-contracts/R0033.md) §2 (M1-cache, DG-3). Enforced: first boot `force-cache`; any attempt after a failure (automatic or driver) sends `cache:'no-cache'` in the boot message and `moon/src/moon-worker.mjs` reads assets with it (only `force-cache`/`no-cache` admitted). Verified by: `moon/tests/r0033-recovery.test.cjs` R33-04 (two cases; mutant killed); native cell `cached404` (Firefox b21 pattern) and healthy request accounting in the `scenes` cell. Unresolved: content-versioned URLs (DG-3 ii) deferred to the next asset change. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-moon-019"></a>
 ### ISM-MOON-019 — Moon page-lifecycle withdrawal and worker lifetime
@@ -3481,6 +3487,7 @@ Original audit: **new (NEW-E-05 + NEW-D-04)** · Lane papers: [D](docs/audit/pos
 - **Findings.** [PRA-F-13](docs/audit/post-rlgwo/FINDINGS.md#pra-f-13), [PRA-F-31](docs/audit/post-rlgwo/FINDINGS.md#pra-f-31)
 
 ## Build, deployment and qualification (`ISM-BLD`)
+- **R0033 rows (issue 100), branch `claude/r0033-moon-recovery-20261115` (not merged; awaiting independent review).** Documented: [R0033 contract](docs/state-contracts/R0033.md) §5 (M4), DESIGN "Opaque calendar disc vs atmospheric moonlight", OPTICS "Lunar light gate". Enforced: `lunarPresentation` passes `!moonSurfacePresentable()` (runtime `presentable` pure predicate, published href, established scene) instead of `_pbrFailed`; `SalahMoonHost.publish`/`fallback` mark a render on a change of that decision only; every consumer (sky lift, cloud light, local wash, beam, glow, halo, corona, paraselenae, debugOptic forces) is zero with reason `surface-unavailable` without a presented surface. Verified by: `tests/r0033-lunar-surface-gate.test.cjs` (8 cases incl. purity spy and static census), re-pointed `tests/r0022-lunar-consumers.cjs`/`tests/r0022-baseline-balance.cjs` (presented-surface stub), mutants (surface ignored, adopting getter, dirty flip omitted, commit guard removed) killed; native `scenes` and `construction` cells. Proposed status (effective on acceptance): D EIV / I EEV / V EEV.
 
 <a id="ism-bld-001"></a>
 ### ISM-BLD-001 — Native generation output publication sequence

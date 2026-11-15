@@ -285,3 +285,12 @@ availability still open; **N003 BLOCKED on prerequisites** with partial platform
 evidence. Moon addition does not satisfy those unrelated obligations. Next steps
 are review of this dependent Draft PR and separately authorized work on the open
 gates; neither PR is merged.
+
+## Note appended 2026-11-15 (R0033, issue 100)
+
+The 2026-10-08 records above describe a "native fallback" and an "explicit retry
+restored the refined surface". On current source the failure fallback is the V5
+initial tier, and recovery is automatic and bounded (three runtime-owned attempts,
+cache revalidation on recovery); the explicit driver retry remains for QA. Those
+records are historical and are not re-qualified by this note. See
+`docs/state-contracts/R0033.md`.
