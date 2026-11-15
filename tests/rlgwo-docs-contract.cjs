@@ -291,12 +291,13 @@ function mentions(name, tokens) {
       // R0032 re-bind (issue 99, merged with main 93f7c262): body 23f30c5d... -> 3d263975..., entry cccd79a0... -> a2336574...; R0032 changes only the
       // radar gate/host/tile admission, the bound site-elevation reader, the post-write cache eviction and qa radar reason,
       // not the pinned block, helper, clamp or call.
+      // R0033 re-bind (issue 100, merged with main 8990c36d): body 679294ce... -> d640373c..., entry 78c3ae8a... -> 3615841c...; R0033 changes the lunar wrapper, Moon host hooks, sky commit/reveal guards and the no-timetable lunar repaint, not the pinned force block, helper, clamp or call.
       // R0031 GPS slice re-bind (issue 98, merged with main 48ba76db): body 3d263975... -> 679294ce..., entry a2336574... -> 78c3ae8a...;
       // R0031 changes only _usePrecise (publish first, permission diagnostic afterwards), not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"679294ce325e967f88d071e951866a8134cd1ef1d6ba6482fdedb5d4adcb9a67",'delegated native script changed');
+      assert.equal(digest(body),"d640373c6a980c72b8152a485bdfe9f4ede92267c31d91bae9b2ff137b6f6c13",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      assert.equal(digest(source),"78c3ae8a01a9c1398682f92a463d95a6bfd076f427c9af8042cb7ec1d3ec6bd0",'delegated current generated entry changed');
+      assert.equal(digest(source),"3615841cf332bec531b9d8756c6b53ced60e34e5052b0ebf62aafda303e9c608",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
