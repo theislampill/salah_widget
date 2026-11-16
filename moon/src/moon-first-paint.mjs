@@ -27,7 +27,7 @@ function composeNativeHeadMoon(preview,snapshot,sim,owner,support){
  const opacity=Number(presentation.moonShow.toFixed(3));
  if(opacity<=0)return {visible:false,moon,presentation,snapshot};
  if(!support.initial)throw Error('Head Moon qualified initial unavailable');
- const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
+ const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,...(moon.phaseDirection!=null?{phaseDirection:moon.phaseDirection}:{}),up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
   phaseQuantum:support.phaseQuantum(g.phaseDiameter),physicalFraction:support.canonicalFraction(moon.frac,g.phaseDiameter)};
  let table,calendar;
  const scene=owner.scene(capture,support.profile),result=support.initial.render(scene,(surface,token)=>{table=surface;calendar=token;});

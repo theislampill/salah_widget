@@ -11,12 +11,16 @@ const a=hostTest.indexOf('function rig('),b=hostTest.indexOf('\n}\n',a)+3;
 const rig=new Function('require','__dirname','process','fs','vm','path','crypto','const src=path.join(__dirname,"../src");'+hostTest.slice(a,b)+';return rig;')(require,__dirname,process,fs,vm,path,crypto);
 const html=fs.readFileSync(path.join(root,'src/native/index.html'),'utf8');
 const s0=html.indexOf('const _RAD=Math.PI/180'),s1=html.indexOf('// Galactic centre',s0);
-const eph={Math,Date};vm.createContext(eph);vm.runInContext(html.slice(s0,s1)+';this.moonIllum=moonIllum;'+(html.includes('function moonPhaseDirection(')?html.slice(html.indexOf('function moonPhaseDirection('),html.indexOf('\n}\n',html.indexOf('function moonPhaseDirection('))+3)+';this.moonPhaseDirection=moonPhaseDirection;':''),eph);
+// The native snapshot (nativeLunarSnapshot) is the product's own producer of fraction, waxing and, after R0041, the
+// phase direction. Run it as the reviewed native-lunar-factors test does (astro + scales + clamp + snapshot).
+const snapSrc=html.slice(html.indexOf('function nativeLunarSnapshot('),html.indexOf('\nfunction renderMoon('));
+const eph={Math,Date};vm.createContext(eph);
+vm.runInContext(html.slice(s0,s1)+html.match(/const MOON_SCALE_MIN=.*?;/)[0]+html.match(/const clamp\s*=.*?;/)[0]+snapSrc+';this.moonIllum=moonIllum;this.snapshot=d=>nativeLunarSnapshot(d,24.47,39.61,{});',eph);
 function drive({startISO,minutes,jobS=10,up=1}){
  const r=rig({initial:true,diameter:109});let clears=0;const dc=r.detail.clear.bind(r.detail);r.detail.clear=()=>{clears++;dc();};
  let composes=0;r.w.SalahRealSky={compose(){composes++;}};
  const start=Date.parse(startISO);Object.assign(r.state,{timeScale:1,up,utcMs:start});
- const snap=t=>{const il=eph.moonIllum(new Date(t));r.state.fraction=il.fraction;r.state.waxing=il.waxing;if(eph.moonPhaseDirection)r.state.phaseDirection=eph.moonPhaseDirection(new Date(t));};
+ const snap=t=>{const il=eph.moonIllum(new Date(t));r.state.fraction=il.fraction;r.state.waxing=il.waxing;const pd=eph.snapshot(new Date(t)).phaseDirection;if(pd!=null)r.state.phaseDirection=pd;};
  snap(start);const worker=r.workers.at(-1);worker.emit({kind:'ready'});const rt=r.w.SalahMoonRuntime;
  let reply=null,last=null,renders=0,results=0,backToBack=0,lastResult=-1e9;
  for(let m=0;m<minutes;m++){snap(start+m*60000);

@@ -32,7 +32,7 @@
   // Native observation can initialize the explicit clock. Preserve it even
   // when an empty surface query has no candidate needing geometric validation.
   if(!withGeometry)return null;
-  if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
+  if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||(s.phaseDirection!==undefined&&![-1,0,1].includes(s.phaseDirection))||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
   // The image rectangle encloses the lunar disc. Round up, so subpixel layout
   // noise cannot understate the bound; translation never changes this identity.
   const rect=document.querySelector('.mphoto')?.getBoundingClientRect();
@@ -45,7 +45,8 @@
  // footprint crossing an integer or a phase bucket is not a location/seek epoch.
  // Every read still proves the ORIGINAL .0416-device-pixel displacement bound.
  const scope=s=>JSON.stringify([s.generation,s.sceneIdentity,s.waxing,s.dpr,s.profileMode,s.referenceIdentity]);
- const phaseDrift=(record,s)=>record?.scene?.mode==='calendar-canonical'?s.phaseDiameter/2*(Math.acos(2*s.fraction-1)-Math.acos(2*record.scene.fraction-1))*(s.waxing?-1:1):0;
+ // R0041: signed by the RECORD's own lead direction (the motion it was created ahead of); unsigned when centred (0).
+ const phaseDrift=(record,s)=>record?.scene?.mode==='calendar-canonical'?(d=>{const x=s.phaseDiameter/2*(Math.acos(2*s.fraction-1)-Math.acos(2*record.scene.fraction-1));return d===0?Math.abs(x):-d*x;})(record.scene.leadDirection??(s.waxing?1:-1)):0;
  const phaseError=(record,s)=>Math.abs(phaseDrift(record,s));
  function syncTexture(s){
   if(!accepted||!upperBytes||!s)return false;const up=profileMode==='reference'?1:Math.max(0,Math.min(1,s.up));
