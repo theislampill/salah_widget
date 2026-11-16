@@ -125,7 +125,7 @@ def main():
                         d.rectangle((4, 506, 200, 524), fill=(0, 0, 0)); d.text((8, 508), txt, fill=(255, 210, 90) if tk >= claim else (200, 230, 200), font=font())
                         M['claimWithdrawnClipS'] = round(claim - ts[0], 3)
                     rs.append(im)
-                w = os.path.join(a.anim, f'{sid}--{re.sub(r"[|:+~]", "_", spec)}.webp')
+                w = os.path.join(a.anim, f'{sid}--{re.sub(r"[|:+~^@/.]", "_", spec)}.webp')
                 rs[0].save(w, save_all=True, append_images=rs[1:], duration=int(1000 / FPS), loop=0, quality=80, method=4)
                 M['anim'] = os.path.basename(w); M['animSeconds'] = round(dur, 2)
                 seqs.append(rs); labels.append(spec)
