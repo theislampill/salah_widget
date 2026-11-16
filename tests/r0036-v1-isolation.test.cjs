@@ -2,7 +2,8 @@
 // R0036 V1 browser verification (issue 103, owner decision 2026-11-16): unit tests of the process-side isolation
 // layer, no browser. The guard is installed first in this test process, so every probe below is refused before a
 // socket opens or a name resolves. Refusal probes target 0.0.0.0 (refused by the OS locally even without the guard)
-// except the name probes, which run only after the guard is proven installed.
+// except the name probes, which run only after the guard is proven installed. Hermetic: no browser, no optional Python
+// package (the helpers' selftest uses only the standard library), no network; it must pass on a clean Linux host.
 const assert=require('node:assert/strict'),{test}=require('node:test');
 const path=require('node:path'),{spawnSync}=require('node:child_process');
 const guard=require('../tools/qa/v1_net_guard.cjs');guard.install();
@@ -38,9 +39,6 @@ test('V1I-04 the Python guard refuses urlopen off loopback and logs it; helpers 
   assert.equal(o.refused.length,o.probes.length);
 });
 
-test('V1I-05 the offline font fixture is deterministic and generated locally (no network)',()=>{
-  const os=require('node:os'),fs=require('node:fs'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'r0036-font-'));
-  try{const run=f=>JSON.parse(spawnSync('python',['-I',HELPERS,'font',path.join(dir,f)],{encoding:'utf8'}).stdout.trim());
-    const a=run('a.ttf'),b=run('b.ttf');assert.equal(a.sha256,b.sha256);assert.ok(a.bytes>100);assert.deepEqual(a.refused,[]);}
-  finally{fs.rmSync(dir,{recursive:true,force:true});}
-});
+// V1I-05 (the offline font fixture's determinism) needs fontTools, an optional package a clean host does not have, so it
+// is not part of this hermetic file: the isolation self-test of tools/qa/r0036_v1_browser.cjs (a native recipe) checks
+// that two generations equal the pinned digest (docs/state-contracts/R0036.md section 12).

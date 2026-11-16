@@ -284,6 +284,9 @@ async function selftest(browser,origin){
   if(guard.state.installed)node.ipLiteral=await new Promise(res=>{try{http.get('http://10.255.255.1/r0036-selftest',()=>res('connected')).on('error',e=>res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message));}catch(e){res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message);}});
   if(guard.state.installed)node.httpsName=await new Promise(res=>{try{https.get('https://fonts.googleapis.com/css2?family=Inter',()=>res('connected')).on('error',e=>res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message));}catch(e){res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message);}});
   const python=py(['selftest']);
+  // Offline font fixture determinism (needs fontTools, so it lives in this native recipe, not the hermetic unit test).
+  const FONT_PIN='3bdfe0e90e0bbe36439c6e05b567d5356288285dcf1287058f123c2302a5aadc';
+  const fonts=[1,2].map(n=>py(['font',path.join(out,'font-check-'+n+'.ttf')]));
   const refusedInRoute=u=>LEDGER.aborted.includes(u),atProxy=t=>PROXY_REFUSED.some(x=>x.target.includes(t));
   const checks={
     pageFetchRefusedByRoute:r.fetch.startsWith('refused')&&refusedInRoute('https://fonts.googleapis.com/css2?family=Inter'),
@@ -293,6 +296,7 @@ async function selftest(browser,origin){
     nodeRefusedByGuard:node.httpGet.startsWith('refused-by-guard')&&node.fetch.startsWith('refused-by-guard')&&(!('httpsName' in node)||node.httpsName.startsWith('refused-by-guard'))&&(!('ipLiteral' in node)||node.ipLiteral.startsWith('refused-by-guard')),
     redirectRefusedAtProxy:r.redirectName.startsWith('refused')&&atProxy('fonts.googleapis.com'),
     ipLiteralRefused:!!r.ip&&r.ip.direct.startsWith('refused')&&refusedInRoute('http://10.255.255.1/r0036-direct')&&r.ip.redirect.startsWith('refused')&&atProxy('10.255.255.1'),
+    fontFixtureDeterministic:fonts.every(f=>f.sha256===FONT_PIN&&f.refused.length===0),
     pythonGuardInstalled:python.installed===true,
     pythonUrlopenRefusedByGuard:python.probes.length>0&&python.probes.every(p=>p.refusedByGuard===true),
     // The only route bypasses allowed are the two probe redirects, and only because the proxy refused them.
