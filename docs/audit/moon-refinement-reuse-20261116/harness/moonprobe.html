@@ -1,0 +1,78 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Moon refinement reuse probe</title>
+<!-- Research probe (Moon-reuse feasibility audit, 2026-11-16). NOT product code.
+     It runs the generated product worker moon/moon-worker.js unchanged (variant 'product'), or an IN-MEMORY
+     copy with one documented string patch (variants 'shards2', 'stepwise'); no file is modified.
+     The scene is passed as literal numbers so every engine receives bit-identical input. -->
+<body>
+<script>
+'use strict';
+const hex=b=>Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).join('');
+const sha=async view=>hex(await crypto.subtle.digest('SHA-256',view instanceof ArrayBuffer?view:new Uint8Array(view.buffer,view.byteOffset,view.byteLength)));
+const b64=view=>{const u=new Uint8Array(view.buffer,view.byteOffset,view.byteLength);let s='';for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(s);};
+const PROFILE={schema:'lunar-presentation/5',profile_id:'calendar-neutral-v5-01',mode:'calendar',exposure:2.9195482731525044,lift:.003,knee:5.388411226362526e-6,colour_basis:'linear-sRGB',gamut:'luminance-preserving-neutral-axis'};
+// Same shape as nativeCalendarMoonScene (moon/src/moon-precision.mjs L63-68); sun given as literals.
+function scene(sc){return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:sc.sun,earth:[384400,0,0],distance:384400,extent:1.08,profile:{...PROFILE},mode:'calendar-canonical',fraction:(1+sc.sun[0])/2,waxing:sc.waxing,tilt:0,requestedNativeFraction:sc.f,phaseQuantumRadians:4*.0416/108,phaseDisplayDiameter:108,geometryConvention:'probe'};}
+let SRC=null,SRC_SHA=null;
+async function load(){
+  if(SRC)return;const r=await fetch('/moon/moon-worker.js',{cache:'no-store'});SRC=await r.text();SRC_SHA=await sha(new TextEncoder().encode(SRC));
+  (0,eval)(await (await fetch('/moon/src/moon-detail.mjs',{cache:'no-store'})).text()); // projectSurfaceCodes, prefixSurface, boxSurface
+}
+function variantSource(v){
+  if(v==='product')return SRC;
+  const one=(s,a,b)=>{if(s.split(a).length!==2)throw new Error('patch anchor not unique: '+a);return s.replace(a,b);};
+  if(v==='shards2')return one(SRC,'for(let i=0;i<4;i++){','for(let i=0;i<2;i++){');
+  if(v==='stepwise')return one(SRC,'if(step===0)await onPreview({...result,','await onPreview({...result,rgba:result.rgba.slice(),surfaceLinear:result.surfaceLinear.slice(),surfaceCoverage:result.surfaceCoverage.slice(),');
+  throw new Error('variant');
+}
+const workers=new Map();
+async function boot(variant){
+  await load();const src=variantSource(variant);const url=URL.createObjectURL(new Blob([src],{type:'text/javascript'}));const w=new Worker(url);
+  const t0=performance.now();
+  await new Promise((res,rej)=>{w.onmessage=e=>{if(e.data.kind==='ready')res();else if(e.data.kind==='boot-error')rej(new Error(e.data.error));};w.onerror=e=>rej(new Error(e.message));
+    w.postMessage({kind:'boot',base:new URL('/moon/',location.href).href,offline:false,workerSource:src,cache:'force-cache'});});
+  const handle={w,variant,src,bootMs:performance.now()-t0,serial:0,sourceSha:await sha(new TextEncoder().encode(src))};return handle;
+}
+async function digestMsg(m){
+  return {rgba:await sha(m.rgba),calendarRgba:await sha(m.calendarRgba),surfaceLinear:await sha(m.surfaceLinear),surfaceCoverage:await sha(m.surfaceCoverage),calendarLinear:await sha(m.calendarLinear)};
+}
+function diff8(a,b){let n=0,n1=0,n3=0,max=0;for(let i=0;i<a.length;i++){const d=Math.abs(a[i]-b[i]);if(d){n++;if(d>1)n1++;if(d>3)n3++;if(d>max)max=d;}}return {channelsDiffering:n,channelsOver1:n1,channelsOver3:n3,maxDelta:max};}
+function pixdiff8(a,b){let p=0,p1=0,p3=0,max=0;for(let i=0;i<a.length;i+=4){let d=0;for(let k=0;k<4;k++)d=Math.max(d,Math.abs(a[i+k]-b[i+k]));if(d){p++;if(d>1)p1++;if(d>3)p3++;if(d>max)max=d;}}return {pixelsDiffering:p,pixelsOver1:p1,pixelsOver3:p3,maxDelta:max,pixels:a.length/4};}
+function proj(m,D){return projectSurfaceCodes({size:m.surfaceSize,linear:m.surfaceLinear,coverage:m.surfaceCoverage,extent:m.surfaceExtent},D);}
+function projdiff(a,b){let p=0,pr=0,max=0;const n=a.length/3;for(let i=0;i<n;i++){let d=0,r=false;for(let k=0;k<3;k++){const x=a[3*i+k],y=b[3*i+k];d=Math.max(d,Math.abs(x-y));if(Math.round(x)!==Math.round(y))r=true;}if(d>.5)p++;if(r)pr++;if(d>max)max=d;}return {pixels:n,overHalfCode:p,rounded8bitDiffering:pr,maxCode:max};}
+async function render(h,sc,{exportBytes=false}={}){
+  const id=++h.serial,s=scene(sc),t0=performance.now(),msgs=[];
+  const done=await new Promise((res,rej)=>{h.w.onmessage=e=>{const m=e.data;if(m.id!==id&&m.kind!=='boot-error')return;
+      if(m.kind==='progress')return;if(m.kind==='error'||m.kind==='boot-error'){rej(new Error(m.error));return;}
+      m.at=performance.now()-t0;msgs.push(m);if(m.kind==='result')res(m);};
+    h.w.postMessage({kind:'render',id,identity:{id},scene:s});});
+  const out={scene:sc.name,variant:h.variant,ms:done.at,quality:done.diagnostics.quality,rowScheduling:done.diagnostics.rowScheduling,physicalIdentity:done.physicalIdentity,profileIdentity:done.profileIdentity,
+    hashes:await digestMsg(done),previews:[]};
+  for(const m of msgs.filter(x=>x.kind==='preview'))out.previews.push({at:m.at,samples:m.diagnostics.quality.samples,hashes:await digestMsg(m)});
+  if(h.variant==='stepwise'){
+    const fin={};for(const D of [108,216,312])fin[D]=proj(done,D);
+    out.steps=[];
+    for(const m of msgs.filter(x=>x.kind==='preview')){
+      const st={samples:m.diagnostics.quality.samples,at:m.at,rgbaVsFinal:pixdiff8(m.rgba,done.rgba),calendarRgbaVsFinal:pixdiff8(m.calendarRgba,done.calendarRgba),projectedVsFinal:{}};
+      for(const D of [108,216,312])st.projectedVsFinal[D]=projdiff(proj(m,D),fin[D]);
+      out.steps.push(st);
+    }
+  }
+  if(exportBytes)out.bytes={rgba:b64(done.rgba),calendarRgba:b64(done.calendarRgba),surfaceLinear:b64(done.surfaceLinear),surfaceCoverage:b64(done.surfaceCoverage)};
+  return out;
+}
+// Engine Math fingerprint: the kernel imports these JS functions (moon_kernel.c L9-12) and the scene/tone map use them.
+async function mathFingerprint(){
+  let x=0x9e3779b9>>>0;const rnd=()=>{x^=x<<13;x>>>=0;x^=x>>>17;x^=x<<5;x>>>=0;return x/4294967296;};
+  const N=200000,res={};
+  const fns={sin:a=>Math.sin(a*20-10),cos:a=>Math.cos(a*20-10),asin:a=>Math.asin(a*2-1),atan:a=>Math.atan(a*40-20),exp:a=>Math.exp(a*20-10),expm1:a=>Math.expm1(a*2-1),log:a=>Math.log(a*1e3+1e-9),
+    atan2:(a,b)=>Math.atan2(a*2-1,b*2-1),pow:(a,b)=>Math.pow(a*2,b*5-2.5),pow24:a=>Math.pow(a,2.4),powInv24:a=>a**(1/2.4),acos:a=>Math.acos(a*2-1)};
+  for(const [k,f] of Object.entries(fns)){x=0x9e3779b9>>>0;const o=new Float64Array(N);for(let i=0;i<N;i++)o[i]=f(rnd(),rnd());res[k]=(await sha(o)).slice(0,16);}
+  const bits=v=>{const b=new DataView(new ArrayBuffer(8));b.setFloat64(0,v);return b.getBigUint64(0).toString(16);};
+  res.sceneInputs={};for(const f of [.15,.5,.8,.98]){const a=Math.acos(2*f-1);res.sceneInputs[f]={acos:bits(a),cos:bits(Math.cos(a)),sin:bits(Math.sin(a))};}
+  return res;
+}
+window.probe={load,boot,render,mathFingerprint,info:async()=>{await load();return {workerSha256:SRC_SHA,ua:navigator.userAgent,dpr:devicePixelRatio,cores:navigator.hardwareConcurrency};}};
+window.probeReady=true;
+</script>
