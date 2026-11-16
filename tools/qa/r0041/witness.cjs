@@ -20,6 +20,8 @@
 //   resume    - document.hidden overridden true -> visibilitychange -> 1 s -> false -> visibilitychange, x3
 //   sky       - SalahRealSky.invalidate('r0041-witness') x3 (sky-host lifecycle)
 //   identity  - SalahClock.set({rate:1,utcMs:now+3600 s}) (genuine clock/identity change)
+//   identity12- SalahClock.set({rate:1,utcMs:now+12 h}): a change whose new Moon differs visibly from the old one (lit
+//               vs below-horizon calendar disc), so frames can be attributed to the OLD or NEW identity.
 // Every launch goes through iso.cjs (proxy, resolver rules, catch-all route before navigation, finish() throws on
 // any allowed non-loopback request).
 // Usage: node witness.cjs <repoRoot> <outJson> <engine> <dpr> <motion:reduce|full> <route> <startISO> [runs=1] [cropDir]
@@ -45,7 +47,9 @@ function classify(img,rect,scale,refs){
   const {disc,corner,pts}=discOf(img,rect,scale),sky=median(corner),stars=disc.filter((v,i)=>pts[i]>30&&v>sky+30).length;
   const dRefs=refs.filter(Boolean).filter(r=>r.length===disc.length).map(r=>disc.reduce((p,v,i)=>p+Math.abs(v-r[i]),0)/disc.length);
   const dRef=dRefs.length?Math.min(...dRefs):null;
-  return {stars,dRef,absent:stars>=10||(dRef!=null&&dRef>4),disc};
+  const dOld=dRefs.length>0&&refs[0]&&refs[0].length===disc.length?disc.reduce((p,v,i)=>p+Math.abs(v-refs[0][i]),0)/disc.length:null;
+  const dNew=refs[1]&&refs[1].length===disc.length?disc.reduce((p,v,i)=>p+Math.abs(v-refs[1][i]),0)/disc.length:null;
+  return {stars,dRef,absent:stars>=10||(dRef!=null&&dRef>4),disc,dOld,dNew};
 }
 async function oneRun(L,env,run){
   const page=await L.context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e).slice(0,200)));
@@ -73,6 +77,7 @@ async function oneRun(L,env,run){
   else if(route==='sky'){for(let k=0;k<3;k++){await pageMark('sky-invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahRealSky?.invalidate('r0041-witness');return w;});await page.waitForTimeout(6000);}}
   else if(route==='resume'){for(let k=0;k<3;k++){await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange'));});
       await page.waitForTimeout(1000);await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});document.dispatchEvent(new Event('visibilitychange'));return w;});await page.waitForTimeout(4000);}}
+  else if(route==='identity12'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+43200000});return w;});await page.waitForTimeout(45000);}
   else if(route==='identity'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+3600000});return w;});await page.waitForTimeout(45000);}
   capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});
   await page.waitForTimeout(300);
@@ -91,12 +96,12 @@ async function oneRun(L,env,run){
       // reference frames: the last frame before settle+0 (old identity) and the last frame of the run (new identity)
       const decode=s=>{try{return decodePng(s.png);}catch(e){return null;}};
       const before=[...shots].reverse().find(s=>s.t<=r.settleWall);const last=shots.at(-1);
-      const refOld=before&&route!=='startup'?discOf(decode(before),r.rect,scale).disc:null,refNew=(route==='identity'||route==='startup')&&last?discOf(decode(last),r.rect,scale).disc:null;
+      const refOld=before&&route!=='startup'?discOf(decode(before),r.rect,scale).disc:null,refNew=(route==='identity'||route==='identity12'||route==='startup')&&last?discOf(decode(last),r.rect,scale).disc:null;
       const frames=[];let firstPresent=null;
       for(const s of shots){const img=decode(s);if(!img)continue;const c=classify(img,r.rect,scale,[refOld,refNew]);
         // startup: dRef is meaningless before a reference; use stars and disc-vs-corner difference of the reference-free part
         const absent=c.absent;
-        frames.push({t:Math.round(s.t-r.t0),absent:absent?1:0,stars:c.stars,dRef:c.dRef==null?null:+c.dRef.toFixed(2)});
+        frames.push({t:Math.round(s.t-r.t0),absent:absent?1:0,stars:c.stars,dRef:c.dRef==null?null:+c.dRef.toFixed(2),old:c.dOld!=null&&c.dOld<=4&&!(c.dNew!=null&&c.dNew<=4)?1:0});
         if(!absent&&firstPresent==null&&route!=='startup')firstPresent=s.t;
         if(absent&&cropDir&&run===0&&!out.cropSaved){fs.mkdirSync(cropDir,{recursive:true});fs.writeFileSync(path.join(cropDir,`${engine}-dpr${dpr}-${motion}-${route}-absent.png`),s.png);out.cropSaved=true;}}
       const afterSettle=route==='startup'?frames.slice(Math.max(0,frames.findIndex(f=>!f.absent))):frames.filter(f=>f.t>=r.settleWall-r.t0-3000);
@@ -107,7 +112,8 @@ async function oneRun(L,env,run){
         absentFramesAfterSettle:afterSettle.filter(f=>f.absent).length,absentIntervals:intervals,events:r.events.map(e=>({name:e.name,tMs:e.wall-r.t0})),
         rafFrames:rafAfter.length,rafMoonReadyOff:rafAfter.filter(x=>!x[1]).length,rafMaskOff:rafAfter.filter(x=>!x[2]).length,rafNotCurrent:rafAfter.filter(x=>!x[3]).length,
         startupFirstPresentMs:route==='startup'?(frames.find(f=>!f.absent)||{}).t??null:undefined,startupAbsentAfterFirstPresent:route==='startup'?(()=>{const i=frames.findIndex(f=>!f.absent);return i<0?null:frames.slice(i).filter(f=>f.absent).length;})():undefined,
-        pageErrors:r.errors,frameLog:frames.map(f=>[f.t,f.absent,f.stars,f.dRef])});
+        pageErrors:r.errors,frameLog:frames.map(f=>[f.t,f.absent,f.stars,f.dRef,f.old]),
+        oldIdentityFramesAfterEvent:route==='identity12'&&r.events.length?frames.filter(f=>f.t>r.events[0].wall-r.t0&&f.old).length:undefined});
       console.log(engine,dpr,motion,route,'run',run,'frames',frames.length,'absentAfterSettle',afterSettle.filter(f=>f.absent).length,'intervals',JSON.stringify(intervals.slice(0,6)));
     }
     await L.close();

@@ -15,7 +15,9 @@ for f in sys.argv[2:]:
                 end = ev[k + 1] if k + 1 < len(ev) else float('inf')
                 seg = [x for x in log if t <= x[0] < end]
                 # absent run starting at or after the event, until the first present frame
-                start = next((x[0] for x in seg if x[1]), None)
+                # Display state AT the event is the last frame produced before it; frames are produced only on change.
+                prev = [x for x in log if x[0] < t]
+                start = t if (prev and prev[-1][1] and seg and seg[0][1]) else next((x[0] for x in seg if x[1]), None)
                 stop = next((x[0] for x in seg if start is not None and x[0] > start and not x[1]), None)
                 per.append({'eventMs': t, 'absentFrames': sum(x[1] for x in seg), 'absentFromMs': start, 'presentAgainMs': stop,
                             'absentDurationMs': (stop - start) if (start is not None and stop is not None) else (None if start is None else 'open')})
