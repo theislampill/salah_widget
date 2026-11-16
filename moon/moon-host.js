@@ -598,11 +598,14 @@ function canonicalFraction(f,diameter=416){
 }
 
 // Shared calendar geometry; the existing native owner supplies every input.
+// R0041: the leading edge follows the PHASE-DIRECTION authority (s.phaseDirection: +1 alpha falling, -1 rising, 0 centred)
+// when the native owner supplies it, else the historical waxing sign. The lit limb (sun y) stays on waxing.
+function leadDirection(s){return s.phaseDirection===1||s.phaseDirection===-1||s.phaseDirection===0?s.phaseDirection:(s.waxing?1:-1);}
 function nativeCalendarMoonScene(s,profile){
- const nativeAlpha=Math.acos(2*s.fraction-1),moving=(s.timeScale??1)>0;
- const alpha=moving?Math.max(0,Math.min(Math.PI,nativeAlpha+(s.waxing?-1:1)*(2*PHASE_POSITION_BUDGET/s.maximumPhaseDiameter)*(1-1e-9))):Math.acos(2*s.physicalFraction-1);
+ const nativeAlpha=Math.acos(2*s.fraction-1),moving=(s.timeScale??1)>0,lead=leadDirection(s);
+ const alpha=moving?Math.max(0,Math.min(Math.PI,nativeAlpha-lead*(2*PHASE_POSITION_BUDGET/s.maximumPhaseDiameter)*(1-1e-9))):Math.acos(2*s.physicalFraction-1);
  const fraction=(1+Math.cos(alpha))/2;
- return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:[Math.cos(alpha),(s.waxing?1:-1)*Math.sin(alpha),0],earth:[384400,0,0],distance:384400,extent:1.08,profile,mode:'calendar-canonical',fraction,waxing:s.waxing,tilt:0,requestedNativeFraction:s.fraction,phaseQuantumRadians:s.phaseQuantum,phaseDisplayDiameter:s.phaseDiameter,geometryConvention:'native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC'};
+ return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:[Math.cos(alpha),(s.waxing?1:-1)*Math.sin(alpha),0],earth:[384400,0,0],distance:384400,extent:1.08,profile,mode:'calendar-canonical',fraction,waxing:s.waxing,...(moving&&s.phaseDirection!=null?{leadDirection:lead}:{}),tilt:0,requestedNativeFraction:s.fraction,phaseQuantumRadians:s.phaseQuantum,phaseDisplayDiameter:s.phaseDiameter,geometryConvention:'native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC'};
 }
 // moon-first-paint.mjs
 /* Bounded head composition. The caller supplies the existing admitted
@@ -634,7 +637,7 @@ function composeNativeHeadMoon(preview,snapshot,sim,owner,support){
  const opacity=Number(presentation.moonShow.toFixed(3));
  if(opacity<=0)return {visible:false,moon,presentation,snapshot};
  if(!support.initial)throw Error('Head Moon qualified initial unavailable');
- const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
+ const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,...(moon.phaseDirection!=null?{phaseDirection:moon.phaseDirection}:{}),up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
   phaseQuantum:support.phaseQuantum(g.phaseDiameter),physicalFraction:support.canonicalFraction(moon.frac,g.phaseDiameter)};
  let table,calendar;
  const scene=owner.scene(capture,support.profile),result=support.initial.render(scene,(surface,token)=>{table=surface;calendar=token;});
@@ -703,16 +706,22 @@ function moonPhase(date){
 
 const MOON_SCALE_MIN=1.11,MOON_SCALE_MAX=1.13;
 function nativeLunarSnapshot(date,lat,lon,SIM){
- let frac,waxing;
+ let frac,waxing,phaseDirection=null;   // null: no ephemeris direction (override / no location) -> consumers keep the waxing sign
  if(SIM.moon!=null){frac=clamp(+SIM.moon);waxing=SIM.wax!=='0';}
- else if(isFinite(+lat)&&isFinite(+lon)){const il=moonIllum(date);frac=il.fraction;waxing=il.waxing;}
+ else if(isFinite(+lat)&&isFinite(+lon)){const il=moonIllum(date);frac=il.fraction;waxing=il.waxing;
+  // R0041: the PHASE-DIRECTION authority, distinct from waxing (the lit limb, chi sign). +1 while the phase angle
+  // alpha=acos(2f-1) falls over the next minute, -1 while it rises, 0 inside a 1e-6 rad/min dead band. Near full and
+  // new Moon the two disagree for minutes to hours (ecliptic-longitude vs right-ascension opposition); kinematic
+  // consumers (leading edge, drift, re-request) follow this sign, the lit limb keeps waxing.
+  const da=Math.acos(2*moonIllum(new Date(date.getTime()+60000)).fraction-1)-Math.acos(2*frac-1);
+  phaseDirection=!Number.isFinite(da)?null:Math.abs(da)<=1e-6?0:(da<0?1:-1);}
  else{const mp=moonPhase(date);frac=mp.frac;waxing=mp.waxing;}
  let alt=25,Hm=0;
  if(SIM.moonAlt!=null){alt=+SIM.moonAlt;Hm=SIM.moonH!=null?+SIM.moonH:0;}
  else if(isFinite(+lat)&&isFinite(+lon)){const aa=moonAltAz(date,Math.max(-89.5,Math.min(89.5,+lat)),+lon);alt=aa.alt;Hm=aa.H;}
  const up=clamp((alt+2)/6),hd=Math.max(-1,Math.min(1,Hm/120)),x=268+hd*1.5,y=55+3*up-clamp((alt-6)/70)*3;
  const scale=MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*up;
- return {utcMs:date.getTime(),frac,waxing,alt,H:Hm,up,x,y,scale,sx:x/325,sy:y/530,
+ return {utcMs:date.getTime(),frac,waxing,phaseDirection,alt,H:Hm,up,x,y,scale,sx:x/325,sy:y/530,
   transform:`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`,
   valid:[alt,Hm,frac,up,x,y].every(Number.isFinite)};
 }
@@ -767,7 +776,7 @@ try{
   // Native observation can initialize the explicit clock. Preserve it even
   // when an empty surface query has no candidate needing geometric validation.
   if(!withGeometry)return null;
-  if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
+  if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||(s.phaseDirection!==undefined&&![-1,0,1].includes(s.phaseDirection))||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
   // The image rectangle encloses the lunar disc. Round up, so subpixel layout
   // noise cannot understate the bound; translation never changes this identity.
   const rect=document.querySelector('.mphoto')?.getBoundingClientRect();
@@ -780,7 +789,8 @@ try{
  // footprint crossing an integer or a phase bucket is not a location/seek epoch.
  // Every read still proves the ORIGINAL .0416-device-pixel displacement bound.
  const scope=s=>JSON.stringify([s.generation,s.sceneIdentity,s.waxing,s.dpr,s.profileMode,s.referenceIdentity]);
- const phaseDrift=(record,s)=>record?.scene?.mode==='calendar-canonical'?s.phaseDiameter/2*(Math.acos(2*s.fraction-1)-Math.acos(2*record.scene.fraction-1))*(s.waxing?-1:1):0;
+ // R0041: signed by the RECORD's own lead direction (the motion it was created ahead of); unsigned when centred (0).
+ const phaseDrift=(record,s)=>record?.scene?.mode==='calendar-canonical'?(d=>{const x=s.phaseDiameter/2*(Math.acos(2*s.fraction-1)-Math.acos(2*record.scene.fraction-1));return d===0?Math.abs(x):-d*x;})(record.scene.leadDirection??(s.waxing?1:-1)):0;
  const phaseError=(record,s)=>Math.abs(phaseDrift(record,s));
  function syncTexture(s){
   if(!accepted||!upperBytes||!s)return false;const up=profileMode==='reference'?1:Math.max(0,Math.min(1,s.up));
@@ -909,8 +919,17 @@ try{
    serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;
    try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);}status.cancelled++;status.reason='lunar geometry exceeded unchanged display bound';
   }
-  if(accepted&&!presentation(s))fallback('lunar geometry exceeded unchanged display bound');
-  initialPresentation(s,now);
+  // R0041 presenter guarantee (same-scope expiry): a presented Moon is not withdrawn before its successor is presented.
+  // The expired record leaves authority at once, but the presented layers (detail canvas, reveal classes) are kept
+  // until the successor tier is adopted in this same task and a compose is requested; only when no successor can be
+  // adopted does the historical full fallback (detail hidden, host fallback) run. Scope/epoch/clock changes never get
+  // here: they already ran clear() above and keep their truthful withdrawal.
+  if(accepted&&!presentation(s)){
+   accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason='lunar geometry exceeded unchanged display bound';
+   initialPresentation(s,now);
+   if(accepted){try{window.SalahRealSky?.compose();}catch(error){note(error);}}
+   else fallback('lunar geometry exceeded unchanged display bound');
+  }else initialPresentation(s,now);
   // A dead worker never reads 'paused' in a visible document (the hide path set it).
   if(!ready||!worker){status.status=lastError?'unavailable':typeof MOON_WORKER_SOURCE==='string'?'loading':'waiting-refinement-source';return;}
   if(matches(accepted,s))syncTexture(s);
