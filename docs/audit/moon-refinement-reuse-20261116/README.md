@@ -458,8 +458,10 @@ control.
 - **Native: NOT OBSERVED.** Near full and new Moon every job finished within the minute. The longest window job was
   49 s, in Firefox, and the phase-dependent work is small at those phases. So the refined tier was reached each
   minute in every engine.
-- **VM: CONFIRMED for jobs longer than a minute** (`evidence/defect-vm.jsonl`). With 70 s jobs, 0 refined results
-  were adopted in 30 minutes, at both `up = 1` and `up = 0`, and the initial tier remained.
+- **VM: CONFIRMED for jobs longer than a minute** (`evidence/defect-vm.jsonl`, regenerated after an erratum: at
+  `153c2066` the fake worker's reply time was minute-relative). With 70 s jobs:
+  - `up = 1`: 0 refined results adopted in 30 minutes (29 cancelled); the initial tier remained;
+  - `up = 0`: 6 of 24 adopted, because some steps there stay inside the slack.
 - **Open.** Whether a slow or throttled device reaches > 60 s jobs at these phases is UNDETERMINED.
 
 **VM witness with the unmodified host source** (`harness/defect-vm.cjs`, 30 simulated minutes, 10 s jobs):

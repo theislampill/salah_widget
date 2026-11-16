@@ -23,8 +23,9 @@ for(let m=0;m<+minutes;m++){
   const il=eph.moonIllum(new Date(start+m*60000));r.state.fraction=il.fraction;r.state.waxing=il.waxing;
   for(let q=0;q<240;q++){ // 4 Hz polls within the minute
     rt.request();const req=r.request(); // request() = the native paint hook (poll without force)
-    if(req&&req.id!==lastRenderId){lastRenderId=req.id;pendingReply={id:req.id,at:q*250+(+jobS)*1000,msg:r.response('result')};log.push({minute:m,event:'render',id:req.id});}
-    if(pendingReply&&q*250>=pendingReply.at&&r.request()?.id===pendingReply.id){pendingReply.msg.diagnostics={kernel:'metric-radial-terrain-wasm-mb1',quality:{status:'empirical-adaptive'}};worker.emit(pendingReply.msg);log.push({minute:m,event:'result',id:pendingReply.id});pendingReply=null;}
+    if(req&&req.id!==lastRenderId){lastRenderId=req.id;pendingReply={id:req.id,at:m*60000+q*250+(+jobS)*1000, // absolute simulated time (erratum: was minute-relative at 153c2066)
+      msg:r.response('result')};log.push({minute:m,event:'render',id:req.id});}
+    if(pendingReply&&m*60000+q*250>=pendingReply.at&&r.request()?.id===pendingReply.id){pendingReply.msg.diagnostics={kernel:'metric-radial-terrain-wasm-mb1',quality:{status:'empirical-adaptive'}};worker.emit(pendingReply.msg);log.push({minute:m,event:'result',id:pendingReply.id});pendingReply=null;}
     tick(250);
   }
 }
