@@ -175,8 +175,17 @@
    serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;
    try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);}status.cancelled++;status.reason='lunar geometry exceeded unchanged display bound';
   }
-  if(accepted&&!presentation(s))fallback('lunar geometry exceeded unchanged display bound');
-  initialPresentation(s,now);
+  // R0041 presenter guarantee (same-scope expiry): a presented Moon is not withdrawn before its successor is presented.
+  // The expired record leaves authority at once, but the presented layers (detail canvas, reveal classes) are kept
+  // until the successor tier is adopted in this same task and a compose is requested; only when no successor can be
+  // adopted does the historical full fallback (detail hidden, host fallback) run. Scope/epoch/clock changes never get
+  // here: they already ran clear() above and keep their truthful withdrawal.
+  if(accepted&&!presentation(s)){
+   accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason='lunar geometry exceeded unchanged display bound';
+   initialPresentation(s,now);
+   if(accepted){try{window.SalahRealSky?.compose();}catch(error){note(error);}}
+   else fallback('lunar geometry exceeded unchanged display bound');
+  }else initialPresentation(s,now);
   // A dead worker never reads 'paused' in a visible document (the hide path set it).
   if(!ready||!worker){status.status=lastError?'unavailable':typeof MOON_WORKER_SOURCE==='string'?'loading':'waiting-refinement-source';return;}
   if(matches(accepted,s))syncTexture(s);

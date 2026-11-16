@@ -49,3 +49,24 @@ test('R41-CTL: normal operation unchanged in a control (job count as on main)',(
  const o=drive({startISO:'2026-11-18T16:30:00Z',minutes:120,jobS:30,up:1});
  assert.equal(o.renders,18,JSON.stringify(o));assert.equal(o.fallbacks,0);assert.equal(o.clears,0);
 });
+test('R41-SWP: a same-scope expiry with an adoptable successor never hides the presented Moon first',()=>{
+ const r=rig({initial:true,diameter:109});let clears=0,order=[];const dc=r.detail.clear.bind(r.detail),da=r.detail.adopt.bind(r.detail);
+ r.detail.clear=()=>{clears++;order.push('clear');dc();};r.detail.adopt=x=>{order.push('adopt');return da(x);};
+ let composes=0;r.w.SalahRealSky={compose(){composes++;order.push('compose');}};
+ Object.assign(r.state,{timeScale:1,up:1,fraction:.6,waxing:true});
+ r.workers.at(-1).emit({kind:'ready'});const rt=r.w.SalahMoonRuntime;rt.request();
+ const msg=r.response('result');msg.diagnostics={kernel:'metric-radial-terrain-wasm-mb1',quality:{status:'empirical-adaptive'}};r.workers.at(-1).emit(msg);
+ assert.equal(rt.state.visibleSource,'refined-terrain');
+ // Same scope and continuous clock, but the phase has moved past the 0.0416 px bound (e.g. a job slower than the window).
+ order=[];clears=0;const a=Math.acos(2*r.state.fraction-1)-3*0.0416*2/109;r.state.fraction=(1+Math.cos(a))/2;r.advance(250);r.state.utcMs+=250;rt.request();
+ assert.equal(clears,0,`detail.clear() before the successor: ${order.join(',')}`);
+ assert.ok(order.indexOf('adopt')>=0&&order.indexOf('compose')>order.indexOf('adopt'),`successor adopted then composed: ${order.join(',')}`);
+ assert.equal(r.fallbacks,0,'no host fallback while a successor exists');
+});
+test('R41-SWP-N: with no adoptable successor the historical withdrawal still runs (named residual, owner gate G41-F1)',()=>{
+ const r=rig({initial:false,diameter:109});let clears=0;const dc=r.detail.clear.bind(r.detail);r.detail.clear=()=>{clears++;dc();};
+ Object.assign(r.state,{timeScale:1,up:1,fraction:.6,waxing:true});r.workers.at(-1).emit({kind:'ready'});const rt=r.w.SalahMoonRuntime;rt.request();
+ const msg=r.response('result');msg.diagnostics={kernel:'metric-radial-terrain-wasm-mb1',quality:{status:'empirical-adaptive'}};r.workers.at(-1).emit(msg);
+ const a=Math.acos(2*r.state.fraction-1)-3*0.0416*2/109;r.state.fraction=(1+Math.cos(a))/2;r.advance(250);r.state.utcMs+=250;rt.request();
+ assert.equal(clears,1);assert.equal(rt.state.visibleSource,'awaiting-terrain');
+});
