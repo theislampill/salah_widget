@@ -65,13 +65,15 @@ async function oneRun(L,env,run){
   const rect=await page.evaluate(()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r?{x:r.x,y:r.y,w:r.width,h:r.height}:null;});
   const settleWall=Date.now();
   const events=[];const mark=async name=>{events.push({name,wall:Date.now()});};
+  // In-page wall time (performance.timeOrigin + now) of the forcing call itself, comparable with screencast timestamps.
+  const pageMark=async (name,fn)=>{const wall=await page.evaluate(fn);events.push({name,wall});};
   if(route==='startup'){await page.waitForTimeout(2000);}
   else if(route==='expiry'||route==='noSucc'){if(route==='noSucc')await page.evaluate(()=>{window.__r41keep=window.SalahMoonInitial;window.SalahMoonInitial=null;});await mark('observe');await page.waitForTimeout(45000);}
-  else if(route==='invalidate'){for(let k=0;k<3;k++){await mark('invalidate');await page.evaluate(()=>window.SalahMoonRuntime.invalidate('r0041-witness'));await page.waitForTimeout(5000);}}
-  else if(route==='sky'){for(let k=0;k<3;k++){await mark('sky-invalidate');await page.evaluate(()=>window.SalahRealSky?.invalidate('r0041-witness'));await page.waitForTimeout(6000);}}
+  else if(route==='invalidate'){for(let k=0;k<3;k++){await pageMark('invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahMoonRuntime.invalidate('r0041-witness');return w;});await page.waitForTimeout(5000);}}
+  else if(route==='sky'){for(let k=0;k<3;k++){await pageMark('sky-invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahRealSky?.invalidate('r0041-witness');return w;});await page.waitForTimeout(6000);}}
   else if(route==='resume'){for(let k=0;k<3;k++){await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange'));});
-      await page.waitForTimeout(1000);await mark('resume');await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});document.dispatchEvent(new Event('visibilitychange'));});await page.waitForTimeout(4000);}}
-  else if(route==='identity'){await mark('identity');await page.evaluate(()=>window.SalahClock.set({rate:1,utcMs:Date.now()+3600000}));await page.waitForTimeout(45000);}
+      await page.waitForTimeout(1000);await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});document.dispatchEvent(new Event('visibilitychange'));return w;});await page.waitForTimeout(4000);}}
+  else if(route==='identity'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+3600000});return w;});await page.waitForTimeout(45000);}
   capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});
   await page.waitForTimeout(300);
   const raf=await page.evaluate(()=>window.__r41.frames);const perfOrigin=await page.evaluate(()=>performance.timeOrigin);

@@ -63,11 +63,11 @@
     // R0041 (issue 143) CANDIDATE, branch claude/r0041-moon-presence-phase-direction-20261116 over main 47faae32:
     // authored source a43aa6a6 (phase-direction authority in nativeLunarSnapshot) and the legacy-Moon structural control
     // 15b5f253 of its generated index d1216f95 (first candidate index beaa894d). Awaits independent source review. Every entry below remains admitted.
-    'a43aa6a60a39e1e648a5738154fdc57fefea5967ee492c099cf793d18845804f':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'248ce9fd',path:'src/native/index.html',layout:'config,native'}),
-    '15b5f2535f807706158686d667a85c7879bcd787dc66b5b358ec8b7cce623807':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'cb0537a0',path:'index.html',
-      parentSha256:'d1216f951a84437c8f3e9800bcbd0c9f8ade1a49d77e9045e9fe54ffc6f7017c',
+    '19f0fe2dce3a26463f68f9cbb7faf380220d97f0f4b14f73da52014c808ef27d':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'candidate',path:'src/native/index.html',layout:'config,native'}),
+    'e49fe1c890e6a41292b692e39b29a2e765b62213248a675ff3698fc0022f7390':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'candidate',path:'index.html',
+      parentSha256:'88b538ec40d98ea6c33cb881735ac90e47c81ef52ed048bff2e0c2fdb4c0ac24',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):
