@@ -4502,9 +4502,25 @@ try{
  const presentableAt=s=>!!s&&(matches(accepted,s)||(!!waitingPreview&&matches(waitingPreview.record,s)));
  function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;try{window.SalahMoonHost?.fallback();}catch(error){note(error);}detail.clear();}
  function revokeInitialHead(){initialHeadEligible=false;if(window.SalahFirstPaint?.moon)window.SalahFirstPaint.moon.result=null;}
+ // R0041 presenter: withdraw the record's AUTHORITY without touching what is presented (detail canvas, reveal
+ // classes). Used only where a successor for the SAME identity is adopted in this same task.
+ function withdrawAuthority(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;}
  function clear(reason,initialDocument=false){
   if(!initialDocument)revokeInitialHead();
-  epoch++;serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);/* A crashed worker cannot veto withdrawal. */}status.cancelled++;fallback(reason);
+  const presented=accepted?.scope??null;
+  epoch++;serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);/* A crashed worker cannot veto withdrawal. */}status.cancelled++;
+  // R0041 presenter guarantee: when the identity is unchanged (same scope, continuous clock, visible, unpaused), the
+  // successor tier for the current scene is adopted and composed in this task BEFORE anything presented is withdrawn;
+  // the host is then notified as before. A genuine identity, clock, epoch-source or visibility change keeps the
+  // truthful withdrawal below (never retain an invalid Moon).
+  if(presented&&!disposed&&!document.hidden){
+   const s=capture();
+   if(s&&!s.paused&&scope(s)===presented&&!clockDiscontinuous(s)){
+    withdrawAuthority(reason);initialPresentation(s,performance.now());
+    if(accepted){try{window.SalahMoonHost?.fallback();}catch(error){note(error);}return;}
+   }
+  }
+  fallback(reason);
  }
  function closeWorker(){
   stopOffline?.();stopOffline=null;
@@ -4584,6 +4600,9 @@ try{
    // phase bound before publication, including accelerated native time.
    if(matches(record,capture())){
     adopt(result,record);if(!accepted)return;
+    // R0041 presenter: the successor is composed in this task (as the preview and result paths do), so the
+    // device-resolution disc never waits for the sky's next compose after any withdrawal or resume.
+    try{window.SalahRealSky?.compose();}catch(error){note(error);}
     // Retain stage timing for later diagnostics; no polling is needed during
     // the first presented frames. Publication is distinct from visible pixels.
     status.firstInitial??={capturedAt,publishedAt:performance.now(),generation:s.generation,sceneIdentity:s.sceneIdentity,renderMs:head?0:result.diagnostics.totalMs,headHandoff:!!head,headCapturedAt:head?.capturedAt??null,headRenderMs:head?result.diagnostics.totalMs:null};
@@ -4614,10 +4633,9 @@ try{
   // adopted does the historical full fallback (detail hidden, host fallback) run. Scope/epoch/clock changes never get
   // here: they already ran clear() above and keep their truthful withdrawal.
   if(accepted&&!presentation(s)){
-   accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason='lunar geometry exceeded unchanged display bound';
+   withdrawAuthority('lunar geometry exceeded unchanged display bound');
    initialPresentation(s,now);
-   if(accepted){try{window.SalahRealSky?.compose();}catch(error){note(error);}}
-   else fallback('lunar geometry exceeded unchanged display bound');
+   if(!accepted)fallback('lunar geometry exceeded unchanged display bound');
   }else initialPresentation(s,now);
   // A dead worker never reads 'paused' in a visible document (the hide path set it).
   if(!ready||!worker){status.status=lastError?'unavailable':typeof MOON_WORKER_SOURCE==='string'?'loading':'waiting-refinement-source';return;}

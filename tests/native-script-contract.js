@@ -49,9 +49,11 @@
   // moon-initial 067034c8 -> da1eb220 (moon-precision.mjs phase-direction lead; moon-native.mjs record-signed
   // drift, phaseDirection admission and the same-scope presenter guarantee; moon-first-paint.mjs head direction).
   // moon-refinement and first-paint unchanged. CANDIDATE: awaits independent source review.
+  // R0041 second candidate rebind: moon-initial da1eb220 -> bc15327c (moon-native.mjs presenter guarantee on clear()
+  // routes and compose after every initial adoption).
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'da1eb22063df1f169340f7722a4e247d6d19fd70963a3f94798582b10bac5012',
+    'moon-initial':'bc15327cefc0c552f73c2b7354efc08b8c5ab73922127bd9026a60bdc07b4824',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
@@ -60,12 +62,12 @@
   const RETAINED_INPUTS=Object.freeze({
     // R0041 (issue 143) CANDIDATE, branch claude/r0041-moon-presence-phase-direction-20261116 over main 47faae32:
     // authored source a43aa6a6 (phase-direction authority in nativeLunarSnapshot) and the legacy-Moon structural control
-    // 15b5f253 of its generated index beaa894d. Awaits independent source review. Every entry below remains admitted.
+    // 15b5f253 of its generated index d1216f95 (first candidate index beaa894d). Awaits independent source review. Every entry below remains admitted.
     'a43aa6a60a39e1e648a5738154fdc57fefea5967ee492c099cf793d18845804f':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'248ce9fd',path:'src/native/index.html',layout:'config,native'}),
     '15b5f2535f807706158686d667a85c7879bcd787dc66b5b358ec8b7cce623807':Object.freeze({
       profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'cb0537a0',path:'index.html',
-      parentSha256:'beaa894dc6ac5c44d0a6b9a813c71cc7b4306d0e47edfc00437876fb0eafcad5',
+      parentSha256:'d1216f951a84437c8f3e9800bcbd0c9f8ade1a49d77e9045e9fe54ffc6f7017c',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):
