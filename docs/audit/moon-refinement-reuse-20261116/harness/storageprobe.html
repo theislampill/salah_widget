@@ -1,0 +1,47 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Storage probe</title>
+<!-- Research probe (Moon-reuse feasibility audit, 2026-11-16). NOT product code; writes only to this probe's own
+     loopback origin and deletes what it wrote. Measures whether a refined-Moon-sized entry (~9 MB) can be stored and
+     read back intact in IndexedDB, the Cache API and OPFS, in a normal context and in an opaque-origin iframe. -->
+<body>
+<script>
+'use strict';
+const hex=b=>Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).join('');
+const sha=async u=>hex(await crypto.subtle.digest('SHA-256',u));
+function entry(bytes){const u=new Uint8Array(bytes);let x=12345;for(let i=0;i<u.length;i++){x=(x*1103515245+12345)>>>0;u[i]=x>>>24;}return u;}
+async function idb(u){
+  const t0=performance.now();
+  const db=await new Promise((res,rej)=>{const r=indexedDB.open('moon-reuse-probe',1);r.onupgradeneeded=()=>r.result.createObjectStore('e');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
+  await new Promise((res,rej)=>{const tx=db.transaction('e','readwrite');tx.objectStore('e').put(u,'k');tx.oncomplete=res;tx.onerror=()=>rej(tx.error);tx.onabort=()=>rej(tx.error);});
+  const w=performance.now();
+  const back=await new Promise((res,rej)=>{const tx=db.transaction('e','readonly');const q=tx.objectStore('e').get('k');q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error);});
+  const r=performance.now();const ok=(await sha(back))===(await sha(u));db.close();
+  await new Promise(res=>{const d=indexedDB.deleteDatabase('moon-reuse-probe');d.onsuccess=d.onerror=d.onblocked=()=>res();});
+  return {ok,writeMs:w-t0,readMs:r-w};
+}
+async function cacheApi(u){
+  const t0=performance.now();const c=await caches.open('moon-reuse-probe');await c.put('/__moon_probe_entry',new Response(u));const w=performance.now();
+  const back=new Uint8Array(await (await c.match('/__moon_probe_entry')).arrayBuffer());const r=performance.now();const ok=(await sha(back))===(await sha(u));await caches.delete('moon-reuse-probe');
+  return {ok,writeMs:w-t0,readMs:r-w};
+}
+async function opfs(u){
+  const t0=performance.now();const root=await navigator.storage.getDirectory();const fh=await root.getFileHandle('moon-reuse-probe.bin',{create:true});
+  if(!fh.createWritable)return {ok:false,error:'createWritable unavailable on the main thread (worker sync access handle not probed)'};
+  const ws=await fh.createWritable();await ws.write(u);await ws.close();const w=performance.now();
+  const back=new Uint8Array(await (await fh.getFile()).arrayBuffer());const r=performance.now();const ok=(await sha(back))===(await sha(u));await root.removeEntry('moon-reuse-probe.bin');
+  return {ok,writeMs:w-t0,readMs:r-w};
+}
+async function all(bytes){
+  const u=entry(bytes),out={origin:location.origin,isSecureContext,bytes};
+  try{out.estimate=await navigator.storage.estimate();}catch(e){out.estimate={error:String(e)};}
+  try{out.persisted=await navigator.storage.persisted?.();}catch(e){out.persisted='error:'+e;}
+  for(const [k,f] of Object.entries({indexedDB:idb,cacheApi,opfs})){try{out[k]=await f(u);}catch(e){out[k]={ok:false,error:String(e&&e.name)+': '+String(e&&e.message)};}}
+  return out;
+}
+window.storageProbe={all};
+window.opaqueProbe=()=>new Promise(res=>{const f=document.createElement('iframe');f.sandbox='allow-scripts';
+  f.srcdoc=`<script>(async()=>{const r={};try{r.indexedDB=await new Promise(ok=>{const q=indexedDB.open('x');q.onsuccess=()=>{q.result.close();ok('ok');};q.onerror=()=>ok('error:'+(q.error&&q.error.name));});}catch(e){r.indexedDB=e.name;}try{await caches.open('x');r.cacheApi='ok';}catch(e){r.cacheApi=e.name;}try{await navigator.storage.getDirectory();r.opfs='ok';}catch(e){r.opfs=e.name;}parent.postMessage(r,'*');})();<\/script>`;
+  addEventListener('message',e=>res(e.data),{once:true});document.body.append(f);});
+window.storageReady=true;
+</script>
