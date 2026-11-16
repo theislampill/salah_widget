@@ -15,91 +15,121 @@ from source at the commit above; hypotheses (H) are reasoned but not measured; u
 
 ## Front section (for the owner)
 
+Revised 2026-11-16 after an independent review (PASS_WITH_FINDINGS, 11 advisory findings, all addressed). Section 3.5
+was added to measure the leading-edge defect in three engines.
+
 ### Answer in brief
 
-The refined Moon is a pure function of a small scene whose only varying input is the Sun direction (the phase
-angle), and it is reproducible bit-for-bit within each engine and, for the scenes tested, across Chromium, Firefox and WebKit. But the advisory's premise that the scene "depends only on a phase bucket" is **refuted for the
-normal live widget**: an advancing clock gives every refinement a *continuous* phase angle (the native phase plus a
-leading-edge offset), so two tabs never request the same scene and no stored result could ever be hit. The phase
-is quantised only when the clock is frozen. Memoisation is therefore possible only after one product change: snap
-the advancing-clock scene to a fixed phase grid. That changes what the Moon worker computes, so it needs owner
-authority even before any storage question arises.
+**The refined Moon is a pure function of a small scene.** Its only varying input is the Sun direction (the phase
+angle).
 
-Today each visible tab refines about 205 (median day; range 118–240) times a day at DPR 1 and 360 at DPR 2. In every engine,
-**about 46 % of that work is done while the Moon is day-suppressed**, and in some of it the Moon is also below the
-horizon. Any time the
-refinement takes longer than the remaining validity of the old result (observed live in Firefox at DPR 2: 18 s on the preview tier in 12 minutes), the visible
-Moon falls back to the preview tier. The work also hits a pathology that the advisory did not report. On about 25
-occasions a year, near full and new Moon, the product's waxing flag disagrees with the direction in which the phase
-angle is moving, for 1 to 261 minutes each time. The leading edge then points the wrong way, and at every native minute step the refined Moon expires. The disc then drops to the main-thread initial tier, then to the preview, then returns to refined after a new job. Live, on 24 Nov: 5 jobs in 4 minutes, about 10 s of every minute below the refined tier. The model gives about 77 such expiries a month at this location, only while the Moon is high.
+- In the probes it was byte-reproducible within each engine.
+- It was also byte-identical across Chromium, Firefox and WebKit, **for the two literal Sun vectors tested**. The
+  engines' `Math` functions differ, so this identity is observed, not guaranteed.
 
-### Strongest supported option (not recommended for adoption)
+**The advisory's "phase bucket" is refuted for the scene of a live (advancing-clock) widget.** The phase angle there
+is continuous: the minute-stepped native phase plus a leading-edge offset that depends on the disc size.
 
-**Day deferral with an anticipatory dusk start, kept inside the current scene definition.** This is candidate (B)
-with the startup advisory's day-deferral prototype as its base. No refinement runs while `_skyMoonPresence` is 0.
-One refinement starts ahead of the dusk reveal, with a lead time between the measured duration and the validity
-window (section 4B). It needs no storage, no new identity and no new presentation tier. It removes about 46 % of
-steady-state refinement work. It adds one refinement per evening and leaves the night-time cadence, the
-stopping rule and every accepted R0033 state unchanged. Its risks are a dusk race (a reveal that comes before the
-result, which today's continuous work hides) and a moving reveal instant under weather changes. It is still a
-scheduling change under R0033 DG-4 ("no new budget; keep accepted limits"), so the owner must decide it.
+- Two tabs on the same device that start a job in the same native minute do request identical scenes. Any other
+  pair does not, so a useful cross-tab hit rate is near zero without a fixed phase grid.
+- What *is* bucketed is the host's job `key` (it holds the grid-snapped fraction). That is probably the source of
+  the advisory's term, and a trap for any cache keyed on it.
+- Memoisation therefore needs a product change first: snapping the scene to a grid.
+
+**Steady-state frequency, as a model replay** (one mid-phase job duration per engine, product ephemeris and decision
+rule):
+
+- about 205 refinements a day per visible tab at DPR 1 and 360 at DPR 2;
+- about 46 % of the modelled refinement starts while the Moon is day-suppressed.
+
+**Live measurements:**
+
+- jobs every 8 simulated minutes at DPR 1 and 4 at DPR 2, as modelled;
+- refinement by day while invisible;
+- one 18 s fallback to the preview tier in a 12-minute Firefox DPR 2 run.
+
+**The study also found a defect the advisory did not report.** It was independently confirmed.
+
+- About 25 times a year, near full and new Moon, the waxing flag (sign of the bright-limb angle χ) disagrees with
+  the direction in which the phase angle moves, for 1 to 261 minutes each time.
+- The leading edge then points the wrong way, and every native minute step withdraws the accepted Moon record. The
+  tier goes refined → initial → preview → refined.
+- Measured in three engines at DPR 1 and 2, full and new Moon (section 3.5), against matched controls:
+  - 4–6 Moon jobs per run instead of 1–2;
+  - 29–146 s below the refined tier, against 0 in the controls (one Firefox control excepted);
+  - about 0.3–1.3 more CPU cores;
+  - and, in 11 of 12 window cells, captured frames in which the disc is absent for 41–622 ms (the 12th had a
+    196 ms capture interval). At new Moon the stars show inside the disc area in those frames.
+- Moonlight eligibility, `displayMode` and the reveal classes were unaffected.
+
+**Classification.** An efficiency and continuity defect with a measured transient presence effect. Human visibility
+has not been judged. The defect is drafted as a work order of its own (R0041), outside this study.
+
+### Strongest supported option (not evaluated for adoption)
+
+**Day deferral with an anticipatory dusk start, inside the current scene definition** (candidate B).
+
+- No refinement runs while `_skyMoonPresence` is 0. One refinement starts ahead of the dusk reveal, which depends
+  on solar elevation only.
+- It needs no storage, no new identity and no new presentation tier. It removes about 46 % of the modelled
+  refinement starts.
+- Its feasible lead window (job duration ≤ lead ≤ validity − duration) is wide in Chromium and WebKit. In Firefox
+  at DPR 2 it is narrow and can close.
+- It is a scheduling change under R0033 DG-4 ("no new budget; keep accepted limits"), so it needs an owner decision.
 
 ### Strongest competing alternative
 
-**Exact memoisation on a canonical phase grid (candidate A), in memory first and across tabs second.** The
-advisory's preferred design, corrected. The scene's phase angle is snapped to a grid that keeps the existing
-0.0416 device-pixel bound. The key is (worker-source digest, engine Math fingerprint, profile, grid index, waxing),
-which holds nothing derived from location. The value is the refined result (8.88 MB raw, about 2.3 MB gzip). Its
-strength: a second tab, a hide/show cycle or a reload inside the same grid cell presents the refined Moon at once,
-with zero worker time. Its costs: a product change to the scene definition; storage failure modes (opaque origins,
-partitioned iframes, no OPFS in the WebKit build tested); an admission rule that has to be designed so that a cache
-read is never mistaken for a worker result in R0033's recovery accounting; and, without (B), no reduction in
-steady-state work for a single long-lived tab. Over a lunar month there are about 8,150 (DPR 1) to 16,300 (DPR 2) grid cells,
-so a store can only ever hold the current and next cell, never a calendar of results.
+**Exact memoisation on a canonical phase grid (candidate A), in memory first and across tabs second.**
+
+- **Key:** the worker-source digest, an engine identity, the profile, the grid index and the waxing flag. No
+  location-derived quantity.
+- **Value:** 8.88 MB raw (2.3 MB gzip). Only the current and next grid cell are useful: there are about 8,150 cells
+  per lunar month at DPR 1 and 16,300 at DPR 2.
+- **Strength:** a second tab, a hide/show or a reload inside one cell presents the refined Moon with no worker time.
+- **Costs:**
+  - a product change to the scene definition;
+  - storage failure modes: opaque origins refuse all storage, partitioned embeds are unmeasured, and the tested
+    WebKit build has no OPFS;
+  - an admission rule kept outside R0033's recovery accounting;
+  - no saving for a single long-lived tab unless combined with B.
 
 ### Verified from evidence in this audit
 
-- Same engine: identical refined bytes across repeated renders in one worker, a new tab, a new browser process,
-  2 instead of 4 shards, concurrent tabs and DPR 1 versus DPR 2 (`evidence/determinism.json`, `evidence/supplement.json`).
-- Across engines: byte-identical for scenes G and C across Chromium 148, Firefox 150 and WebKit 26.4, although the engines' `Math` functions differ. The identity is observed, not guaranteed (`evidence/determinism-analysis.json`).
-- Display-referred stopping: measured at the real disc size (108 px at DPR 1, 216 px at DPR 2):
-  - after the 256-sample step, 67–75 % of the refinement time remains (Chromium, four phases), yet it changes the
-    DPR-1 display by at most 0.26 code;
-  - the 1,024-sample step is within 0.11 code (DPR 1) and 0.25 code (DPR 2) of the final result.
-
-  Source: `evidence/determinism.json` `steps` and `evidence/supplement.json`. The stopping rule is not changed.
-- Cadence and the wrong-way leading edge: `evidence/cadence-sim-30d.json` (a replay of the host's own decision rule
-  over the product's own ephemeris), `evidence/waxing-mismatch-365d.json`, and live observation
-  `evidence/live.json`.
-- Storage: IndexedDB and the Cache API stored and read back a 8,884,800-byte entry intact in all three engines.
-  OPFS worked in Chromium and Firefox but is absent from the WebKit build tested. All three refuse storage in an
-  opaque-origin iframe (`evidence/storage-probe.json`).
+- **Same engine:** identical refined bytes across repeated renders, a new tab, a new process, 2 vs 4 shards,
+  concurrent tabs and DPR 1 vs 2 (`evidence/determinism.json`, `evidence/supplement.json`).
+- **Across engines:** identical for two literal Sun vectors (G 0.80 waxing, C 0.15 waxing) in Playwright Chromium
+  148, Firefox 150 and WebKit 26.4. The engines' `Math` differs. Safari and other machines were not tested.
+- **Candidate C**, a surface-only proxy (`projectSurfaceCodes` at 108 and 216 px), on four phases in Chromium only:
+  - after the 256-sample step, 67–75 % of the time remains and changes the DPR-1 projection by ≤ 0.26 code;
+  - the 1,024 step is within 0.11 code (DPR 1) and 0.25 (DPR 2);
+  - full and new Moon and the device compositor were not measured;
+  - no recommendation either way.
+- **Cadence:** live cells (`evidence/live.json`), and the model replay (`evidence/cadence-sim-30d.json`), which is
+  labelled as a model.
+- **Defect:** both censuses (25 intervals), the live cells, the review's second-date reproduction, the VM witness
+  (`evidence/defect-vm.jsonl`) and the three-engine cells (`evidence/defect-summary.json`,
+  `evidence/blank-census.json`).
+- **Storage:** IndexedDB and the Cache API held a refined-size entry intact in all three engines. OPFS is absent in
+  the WebKit build tested. Opaque origins refuse all three.
 
 ### Unresolved
 
-- Real Safari, real Chrome or Edge profiles, other machines and other CPUs (only Playwright builds on one 16-core
-  Windows host were tested). The cross-machine claim in section 2(f) is an argument from the arithmetic, not a
-  measurement.
-- Worker CPU was not traced. The CPU figures here are wall time × 4 shards (an upper-bound estimate). The
-  startup advisory's CDP traces (77–94 s in the first 30 s) remain the only measured CPU.
-- Whether the wrong-way leading-edge interval is visible to a viewer (disc tier changes, main-thread initial
-  re-renders), beyond the counts recorded in section 3.
-- R0033 row R33-19 (the M5 30-minute duty-cycle record) is still not produced. This audit's cadence data informs
-  it but does not discharge it.
+- Real Safari, real Chrome and Edge profiles, other machines, throttled CPUs.
+- Human visibility of the tier swaps and blank frames.
+- The mechanism of the blank frames (hypothesis in section 3.5).
+- Starvation on devices whose jobs exceed one minute: shown in the VM only.
+- Measured worker CPU per thread (process-tree CPU only). R0033 row R33-19 stays open.
 
 ### Owner decisions this would need
 
-1. Whether the advancing-clock scene may be snapped to a canonical phase grid (precondition for any memoisation;
-   changes what the worker computes; affects the R0033 DG-4 baseline and ISM-MOON-003).
-2. Whether refinement may be deferred while the Moon is day-suppressed and started ahead of dusk (a scheduling
-   change under DG-4).
-3. Separately, and only after 1: whether the first cross-tab store may be introduced. That decision includes the
-   storage technology, the size bound, the eviction rule, and whether a store hit is a new presentation source in
-   the ISM-MOON-003 transaction.
-4. Separately: whether a defect work order should own the wrong-way leading edge near full and new Moon (section
-   3.4). It is a correctness and efficiency defect of the accepted V5 behaviour, independent of reuse.
-5. Display-referred stopping (C) changes the accepted stopping rule and is not recommended by this evidence for a
-   first step. The measured margin is reported for the owner only.
+1. **Phase grid.** Whether the advancing-clock scene may be snapped to a canonical phase grid. This is the
+   precondition for any memoisation.
+2. **Day deferral.** Whether refinement may be deferred while day-suppressed and started ahead of dusk (R0033 DG-4).
+3. **Cross-tab store.** Only after 1: whether the first cross-tab store may be introduced.
+4. **Defect correction.** Whether to commission the separate defect work order R0041 and, within it, which of its
+   alternative corrections to adopt (none is selected).
+5. **Stopping rule.** Display-referred stopping (C) would change the accepted stopping rule. Only the measured
+   margin is reported here, with no recommendation.
 
 ---
 
@@ -323,8 +353,7 @@ bound, not a trace (U3).
 
 ### 3.4 Is work repeated unnecessarily? Dispositions
 
-- **Same identity recomputed in steady state: REFUTED for an undisturbed tab.** α advances between jobs, so no two
-  jobs share a scene.
+- **Same identity recomputed in steady state: REFUTED for an undisturbed tab outside the mismatch intervals.** α advances between jobs. Inside the intervals, successive jobs differ by about 3e−7 in fraction: visually identical recomputations (section 3.5).
 - **Work that is never presented: CONFIRMED.**
   - About 46 % of all job time runs while the slot is day-suppressed. Of the day's jobs, only the one whose cell
     spans the dusk reveal can ever be shown.
@@ -338,12 +367,105 @@ bound, not a trace (U3).
     around the 24 Nov full Moon, with the initial tier visible 14 % of that time
     (`evidence/cadence-sim-fullmoon-window.json`). It gives about 77 expiries per month at this location.
   - With the Moon low or below the horizon (`up < 1` gives 2 % slack), the 8 Dec interval produced no expiry.
-  - **Live confirmation** (24 Nov 16:30 UTC, Chromium DPR 1, real time): 5 jobs in 240 s, one per native minute, against 1 in the control a day earlier. Each minute the disc went initial → preview → refined, about 10 s of every 60 s below the refined tier. The 8 Dec cell had 1 job and no expiry. Visibility of these swaps was not judged (U2): each is an initial ↔ terrain swap of the R0033 F-2 kind.
+  - **Live confirmation** (24 Nov 16:30 UTC, Chromium DPR 1, real time): 5 jobs in 240 s, one per native minute, against 1 in the control a day earlier. Each minute the disc went initial → preview → refined, about 10 s of every 60 s below the refined tier. The 8 Dec cell had 1 job and no expiry. The swaps and blank frames are measured in section 3.5.
 - **Refined lost between jobs (not "never current"): observed once, Firefox DPR 2.** In the single 720 s live run, the
   third job (138.9 s) outlived its predecessor's record. That record expired at 599 s, the sixth native minute step
   after its creation, and the preview was shown from 599 to 617 s (18 s). The refined tier was current for 577 of
   710 s. The model, using one 153 s duration, gives 85 % refined. At the advisory's 115 s that would be 98 %. At
   DPR 3 the window is about 83 s at D ≈ 326, so it would be worse (model only).
+
+### 3.5 The wrong-way leading edge, measured (three engines, DPR 1 and 2, full and new Moon, matched controls)
+
+**Recipe.** `harness/defect.cjs`, with every launch through `iso.cjs`. Each cell is one engine and one DPR.
+
+- **Page clock.** Shifted to the cell's instant, then real speed.
+- **Fixture.** Madinah, with `reducedMotion: reduce`.
+- **Cells.**
+  - Full window: 24 Nov 2026 16:30 Z, Moon ≈ 30° up. Control: 23 Nov 16:30 Z.
+  - New window: 7 Jan 2027 19:30 Z, Moon ≈ 67° below the horizon, so the ashen calendar disc. Control: 6 Jan 19:30 Z.
+- **Duration.** Chromium and WebKit 200 s, Firefox 300 s.
+- **Measurements.**
+  - Moon-rectangle screenshots as fast as the engine allows, timestamped on the page clock: one every 43–81 ms in
+    Chromium, 18–47 ms in Firefox, 55–81 ms in WebKit at DPR 1 and 142–196 ms in WebKit at DPR 2.
+  - Per-frame `.moon-ready` and `mask-on`.
+  - 1 Hz tier and `qaState().moonTruth` (R0036 pure reads).
+  - Moon-worker job, preview and result messages.
+  - CPU of this process's browser tree.
+- **Conditions.** All three engines ran at once on a shared host, alongside other work, so timings include
+  contention.
+- **Data.** Raw `evidence/defect-raw-*.json`; summary `evidence/defect-summary.json`; blank census
+  `evidence/blank-census.json`; two crop pairs in `evidence/defect-crops/`.
+- **Isolation.** 24 environments, 744 request records, 0 allowed off loopback. The only external hosts seen were
+  `fonts.googleapis.com` and `aus5.mozilla.org`, both refused.
+
+**This is model frame analysis of captured frames, not human perception.**
+
+| Cell | Moon jobs | Job durations (s) | Seconds below refined after first refined (1 Hz samples) | Blank-disc frames (events; upper-bound duration, ms) | Process-tree CPU, cores (window / control) |
+|---|---|---|---|---|---|
+| Chromium DPR 1 full | 4 vs control 1 | 11–15 (control 18) | 32 / 173 vs 0 | 3 (153–199) vs 0 | 1.09 / 0.77 |
+| Chromium DPR 1 new | 4 vs 1 | 10–12 (16) | 29 / 180 vs 0 | 2 (193, 215) vs 0 | 1.11 / 0.74 |
+| Chromium DPR 2 full | 4 vs 1 | 11–14 (16) | 32 / 179 vs 0 | 3 (116–227) vs 0 | 1.74 / 1.38 |
+| Chromium DPR 2 new | 4 vs 1 | 10–12 (13) | 30 / 179 vs 0 | 2 (127, 322) vs 0 | 1.39 / 1.05 |
+| Firefox DPR 1 full | 6 vs 2 | 36–49 (58–69) | 146 / 244 vs 58 | 1 (195) vs 0 | 2.61 / 1.77 |
+| Firefox DPR 1 new | 6 vs 1 | 35–42 (53) | 140 / 252 vs 0 | 3 (48–251) vs 0 | 2.57 / 1.26 |
+| Firefox DPR 2 full | 6 vs 2 | 33–39 (37–54) | 134 / 253 vs 0 | 2 (101, 284) vs 0 | 2.63 / 1.75 |
+| Firefox DPR 2 new | 6 vs 2 | 22–26 (25–31) | 92 / 272 vs 0 | 2 (65, 181) vs 0 | 2.32 / 1.66 |
+| WebKit DPR 1 full | 4 vs 1 | 21–31 (31) | 54 / 145 vs 0 | 2 (145, 622) vs 0 | 1.84 / 1.37 |
+| WebKit DPR 1 new | 4 vs 1 | 20–26 (34) | 64 / 161 vs 0 | 2 (41, 536) vs 0 | 1.95 / 1.39 |
+| WebKit DPR 2 full | 4 vs 1 | 23–38 (50) | 68 / 134 vs 0 | 0 detected (capture every ~196 ms) | 1.79 / 1.30 |
+| WebKit DPR 2 new | 4 vs 1 | 28–38 (39) | 76 / 140 vs 0 | 1 (278) vs 0 | 1.79 / 1.41 |
+
+The Firefox DPR 1 full control shows 58 s below refined. That is a normal re-request whose 69 s job outlived the
+old record (as in section 3.4), not this defect.
+
+**Tier sequence.** In every window cell, in every engine and at both DPRs, each native minute step started a new
+job (Moon job starts at about 60, 120, 180 s …). The tier went refined → initial → preview → refined, unless the job
+had not finished before the next step. In the controls there was one job, or two where a normal re-request fell
+inside the run.
+
+**Visible change at each swap (model frame analysis).**
+
+| Swap | Full Moon, DPR 1 (all engines) | Full Moon, WebKit DPR 2 | New Moon (calendar disc), DPR 1 |
+|---|---|---|---|
+| initial → preview | ≈ 4,400 disc pixels change, max Δ 7 codes, mean \|ΔY\| 0.22 | ≈ 23,700 px, max Δ 6 | ≈ 3,150 px, max Δ 6, mean \|ΔY\| 0.16 |
+| preview → refined | ≈ 900 px, max Δ 1 | ≈ 3,800 px, max Δ 1 | ≈ 950 px, max Δ 1 |
+| **blank disc** (between refined and initial) | **all 8,242 disc pixels change, max Δ 154, disc mean luma 150 → 43**, for 101–622 ms | not detected at a 196 ms capture interval | **≈ 7,900 px, max Δ 205–213; the dim calendar disc vanishes and 45–48 star-like pixels appear inside the disc area** (0 before) |
+
+- **What the blank disc is.** In every detected event, `.moon-ready` and `mask-on` stayed set in every
+  animation frame after start-up (no gate drop recorded). So the reveal gate did not withdraw the slot. The
+  pixels of the disc were absent in the captured frame.
+- **Mechanism (HYPOTHESIS, not tested).** `fallback()` clears the device-resolution detail layer (moon-native L69).
+  The initial tier then publishes a new data-URL texture on `.mphoto`. Until that image decodes, nothing paints the
+  disc.
+- **Gate D.** The new-Moon blank frames show stars inside the disc area. AGENTS gate D forbids that ("no stars
+  through the disc"), here for 41–536 ms per event.
+- **Visibility.** Whether a person notices these events has not been judged.
+
+**Moonlight and presence.** Through every window cell:
+
+- `moonlightOpacity` stayed constant: 0.599 at the full window, 0.594 at its control, 0 at new Moon.
+- `displayMode` stayed `physical` at the full window, and `initial-calendar`/`refined-calendar` at new Moon.
+- `moonSkyOpacity` and `moonFeatureOpacity` did not drop.
+
+Eligibility and the reveal classes were unaffected. Only the disc pixels changed.
+
+**Worker CPU.** The process tree used about 0.3–0.4 cores more than the control in Chromium, 0.5–0.9 in WebKit and
+0.7–1.3 in Firefox. That is the whole browser, including the screenshot load, which is the same in window and
+control.
+
+**Starvation hypothesis.**
+
+- **Native: NOT OBSERVED.** Near full and new Moon every job finished within the minute. The longest window job was
+  49 s, in Firefox, and the phase-dependent work is small at those phases. So the refined tier was reached each
+  minute in every engine.
+- **VM: CONFIRMED for jobs longer than a minute** (`evidence/defect-vm.jsonl`). With 70 s jobs, 0 refined results
+  were adopted in 30 minutes, at both `up = 1` and `up = 0`, and the initial tier remained.
+- **Open.** Whether a slow or throttled device reaches > 60 s jobs at these phases is UNDETERMINED.
+
+**VM witness with the unmodified host source** (`harness/defect-vm.cjs`, 30 simulated minutes, 10 s jobs):
+
+- full window: 30 jobs, 29 host fallbacks, 30 main-thread initial renders; control 5 jobs, 0 fallbacks;
+- new window (`up = 0`): 24 jobs, 23 fallbacks; control 4 jobs, 0 fallbacks.
 
 ## 4. Q4 — Candidates against the current V5 baseline
 
@@ -547,7 +669,7 @@ ISM-MOON-012 rule, which is an owner decision.
 | A across tabs | ~0 for a second tab or a reload in the cell | ÷N with N tabs | store failure modes, first cross-tab store | 1, 3 |
 | A + B | as A | − about 46 % and ÷N | union | 1, 2, 3 |
 | C (any) | − 67–75 % (DPR 1) / − 10–25 % (DPR 2) of compute time | same fraction | terminator fidelity, quality label | 5 |
-| Fix of the wrong-way leading edge (section 3.4) | removes the storm | removes about 77 extra jobs and main-thread initial renders a month (this location) | none to fidelity | 4 |
+| Fix of the wrong-way leading edge (sections 3.4–3.5; drafted separately as R0041) | removes the per-minute withdrawals and blank-disc frames inside the intervals | removes about 77 extra jobs and main-thread initial renders a month (model, this location) | depends on the correction chosen (R0041 §E) | 4 |
 
 ## 5. Q5 — What must not change without explicit owner authority, and what a work order would own
 
@@ -615,7 +737,7 @@ ISM-MOON-012 rule, which is an owner decision.
   across Chromium 148, Firefox 150 and WebKit 26.4 for two scenes (22 G runs in all), although the engines' `Math`
   functions differ.
 - F5. A refined entry is 8,884,800 B raw (2,317,137 B gzip-9 without calendarLinear), independent of DPR.
-- F6. Refinement runs by day and below the horizon. There is no gate in `poll()` (native L166-187), and the live
+- F6. (Model replay for the counts; live for the cadence.) Refinement runs by day and below the horizon. There is no gate in `poll()` (native L166-187), and the live
   day run made 3 refinements in 5 min at `timeScale=4`. Re-render timing follows the minute-stepped native phase
   (live: every 8 simulated minutes at D = 109, as modelled).
 - F7. In the product's own ephemeris, the waxing flag and the direction of α disagree 25 times a year, for 0.7–261
@@ -623,15 +745,20 @@ ISM-MOON-012 rule, which is an owner decision.
 - F8. IndexedDB and the Cache API hold a refined-size entry intact in all three engines. OPFS is missing in the
   tested WebKit build. Opaque origins refuse all three.
 - F10. Live: inside the 24 Nov interval the refined record expired at every native minute step (5 jobs in 4 min, against 1 in the control). In Firefox at DPR 2, real time, a 139 s job outlived the ≈125 s window and the preview tier was shown for 18 s.
-- F9. Every step after the 256-sample step changes the projected display at 108 px by ≤ 0.26 code. At 216 px the
+- F11. Three engines, DPR 1 and 2, full and new Moon (section 3.5):
+  - window cells had 4–6 jobs per run against 1–2 in the controls, and 29–146 s below the refined tier against 0;
+  - 11 of 12 window cells had captured blank-disc frames of 41–622 ms, with stars inside the disc area at new Moon;
+  - moonlight eligibility and the reveal classes were unchanged;
+  - the VM showed starvation with jobs over 60 s; native jobs at these phases were ≤ 49 s.
+- F9. (Chromium only, surface-only proxy.) Every step after the 256-sample step changes the projected display at 108 px by ≤ 0.26 code. At 216 px the
   same holds for the steps after 1,024 samples, at ≤ 0.25 code.
 
 **Hypotheses (H)**
 
 - H1. Identical cross-engine bytes come from the float32 and 8-bit publication absorbing last-bit `Math`
   differences. This is not proven, and other scenes or engine versions could differ.
-- H2. Within one engine version, results are identical across machines (fdlibm-style software `Math` in V8 and
-  SpiderMonkey; IEEE WASM). Not tested.
+- H2. Within one engine version, results are identical across machines. Not tested, and not safe as an argument:
+  SpiderMonkey's `pow`/`exp` may use the platform libm.
 - H3. The 1,024-sample step is shard-imbalanced, because its terminator receivers are concentrated in a few
   contiguous rows.
 - H4. The worker CPU per refinement is below 4 × wall time, because sparse steps leave shards idle. The CPU figures
@@ -641,8 +768,10 @@ ISM-MOON-012 rule, which is an owner decision.
 **Unknowns (U)**
 
 - U1. Real Safari, real Chrome or Edge profiles, low-core machines, and throttled CPUs.
-- U2. Whether a refined → initial tier swap inside a wrong-way interval is visible: it is about the size of
-  R0033 F-2, but no clip was taken.
+- U2. Human visibility of the wrong-way tier swaps and blank-disc frames. Their pixel size is measured (section 3.5),
+  but no observer judgement has been made.
+- H6. The blank-disc frames come from `fallback()` clearing the detail layer while the new `.mphoto` data-URL texture
+  is still decoding. Untested.
 - U3. Measured CPU traces. R33-19 (the M5 record) is still open.
 - U4. Store behaviour in private windows, under quota pressure, under eviction during a read, and in real extension
   embeds.
