@@ -32,7 +32,7 @@
   // Native observation can initialize the explicit clock. Preserve it even
   // when an empty surface query has no candidate needing geometric validation.
   if(!withGeometry)return null;
-  if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
+  if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||(s.phaseDirection!==undefined&&![-1,0,1].includes(s.phaseDirection))||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
   // The image rectangle encloses the lunar disc. Round up, so subpixel layout
   // noise cannot understate the bound; translation never changes this identity.
   const rect=document.querySelector('.mphoto')?.getBoundingClientRect();
@@ -45,7 +45,8 @@
  // footprint crossing an integer or a phase bucket is not a location/seek epoch.
  // Every read still proves the ORIGINAL .0416-device-pixel displacement bound.
  const scope=s=>JSON.stringify([s.generation,s.sceneIdentity,s.waxing,s.dpr,s.profileMode,s.referenceIdentity]);
- const phaseDrift=(record,s)=>record?.scene?.mode==='calendar-canonical'?s.phaseDiameter/2*(Math.acos(2*s.fraction-1)-Math.acos(2*record.scene.fraction-1))*(s.waxing?-1:1):0;
+ // R0041: signed by the RECORD's own lead direction (the motion it was created ahead of); unsigned when centred (0).
+ const phaseDrift=(record,s)=>record?.scene?.mode==='calendar-canonical'?(d=>{const x=s.phaseDiameter/2*(Math.acos(2*s.fraction-1)-Math.acos(2*record.scene.fraction-1));return d===0?Math.abs(x):-d*x;})(record.scene.leadDirection??(s.waxing?1:-1)):0;
  const phaseError=(record,s)=>Math.abs(phaseDrift(record,s));
  function syncTexture(s){
   if(!accepted||!upperBytes||!s)return false;const up=profileMode==='reference'?1:Math.max(0,Math.min(1,s.up));
@@ -68,9 +69,25 @@
  const presentableAt=s=>!!s&&(matches(accepted,s)||(!!waitingPreview&&matches(waitingPreview.record,s)));
  function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;try{window.SalahMoonHost?.fallback();}catch(error){note(error);}detail.clear();}
  function revokeInitialHead(){initialHeadEligible=false;if(window.SalahFirstPaint?.moon)window.SalahFirstPaint.moon.result=null;}
+ // R0041 presenter: withdraw the record's AUTHORITY without touching what is presented (detail canvas, reveal
+ // classes). Used only where a successor for the SAME identity is adopted in this same task.
+ function withdrawAuthority(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;}
  function clear(reason,initialDocument=false){
   if(!initialDocument)revokeInitialHead();
-  epoch++;serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);/* A crashed worker cannot veto withdrawal. */}status.cancelled++;fallback(reason);
+  const presented=accepted?.scope??null;
+  epoch++;serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);/* A crashed worker cannot veto withdrawal. */}status.cancelled++;
+  // R0041 presenter guarantee: when the identity is unchanged (same scope, continuous clock, visible, unpaused), the
+  // successor tier for the current scene is adopted and composed in this task BEFORE anything presented is withdrawn;
+  // the host is then notified as before. A genuine identity, clock, epoch-source or visibility change keeps the
+  // truthful withdrawal below (never retain an invalid Moon).
+  if(presented&&!disposed&&!document.hidden){
+   const s=capture();
+   if(s&&!s.paused&&scope(s)===presented&&!clockDiscontinuous(s)){
+    withdrawAuthority(reason);initialPresentation(s,performance.now());
+    if(accepted){try{window.SalahMoonHost?.fallback();}catch(error){note(error);}return;}
+   }
+  }
+  fallback(reason);
  }
  function closeWorker(){
   stopOffline?.();stopOffline=null;
@@ -101,9 +118,17 @@
   if(recovery.state!=='scheduled'||disposed||worker||document.hidden||now<recovery.nextAt||typeof MOON_WORKER_SOURCE!=='string')return;
   recovery.attempts++;start();
  }
+ // R0041: the leading edge follows the PHASE-DIRECTION authority; the lit limb (Sun y sign, scene.waxing) stays on
+ // waxing. nativeCalendarMoonScene (accepted V5 source) is called with the lead's sense, then the lit side is restored;
+ // the scene records leadDirection so phaseDrift signs by the record's own lead. Without a direction (override, no
+ // location, dead band) the historical scene is returned unchanged.
+ function directedCalendarScene(s,p){
+  const d=s.phaseDirection;if((s.timeScale??1)<=0||(d!==1&&d!==-1))return nativeCalendarMoonScene(s,p);
+  const out=nativeCalendarMoonScene({...s,waxing:d===1},p);out.sun=[out.sun[0],(s.waxing?1:-1)*Math.abs(out.sun[1]),out.sun[2]];out.waxing=s.waxing;out.leadDirection=d;return out;
+ }
  function scene(s){
   if(referenceScene)return {...structuredClone(referenceScene),profile:profile()};
-  return nativeCalendarMoonScene(s,profile());
+  return directedCalendarScene(s,profile());
  }
  function adopt(m,record){
   const began=performance.now();
@@ -150,6 +175,10 @@
    // phase bound before publication, including accelerated native time.
    if(matches(record,capture())){
     adopt(result,record);if(!accepted)return;
+    // R0041 presenter: the successor is composed in this task (as the preview and result paths do), so the
+    // device-resolution disc never waits for the sky's next compose after any withdrawal or resume. A host that is
+    // composing right now (presentForCompose) is not re-entered: its own compose follows this adoption.
+    if(!hostComposing)try{window.SalahRealSky?.compose();}catch(error){note(error);}
     // Retain stage timing for later diagnostics; no polling is needed during
     // the first presented frames. Publication is distinct from visible pixels.
     status.firstInitial??={capturedAt,publishedAt:performance.now(),generation:s.generation,sceneIdentity:s.sceneIdentity,renderMs:head?0:result.diagnostics.totalMs,headHandoff:!!head,headCapturedAt:head?.capturedAt??null,headRenderMs:head?result.diagnostics.totalMs:null};
@@ -158,6 +187,16 @@
    status.initialError=String(error.message??error);initialRetry.count++;initialRetry.epoch=epoch;
    initialRetry.notBefore=capturedAt+60000;initialRetry.state=initialRetry.count>=3?'exhausted':'waiting';
   }
+ }
+ // R0041 resume (owner decision 1, issue 143): every sky host composes the Moon only through this runtime's handle.
+ // Before a host composes a frame, the presenter brings its presentation current with the same poll the 4 Hz timer
+ // runs, so a sky frame published on resume (or after any withdrawal) carries the current successor, never an empty
+ // slot. It acts only when nothing is presentable, so a steady presented state is untouched. Hidden: nothing (the
+ // accepted hide withdrawal, ISM-MOON-019, is unchanged); the pre-hide surface was withdrawn and is never retained.
+ let hostComposing=false;
+ function presentForCompose(){
+  if(disposed||hostComposing||document.hidden||presentableAt(capture(!!(accepted||waitingPreview))))return;
+  hostComposing=true;try{poll();}catch(error){note(error);}finally{hostComposing=false;}
  }
  function initialEligible(now){
   if(initialRetry.state==='permanent'||initialRetry.state==='exhausted')return false;
@@ -174,8 +213,16 @@
    serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;
    try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);}status.cancelled++;status.reason='lunar geometry exceeded unchanged display bound';
   }
-  if(accepted&&!presentation(s))fallback('lunar geometry exceeded unchanged display bound');
-  initialPresentation(s,now);
+  // R0041 presenter guarantee (same-scope expiry): a presented Moon is not withdrawn before its successor is presented.
+  // The expired record leaves authority at once, but the presented layers (detail canvas, reveal classes) are kept
+  // until the successor tier is adopted in this same task and a compose is requested; only when no successor can be
+  // adopted does the historical full fallback (detail hidden, host fallback) run. Scope/epoch/clock changes never get
+  // here: they already ran clear() above and keep their truthful withdrawal.
+  if(accepted&&!presentation(s)){
+   withdrawAuthority('lunar geometry exceeded unchanged display bound');
+   initialPresentation(s,now);
+   if(!accepted)fallback('lunar geometry exceeded unchanged display bound');
+  }else initialPresentation(s,now);
   // A dead worker never reads 'paused' in a visible document (the hide path set it).
   if(!ready||!worker){status.status=lastError?'unavailable':typeof MOON_WORKER_SOURCE==='string'?'loading':'waiting-refinement-source';return;}
   if(matches(accepted,s))syncTexture(s);
@@ -280,13 +327,15 @@
   const b=[s.basis.slice(0,3),s.basis.slice(3,6),s.basis.slice(6)];for(let i=0;i<3;i++)for(let j=0;j<3;j++)if(Math.abs(b[i].reduce((a,x,k)=>a+x*b[j][k],0)-(i===j?1:0))>1e-10)throw new RangeError('Moon basis');
   return structuredClone(s);
  }
- const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();}};
+ // R0041 resume: the native host clears its own pause after this listener may already have run; one frame callback
+ // (before the next paint) presents the successor when this turn could not, so the vector Moon is never left empty.
+ const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();if(!accepted)requestAnimationFrame(()=>{if(!document.hidden)presentForCompose();});}};
  // The handle is idempotent and refuses adoption once retired (ES21-07). It is
  // a pass-through: moon-detail.mjs stays byte-identical because it is a pinned
  // initial-receiver source (tools/build_moon.py validate_initial_sources).
  // It is acquired at the registration boundary; a throw before the runtime is
  // complete releases exactly this wrapper's detail, slot, listener and timers.
- const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
+ const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){if(!retired)presentForCompose();return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
  let registered=null;
  try{
  document.addEventListener('visibilitychange',visibility);
