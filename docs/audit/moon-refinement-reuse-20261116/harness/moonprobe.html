@@ -39,6 +39,8 @@ async function digestMsg(m){
 }
 function diff8(a,b){let n=0,n1=0,n3=0,max=0;for(let i=0;i<a.length;i++){const d=Math.abs(a[i]-b[i]);if(d){n++;if(d>1)n1++;if(d>3)n3++;if(d>max)max=d;}}return {channelsDiffering:n,channelsOver1:n1,channelsOver3:n3,maxDelta:max};}
 function pixdiff8(a,b){let p=0,p1=0,p3=0,max=0;for(let i=0;i<a.length;i+=4){let d=0;for(let k=0;k<4;k++)d=Math.max(d,Math.abs(a[i+k]-b[i+k]));if(d){p++;if(d>1)p1++;if(d>3)p3++;if(d>max)max=d;}}return {pixelsDiffering:p,pixelsOver1:p1,pixelsOver3:p3,maxDelta:max,pixels:a.length/4};}
+// Premultiplied (displayed over black) comparison: straight colour of near-transparent limb pixels is ill-conditioned.
+function pmdiff8(a,b){let p=0,p1=0,max=0;for(let i=0;i<a.length;i+=4){let d=Math.abs(a[i+3]-b[i+3]);for(let k=0;k<3;k++)d=Math.max(d,Math.abs(Math.round(a[i+k]*a[i+3]/255)-Math.round(b[i+k]*b[i+3]/255)));if(d){p++;if(d>1)p1++;if(d>max)max=d;}}return {pixelsDiffering:p,pixelsOver1:p1,maxDelta:max};}
 function proj(m,D){return projectSurfaceCodes({size:m.surfaceSize,linear:m.surfaceLinear,coverage:m.surfaceCoverage,extent:m.surfaceExtent},D);}
 function projdiff(a,b){let p=0,pr=0,max=0;const n=a.length/3;for(let i=0;i<n;i++){let d=0,r=false;for(let k=0;k<3;k++){const x=a[3*i+k],y=b[3*i+k];d=Math.max(d,Math.abs(x-y));if(Math.round(x)!==Math.round(y))r=true;}if(d>.5)p++;if(r)pr++;if(d>max)max=d;}return {pixels:n,overHalfCode:p,rounded8bitDiffering:pr,maxCode:max};}
 async function render(h,sc,{exportBytes=false}={}){
@@ -54,7 +56,7 @@ async function render(h,sc,{exportBytes=false}={}){
     const fin={};for(const D of [108,216,312])fin[D]=proj(done,D);
     out.steps=[];
     for(const m of msgs.filter(x=>x.kind==='preview')){
-      const st={samples:m.diagnostics.quality.samples,at:m.at,rgbaVsFinal:pixdiff8(m.rgba,done.rgba),calendarRgbaVsFinal:pixdiff8(m.calendarRgba,done.calendarRgba),projectedVsFinal:{}};
+      const st={samples:m.diagnostics.quality.samples,at:m.at,rgbaVsFinal:pixdiff8(m.rgba,done.rgba),calendarRgbaVsFinal:pixdiff8(m.calendarRgba,done.calendarRgba),rgbaPremulVsFinal:pmdiff8(m.rgba,done.rgba),calendarPremulVsFinal:pmdiff8(m.calendarRgba,done.calendarRgba),projectedVsFinal:{}};
       for(const D of [108,216,312])st.projectedVsFinal[D]=projdiff(proj(m,D),fin[D]);
       out.steps.push(st);
     }

@@ -54,7 +54,7 @@ for(const [engine,dur] of Object.entries(durations))for(const [dprLabel,Dcss] of
     if(tier==='refined')refinedT++;else if(tier==='preview')previewT++;else if(tier==='initial')initialT++;else noneT++;
   }
   result.cases[engine+'-'+dprLabel]={renderMs:dur.renderMs,previewMs:dur.previewMs,rectCss:baseRect,
-    rendersStarted:starts,rendersPerDay:{mean:starts/DAYS,min:Math.min(...perDay.slice(0,Math.floor(DAYS))),max:Math.max(...perDay.slice(0,Math.floor(DAYS)))},meanIntervalS:DAYS*86400/starts,
+    rendersStarted:starts,rendersPerDayList:perDay,rendersPerDay:{median:[...perDay].sort((a,b)=>a-b)[Math.floor(perDay.length/2)],mean:starts/DAYS,min:Math.min(...perDay.slice(0,Math.floor(DAYS))),max:Math.max(...perDay.slice(0,Math.floor(DAYS)))},meanIntervalS:DAYS*86400/starts,
     completed:completes,mainThreadInitialRenders:initialRenders,cancelledPending:cancels,acceptedExpiries:expiries,waxingFlipClears:scopeClears,
     workerBusyFraction:busy/N,busyWhileDaySuppressedFraction:busy?busyDay/busy:0,busyWhileBelowHorizonFraction:busy?busyBelow/busy:0,
     startsWhileDaySuppressed:startsDay,startsWhileBelowHorizon:startsBelow,
