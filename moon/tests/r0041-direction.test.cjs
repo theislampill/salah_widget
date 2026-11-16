@@ -75,3 +75,47 @@ test('R41-SWP-N: with no adoptable successor the historical withdrawal still run
  const a=Math.acos(2*r.state.fraction-1)-3*0.0416*2/109;r.state.fraction=(1+Math.cos(a))/2;r.advance(250);r.state.utcMs+=250;rt.request();
  assert.equal(clears,1);assert.equal(rt.state.visibleSource,'awaiting-terrain');
 });
+// ---- R0041 owner decision 1 (issue 143, "Owner decision recorded — R0041 remaining Moon-presence routes"): compose on
+// resume. The hide withdrawal (ISM-MOON-019, host.test.cjs) is unchanged; on resume the presenter makes the current
+// successor present before any host composes or the next frame paints. RED on fccee193 (no presenter guarantee).
+function settledRefined(){
+ const r=rig({initial:true,diameter:109});const order=[];const rt=r.w.SalahMoonRuntime;
+ r.detail.compose=()=>{order.push('inner-compose:'+rt.state.visibleSource);};
+ r.w.SalahRealSky={compose(){order.push('sky-compose');}};
+ Object.assign(r.state,{timeScale:1,up:1,fraction:.6,waxing:true});r.workers.at(-1).emit({kind:'ready'});rt.request();
+ const msg=r.response('result');msg.diagnostics={kernel:'metric-radial-terrain-wasm-mb1',quality:{status:'empirical-adaptive'}};r.workers.at(-1).emit(msg);
+ assert.equal(rt.state.visibleSource,'refined-terrain');return {r,rt,order};
+}
+function hideThenResumeWithStalePause({r}){
+ const fallbacks=r.fallbacks;r.doc.hidden=true;r.state.paused=true;r.events.get('visibilitychange')();
+ assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'awaiting-terrain','hide withdraws (ISM-MOON-019 unchanged)');
+ assert.equal(r.detail.available,false,'hide clears the detail');assert.equal(r.fallbacks,fallbacks+1);
+ // The browser shows the page again; the native host clears its own pause in a LATER listener.
+ r.doc.hidden=false;r.events.get('visibilitychange')();
+ assert.equal(r.w.SalahMoonRuntime.state.visibleSource,'awaiting-terrain','nothing adopted while the host still reads paused');
+ r.state.paused=false;r.state.utcMs+=1000;r.advance(1000);
+}
+test('R41-RES-1: a host composing after resume composes the current successor, never an empty slot',()=>{
+ const o=settledRefined();hideThenResumeWithStalePause(o);o.order.length=0;
+ o.r.w.SalahMoonDetail.compose({preview:true},()=>null);
+ assert.deepEqual(o.order,['inner-compose:initial-v5'],'adopted before the inner compose; no re-entrant sky compose');
+});
+test('R41-RES-2: with no host compose, the resume frame callback presents the successor before the next paint',()=>{
+ const o=settledRefined();hideThenResumeWithStalePause(o);const sent=o.r.workers.at(-1).sent.length;
+ o.r.frame();
+ assert.equal(o.rt.state.visibleSource,'initial-v5');assert.equal(o.r.detail.available,true);
+ assert.ok(o.r.workers.at(-1).sent.length>=sent,'refinement continues');
+});
+test('R41-RES-3: the pre-hide surface is never retained or re-shown; the successor is the current scene',()=>{
+ const o=settledRefined();const before=o.rt.state.accepted.scene.fraction;hideThenResumeWithStalePause(o);
+ const a=Math.acos(2*o.r.state.fraction-1)-5*0.0416*2/109;o.r.state.fraction=(1+Math.cos(a))/2;   // the Moon moved while hidden
+ o.r.w.SalahMoonDetail.compose({preview:true},()=>null);
+ const s=o.rt.state;assert.equal(s.visibleSource,'initial-v5');assert.notEqual(s.accepted.scene.fraction,before);
+ assert.ok(s.phasePrecision.signedPositionDrift<=0.0416,'within the unchanged currentness bound');
+});
+test('R41-RES-4: a steady presented state is untouched by host composes (no poll, no adoption, no request)',()=>{
+ const o=settledRefined();const sent=o.r.workers.at(-1).sent.length,renders=o.r.initialRenders;o.order.length=0;
+ for(let k=0;k<5;k++)o.r.w.SalahMoonDetail.compose({preview:true},()=>null);
+ assert.deepEqual(o.order,Array(5).fill('inner-compose:refined-terrain'));
+ assert.equal(o.r.workers.at(-1).sent.length,sent);assert.equal(o.r.initialRenders,renders);
+});

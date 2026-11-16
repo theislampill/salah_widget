@@ -9,10 +9,13 @@ for f in sys.argv[2:]:
         for r in d.get('runs', []):
             if 'frameLog' not in r:
                 rows.append({'error': r.get('error')}); continue
-            log = r['frameLog']; ev = [e['tMs'] for e in r.get('events', []) if e['name'] in ('invalidate', 'resume', 'sky-invalidate', 'identity')]
+            log = r['frameLog']; MEASURED = ('invalidate', 'resume', 'sky-invalidate', 'identity')
+            allev = sorted(e['tMs'] for e in r.get('events', []))
+            ev = [e['tMs'] for e in r.get('events', []) if e['name'] in MEASURED]
             per = []
             for k, t in enumerate(ev):
-                end = ev[k + 1] if k + 1 < len(ev) else float('inf')
+                # a segment ends at the next forced event of ANY kind (e.g. the next 'hide'), never spills into it
+                end = next((u for u in allev if u > t), float('inf'))
                 seg = [x for x in log if t <= x[0] < end]
                 # absent run starting at or after the event, until the first present frame
                 # Display state AT the event is the last frame produced before it; frames are produced only on change.

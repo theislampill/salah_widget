@@ -922,8 +922,9 @@ try{
    if(matches(record,capture())){
     adopt(result,record);if(!accepted)return;
     // R0041 presenter: the successor is composed in this task (as the preview and result paths do), so the
-    // device-resolution disc never waits for the sky's next compose after any withdrawal or resume.
-    try{window.SalahRealSky?.compose();}catch(error){note(error);}
+    // device-resolution disc never waits for the sky's next compose after any withdrawal or resume. A host that is
+    // composing right now (presentForCompose) is not re-entered: its own compose follows this adoption.
+    if(!hostComposing)try{window.SalahRealSky?.compose();}catch(error){note(error);}
     // Retain stage timing for later diagnostics; no polling is needed during
     // the first presented frames. Publication is distinct from visible pixels.
     status.firstInitial??={capturedAt,publishedAt:performance.now(),generation:s.generation,sceneIdentity:s.sceneIdentity,renderMs:head?0:result.diagnostics.totalMs,headHandoff:!!head,headCapturedAt:head?.capturedAt??null,headRenderMs:head?result.diagnostics.totalMs:null};
@@ -932,6 +933,16 @@ try{
    status.initialError=String(error.message??error);initialRetry.count++;initialRetry.epoch=epoch;
    initialRetry.notBefore=capturedAt+60000;initialRetry.state=initialRetry.count>=3?'exhausted':'waiting';
   }
+ }
+ // R0041 resume (owner decision 1, issue 143): every sky host composes the Moon only through this runtime's handle.
+ // Before a host composes a frame, the presenter brings its presentation current with the same poll the 4 Hz timer
+ // runs, so a sky frame published on resume (or after any withdrawal) carries the current successor, never an empty
+ // slot. It acts only when nothing is presentable, so a steady presented state is untouched. Hidden: nothing (the
+ // accepted hide withdrawal, ISM-MOON-019, is unchanged); the pre-hide surface was withdrawn and is never retained.
+ let hostComposing=false;
+ function presentForCompose(){
+  if(disposed||hostComposing||document.hidden||presentableAt(capture(!!(accepted||waitingPreview))))return;
+  hostComposing=true;try{poll();}catch(error){note(error);}finally{hostComposing=false;}
  }
  function initialEligible(now){
   if(initialRetry.state==='permanent'||initialRetry.state==='exhausted')return false;
@@ -1062,13 +1073,15 @@ try{
   const b=[s.basis.slice(0,3),s.basis.slice(3,6),s.basis.slice(6)];for(let i=0;i<3;i++)for(let j=0;j<3;j++)if(Math.abs(b[i].reduce((a,x,k)=>a+x*b[j][k],0)-(i===j?1:0))>1e-10)throw new RangeError('Moon basis');
   return structuredClone(s);
  }
- const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();}};
+ // R0041 resume: the native host clears its own pause after this listener may already have run; one frame callback
+ // (before the next paint) presents the successor when this turn could not, so the vector Moon is never left empty.
+ const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();if(!accepted)requestAnimationFrame(()=>{if(!document.hidden)presentForCompose();});}};
  // The handle is idempotent and refuses adoption once retired (ES21-07). It is
  // a pass-through: moon-detail.mjs stays byte-identical because it is a pinned
  // initial-receiver source (tools/build_moon.py validate_initial_sources).
  // It is acquired at the registration boundary; a throw before the runtime is
  // complete releases exactly this wrapper's detail, slot, listener and timers.
- const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
+ const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){if(!retired)presentForCompose();return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
  let registered=null;
  try{
  document.addEventListener('visibilitychange',visibility);
