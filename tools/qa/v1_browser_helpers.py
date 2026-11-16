@@ -58,6 +58,7 @@ def selftest():
     probes = ["http://0.0.0.0:9/r0036-selftest"]
     if v1_net_guard.installed():
         probes.append("https://fonts.googleapis.com/css2?family=Inter")   # name probe only while the guard is proven active
+        probes.append("http://10.255.255.1/r0036-selftest")               # IP-literal probe, likewise only while it is active
     for url in probes:
         try:
             urlopen(url, timeout=2)
@@ -78,6 +79,13 @@ def main():
         print(json.dumps({"bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(), "refused": v1_net_guard.REFUSED}))
     elif cmd == "compare":
         print(json.dumps({**compare(Path(sys.argv[2]), sys.argv[3], sys.argv[4]), "refused": v1_net_guard.REFUSED}))
+    elif cmd == "stats":
+        # R191 (root-current): image size and distinct RGB colours inside the card box (device pixels).
+        from PIL import Image
+        im = Image.open(Path(sys.argv[2]) / sys.argv[3]).convert("RGB")
+        x, y, w, h = (int(v) for v in sys.argv[4:8])
+        crop = im.crop((max(0, x), max(0, y), min(im.width, x + w), min(im.height, y + h)))
+        print(json.dumps({"width": im.width, "height": im.height, "distinctCardColours": len(set(crop.getdata())), "refused": v1_net_guard.REFUSED}))
     elif cmd == "selftest":
         print(json.dumps(selftest()))
     else:

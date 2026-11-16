@@ -9,18 +9,27 @@
 // (3) the browser is Playwright's bundled Chromium unless --chromium names another executable.
 // ISOLATION. Node side: tools/qa/v1_net_guard.cjs is installed before anything else (non-loopback connect/DNS/
 // http(s)/fetch/WebSocket refused and logged; proxy variables removed). Python side: the helpers install
-// tools/qa/v1_net_guard.py first. Browser side: Chromium starts with --no-proxy-server and a host-resolver rule that
-// resolves nothing but 127.0.0.1; every context gets the catch-all route `**/*` and a catch-all WebSocket route BEFORE
+// tools/qa/v1_net_guard.py first. Browser side: Chromium starts with a REFUSING loopback proxy (every non-loopback
+// connection, including a redirect the route never sees and an IP literal, is refused there before any outbound
+// connection and logged) and a host-resolver rule that resolves nothing but 127.0.0.1; every context gets the catch-all route `**/*` and a catch-all WebSocket route BEFORE
 // any page exists, neither is ever removed; only the loopback fixture origin and same-origin blob:/data: continue;
 // providers are fulfilled from the original fixtures, anything else is aborted; every request is logged; the run
 // fails (exit 3) on any request allowed off loopback, any request or WebSocket that bypassed the routes, or any
 // Node/Python-side refusal outside the self-test.
-// Usage: node tools/qa/r0036_v1_browser.cjs --out <dir> [--mode verify|selftest] [--layout original|full]
-//        [--playwright <pkg>] [--chromium <exe>] [--root <tree>]
+// Usage: node tools/qa/r0036_v1_browser.cjs --out <dir> [--mode verify|selftest] [--config original|root-current]
+//        [--layout original|full] [--blocks scenes,geo,storage,replacement] [--playwright <pkg>] [--chromium <exe>] [--root <tree>]
 const guard=require('./v1_net_guard.cjs');guard.install();                   // before any other module can connect
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http=require('node:http'),https=require('node:https'),crypto=require('node:crypto'),{spawnSync}=require('node:child_process');
 const a={};const v=process.argv.slice(2);for(let i=0;i<v.length;i+=2)a[v[i].slice(2)]=v[i+1];
-const PW=require(a.playwright||'playwright'),REPO=path.resolve(a.root||path.join(__dirname,'..','..')),out=path.resolve(a.out),mode=a.mode||'verify',layout=a.layout||'original';
+const PW=require(a.playwright||'playwright'),REPO=path.resolve(a.root||path.join(__dirname,'..','..')),out=path.resolve(a.out),mode=a.mode||'verify';
+// --config original (default): the historical configuration of tests/v1_browser.py, unchanged.
+// --config root-current (owner decision "R0036 current-widget verification", 2026-11-16): ROOT sessions only get the
+// three setup corrections the current widget needs (prayer fixture with date.gregorian.date, an advancing mocked clock
+// during the root's waits, real-sky/ and moon/ served); V1 sessions keep the original setup exactly. Assertions whose
+// premise is root == V1 are recorded FORMALLY INAPPLICABLE with their observation and an independent R-check.
+const config=a.config||'original',ROOT_CURRENT=config==='root-current',layout=ROOT_CURRENT?'full':(a.layout||'original');
+const BLOCKS=new Set((a.blocks||'scenes,geo,storage,replacement').split(','));
+const ROOT_MUTANT=a['root-mutant']||null;   // test-only mutation of the STAGED root copy (tools/qa/r0036_v1_root_mutants.cjs)
 const HELPERS=path.join(__dirname,'v1_browser_helpers.py');
 fs.mkdirSync(out,{recursive:true});
 // ---- verbatim constants of tests/v1_browser.py (L25-L29) ----
@@ -37,6 +46,12 @@ function py(args){const r=spawnSync('python',['-I',HELPERS,...args],{encoding:'u
   if(args[0]!=='selftest'&&Array.isArray(o.refused))PY_REFUSED.push(...o.refused);return o;}
 const PY_REFUSED=[];                                                       // Python-side refusals outside the self-test fail the run
 // ---- verbatim provider fixture of tests/v1_browser.py fixture() L53-L68 ----
+// root-current only: the current widget admits a prayer record only when it names the requested day
+// (src/native/index.html L1263 `data.date.gregorian.date!==day` -> refused; L2568 the same identity on use). The added
+// field is the DD-MM-YYYY segment of the requested URL; every other value is the original fixture's.
+function fixtureFor(url,night,rootCurrent){const body=fixture(url,night);
+  if(rootCurrent&&new URL(url).hostname==='api.aladhan.com')body.data.date.gregorian.date=new URL(url).pathname.replace(/\/+$/,'').split('/').pop();
+  return body;}
 function fixture(url,night){
   const u=new URL(url),host=u.hostname;
   if(host==='api.aladhan.com'){const day=parseInt(u.pathname.replace(/\/+$/,'').split('/').pop().split('-')[0],10);
@@ -52,14 +67,22 @@ function fixture(url,night){
 const LEDGER={seen:0,continued:0,allowedOffLoopback:[],fulfilledFixture:0,fulfilledFont:0,aborted:[],unplanned:[],bypassed:[],websockets:[],wsBypassed:[]};
 const LOOP=new Set(['127.0.0.1','localhost','[::1]','::1']);
 const hostOf=u=>{try{return new URL(u).hostname;}catch{return null;}};
-const LAUNCH_ARGS=['--no-proxy-server','--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1','--disable-background-networking','--disable-component-update','--disable-domain-reliability','--no-pings'];
-async function isolatedContext(browser,origin,options,{night=false,font=null}={}){
+// Refusing loopback proxy: every browser connection that is not to loopback (a redirect the route never saw, an IP
+// literal, anything else) goes to this proxy, which refuses it BEFORE any outbound connection and logs it. Chromium
+// bypasses the proxy only for loopback (its implicit rule). The resolver rule stays as a second layer.
+const PROXY_REFUSED=[];let PROXY_PORT=0;
+const proxy=http.createServer((req,res)=>{PROXY_REFUSED.push({kind:'http',target:req.url,at:Date.now()});res.writeHead(403);res.end('R0036 isolation');});
+proxy.on('connect',(req,sock)=>{PROXY_REFUSED.push({kind:'connect',target:req.url,at:Date.now()});sock.end('HTTP/1.1 403 Forbidden\r\n\r\n');});
+proxy.on('upgrade',(req,sock)=>{PROXY_REFUSED.push({kind:'upgrade',target:req.url,at:Date.now()});sock.destroy();});
+const launchArgs=()=>['--proxy-server=http://127.0.0.1:'+PROXY_PORT,'--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1','--disable-background-networking','--disable-component-update','--disable-domain-reliability','--no-pings'];
+const PROXY_ON=()=>launchArgs().some(x=>x.startsWith('--proxy-server=http://127.0.0.1:'));
+async function isolatedContext(browser,origin,options,{night=false,font=null,rootCurrent=false}={}){
   const context=await browser.newContext(options);const routed=new WeakSet(),wsRouted=new Set();
   await context.route('**/*',route=>{const req=route.request(),url=req.url();routed.add(req);LEDGER.seen++;
     if(url.startsWith(origin+'/')||url.startsWith('blob:'+origin+'/')){LEDGER.continued++;if(!LOOP.has(hostOf(url))&&!url.startsWith('blob:'))LEDGER.allowedOffLoopback.push(url);return route.continue();}
     if(url===FONT_CSS){LEDGER.fulfilledFont++;return route.fulfill({body:FIXTURE_CSS,contentType:'text/css',headers:{'Access-Control-Allow-Origin':'*'}});}
     if(url===FONT_URL&&font){LEDGER.fulfilledFont++;return route.fulfill({body:font,contentType:'font/ttf',headers:{'Access-Control-Allow-Origin':'*'}});}
-    let body;try{body=fixture(url,night);}catch(e){LEDGER.unplanned.push(url);LEDGER.aborted.push(url);return route.abort('blockedbyclient');}
+    let body;try{body=fixtureFor(url,night,rootCurrent);}catch(e){LEDGER.unplanned.push(url);LEDGER.aborted.push(url);return route.abort('blockedbyclient');}
     LEDGER.fulfilledFixture++;return route.fulfill({json:body,headers:{'Access-Control-Allow-Origin':'*'}});});
   await context.routeWebSocket(/.*/,ws=>{const url=ws.url();wsRouted.add(url);LEDGER.websockets.push(url);
     if(LOOP.has(hostOf(url)))return ws.connectToServer();ws.close({code:1008,reason:'R0036 isolation'});});
@@ -72,9 +95,10 @@ const ROWS=[];
 function check(id,cond,detail){ROWS.push({id,result:cond?'PASS':'FAIL',detail:cond?undefined:detail});return !!cond;}
 function notRun(id,why){ROWS.push({id,result:'NOT RUN',detail:why});}
 const tryRun=async(id,fn)=>{try{return await fn();}catch(e){ROWS.push({id,result:'FAIL',detail:String(e.message||e).slice(0,400)});return null;}};
-async function setupBrowser(browser,font,origin,{night=false,dpr=1,seed=true,denied=false}={}){                   // setup_browser L76-L105
+async function setupBrowser(browser,font,origin,{night=false,dpr=1,seed=true,denied=false,version='v1'}={}){       // setup_browser L76-L105
+  const rootCurrent=ROOT_CURRENT&&version==='root';
   const context=await isolatedContext(browser,origin,{viewport:{width:390,height:600},deviceScaleFactor:dpr,timezoneId:'Asia/Riyadh',locale:'en-US',
-    reducedMotion:'reduce',colorScheme:'light',geolocation:{latitude:21.4225,longitude:39.8262,accuracy:10}},{night,font});
+    reducedMotion:'reduce',colorScheme:'light',geolocation:{latitude:21.4225,longitude:39.8262,accuracy:10}},{night,font,rootCurrent});
   if(!denied)await context.grantPermissions(['geolocation'],{origin});
   if(seed)await context.addInitScript("if(location.protocol === 'http:' && !localStorage.getItem("+JSON.stringify(ROOT_KEY)+")) localStorage.setItem("+JSON.stringify(ROOT_KEY)+","+JSON.stringify(JSON.stringify(SETTINGS))+");");
   const requests=[],errors=[],failed=[];
@@ -86,11 +110,22 @@ async function setupBrowser(browser,font,origin,{night=false,dpr=1,seed=true,den
   if(denied){const s=await context.newCDPSession(page);await s.send('Browser.setPermission',{permission:{name:'geolocation'},setting:'denied',origin});}
   const instant=new Date(Date.UTC(2026,9,7,night?20:9,30));
   await page.clock.install({time:instant});await page.clock.pauseAt(instant);
-  return {context,page,requests,errors,failed};
+  return {context,page,requests,errors,failed,rootCurrent};
+}
+// The original waits with the page clock PAUSED (L103-L104). The current root boots through animation frames and
+// timers, which a paused mocked clock never delivers, so in root-current a ROOT wait advances the mocked clock in
+// 100 ms steps (clock.runFor) between polls, up to the same 30 s wall-clock budget. Only waiting changes: the
+// installed instant, the assertions and their expected values are unchanged; at most the elapsed wait (seconds)
+// is added to the mocked time before A114-A116, which read rows/date labels that do not depend on seconds.
+async function waitFor(s,frame,expr,timeout=30000){
+  if(!s.rootCurrent)return frame.waitForFunction(expr,null,{polling:100,timeout}).then(()=>true);
+  const t0=Date.now();s.advancedMs=s.advancedMs||0;
+  while(Date.now()-t0<timeout){if(await frame.evaluate(expr).catch(()=>false))return true;await s.page.clock.runFor(100);s.advancedMs+=100;}
+  throw new Error('waitFor: Timeout '+timeout+'ms exceeded (clock advanced '+s.advancedMs+' ms)');
 }
 async function loaded(page,url,tag,diag){                                                                                  // loaded L108-L117
   await page.goto(url,{waitUntil:'load'});const frame=page.frames()[1];
-  const ok=await frame.waitForFunction("typeof qaState === 'function' && qaState().cache.prayerLoaded && qaState().cache.tomorrowLoaded",null,{polling:100,timeout:30000}).then(()=>true,async e=>{
+  const ok=await waitFor(diag,frame,"typeof qaState === 'function' && qaState().cache.prayerLoaded && qaState().cache.tomorrowLoaded").then(()=>true,async e=>{
     // Diagnostic only (the wait itself is the assertion): what the page reported when the wait expired.
     const seen=await frame.evaluate("typeof qaState==='function'?(()=>{const q=qaState();return {cache:q.cache,configMode:q.config&&q.config.configMode,autoDetectStatus:q.config&&q.config.autoDetectStatus,source:q.config&&q.config.configSource};})():'qaState unavailable'").catch(x=>'evaluate failed: '+x.message);
     check(tag+':A111',false,{wait:'timed out: '+String(e.message).slice(0,120),seen,diag:diag&&{errors:diag.errors.slice(0,5),failed:diag.failed.slice(0,8)}});return false;});
@@ -109,12 +144,22 @@ async function snapshot(page,frame,name){                                       
     geometry:await frame.evaluate("(() => {const box=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}; return {innerWidth,innerHeight,dpr:devicePixelRatio,card:box('.c'),footer:box('.d'),header:box('.h'),scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight};})()"),   // the original passes this function source; Node evaluates a string as an expression, so it is invoked
    
     rows:await frame.locator('.times').innerText(),countdown:await frame.locator('.left').innerText(),
+    // R191 inputs only (no original assertion reads them):
+    visible:await frame.evaluate("(()=>{const c=document.querySelector('.c');if(!c)return false;const cs=getComputedStyle(c);return cs.visibility==='visible'&&cs.display!=='none'&&+cs.opacity>0;})()"),
+    footerText:await frame.evaluate("document.querySelector('#ce')?.innerText??null"),
     fonts:await frame.evaluate("[...document.fonts].filter(f=>f.status==='loaded').map(f=>({family:f.family,weight:f.weight,status:f.status}))")};
 }
 const compare=(x,y)=>py(['compare',out,x,y]);                                                                       // compare L129-L135 (verbatim, Pillow)
+// Test-only mutations of the staged ROOT copy, to prove each R-check fails when its property breaks.
+const ROOT_MUTANTS={
+  'hide-card':["</head>","<style>.c{visibility:hidden!important}</style></head>"],
+  'no-precise-adoption':['_byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5);',''],
+};
 function stage(layoutKind){
   const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'salah-v1-browser-')),site=path.join(tmp,'salah_widget');fs.mkdirSync(site);
   for(const n of ['index.html','config.js'])fs.copyFileSync(path.join(REPO,n),path.join(site,n));
+  if(ROOT_MUTANT){const [from,to]=ROOT_MUTANTS[ROOT_MUTANT],p=path.join(site,'index.html'),t=fs.readFileSync(p,'utf8');
+    if(t.split(from).length!==2)throw new Error('root mutant anchor missing: '+ROOT_MUTANT);fs.writeFileSync(p,t.replace(from,()=>to));}
   fs.cpSync(path.join(REPO,'v1'),path.join(site,'v1'),{recursive:true});
   if(layoutKind==='full')for(const d of ['real-sky','moon'])fs.cpSync(path.join(REPO,d),path.join(site,d),{recursive:true});   // ADJUNCT only
   for(const [name,src] of [['root','/salah_widget/#local=1'],['v1','/salah_widget/v1/#local=1']]){
@@ -122,16 +167,21 @@ function stage(layoutKind){
     fs.writeFileSync(path.join(tmp,name+'.html'),html);fs.writeFileSync(path.join(out,name+'-iframe.html'),html);}
   return {tmp,site};
 }
-function serve(dir){const TYPES={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.wasm':'application/wasm','.bin':'application/octet-stream','.gz':'application/gzip'};
-  return http.createServer((req,res)=>{let p=path.normalize(path.join(dir,decodeURIComponent(new URL(req.url,'http://x').pathname)));
+function serve(dir,extra=()=>false){const TYPES={'.html':'text/html','.js':'text/javascript','.mjs':'text/javascript','.json':'application/json','.css':'text/css','.png':'image/png','.svg':'image/svg+xml','.wasm':'application/wasm','.bin':'application/octet-stream','.gz':'application/gzip'};
+  return http.createServer((req,res)=>{if(extra(req,res))return;let p=path.normalize(path.join(dir,decodeURIComponent(new URL(req.url,'http://x').pathname)));
     if(p.endsWith(path.sep))p=path.join(p,'index.html');
     if(!p.startsWith(dir)||!fs.existsSync(p)||fs.statSync(p).isDirectory()){res.writeHead(404);return res.end();}
     res.writeHead(200,{'content-type':TYPES[path.extname(p)]||'application/octet-stream'});fs.createReadStream(p).pipe(res);});}
+// FORMALLY INAPPLICABLE: the assertion's premise (root == V1) ended when the root was replaced by the current widget
+// (pull request 39, merge 5f1f0003, 2026-10-07; docs/V1_PRESERVATION.md "Preserved pre-overhaul widget", the
+// --check-root note). The observation is still recorded; nothing is tuned; an independent R-check tests the purpose.
+function inapplicable(id,premise,observed,replacement){ROWS.push({id,result:'FORMALLY INAPPLICABLE',detail:{premise,ended:'pull request 39, merge 5f1f0003 (2026-10-07); docs/V1_PRESERVATION.md',historical:'original configuration record (docs/state-contracts/R0036.md section 12)',observed,replacement}});}
+const pyStats=(file,box,dpr)=>py(['stats',out,file,String(Math.round(box.x*dpr)),String(Math.round(box.y*dpr)),String(Math.round(box.width*dpr)),String(Math.round(box.height*dpr))]);
 async function verify(browser,origin,font,site){
   const receipt={captures:{},checks:{}};
-  for(const [night,dpr] of [[false,1],[true,1],[false,2]]){const scene=(night?'night':'day')+'-dpr'+dpr;let shots=0;
+  if(BLOCKS.has('scenes'))for(const [night,dpr] of [[false,1],[true,1],[false,2]]){const scene=(night?'night':'day')+'-dpr'+dpr;let shots=0;
     for(const version of ['root','v1']){const tag=version+'-'+scene;
-      await tryRun(tag+':setup',async()=>{const s=await setupBrowser(browser,font,origin,{night,dpr});
+      await tryRun(tag+':setup',async()=>{const s=await setupBrowser(browser,font,origin,{night,dpr,version});
         try{const f=await loaded(s.page,origin+'/'+version+'.html',tag,s);
           if(!f){for(const id of ['A172','A173','A174','A175','A177','A179','A183','A185'])notRun(tag+':'+id,'page not loaded');return;}
           const r=await snapshot(s.page,f,tag);shots++;r.localRequests=s.requests.filter(u=>u.startsWith(origin)).map(u=>u.replace(origin,''));
@@ -142,28 +192,47 @@ async function verify(browser,origin,font,site){
           const before=await f.locator('.left').innerText();await s.page.clock.fastForward(61000);
           const after=await f.locator('.left').innerText();check(tag+':A183',before!==after,'Countdown is frozen: '+before);
           r.countdownAfter61Seconds=after;check(tag+':A185',!s.errors.length&&!s.failed.length,{errors:s.errors,failed:s.failed});
-          r.errors=s.errors;r.failedRequests=s.failed;receipt.captures[tag]=r;}finally{await s.context.close();}});}
-    if(shots===2){const c=compare('root-'+scene+'.png','v1-'+scene+'.png');receipt.checks['comparison-'+scene]=c;check('comparison-'+scene+':A191',c.pixelExact,c);}
+          r.errors=s.errors;r.failedRequests=s.failed;r.clockAdvancedDuringWaitsMs=s.advancedMs||0;receipt.captures[tag]=r;}finally{await s.context.close();}});}
+    const root=receipt.captures['root-'+scene],v1=receipt.captures['v1-'+scene];
+    if(ROOT_CURRENT){
+      // R191: what the root-vs-V1 comparison was FOR, tested on the current widget alone: the embedded card is complete
+      // (prayer rows, dated footer), rendered (not blank: >= 64 distinct colours inside the card box), visible, and has
+      // the same embedding footprint as V1 (identical iframe screenshot dimensions).
+      if(root&&v1){const c=compare('root-'+scene+'.png','v1-'+scene+'.png'),st=pyStats('root-'+scene+'.png',root.geometry.card,dpr),sv=pyStats('v1-'+scene+'.png',v1.geometry.card,dpr);
+        receipt.checks['comparison-'+scene]=c;
+        inapplicable('comparison-'+scene+':A191','root screenshot pixel-identical to V1',c,'R191-'+scene);
+        const ok=st.width===sv.width&&st.height===sv.height&&st.distinctCardColours>=64&&root.visible===true&&/Fajr/.test(root.rows)&&/2026-10-07/.test(root.footerText||'');
+        check('comparison-'+scene+':R191',ok,{root:st,v1:{width:sv.width,height:sv.height},visible:root.visible,footer:root.footerText});}
+      else{inapplicable('comparison-'+scene+':A191','root screenshot pixel-identical to V1','a capture is missing','R191-'+scene);notRun('comparison-'+scene+':R191','a capture is missing');}}
+    else if(shots===2){const c=compare('root-'+scene+'.png','v1-'+scene+'.png');receipt.checks['comparison-'+scene]=c;check('comparison-'+scene+':A191',c.pixelExact,c);}
     else notRun('comparison-'+scene+':A191','a capture is missing');}
-  for(const version of ['root','v1'])for(const denied of [false,true]){const tag=version+(denied?'-geo-denied':'-geo-granted');
-    await tryRun(tag+':setup',async()=>{const s=await setupBrowser(browser,font,origin,{seed:false,denied});
+  if(BLOCKS.has('geo'))for(const version of ['root','v1'])for(const denied of [false,true]){const tag=version+(denied?'-geo-denied':'-geo-granted');
+    await tryRun(tag+':setup',async()=>{const s=await setupBrowser(browser,font,origin,{seed:false,denied,version});
       try{let f=await loaded(s.page,origin+'/'+version+'.html',tag,s);
         if(!f){for(const id of ['A199','A203','A205','A213','A215','A218','A220','A221'])notRun(tag+':'+id,'page not loaded');return;}
         const st=await f.evaluate('qaState().config.autoDetectStatus');check(tag+':A199',st==='ok',st);
         await f.locator('.buckle').click({force:true});await s.page.clock.runFor(100);await f.locator('#set-pin').click({force:true});
-        await f.waitForFunction("!document.querySelector('#set-status').textContent.includes('Requesting')",null,{polling:100,timeout:15000}).then(()=>check(tag+':A203',true),e=>check(tag+':A203',false,String(e.message).slice(0,200)));
-        const status=await f.locator('#set-status').innerText();check(tag+':A205',denied?status.includes('unavailable'):status.includes('Using your precise location'),status);
+        await waitFor(s,f,"!document.querySelector('#set-status').textContent.includes('Requesting')",30000).then(()=>check(tag+':A203',true),e=>check(tag+':A203',false,String(e.message).slice(0,200)));
+        const status=await f.locator('#set-status').innerText();
+        if(s.rootCurrent&&!denied){
+          // The granted text "Using your precise location" is V1's wording; the root's changed in 3cf6ce2f (reached main in
+          // pull request 39). R205: the root ADOPTS the fix — its status names the browser position and the form holds the
+          // emulated fix coordinates (21.4225, 39.8262).
+          inapplicable(tag+':A205','root GPS status text equals V1 ("Using your precise location")',status,'R205-'+tag);
+          const lat=await f.locator('#set-lat').inputValue(),lon=await f.locator('#set-lon').inputValue();
+          check(tag+':R205',/^Browser position/.test(status)&&lat==='21.42250'&&lon==='39.82620',{status,lat,lon});}
+        else check(tag+':A205',denied?status.includes('unavailable'):status.includes('Using your precise location'),status);
         if(denied){await f.locator('#set-label').fill('Manual after denial');await f.locator('#set-lat').fill('24.47');await f.locator('#set-lon').fill('39.61');}
         await f.locator('#setClose').click({force:true});await s.page.clock.runFor(1500);
         const saved=await f.evaluate('SalahConfig.loadLocal()');check(tag+':A213',!!saved&&(denied?saved.label==='Manual after denial':saved.lat===21.4225),saved);
         if(version==='v1')check(tag+':A215',await f.evaluate("localStorage.getItem('salah_widget:config:v1')")===null,'root key written by V1');
         await s.page.reload({waitUntil:'load'});f=s.page.frames()[1];
-        const ok=await f.waitForFunction("typeof qaState==='function' && qaState().cache.prayerLoaded",null,{polling:100,timeout:30000}).then(()=>true,()=>false);check(tag+':A218',ok,'reload wait timed out');
+        const ok=await waitFor(s,f,"typeof qaState==='function' && qaState().cache.prayerLoaded").then(()=>true,()=>false);check(tag+':A218',ok,'reload wait timed out');
         await s.page.clock.runFor(1500);
         if(ok&&saved)check(tag+':A220',await f.evaluate('SalahConfig.loadLocal().label')===saved.label,saved.label);else notRun(tag+':A220','reload or save failed');
         check(tag+':A221',!s.errors.length&&!s.failed.length,{errors:s.errors,failed:s.failed});
         receipt.checks[tag]={status,saved,reload:ok,errors:s.errors};}finally{await s.context.close();}});}
-  await tryRun('storage-isolation:setup',async()=>{const tag='storage-isolation';const s=await setupBrowser(browser,font,origin);
+  if(BLOCKS.has('storage'))await tryRun('storage-isolation:setup',async()=>{const tag='storage-isolation';const s=await setupBrowser(browser,font,origin);
     try{let f=await loaded(s.page,origin+'/v1.html',tag,s);if(!f){for(const id of ['A236','A237','A242','A244','A245','A246','A247'])notRun(tag+':'+id,'page not loaded');return;}
       const original=await f.evaluate("localStorage.getItem('salah_widget:config:v1')");
       await f.locator('.buckle').click({force:true});await s.page.clock.runFor(100);await f.locator('#set-label').fill('V1 saved independently');await f.locator('#set-time').selectOption('12');
@@ -173,13 +242,15 @@ async function verify(browser,origin,font,site){
       check(tag+':A237',await f.evaluate('SalahConfig.loadLocal().time')==='12','time not saved');
       await f.evaluate("localStorage.setItem('salah_widget:config:v1',JSON.stringify({v:99,label:'Future root schema'}))");
       await s.page.reload({waitUntil:'load'});f=s.page.frames()[1];
-      await f.waitForFunction("typeof qaState==='function' && qaState().cache.prayerLoaded",null,{polling:100,timeout:30000});
+      // L241: the original reload wait, now its own row; a timeout leaves A242-A247 NOT RUN instead of aborting silently.
+      const reloaded=await waitFor(s,f,"typeof qaState==='function' && qaState().cache.prayerLoaded").then(()=>true,()=>false);check(tag+':A241',reloaded,'reload wait timed out');
+      if(!reloaded){for(const id of ['A242','A244','A245','A246','A247'])notRun(tag+':'+id,'A241 reload wait failed');return;}
       check(tag+':A242',await f.evaluate('SalahConfig.loadLocal().label')==='V1 saved independently','label');
       const keys=await f.evaluate('Object.keys(localStorage)');
       check(tag+':A244',keys.some(k=>k.startsWith('salah_widget:v1:prayer:')),keys);check(tag+':A245',keys.some(k=>k.startsWith('salah_widget:v1:weather:')),keys);
       check(tag+':A246',!keys.some(k=>k.startsWith('salah:')||k.startsWith('salahwx:')),keys);check(tag+':A247',!s.errors.length&&!s.failed.length,{errors:s.errors,failed:s.failed});
       receipt.checks[tag]={keys};}finally{await s.context.close();}});
-  await tryRun('root-replacement:setup',async()=>{const tag='root-replacement';
+  if(BLOCKS.has('replacement'))await tryRun('root-replacement:setup',async()=>{const tag='root-replacement';
     fs.writeFileSync(path.join(site,'config.js'),"throw new Error('ROOT CONFIG REPLACED CONTROL');");fs.writeFileSync(path.join(site,'index.html'),'<!doctype html>ROOT REPLACED CONTROL');
     const s=await setupBrowser(browser,font,origin);
     try{const f=await loaded(s.page,origin+'/v1.html',tag,s);if(!f){notRun(tag+':A258','page not loaded');notRun(tag+':A259','page not loaded');return;}
@@ -197,33 +268,50 @@ async function selftest(browser,origin){
     out.image=await new Promise(res=>{const i=new Image();i.onload=()=>res('loaded');i.onerror=()=>res('refused');i.src='https://tilecache.rainviewer.com/v2/radar/r0036/256/6/39/27/2/1_1.png';});
     out.websocket=await new Promise(res=>{let w;try{w=new WebSocket('wss://ws.r0036-provider.example/stream');}catch(e){return res('refused: '+e.message);}
       w.onopen=()=>res('connected');w.onerror=()=>res('refused');w.onclose=ev=>res('refused (close '+ev.code+')');setTimeout(()=>res('timeout'),5000);});
+    // A loopback response that redirects off loopback: the redirected request skips the route, so it must be refused at
+    // the loopback proxy before any outbound connection.
+    try{await fetch('/r0036-redirect-name');out.redirectName='connected';}catch(e){out.redirectName='refused: '+e.message;}
     return out;});
+  // IP-literal probes run only while the refusing proxy is configured (they would otherwise be routed by the OS).
+  if(PROXY_ON())r.ip=await page.evaluate(async()=>{const o={};
+    try{await fetch('http://10.255.255.1/r0036-direct');o.direct='connected';}catch(e){o.direct='refused: '+e.message;}
+    try{await fetch('/r0036-redirect-ip');o.redirect='connected';}catch(e){o.redirect='refused: '+e.message;}
+    return o;});
   await page.waitForTimeout(300);await s.close();
   const node={};
   node.httpGet=await new Promise(res=>{try{const q=http.get('http://0.0.0.0:9/r0036-selftest',()=>res('connected'));q.on('error',e=>res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message));}catch(e){res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message);}});
   node.fetch=await fetch('http://0.0.0.0:9/r0036-selftest').then(()=>'connected',e=>(e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message);
+  if(guard.state.installed)node.ipLiteral=await new Promise(res=>{try{http.get('http://10.255.255.1/r0036-selftest',()=>res('connected')).on('error',e=>res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message));}catch(e){res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message);}});
   if(guard.state.installed)node.httpsName=await new Promise(res=>{try{https.get('https://fonts.googleapis.com/css2?family=Inter',()=>res('connected')).on('error',e=>res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message));}catch(e){res((e.code==='ER0036_ISOLATED'?'refused-by-guard: ':'error: ')+e.message);}});
   const python=py(['selftest']);
-  const refusedInRoute=u=>LEDGER.aborted.includes(u);
+  const refusedInRoute=u=>LEDGER.aborted.includes(u),atProxy=t=>PROXY_REFUSED.some(x=>x.target.includes(t));
   const checks={
     pageFetchRefusedByRoute:r.fetch.startsWith('refused')&&refusedInRoute('https://fonts.googleapis.com/css2?family=Inter'),
     pageImageRefusedByRoute:r.image==='refused'&&refusedInRoute('https://tilecache.rainviewer.com/v2/radar/r0036/256/6/39/27/2/1_1.png'),
     pageWebSocketRefusedByRoute:r.websocket.startsWith('refused')&&LEDGER.websockets.includes('wss://ws.r0036-provider.example/stream'),
     nodeGuardInstalled:guard.state.installed===true,
-    nodeRefusedByGuard:node.httpGet.startsWith('refused-by-guard')&&node.fetch.startsWith('refused-by-guard')&&(!('httpsName' in node)||node.httpsName.startsWith('refused-by-guard')),
+    nodeRefusedByGuard:node.httpGet.startsWith('refused-by-guard')&&node.fetch.startsWith('refused-by-guard')&&(!('httpsName' in node)||node.httpsName.startsWith('refused-by-guard'))&&(!('ipLiteral' in node)||node.ipLiteral.startsWith('refused-by-guard')),
+    redirectRefusedAtProxy:r.redirectName.startsWith('refused')&&atProxy('fonts.googleapis.com'),
+    ipLiteralRefused:!!r.ip&&r.ip.direct.startsWith('refused')&&refusedInRoute('http://10.255.255.1/r0036-direct')&&r.ip.redirect.startsWith('refused')&&atProxy('10.255.255.1'),
     pythonGuardInstalled:python.installed===true,
     pythonUrlopenRefusedByGuard:python.probes.length>0&&python.probes.every(p=>p.refusedByGuard===true),
-    noRequestOffLoopback:LEDGER.allowedOffLoopback.length===0&&LEDGER.bypassed.length===0&&LEDGER.wsBypassed.length===0};
+    // The only route bypasses allowed are the two probe redirects, and only because the proxy refused them.
+    noRequestOffLoopback:LEDGER.allowedOffLoopback.length===0&&LEDGER.wsBypassed.length===0&&LEDGER.bypassed.every(u=>(/^https:\/\/fonts\.googleapis\.com\/r0036-redirect/.test(u)&&atProxy('fonts.googleapis.com'))||(/^http:\/\/10\.255\.255\.1\/r0036-redirect/.test(u)&&atProxy('10.255.255.1')))};
   return {page:r,node,python,checks,pass:Object.values(checks).every(Boolean)};
 }
 (async()=>{
   const {tmp,site}=stage(layout);
   fs.writeFileSync(path.join(tmp,'selftest.html'),'<!doctype html><meta charset="utf-8"><title>R0036 isolation self-test</title><p>self-test</p>');
   const font=fs.readFileSync((()=>{const f=path.join(out,'fixture-font.ttf');const r=py(['font',f]);fs.writeFileSync(path.join(out,'fixture-font.json'),JSON.stringify(r));return f;})());
-  const server=serve(tmp);await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+  const server=serve(tmp,(req,res)=>{const p=new URL(req.url,'http://x').pathname;
+    if(mode==='selftest'&&p==='/r0036-redirect-name'){res.writeHead(302,{location:'https://fonts.googleapis.com/r0036-redirect'});res.end();return true;}
+    if(mode==='selftest'&&p==='/r0036-redirect-ip'){res.writeHead(302,{location:'http://10.255.255.1/r0036-redirect'});res.end();return true;}
+    return false;});
+  await new Promise(r=>server.listen(0,'127.0.0.1',r));const origin='http://127.0.0.1:'+server.address().port;
+  await new Promise(r=>proxy.listen(0,'127.0.0.1',r));PROXY_PORT=proxy.address().port;
   const exe=a.chromium?{executablePath:a.chromium}:{};
-  const browser=await PW.chromium.launch({headless:true,args:LAUNCH_ARGS,...exe});
-  const receipt={schema:'r0036-v1-browser/1',mode,layout,layoutNote:layout==='full'?'ADJUNCT: root runtime directories real-sky/ and moon/ also served; not the original layout':'original layout of tests/v1_browser.py (index.html, config.js, v1/)',
+  const browser=await PW.chromium.launch({headless:true,args:launchArgs(),...exe});
+  const receipt={schema:'r0036-v1-browser/2',mode,config,blocks:[...BLOCKS],rootMutant:ROOT_MUTANT,layout,layoutNote:layout==='full'?'ADJUNCT: root runtime directories real-sky/ and moon/ also served; not the original layout':'original layout of tests/v1_browser.py (index.html, config.js, v1/)',
     browser:browser.version(),node:process.version,testSha256:sha(fs.readFileSync(path.join(REPO,'tests','v1_browser.py'))),runnerSha256:sha(fs.readFileSync(__filename)),
     payloadHashes:Object.fromEntries(['index.html','config.js','v1/index.html','v1/config.js'].map(n=>[n,sha(fs.readFileSync(path.join(REPO,n)))])),
     fontFixture:{css:FIXTURE_CSS,cssSha256:sha(FIXTURE_CSS),font:JSON.parse(fs.readFileSync(path.join(out,'fixture-font.json'),'utf8'))},
@@ -233,18 +321,18 @@ async function selftest(browser,origin){
     if(mode==='selftest'){receipt.selftest=await selftest(browser,origin);}
     else{const r=await verify(browser,origin,font,site);receipt.captures=r.captures;receipt.checks=r.checks;receipt.rows=ROWS;
       receipt.summary=ROWS.reduce((m,x)=>(m[x.result]=(m[x.result]||0)+1,m),{});}
-  }finally{await browser.close();server.close();fs.rmSync(tmp,{recursive:true,force:true});
-    const outsideSelftest=mode==='selftest'?[]:[...guard.state.refused,...PY_REFUSED];
+  }finally{await browser.close();server.close();proxy.close();fs.rmSync(tmp,{recursive:true,force:true});
+    const outsideSelftest=mode==='selftest'?[]:[...guard.state.refused,...PY_REFUSED,...PROXY_REFUSED];
     receipt.isolation={requestsSeen:LEDGER.seen,continuedLoopback:LEDGER.continued,allowedOffLoopback:LEDGER.allowedOffLoopback.length,fulfilledFixture:LEDGER.fulfilledFixture,
       fulfilledFont:LEDGER.fulfilledFont,aborted:LEDGER.aborted.length,abortedHosts:LEDGER.aborted.reduce((m,u)=>(m[hostOf(u)]=(m[hostOf(u)]||0)+1,m),{}),
       unplanned:LEDGER.unplanned,bypassed:LEDGER.bypassed,websockets:LEDGER.websockets,wsBypassed:LEDGER.wsBypassed,
-      nodeGuard:{installed:guard.state.installed,refused:guard.state.refused,proxyVarsRemoved:guard.state.proxyVarsRemoved},pythonRefusedOutsideSelftest:PY_REFUSED,launchArgs:LAUNCH_ARGS};
-    failedIsolation=LEDGER.allowedOffLoopback.length>0||LEDGER.bypassed.length>0||LEDGER.wsBypassed.length>0||outsideSelftest.length>0;
+      nodeGuard:{installed:guard.state.installed,refused:guard.state.refused,proxyVarsRemoved:guard.state.proxyVarsRemoved},pythonRefusedOutsideSelftest:PY_REFUSED,proxyRefused:PROXY_REFUSED,launchArgs:launchArgs()};
+    failedIsolation=LEDGER.allowedOffLoopback.length>0||LEDGER.wsBypassed.length>0||outsideSelftest.length>0||(mode==='selftest'?!receipt.selftest?.checks?.noRequestOffLoopback:LEDGER.bypassed.length>0);
     fs.writeFileSync(path.join(out,mode==='selftest'?'selftest.json':'v1-browser-results.json'),JSON.stringify(receipt,null,1)+'\n');}
   const i=receipt.isolation;
-  console.log(JSON.stringify({mode,layout,isolation:{seen:i.requestsSeen,continuedLoopback:i.continuedLoopback,allowedOffLoopback:i.allowedOffLoopback,fulfilledFixture:i.fulfilledFixture,fulfilledFont:i.fulfilledFont,aborted:i.aborted,abortedHosts:i.abortedHosts,bypassed:i.bypassed.length,wsBypassed:i.wsBypassed.length},
+  console.log(JSON.stringify({mode,config,layout,isolation:{seen:i.requestsSeen,continuedLoopback:i.continuedLoopback,allowedOffLoopback:i.allowedOffLoopback,fulfilledFixture:i.fulfilledFixture,fulfilledFont:i.fulfilledFont,aborted:i.aborted,abortedHosts:i.abortedHosts,bypassed:i.bypassed.length,wsBypassed:i.wsBypassed.length,proxyRefused:i.proxyRefused.length},
     ...(mode==='selftest'?{selftest:receipt.selftest.checks,pass:receipt.selftest.pass}:{summary:receipt.summary})}));
   if(failedIsolation){console.error('NETWORK ISOLATION FAILURE');process.exitCode=3;}
   else if(mode==='selftest'&&!receipt.selftest.pass)process.exitCode=1;
-  else if(mode!=='selftest'&&ROWS.some(r=>r.result!=='PASS'))process.exitCode=1;
+  else if(mode!=='selftest'&&ROWS.some(r=>r.result!=='PASS'&&r.result!=='FORMALLY INAPPLICABLE'))process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=2;});

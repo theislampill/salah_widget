@@ -15,6 +15,8 @@ const MUTANTS=[
   ['no-websocket-route','r0036_v1_browser.cjs',"await context.routeWebSocket(/.*/,ws=>{","await (async()=>{})(ws=>{",'pageWebSocketRefusedByRoute'],
   ['no-node-guard','r0036_v1_browser.cjs',"const guard=require('./v1_net_guard.cjs');guard.install();","const guard=require('./v1_net_guard.cjs');",'nodeRefusedByGuard'],
   ['no-python-guard','v1_browser_helpers.py','v1_net_guard.install()\n','pass\n','pythonUrlopenRefusedByGuard'],
+  // The refusing proxy is replaced by --no-proxy-server (never by a system proxy); the IP-literal probes then stay off.
+  ['no-refusing-proxy','r0036_v1_browser.cjs',"['--proxy-server=http://127.0.0.1:'+PROXY_PORT,","['--no-proxy-server',",'redirectRefusedAtProxy'],
 ];
 const results=[];
 for(const [name,file,from,to,check] of [['control',null,null,null,null],...MUTANTS]){
