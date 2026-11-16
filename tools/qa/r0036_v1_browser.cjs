@@ -147,6 +147,8 @@ async function snapshot(page,frame,name){                                       
     // R191 inputs only (no original assertion reads them):
     visible:await frame.evaluate("(()=>{const c=document.querySelector('.c');if(!c)return false;const cs=getComputedStyle(c);return cs.visibility==='visible'&&cs.display!=='none'&&+cs.opacity>0;})()"),
     footerText:await frame.evaluate("document.querySelector('#ce')?.innerText??null"),
+    // R191 rendered-visibility inputs: box, computed-style chain and hit test for the card and its three regions.
+    rendered:await frame.evaluate("(()=>{const out={};for(const [k,s] of [['card','.c'],['header','.h'],['rows','.times'],['footer','#ce']]){const e=document.querySelector(s);if(!e){out[k]=null;continue;}const r=e.getBoundingClientRect();let shown=true;for(let n=e;n&&n.nodeType===1;n=n.parentElement){const cs=getComputedStyle(n);if(cs.display==='none'||cs.visibility==='hidden'||cs.visibility==='collapse'||+cs.opacity===0)shown=false;}const hit=r.width>0&&r.height>0?document.elementFromPoint(r.x+r.width/2,r.y+r.height/2):null;out[k]={x:r.x,y:r.y,width:r.width,height:r.height,shown,hit:!!hit&&(hit===e||e.contains(hit)||hit.contains(e))};}return out;})()"),
     fonts:await frame.evaluate("[...document.fonts].filter(f=>f.status==='loaded').map(f=>({family:f.family,weight:f.weight,status:f.status}))")};
 }
 const compare=(x,y)=>py(['compare',out,x,y]);                                                                       // compare L129-L135 (verbatim, Pillow)
@@ -154,6 +156,10 @@ const compare=(x,y)=>py(['compare',out,x,y]);                                   
 const ROOT_MUTANTS={
   'hide-card':["</head>","<style>.c{visibility:hidden!important}</style></head>"],
   'no-precise-adoption':['_byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5);',''],
+  // Independent review (2026-11-16): a fully black card, a hidden footer date, swapped fix coordinates.
+  'black-card':["</head>","<style>.c{filter:brightness(0)!important}</style></head>"],
+  'no-footer-date':["</head>","<style>#ce{display:none!important}</style></head>"],
+  'swap-lat-lon':['_byId("set-lat").value=(+r.lat).toFixed(5); _byId("set-lon").value=(+r.lon).toFixed(5);','_byId("set-lat").value=(+r.lon).toFixed(5); _byId("set-lon").value=(+r.lat).toFixed(5);'],
 };
 function stage(layoutKind){
   const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'salah-v1-browser-')),site=path.join(tmp,'salah_widget');fs.mkdirSync(site);
@@ -177,6 +183,15 @@ function serve(dir,extra=()=>false){const TYPES={'.html':'text/html','.js':'text
 // --check-root note). The observation is still recorded; nothing is tuned; an independent R-check tests the purpose.
 function inapplicable(id,premise,observed,replacement){ROWS.push({id,result:'FORMALLY INAPPLICABLE',detail:{premise,ended:'pull request 39, merge 5f1f0003 (2026-10-07); docs/V1_PRESERVATION.md',historical:'original configuration record (docs/state-contracts/R0036.md section 12)',observed,replacement}});}
 const pyStats=(file,box,dpr)=>py(['stats',out,file,String(Math.round(box.x*dpr)),String(Math.round(box.y*dpr)),String(Math.round(box.width*dpr)),String(Math.round(box.height*dpr))]);
+// R191 content measure: the card INTERIOR (inset 30 CSS px, beyond the 28 px corner radius and clear of the drop
+// shadow) and the header, prayer-row and footer regions, in device pixels.
+// Thresholds = about one quarter of the healthy minimum measured on main 47faae32 over the three scenes (interior:
+// 4778 distinct colours, luminance sd 38.1; header/rows/footer: sd 22.1, 142 distinct). A blank, black or flat card is
+// 1 colour, sd 0.
+const R191_T_INTERIOR_DISTINCT=()=>1000,R191_T_INTERIOR_STD=()=>10,R191_T_REGION_STD=()=>5,R191_T_REGION_DISTINCT=()=>32;
+const R191_INSET=30,R191_MIN={interiorDistinct:R191_T_INTERIOR_DISTINCT(),interiorLumStd:R191_T_INTERIOR_STD(),regionLumStd:R191_T_REGION_STD(),regionDistinct:R191_T_REGION_DISTINCT()};
+function r191Regions(file,rendered,dpr){const c=rendered.card,box=(r,i=0)=>r?[(r.x+i)*dpr,(r.y+i)*dpr,(r.width-2*i)*dpr,(r.height-2*i)*dpr]:[0,0,0,0];
+  return py(['regions',out,file,JSON.stringify({interior:box(c,R191_INSET),header:box(rendered.header),rows:box(rendered.rows),footer:box(rendered.footer)})]);}
 async function verify(browser,origin,font,site){
   const receipt={captures:{},checks:{}};
   if(BLOCKS.has('scenes'))for(const [night,dpr] of [[false,1],[true,1],[false,2]]){const scene=(night?'night':'day')+'-dpr'+dpr;let shots=0;
@@ -201,8 +216,12 @@ async function verify(browser,origin,font,site){
       if(root&&v1){const c=compare('root-'+scene+'.png','v1-'+scene+'.png'),st=pyStats('root-'+scene+'.png',root.geometry.card,dpr),sv=pyStats('v1-'+scene+'.png',v1.geometry.card,dpr);
         receipt.checks['comparison-'+scene]=c;
         inapplicable('comparison-'+scene+':A191','root screenshot pixel-identical to V1',c,'R191-'+scene);
-        const ok=st.width===sv.width&&st.height===sv.height&&st.distinctCardColours>=64&&root.visible===true&&/Fajr/.test(root.rows)&&/2026-10-07/.test(root.footerText||'');
-        check('comparison-'+scene+':R191',ok,{root:st,v1:{width:sv.width,height:sv.height},visible:root.visible,footer:root.footerText});}
+        const rg=r191Regions('root-'+scene+'.png',root.rendered,dpr),b=rg.boxes,R=root.rendered;
+        const shown=['card','header','rows','footer'].every(k=>R[k]&&R[k].width>0&&R[k].height>0&&R[k].shown&&R[k].hit);
+        const content=b.interior.distinct>=R191_MIN.interiorDistinct&&b.interior.lumStd>=R191_MIN.interiorLumStd&&
+          ['header','rows','footer'].every(k=>b[k].lumStd>=R191_MIN.regionLumStd&&b[k].distinct>=R191_MIN.regionDistinct);
+        const ok=st.width===sv.width&&st.height===sv.height&&shown&&content&&/Fajr/.test(root.rows)&&/2026-10-07/.test(root.footerText||'');
+        check('comparison-'+scene+':R191',ok,{size:{root:[st.width,st.height],v1:[sv.width,sv.height]},rendered:R,regions:b,thresholds:R191_MIN});}
       else{inapplicable('comparison-'+scene+':A191','root screenshot pixel-identical to V1','a capture is missing','R191-'+scene);notRun('comparison-'+scene+':R191','a capture is missing');}}
     else if(shots===2){const c=compare('root-'+scene+'.png','v1-'+scene+'.png');receipt.checks['comparison-'+scene]=c;check('comparison-'+scene+':A191',c.pixelExact,c);}
     else notRun('comparison-'+scene+':A191','a capture is missing');}

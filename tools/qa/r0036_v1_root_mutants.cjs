@@ -11,9 +11,15 @@ const work=path.resolve(a.work),runner=path.join(__dirname,'r0036_v1_browser.cjs
 const MUTANTS=[
   ['hide-card','scenes',['comparison-day-dpr1:R191','comparison-night-dpr1:R191','comparison-day-dpr2:R191']],   // a blank/invisible root card
   ['no-precise-adoption','geo',['root-geo-granted:R205']],                                                       // the root no longer adopts the fix
+  ['black-card','scenes',['comparison-day-dpr1:R191','comparison-night-dpr1:R191','comparison-day-dpr2:R191']],  // reviewer: fully black card
+  ['no-footer-date','scenes',['comparison-day-dpr1:R191','comparison-night-dpr1:R191','comparison-day-dpr2:R191']],// reviewer: footer date not rendered
+  ['swap-lat-lon','geo',['root-geo-granted:R205']],                                                              // reviewer: swapped fix coordinates
 ];
+// Usage addition: --only <name> runs one mutant (each scenes/geo run takes about a minute).
+const only=a.only||null;
 const results=[];
 for(const [name,blocks,ids] of MUTANTS){
+  if(only&&only!==name)continue;
   const out=path.join(work,name);fs.rmSync(out,{recursive:true,force:true});
   const r=spawnSync(process.execPath,[runner,'--mode','verify','--config','root-current','--blocks',blocks,'--root-mutant',name,'--out',out,...(a.playwright?['--playwright',a.playwright]:[])],{encoding:'utf8',timeout:600000});
   let rows=[];try{rows=JSON.parse(fs.readFileSync(path.join(out,'v1-browser-results.json'),'utf8')).rows;}catch{}

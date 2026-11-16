@@ -86,6 +86,21 @@ def main():
         x, y, w, h = (int(v) for v in sys.argv[4:8])
         crop = im.crop((max(0, x), max(0, y), min(im.width, x + w), min(im.height, y + h)))
         print(json.dumps({"width": im.width, "height": im.height, "distinctCardColours": len(set(crop.getdata())), "refused": v1_net_guard.REFUSED}))
+    elif cmd == "regions":
+        # R191 (root-current): per named box (device pixels) the distinct RGB colour count and the luminance standard
+        # deviation, plus the image size. Boxes arrive as JSON {name: [x, y, w, h]}.
+        from PIL import Image, ImageStat
+        im = Image.open(Path(sys.argv[2]) / sys.argv[3]).convert("RGB")
+        out = {"width": im.width, "height": im.height, "boxes": {}}
+        for name, (x, y, w, h) in json.loads(sys.argv[4]).items():
+            box = (max(0, int(x)), max(0, int(y)), min(im.width, int(x + w)), min(im.height, int(y + h)))
+            if box[2] <= box[0] or box[3] <= box[1]:
+                out["boxes"][name] = {"empty": True, "distinct": 0, "lumStd": 0.0}
+                continue
+            crop = im.crop(box)
+            out["boxes"][name] = {"distinct": len(crop.getcolors(1 << 24)), "lumStd": round(ImageStat.Stat(crop.convert("L")).stddev[0], 3)}
+        out["refused"] = v1_net_guard.REFUSED
+        print(json.dumps(out))
     elif cmd == "selftest":
         print(json.dumps(selftest()))
     else:
