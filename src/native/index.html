@@ -2286,22 +2286,16 @@ function moonDebugSamples(){
 }
 const MOON_SCALE_MIN=1.11,MOON_SCALE_MAX=1.13;
 function nativeLunarSnapshot(date,lat,lon,SIM){
- let frac,waxing,phaseDirection=null;   // null: no ephemeris direction (override / no location) -> consumers keep the waxing sign
+ let frac,waxing;
  if(SIM.moon!=null){frac=clamp(+SIM.moon);waxing=SIM.wax!=='0';}
- else if(isFinite(+lat)&&isFinite(+lon)){const il=moonIllum(date);frac=il.fraction;waxing=il.waxing;
-  // R0041: the PHASE-DIRECTION authority, distinct from waxing (the lit limb, chi sign). +1 while the phase angle
-  // alpha=acos(2f-1) falls over the next minute, -1 while it rises, 0 inside a 1e-6 rad/min dead band. Near full and
-  // new Moon the two disagree for minutes to hours (ecliptic-longitude vs right-ascension opposition); kinematic
-  // consumers (leading edge, drift, re-request) follow this sign, the lit limb keeps waxing.
-  const da=Math.acos(2*moonIllum(new Date(date.getTime()+60000)).fraction-1)-Math.acos(2*frac-1);
-  phaseDirection=!Number.isFinite(da)?null:Math.abs(da)<=1e-6?0:(da<0?1:-1);}
+ else if(isFinite(+lat)&&isFinite(+lon)){const il=moonIllum(date);frac=il.fraction;waxing=il.waxing;}
  else{const mp=moonPhase(date);frac=mp.frac;waxing=mp.waxing;}
  let alt=25,Hm=0;
  if(SIM.moonAlt!=null){alt=+SIM.moonAlt;Hm=SIM.moonH!=null?+SIM.moonH:0;}
  else if(isFinite(+lat)&&isFinite(+lon)){const aa=moonAltAz(date,Math.max(-89.5,Math.min(89.5,+lat)),+lon);alt=aa.alt;Hm=aa.H;}
  const up=clamp((alt+2)/6),hd=Math.max(-1,Math.min(1,Hm/120)),x=268+hd*1.5,y=55+3*up-clamp((alt-6)/70)*3;
  const scale=MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*up;
- return {utcMs:date.getTime(),frac,waxing,phaseDirection,alt,H:Hm,up,x,y,scale,sx:x/325,sy:y/530,
+ return {utcMs:date.getTime(),frac,waxing,alt,H:Hm,up,x,y,scale,sx:x/325,sy:y/530,
   transform:`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`,
   valid:[alt,Hm,frac,up,x,y].every(Number.isFinite)};
 }
@@ -2309,7 +2303,7 @@ function renderMoon(){
   const date=simDate();
   // The head and ordinary painter share this same native phase, upright sense,
   // approved body size and altitude/hour-angle path. No second ephemeris/clock.
-  const {frac,waxing,phaseDirection,alt,H:Hm,up,x,y,transform}=nativeLunarSnapshot(date,lat,lon,SIM);
+  const {frac,waxing,alt,H:Hm,up,x,y,transform}=nativeLunarSnapshot(date,lat,lon,SIM);
   const g=$(".moon"); if(g) g.setAttribute("transform",transform);
   const mask=$(".moon-mask-geometry"); if(mask) mask.setAttribute("transform",transform);
   const maskDisc=$(".moon-mask-disc"),photo=$(".mphoto");
@@ -2317,7 +2311,7 @@ function renderMoon(){
   const feat=$(".mfeatures"); if(feat) feat.removeAttribute("transform");   // moon is upright (no parallactic rotation); the lit side is baked by renderMoonPBR per waxing/waning
   const gl=$(".mglow"); if(gl) gl.setAttribute("r",(56+34*frac).toFixed(1));   // geometry only; atmospheric glow permission is consumed from AtmosphereState in paint()
   const stamp=moonGeometryIdentity(date),valid=[alt,Hm,frac,up,x,y].every(Number.isFinite);
-  moonSky={alt,H:Hm,frac,waxing,phaseDirection,up,sx:x/325,sy:y/530,_min:valid?stamp.minute:null,_epochMin:valid?stamp.epochMinute:null,_context:valid?stamp.context:null};   // sx/sy = card-fraction centre; stamp ONLY this successfully produced finite geometry
+  moonSky={alt,H:Hm,frac,waxing,up,sx:x/325,sy:y/530,_min:valid?stamp.minute:null,_epochMin:valid?stamp.epochMinute:null,_context:valid?stamp.context:null};   // sx/sy = card-fraction centre; stamp ONLY this successfully produced finite geometry
   renderMoonPBR(frac, waxing);                                     // light the real LRO albedo + LOLA normals → .mphoto canvas
   if(_pbrFailed&&!window.SalahMoonRuntime?.surface()) renderMoonCalendarFallback(frac,waxing);
   if(DEBUGMOON){ const dm=$(".dbgmoon");
@@ -4694,12 +4688,26 @@ function _closeSettings(){
 }
 function _toggleSettings(){ const c=document.querySelector(".c"); if(!c) return; c.classList.contains("settings-open")?_closeSettings():_openSettings(); }
 
+// R0041: the PHASE-DIRECTION authority, distinct from waxing (the lit limb, chi sign). For the minute snapshot that
+// moonSky holds: +1 while the phase angle alpha=acos(2f-1) falls over the next minute, -1 while it rises, 0 inside a
+// 1e-6 rad/min dead band. Near full and new Moon the two disagree for minutes to hours (ecliptic-longitude versus
+// right-ascension opposition); the Moon host's kinematic consumers (leading edge, drift, re-request) follow this sign.
+// Absent for simMoon overrides and without a location: consumers then keep the historical waxing sign. It lives
+// outside nativeLunarSnapshot so the accepted V5/CP9 material section stays byte-identical.
+let _moonDirMemo={min:null,frac:null,dir:null};
+function nativeLunarPhaseDirection(){
+  if(SIM.moon!=null||!(isFinite(+lat)&&isFinite(+lon))||!Number.isFinite(moonSky._epochMin)) return {};
+  if(_moonDirMemo.min!==moonSky._epochMin||_moonDirMemo.frac!==moonSky.frac){
+    const t=moonSky._epochMin*60000,a=Math.acos(2*moonIllum(new Date(t)).fraction-1),b=Math.acos(2*moonIllum(new Date(t+60000)).fraction-1),d=b-a;
+    _moonDirMemo={min:moonSky._epochMin,frac:moonSky.frac,dir:!Number.isFinite(d)?null:Math.abs(d)<=1e-6?0:(d<0?1:-1)};}
+  return _moonDirMemo.dir==null?{}:{phaseDirection:_moonDirMemo.dir};
+}
 // Authored MB1 boundary: this is the only producer of native phase/time identity.
 window.SalahMoonHost=Object.freeze({
  capture(){
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
-   fraction:moonSky.frac,waxing:!!moonSky.waxing,...(moonSky.phaseDirection!=null?{phaseDirection:moonSky.phaseDirection}:{}),up:moonSky.up,
+   fraction:moonSky.frac,waxing:!!moonSky.waxing,...nativeLunarPhaseDirection(),up:moonSky.up,
    presentationReady:_skySceneKey!==null,initialWarranted:_skyMoonPresence>0,
    maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,

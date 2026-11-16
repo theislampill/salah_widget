@@ -53,7 +53,7 @@
   // routes and compose after every initial adoption).
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'bc15327cefc0c552f73c2b7354efc08b8c5ab73922127bd9026a60bdc07b4824',
+    'moon-initial':'ee6aa374e5bca9a49125c9dd3d687805c297a4b900da1177b8182affc319504a',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
@@ -63,7 +63,7 @@
     // R0041 (issue 143) CANDIDATE, branch claude/r0041-moon-presence-phase-direction-20261116 over main 47faae32:
     // authored source a43aa6a6 (phase-direction authority in nativeLunarSnapshot) and the legacy-Moon structural control
     // 15b5f253 of its generated index d1216f95 (first candidate index beaa894d). Awaits independent source review. Every entry below remains admitted.
-    '19f0fe2dce3a26463f68f9cbb7faf380220d97f0f4b14f73da52014c808ef27d':Object.freeze({
+    'f136331227e477fe083bfc4f329ae11bc7781312a6a26e1b9e5bc33f53026bb6':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'candidate',path:'src/native/index.html',layout:'config,native'}),
     'e49fe1c890e6a41292b692e39b29a2e765b62213248a675ff3698fc0022f7390':Object.freeze({
       profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'candidate',path:'index.html',
@@ -73,10 +73,10 @@
     // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):
     // authored source be476b3e and the legacy-Moon structural control f57dcab8 of its generated index c2c827c7. Every entry below remains admitted.
     'be476b3e8d9c99f127ac08cbadc951f21aaa4b977f5b57f15216f32f99d28fe9':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'26e797983fbfda080307dc1fda336e9ad2fac560',path:'src/native/index.html',layout:'config,native'}),
-    'f57dcab8ce8bf5462896aec6b8edf1ae1a0d966d7ba643276cfa456e26ceb31d':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'26e797983fbfda080307dc1fda336e9ad2fac560',path:'index.html',
-      parentSha256:'c2c827c7e5d4d203a757483de1b8d3e01c8d31984a20b8ad9d06e5a799d5ae12',
+      profile:'current-authored-native',kind:'current-authored-source',commit:'candidate',path:'src/native/index.html',layout:'config,native'}),
+    '0ec36d2d65a84043bcc647ba09b3d7ad025ce44796744b1fbacdba740c363bce':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'candidate',path:'index.html',
+      parentSha256:'7396482476fb352e44ae5c7d6703923aa04c30351d3d80c131ca99c3ee8c8c89',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0033 re-bind after merging main 8990c36d (R0031): authored source 90b0f642 and the legacy-Moon structural control e0acbaae of its generated index 3615841c. Every entry below remains admitted.

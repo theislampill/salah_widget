@@ -598,14 +598,11 @@ function canonicalFraction(f,diameter=416){
 }
 
 // Shared calendar geometry; the existing native owner supplies every input.
-// R0041: the leading edge follows the PHASE-DIRECTION authority (s.phaseDirection: +1 alpha falling, -1 rising, 0 centred)
-// when the native owner supplies it, else the historical waxing sign. The lit limb (sun y) stays on waxing.
-function leadDirection(s){return s.phaseDirection===1||s.phaseDirection===-1||s.phaseDirection===0?s.phaseDirection:(s.waxing?1:-1);}
 function nativeCalendarMoonScene(s,profile){
- const nativeAlpha=Math.acos(2*s.fraction-1),moving=(s.timeScale??1)>0,lead=leadDirection(s);
- const alpha=moving?Math.max(0,Math.min(Math.PI,nativeAlpha-lead*(2*PHASE_POSITION_BUDGET/s.maximumPhaseDiameter)*(1-1e-9))):Math.acos(2*s.physicalFraction-1);
+ const nativeAlpha=Math.acos(2*s.fraction-1),moving=(s.timeScale??1)>0;
+ const alpha=moving?Math.max(0,Math.min(Math.PI,nativeAlpha+(s.waxing?-1:1)*(2*PHASE_POSITION_BUDGET/s.maximumPhaseDiameter)*(1-1e-9))):Math.acos(2*s.physicalFraction-1);
  const fraction=(1+Math.cos(alpha))/2;
- return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:[Math.cos(alpha),(s.waxing?1:-1)*Math.sin(alpha),0],earth:[384400,0,0],distance:384400,extent:1.08,profile,mode:'calendar-canonical',fraction,waxing:s.waxing,...(moving&&s.phaseDirection!=null?{leadDirection:lead}:{}),tilt:0,requestedNativeFraction:s.fraction,phaseQuantumRadians:s.phaseQuantum,phaseDisplayDiameter:s.phaseDiameter,geometryConvention:'native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC'};
+ return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:[Math.cos(alpha),(s.waxing?1:-1)*Math.sin(alpha),0],earth:[384400,0,0],distance:384400,extent:1.08,profile,mode:'calendar-canonical',fraction,waxing:s.waxing,tilt:0,requestedNativeFraction:s.fraction,phaseQuantumRadians:s.phaseQuantum,phaseDisplayDiameter:s.phaseDiameter,geometryConvention:'native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC'};
 }
 // moon-first-paint.mjs
 /* Bounded head composition. The caller supplies the existing admitted
@@ -628,6 +625,17 @@ function nativeHeadMoonGeometry(moon,dpr){
   backgroundLeft:left/dpr-originX,backgroundTop:top/dpr-originY,backgroundWidth:width/dpr,backgroundHeight:height/dpr};
 }
 
+// R0041: the head scene uses the same phase-direction authority as the Moon host (see moon-native.mjs
+// directedCalendarScene): direction from the owner's own snapshot one minute apart; lit side stays on waxing.
+function headPhaseDirection(owner,snapshot,sim,moon){
+ if(sim?.moon!=null||!Number.isFinite(snapshot.lat)||!Number.isFinite(snapshot.lon))return {};
+ const next=owner.snapshot(new Date(snapshot.utcMs+60000),snapshot.lat,snapshot.lon,sim),d=Math.acos(2*next.frac-1)-Math.acos(2*moon.frac-1);
+ return !Number.isFinite(d)?{}:{phaseDirection:Math.abs(d)<=1e-6?0:(d<0?1:-1)};
+}
+function headDirectedScene(owner,capture,profile){
+ const d=capture.phaseDirection;if((capture.timeScale??1)<=0||(d!==1&&d!==-1))return owner.scene(capture,profile);
+ const out=owner.scene({...capture,waxing:d===1},profile);out.sun=[out.sun[0],(capture.waxing?1:-1)*Math.abs(out.sun[1]),out.sun[2]];out.waxing=capture.waxing;out.leadDirection=d;return out;
+}
 function composeNativeHeadMoon(preview,snapshot,sim,owner,support){
  if(!snapshot||snapshot.timeScale!==1||snapshot.paused||!Number.isFinite(snapshot.utcMs)||!Number.isFinite(snapshot.lat)||!Number.isFinite(snapshot.lon)||!Number.isFinite(snapshot.dpr))throw Error('Head Moon accepted input');
  if(!preview?.raster?.starPreview)throw Error('Head Moon needs admitted catalogue preview');
@@ -637,10 +645,10 @@ function composeNativeHeadMoon(preview,snapshot,sim,owner,support){
  const opacity=Number(presentation.moonShow.toFixed(3));
  if(opacity<=0)return {visible:false,moon,presentation,snapshot};
  if(!support.initial)throw Error('Head Moon qualified initial unavailable');
- const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,...(moon.phaseDirection!=null?{phaseDirection:moon.phaseDirection}:{}),up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
+ const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,...headPhaseDirection(owner,snapshot,sim,moon),up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
   phaseQuantum:support.phaseQuantum(g.phaseDiameter),physicalFraction:support.canonicalFraction(moon.frac,g.phaseDiameter)};
  let table,calendar;
- const scene=owner.scene(capture,support.profile),result=support.initial.render(scene,(surface,token)=>{table=surface;calendar=token;});
+ const scene=headDirectedScene(owner,capture,support.profile),result=support.initial.render(scene,(surface,token)=>{table=surface;calendar=token;});
  const r=preview.raster,E=r.effectiveExposure,sky=r.skyBackgroundLinear??r.backgroundLinear,stars=r.stellarLinear,diffuse=r.diffusePhysicalLinear;
  const W=g.width,H=g.height,linear=new Float64Array(W*H*3),covered=new Uint8Array(W*H);
  const ss=result.surfaceSize/(.96*result.surfaceExtent),ox=result.surfaceSize/2-.5*ss,oy=ox;
@@ -706,22 +714,16 @@ function moonPhase(date){
 
 const MOON_SCALE_MIN=1.11,MOON_SCALE_MAX=1.13;
 function nativeLunarSnapshot(date,lat,lon,SIM){
- let frac,waxing,phaseDirection=null;   // null: no ephemeris direction (override / no location) -> consumers keep the waxing sign
+ let frac,waxing;
  if(SIM.moon!=null){frac=clamp(+SIM.moon);waxing=SIM.wax!=='0';}
- else if(isFinite(+lat)&&isFinite(+lon)){const il=moonIllum(date);frac=il.fraction;waxing=il.waxing;
-  // R0041: the PHASE-DIRECTION authority, distinct from waxing (the lit limb, chi sign). +1 while the phase angle
-  // alpha=acos(2f-1) falls over the next minute, -1 while it rises, 0 inside a 1e-6 rad/min dead band. Near full and
-  // new Moon the two disagree for minutes to hours (ecliptic-longitude vs right-ascension opposition); kinematic
-  // consumers (leading edge, drift, re-request) follow this sign, the lit limb keeps waxing.
-  const da=Math.acos(2*moonIllum(new Date(date.getTime()+60000)).fraction-1)-Math.acos(2*frac-1);
-  phaseDirection=!Number.isFinite(da)?null:Math.abs(da)<=1e-6?0:(da<0?1:-1);}
+ else if(isFinite(+lat)&&isFinite(+lon)){const il=moonIllum(date);frac=il.fraction;waxing=il.waxing;}
  else{const mp=moonPhase(date);frac=mp.frac;waxing=mp.waxing;}
  let alt=25,Hm=0;
  if(SIM.moonAlt!=null){alt=+SIM.moonAlt;Hm=SIM.moonH!=null?+SIM.moonH:0;}
  else if(isFinite(+lat)&&isFinite(+lon)){const aa=moonAltAz(date,Math.max(-89.5,Math.min(89.5,+lat)),+lon);alt=aa.alt;Hm=aa.H;}
  const up=clamp((alt+2)/6),hd=Math.max(-1,Math.min(1,Hm/120)),x=268+hd*1.5,y=55+3*up-clamp((alt-6)/70)*3;
  const scale=MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*up;
- return {utcMs:date.getTime(),frac,waxing,phaseDirection,alt,H:Hm,up,x,y,scale,sx:x/325,sy:y/530,
+ return {utcMs:date.getTime(),frac,waxing,alt,H:Hm,up,x,y,scale,sx:x/325,sy:y/530,
   transform:`translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${scale.toFixed(3)})`,
   valid:[alt,Hm,frac,up,x,y].every(Number.isFinite)};
 }
@@ -862,9 +864,17 @@ try{
   if(recovery.state!=='scheduled'||disposed||worker||document.hidden||now<recovery.nextAt||typeof MOON_WORKER_SOURCE!=='string')return;
   recovery.attempts++;start();
  }
+ // R0041: the leading edge follows the PHASE-DIRECTION authority; the lit limb (Sun y sign, scene.waxing) stays on
+ // waxing. nativeCalendarMoonScene (accepted V5 source) is called with the lead's sense, then the lit side is restored;
+ // the scene records leadDirection so phaseDrift signs by the record's own lead. Without a direction (override, no
+ // location, dead band) the historical scene is returned unchanged.
+ function directedCalendarScene(s,p){
+  const d=s.phaseDirection;if((s.timeScale??1)<=0||(d!==1&&d!==-1))return nativeCalendarMoonScene(s,p);
+  const out=nativeCalendarMoonScene({...s,waxing:d===1},p);out.sun=[out.sun[0],(s.waxing?1:-1)*Math.abs(out.sun[1]),out.sun[2]];out.waxing=s.waxing;out.leadDirection=d;return out;
+ }
  function scene(s){
   if(referenceScene)return {...structuredClone(referenceScene),profile:profile()};
-  return nativeCalendarMoonScene(s,profile());
+  return directedCalendarScene(s,profile());
  }
  function adopt(m,record){
   const began=performance.now();

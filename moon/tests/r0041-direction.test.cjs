@@ -11,11 +11,16 @@ const a=hostTest.indexOf('function rig('),b=hostTest.indexOf('\n}\n',a)+3;
 const rig=new Function('require','__dirname','process','fs','vm','path','crypto','const src=path.join(__dirname,"../src");'+hostTest.slice(a,b)+';return rig;')(require,__dirname,process,fs,vm,path,crypto);
 const html=fs.readFileSync(path.join(root,'src/native/index.html'),'utf8');
 const s0=html.indexOf('const _RAD=Math.PI/180'),s1=html.indexOf('// Galactic centre',s0);
-// The native snapshot (nativeLunarSnapshot) is the product's own producer of fraction, waxing and, after R0041, the
-// phase direction. Run it as the reviewed native-lunar-factors test does (astro + scales + clamp + snapshot).
-const snapSrc=html.slice(html.indexOf('function nativeLunarSnapshot('),html.indexOf('\nfunction renderMoon('));
-const eph={Math,Date};vm.createContext(eph);
-vm.runInContext(html.slice(s0,s1)+html.match(/const MOON_SCALE_MIN=.*?;/)[0]+html.match(/const clamp\s*=.*?;/)[0]+snapSrc+';this.moonIllum=moonIllum;this.snapshot=d=>nativeLunarSnapshot(d,24.47,39.61,{});',eph);
+// The product's own producers: nativeLunarSnapshot (fraction, waxing) and, after R0041, nativeLunarPhaseDirection
+// (the phase-direction authority read by SalahMoonHost.capture). On main the latter does not exist, so no direction is
+// supplied and the historical waxing-signed lead applies (RED).
+const NL=String.fromCharCode(10);
+const snapSrc=html.slice(html.indexOf('function nativeLunarSnapshot('),html.indexOf(NL+'function renderMoon('));
+const dirStart=html.indexOf('let _moonDirMemo='),dirSrc=dirStart<0?'':html.slice(dirStart,html.indexOf(NL+'}'+NL,html.indexOf('function nativeLunarPhaseDirection('))+3);
+const eph={Math,Date,SIM:{},lat:24.47,lon:39.61,moonSky:{}};vm.createContext(eph);
+vm.runInContext(html.slice(s0,s1)+html.match(/const MOON_SCALE_MIN=.*?;/)[0]+html.match(/const clamp\s*=.*?;/)[0]+snapSrc+dirSrc+
+ ';this.moonIllum=moonIllum;this.snapshot=d=>{const s=nativeLunarSnapshot(d,24.47,39.61,{});moonSky={frac:s.frac,waxing:s.waxing,_epochMin:Math.floor(d.getTime()/60000)};'+
+ '  return {frac:s.frac,waxing:s.waxing,phaseDirection:typeof nativeLunarPhaseDirection==="function"?nativeLunarPhaseDirection().phaseDirection:undefined};};',eph);
 function drive({startISO,minutes,jobS=10,up=1}){
  const r=rig({initial:true,diameter:109});let clears=0;const dc=r.detail.clear.bind(r.detail);r.detail.clear=()=>{clears++;dc();};
  let composes=0;r.w.SalahRealSky={compose(){composes++;}};

@@ -297,13 +297,13 @@ function mentions(name, tokens) {
       // R0036 re-bind (issue 103, on main a196351b at 26e79798, merged with main 47608f15): body d640373c... -> 12fe5ac6..., entry 3615841c... -> c2c827c7...; R0036 changes
       // only diagnostic reads (qaState, the CP9 wrapper), attempt-outcome/acquisition records and the settings GPS/Reset records,
       // not the pinned block, helper, clamp or call.
-      // R0041 candidate re-bind (issue 143, over main 47faae32, merged with main 06b6e93b): body 12fe5ac6... -> 51e447b8...; R0041
-      // changes only the lunar snapshot's phase direction and the Moon texture publication, not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"51e447b8b639af5d6ca6cc5f724eb611e02365758e7d9afea441853db2bf6d01",'delegated native script changed');
+      // R0041 candidate re-bind (issue 143, over main 47faae32, merged with main 06b6e93b): body 12fe5ac6... -> c3617811... (candidate); R0041
+      // adds the phase-direction authority beside SalahMoonHost.capture and the Moon texture publication, not the pinned block, helper, clamp or call.
+      assert.equal(digest(body),"c36178113b3cdfbb58163945e4dc34f4ed3585671a4885b02297a124481f93c8",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 88b538ec... (generated from the R0041 authored sources above).
-      assert.equal(digest(source),"88b538ec40d98ea6c33cb881735ac90e47c81ef52ed048bff2e0c2fdb4c0ac24",'delegated current generated entry changed');
+      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 73964824... (candidate) (generated from the R0041 authored sources above).
+      assert.equal(digest(source),"7396482476fb352e44ae5c7d6703923aa04c30351d3d80c131ca99c3ee8c8c89",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {

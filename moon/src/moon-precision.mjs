@@ -19,12 +19,9 @@ function canonicalFraction(f,diameter=416){
 }
 
 // Shared calendar geometry; the existing native owner supplies every input.
-// R0041: the leading edge follows the PHASE-DIRECTION authority (s.phaseDirection: +1 alpha falling, -1 rising, 0 centred)
-// when the native owner supplies it, else the historical waxing sign. The lit limb (sun y) stays on waxing.
-function leadDirection(s){return s.phaseDirection===1||s.phaseDirection===-1||s.phaseDirection===0?s.phaseDirection:(s.waxing?1:-1);}
 function nativeCalendarMoonScene(s,profile){
- const nativeAlpha=Math.acos(2*s.fraction-1),moving=(s.timeScale??1)>0,lead=leadDirection(s);
- const alpha=moving?Math.max(0,Math.min(Math.PI,nativeAlpha-lead*(2*PHASE_POSITION_BUDGET/s.maximumPhaseDiameter)*(1-1e-9))):Math.acos(2*s.physicalFraction-1);
+ const nativeAlpha=Math.acos(2*s.fraction-1),moving=(s.timeScale??1)>0;
+ const alpha=moving?Math.max(0,Math.min(Math.PI,nativeAlpha+(s.waxing?-1:1)*(2*PHASE_POSITION_BUDGET/s.maximumPhaseDiameter)*(1-1e-9))):Math.acos(2*s.physicalFraction-1);
  const fraction=(1+Math.cos(alpha))/2;
- return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:[Math.cos(alpha),(s.waxing?1:-1)*Math.sin(alpha),0],earth:[384400,0,0],distance:384400,extent:1.08,profile,mode:'calendar-canonical',fraction,waxing:s.waxing,...(moving&&s.phaseDirection!=null?{leadDirection:lead}:{}),tilt:0,requestedNativeFraction:s.fraction,phaseQuantumRadians:s.phaseQuantum,phaseDisplayDiameter:s.phaseDiameter,geometryConvention:'native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC'};
+ return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:[Math.cos(alpha),(s.waxing?1:-1)*Math.sin(alpha),0],earth:[384400,0,0],distance:384400,extent:1.08,profile,mode:'calendar-canonical',fraction,waxing:s.waxing,tilt:0,requestedNativeFraction:s.fraction,phaseQuantumRadians:s.phaseQuantum,phaseDisplayDiameter:s.phaseDiameter,geometryConvention:'native accepted phase; leading-edge bounded display approximation while advancing, nearest while fixed; .0416 device px maximum; no future UTC'};
 }

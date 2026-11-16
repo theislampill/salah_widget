@@ -118,9 +118,17 @@
   if(recovery.state!=='scheduled'||disposed||worker||document.hidden||now<recovery.nextAt||typeof MOON_WORKER_SOURCE!=='string')return;
   recovery.attempts++;start();
  }
+ // R0041: the leading edge follows the PHASE-DIRECTION authority; the lit limb (Sun y sign, scene.waxing) stays on
+ // waxing. nativeCalendarMoonScene (accepted V5 source) is called with the lead's sense, then the lit side is restored;
+ // the scene records leadDirection so phaseDrift signs by the record's own lead. Without a direction (override, no
+ // location, dead band) the historical scene is returned unchanged.
+ function directedCalendarScene(s,p){
+  const d=s.phaseDirection;if((s.timeScale??1)<=0||(d!==1&&d!==-1))return nativeCalendarMoonScene(s,p);
+  const out=nativeCalendarMoonScene({...s,waxing:d===1},p);out.sun=[out.sun[0],(s.waxing?1:-1)*Math.abs(out.sun[1]),out.sun[2]];out.waxing=s.waxing;out.leadDirection=d;return out;
+ }
  function scene(s){
   if(referenceScene)return {...structuredClone(referenceScene),profile:profile()};
-  return nativeCalendarMoonScene(s,profile());
+  return directedCalendarScene(s,profile());
  }
  function adopt(m,record){
   const began=performance.now();
