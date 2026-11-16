@@ -27,6 +27,11 @@ const RG={
 const WIND={calm:{wind:0.3,wdir:225,gust:0.5},w8:{wind:8,wdir:270,gust:9},w8g:{wind:8,wdir:270,gust:20},
   e8:{wind:8,wdir:90,gust:9},n8:{wind:8,wdir:0,gust:9},s8:{wind:8,wdir:180,gust:9}};
 const MODELS_ALL=['current','M1','M2','M3','M4','M5'];
+// FIXTURE-CONTROLLED blocks (review F-1): one deck, temperature, dew point, visibility and wind for every regime in a
+// block; only the weather code and the amount differ, so recognition can only come from the rain depiction.
+const CTRL={cloud:85,low:75,mid:60,high:40,temp:60,hum:92,dew:55,vis:20000};
+const CREG={drizzle:{code:53,precip:0.08,rain:0.08},light:{code:61,precip:0.3,rain:0.3},moderate:{code:63,precip:1.25,rain:1.25},
+  heavy:{code:65,precip:3,rain:3},showers:{code:81,precip:0.75,showers:0.75},dry:{code:3,precip:0}};
 function scenes(){const out=[],site=L.SITES.madinah;
   const at=(dk,sc)=>{const st=L.sceneTimes(site,DATES[dk]);return Math.floor(st[sc]/900000)*900000+6*60000;};
   const add=(id,dk,sc,rg,wd,extra)=>out.push({id,date:dk,scene:sc,utcMs:at(dk,sc),wx:{...RG[rg],...WIND[wd]},rg,wd,models:MODELS_ALL,...(extra||{})});
@@ -41,6 +46,12 @@ function scenes(){const out=[],site=L.SITES.madinah;
     add(`orient-moderate-${wd}-az${az}`,'equinox','solar-noon','moderate',wd,{hash:az===180?'':`&skyAz=${az}`,models:['current','M1','M1:rigid','M2']});
   for(const rg of ['light','moderate','heavy'])add(`tlong-${rg}-w8`,'equinox','solar-noon',rg,'w8',{models:['M1','M1~67','M2','M2~67']});
   for(const rg of ['drizzle','light','moderate','heavy','showers'])add(`gain-${rg}-calm`,'equinox','solar-noon',rg,'calm',{models:['current','M1','M1^400','M2','M2^400','M3^400']});
+  for(const [blk,sc,wd] of [['bday','solar-noon','calm'],['bwind','solar-noon','w8'],['btwi','blue-hour','calm'],['bmoon','night-early','calm']])
+    for(const rg of Object.keys(CREG))out.push({id:`${blk}-${rg}`,date:'equinox',scene:sc,utcMs:at('equinox',sc),wx:{...CTRL,...CREG[rg],...WIND[wd]},rg,wd,models:MODELS_ALL,block:blk,secs:3.6});
+  for(const rg of ['moderate','heavy']){
+    const m=[];for(const sh of ['0.5-1','1-3','3-10'])for(const gn of [25,50,100,400])m.push(`M1@${sh}^${gn}`);
+    out.push({id:`conv-${rg}`,date:'equinox',scene:'solar-noon',utcMs:at('equinox','solar-noon'),wx:{...CTRL,...CREG[rg],...WIND.calm},rg,wd:'calm',models:m,secs:3.6});
+    out.push({id:`layers-${rg}`,date:'equinox',scene:'solar-noon',utcMs:at('equinox','solar-noon'),wx:{...CTRL,...CREG[rg],...WIND.calm},rg,wd:'calm',models:['current','M2','M2/veil','M2/tex','M2/near'],secs:3.6});}
   add('frame-moderate-w8','equinox','solar-noon','moderate','w8',{models:['M1','M1:rigid','M2','M2:rigid','M5','M5:rigid']});
   // expiry: provider fails after the first record; clock jumped to boundary-3 s; 12 s real-time across expiry
   for(const rg of ['moderate','heavy'])for(const m of ['current','M1|immediate','M1|complete','M2|immediate','M2|complete','M5|complete'])
@@ -54,11 +65,11 @@ const RECTS=L.RECTS;
 (async()=>{let list=scenes();if(a.only)list=list.filter(s=>new RegExp(a.only).test(s.id));
   if(a.models){const want=a.models.split(',');list=list.map(s=>({...s,models:s.models.filter(m=>want.includes(m.split(/[|:~^+]/)[0]))})).filter(s=>s.models.length);}if(a.list){console.log(list.map(s=>s.id+' '+s.models.join(',')).join('\n'));return;}
   const pw=require(a.pw),root=path.resolve(a.root||'.'),out=path.resolve(a.out);
-  const ordinary=JSON.parse(fs.readFileSync(L.ordinaryPath,'utf8'));const overlay=fs.readFileSync(path.join(__dirname,'precip_models_geom.js'),'utf8')+String.fromCharCode(10)+fs.readFileSync(path.join(__dirname,'precip_models.js'),'utf8');
-  const {srv,base}=await L.serve(root);const browser=await pw.chromium.launch({headless:a.headed!=='1',args:['--ignore-gpu-blocklist']});let bad=0;
-  try{for(const sc of list){const t0=Date.now(),site={...L.SITES.madinah},dir=path.join(out,sc.id);fs.mkdirSync(dir,{recursive:true});
+  const _o=0;const ordinary=JSON.parse(fs.readFileSync(L.ordinaryPath,'utf8'));const overlay=fs.readFileSync(path.join(__dirname,'precip_models_geom.js'),'utf8')+String.fromCharCode(10)+fs.readFileSync(path.join(__dirname,'precip_models.js'),'utf8');
+  const {srv,base}=await L.serve(root);const ENG=a.engine||'chromium',CR=ENG==='chromium';const browser=await pw[ENG].launch({headless:a.headed!=='1',...(CR?{args:['--ignore-gpu-blocklist']}:{})});let bad=0;
+  try{for(const sc of list){const t0=Date.now(),site={...L.SITES.madinah},dir=path.join(out,(a.engine&&a.engine!=='chromium'?a.engine+'-':'')+sc.id);fs.mkdirSync(dir,{recursive:true});
     for(const f of fs.readdirSync(dir,{recursive:true}))if(/\.png$/.test(f))fs.rmSync(path.join(dir,f),{force:true});
-    const s=await L.openScene(browser,base,ordinary,{site,utcMs:sc.utcMs,wx:sc.wx,hash:(sc.hash||'')+(sc.reduced?'':'&motion=full'),reduced:!!sc.reduced,clock:'running',wxFailAfter:sc.expiry?1:null});
+    const ctxStart=Date.now();const s=await L.openScene(browser,base,ordinary,{site,utcMs:sc.utcMs,wx:sc.wx,hash:(sc.hash||'')+(sc.reduced?'':'&motion=full'),reduced:!!sc.reduced,video:CR?null:dir,clock:'running',wxFailAfter:sc.expiry?1:null});
     const meta={id:sc.id,scene:sc,url:s.url,mockedStartUtc:new Date(sc.utcMs).toISOString(),models:{}};
     try{
       meta.ready=await L.waitReady(s.page,{maxMs:16000});
@@ -70,11 +81,12 @@ const RECTS=L.RECTS;
         return {card:r('.c'),header:r('.h'),footer:r('.d'),rows:[...document.querySelectorAll('.p')].map(p=>{const b=p.getBoundingClientRect();return [b.x,b.y,b.width,b.height].map(v=>+v.toFixed(2))}),
         overlayParents:[...document.querySelectorAll('.pm-rain')].map(e=>e.parentElement.id),glass:getComputedStyle(document.querySelector('.p')).backdropFilter}})()`;
       meta.geomProduct=await s.page.evaluate(GEO);
-      const cdp=await s.ctx.newCDPSession(s.page);
+      const cdp=CR?await s.ctx.newCDPSession(s.page):null;meta.engine=ENG;meta.ctxStart=ctxStart;
       for(const spec of sc.models){
-        const [mf00,policyStr]=spec.split('|'),[mf0,Gx]=mf00.split('^'),[mf,Tms]=mf0.split('~'),[mname,frm]=mf.replace('+cat','').split(':'),cat=mf.includes('+cat');
-        const mdir=path.join(dir,spec.replace(/[|:+~^]/g,'_'));fs.mkdirSync(mdir,{recursive:true});
-        await s.page.evaluate(([m,f,p,c,tm,gx])=>window.__PM.set(m==='current'?'off':m,f||'flat',{policy:p||'immediate',categoryOnly:c,T:tm?tm/1000:null,G:gx}),[mname,frm,policyStr,cat,Tms?+Tms:null,Gx?+Gx:null]);
+        const [mf000,policyStr]=spec.split('|'),[mf00,Gx]=mf000.split('^'),[mf0a,Tms]=mf00.split('~'),[mf0b,shellStr]=mf0a.split('@'),[mf,layStr]=mf0b.split('/'),[mname,frm]=mf.replace('+cat','').split(':'),cat=mf.includes('+cat');
+        const shell=shellStr?shellStr.split('-').map(Number):null,layers=layStr?layStr.split('.'):null;
+        const mdir=path.join(dir,spec.replace(/[|:+~^@\/.]/g,'_'));fs.mkdirSync(mdir,{recursive:true});
+        await s.page.evaluate(([m,f,p,c,tm,gx,sh,ly])=>window.__PM.set(m==='current'?'off':m,f||'flat',{policy:p||'immediate',categoryOnly:c,T:tm?tm/1000:null,G:gx,shell:sh,layers:ly}),[mname,frm,policyStr,cat,Tms?+Tms:null,Gx?+Gx:null,shell,layers]);
         await s.page.waitForTimeout(900);
         const rec={spec,frames:[],records:[]};
         if(sc.reduced){await s.page.waitForTimeout(600);await s.page.screenshot({path:path.join(mdir,'still.png')});rec.records.push(await s.page.evaluate(()=>window.__PM.last));}
@@ -82,22 +94,24 @@ const RECTS=L.RECTS;
           if(sc.expiry){ // jump to 3 s before the next quarter-hour boundary (record validity end), then real time
             const now=await s.page.evaluate(()=>Date.now()),B=Math.ceil((now+1)/900000)*900000;await s.page.clock.pauseAt(B-3000);await s.page.clock.resume();rec.boundaryUtc=B;}
           const frames=[];const onF=f=>{frames.push({ts:f.metadata.timestamp,data:f.data});cdp.send('Page.screencastFrameAck',{sessionId:f.sessionId}).catch(()=>{});};
-          cdp.on('Page.screencastFrame',onF);await cdp.send('Page.startScreencast',{format:'png',maxWidth:325,maxHeight:530,everyNthFrame:1});
-          const dur=sc.expiry?12000:SECS*1000,tA=Date.now();
-          while(Date.now()-tA<dur){await s.page.waitForTimeout(500);try{rec.records.push(await s.page.evaluate(()=>{const r=window.__PM.last;const c=document.querySelector('.c');return r?{...r,precip:c.dataset.precip,fx:c.dataset.fx,now:Date.now()}:{precip:c.dataset.precip,fx:c.dataset.fx,now:Date.now()};}));}catch(e){}}
-          await cdp.send('Page.stopScreencast');cdp.off('Page.screencastFrame',onF);
+          if(CR){cdp.on('Page.screencastFrame',onF);await cdp.send('Page.startScreencast',{format:'png',maxWidth:325,maxHeight:530,everyNthFrame:1});}rec.videoStartMs=Date.now()-ctxStart;
+          const dur=sc.expiry?11000:(sc.secs||SECS)*1000,tA=Date.now();rec.wallStart=tA;
+          const step=sc.expiry?50:500;
+          while(Date.now()-tA<dur){await s.page.waitForTimeout(step);try{rec.records.push(await s.page.evaluate(()=>{const r=window.__PM.last;const c=document.querySelector('.c');const wi=document.querySelector('#wi');const fc=window.__PM.fc;const o={precip:c.dataset.precip,fx:c.dataset.fx,now:Date.now(),icon:wi?wi.textContent.trim():null,fc,ringLast:window.__PM.ring.length?window.__PM.ring[window.__PM.ring.length-1]:null};if(r){o.perm=r.perm;o.near=r.near?{drawn:r.near.drawn,angleSd:r.near.angleSd,lenP10:r.near.lenP10,lenP50:r.near.lenP50,lenP90:r.near.lenP90}:null;o.veil=r.veil;o.sinceExpiryS=r.sinceExpiryS;o.sheetsVisible=r.sheetsVisible;o.completed=r.completed;o.R=r.R;}return o;}));rec.records[rec.records.length-1].wall=Date.now();}catch(e){}}
+          rec.wallEnd=Date.now();
+          if(CR){await cdp.send('Page.stopScreencast');cdp.off('Page.screencastFrame',onF);}rec.videoEndMs=Date.now()-ctxStart;
           frames.forEach((f,i)=>{fs.writeFileSync(path.join(mdir,`f${String(i).padStart(4,'0')}.png`),Buffer.from(f.data,'base64'));rec.frames.push(f.ts);});
           if(sc.expiry)rec.completionBound=await s.page.evaluate(()=>window.__PM.completionBound());
         }
         rec.geom=await s.page.evaluate(GEO);
         if(mname!=='current'){rec.costMs=await s.page.evaluate(()=>window.__PM.cost(120));
-          if(a.throttle==='1'){await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});rec.costMs4x=await s.page.evaluate(()=>window.__PM.cost(60));await cdp.send('Emulation.setCPUThrottlingRate',{rate:1});}}
+          if(a.throttle==='1'&&CR){await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});rec.costMs4x=await s.page.evaluate(()=>window.__PM.cost(60));await cdp.send('Emulation.setCPUThrottlingRate',{rate:1});}}
         meta.models[spec]=rec;
         console.log(`  ${sc.id} ${spec} frames=${rec.frames.length} fps=${rec.frames.length>1?((rec.frames.length-1)/(rec.frames[rec.frames.length-1]-rec.frames[0])).toFixed(1):'-'} cost=${rec.costMs!=null?rec.costMs.toFixed(3):'-'}${rec.costMs4x!=null?'/4x '+rec.costMs4x.toFixed(3):''}`);
       }
     }catch(e){meta.error=String(e&&e.message||e).slice(0,300);}
     meta.providerLog=s.log.requests;meta.aborted=[...new Set(s.log.aborted)];meta.continuedExternal=s.log.continuedExternal;meta.requestsSeen=s.log.all;meta.errors=s.log.errors||[];
-    await s.ctx.close();if(meta.continuedExternal.length){bad++;meta.error='EXTERNAL REQUEST CONTINUED';}
+    const vid=CR?null:s.page.video();await s.ctx.close();if(vid){try{fs.renameSync(await vid.path(),path.join(dir,'clip.webm'));meta.video='clip.webm';}catch(e){meta.videoError=String(e);}}if(meta.continuedExternal.length){bad++;meta.error='EXTERNAL REQUEST CONTINUED';}
     meta.wallMs=Date.now()-t0;fs.writeFileSync(path.join(dir,'meta.json'),JSON.stringify(meta));
     console.log(`${sc.id} ${meta.error?'ERROR '+meta.error:'ok'} ${meta.wallMs}ms precip=${meta.state&&meta.state.data.precip} fx=${meta.state&&meta.state.data.fx} requests=${meta.requestsSeen} ext=${meta.continuedExternal.length} aborted=${meta.aborted.join('|')}`);}
   }finally{await browser.close().catch(()=>{});srv.close();}

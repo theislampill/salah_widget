@@ -39,6 +39,16 @@
     shaftPathKm:1.5, shaftTrail:0.21,           // shaft path through rain, trail slope against drift (~12 deg)
     fibrePathKm:0.6, minRateMmH:0.1,            // edge-on rain under the base; category-only minimum-rate depiction
     rateFactor:4,      // live current amount (mm per 900 s interval) -> mm/h, as the product's own label does
+    // ---- regime-dependent or non-physical parameters, each labelled [physics] / [convention] / [visibility aid] ----
+    drizzleSigmaZero:true,     // [convention] drizzle veil left to the product's own visibility->aerosol path (no double count); not a derivation
+    struct:{drizzle:[0.05,8],light:[0.1,8],moderate:[0.2,8],heavy:[0.45,3.5],heavySheets:[0.35,2.5],rModerate:2.5,rHeavy:7.6},   // [convention] M3/M5 field amplitude, time scale (s); NOT derived from the DSD
+    showersVeil:'field-only',  // [physics] a cell-mean rate is not local: showers veil only where the M3/M5 field localises it; none in M1/M2/M4
+    m4StreakFrac:0.15,         // [visibility aid] M4 keeps 15 % of the M1 streak population
+    fibre:{count:70,lenBasePx:10,lenGainPx:60,widthPx:[2,5],colour:0.8},   // [visibility aid] M4/M5 base fibres; strength = 1 - e^(-sigma*fibrePathKm), rate enters only via sigma
+    sunKernel:{amp:0.55,sigmaPx:120},     // [convention] area-fraction rule approximated by a gaussian around the visible Sun, x (1 - cloud^2)
+    moonKernel:{amp:0,sigmaPx:120},       // [visibility aid if > 0] REMOVED by default (review F-5: magnitude not derived)
+    tile:{w:352,h:320,cap:9000},          // [convention] M2/M5 texture tile larger than the band in both axes (no in-frame repeat)
+    render:{alphaCap:0.92,lineMin:1,lineFloor:0.6,ytop:8,ybot:300,yfade:255,sunDimMinDeg:3},   // [convention] rendering licences
   },window.__PM_PARAMS||{});
   let T=P.T,G=P.G;const DEG=Math.PI/180,W=325,H=530,YTOP=8,YBOT=300,YFADE=255;
   // camera: the refined-sky camera from the fragment (skyAz/skyAlt), defaults 180/45
@@ -67,7 +77,7 @@
     const fam=drizzle?mkF('drizzle','drizzle (JW, recalled)'):shower?mkF('convective','convective (JW, recalled)'):mkF('mp','Marshall-Palmer');
     const Nabove=Dc=>fam.N0/fam.L*Math.exp(-fam.L*Dc);                        // per m^3
     // extinction sigma = (pi/2) int D^2 N dD = pi N0 / L^3 (mm^2/m^3 -> km^-1 x1e-3)
-    const sigma=drizzle?0:Math.PI*fam.N0/Math.pow(fam.L,3)*1e-3;              // km^-1 (drizzle: existing product vis path only)
+    const sigma=(drizzle&&P.drizzleSigmaZero)?0:Math.PI*fam.N0/Math.pow(fam.L,3)*1e-3;              // km^-1 (drizzle: existing product vis path only)
     const sampleD=(u,Dc)=>Dc-Math.log(1-u*0.999)/fam.L;                      // truncated exponential above Dc
     // cloud-base height from the dew-point spread (125 m per degC, recalled approximation), bounded
     const Hm=clamp(P.baseMPerC*Math.max(0.5,I.spreadC),P.baseMin,P.baseMax);
@@ -76,7 +86,7 @@
   // ---------- inputs ----------
   let I=null,lastIn=-1e9,envAt=-1e9,envData=null,drift={px:0,prev:null,at:0,vx:0};
   function readInputs(t){
-    if(I&&t-lastIn<500)return I;lastIn=t;
+    if(I&&t-lastIn<500){I.perm=c.dataset.precip==='on';I.fx=c.dataset.fx||'';return I;}lastIn=t;   // authority read every frame (no cache lag)
     let w=null;try{w=selectedWeather();}catch(e){}
     const ds=c.dataset,cs=getComputedStyle(c),num=k=>parseFloat(cs.getPropertyValue(k));
     let col=null;try{col=_colDens?Array.from(_colDens):null;}catch(e){}
@@ -103,10 +113,10 @@
     try{if(cc&&getComputedStyle(cc).display!=='none')et.drawImage(cc,0,0,41,67);}catch(e){}
     const d=et.getImageData(0,0,41,67);
     // light kernels (area-fraction rule ~ gaussian, 120 px), Sun only through the direct-beam fraction 1 - cloud^2
-    const add=(x,y,col,amt)=>{for(let j=0;j<67;j++)for(let i=0;i<41;i++){const dx=(i*8+4-x),dy=(j*8+4-y),k=Math.exp(-(dx*dx+dy*dy)/(2*120*120))*amt,o=(j*41+i)*4;
+    const add=(x,y,col,amt,sg)=>{for(let j=0;j<67;j++)for(let i=0;i<41;i++){const dx=(i*8+4-x),dy=(j*8+4-y),k=Math.exp(-(dx*dx+dy*dy)/(2*sg*sg))*amt,o=(j*41+i)*4;
       for(let m=0;m<3;m++)d.data[o+m]=Math.min(255,d.data[o+m]+col[m]*k);}};
-    if(I.sunamt>0.02&&I.sunEl!=null&&I.sunEl>-1)add(I.sunvx/100*W,I.sunvy/100*H,[255,240,215],0.55*I.sunamt*(1-I.cloud*I.cloud));
-    if(I.moon)add(I.moon.x,I.moon.y,[205,215,235],0.35*I.moonLit);
+    if(I.sunamt>0.02&&I.sunEl!=null&&I.sunEl>-1)add(I.sunvx/100*W,I.sunvy/100*H,[255,240,215],P.sunKernel.amp*I.sunamt*(1-I.cloud*I.cloud),P.sunKernel.sigmaPx);
+    if(I.moon&&P.moonKernel.amp>0)add(I.moon.x,I.moon.y,[205,215,235],P.moonKernel.amp*I.moonLit,P.moonKernel.sigmaPx);
     et.putImageData(d,0,0);
     es.clearRect(0,0,41,67);es.filter='blur(12px)';
     for(let k=0;k<3;k++)es.drawImage(envT,0,0);es.filter='none';                       // repeated for edge fill
@@ -142,8 +152,8 @@
       const pk=[];for(let k=1;k<N-1;k++)if(smooth[k]>=smooth[k-1]&&smooth[k]>smooth[k+1]&&smooth[k]>0.55*mx)pk.push(k);
       for(let k=0;k<N;k++){let s=0;for(const p of pk){const w=3.2;s+=(smooth[p]/mx)*Math.exp(-((k-p)*(k-p))/(2*w*w));}rho[k]=s;}
     } else {
-      const heavy=Rg.R>=7.6&&!Rg.drizzle,amp=Rg.drizzle?0.05:heavy?0.45:Rg.R>=2.5?0.2:0.1,scale=heavy?3.5:8;
-      for(let k=0;k<N;k++){const x=k*5-sh;rho[k]=1+amp*(vn(x/90+t/1000/scale,31)*2-1)+(heavy?0.35*(vn(x/45-t/1000/2.5,57)*2-1):0);}
+      const S=P.struct,heavy=Rg.R>=S.rHeavy&&!Rg.drizzle,k0=Rg.drizzle?S.drizzle:heavy?S.heavy:Rg.R>=S.rModerate?S.moderate:S.light,amp=k0[0],scale=k0[1];
+      for(let k=0;k<N;k++){const x=k*5-sh;rho[k]=1+amp*(vn(x/90+t/1000/scale,31)*2-1)+(heavy?S.heavySheets[0]*(vn(x/45-t/1000/S.heavySheets[1],57)*2-1):0);}
       if(smooth.length)for(let k=0;k<N;k++)rho[k]*=clamp((smooth[k]/mx-0.12)/0.3);   // no rain without cloud above (gate H)
     }
     let mean=0;for(let k=0;k<N;k++){rho[k]=Math.max(0,rho[k]);mean+=rho[k]/N;}
@@ -163,6 +173,7 @@
     return mask;}
   function veilLayer(I,Rg,fld,strength){
     const sig=Rg.sigma;if(!(sig>0))return 0;
+    if(Rg.shower&&P.showersVeil==='field-only'&&!fld)return 0;            // a cell mean is not a local rate
     lg.clearRect(0,0,W,H);lg.globalCompositeOperation='source-over';lg.drawImage(envF,0,0);
     lg.globalCompositeOperation='destination-in';
     const grd=lg.createLinearGradient(0,YTOP,0,YBOT);let maxA=0;
@@ -175,7 +186,7 @@
     if(!Rg.shower||!fld)return 0;let n=0;
     const cb=colBases(),b0=deckBase(I);const g=softBegin();
     for(let k=0;k<65;k++){const r=fld.rho[k];if(r<0.6)continue;n++;const bb=cb?cb[Math.min(cb.length-1,Math.floor((k*5+2)/W*cb.length))]:-1,base=bb>20?bb:b0;
-      const Rl=Rg.R*r,lam=3.0*Math.pow(Math.max(Rl,0.05),-0.21),sl=Math.PI*1400/Math.pow(lam,3)*1e-3;   // local convective sigma
+      const Rl=Rg.R*r,lam=P.dsd.convective[1]*Math.pow(Math.max(Rl,0.05),P.dsd.exp),sl=Math.PI*P.dsd.convective[0]/Math.pow(lam,3)*1e-3;   // local convective sigma
       const a=(1-Math.exp(-sl*P.shaftPathKm))*clamp((r-0.6)/0.6);                  // 1.5 km shaft path (declared typical shaft width)
       const x=k*5,col=envAtPx(x,base+10).map(v=>Math.round(v*0.86)),trail=-Math.sign(drift.vx||0)*P.shaftTrail;   // ~12 deg trail against drift
       const grd=g.createLinearGradient(0,base,0,YBOT);grd.addColorStop(0,`rgba(${col},0)`);grd.addColorStop(0.15,`rgba(${col},${a.toFixed(3)})`);
@@ -197,7 +208,8 @@
   function streaks(I,Rg,t,opt){
     const z1=opt.z1,z2=opt.z2,Dc=opt.Dc,vol=P.frustumK*(z2*z2*z2-z1*z1*z1);
     let count=Rg.Nabove(Dc)*vol*(opt.frac||1);const cap=opt.cap||600,drawn=Math.min(cap,Math.round(count));
-    const CY=180;let n=0,sumA=0;
+    if(COMP&&count>drawn)opt.comp=count/drawn;                                // shell study: keep the summed contrast when the drawn sample is capped
+    const CY=180;let n=0,sumA=0;const angs=[],lens=[];
     const rig=opt.frame==='rigid';
     for(let i=0;i<drawn;i++){
       const ph=h1(i,11)*CY,u=(t+ph)/CY,k=Math.floor(u),fr=u-k,s=i*7919+k*104729;
@@ -215,31 +227,33 @@
       const sp=Math.hypot(vx,vy),Lp=sp*T,ux=vx/sp,uy=vy/sp;
       const x=x0+vx*(fr-0.5)*CY/1000,y=y0+vy*(fr-0.5)*CY/1000;
       if(opt.front!=null){if((t-(k*CY-ph))<opt.front*1000)continue;const fy=YTOP+vy*opt.front;if(y-Lp<fy)continue;}   // emitted after expiry: never drawn   // nothing emitted after expiry enters from above
-      const a=D/2/1000,alpha=Math.min(0.92,G*4*F*a*a/(zz*Math.hypot(wnd.ur,v)*T))*yband(y);
+      const a=D/2/1000,alpha=Math.min(P.render.alphaCap,G*4*F*a*a/(zz*Math.hypot(wnd.ur,v)*T)*(opt.comp||1))*yband(y);
       if(alpha<0.01||x<-60||x>W+60)continue;
       const e=envAtPx(x,y);g.strokeStyle=`rgba(${e[0]},${e[1]},${e[2]},${alpha.toFixed(3)})`;
       g.lineWidth=Math.max(1,Math.min(2.2,F*D/1000/zz*1.0+0.6));g.beginPath();g.moveTo(x-ux*Lp,y-uy*Lp);g.lineTo(x,y);g.stroke();
-      n++;sumA+=alpha;
+      n++;sumA+=alpha;angs.push(Math.atan2(ux,uy)/DEG);lens.push(Lp);
     }
-    return {count:Math.round(count),drawn:n,meanAlpha:n?sumA/n:0};
+    const q=(a,p)=>{if(!a.length)return null;const b=a.slice().sort((x,y)=>x-y);return +b[Math.min(b.length-1,Math.floor(p*b.length))].toFixed(2);};
+    const mA=angs.length?angs.reduce((x,y)=>x+y,0)/angs.length:0,sdA=angs.length?Math.sqrt(angs.reduce((x,y)=>x+(y-mA)*(y-mA),0)/angs.length):null;
+    return {count:Math.round(count),drawn:n,meanAlpha:n?sumA/n:0,angleMean:+mA.toFixed(2),angleSd:sdA==null?null:+sdA.toFixed(2),lenP10:q(lens,0.1),lenP50:q(lens,0.5),lenP90:q(lens,0.9)};
   }
   // mid-depth texture sheets (M2/M5): DSD-derived alpha masks generated once per regime, scrolled with parallax
   let tiles=null,tileKey='';
   function buildTiles(I,Rg){
     const key=[Rg.fam.name,Rg.R.toFixed(2)].join('|');if(key===tileKey)return;tileKey=key;tiles=[];
     for(const [zA,zB] of P.midSlabs){
-      const tw=128,th=256,cvT=document.createElement('canvas');cvT.width=tw;cvT.height=th;const tg=cvT.getContext('2d');
+      const tw=P.tile.w,th=P.tile.h,cvT=document.createElement('canvas');cvT.width=tw;cvT.height=th;const tg=cvT.getContext('2d');
       // count per tile: sum over D bins of N(D) dD x volume(zA, min(zB, z_res(D))) x tile area / band area
       let total=0;const bins=[];
       for(let D=P.midDmin;D<6;D+=0.1){const N=Rg.fam.N0*Math.exp(-Rg.fam.L*D)*0.1,zr=Math.min(zB,F*vT(D)*T/P.resolvablePx);if(zr<=zA)continue;
         const vol=P.frustumK*(zr*zr*zr-zA*zA*zA),cnt=N*vol*(tw*th)/(W*(YBOT-YTOP));bins.push([D,cnt,zr]);total+=cnt;}
-      const cap=9000,scale=total>cap?total/cap:1;let made=0;
+      const cap=P.tile.cap,scale=total>cap?total/cap:1;let made=0;
       tg.lineCap='butt';
       for(const [D,cnt,zr] of bins){const m=Math.round(cnt/scale);for(let i=0;i<m;i++){const s=made++;
         const zz=Math.cbrt(zA*zA*zA+h1(s,5+zA*10|0)*(zr*zr*zr-zA*zA*zA)),v=vT(D),L=F*v*T/zz,a=D/2000;
         const al=Math.min(0.9,G*4*F*a*a/(zz*v*T)*scale);
         const x=h1(s,6)*tw,y=h1(s,7)*th;tg.strokeStyle=`rgba(255,255,255,${al.toFixed(3)})`;tg.lineWidth=1;
-        for(const oy of [0,-th,th]){tg.beginPath();tg.moveTo(x+0.5,y+oy-L);tg.lineTo(x+0.5,y+oy);tg.stroke();}}}
+        for(const oy of [0,-th,th])for(const ox of [0,-tw,tw]){tg.beginPath();tg.moveTo(x+ox+0.5,y+oy-L);tg.lineTo(x+ox+0.5,y+oy);tg.stroke();}}}
       tiles.push({cv:cvT,zMean:(zA+zB)/2*0.8,vMean:vT(Math.max(0.6,3.67/Rg.fam.L)),total,scale});
     }
   }
@@ -247,16 +261,15 @@
     buildTiles(I,Rg);lg.clearRect(0,0,W,H);lg.globalCompositeOperation='source-over';
     const wnd=windAt(I,t,1.5);
     for(const tl of tiles){const vy=F*tl.vMean/tl.zMean,vx=F*wnd.ur/tl.zMean,tan=wnd.ur/tl.vMean;
-      const oy=((t/1000*vy)%256+256)%256,ox=((t/1000*vx)%128+128)%128,seed=Math.floor(t/1000*vy/256);
-      const jx=h1(seed,tl.zMean*100|0)*128;                               // re-seeded lateral offset per wrap (no visible loop)
+      const TW=tl.cv.width,TH=tl.cv.height,oy=((t/1000*vy)%TH+TH)%TH,ox=((t/1000*vx)%TW+TW)%TW;
       lg.save();lg.setTransform(1,0,tan,1,-tan*H/2,0);
-      for(let yy=-256+oy;yy<H;yy+=256)for(let xx=-256+ox+jx%128;xx<W+256;xx+=128)lg.drawImage(tl.cv,xx,yy);
+      for(let yy=-TH+oy;yy<H;yy+=TH)for(let xx=-TW+ox-TW;xx<W+TW;xx+=TW)lg.drawImage(tl.cv,xx,yy);   // tile larger than the band: no in-frame repeat
       lg.restore();}
     // mask: band rows, structure field; colourise with the environment
     lg.globalCompositeOperation='destination-in';
     const grd=lg.createLinearGradient(0,YTOP,0,YBOT);grd.addColorStop(0,'rgba(0,0,0,1)');grd.addColorStop((YFADE-YTOP)/(YBOT-YTOP),'rgba(0,0,0,1)');grd.addColorStop(1,'rgba(0,0,0,0)');
     lg.drawImage(buildMask(grd,fld,1/1.5),0,0);
-    if(front!=null){const vmin=Math.min(...tiles.map(tl=>F*tl.vMean/tl.zMean));lg.clearRect(0,0,W,Math.max(0,YTOP+vmin*front));}
+    if(front!=null){const vmin=Math.min(...tiles.map(tl=>F*tl.vMean/tl.zMean)),fy=YTOP+vmin*front;sheets.visible=fy<YBOT;lg.clearRect(0,0,W,Math.max(0,fy));}else sheets.visible=true;
     lg.globalCompositeOperation='source-in';lg.drawImage(envF,0,0);lg.globalCompositeOperation='source-over';
     g.drawImage(lay,0,0);
   }
@@ -271,12 +284,12 @@
   // fall streaks under the deck: irregular, soft, deck-lit fibres hanging from each column's own base; their
   // strength is the edge-on rain path (P.fibrePathKm) through the local rate, length grows with the rate
   function baseFibres(I,Rg,fld,t){
-    const cb=colBases();if(!cb||!I.col)return 0;const mx=Math.max(...I.col),len=clamp(Math.log10(1+Rg.R)/1.7)*60+10;let n=0;
+    const cb=colBases();if(!cb||!I.col)return 0;const mx=Math.max(...I.col),len=clamp(Math.log10(1+Rg.R)/1.7)*P.fibre.lenGainPx+P.fibre.lenBasePx;let n=0;
     const g=softBegin();
-    for(let k=0;k<70;k++){const x=h1(k,77)*W,ci=Math.min(cb.length-1,Math.floor(x/W*cb.length)),base=cb[ci];if(base<20)continue;
+    for(let k=0;k<P.fibre.count;k++){const x=h1(k,77)*W,ci=Math.min(cb.length-1,Math.floor(x/W*cb.length)),base=cb[ci];if(base<20)continue;
       const dn=I.col[Math.min(I.col.length-1,Math.floor(x/W*I.col.length))]/mx*(fld?clamp(fld.at(x)):1);if(dn<0.3)continue;
-      const col=envAtPx(x,base-6).map(v=>Math.round(v*0.8)),a=(1-Math.exp(-Rg.sigma*Rg.R/Math.max(Rg.R,1e-6)*P.fibrePathKm))*dn*(0.6+0.4*h1(k,78));
-      const L=len*(0.6+0.8*h1(k,79)),sway=(vn(t/7000+k*0.37,91)-0.5)*6,wid=2+3*h1(k,80);
+      const col=envAtPx(x,base-6).map(v=>Math.round(v*P.fibre.colour)),a=(1-Math.exp(-Rg.sigma*P.fibrePathKm))*dn*(0.6+0.4*h1(k,78));
+      const L=len*(0.6+0.8*h1(k,79)),sway=(vn(t/7000+k*0.37,91)-0.5)*6,wid=P.fibre.widthPx[0]+(P.fibre.widthPx[1]-P.fibre.widthPx[0])*h1(k,80);
       const grd=g.createLinearGradient(0,base-4,0,base+L);grd.addColorStop(0,`rgba(${col},${a.toFixed(3)})`);grd.addColorStop(1,`rgba(${col},0)`);
       g.strokeStyle=grd;g.lineWidth=wid;g.beginPath();g.moveTo(x,base-4);g.quadraticCurveTo(x+sway*0.3,base+L*0.5,x+sway,base+L);g.stroke();n++;}
     softEnd();return n;
@@ -294,10 +307,12 @@
   // Category-only presentation (evidence-semantics prototype T-C): draws at P.minRateMmH when the product shows a
   // precipitation class with data-precip off (amount unavailable) - itself an unsupported rate, shown for judgement.
   let MODEL='off',FRAME='flat',POLICY='immediate',CATONLY=false,t0=0,exp=null,lastGood=null;
-  const NEAR=()=>({z1:P.nearShell[0],z2:P.nearShell[1],Dc:P.nearDmin}),TAIL=()=>({z1:P.tailShell[0],z2:P.tailShell[1],Dc:P.tailDmin,cap:300});
+  let SHELL=null,LAYERS=null,COMP=false;
+  const has=k=>!LAYERS||LAYERS.includes(k);
+  const NEAR=()=>({z1:(SHELL||P.nearShell)[0],z2:(SHELL||P.nearShell)[1],Dc:P.nearDmin}),TAIL=()=>({z1:P.tailShell[0],z2:P.tailShell[1],Dc:P.tailDmin,cap:300});
   function frame(tAbs){
     const t=tAbs-t0;let In=readInputs(tAbs);g.clearRect(0,0,W,H);
-    const rec={t,model:MODEL,frame:FRAME,policy:POLICY,T,G,perm:In.perm,cam:CAM};
+    const rec={t,model:MODEL,frame:FRAME,policy:POLICY,T,G,shell:SHELL,layers:LAYERS,perm:In.perm,cam:CAM};
     const precipClass=/^(rain|drizzle|thunder)$/.test(In.fx);
     let front=null;
     if(MODEL!=='off'&&!In.perm){
@@ -313,27 +328,28 @@
     const needF=MODEL==='M3'||MODEL==='M5';const fld=needF?field(In,Rg,t):null;
     const o=x=>Object.assign(x,{frame:FRAME,front});
     if(MODEL==='M1'){rec.near=streaks(In,Rg,t,o(NEAR()));}
-    else if(MODEL==='M2'){if(st)rec.veil=veilLayer(In,Rg,null,1);sheets(In,Rg,t,null,front);rec.near=streaks(In,Rg,t,o(TAIL()));rec.sunT=sunDim(In,Rg,st);}
+    else if(MODEL==='M2'){if(st&&has('veil'))rec.veil=veilLayer(In,Rg,null,1);if(has('tex'))sheets(In,Rg,t,null,front);if(has('near'))rec.near=streaks(In,Rg,t,o(TAIL()));rec.sunT=sunDim(In,Rg,st&&has('veil'));}
     else if(MODEL==='M3'){if(st){rec.veil=veilLayer(In,Rg,fld,1);rec.shafts=shafts(In,Rg,fld,t);}rec.near=streaks(In,Rg,t,o(Object.assign(NEAR(),{fld})));}
-    else if(MODEL==='M4'){if(st){rec.veil=veilLayer(In,Rg,null,1);rec.fibres=baseFibres(In,Rg,null,t);}rec.near=streaks(In,Rg,t,o(Object.assign(NEAR(),{frac:0.15})));rec.sunT=sunDim(In,Rg,st);}
+    else if(MODEL==='M4'){if(st){rec.veil=veilLayer(In,Rg,null,1);rec.fibres=baseFibres(In,Rg,null,t);}rec.near=streaks(In,Rg,t,o(Object.assign(NEAR(),{frac:P.m4StreakFrac})));rec.sunT=sunDim(In,Rg,st);}
     else if(MODEL==='M5'){if(st){rec.veil=veilLayer(In,Rg,fld,1);rec.shafts=shafts(In,Rg,fld,t);rec.fibres=baseFibres(In,Rg,fld,t);}sheets(In,Rg,t,fld,front);
       rec.near=streaks(In,Rg,t,o(Object.assign(TAIL(),{fld})));rec.sunT=sunDim(In,Rg,st);}
-    if(front!==null&&rec.near&&rec.near.drawn===0&&!(MODEL==='M2'||MODEL==='M5')){rec.completed=true;}
+    if(front!==null){rec.sheetsVisible=(MODEL==='M2'||MODEL==='M5')?!!sheets.visible:false;rec.completed=(!rec.near||rec.near.drawn===0)&&!rec.sheetsVisible;}
     window.__PM_LAST=rec;return rec;
   }
+  let FC=0;const RING=[];
   const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches&&!c.classList.contains('motionfull');
   let frozenAt=null;
   function loop(){const now=performance.now();
     if(reduced()){if(frozenAt===null){frozenAt=now;frame(now);} }   // reduced motion: one frozen frame, alpha-bounded
-    else{frozenAt=null;frame(now);}
+    else{frozenAt=null;const r=frame(now);FC++;RING.push({fc:FC,pt:now,perm:r.perm,drawn:r.near?r.near.drawn:null,exp:r.sinceExpiryS??null,sheets:r.sheetsVisible??null,done:r.completed??null,precip:c.dataset.precip});if(RING.length>2000)RING.shift();}
     requestAnimationFrame(loop);}
   // maximum post-expiry visibility per layer (s): band height / slowest screen speed of that layer
   function completionBound(){const In=lastGood||readInputs(performance.now());if(!In)return null;const Rg=regime(In),band=YBOT-YTOP,out={};
     out.near=band/(F*vT(P.nearDmin)/P.nearShell[1]);out.tail=band/(F*vT(P.tailDmin)/P.tailShell[1]);
     buildTiles(In,Rg);out.sheets=tiles?Math.max(...tiles.map(tl=>band/(F*tl.vMean/tl.zMean))):null;return out;}
-  window.__PM={set(model,frm,opts){MODEL=model;T=(opts&&opts.T)||P.T;G=(opts&&opts.G)||P.G;tileKey='';FRAME=frm||'flat';POLICY=(opts&&opts.policy)||'immediate';CATONLY=!!(opts&&opts.categoryOnly);exp=null;t0=performance.now();tileKey='';envAt=-1e9;lastIn=-1e9;frozenAt=null;
+  window.__PM={set(model,frm,opts){MODEL=model;SHELL=(opts&&opts.shell)||null;COMP=!!(opts&&opts.shell);LAYERS=(opts&&opts.layers)||null;T=(opts&&opts.T)||P.T;G=(opts&&opts.G)||P.G;tileKey='';FRAME=frm||'flat';POLICY=(opts&&opts.policy)||'immediate';CATONLY=!!(opts&&opts.categoryOnly);exp=null;t0=performance.now();tileKey='';envAt=-1e9;lastIn=-1e9;frozenAt=null;
       document.querySelectorAll('.atmo .suncorner,.atmo .sunbody,.wfx .sunhaze').forEach(e=>e.style.filter='');g.clearRect(0,0,W,H);},
-    frame,completionBound,params:P,cam:CAM,cost(n){const a=performance.now();for(let i=0;i<n;i++)frame(a+i*16.7);return (performance.now()-a)/n;},
+    frame,completionBound,params:P,cam:CAM,get fc(){return FC;},ring:RING,cost(n){const a=performance.now();for(let i=0;i<n;i++)frame(a+i*16.7);return (performance.now()-a)/n;},
     get last(){return window.__PM_LAST;}};
   requestAnimationFrame(loop);
 })();

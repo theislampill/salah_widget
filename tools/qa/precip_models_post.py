@@ -42,6 +42,22 @@ def font(sz=12):
         return ImageFont.load_default()
 
 
+def scene_metrics(paths):
+    # comparative lightness and fine-structure measures of the sky band (8-bit sRGB -> CIE L*):
+    # bandL = mean L* rows 20-250; detail = std of 3-px high-passed L* rows 20-180 (deck/streak structure);
+    # motionE = RMS of frame-to-frame difference of high-passed L* (changing fine structure, rows 20-250)
+    from scipy.ndimage import gaussian_filter
+    Ls = []
+    for p in paths:
+        a = np.asarray(Image.open(p).convert('RGB')).astype(np.float64) / 255.0
+        lin = np.where(a <= 0.04045, a / 12.92, ((a + 0.055) / 1.055) ** 2.4); Y = lin @ np.array([0.2126, 0.7152, 0.0722])
+        L = np.where(Y > 216 / 24389, 116 * np.cbrt(Y) - 16, 24389 / 27 * Y); Ls.append(L)
+    hp = [L - gaussian_filter(L, 3) for L in Ls]
+    E = [float(np.sqrt(np.mean((hp[i][20:250] - hp[i - 1][20:250]) ** 2))) for i in range(1, len(hp))]
+    return {'bandL': round(float(np.mean([L[20:250].mean() for L in Ls])), 2), 'detail': round(float(np.mean([h[20:180].std() for h in hp])), 3),
+            'motionE': round(float(np.mean(E)), 3) if E else None}
+
+
 def contrast(paths, rects):
     names = [r for r in rects if re.match(r'(row\d-(label|time)|bigclock|title|countdown)$', r['name'])]
     res = {r['name']: [] for r in names}
@@ -61,7 +77,7 @@ def contrast(paths, rects):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--bulk'); ap.add_argument('--only', default='.'); ap.add_argument('--anim'); ap.add_argument('--blind'); ap.add_argument('--key')
-    ap.add_argument('--keep', default='0'); ap.add_argument('--out', default=None); ap.add_argument('--compare', default='1')
+    ap.add_argument('--keep', default='0'); ap.add_argument('--blindrx', default=r'^day-(?!dry)'); ap.add_argument('--out', default=None); ap.add_argument('--compare', default='1')
     a = ap.parse_args()
     os.makedirs(a.anim, exist_ok=True)
     summary = json.load(open(a.out, encoding='utf8')) if a.out and os.path.exists(a.out) else {}
@@ -76,7 +92,7 @@ def main():
              'aborted': meta.get('aborted'), 'geomProduct': meta.get('geomProduct'), 'models': {}}
         seqs, labels = [], []
         for spec, rec in meta.get('models', {}).items():
-            mdir = os.path.join(sdir, re.sub(r'[|:+~^]', '_', spec))
+            mdir = os.path.join(sdir, re.sub(r'[|:+~^@/.]', '_', spec))
             paths = sorted(glob.glob(os.path.join(mdir, 'f*.png')))
             M = {'frames': len(rec.get('frames') or []), 'costMs': rec.get('costMs'), 'costMs4x': rec.get('costMs4x'),
                  'geomSame': rec.get('geom', {}).get('card') == meta.get('geomProduct', {}).get('card') and rec.get('geom', {}).get('header') == meta.get('geomProduct', {}).get('header')
@@ -93,15 +109,28 @@ def main():
                 fps_real = (len(ts) - 1) / (ts[-1] - ts[0]) if len(ts) > 1 else 0
                 M['captureFps'] = round(float(fps_real), 1)
                 M['contrast'] = contrast(paths[::6], meta.get('rects') or [])
-                dur = min(ts[-1] - ts[0], 12.0)
+                M['scene'] = scene_metrics(paths[::6])
+                end = rec.get('wallEnd') / 1000.0 if rec.get('wallEnd') else ts[-1]
+                dur = min(max(ts[-1], end) - ts[0], 12.0)          # hold the last frame to the end of capture (static scenes emit few frames)
                 _cache.clear()
-                rs = [load(paths[i]) for i in resample_idx(ts, ts[0], dur)]
+                idx = resample_idx(ts, ts[0], dur)
+                claim = next((x['wall'] / 1000.0 for x in (rec.get('records') or []) if x.get('wall') and x.get('precip') == 'off'), None)                     if any(x.get('precip') == 'on' for x in (rec.get('records') or [])) else None
+                rs = []
+                for k, i in enumerate(idx):
+                    im = load(paths[i])
+                    if claim is not None:      # mark the claim-withdrawal frame (+/- one 50 ms poll) in the clip
+                        tk = ts[0] + k / FPS
+                        im = im.copy(); d = ImageDraw.Draw(im)
+                        txt = ('claims withdrawn +%.2f s' % (tk - claim)) if tk >= claim else ('claims valid  %.2f s' % (tk - claim))
+                        d.rectangle((4, 506, 200, 524), fill=(0, 0, 0)); d.text((8, 508), txt, fill=(255, 210, 90) if tk >= claim else (200, 230, 200), font=font())
+                        M['claimWithdrawnClipS'] = round(claim - ts[0], 3)
+                    rs.append(im)
                 w = os.path.join(a.anim, f'{sid}--{re.sub(r"[|:+~]", "_", spec)}.webp')
                 rs[0].save(w, save_all=True, append_images=rs[1:], duration=int(1000 / FPS), loop=0, quality=80, method=4)
                 M['anim'] = os.path.basename(w); M['animSeconds'] = round(dur, 2)
                 seqs.append(rs); labels.append(spec)
-                if a.blind and sid.startswith('day-') and not sid.startswith('day-dry') and dur >= 3.4:
-                    clip = [load(paths[i]) for i in resample_idx(ts, ts[0] + 0.4, 3.0)]
+                if a.blind and re.search(a.blindrx, sid) and dur >= 3.2:
+                    clip = [load(paths[i]) for i in resample_idx(ts, ts[0] + 0.3, 3.0)]
                     name = 'clip-%06d.webp' % rnd.randrange(10 ** 6)
                     while name in key:
                         name = 'clip-%06d.webp' % rnd.randrange(10 ** 6)
@@ -180,3 +209,29 @@ def compare_files(paths, labels, out, crop_h=530, max_frames=100):
         outf.append(C)
     outf[0].save(out, save_all=True, append_images=outf[1:], duration=int(1000 / FPS), loop=0, quality=78, method=4)
     return out
+
+
+def engine_compare(sdir, out, seconds=3.4):
+    """Firefox/WebKit: cut each presentation's segment from the context's recordVideo (25 fps, lossy VP8) and set
+    them side by side. Segment times come from the capture's own wall-clock marks relative to context creation."""
+    import subprocess, tempfile
+    meta = json.load(open(os.path.join(sdir, 'meta.json'), encoding='utf8'))
+    vid = os.path.join(sdir, meta.get('video') or 'clip.webm'); seqs, labels = [], []
+    tmp = tempfile.mkdtemp(dir=os.path.dirname(out))
+    for spec, rec in meta['models'].items():
+        st = rec['videoStartMs'] / 1000.0
+        pat = os.path.join(tmp, re.sub(r'[|:+~^@/.]', '_', spec) + '_%03d.png')
+        subprocess.run(['ffmpeg', '-loglevel', 'error', '-y', '-ss', '%.3f' % st, '-t', '%.2f' % seconds, '-i', vid, '-vf', 'fps=25', pat], check=True)
+        fr = sorted(glob.glob(pat.replace('%03d', '*')))
+        seqs.append([Image.open(p).convert('RGB').resize((325, 530)) for p in fr]); labels.append(spec)
+        for p in fr:
+            os.remove(p)
+    os.rmdir(tmp)
+    n = min(len(s) for s in seqs); outf = []
+    for k in range(n):
+        C = Image.new('RGB', (len(seqs) * 329 - 4, 548), (18, 18, 22)); d = ImageDraw.Draw(C)
+        for j, (s, lab) in enumerate(zip(seqs, labels)):
+            C.paste(s[k], (j * 329, 18)); d.text((j * 329 + 4, 2), ('current product' if lab == 'current' else lab) + ' [' + meta.get('engine', '?') + ']', fill=(235, 235, 235), font=font())
+        outf.append(C)
+    outf[0].save(out, save_all=True, append_images=outf[1:], duration=40, loop=0, quality=78, method=4)
+    return out, n
