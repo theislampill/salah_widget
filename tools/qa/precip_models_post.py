@@ -127,6 +127,11 @@ def main():
             out[0].save(w, save_all=True, append_images=out[1:], duration=int(1000 / FPS), loop=0, quality=78, method=4)
             S['compare'] = os.path.basename(w)
         summary[sid] = S
+        if a.out:   # incremental: a timeout never orphans clips or loses the scene record
+            json.dump(summary, open(a.out, 'w', encoding='utf8'), indent=1)
+        if a.key:
+            os.makedirs(os.path.dirname(os.path.abspath(a.key)), exist_ok=True)
+            json.dump(key, open(a.key, 'w', encoding='utf8'), indent=1)
         print(sid, {k: (v.get('captureFps'), v.get('costMs'), v.get('geomSame')) for k, v in S['models'].items()}, 'ext', S['continuedExternal'])
     if a.out:
         json.dump(summary, open(a.out, 'w', encoding='utf8'), indent=1)
