@@ -38,8 +38,10 @@ async function exclusivity(api){
 }
 test('ISM-MOON-010: a second concurrent render is refused, the first completes intact, and the engine is released after success and cancellation',async()=>exclusivity(build()));
 test('ISM-MOON-010 mutant: removing the reentry guard fails the discriminator',async()=>{
- await assert.rejects(()=>exclusivity(build([GUARD,''])),e=>e instanceof assert.AssertionError);
+ const api=build([GUARD,'']); // built outside the rejects: a drifted site text fails this case
+ await assert.rejects(()=>exclusivity(api),e=>e instanceof assert.AssertionError);
 });
 test('ISM-MOON-010 mutant: removing the release in finally fails the discriminator',async()=>{
- await assert.rejects(()=>exclusivity(build([RELEASE,''])),e=>e instanceof assert.AssertionError||/One owned Moon computation/.test(String(e.message)));
+ const api=build([RELEASE,'']);
+ await assert.rejects(()=>exclusivity(api),e=>e instanceof assert.AssertionError||/One owned Moon computation/.test(String(e.message)));
 });

@@ -12,10 +12,12 @@ const owner=new URL('../../real-sky/native-preview.mjs',import.meta.url);
 const source=fs.readFileSync(owner,'utf8');
 const EVICTION='if(displayGeometryCache.size===4)displayGeometryCache.delete(displayGeometryCache.keys().next().value);';
 const HIT='if(c.type===\'camera\'&&cached)return cached;';
-async function load({dropEviction=false,dropHit=false}={}){
+let instances=0;
+const ROLL='rollDeg:view.rollDeg??0}';
+async function load({dropEviction=false,dropHit=false,dropRoll=false}={}){
  let s=source.replace(/from '(\.\/[^']+)'/g,(_,v)=>'from '+JSON.stringify(new URL(v,owner).href));
- for(const [flag,rule] of [[dropEviction,EVICTION],[dropHit,HIT]])if(flag){assert.equal(s.split(rule).length,2,'the mutated statement exists exactly once in the shipped source');s=s.replace(rule,'');}
- s+='\nexport const peekDisplayGeometry=()=>[...displayGeometryCache];';
+ for(const [flag,rule,to] of [[dropEviction,EVICTION,''],[dropHit,HIT,''],[dropRoll,ROLL,'rollDeg:0}']])if(flag){assert.equal(s.split(rule).length,2,'the mutated statement exists exactly once in the shipped source');s=s.replace(rule,to);}
+ s+='\n// instance '+(++instances)+'\nexport const peekDisplayGeometry=()=>[...displayGeometryCache];';
  return import('data:text/javascript;base64,'+Buffer.from(s).toString('base64'));
 }
 const raster={width:325,height:530,physicalState:{sun:{altDeg:40,azDeg:150}},atmosphere:{aerosolG:.76}};
@@ -53,4 +55,12 @@ test('removing the cache hit fails the identity discriminator',async()=>{
  const m=await load({dropHit:true});for(let i=0;i<4;i++)touch(m,i);
  const before=m.peekDisplayGeometry();touch(m,3);const after=m.peekDisplayGeometry();
  assert.throws(()=>{for(let i=0;i<4;i++)assert.strictEqual(after[i][1],before[i][1]);},assert.AssertionError);
+});
+test('views that differ only in roll are distinct cache keys',async()=>{
+ const m=await load(),roll=r=>m.nativeSolarRegistration(raster,{...view(0),rollDeg:r},{x:60,y:120,presence:1});
+ roll(0);roll(10);assert.equal(m.peekDisplayGeometry().length,2);
+});
+test('dropping roll from the key fails the roll discriminator',async()=>{
+ const m=await load({dropRoll:true}),roll=r=>m.nativeSolarRegistration(raster,{...view(0),rollDeg:r},{x:60,y:120,presence:1});
+ roll(0);roll(10);assert.throws(()=>assert.equal(m.peekDisplayGeometry().length,2),assert.AssertionError);
 });

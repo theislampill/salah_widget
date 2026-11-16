@@ -101,5 +101,7 @@ const mutants=[
  ['removes the drain loop and the finally re-pump together',s=>mutate(mutate(s,M.drain),M.repump),newestOnly],
 ];
 for(const [name,edit,scenario] of mutants)test('ISM-MOON-007 mutant: '+name+' fails the discriminator',async()=>{
- await assert.rejects(()=>scenario(edit),e=>e instanceof assert.AssertionError);
+ // Apply the mutation OUTSIDE the rejects below: a drifted site text must fail this case, not satisfy it.
+ const edited=edit(SOURCE);assert.notEqual(edited,SOURCE,'the mutation changed the shipped source');
+ await assert.rejects(()=>scenario(()=>edited),e=>e instanceof assert.AssertionError&&!/mutated statement exists/.test(e.message));
 });
