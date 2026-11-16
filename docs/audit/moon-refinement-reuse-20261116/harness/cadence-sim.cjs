@@ -21,7 +21,9 @@ const durations=JSON.parse(durArg); // {engine:{renderMs, previewMs}}
 const start=Date.parse(startISO),DAYS=+daysArg,STEP=250; // the host polls at 4 Hz (moon-native.mjs L344)
 // Precompute ephemeris once per second.
 const N=Math.round(DAYS*86400000/STEP),alpha=new Float64Array(N),wax=new Uint8Array(N),up=new Float32Array(N),sun=new Float32Array(N);
-for(let i=0;i<N;i++){const t=new Date(start+i*STEP),il=moonIllum(t);alpha[i]=Math.acos(2*il.fraction-1);wax[i]=il.waxing?1:0;const aa=moonAltAz(t,LAT,LON);up[i]=Math.max(0,Math.min(1,(aa.alt+2)/6));sun[i]=sunAlt(t);}
+// The host's lunar snapshot (moonSky: frac, waxing, up) is refreshed at the native minute cadence (index.html L3841,
+// renderMoon L2302-2314), so the poll sees a phase that steps once per (simulated) minute.
+for(let i=0;i<N;i++){const t=new Date(Math.floor((start+i*STEP)/60000)*60000),il=moonIllum(t);alpha[i]=Math.acos(2*il.fraction-1);wax[i]=il.waxing?1:0;const aa=moonAltAz(t,LAT,LON);up[i]=Math.max(0,Math.min(1,(aa.alt+2)/6));sun[i]=sunAlt(t);}
 let rate=[];for(let i=2400;i<N;i+=2400)rate.push(Math.abs(alpha[i]-alpha[i-2400])/(2400*STEP/1000));
 const result={model:'moon-native poll replay',start:startISO,days:DAYS,location:'fixture Madinah 24.47,39.61 (only for day/below-horizon accounting and the up-dependent leading edge)',
   phaseRateRadPerS:{min:Math.min(...rate),max:Math.max(...rate),mean:rate.reduce((a,b)=>a+b,0)/rate.length},cases:{}};
