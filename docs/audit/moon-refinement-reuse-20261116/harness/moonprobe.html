@@ -12,7 +12,7 @@ const hex=b=>Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).joi
 const sha=async view=>hex(await crypto.subtle.digest('SHA-256',view instanceof ArrayBuffer?view:new Uint8Array(view.buffer,view.byteOffset,view.byteLength)));
 const b64=view=>{const u=new Uint8Array(view.buffer,view.byteOffset,view.byteLength);let s='';for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(s);};
 const PROFILE={schema:'lunar-presentation/5',profile_id:'calendar-neutral-v5-01',mode:'calendar',exposure:2.9195482731525044,lift:.003,knee:5.388411226362526e-6,colour_basis:'linear-sRGB',gamut:'luminance-preserving-neutral-axis'};
-// Same shape as nativeCalendarMoonScene (moon/src/moon-precision.mjs L63-68); sun given as literals.
+// Same shape as nativeCalendarMoonScene (moon/src/moon-precision.mjs L22-27); sun given as literals.
 function scene(sc){return {size:540,outSize:300,diameter:288,basis:[0,1,0,0,0,1,1,0,0],sun:sc.sun,earth:[384400,0,0],distance:384400,extent:1.08,profile:{...PROFILE},mode:'calendar-canonical',fraction:(1+sc.sun[0])/2,waxing:sc.waxing,tilt:0,requestedNativeFraction:sc.f,phaseQuantumRadians:4*.0416/108,phaseDisplayDiameter:108,geometryConvention:'probe'};}
 let SRC=null,SRC_SHA=null;
 async function load(){

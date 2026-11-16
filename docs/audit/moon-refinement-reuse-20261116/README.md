@@ -111,12 +111,20 @@ Source identity: `main` 47faae32 (`moon/BUILD.json`: worker `e6d3f732…`, kerne
 ### How the refined scene is built
 
 `poll()` (`moon/src/moon-native.mjs` L166-187) calls `scene(s)` (L104-107) = `nativeCalendarMoonScene(s,profile())`
-(`moon/src/moon-precision.mjs` L63-68). That scene has a fixed raster and camera — `size:540`, `outSize:300`,
+(`moon/src/moon-precision.mjs` L22-27). That scene has a fixed raster and camera — `size:540`, `outSize:300`,
 `diameter:288`, `basis:[0,1,0,0,0,1,1,0,0]`, `earth:[384400,0,0]`, `distance:384400`, `extent:1.08`, `tilt:0` —
 and exactly one varying physical quantity, the Sun direction `[cos α, ±sin α, 0]`, where:
 
 - **advancing clock** (`timeScale>0`, every normal live tab): `α = acos(2f−1) ∓ 2·0.0416/D_max·(1−1e−9)`, i.e. the
-  *continuous* native phase angle shifted to a leading edge. **It is not quantised.**
+  *continuous* native phase angle shifted to a leading edge. The scene itself is not snapped to any grid. The
+  native fraction steps once per simulated minute (index.html L3841), and `D_max` takes integer values, so two tabs
+  on one device with the same DPR, zoom and Moon-altitude class that start a job in the same native minute do
+  request bit-identical scenes. Any other pair does not.
+
+  **The host's job `key` is bucketed even though the scene is not.** `key(s)` (native L43) holds
+  `physicalFraction = canonicalFraction(f, D)`, the grid-snapped fraction (native L41). The scene sent to the
+  worker uses the unsnapped leading edge. Two jobs with equal host `key` can therefore have different bytes. This
+  most likely explains the advisory's "phase bucket", and it is a trap for any future cache keyed on `key`.
 - **frozen clock** (`timeScale==0`, i.e. `simTime` without `timeScale`, QA scenes): `α = acos(2·f_c−1)` with
   `f_c = canonicalFraction(f, D)` (L55-60), the nearest point of a grid of spacing `4·0.0416/max(104,D)` rad.
 
@@ -129,25 +137,25 @@ of the observer's Moon altitude (L2296). `f` = `moonSky.frac` from `moonIllum(da
 
 | Input | Enters the refined SURFACE bytes? | Path (file:line at 47faae32) |
 |---|---|---|
-| Phase angle α (UTC → geocentric ephemeris) | **Yes**, continuously (advancing clock) | precision L64-66; index.html L2072-2077 |
-| Phase quantisation | **Only in the frozen clock** (grid 4·0.0416/max(104,D) rad); advancing clock uses a continuous leading edge | precision L49-60, L65 |
-| Waxing flag | Yes (sign of Sun y; also in `scope`) | precision L67; native L47 |
+| Phase angle α (UTC → geocentric ephemeris) | **Yes**, continuously (advancing clock) | precision L23-25; index.html L2072-2077 |
+| Phase quantisation | **Only in the frozen clock** (grid 4·0.0416/max(104,D) rad); advancing clock uses a continuous leading edge | precision L8-19, L24 |
+| Waxing flag | Yes (sign of Sun y; also in `scope`) | precision L26; native L47 |
 | Phase source (ephemeris vs mean synodic vs `simMoon`) | Yes (different `f` for the same instant) | index.html L2289-2292 |
-| Libration, Earth distance | **No**: basis and Earth vector fixed (mean-libration calendar Moon) | precision L67 |
-| Position angle / parallactic rotation | **No** (`tilt:0`, upright Moon) | precision L67; index.html L2077 comment |
+| Libration, Earth distance | **No**: basis and Earth vector fixed (mean-libration calendar Moon) | precision L26 |
+| Position angle / parallactic rotation | **No** (`tilt:0`, upright Moon) | precision L26; index.html L2077 comment |
 | Observer lat/lon, height | **Not directly** (`f` is geocentric). **Indirectly yes**: Moon altitude → `up` → `D` (group scale 1.11…1.13) and `D_max` → leading-edge offset of α; frozen clock: `D` → grid | native L39-40; index.html L2296-2297, L4697 |
 | `simMoon`, `simWax` | Yes (via `f`, waxing) | index.html L2290 |
 | `simMoonAlt`, `simMoonH` | Indirectly (via `up` → `D`, `D_max`) | index.html L2294 |
-| DPR | Only through `D` (and so α); the raster is DPR-independent (540/300/288) | native L39; precision L67 |
+| DPR | Only through `D` (and so α); the raster is DPR-independent (540/300/288) | native L39; precision L26 |
 | On-screen disc size / canvas size | Only through `D`; output canvas fixed 300×300 | native L12, L39 |
-| Scene metadata `phaseQuantumRadians`, `phaseDisplayDiameter`, `requestedNativeFraction`, `geometryConvention` | No pixel effect; they are in the scene JSON, which the host compares for result admission | precision L67; native L247 |
+| Scene metadata `phaseQuantumRadians`, `phaseDisplayDiameter`, `requestedNativeFraction`, `geometryConvention` | No pixel effect; they are in the scene JSON, which the host compares for result admission | precision L26; native L247 |
 | DEM / colour assets | Yes; digests in `manifestIdentity` → `physicalIdentity` | engine L41, L50, L73, L117 |
 | WASM kernel | Yes; `manifest.wasm.sha256` in `manifestIdentity` | engine L66, L73 |
-| JS surface code (V5 tone map, pool join/filter, calendar proxy, sRGB encode) | Yes; **not** in `physicalIdentity` (only in the worker source digest) | surface_v5; pool L193-205; calendar L8-41 |
+| JS surface code (V5 tone map, pool join/filter, calendar proxy, sRGB encode) | Yes; **not** in `physicalIdentity` (only in the worker source digest) | surface_v5; pool L79-91; calendar L8-41 |
 | Profile (calendar / reference) | Yes (`profileIdentity`; `profileMode` in `scope`) | native L29, L47; surface_v5 L69 |
-| Quadrature rule / stopping rule | Yes (part of the worker source); the final `physicalIdentity` records the last step's rule | quality L77-113; engine L117 |
-| Worker count / shard layout | Fixed at 4 in product; measured below (2 vs 4) | pool L143, L151, L164 |
-| Tier | initial (main-thread receiver), preview (64-sample step), refined (`result`) are different bytes | native L114; quality L101 |
+| Quadrature rule / stopping rule | Yes (part of the worker source); the final `physicalIdentity` records the last step's rule | quality L9-45; engine L117 |
+| Worker count / shard layout | Fixed at 4 in product; measured below (2 vs 4) | pool L29, L37, L50 |
+| Tier | initial (main-thread receiver), preview (64-sample step), refined (`result`) are different bytes | native L114; quality L33 |
 | Earthshine | Yes, but fixed geometry for a given α (Earth vector constant) | engine L110 |
 | Calendar / below-horizon proxy | Its *bytes* (`calendarLinear`, `calendarRgba`) are a pure function of the result + material; its *blend weight* `up` is applied afterwards | calendar L8-41; native L50-60 |
 | Display mapping after the surface (device-resolution projection, sky gas, cloud, opacity, exposure, placement) | No — applied downstream by `moon-detail.mjs` and the native compositor | detail L43-141 |
@@ -166,7 +174,9 @@ do not enter the bytes except through α.
 `D` and `D_max`, weakly depends on the observer's Moon altitude and on DPR.
 
 - Advisory claim "the refined scene depends only on a phase bucket … and nothing local": **REFUTED** for the
-  advancing clock (continuous α; `up`-dependent `D`/`D_max`); **CONFIRMED** for the frozen clock (grid
+  advancing clock: α is continuous and depends on `up` through `D` and `D_max`. Coincidence needs the same native
+  minute and the same `D` and `D_max`, so the useful cross-tab hit rate is near zero. It is the host `key`, not the
+  scene, that is bucketed; **CONFIRMED** for the frozen clock (grid
   `4·0.0416/max(104,D)`), where only the DPR-dependent `D` selects the grid.
 - "Bucket ≈ 11 min at DPR 1": **CONFIRMED as the validity window, not as a bucket.** `4·0.0416/D` rad at the
   measured `D = 109` (rect 107.8 × 108.1 CSS px at `up = 1`, `evidence/live.json`) and the measured 30-day mean phase
@@ -218,7 +228,7 @@ avoid the arguments where the engines disagree. Either way, identity is an obser
 not a property of the arithmetic.
 
 **There is a second engine dependence, in the product path, that the probe deliberately bypassed.** The host builds
-the Sun vector with JS `Math.acos`, `cos` and `sin` (precision L64-66). For the four probe fractions those inputs
+the Sun vector with JS `Math.acos`, `cos` and `sin` (precision L23-25). For the four probe fractions those inputs
 were bit-equal in all engines (`sceneInputs`), but WebKit's `acos` hash differs over random arguments. Equal native
 fractions can therefore give different scene vectors in different engines.
 
@@ -229,15 +239,21 @@ updates must carry an engine identity (a runtime `Math` self-test fingerprint, o
 the scene and kernel arithmetic stop depending on host `Math`. The second option is a kernel recompile, which R0021
 excluded from that increment.
 
-**(f) Across machines (UNDETERMINED; argument only).** Three arguments, none of them a measurement:
+**Scope of the cross-engine result.** Cross-engine identity covers two literal Sun vectors passed straight to the
+worker: G `[0.6, 0.8, 0]` and C. Those are not the vectors the host builds; the host uses `Math.acos`, `cos` and
+`sin`, which differ in WebKit. H, F, the real leading-edge angles and the full-Moon (α ≈ 0.09) and near-new regimes
+were Chromium-only or untested.
+
+**(f) Across machines (UNDETERMINED; hypothesis only).**
 
 - WebAssembly f64 arithmetic is IEEE-754 and deterministic except for NaN payloads.
-- V8 and SpiderMonkey implement `Math` in software (fdlibm-derived), with no CPU-dependent paths and no FMA
-  contraction in JS. The same engine version should therefore give the same bytes on any x86-64 or ARM64 machine.
+- Whether one engine version gives the same bytes on every machine depends on its `Math` implementation.
+  SpiderMonkey's `pow` and `exp` can defer to the platform C library, and Chromium and Firefox already disagree on
+  `sin`/`cos` here. "Same engine version, same bytes on any machine" is therefore only a hypothesis (H2).
 - JavaScriptCore relies more on the platform C library, so real Safari on macOS or iOS may differ from Playwright
   WebKit on Windows. This audit did not test Safari, and it does not claim Safari behaviour.
 
-The worker joins shard rows by ownership and filters and encodes once on one thread (`moon-pool.mjs` L176-205).
+The worker joins shard rows by ownership and filters and encodes once on one thread (`moon-pool.mjs` L62-91).
 No floating-point reduction depends on scheduling, which is consistent with (b′) and (c).
 
 ## 3. Q3 — Steady-state refinement frequency
@@ -247,7 +263,7 @@ No floating-point reduction depends on scheduling, which is consistent with (b�
 - `poll()` runs every 250 ms (native L344) and from `request()` on native paints.
 - It starts a new job when no pending job matches and the accepted non-initial record's signed drift has reached
   `B/4` (native L182; B = 0.0416 device px). A job's scene is created at the leading edge, with a signed drift of
-  about −B (precision L65), so a new job starts after the phase has moved about `2.5·B/D` rad.
+  about −B (precision L24), so a new job starts after the phase has moved about `2.5·B/D` rad.
 - The accepted record stays presentable until the drift exceeds +B, about `4·B/D` from its creation (native L66).
   A replacement must therefore finish within about `1.5·B/D` of phase, or the visible tier drops to the stored
   preview (L177, L118-125) or to the main-thread initial tier (L178).
@@ -297,6 +313,11 @@ simulated minutes.
 | Firefox DPR 2 (153.2 s) | 360 | **64.7 %** | 46.7 % / 48.8 % | **85.2 / 14.6 / 0.2 %** | 62.1 h |
 | Firefox DPR 2 at the advisory's 115 s | 360 | 48.6 % | 46.6 % / 48.7 % | 98.0 / 1.9 / 0.2 % | 46.6 h |
 
+**This section is a MODEL REPLAY, not a measurement.** It uses one mid-phase duration per engine for every phase.
+Live jobs near full Moon took 8–14 s in Chromium, against 31 s at mid phase. The job counts per day, which the rule
+drives, are insensitive to duration. The busy fractions, the CPU column and the Firefox preview share depend
+directly on the single duration.
+
 The "CPU" column is 4 shards × busy wall time. It exceeds 24 h because four workers run at once. It is an upper
 bound, not a trace (U3).
 
@@ -318,9 +339,11 @@ bound, not a trace (U3).
     (`evidence/cadence-sim-fullmoon-window.json`). It gives about 77 expiries per month at this location.
   - With the Moon low or below the horizon (`up < 1` gives 2 % slack), the 8 Dec interval produced no expiry.
   - **Live confirmation** (24 Nov 16:30 UTC, Chromium DPR 1, real time): 5 jobs in 240 s, one per native minute, against 1 in the control a day earlier. Each minute the disc went initial → preview → refined, about 10 s of every 60 s below the refined tier. The 8 Dec cell had 1 job and no expiry. Visibility of these swaps was not judged (U2): each is an initial ↔ terrain swap of the R0033 F-2 kind.
-- **Refined never current: CONFIRMED only marginally, for Firefox DPR 2 at the durations measured here.** The
-  preview is shown 14.6 % of the time. At the advisory's 115 s that falls to 1.9 %, and at DPR 3 it would be worse
-  (the window is about 83 s at D ≈ 326).
+- **Refined lost between jobs (not "never current"): observed once, Firefox DPR 2.** In the single 720 s live run, the
+  third job (138.9 s) outlived its predecessor's record. That record expired at 599 s, the sixth native minute step
+  after its creation, and the preview was shown from 599 to 617 s (18 s). The refined tier was current for 577 of
+  710 s. The model, using one 153 s duration, gives 85 % refined. At the advisory's 115 s that would be 98 %. At
+  DPR 3 the window is about 83 s at D ≈ 326, so it would be worse (model only).
 
 ## 4. Q4 — Candidates against the current V5 baseline
 
@@ -337,7 +360,7 @@ WebKit were slower here than in the startup advisory; the cause is not establish
 while `phaseDrift < B/4` (native L182). The other caches are intra-computation or downstream, and none returns a
 refined result for an identity:
 
-- the engine's camera cache (`cameraKey`, engine L89-99) and the pool's `lightKey` (pool L162), which reuse the
+- the engine's camera cache (`cameraKey`, engine L89-99) and the pool's `lightKey` (pool L48), which reuse the
   camera receivers across Sun changes;
 - R0022's one material-projection cache in `moon-detail.mjs` (`docs/real-sky/LUNAR_DISPLAY.md`, "Bounded Moon
   projection reuse"), which reuses the device projection downstream of the surface.
@@ -441,15 +464,23 @@ calendar disc (gate D).
 
 **Lead time.** A job started at t₀ with the leading edge is presentable while its drift stays within ±0.0416 px:
 for about 4B/D of phase (Q3 table). That is ≈ 10.4 min at D = 108 and ≈ 5.2 min at D = 216 (mean rate). The lead L
-must satisfy duration ≤ L ≤ validity − margin:
+must satisfy duration ≤ L ≤ validity − duration. The validity window starts when the job's scene is created, not
+when its result arrives:
 
-- Chromium: 31–35 s ≤ L ≤ ~600 s (DPR 1) or ~300 s (DPR 2).
-- WebKit: 40–51 s ≤ L ≤ the same bounds.
-- Firefox: 122–169 s ≤ L ≤ ~600 s (DPR 1) or ~300 s (DPR 2).
+- Chromium: 31–35 s ≤ L ≤ ~620 s (DPR 1) or ~295 s (DPR 2).
+- WebKit: 40–51 s ≤ L ≤ ~610 s or ~280 s.
+- Firefox: 102–169 s ≤ L ≤ ~490–560 s (DPR 1) or ~160–230 s (DPR 2).
 
-The DPR 2 Firefox margin is narrow. The advisory's rule ("2× last duration, floor 60 s, default 240 s") fits every
-case measured here except a Firefox run longer than 150 s at DPR 2, where 2× exceeds the validity window. A rule of
-"max(duration × 1.2, 60 s), capped at half the validity window" would fit. This is analysis, not prototyped.
+These bounds use mid-phase durations; full-Moon jobs are shorter (8–14 s in Chromium, live).
+
+- For Firefox at DPR 2 the feasible window is narrow and can close: with a 169 s job the upper bound is about 163 s,
+  below the duration.
+- The advisory's rule ("2× last duration, floor 60 s") exceeds the upper bound there.
+- The rule considered earlier ("max(1.2 × duration, 60 s), capped at half the validity window") also cannot be
+  satisfied there: 166 s < 1.2 × 153 s.
+- At DPR 3, B is not feasible in Firefox.
+
+This is analysis, not prototyped.
 
 **Cost.**
 
@@ -458,15 +489,24 @@ case measured here except a Firefox run longer than 150 s at DPR 2, where 2× ex
 
 **Risks.**
 
-- A reveal before the result, for example when weather moves darkness or the lead was misjudged. The preview and
-  initial tiers cover this, as they do today on a fresh tab.
+- A reveal before the result, for example when the lead was misjudged or the job was slower than measured. The
+  reveal depends on solar elevation only (`moonShow = clamp(darkness·1.8)`, `darkness = clamp(−(e+3)/9)`,
+  index.html L3237, L3243), so its instant is predictable. The preview and initial tiers cover a late result, as
+  they do today on a fresh tab.
 - Gate D is unaffected: the initial tier still presents at reveal.
 - It changes R0033 DG-4's frozen scheduling: owner decision 2.
 
 ### 4C. Display-referred stopping (measured margin only; the rule is NOT changed)
 
-Per-step results against the final result. Chromium covers four phases; Firefox and WebKit G gave identical step
-bytes (`evidence/determinism.json` `steps`, `evidence/supplement.json`). Metrics:
+Per-step results against the final result. **Scope:**
+
+- the metric is a surface-only proxy;
+- Chromium covers four phases (G, C, H, F), and Firefox and WebKit only G, with identical step bytes;
+- full-Moon (α ≈ 0.09) and near-new phases, where the dark limb and Earthshine dominate, were not measured;
+- the device compositor (exposure, sky gas, opacity, cloud) was not measured.
+
+Sources: `evidence/determinism.json` `steps` and `evidence/supplement.json`. Metrics, each taken as the maximum over
+all disc pixels, limb and terminator included:
 
 - the published 300-px texture, premultiplied (as displayed over black);
 - `projectSurfaceCodes` at the real disc size: 108 px at DPR 1, 216 px at DPR 2. This is the product's own
@@ -487,7 +527,7 @@ bytes (`evidence/determinism.json` `steps`, `evidence/supplement.json`). Metrics
   (2.7–7.6 s, 10–25 %) is below a quarter code.
 - The 1,024 step is the longest step (8.8–20.5 s in Chromium, 88–100 s in Firefox) although it touches only
   2,266–5,720 receivers. Those are the terminator and ambiguous receivers. The rows are contiguous per shard
-  (pool L164), so this step is plausibly shard-imbalanced, as the advisory suggested (H; per-shard times were not
+  (pool L50), so this step is plausibly shard-imbalanced, as the advisory suggested (H; per-shard times were not
   recorded per step).
 
 **Risks to fidelity.** The residual changes sit on the terminator and on Earthshine-lit relief, exactly where gate D
@@ -495,8 +535,8 @@ and the PBR judgement look. 0.5 code is below one display code, but the criterio
 (screenshots override metrics). Stopping earlier would also change the `empirical-adaptive` label, which the host
 requires (native L266).
 
-**Status.** An amendment to R0033's accepted limits and to the ISM-MOON-012 rule: owner decision. Not recommended as
-a first step here.
+**Status.** Measured margin only; no recommendation either way. Any use would amend R0033's accepted limits and the
+ISM-MOON-012 rule, which is an owner decision.
 
 ### 4D. Combinations
 
@@ -513,11 +553,11 @@ a first step here.
 
 ### 5.1 Must not change without explicit owner authority
 
-- The refinement stopping rule: `moon/src/moon-quality.mjs` L95-113 (rules 64/256/1,024/4,096/8,192; receiver
+- The refinement stopping rule: `moon/src/moon-quality.mjs` L27-45 (rules 64/256/1,024/4,096/8,192; receiver
   threshold 0.125 code; projected gate 0.5 code from step 3), and the host's `empirical-adaptive` admission
   (`moon-native.mjs` L266). Candidate C changes it.
-- The scene definition and its currentness bound: `nativeCalendarMoonScene` (precision L63-68), the 0.0416
-  device-pixel budget (`PHASE_POSITION_BUDGET`, L50) and its read-time check `matches()` (native L66), which is
+- The scene definition and its currentness bound: `nativeCalendarMoonScene` (precision L22-27), the 0.0416
+  device-pixel budget (`PHASE_POSITION_BUDGET`, precision L9) and its read-time check `matches()` (native L66), which is
   checked again at every publication and read. Candidate A changes the scene definition.
 - R0033 DG-1…DG-5 as recorded in `docs/state-contracts/R0033.md` L13-17: the DG-1 = B construction-failure state;
   the DG-2 recovery budget (three automatic attempts at 30 s / 2 min / 10 min per page lifetime, not restored by
@@ -566,9 +606,9 @@ a first step here.
 **Facts (F)**
 
 - F1. The refined scene has a fixed raster, camera, Earth vector and extent. Its only varying input is the Sun
-  direction, set by α and the waxing flag (precision L63-68).
+  direction, set by α and the waxing flag (precision L22-27).
 - F2. With an advancing clock, α is continuous: the native phase plus a leading edge of `2·0.0416/D_max`. With a
-  frozen clock it is snapped to a grid of `4·0.0416/max(104,D)` (precision L55-66).
+  frozen clock it is snapped to a grid of `4·0.0416/max(104,D)` (precision L14-25).
 - F3. `D` (109 at DPR 1, measured) and `D_max` depend on DPR and on the observer's Moon altitude `up`
   (native L39-40; index.html L2296-2297, L4697).
 - F4. Refined bytes were identical across repeat, tab, process, concurrency, shard count and DPR in Chromium, and
@@ -616,7 +656,14 @@ a first step here.
   host-resolver rules mapping every non-loopback host to NOTFOUND; a context `**/*` route installed before any
   navigation and never removed; an in-page provider shim; and `finish()`, which throws if any non-loopback request
   was allowed.
-- Totals (`evidence/isolation-totals.json`): 14 environments, 597 records, 25 external attempts, **0 allowed**.
+- Totals (`evidence/isolation-totals.json`): 14 environments, 597 records, **0 allowed**. The 25 external records
+  are several layers' records of the same few requests; there were two distinct external hosts
+  (`fonts.googleapis.com`, `aus5.mozilla.org`), and both were refused.
+- Publication: `docs/audit/` is not in the `_config.yml` Pages exclusion list (R002B). This tree would be published
+  with the site unless the owner excludes it, as would the startup-advisory tree. That is a repository convention
+  question.
+- Errata: `evidence/determinism-analysis.json` `entrySize.note` cites `moon-precision.mjs L67`. The correct
+  locator is L26. The generated file is left unedited.
 - Firefox recorded no Playwright route decisions in these runs. Its catch-all was the proxy (all requests reached
   it as `proxy-loopback`, and `aus5.mozilla.org` and `fonts.googleapis.com` were refused there). This deviation is
   recorded, not hidden.

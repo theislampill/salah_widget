@@ -1,7 +1,7 @@
 'use strict';
 // Moon-reuse feasibility audit (2026-11-16): intervals in which the product's waxing flag (sign of the bright-limb
 // angle chi, src/native/index.html L2072-2077) disagrees with the direction in which the phase angle alpha actually
-// moves. During such an interval the host's leading-edge scene (moon/src/moon-precision.mjs L65) is offset in the
+// moves. During such an interval the host's leading-edge scene (moon/src/moon-precision.mjs L24) is offset in the
 // wrong direction. Pure ephemeris replay of the product's own functions; no browser.
 // Usage: node waxing-mismatch.cjs <repoRoot> <startISO> <days> <outJson>
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');

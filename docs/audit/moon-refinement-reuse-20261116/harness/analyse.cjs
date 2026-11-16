@@ -32,6 +32,6 @@ for(const s of ['G','C']){const lab=s==='G'?'b1t1-first':'b1t1-C-after-G';
  const parts={rgba:g('rgba'),calendarRgba:g('calendarRgba'),surfaceLinear:g('surfaceLinear'),surfaceCoverage:g('surfaceCoverage')};
  if(parts.rgba){const raw={},gz={};for(const [k,v] of Object.entries(parts)){raw[k]=v.length;gz[k]=zlib.gzipSync(v,{level:9}).length;}
   raw.calendarLinear=raw.surfaceLinear;gz.calendarLinear='derivable from surfaceLinear x one scalar gain (not measured separately)';
-  out.entrySize={engine:e,scene:'G',rawBytes:raw,rawTotal:Object.values(raw).reduce((a,b)=>a+b,0),gzip9Bytes:gz,gzip9TotalWithoutCalendarLinear:Object.values(gz).filter(x=>typeof x==='number').reduce((a,b)=>a+b,0),note:'DPR-independent: the scene raster is fixed at size 540 / outSize 300 (moon-precision.mjs L67)'};}}
+  out.entrySize={engine:e,scene:'G',rawBytes:raw,rawTotal:Object.values(raw).reduce((a,b)=>a+b,0),gzip9Bytes:gz,gzip9TotalWithoutCalendarLinear:Object.values(gz).filter(x=>typeof x==='number').reduce((a,b)=>a+b,0),note:'DPR-independent: the scene raster is fixed at size 540 / outSize 300 (moon-precision.mjs L26)'};}}
 fs.writeFileSync(outFile,JSON.stringify(out,null,1));
 console.log(JSON.stringify({summary:Object.fromEntries(Object.entries(out.summary).map(([k,v])=>[k,{distinct:v.distinctByScene,math:v.math,allowed:v.isolation&&v.isolation.allowedExternal,err:v.error}])),crossEngine:out.crossEngine,entrySize:out.entrySize},null,1));
