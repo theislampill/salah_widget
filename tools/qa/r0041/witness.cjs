@@ -20,7 +20,7 @@
 //   resume    - document.hidden overridden true -> visibilitychange -> 1 s -> false -> visibilitychange, x3
 //   sky       - SalahRealSky.invalidate('r0041-witness') x3 (sky-host lifecycle)
 //   identity  - SalahClock.set({rate:1,utcMs:now+3600 s}) (genuine clock/identity change)
-//   identity12- SalahClock.set({rate:1,utcMs:now+12 h}): a change whose new Moon differs visibly from the old one (lit
+//   identity12- SalahClock.set({rate:1,utcMs:now+7.5 h}) from 2026-11-18 16:30 Z: lit gibbous (alt 60) -> below-horizon (
 //               vs below-horizon calendar disc), so frames can be attributed to the OLD or NEW identity.
 // Every launch goes through iso.cjs (proxy, resolver rules, catch-all route before navigation, finish() throws on
 // any allowed non-loopback request).
@@ -77,7 +77,7 @@ async function oneRun(L,env,run){
   else if(route==='sky'){for(let k=0;k<3;k++){await pageMark('sky-invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahRealSky?.invalidate('r0041-witness');return w;});await page.waitForTimeout(6000);}}
   else if(route==='resume'){for(let k=0;k<3;k++){await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange'));});
       await page.waitForTimeout(1000);await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});document.dispatchEvent(new Event('visibilitychange'));return w;});await page.waitForTimeout(4000);}}
-  else if(route==='identity12'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+43200000});return w;});await page.waitForTimeout(45000);}
+  else if(route==='identity12'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+27000000});return w;});await page.waitForTimeout(45000);}
   else if(route==='identity'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+3600000});return w;});await page.waitForTimeout(45000);}
   capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});
   await page.waitForTimeout(300);
