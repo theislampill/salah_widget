@@ -25,6 +25,8 @@
 //   bfcache   - navigate to a loopback JSON document, 1 s, history back, x3; measured from the in-page pageshow
 //               (persisted) instant. When the engine does not restore from the back/forward cache the run records
 //               'bfcache-reload' and stops (that is a fresh startup, not this route).
+//   pageshow  - the bfcache lifecycle synthesised in spec order (pagehide persisted, hidden; 1 s; visible, pageshow
+//               persisted), x3, measured from the resume call
 //   sky       - SalahRealSky.invalidate('r0041-witness') x3 (sky-host lifecycle)
 //   identity  - SalahClock.set({rate:1,utcMs:now+3600 s}) (genuine clock/identity change)
 //   identity12- SalahClock.set({rate:1,utcMs:now+7.5 h}) from 2026-11-18 16:30 Z: lit gibbous (alt 60) -> below-horizon (
@@ -38,7 +40,7 @@ const [root,outFile,engine,dpr,motion,route,startISO,runsArg,cropDir]=process.ar
 const RUNS=+(runsArg||1);
 const FRAG='#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&simWx=0&simCloud=0&qa=1'+(motion==='full'?'&motion=full':'')+((route==='expiry'||route==='noSucc'||route==='noSuccThrow')?'&timeScale=60':'');
 const SHIFT=`(()=>{const ND=Date,off=${Date.parse(startISO)}-ND.now();class D extends ND{constructor(...a){super(...(a.length?a:[ND.now()+off]));}static now(){return ND.now()+off;}}window.Date=D;})();`;
-const RAF=`(()=>{window.__r41={frames:[],events:[],pageshow:[]};addEventListener('pageshow',e=>{if(e.persisted)window.__r41.pageshow.push({persisted:true,wall:performance.timeOrigin+performance.now()});});const tick=t=>{const c=document.querySelector('.c'),m=document.querySelector('.moon-mask-disc');let cur=null;try{cur=window.SalahMoonRuntime?.observe?.().current??null;}catch(e){}
+const RAF=`(()=>{window.__r41={frames:[],events:[],pageshow:[],renders:0};{const P=Worker.prototype.postMessage;Worker.prototype.postMessage=function(m,...t){if(m&&m.kind==='render'&&m.scene&&m.scene.fraction!=null)window.__r41.renders++;return P.call(this,m,...t);};}addEventListener('pageshow',e=>{if(e.persisted)window.__r41.pageshow.push({persisted:true,wall:performance.timeOrigin+performance.now()});});const tick=t=>{const c=document.querySelector('.c'),m=document.querySelector('.moon-mask-disc');let cur=null;try{cur=window.SalahMoonRuntime?.observe?.().current??null;}catch(e){}
  window.__r41.frames.push([Math.round(t*10)/10,c&&c.classList.contains('moon-ready')?1:0,m&&m.classList.contains('mask-on')?1:0,cur?1:0,c&&c.classList.contains('real-sky-composed')?1:0]);if(window.__r41.frames.length>20000)window.__r41.frames.shift();requestAnimationFrame(tick);};requestAnimationFrame(tick);})();`;
 const Y=(d,i)=>.2126*d[i]+.7152*d[i+1]+.0722*d[i+2];
 function discOf(img,rect,scale){
@@ -74,7 +76,7 @@ async function oneRun(L,env,run){
   await page.waitForFunction(()=>window.SalahMoonRuntime?.observe?.().state?.visibleSource==='refined-terrain',null,{timeout:240000,polling:250}).catch(()=>{});
   await page.waitForTimeout(3000);
   const rect=await page.evaluate(()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r?{x:r.x,y:r.y,w:r.width,h:r.height}:null;});
-  const settleWall=Date.now();
+  const settleWall=Date.now();const rendersAtSettle=await page.evaluate(()=>window.__r41.renders);
   const events=[];const mark=async name=>{events.push({name,wall:Date.now()});};
   // In-page wall time (performance.timeOrigin + now) of the forcing call itself, comparable with screencast timestamps.
   const pageMark=async (name,fn)=>{const wall=await page.evaluate(fn);events.push({name,wall});};
@@ -94,13 +96,24 @@ async function oneRun(L,env,run){
       await page.goBack({waitUntil:'commit'});await page.waitForTimeout(4000);
       const shows=await page.evaluate(()=>window.__r41?.pageshow??null);if(!shows||!shows.length){events.push({name:'bfcache-reload',wall:Date.now()});break;}
       const last=shows.at(-1);events.push({name:last.persisted?'resume':'bfcache-reload',wall:last.wall,persisted:last.persisted});}}
+  else if(route==='pageshow'){for(let k=0;k<3;k++){
+      // Back/forward-cache lifecycle, synthesised in spec order because no engine restores from bfcache under Playwright
+      // (Chromium: BackForwardCacheDisabledForDelegate; Firefox, WebKit: the page reloads): pagehide(persisted) ->
+      // hidden visibilitychange; 1 s; visible visibilitychange -> pageshow(persisted). The asset owner suspends and
+      // resumes on these events exactly as on a real restore.
+      await pageMark('hide',()=>{const w=performance.timeOrigin+performance.now();window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));
+        Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});
+      await page.waitForTimeout(1000);
+      await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});
+        document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));return w;});
+      await page.waitForTimeout(6000);}}
   else if(route==='identity12'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+27000000});return w;});await page.waitForTimeout(45000);}
   else if(route==='identity'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+3600000});return w;});await page.waitForTimeout(45000);}
   capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});
   await page.waitForTimeout(300);
-  const raf=await page.evaluate(()=>window.__r41.frames);const perfOrigin=await page.evaluate(()=>performance.timeOrigin);
+  const raf=await page.evaluate(()=>window.__r41.frames);const rendersAtEnd=await page.evaluate(()=>window.__r41.renders);const perfOrigin=await page.evaluate(()=>performance.timeOrigin);
   await page.close();
-  return {shots,raf,perfOrigin,events,rect,settleWall,t0,errors};
+  return {shots,raf,perfOrigin,events,rect,settleWall,t0,errors,renderJobsAfterSettle:rendersAtEnd-rendersAtSettle};
 }
 (async()=>{
   const env=await createEnv({root});const out={engine,dpr:+dpr,motion,route,startISO,fragment:FRAG,runs:[]};
@@ -134,7 +147,7 @@ async function oneRun(L,env,run){
         absentFramesAfterSettle:afterSettle.filter(f=>f.absent).length,absentIntervals:intervals,events:r.events.map(e=>({name:e.name,tMs:e.wall-r.t0,persisted:e.persisted})),
         rafFrames:rafAfter.length,rafMoonReadyOff:rafAfter.filter(x=>!x[1]).length,rafMaskOff:rafAfter.filter(x=>!x[2]).length,rafNotCurrent:rafAfter.filter(x=>!x[3]).length,
         startupFirstPresentMs:route==='startup'?(frames.find(f=>!f.absent)||{}).t??null:undefined,startupAbsentAfterFirstPresent:route==='startup'?(()=>{const i=frames.findIndex(f=>!f.absent);return i<0?null:frames.slice(i).filter(f=>f.absent).length;})():undefined,
-        pageErrors:r.errors,frameLog:frames.map(f=>[f.t,f.absent,f.stars,f.dRef,f.old,f.dPrev]),
+        pageErrors:r.errors,renderJobsAfterSettle:r.renderJobsAfterSettle,frameLog:frames.map(f=>[f.t,f.absent,f.stars,f.dRef,f.old,f.dPrev]),
         oldIdentityFramesAfterEvent:route==='identity12'&&r.events.length?frames.filter(f=>f.t>r.events[0].wall-r.t0&&f.old).length:undefined});
       console.log(engine,dpr,motion,route,'run',run,'frames',frames.length,'absentAfterSettle',afterSettle.filter(f=>f.absent).length,'intervals',JSON.stringify(intervals.slice(0,6)));
     }
