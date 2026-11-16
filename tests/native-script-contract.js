@@ -45,15 +45,29 @@
   // moon-initial f233b816 -> 067034c8 (moon-native.mjs: the named presence predicate and the
   // non-adopting observe() diagnostic accessor; production getters unchanged). moon-refinement and
   // first-paint unchanged. Awaits independent source review with the R0036 candidate.
+  // R0041 rebind (issue 143, branch claude/r0041-moon-presence-phase-direction-20261116 over main 47faae32):
+  // moon-initial 067034c8 -> da1eb220 (moon-precision.mjs phase-direction lead; moon-native.mjs record-signed
+  // drift, phaseDirection admission and the same-scope presenter guarantee; moon-first-paint.mjs head direction).
+  // moon-refinement and first-paint unchanged. CANDIDATE: awaits independent source review.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'067034c815be4d8d024b5c36cb3ed64c00f96127e3b7078ce6f2449da01578d8',
+    'moon-initial':'da1eb22063df1f169340f7722a4e247d6d19fd70963a3f94798582b10bac5012',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0041 (issue 143) CANDIDATE, branch claude/r0041-moon-presence-phase-direction-20261116 over main 47faae32:
+    // authored source a43aa6a6 (phase-direction authority in nativeLunarSnapshot) and the legacy-Moon structural control
+    // 15b5f253 of its generated index beaa894d. Awaits independent source review. Every entry below remains admitted.
+    'a43aa6a60a39e1e648a5738154fdc57fefea5967ee492c099cf793d18845804f':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'248ce9fd',path:'src/native/index.html',layout:'config,native'}),
+    '15b5f2535f807706158686d667a85c7879bcd787dc66b5b358ec8b7cce623807':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'cb0537a0',path:'index.html',
+      parentSha256:'beaa894dc6ac5c44d0a6b9a813c71cc7b4306d0e47edfc00437876fb0eafcad5',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):
     // authored source be476b3e and the legacy-Moon structural control f57dcab8 of its generated index c2c827c7. Every entry below remains admitted.
     'be476b3e8d9c99f127ac08cbadc951f21aaa4b977f5b57f15216f32f99d28fe9':Object.freeze({
