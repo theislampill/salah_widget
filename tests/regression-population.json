@@ -23,6 +23,7 @@
   "tests/native-appearance-currentness.test.cjs",
   "tests/prayer-next-event-state.test.cjs",
   "tests/prayer-presentation-residuals.test.cjs",
+  "tests/precip-eval-direction.test.cjs",
   "tests/r0002-admission.test.cjs",
   "tests/r0003-ownership.test.cjs",
   "tests/r0004-boot-day.test.cjs",
@@ -46,9 +47,9 @@
   "tests/r0024-response-zone.test.cjs",
   "tests/r0024-weather.test.cjs",
   "tests/r0028-closure-index.test.cjs",
+  "tests/r002b-pages-payload.test.cjs",
   "tests/r0030-reset-authority-mutations.test.cjs",
   "tests/r0030-reset-authority.test.cjs",
-  "tests/r002b-pages-payload.test.cjs",
   "tests/r0033-lunar-surface-gate.test.cjs",
   "tests/r003a-cloud-wind-truth.test.cjs",
   "tests/r003a-docs-truth.test.cjs",
@@ -1557,6 +1558,14 @@
   {
    "path": "tools/qa/precip_eval_levers.js",
    "reason": "browser-injected evaluation overlay read by precip_eval_capture.cjs (experiment levers L1-L5); not product code and not an instrument"
+  },
+  {
+   "path": "tools/qa/precip_models_geom.js",
+   "reason": "pure camera/wind geometry module of the precipitation model prototypes, imported by tests/precip-eval-direction.test.cjs and injected by precip_models_capture.cjs; not an instrument"
+  },
+  {
+   "path": "tools/qa/precip_models.js",
+   "reason": "browser-injected precipitation model prototypes M1-M5 (evaluation overlay); not product code and not an instrument"
   }
  ],
  "exclusions": [
@@ -2073,6 +2082,50 @@
      "<metrics.json>"
     ],
     "protocol": "writes a metrics JSON keyed by clip; exit 0"
+   }
+  },
+  {
+   "path": "tools/qa/precip_models_capture.cjs",
+   "reason": "native browser recipe (Playwright Chromium, served generated tree, catch-all route installed before any page, only loopback continued, fails on any non-loopback escape, mocked running clock, CDP screencast real-time capture); not a headless unit instrument",
+   "owner": "precipitation model comparison (research-only evidence; docs/audit/precipitation-presentation-20261115/models/README.md)",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/precip_models_capture.cjs",
+     "--pw",
+     "<playwright package dir>",
+     "--root",
+     "<tree>",
+     "--out",
+     "<bulk dir outside the repository>",
+     "--only",
+     "<regex on scene id>",
+     "--secs",
+     "4"
+    ],
+    "protocol": "per-scene meta.json and per-model PNG frames under <out>/<scene>/<model>; exit 0, exit 2 on any non-loopback continuation"
+   }
+  },
+  {
+   "path": "tools/qa/precip_models_post.py",
+   "reason": "offline post-processing of the model captures (Pillow/numpy): native-size animations, comparison clips, text contrast, blind pack; not a headless unit instrument",
+   "owner": "precipitation model comparison (research-only evidence; docs/audit/precipitation-presentation-20261115/models/README.md)",
+   "recipe": {
+    "argv": [
+     "python",
+     "tools/qa/precip_models_post.py",
+     "--bulk",
+     "<models bulk dir>",
+     "--anim",
+     "<dir>",
+     "--out",
+     "<summary.json>",
+     "--blind",
+     "<dir>",
+     "--key",
+     "<key file>"
+    ],
+    "protocol": "writes animated WebPs, a summary JSON and the blind pack; exit 0"
    }
   }
  ]

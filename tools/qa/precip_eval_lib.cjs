@@ -73,7 +73,7 @@ function openMeteoBody(site,W,nowMs,wxFn){
   const q=Math.floor(nowMs/900000)*900000,h=Math.floor(nowMs/3600000)*3600000,cw=wxFn?wxFn(q):W,x=(w,k)=>w[k]??WX_BASE[k];
   const cur={time:iso(q),interval:900,weather_code:x(cw,'code'),temperature_2m:x(cw,'temp'),apparent_temperature:x(cw,'temp')-2,relative_humidity_2m:x(cw,'hum'),dew_point_2m:x(cw,'dew'),
     wind_speed_10m:x(cw,'wind'),wind_direction_10m:x(cw,'wdir'),wind_gusts_10m:cw.gust!=null?cw.gust:x(cw,'wind')*1.5,cloud_cover:x(cw,'cloud'),cloud_cover_low:x(cw,'low'),cloud_cover_mid:x(cw,'mid'),cloud_cover_high:x(cw,'high'),
-    precipitation:x(cw,'precip'),rain:x(cw,'rain'),showers:x(cw,'showers'),snowfall:x(cw,'snow'),is_day:solarEl(q,site.lat,site.lon)>-0.8?1:0,visibility:x(cw,'vis')};
+    precipitation:cw.precip===null?null:x(cw,'precip'),rain:cw.precip===null?null:x(cw,'rain'),showers:cw.precip===null?null:x(cw,'showers'),snowfall:x(cw,'snow'),is_day:solarEl(q,site.lat,site.lon)>-0.8?1:0,visibility:x(cw,'vis')};
   const hrs=[-1,0,1,2,3,4].map(k=>h+k*3600000),col=k=>hrs.map(t=>x(wxFn?wxFn(t):W,k));
   return {latitude:site.lat,longitude:site.lon,timezone:site.tz,utc_offset_seconds:offSec(nowMs,site.tz),elevation:30,current:cur,
     hourly:{time:hrs.map(iso),temperature_2m:col('temp'),apparent_temperature:col('temp').map(v=>v-2),relative_humidity_2m:col('hum'),dew_point_2m:col('dew'),cloud_cover:col('cloud'),cloud_cover_low:col('low'),cloud_cover_mid:col('mid'),cloud_cover_high:col('high'),
@@ -96,7 +96,7 @@ async function openScene(browser,base,ordinary,o){
     const m=/api\.aladhan\.com\/v1\/timings\/(\d{2}-\d{2}-\d{4})/.exec(u),ls=siteFor(u,site);
     if(m){log.requests.push('aladhan:'+ls.key);return r.fulfill({status:200,contentType:'application/json',headers:CORS,body:JSON.stringify({code:200,status:'OK',data:prayerRecord(ls,m[1],ordinary)})});}
     if(u.includes('api.open-meteo.com')){let now=o.utcMs;try{now=await page.evaluate(()=>Date.now());}catch(e){}log.requests.push('open-meteo:'+ls.key+'@'+now);
-      if(!o.wx&&!o.wxFn)return r.abort();return r.fulfill({status:200,contentType:'application/json',headers:CORS,body:JSON.stringify(openMeteoBody(ls,{...WX_BASE,...(o.wx||{})},now,o.wxFn))});}
+      log.wxServed=(log.wxServed||0);if(!o.wx&&!o.wxFn)return r.abort();if(o.wxFailAfter!=null&&log.wxServed>=o.wxFailAfter){log.requests.push('open-meteo:FAILED(stub)');return r.abort();}log.wxServed++;return r.fulfill({status:200,contentType:'application/json',headers:CORS,body:JSON.stringify(openMeteoBody(ls,{...WX_BASE,...(o.wx||{})},now,o.wxFn))});}
     if(u.includes('api.rainviewer.com')){log.requests.push('radar');return r.fulfill({status:200,contentType:'application/json',headers:CORS,body:'{"version":"2.0","generated":0,"host":"https://tilecache.rainviewer.com","radar":{"past":[],"nowcast":[]}}'});}
     log.aborted.push(new URL(u).host);return r.abort();});
   page=await ctx.newPage();page.on('pageerror',e=>(log.errors||(log.errors=[])).push(String(e.message).slice(0,200)));
