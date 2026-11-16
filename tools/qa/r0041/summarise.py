@@ -24,7 +24,8 @@ for f in sys.argv[2:]:
                 stop = next((x[0] for x in seg if start is not None and x[0] > start and not x[1]), None)
                 per.append({'eventMs': t, 'absentFrames': sum(x[1] for x in seg), 'absentFromMs': start, 'presentAgainMs': stop,
                             'absentDurationMs': (stop - start) if (start is not None and stop is not None) else (None if start is None else 'open')})
-            rows.append({'frames': r['frames'], 'meanFrameIntervalMs': r['meanFrameIntervalMs'], 'absentFramesAfterSettle': r['absentFramesAfterSettle'],
+            dprev = [x[5] for x in log if len(x) > 5 and x[5] is not None and not x[1]]
+            rows.append({'maxPresentFrameDeltaY': max(dprev) if dprev else None, 'frames': r['frames'], 'meanFrameIntervalMs': r['meanFrameIntervalMs'], 'absentFramesAfterSettle': r['absentFramesAfterSettle'],
                          'perEvent': per, 'intervals': r['absentIntervals'][:8], 'rafMoonReadyOff': r['rafMoonReadyOff'], 'rafNotCurrent': r['rafNotCurrent'],
                          'startupFirstPresentMs': r.get('startupFirstPresentMs'), 'startupAbsentAfterFirstPresent': r.get('startupAbsentAfterFirstPresent')})
         out[os.path.basename(f) + '|' + key] = {'engine': d['engine'], 'dpr': d['dpr'], 'motion': d['motion'], 'route': d['route'], 'startISO': d['startISO'], 'runs': rows,

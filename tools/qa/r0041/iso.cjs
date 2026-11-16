@@ -127,16 +127,18 @@ class IsoProxy{
 //       viewport, reducedMotion ('reduce'|'no-preference'), fonts (route mode: fulfil font hosts with stand-in faces)
 async function launch(env,opts){
   const PW=loadPlaywright();const {engine='chromium',mode='route',profileDir=null,reducedMotion='no-preference',viewport={width:325,height:530},
-    timezoneId='Asia/Riyadh',fonts=null,headless=true,shim={},extraArgs=[],deviceScaleFactor=1}=opts;
+    timezoneId='Asia/Riyadh',fonts=null,headless=true,shim={},extraArgs=[],deviceScaleFactor=1,ignoreDefaultArgs=undefined,extraPrefs={}}=opts;
   const log=env.log;const proxy={server:`http://127.0.0.1:${env.proxy.port}`,bypass:'<-loopback>'};
   const common={viewport,deviceScaleFactor,timezoneId,locale:'en-US',reducedMotion,serviceWorkers:'block',proxy};
-  const launchOpts={headless};
+  // R0041 addition: ignoreDefaultArgs (Chromium: drop Playwright's --disable-back-forward-cache for the bfcache route)
+  // and extraPrefs (Firefox prefs merged after the isolation prefs). Isolation layers unchanged.
+  const launchOpts={headless};if(ignoreDefaultArgs)launchOpts.ignoreDefaultArgs=ignoreDefaultArgs;
   if(engine==='chromium')launchOpts.args=['--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1 , EXCLUDE localhost','--disable-background-networking',
     '--dns-prefetch-disable','--no-pings','--force-webrtc-ip-handling-policy=disable_non_proxied_udp','--webrtc-ip-handling-policy=disable_non_proxied_udp','--disable-component-update','--disable-domain-reliability','--disable-sync','--disable-features=NetworkPrediction,OptimizationHints,MediaRouter',...extraArgs];
   if(engine==='firefox')launchOpts.firefoxUserPrefs={'network.proxy.allow_hijacking_localhost':true,'network.proxy.no_proxies_on':'','network.dns.disablePrefetch':true,
     'network.predictor.enabled':false,'network.prefetch-next':false,'network.http.speculative-parallel-limit':0,'browser.safebrowsing.malware.enabled':false,
     'browser.safebrowsing.phishing.enabled':false,'app.update.enabled':false,'network.captive-portal-service.enabled':false,'network.connectivity-service.enabled':false,
-    'dom.serviceWorkers.enabled':false,'media.peerconnection.enabled':false,'media.peerconnection.ice.proxy_only':true};
+    'dom.serviceWorkers.enabled':false,'media.peerconnection.enabled':false,'media.peerconnection.ice.proxy_only':true,...extraPrefs};
   let browser=null,context;
   if(profileDir){fs.mkdirSync(profileDir,{recursive:true});context=await PW[engine].launchPersistentContext(profileDir,{...launchOpts,...common});}
   else{browser=await PW[engine].launch({...launchOpts,proxy});context=await browser.newContext(common);}

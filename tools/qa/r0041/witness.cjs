@@ -9,13 +9,16 @@
 //              forced event and, for identity-change routes, the settled frame at the end of the run
 //   ABSENT   if stars >= 10 or dRef > 4 against every reference.
 // Capture: Chromium uses the DevTools screencast (every composited frame, compositor timestamps); Firefox and WebKit
-// use a screenshot loop (capture interval reported; events shorter than it can be missed).
+// use a screenshot loop (capture interval reported; events shorter than it can be missed). A screenshot is attributed to
+// its REQUEST instant: one requested after a forcing call returned shows the post-event page (conservative for blanks).
 // In-page, per animation frame, the reveal classes and observe().current are logged with rAF timestamps so that
 // "indicators match pixels" can be checked.
 // Routes (forced in a real page of the product; Date shifted to the chosen night, real speed):
 //   startup   - from navigation; after the first PRESENT frame no frame may be ABSENT
+//   natural   - real speed, no forcing, R41_SECONDS (default 130) after settle; reference rolls to the last PRESENT frame
 //   expiry    - same-scope expiry: fragment &timeScale=60 makes jobs outlast the validity window
 //   noSucc    - same as expiry with window.SalahMoonInitial removed (no immediately available successor)
+//   noSuccThrow - same as expiry with every receiver render throwing (R0033 initial-tier budget waiting/exhausted)
 //   invalidate- SalahMoonRuntime.invalidate('r0041-witness') x3 (R0033 F-1 route, same identity)
 //   resume    - document.hidden overridden true -> visibilitychange (bubbling, as the browser's) -> 1 s -> false ->
 //               visibilitychange, x3
@@ -33,7 +36,7 @@ const fs=require('node:fs'),path=require('node:path');
 const {createEnv,launch}=require('./iso.cjs');const {decodePng}=require('./png.cjs');
 const [root,outFile,engine,dpr,motion,route,startISO,runsArg,cropDir]=process.argv.slice(2);
 const RUNS=+(runsArg||1);
-const FRAG='#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&simWx=0&simCloud=0&qa=1'+(motion==='full'?'&motion=full':'')+((route==='expiry'||route==='noSucc')?'&timeScale=60':'');
+const FRAG='#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&simWx=0&simCloud=0&qa=1'+(motion==='full'?'&motion=full':'')+((route==='expiry'||route==='noSucc'||route==='noSuccThrow')?'&timeScale=60':'');
 const SHIFT=`(()=>{const ND=Date,off=${Date.parse(startISO)}-ND.now();class D extends ND{constructor(...a){super(...(a.length?a:[ND.now()+off]));}static now(){return ND.now()+off;}}window.Date=D;})();`;
 const RAF=`(()=>{window.__r41={frames:[],events:[],pageshow:[]};addEventListener('pageshow',e=>{if(e.persisted)window.__r41.pageshow.push({persisted:true,wall:performance.timeOrigin+performance.now()});});const tick=t=>{const c=document.querySelector('.c'),m=document.querySelector('.moon-mask-disc');let cur=null;try{cur=window.SalahMoonRuntime?.observe?.().current??null;}catch(e){}
  window.__r41.frames.push([Math.round(t*10)/10,c&&c.classList.contains('moon-ready')?1:0,m&&m.classList.contains('mask-on')?1:0,cur?1:0,c&&c.classList.contains('real-sky-composed')?1:0]);if(window.__r41.frames.length>20000)window.__r41.frames.shift();requestAnimationFrame(tick);};requestAnimationFrame(tick);})();`;
@@ -66,7 +69,7 @@ async function oneRun(L,env,run){
   await page.goto(`http://127.0.0.1:${env.origins.ports['127.0.0.1']}/index.html${FRAG}`,{waitUntil:'commit',timeout:120000});
   if(cdp)await cdp.send('Page.startScreencast',{format:'png',everyNthFrame:1,maxWidth:Math.round(325*scale),maxHeight:Math.round(530*scale)});
   let capturing=true;
-  const loop=(async()=>{if(cdp)return;while(capturing){try{const t=Date.now();const png=await page.screenshot({scale:'device',animations:'allow',caret:'initial'});shots.push({t:(t+Date.now())/2,png});}catch(e){await page.waitForTimeout(20);}}})();
+  const loop=(async()=>{if(cdp)return;while(capturing){try{const t=Date.now();const png=await page.screenshot({scale:'device',animations:'allow',caret:'initial'});shots.push({t,png});}catch(e){await page.waitForTimeout(20);}}})();
   // settle: first refined result presented
   await page.waitForFunction(()=>window.SalahMoonRuntime?.observe?.().state?.visibleSource==='refined-terrain',null,{timeout:240000,polling:250}).catch(()=>{});
   await page.waitForTimeout(3000);
@@ -76,7 +79,13 @@ async function oneRun(L,env,run){
   // In-page wall time (performance.timeOrigin + now) of the forcing call itself, comparable with screencast timestamps.
   const pageMark=async (name,fn)=>{const wall=await page.evaluate(fn);events.push({name,wall});};
   if(route==='startup'){await page.waitForTimeout(2000);}
-  else if(route==='expiry'||route==='noSucc'){if(route==='noSucc')await page.evaluate(()=>{window.__r41keep=window.SalahMoonInitial;window.SalahMoonInitial=null;});await mark('observe');await page.waitForTimeout(45000);}
+  else if(route==='natural'){await mark('observe');await page.waitForTimeout(+(process.env.R41_SECONDS||130)*1000);}
+  else if(route==='expiry'||route==='noSucc'||route==='noSuccThrow'){
+      // noSucc: receiver removed after construction (missing receiver); noSuccThrow: receiver kept but every render throws,
+      // so R0033's initial-tier budget is spent (waiting -> exhausted) -- the two conditions of owner decision 2.
+      if(route==='noSucc')await page.evaluate(()=>{window.__r41keep=window.SalahMoonInitial;window.SalahMoonInitial=null;});
+      if(route==='noSuccThrow')await page.evaluate(()=>{const k=window.SalahMoonInitial;window.SalahMoonInitial={identity:k.identity,render(){throw new Error('r0041 witness: injected receiver failure');}};});
+      await mark('observe');await page.waitForTimeout(45000);}
   else if(route==='invalidate'){for(let k=0;k<3;k++){await pageMark('invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahMoonRuntime.invalidate('r0041-witness');return w;});await page.waitForTimeout(5000);}}
   else if(route==='sky'){for(let k=0;k<3;k++){await pageMark('sky-invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahRealSky?.invalidate('r0041-witness');return w;});await page.waitForTimeout(6000);}}
   else if(route==='resume'){for(let k=0;k<3;k++){await pageMark('hide',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});
@@ -96,7 +105,8 @@ async function oneRun(L,env,run){
 (async()=>{
   const env=await createEnv({root});const out={engine,dpr:+dpr,motion,route,startISO,fragment:FRAG,runs:[]};
   try{
-    const L=await launch(env,{engine,mode:'route',deviceScaleFactor:+dpr,reducedMotion:motion==='full'?'no-preference':'reduce'});
+    const L=await launch(env,{engine,mode:'route',deviceScaleFactor:+dpr,reducedMotion:motion==='full'?'no-preference':'reduce',
+      ...(route==='bfcache'?{ignoreDefaultArgs:engine==='chromium'?['--disable-back-forward-cache']:undefined,extraPrefs:{'browser.sessionhistory.max_total_viewers':8}}:{})});
     await L.context.addInitScript(SHIFT);await L.context.addInitScript(RAF);
     for(let run=0;run<RUNS;run++){
       const r=await oneRun(L,env,run);if(!r.rect){out.runs.push({error:'no Moon rectangle',errors:r.errors});continue;}
@@ -105,11 +115,15 @@ async function oneRun(L,env,run){
       const decode=s=>{try{return decodePng(s.png);}catch(e){return null;}};
       const before=[...shots].reverse().find(s=>s.t<=r.settleWall);const last=shots.at(-1);
       const refOld=before&&route!=='startup'?discOf(decode(before),r.rect,scale).disc:null,refNew=(route==='identity'||route==='identity12'||route==='startup')&&last?discOf(decode(last),r.rect,scale).disc:null;
-      const frames=[];let firstPresent=null;
-      for(const s of shots){const img=decode(s);if(!img)continue;const c=classify(img,r.rect,scale,[refOld,refNew]);
+      const frames=[];let firstPresent=null,prevDisc=null,rolling=refOld;
+      for(const s of shots){const img=decode(s);if(!img)continue;
+        // natural: the reference ROLLS to the last PRESENT frame (the lit disc changes slowly at real speed over minutes)
+        const c=classify(img,r.rect,scale,route==='natural'?[rolling]:[refOld,refNew]);if(route==='natural'&&!c.absent&&s.t>r.settleWall)rolling=c.disc;
+        // dPrev: mean |dY| over the disc against the previous captured frame (size of a visible swap, e.g. V5 -> refined)
+        const dPrev=prevDisc&&prevDisc.length===c.disc.length?+(c.disc.reduce((p,v,i)=>p+Math.abs(v-prevDisc[i]),0)/c.disc.length).toFixed(2):null;prevDisc=c.disc;
         // startup: dRef is meaningless before a reference; use stars and disc-vs-corner difference of the reference-free part
         const absent=c.absent;
-        frames.push({t:Math.round(s.t-r.t0),absent:absent?1:0,stars:c.stars,dRef:c.dRef==null?null:+c.dRef.toFixed(2),old:c.dOld!=null&&c.dOld<=4&&!(c.dNew!=null&&c.dNew<=4)?1:0});
+        frames.push({t:Math.round(s.t-r.t0),absent:absent?1:0,stars:c.stars,dRef:c.dRef==null?null:+c.dRef.toFixed(2),old:c.dOld!=null&&c.dOld<=4&&!(c.dNew!=null&&c.dNew<=4)?1:0,dPrev});
         if(!absent&&firstPresent==null&&route!=='startup')firstPresent=s.t;
         if(absent&&cropDir&&run===0&&!out.cropSaved){fs.mkdirSync(cropDir,{recursive:true});fs.writeFileSync(path.join(cropDir,`${engine}-dpr${dpr}-${motion}-${route}-absent.png`),s.png);out.cropSaved=true;}}
       const afterSettle=route==='startup'?frames.slice(Math.max(0,frames.findIndex(f=>!f.absent))):frames.filter(f=>f.t>=r.settleWall-r.t0-3000);
@@ -120,7 +134,7 @@ async function oneRun(L,env,run){
         absentFramesAfterSettle:afterSettle.filter(f=>f.absent).length,absentIntervals:intervals,events:r.events.map(e=>({name:e.name,tMs:e.wall-r.t0,persisted:e.persisted})),
         rafFrames:rafAfter.length,rafMoonReadyOff:rafAfter.filter(x=>!x[1]).length,rafMaskOff:rafAfter.filter(x=>!x[2]).length,rafNotCurrent:rafAfter.filter(x=>!x[3]).length,
         startupFirstPresentMs:route==='startup'?(frames.find(f=>!f.absent)||{}).t??null:undefined,startupAbsentAfterFirstPresent:route==='startup'?(()=>{const i=frames.findIndex(f=>!f.absent);return i<0?null:frames.slice(i).filter(f=>f.absent).length;})():undefined,
-        pageErrors:r.errors,frameLog:frames.map(f=>[f.t,f.absent,f.stars,f.dRef,f.old]),
+        pageErrors:r.errors,frameLog:frames.map(f=>[f.t,f.absent,f.stars,f.dRef,f.old,f.dPrev]),
         oldIdentityFramesAfterEvent:route==='identity12'&&r.events.length?frames.filter(f=>f.t>r.events[0].wall-r.t0&&f.old).length:undefined});
       console.log(engine,dpr,motion,route,'run',run,'frames',frames.length,'absentAfterSettle',afterSettle.filter(f=>f.absent).length,'intervals',JSON.stringify(intervals.slice(0,6)));
     }
