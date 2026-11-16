@@ -54,13 +54,13 @@
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
-    // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at a5c7e885:
-    // authored source 26059840 and the legacy-Moon structural control 5b3abea2 of its generated index 388ee9ae. Every entry below remains admitted.
-    '26059840189d3feea64ee4047728409f3c07a32d04d06eb0ebaca091489e554d':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'a5c7e885de13e859e5e0b4afc4660d09e18f2b14',path:'src/native/index.html',layout:'config,native'}),
-    '5b3abea2a8ad31038a9ce4f5fff5cac14035b5342b53b90d39e32ba8eb08edef':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'a5c7e885de13e859e5e0b4afc4660d09e18f2b14',path:'index.html',
-      parentSha256:'388ee9ae156223f4d7e643c1a4f261c8f2394e791b1e1230b275397c6e1ee925',
+    // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):
+    // authored source be476b3e and the legacy-Moon structural control f57dcab8 of its generated index c2c827c7. Every entry below remains admitted.
+    'be476b3e8d9c99f127ac08cbadc951f21aaa4b977f5b57f15216f32f99d28fe9':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'26e797983fbfda080307dc1fda336e9ad2fac560',path:'src/native/index.html',layout:'config,native'}),
+    'f57dcab8ce8bf5462896aec6b8edf1ae1a0d966d7ba643276cfa456e26ceb31d':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'26e797983fbfda080307dc1fda336e9ad2fac560',path:'index.html',
+      parentSha256:'c2c827c7e5d4d203a757483de1b8d3e01c8d31984a20b8ad9d06e5a799d5ae12',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0033 re-bind after merging main 8990c36d (R0031): authored source 90b0f642 and the legacy-Moon structural control e0acbaae of its generated index 3615841c. Every entry below remains admitted.
