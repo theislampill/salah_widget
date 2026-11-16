@@ -608,11 +608,13 @@ not settled, or body received and not yet decided); `admitted` (a new current re
 `admitted-track` (no admissible current, the hourly track adopted); `retained-current` (a new admissible current
 kept out because the retained one is still eligible); `early-renewal-miss` (R002F); `no-admissible-record`;
 `provider-error` (`error:true` body); `malformed-body` (not a JSON object); `zone-rejected` (response zone check);
-`transport-unavailable` (HTTP, timeout, network, image or canvas failure); `superseded` (cancelled, obsolete or
-expired attempt; written only to that attempt's own record, so its `state` may still show the last stage it
+`transport-unavailable` (HTTP, network, image or canvas failure); `expired` (the attempt's own absolute deadline
+passed: a `fetch`/`body`/`image timeout`, or a response arriving after the deadline while the attempt still owned its
+request); `superseded` (the attempt was replaced by a newer operation or runtime generation, or its image stage could
+not begin for that reason; written only to that attempt's own record, so its `state` may still show the last stage it
 reached); `admission-error` (an exception during admission). Radar, retained test path only: `admitted`,
 `malformed-manifest`, `no-frame`, `rejected` (R0032's host, frame-path and tile-index rejections, `state`
-`rejected`), `transport-unavailable`, `superseded`. A weather attempt that reached adoption also carries
+`rejected`), `transport-unavailable`, `expired`, `superseded`. A weather attempt that reached adoption also carries
 `adopted:{current,track}`. No admission, retry or freshness behaviour depends on these fields.
 For freshness inspection, `qaState().cache.weatherSourceAgeSec` and
 `weatherAgeSec` report source and receipt ages, with `currentEligible`,

@@ -169,7 +169,8 @@ async function calendarScene(hash,name,fn,extraReady){
          }
        }
        const nativeAfter=ww.SalahMoonHost?.capture?.(),after=legacy?api?.state:api.observe().state;
-      s={sameOwner:true,run:f.run,attempt:f.attempt,documentId:f.documentId,hash:f.hash,sourceSha256:f.sourceSha256,
+      // R0036: the Moon read path is part of the observation, so a legacy (adopting) read is never mistaken for a pure one.
+      s={moonReadPath:legacy?"legacy-adopting-getters (runtime without observe())":"observe",sameOwner:true,run:f.run,attempt:f.attempt,documentId:f.documentId,hash:f.hash,sourceSha256:f.sourceSha256,
         elapsedMs:performance.now()-started,prayerReady:prayerReady(ww),parentVisible:document.visibilityState==="visible",childVisible:doc.visibilityState==="visible",
         frameInView:r.right>0 && r.bottom>0 && r.left<innerWidth && r.top<innerHeight,frameWidth:r.width,frameHeight:r.height,
         paused:!card || card.classList.contains("paused"),composed:!!card && card.classList.contains("real-sky-composed"),

@@ -100,6 +100,27 @@ test('R36-04 I-D2: qaState().moonTruth and the CP9 wrapper never read the adopti
   assert.equal(wrapped.moonRenderer.status,'refining');
 });
 
+// Review A1 (mutant M22): a runtime without observe() is not read through its adopting getters by the CP9 wrapper either.
+test('R36-09 I-D2: the CP9 wrapper reports no moonRenderer rather than falling back to the adopting state getter',()=>{
+  const h=boot();
+  h.run(`window.__r36legacy=0;window.SalahMoonRuntime={get state(){__r36legacy++;return {status:'ready'};},surface(){__r36legacy++;return null;}};`);
+  const q=h.run('qaState()');
+  assert.equal(h.run('__r36legacy'),0,'a diagnostic read used an adopting getter of a runtime without observe()');
+  assert.equal(q.moonRenderer,null);assert.equal(q.moonTruth.observation,null);
+});
+
+// Review A1 (mutant M15): geolocationLastErrorCurrent follows the attempt's read-time supersession.
+test('R36-14 geolocationLastErrorCurrent is true only while the erroring GPS attempt still owns the location intent',()=>{
+  const h=boot();
+  h.run('_setOpen=true;_geoLastError="denied";_geoAttempt={attempt:1,owner:{session:_setSession,edit:_setEdit,seq:_setSearchSeq},outcome:"error",error:"denied",at:1};');
+  const live=h.run('qaState().config');
+  assert.equal(live.geolocationLastErrorCurrent,true);assert.equal(live.geolocationAttempt.superseded,false);
+  h.run('_setEdit++;');                                                       // a newer location intent (an edit)
+  const after=h.run('qaState().config');
+  assert.equal(after.geolocationAttempt.superseded,true);assert.equal(after.geolocationLastErrorCurrent,false);
+  assert.equal(after.geolocationLastError,'denied','the compatibility string stays');
+});
+
 // N3 / ES36-03: the smoke instrument polls the observation, not the adopting getters.
 // Executed, not grepped: the smoke stage's own Moon-read lines run against a runtime double that counts reads.
 test('R36-05 I-D2: tests/smoke.html Moon reads use observe() when the runtime has it, never the adopting getters',()=>{
@@ -115,6 +136,12 @@ test('R36-05 I-D2: tests/smoke.html Moon reads use observe() when the runtime ha
   const out=new Function('ww','doc','fr',lines+'\nreturn {runtime,backing,after};')(ww,doc,fr);
   assert.equal(reads.adopting,0,'smoke used an adopting getter on a runtime that has observe()');
   assert.equal(reads.observe,2,'before and after observations');assert.equal(out.backing,canvas);assert.equal(out.after.current,true);
+  // Review A3: the legacy branch (a runtime without observe()) is recorded in the observation, never silent.
+  const path=/moonReadPath:(legacy\?"[^"]*":"observe")/.exec(stage);assert.ok(path,'the observation records its Moon read path');
+  const legacyApi={get state(){return {current:true};},surface(){return canvas;}};
+  const legacyOut=new Function('ww','doc','fr',lines+'\nreturn {legacy,path:'+path[1]+'};')({...ww,SalahMoonRuntime:legacyApi},doc,fr);
+  assert.equal(legacyOut.legacy,true);assert.match(legacyOut.path,/^legacy-adopting-getters/);
+  assert.equal(new Function('ww','doc','fr',lines+'\nreturn '+path[1]+';')(ww,doc,fr),'observe');
 });
 
 // ES36-09 N2: every effective override is reported; a present but inert parameter is not "simulated".

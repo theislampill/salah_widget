@@ -1558,16 +1558,20 @@ const _WX_BODY_WAIT=10000, _RADAR_BODY_WAIT=10000, _RADAR_IMAGE_WAIT=10000;
 const _wxRequests={weather:null,radar:null};                  // last small attempt result; never a freshness/coverage grant
 // R0036 machine OUT: `state` keeps R000D's transport meaning; `admission` (closed vocabulary, DESIGN.md) is the outcome
 // of the admission decision, written once per attempt after that decision. Transport stages carry "pending"; a transport
-// failure "transport-unavailable"; a cancelled/obsolete/expired attempt "superseded"; a host/path/tile rejection "rejected".
-function wxTransportAdmission(state,reason){
+// failure "transport-unavailable"; an attempt replaced by a newer operation/generation "superseded"; an attempt whose own
+// absolute deadline passed (timer or late arrival) "expired"; a host/path/tile rejection "rejected".
+// Why an attempt is no longer eligible: its operation/slot was replaced (superseded) or, still owning them, its deadline passed.
+function wxIneligible(op,a){ return requestEligible(op)&&op.attempt===a?"expired":"superseded"; }
+function wxTransportAdmission(state,reason,op,a){
   if(state==="rejected") return "rejected";
-  if(state==="unavailable") return /^(cancelled|obsolete or expired)/.test(reason||"")?"superseded":"transport-unavailable";
-  return "pending";
+  if(state!=="unavailable") return "pending";
+  if(/^cancelled/.test(reason||"")) return "superseded";
+  if(/^obsolete or expired/.test(reason||"")) return wxIneligible(op,a);
+  return / timeout$/.test(reason||"")?"expired":"transport-unavailable";
 }
 function wxAttemptState(op,a,state,reason=null){
-  const admission=wxTransportAdmission(state,reason);
-  if(requestEligible(op)) _wxRequests[op.kind]={generation:op.generation,operationId:op.operationId,attemptId:a.attemptId,state,reason,admission};
-  else if(admission==="superseded") wxAdmission(op,a,admission);   // an obsolete attempt may label only its own record
+  if(requestEligible(op)) _wxRequests[op.kind]={generation:op.generation,operationId:op.operationId,attemptId:a.attemptId,state,reason,admission:wxTransportAdmission(state,reason,op,a)};
+  else if(state==="unavailable") wxAdmission(op,a,"superseded");   // an obsolete attempt may label only its own record
 }
 // Labels only the record this exact attempt wrote; never another attempt's or a newer operation's record.
 function wxAdmission(op,a,admission,adopted=null){
@@ -1612,7 +1616,7 @@ async function fetchWeather(renewal=null){            // renewal: only renewWeat
   lastWxTry=now; _wxRetry.weather={startedAt:elapsed,clock:retryClockDomain()}; wxBusy=true;
   const u=`https://api.open-meteo.com/v1/forecast?latitude=${enc(captured.lat)}&longitude=${enc(captured.lon)}&current=temperature_2m,apparent_temperature,relative_humidity_2m,dew_point_2m,wind_speed_10m,wind_direction_10m,wind_gusts_10m,cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,visibility,is_day,weather_code,precipitation,rain,showers,snowfall&hourly=${_WX_HOURLY}&forecast_days=3&temperature_unit=${captured.units==="c"?"celsius":"fahrenheit"}&wind_speed_unit=ms&timezone=${enc(captured.zone)}`;
   try{
-    const result=await wxFetchJson(op,a,u); if(!result.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
+    const result=await wxFetchJson(op,a,u); if(!result.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,wxIneligible(op,a)); return; }
     const j=result.data;
     if(!j||typeof j!=="object"||Array.isArray(j)){ wxAdmission(op,a,"malformed-body"); return; }
     if(j.error===true){ wxAdmission(op,a,"provider-error"); return; }
@@ -1621,7 +1625,7 @@ async function fetchWeather(renewal=null){            // renewal: only renewWeat
     }
     const ctx={...captured,retrievedAt:Date.now()}, current=wxUnitsMatch(j.current_units,ctx)?admitWeatherRecord(j.current,ctx):null;
     const track=admitWeatherTrack(j.hourly,ctx,j.hourly_units), elevation=wxNumber(j.elevation);
-    if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }   // includes delayed-timer absolute expiry after normalization
+    if(!attemptEligible(op,a)){ wxAdmission(op,a,wxIneligible(op,a)); return; }   // includes delayed-timer absolute expiry after normalization
     // Publication must wake the native consumer even at a frozen clock or
     // between the loader's completed paint and its first animation callback.
     if((current||track)&&elevation!=null){ siteElev=elevation; _siteElevAt={lat:captured.lat,lon:captured.lon}; _renderDirty=true; }
@@ -1726,7 +1730,7 @@ async function acquireRadar(){                       // retained acquisition (te
   lastRadarAt=now; _wxRetry.radar={startedAt:elapsed,clock:retryClockDomain()}; radarBusy=true;
   try{
     const result=await wxFetchJson(op,a,"https://api.rainviewer.com/public/weather-maps.json");
-    if(!result.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
+    if(!result.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,wxIneligible(op,a)); return; }
     const j=result.data, host=j&&j.host, past=j&&j.radar&&j.radar.past;
     if(!Array.isArray(past)) wxAdmission(op,a,"malformed-manifest");
     else if(!past.length) wxAdmission(op,a,"no-frame");
@@ -1741,10 +1745,11 @@ async function acquireRadar(){                       // retained acquisition (te
       const admitted=radarTileBase(host,fr.path);          // R0032: no tile request to a non-admitted origin or path
       if(!admitted.base){ wxAttemptState(op,a,"rejected",admitted.reason); return; }
       const {fx,fy,xt,yt}=idx, url=admitted.base+"/256/"+z+"/"+xt+"/"+yt+"/2/1_1.png";
-      if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
-      finishAttempt(op,a); a=beginAttempt(op,_RADAR_IMAGE_WAIT); if(!a) return;
+      if(!attemptEligible(op,a)){ wxAdmission(op,a,wxIneligible(op,a)); return; }
+      const manifest=a; finishAttempt(op,a); a=beginAttempt(op,_RADAR_IMAGE_WAIT);
+      if(!a){ wxAdmission(op,manifest,"superseded"); return; }   // terminal: only an ineligible request refuses the image attempt
       const image=await wxRadarSample(op,a,url,fx,fy,xt,yt);
-      if(!image.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,"superseded"); return; }
+      if(!image.ok) return; if(!attemptEligible(op,a)){ wxAdmission(op,a,wxIneligible(op,a)); return; }
       const retrievedAt=Date.now();
       weatherRadar={precipMm:0,at:retrievedAt,retrievedAt,target:captured.target,frame:fr.time,frameGeneratedAt,
         indexGeneratedAt,sample:image.sample,source:"RainViewer mosaic",quantitativeAuthority:"unavailable (uncalibrated palette/alpha)"};
