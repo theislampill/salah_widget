@@ -76,7 +76,7 @@ def main():
              'aborted': meta.get('aborted'), 'geomProduct': meta.get('geomProduct'), 'models': {}}
         seqs, labels = [], []
         for spec, rec in meta.get('models', {}).items():
-            mdir = os.path.join(sdir, re.sub(r'[|:+~]', '_', spec))
+            mdir = os.path.join(sdir, re.sub(r'[|:+~^]', '_', spec))
             paths = sorted(glob.glob(os.path.join(mdir, 'f*.png')))
             M = {'frames': len(rec.get('frames') or []), 'costMs': rec.get('costMs'), 'costMs4x': rec.get('costMs4x'),
                  'geomSame': rec.get('geom', {}).get('card') == meta.get('geomProduct', {}).get('card') and rec.get('geom', {}).get('header') == meta.get('geomProduct', {}).get('header')
@@ -142,3 +142,41 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def strip(anim_dir, scenes, model, labels, out, crop_h=330):
+    """Side-by-side strip of one model across scenes (frames aligned by index from each scene's clip start)."""
+    seqs = []
+    for sc in scenes:
+        im = Image.open(os.path.join(anim_dir, f'{sc}--{model}.webp'))
+        fr = []
+        for k in range(getattr(im, 'n_frames', 1)):
+            im.seek(k); fr.append(im.convert('RGB').crop((0, 0, 325, crop_h)))
+        seqs.append(fr)
+    n = min(len(s) for s in seqs)
+    outf = []
+    for k in range(n):
+        C = Image.new('RGB', (len(seqs) * 329 - 4, crop_h + 18), (18, 18, 22)); d = ImageDraw.Draw(C)
+        for j, (s, lab) in enumerate(zip(seqs, labels)):
+            C.paste(s[k], (j * 329, 18)); d.text((j * 329 + 4, 2), lab, fill=(235, 235, 235), font=font())
+        outf.append(C)
+    outf[0].save(out, save_all=True, append_images=outf[1:], duration=int(1000 / FPS), loop=0, quality=78, method=4)
+    return out
+
+
+def compare_files(paths, labels, out, crop_h=530, max_frames=100):
+    """Side-by-side comparison from per-model clip files (first frames aligned)."""
+    seqs = []
+    for p in paths:
+        im = Image.open(p); fr = []
+        for k in range(min(getattr(im, 'n_frames', 1), max_frames)):
+            im.seek(k); fr.append(im.convert('RGB').crop((0, 0, 325, crop_h)))
+        seqs.append(fr)
+    n = min(len(s) for s in seqs); outf = []
+    for k in range(n):
+        C = Image.new('RGB', (len(seqs) * 329 - 4, crop_h + 18), (18, 18, 22)); d = ImageDraw.Draw(C)
+        for j, (s, lab) in enumerate(zip(seqs, labels)):
+            C.paste(s[k], (j * 329, 18)); d.text((j * 329 + 4, 2), lab, fill=(235, 235, 235), font=font())
+        outf.append(C)
+    outf[0].save(out, save_all=True, append_images=outf[1:], duration=int(1000 / FPS), loop=0, quality=78, method=4)
+    return out

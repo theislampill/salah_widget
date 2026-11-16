@@ -2,7 +2,7 @@
 // Precipitation MODEL comparison (research only, 2026-11-15): REAL-TIME native-size clips of the current product rain
 // and the M1-M5 prototypes (tools/qa/precip_models.js) in one page per scene, same mocked start time and seed.
 //   node tools/qa/precip_models_capture.cjs --pw <playwright package dir> --root <generated tree> --out <bulk dir>
-//        --only <regex on scene id> [--secs 4] [--list 1] [--throttle 1]
+//        --only <regex on scene id> [--secs 4] [--list 1] [--throttle 1] [--models M3,M4,M5 (subset re-capture)]
 // Capture: Chromium, CDP Page.startScreencast (lossless PNG frames with compositor timestamps) while the mocked
 // clock RUNS at wall rate, so CSS animation, rAF cloud motion and the overlay run unassisted. Card 325x530, DPR 1.
 // Network: precip_eval_lib.cjs installs the catch-all route on the context before any page exists, continues only
@@ -40,6 +40,7 @@ function scenes(){const out=[],site=L.SITES.madinah;
   for(const wd of ['w8','e8','n8','s8'])for(const az of [180,90])
     add(`orient-moderate-${wd}-az${az}`,'equinox','solar-noon','moderate',wd,{hash:az===180?'':`&skyAz=${az}`,models:['current','M1','M1:rigid','M2']});
   for(const rg of ['light','moderate','heavy'])add(`tlong-${rg}-w8`,'equinox','solar-noon',rg,'w8',{models:['M1','M1~67','M2','M2~67']});
+  for(const rg of ['drizzle','light','moderate','heavy','showers'])add(`gain-${rg}-calm`,'equinox','solar-noon',rg,'calm',{models:['current','M1','M1^400','M2','M2^400','M3^400']});
   add('frame-moderate-w8','equinox','solar-noon','moderate','w8',{models:['M1','M1:rigid','M2','M2:rigid','M5','M5:rigid']});
   // expiry: provider fails after the first record; clock jumped to boundary-3 s; 12 s real-time across expiry
   for(const rg of ['moderate','heavy'])for(const m of ['current','M1|immediate','M1|complete','M2|immediate','M2|complete','M5|complete'])
@@ -50,7 +51,8 @@ function scenes(){const out=[],site=L.SITES.madinah;
   for(const rg of ['drizzle','light','moderate','heavy','showers'])add(`reduced-${rg}`,'equinox','solar-noon',rg,'w8',{reduced:true});
   return out;}
 const RECTS=L.RECTS;
-(async()=>{let list=scenes();if(a.only)list=list.filter(s=>new RegExp(a.only).test(s.id));if(a.list){console.log(list.map(s=>s.id+' '+s.models.join(',')).join('\n'));return;}
+(async()=>{let list=scenes();if(a.only)list=list.filter(s=>new RegExp(a.only).test(s.id));
+  if(a.models){const want=a.models.split(',');list=list.map(s=>({...s,models:s.models.filter(m=>want.includes(m.split(/[|:~^+]/)[0]))})).filter(s=>s.models.length);}if(a.list){console.log(list.map(s=>s.id+' '+s.models.join(',')).join('\n'));return;}
   const pw=require(a.pw),root=path.resolve(a.root||'.'),out=path.resolve(a.out);
   const ordinary=JSON.parse(fs.readFileSync(L.ordinaryPath,'utf8'));const overlay=fs.readFileSync(path.join(__dirname,'precip_models_geom.js'),'utf8')+String.fromCharCode(10)+fs.readFileSync(path.join(__dirname,'precip_models.js'),'utf8');
   const {srv,base}=await L.serve(root);const browser=await pw.chromium.launch({headless:a.headed!=='1',args:['--ignore-gpu-blocklist']});let bad=0;
@@ -70,9 +72,9 @@ const RECTS=L.RECTS;
       meta.geomProduct=await s.page.evaluate(GEO);
       const cdp=await s.ctx.newCDPSession(s.page);
       for(const spec of sc.models){
-        const [mf0,policyStr]=spec.split('|'),[mf,Tms]=mf0.split('~'),[mname,frm]=mf.replace('+cat','').split(':'),cat=mf.includes('+cat');
-        const mdir=path.join(dir,spec.replace(/[|:+~]/g,'_'));fs.mkdirSync(mdir,{recursive:true});
-        await s.page.evaluate(([m,f,p,c,tm])=>window.__PM.set(m==='current'?'off':m,f||'flat',{policy:p||'immediate',categoryOnly:c,T:tm?tm/1000:null}),[mname,frm,policyStr,cat,Tms?+Tms:null]);
+        const [mf00,policyStr]=spec.split('|'),[mf0,Gx]=mf00.split('^'),[mf,Tms]=mf0.split('~'),[mname,frm]=mf.replace('+cat','').split(':'),cat=mf.includes('+cat');
+        const mdir=path.join(dir,spec.replace(/[|:+~^]/g,'_'));fs.mkdirSync(mdir,{recursive:true});
+        await s.page.evaluate(([m,f,p,c,tm,gx])=>window.__PM.set(m==='current'?'off':m,f||'flat',{policy:p||'immediate',categoryOnly:c,T:tm?tm/1000:null,G:gx}),[mname,frm,policyStr,cat,Tms?+Tms:null,Gx?+Gx:null]);
         await s.page.waitForTimeout(900);
         const rec={spec,frames:[],records:[]};
         if(sc.reduced){await s.page.waitForTimeout(600);await s.page.screenshot({path:path.join(mdir,'still.png')});rec.records.push(await s.page.evaluate(()=>window.__PM.last));}

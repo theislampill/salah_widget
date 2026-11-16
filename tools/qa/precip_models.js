@@ -40,7 +40,7 @@
     fibrePathKm:0.6, minRateMmH:0.1,            // edge-on rain under the base; category-only minimum-rate depiction
     rateFactor:4,      // live current amount (mm per 900 s interval) -> mm/h, as the product's own label does
   },window.__PM_PARAMS||{});
-  let T=P.T;const G=P.G,DEG=Math.PI/180,W=325,H=530,YTOP=8,YBOT=300,YFADE=255;
+  let T=P.T,G=P.G;const DEG=Math.PI/180,W=325,H=530,YTOP=8,YBOT=300,YFADE=255;
   // camera: the refined-sky camera from the fragment (skyAz/skyAlt), defaults 180/45
   const hq=new URLSearchParams(location.hash.slice(1)),CAM={az:+(hq.get('skyAz')||180),alt:+(hq.get('skyAlt')||45),fov:+(hq.get('skyFov')||90)};
   const F=265/Math.tan(CAM.fov/2*Math.PI/180);
@@ -150,6 +150,11 @@
     if(mean>0)for(let k=0;k<N;k++)rho[k]/=mean;                            // mean rate conserved
     return {rho,at:x=>rho[clamp(Math.floor(x/5),0,N-1)]};
   }
+  // soft elements (shafts, base fibres) are drawn on a quarter-resolution canvas and upscaled with smoothing:
+  // the same softness as a blur filter at a fraction of the cost (a ctx.filter blur dropped real-time fps to 7-13)
+  const low=document.createElement('canvas');low.width=82;low.height=133;const lw=low.getContext('2d');
+  function softBegin(){lw.setTransform(1,0,0,1,0,0);lw.clearRect(0,0,82,133);lw.setTransform(82/W,0,0,133/H,0,0);return lw;}
+  function softEnd(){g.save();g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(low,0,0,W,H);g.restore();}
   // ---------- layers ----------
   const mask=mk('pm-mask'),mg=mask.getContext('2d'),colC=document.createElement('canvas');colC.width=65;colC.height=1;const cg=colC.getContext('2d');
   function buildMask(grd,fld,scale){mg.globalCompositeOperation='source-over';mg.clearRect(0,0,W,H);mg.fillStyle=grd;mg.fillRect(0,YTOP,W,YBOT-YTOP);
@@ -168,7 +173,7 @@
   }
   function shafts(I,Rg,fld,t){
     if(!Rg.shower||!fld)return 0;let n=0;
-    const cb=colBases(),b0=deckBase(I);g.save();g.filter='blur(3px)';
+    const cb=colBases(),b0=deckBase(I);const g=softBegin();
     for(let k=0;k<65;k++){const r=fld.rho[k];if(r<0.6)continue;n++;const bb=cb?cb[Math.min(cb.length-1,Math.floor((k*5+2)/W*cb.length))]:-1,base=bb>20?bb:b0;
       const Rl=Rg.R*r,lam=3.0*Math.pow(Math.max(Rl,0.05),-0.21),sl=Math.PI*1400/Math.pow(lam,3)*1e-3;   // local convective sigma
       const a=(1-Math.exp(-sl*P.shaftPathKm))*clamp((r-0.6)/0.6);                  // 1.5 km shaft path (declared typical shaft width)
@@ -176,7 +181,7 @@
       const grd=g.createLinearGradient(0,base,0,YBOT);grd.addColorStop(0,`rgba(${col},0)`);grd.addColorStop(0.15,`rgba(${col},${a.toFixed(3)})`);
       grd.addColorStop(0.75,`rgba(${col},${(a*0.8).toFixed(3)})`);grd.addColorStop(1,`rgba(${col},0)`);
       g.fillStyle=grd;g.beginPath();g.moveTo(x-1,base);g.lineTo(x+6,base);g.lineTo(x+6+trail*(YBOT-base),YBOT);g.lineTo(x-1+trail*(YBOT-base),YBOT);g.closePath();g.fill();}
-    g.restore();return n;
+    softEnd();return n;
   }
   function deckBase(I){                                                  // lowest row with appreciable deck alpha (cloud canvas 144x232)
     const cc=document.querySelector('.wfx .cloudcanvas');if(!cc)return 120;
@@ -267,14 +272,14 @@
   // strength is the edge-on rain path (P.fibrePathKm) through the local rate, length grows with the rate
   function baseFibres(I,Rg,fld,t){
     const cb=colBases();if(!cb||!I.col)return 0;const mx=Math.max(...I.col),len=clamp(Math.log10(1+Rg.R)/1.7)*60+10;let n=0;
-    g.save();g.filter='blur(2.2px)';
+    const g=softBegin();
     for(let k=0;k<70;k++){const x=h1(k,77)*W,ci=Math.min(cb.length-1,Math.floor(x/W*cb.length)),base=cb[ci];if(base<20)continue;
       const dn=I.col[Math.min(I.col.length-1,Math.floor(x/W*I.col.length))]/mx*(fld?clamp(fld.at(x)):1);if(dn<0.3)continue;
       const col=envAtPx(x,base-6).map(v=>Math.round(v*0.8)),a=(1-Math.exp(-Rg.sigma*Rg.R/Math.max(Rg.R,1e-6)*P.fibrePathKm))*dn*(0.6+0.4*h1(k,78));
       const L=len*(0.6+0.8*h1(k,79)),sway=(vn(t/7000+k*0.37,91)-0.5)*6,wid=2+3*h1(k,80);
       const grd=g.createLinearGradient(0,base-4,0,base+L);grd.addColorStop(0,`rgba(${col},${a.toFixed(3)})`);grd.addColorStop(1,`rgba(${col},0)`);
       g.strokeStyle=grd;g.lineWidth=wid;g.beginPath();g.moveTo(x,base-4);g.quadraticCurveTo(x+sway*0.3,base+L*0.5,x+sway,base+L);g.stroke();n++;}
-    g.restore();return n;
+    softEnd();return n;
   }
   function sunDim(I,Rg,on){
     const els=document.querySelectorAll('.atmo .suncorner,.atmo .sunbody,.wfx .sunhaze');
@@ -292,7 +297,7 @@
   const NEAR=()=>({z1:P.nearShell[0],z2:P.nearShell[1],Dc:P.nearDmin}),TAIL=()=>({z1:P.tailShell[0],z2:P.tailShell[1],Dc:P.tailDmin,cap:300});
   function frame(tAbs){
     const t=tAbs-t0;let In=readInputs(tAbs);g.clearRect(0,0,W,H);
-    const rec={t,model:MODEL,frame:FRAME,policy:POLICY,T,perm:In.perm,cam:CAM};
+    const rec={t,model:MODEL,frame:FRAME,policy:POLICY,T,G,perm:In.perm,cam:CAM};
     const precipClass=/^(rain|drizzle|thunder)$/.test(In.fx);
     let front=null;
     if(MODEL!=='off'&&!In.perm){
@@ -326,7 +331,7 @@
   function completionBound(){const In=lastGood||readInputs(performance.now());if(!In)return null;const Rg=regime(In),band=YBOT-YTOP,out={};
     out.near=band/(F*vT(P.nearDmin)/P.nearShell[1]);out.tail=band/(F*vT(P.tailDmin)/P.tailShell[1]);
     buildTiles(In,Rg);out.sheets=tiles?Math.max(...tiles.map(tl=>band/(F*tl.vMean/tl.zMean))):null;return out;}
-  window.__PM={set(model,frm,opts){MODEL=model;T=(opts&&opts.T)||P.T;tileKey='';FRAME=frm||'flat';POLICY=(opts&&opts.policy)||'immediate';CATONLY=!!(opts&&opts.categoryOnly);exp=null;t0=performance.now();tileKey='';envAt=-1e9;lastIn=-1e9;frozenAt=null;
+  window.__PM={set(model,frm,opts){MODEL=model;T=(opts&&opts.T)||P.T;G=(opts&&opts.G)||P.G;tileKey='';FRAME=frm||'flat';POLICY=(opts&&opts.policy)||'immediate';CATONLY=!!(opts&&opts.categoryOnly);exp=null;t0=performance.now();tileKey='';envAt=-1e9;lastIn=-1e9;frozenAt=null;
       document.querySelectorAll('.atmo .suncorner,.atmo .sunbody,.wfx .sunhaze').forEach(e=>e.style.filter='');g.clearRect(0,0,W,H);},
     frame,completionBound,params:P,cam:CAM,cost(n){const a=performance.now();for(let i=0;i<n;i++)frame(a+i*16.7);return (performance.now()-a)/n;},
     get last(){return window.__PM_LAST;}};
