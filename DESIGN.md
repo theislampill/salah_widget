@@ -602,6 +602,20 @@ sample is usable, or that the rendered consumer recovered. Check the accepted
 record's eligibility and the actual temperature/presentation, or the radar
 frame/sample and `radarAvailable`, separately. Radar recovery still provides
 unitless imagery and cannot authorise rain amounts or lightning.
+R0036 adds one field beside `state`: `admission`, the outcome of the admission decision, written once per
+attempt after that decision (`state` keeps its transport meaning). Closed vocabulary: `pending` (transport stage
+not settled, or body received and not yet decided); `admitted` (a new current record adopted, track possibly too);
+`admitted-track` (no admissible current, the hourly track adopted); `retained-current` (a new admissible current
+kept out because the retained one is still eligible); `early-renewal-miss` (R002F); `no-admissible-record`;
+`provider-error` (`error:true` body); `malformed-body` (not a JSON object); `zone-rejected` (response zone check);
+`transport-unavailable` (HTTP, network, image or canvas failure); `expired` (the attempt's own absolute deadline
+passed: a `fetch`/`body`/`image timeout`, or a response arriving after the deadline while the attempt still owned its
+request); `superseded` (the attempt was replaced by a newer operation or runtime generation, or its image stage could
+not begin for that reason; written only to that attempt's own record, so its `state` may still show the last stage it
+reached); `admission-error` (an exception during admission). Radar, retained test path only: `admitted`,
+`malformed-manifest`, `no-frame`, `rejected` (R0032's host, frame-path and tile-index rejections, `state`
+`rejected`), `transport-unavailable`, `expired`, `superseded`. A weather attempt that reached adoption also carries
+`adopted:{current,track}`. No admission, retry or freshness behaviour depends on these fields.
 For freshness inspection, `qaState().cache.weatherSourceAgeSec` and
 `weatherAgeSec` report source and receipt ages, with `currentEligible`,
 `weatherStale` and `currentUnavailableReason`. `wxTruth.model.sourceValidAt`,
@@ -707,6 +721,18 @@ Common hash options:
   example a simulated new Moon on a date with a bright real Moon). Treat sky-brightness evidence from such scenes as
   physical-sky evidence for the real Moon, or choose a date whose real phase is near the simulated one.
 - `qa=1` + `window.qaState()` — a structured snapshot (incl. `wxTruth`).
+  Diagnostic reads are pure (R0036, docs/state-contracts/R0036.md): `qaState()`, its CP9 wrapper, the
+  `debugMotion` overlay's 1 Hz read and the smoke instrument's Moon reads perform no storage write, no Moon
+  adoption or texture publication (they use `SalahMoonRuntime.observe()`, never the adopting `surface()`/`state`/
+  `detailEnabled`), no cloud withdrawal, header paint or DOM write, and no request; the weather memos they touch are
+  restored on exit. `qaState().cache.simulated` is true for every effective override and `cache.overrides` lists them
+  (`simWx` with its `simTemp`…`simPrecip` modifiers, `simTime`, `simMoon`/`simWax`, `simMoonAlt`/`simMoonH`,
+  `debugOptic` with one of the six names, an explicit `timeScale`, runtime clock control `clockControl`);
+  `cache.inertOverrides` lists parameters present without effect (e.g. `simMoonH` without `simMoonAlt`).
+  Visible provenance (owner decision G1 = A, issue 103): these overrides add **no** visible badge; provenance stays in
+  the header title/ARIA label ("SIM weather preview"), the `.simclock` read-out of an advancing clock, and `qaState()`.
+  A `simTime` without `timeScale` freezes the clock, prayer state and countdown with no visible marker; never treat
+  such a URL as a production embed.
 - `debugLayers=1`, `debugMoon=1`, `debugMotion=1` — on-card readouts (layers / moon / live-motion telemetry).
   `debugDawn=…` — **deprecated no-op** (dawn is not a painted overlay; nothing to force).
   `motion=full` — force full animation even under OS `prefers-reduced-motion` (accessibility override; default respects it).
@@ -798,6 +824,15 @@ normalize/serialize/load-save-clear-local/coarse-detect. (This deliberately rela
   session-only outcome already shown stays.
 - **`qaState().config`** exposes `configSource/configMode/autoDetectSource/autoDetectStatus/storageAvailable/
   storageError/geolocationPermissionState/geolocationLastError/lat/lon/tz/label/hashConfigOverridden/why`.
+  R0036 (owner decision G2 = a): `storageAvailable` keeps its key with non-writing semantics, a read-only access
+  check (`getItem`); `storage` gives `{readable, reason, basis, lastWrite, lastWriteState}`, where `lastWrite` is the
+  last real settings save/clear outcome (R0011) and `lastWriteState` is `not-attempted-in-this-document` until one
+  happens. `SalahConfig.storageAvailable()` (a write probe) stays an explicit API and is never called by a diagnostic.
+  `autoDetectStatus` is `idle | pending | ok | failed | superseded` (boot detection abandoned by a newer generation);
+  `resetDetect` is Reset's own detection record `{attempt, status: pending | ok | failed | superseded | not-needed,
+  source, at}`; `geolocationAttempt` is the latest GPS attempt `{attempt, outcome: ok | error | superseded, error,
+  at, superseded}` (superseded = a newer location intent replaced its lookup owner) and
+  `geolocationLastErrorCurrent` says whether `geolocationLastError` still describes the current intent.
 - **Embed size = card size:** the iframe wrapper is **325×530** — exactly the widget card (`.c`) — in the builder
   preview, the copied snippet, README, and the TablissNG preset. A larger wrapper only adds invisible transparent
   margin, so the builder card/preview are matched to the *visible* widget (530px), not to an oversized box.

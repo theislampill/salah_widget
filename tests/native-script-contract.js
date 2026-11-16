@@ -41,15 +41,28 @@
   // eligibility, presence predicate and throw guards; build_moon.py construction-failure
   // head rule); moon-refinement d4f90ac3 -> 93afaebd (optional-call tail and the worker's
   // recovery cache mode). Both await independent source review with the R0033 candidate.
+  // R0036 rebind (issue 103, branch claude/r0036-diagnostic-purity-20261115 over main a196351b):
+  // moon-initial f233b816 -> 067034c8 (moon-native.mjs: the named presence predicate and the
+  // non-adopting observe() diagnostic accessor; production getters unchanged). moon-refinement and
+  // first-paint unchanged. Awaits independent source review with the R0036 candidate.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'f233b8168a4f7411a6c11a376e2ee0265a27b1883699bce0690ca3a778ad9c10',
+    'moon-initial':'067034c815be4d8d024b5c36cb3ed64c00f96127e3b7078ce6f2449da01578d8',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
+    // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):
+    // authored source be476b3e and the legacy-Moon structural control f57dcab8 of its generated index c2c827c7. Every entry below remains admitted.
+    'be476b3e8d9c99f127ac08cbadc951f21aaa4b977f5b57f15216f32f99d28fe9':Object.freeze({
+      profile:'current-authored-native',kind:'current-authored-source',commit:'26e797983fbfda080307dc1fda336e9ad2fac560',path:'src/native/index.html',layout:'config,native'}),
+    'f57dcab8ce8bf5462896aec6b8edf1ae1a0d966d7ba643276cfa456e26ceb31d':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'26e797983fbfda080307dc1fda336e9ad2fac560',path:'index.html',
+      parentSha256:'c2c827c7e5d4d203a757483de1b8d3e01c8d31984a20b8ad9d06e5a799d5ae12',
+      transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
+      layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0033 re-bind after merging main 8990c36d (R0031): authored source 90b0f642 and the legacy-Moon structural control e0acbaae of its generated index 3615841c. Every entry below remains admitted.
     '90b0f642789a8ff0acf34a980f63a0625464d4cf0253571e227907d5fafb4bb8':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'0329221a249e588ec198115a4fe291cac4461180',path:'src/native/index.html',layout:'config,native'}),

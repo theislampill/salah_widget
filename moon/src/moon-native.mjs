@@ -64,6 +64,8 @@
  // otherwise identical result through the interval before the next host poll.
  const sameScope=(record,s)=>!!record&&!!s&&!s.paused&&!clockDiscontinuous(s)&&record.epoch===epoch&&record.scope===scope(s);
  const matches=(record,s)=>sameScope(record,s)&&phaseError(record,s)<=PHASE_POSITION_BUDGET;
+ // R0033 M4 presence predicate (named so the diagnostic observation reuses it; no second predicate).
+ const presentableAt=s=>!!s&&(matches(accepted,s)||(!!waitingPreview&&matches(waitingPreview.record,s)));
  function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;try{window.SalahMoonHost?.fallback();}catch(error){note(error);}detail.clear();}
  function revokeInitialHead(){initialHeadEligible=false;if(window.SalahFirstPaint?.moon)window.SalahFirstPaint.moon.result=null;}
  function clear(reason,initialDocument=false){
@@ -319,7 +321,14 @@
   // (a matching accepted surface or a matching queued preview), computed from capture()
   // WITHOUT presentation(), adopt, syncTexture or publish. Native light eligibility
   // reads only this; diagnostics (R0036) may reuse it.
-  get presentable(){if(disposed)return false;const s=capture(!!(accepted||waitingPreview));return !!s&&(matches(accepted,s)||(!!waitingPreview&&matches(waitingPreview.record,s)));},
+  get presentable(){if(disposed)return false;return presentableAt(capture(!!(accepted||waitingPreview)));},
+  // R0036 I-D2: the side-effect-free diagnostic observation (qaState().moonTruth, the CP9 wrapper, smoke). It reuses
+  // the presence predicate above and never calls presentation(), adopt, syncTexture or publish, so a reader cannot
+  // advance a reveal. current = the accepted surface is presented now; wouldPresent = presentable (a matching queued
+  // preview would be adopted by the next production read). surface is the backing canvas only when current, unsynced.
+  // Geometry (and so layout) is read only when a candidate surface exists.
+  observe(){const s=disposed?null:capture(!!(accepted||waitingPreview)),current=!!s&&matches(accepted,s),wouldPresent=!disposed&&presentableAt(s);
+   return {accepted:!!accepted,waitingPreview:!!waitingPreview,current,wouldPresent,detailAvailable:wouldPresent&&!!detail.available,surface:current?canvas:null,state:snapshot(s,current)};},
   get presentationUp(){return profileMode==='reference'?1:Math.max(0,Math.min(1,capture()?.up??1));},
   get detailEnabled(){return presentation(capture())&&!!detail.available;},get disposed(){return disposed;},
   invalidate(reason='native invalidation',options){clear(reason,options?.initialDocument===true);},
@@ -327,9 +336,10 @@
   setProfile(mode){if(!['calendar','reference'].includes(mode))throw new RangeError('Moon profile');if(mode===profileMode)return;profileMode=mode;clear('profile changed');poll();},
   setReferenceScene(value){referenceScene=value===null?null:admitReference(value);clear('reference view changed');poll();},
   retry(){if(disposed||worker||typeof MOON_WORKER_SOURCE!=='string'||retryCount>=3)return false;retryCount++;start();return true;},
-  get state(){const s=capture(),current=presentation(s),target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});},
+  get state(){const s=capture(),current=presentation(s);return snapshot(s,current);},
   dispose(){if(disposed)return;clear('disposed');disposed=true;recovery.state='idle';recovery.nextAt=null;clearInterval(timer);clearTimeout(deadline);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;document.removeEventListener('visibilitychange',visibility);closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status='disposed';}
  };
+ function snapshot(s,current){const target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});}
  registered=window.SalahMoonRuntime;
  timer=setInterval(()=>poll(),250);
  // Full asset/decode/row preparation must not compete with the synchronous
