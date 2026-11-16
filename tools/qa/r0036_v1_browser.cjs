@@ -33,7 +33,9 @@ const FONT_URL='https://fonts.gstatic.com/s/r0036fixture/v1/fixture.ttf';
 const FIXTURE_CSS=[['Fraunces','400 700'],['Inter','400'],['Inter','500'],['Inter','600']].map(([f,w])=>
   `@font-face{font-family:'${f}';font-style:normal;font-weight:${w};font-display:swap;src:url(${FONT_URL}) format('truetype');}`).join('\n')+'\n';
 function py(args){const r=spawnSync('python',['-I',HELPERS,...args],{encoding:'utf8',env:{...process.env}});
-  if(r.status!==0)throw new Error('python helper failed: '+args[0]+' '+r.stderr);return JSON.parse(r.stdout.trim().split('\n').pop());}
+  if(r.status!==0)throw new Error('python helper failed: '+args[0]+' '+r.stderr);const o=JSON.parse(r.stdout.trim().split('\n').pop());
+  if(args[0]!=='selftest'&&Array.isArray(o.refused))PY_REFUSED.push(...o.refused);return o;}
+const PY_REFUSED=[];                                                       // Python-side refusals outside the self-test fail the run
 // ---- verbatim provider fixture of tests/v1_browser.py fixture() L53-L68 ----
 function fixture(url,night){
   const u=new URL(url),host=u.hostname;
@@ -86,9 +88,12 @@ async function setupBrowser(browser,font,origin,{night=false,dpr=1,seed=true,den
   await page.clock.install({time:instant});await page.clock.pauseAt(instant);
   return {context,page,requests,errors,failed};
 }
-async function loaded(page,url,tag){                                                                                  // loaded L108-L117
+async function loaded(page,url,tag,diag){                                                                                  // loaded L108-L117
   await page.goto(url,{waitUntil:'load'});const frame=page.frames()[1];
-  const ok=await frame.waitForFunction("typeof qaState === 'function' && qaState().cache.prayerLoaded && qaState().cache.tomorrowLoaded",null,{polling:100,timeout:30000}).then(()=>true,e=>{check(tag+':A111',false,'wait timed out: '+String(e.message).slice(0,200));return false;});
+  const ok=await frame.waitForFunction("typeof qaState === 'function' && qaState().cache.prayerLoaded && qaState().cache.tomorrowLoaded",null,{polling:100,timeout:30000}).then(()=>true,async e=>{
+    // Diagnostic only (the wait itself is the assertion): what the page reported when the wait expired.
+    const seen=await frame.evaluate("typeof qaState==='function'?(()=>{const q=qaState();return {cache:q.cache,configMode:q.config&&q.config.configMode,autoDetectStatus:q.config&&q.config.autoDetectStatus,source:q.config&&q.config.configSource};})():'qaState unavailable'").catch(x=>'evaluate failed: '+x.message);
+    check(tag+':A111',false,{wait:'timed out: '+String(e.message).slice(0,120),seen,diag:diag&&{errors:diag.errors.slice(0,5),failed:diag.failed.slice(0,8)}});return false;});
   if(!ok){for(const id of ['A114','A115','A116'])notRun(tag+':'+id,'A111 wait failed');return null;}
   check(tag+':A111',true);
   await frame.evaluate('document.fonts.ready');await page.clock.runFor(3500);
@@ -101,7 +106,8 @@ async function loaded(page,url,tag){                                            
 async function snapshot(page,frame,name){                                                                             // snapshot L120-L126
   const file=path.join(out,name+'.png');await page.locator('iframe').screenshot({path:file,animations:'disabled'});
   return {screenshot:name+'.png',sha256:sha(fs.readFileSync(file)),qa:await frame.evaluate('qaState()'),
-    geometry:await frame.evaluate("() => {const box=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}; return {innerWidth,innerHeight,dpr:devicePixelRatio,card:box('.c'),footer:box('.d'),header:box('.h'),scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight};}"),
+    geometry:await frame.evaluate("(() => {const box=s=>{const r=document.querySelector(s).getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height,bottom:r.bottom}}; return {innerWidth,innerHeight,dpr:devicePixelRatio,card:box('.c'),footer:box('.d'),header:box('.h'),scrollWidth:document.documentElement.scrollWidth,scrollHeight:document.documentElement.scrollHeight};})()"),   // the original passes this function source; Node evaluates a string as an expression, so it is invoked
+   
     rows:await frame.locator('.times').innerText(),countdown:await frame.locator('.left').innerText(),
     fonts:await frame.evaluate("[...document.fonts].filter(f=>f.status==='loaded').map(f=>({family:f.family,weight:f.weight,status:f.status}))")};
 }
@@ -126,7 +132,7 @@ async function verify(browser,origin,font,site){
   for(const [night,dpr] of [[false,1],[true,1],[false,2]]){const scene=(night?'night':'day')+'-dpr'+dpr;let shots=0;
     for(const version of ['root','v1']){const tag=version+'-'+scene;
       await tryRun(tag+':setup',async()=>{const s=await setupBrowser(browser,font,origin,{night,dpr});
-        try{const f=await loaded(s.page,origin+'/'+version+'.html',tag);
+        try{const f=await loaded(s.page,origin+'/'+version+'.html',tag,s);
           if(!f){for(const id of ['A172','A173','A174','A175','A177','A179','A183','A185'])notRun(tag+':'+id,'page not loaded');return;}
           const r=await snapshot(s.page,f,tag);shots++;r.localRequests=s.requests.filter(u=>u.startsWith(origin)).map(u=>u.replace(origin,''));
           check(tag+':A172',r.geometry.card.width===325,r.geometry.card);check(tag+':A173',r.geometry.card.height===530,r.geometry.card);
@@ -141,7 +147,7 @@ async function verify(browser,origin,font,site){
     else notRun('comparison-'+scene+':A191','a capture is missing');}
   for(const version of ['root','v1'])for(const denied of [false,true]){const tag=version+(denied?'-geo-denied':'-geo-granted');
     await tryRun(tag+':setup',async()=>{const s=await setupBrowser(browser,font,origin,{seed:false,denied});
-      try{let f=await loaded(s.page,origin+'/'+version+'.html',tag);
+      try{let f=await loaded(s.page,origin+'/'+version+'.html',tag,s);
         if(!f){for(const id of ['A199','A203','A205','A213','A215','A218','A220','A221'])notRun(tag+':'+id,'page not loaded');return;}
         const st=await f.evaluate('qaState().config.autoDetectStatus');check(tag+':A199',st==='ok',st);
         await f.locator('.buckle').click({force:true});await s.page.clock.runFor(100);await f.locator('#set-pin').click({force:true});
@@ -158,7 +164,7 @@ async function verify(browser,origin,font,site){
         check(tag+':A221',!s.errors.length&&!s.failed.length,{errors:s.errors,failed:s.failed});
         receipt.checks[tag]={status,saved,reload:ok,errors:s.errors};}finally{await s.context.close();}});}
   await tryRun('storage-isolation:setup',async()=>{const tag='storage-isolation';const s=await setupBrowser(browser,font,origin);
-    try{let f=await loaded(s.page,origin+'/v1.html',tag);if(!f){for(const id of ['A236','A237','A242','A244','A245','A246','A247'])notRun(tag+':'+id,'page not loaded');return;}
+    try{let f=await loaded(s.page,origin+'/v1.html',tag,s);if(!f){for(const id of ['A236','A237','A242','A244','A245','A246','A247'])notRun(tag+':'+id,'page not loaded');return;}
       const original=await f.evaluate("localStorage.getItem('salah_widget:config:v1')");
       await f.locator('.buckle').click({force:true});await s.page.clock.runFor(100);await f.locator('#set-label').fill('V1 saved independently');await f.locator('#set-time').selectOption('12');
       receipt.captures['v1-settings']=await snapshot(s.page,f,'v1-settings');
@@ -176,7 +182,7 @@ async function verify(browser,origin,font,site){
   await tryRun('root-replacement:setup',async()=>{const tag='root-replacement';
     fs.writeFileSync(path.join(site,'config.js'),"throw new Error('ROOT CONFIG REPLACED CONTROL');");fs.writeFileSync(path.join(site,'index.html'),'<!doctype html>ROOT REPLACED CONTROL');
     const s=await setupBrowser(browser,font,origin);
-    try{const f=await loaded(s.page,origin+'/v1.html',tag);if(!f){notRun(tag+':A258','page not loaded');notRun(tag+':A259','page not loaded');return;}
+    try{const f=await loaded(s.page,origin+'/v1.html',tag,s);if(!f){notRun(tag+':A258','page not loaded');notRun(tag+':A259','page not loaded');return;}
       receipt.captures['v1-root-replaced']=await snapshot(s.page,f,'v1-root-replaced');
       const iso=fs.existsSync(path.join(out,'v1-day-dpr1.png'))?compare('v1-day-dpr1.png','v1-root-replaced.png'):null;
       if(iso)check(tag+':A258',iso.pixelExact&&!s.errors.length&&!s.failed.length,{iso,errors:s.errors,failed:s.failed});else notRun(tag+':A258','v1-day-dpr1 capture missing');
@@ -228,11 +234,11 @@ async function selftest(browser,origin){
     else{const r=await verify(browser,origin,font,site);receipt.captures=r.captures;receipt.checks=r.checks;receipt.rows=ROWS;
       receipt.summary=ROWS.reduce((m,x)=>(m[x.result]=(m[x.result]||0)+1,m),{});}
   }finally{await browser.close();server.close();fs.rmSync(tmp,{recursive:true,force:true});
-    const outsideSelftest=mode==='selftest'?[]:guard.state.refused;
+    const outsideSelftest=mode==='selftest'?[]:[...guard.state.refused,...PY_REFUSED];
     receipt.isolation={requestsSeen:LEDGER.seen,continuedLoopback:LEDGER.continued,allowedOffLoopback:LEDGER.allowedOffLoopback.length,fulfilledFixture:LEDGER.fulfilledFixture,
       fulfilledFont:LEDGER.fulfilledFont,aborted:LEDGER.aborted.length,abortedHosts:LEDGER.aborted.reduce((m,u)=>(m[hostOf(u)]=(m[hostOf(u)]||0)+1,m),{}),
       unplanned:LEDGER.unplanned,bypassed:LEDGER.bypassed,websockets:LEDGER.websockets,wsBypassed:LEDGER.wsBypassed,
-      nodeGuard:{installed:guard.state.installed,refused:guard.state.refused,proxyVarsRemoved:guard.state.proxyVarsRemoved},launchArgs:LAUNCH_ARGS};
+      nodeGuard:{installed:guard.state.installed,refused:guard.state.refused,proxyVarsRemoved:guard.state.proxyVarsRemoved},pythonRefusedOutsideSelftest:PY_REFUSED,launchArgs:LAUNCH_ARGS};
     failedIsolation=LEDGER.allowedOffLoopback.length>0||LEDGER.bypassed.length>0||LEDGER.wsBypassed.length>0||outsideSelftest.length>0;
     fs.writeFileSync(path.join(out,mode==='selftest'?'selftest.json':'v1-browser-results.json'),JSON.stringify(receipt,null,1)+'\n');}
   const i=receipt.isolation;
