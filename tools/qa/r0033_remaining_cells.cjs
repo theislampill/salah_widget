@@ -94,7 +94,8 @@ const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,
    const o=await open(S,base+'/index.html'+FROZEN,{origin:base});
    const first=await until(o.page,terrain,300000,500),n1=served.length;
    await o.page.reload();const second=await until(o.page,terrain,300000,500),n2=served.length;
-   const p2=await o.context.newPage();await p2.clock.install({time:Date.parse('2026-09-08T19:00:00Z')});await p2.clock.resume();await p2.goto(base+'/index.html'+FROZEN);
+   // The Playwright clock belongs to the context, so the second page shares the installed clock and the catch-all route.
+   const p2=await o.context.newPage();await p2.goto(base+'/index.html'+FROZEN);
    const third=await until(p2,terrain,300000,500),n3=served.length;
    const row=(r,from,to)=>({terrain:r.ok,ms:r.ms,serverAssetRequests:to-from,requests:served.slice(from,to).map(x=>({path:x.path,cacheControl:x.cacheControl,conditional:x.conditional})),recovery:r.f?.recovery??null,retryCount:r.f?.retryCount??null,status:r.f?.status??null});
    incomplete=!(first.ok&&second.ok&&third.ok);
