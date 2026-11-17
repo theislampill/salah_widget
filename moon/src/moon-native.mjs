@@ -29,6 +29,7 @@
  const profile=()=>profileMode==='reference'?{...MOON_DEFAULT_PROFILE,profile_id:'unboosted-v5-01',mode:'reference',lift:0}:{...MOON_DEFAULT_PROFILE};
  function capture(withGeometry=true){
   const h=window.SalahMoonHost;if(!h)return null;let s;try{s=h.capture();}catch{return null;}
+  if(s&&s.phaseDirection===undefined&&(s.timeScale??1)>0&&Number.isFinite(s.fraction)){const d=historyDirection(s);if(d!==undefined)s={...s,phaseDirection:d};}
   // Native observation can initialize the explicit clock. Preserve it even
   // when an empty surface query has no candidate needing geometric validation.
   if(!withGeometry)return null;
@@ -40,6 +41,12 @@
   const maximumPhaseDiameter=Math.ceil(phaseDiameter*Math.max(1,Number.isFinite(s.maximumPresentationRatio)?s.maximumPresentationRatio:1));
   return {...s,phaseDiameter,maximumPhaseDiameter,phaseQuantum:phaseQuantum(phaseDiameter),physicalFraction:canonicalFraction(s.fraction,phaseDiameter),profileMode,referenceIdentity:referenceScene?JSON.stringify(referenceScene):null};
  }
+ // C2 VARIANT (evidence only): phase direction from successive native snapshots inside the Moon host.
+ let dirMemo={scope:null,alpha:null,dir:null};
+ function historyDirection(s){const sc=JSON.stringify([s.generation,s.sceneIdentity,s.waxing,s.dpr]),a=Math.acos(2*s.fraction-1);
+  if(dirMemo.scope!==sc){dirMemo={scope:sc,alpha:a,dir:null};return undefined;}
+  if(a!==dirMemo.alpha){const d=a-dirMemo.alpha;dirMemo.dir=Math.abs(d)<=1e-6?0:(d<0?1:-1);dirMemo.alpha=a;}
+  return dirMemo.dir??undefined;}
  const key=s=>JSON.stringify([s.generation,s.sceneIdentity,s.physicalFraction,s.waxing,s.dpr,s.profileMode,s.referenceIdentity,s.phaseDiameter]);
  // Geometry reuse and target authority are different predicates. A CSS-sized
  // footprint crossing an integer or a phase bucket is not a location/seek epoch.
