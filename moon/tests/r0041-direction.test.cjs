@@ -128,3 +128,23 @@ test('R41-RES-5: while the preview owns the sky, an adopted successor is compose
   assert.deepEqual(o.order.filter(x=>x.startsWith('preview')),composed?[]:['preview-update:initial-v5'],JSON.stringify({composed,order:o.order}));
  }
 });
+// ---- R0041 review finding 5: the vector texture is kept through decode ONLY for a re-blend of the same (current)
+// record; every cross-record replacement (expiry successor, withdrawal, resume) is immediate, so no expired surface
+// is retained. The host obeys the flag (static check of src/native/index.html).
+test('R41-RET-1: publish keeps through decode only a re-blend of the same adopted record',()=>{
+ const o=settledRefined(),calls=[];o.r.w.SalahMoonHost.publish=(c,same)=>calls.push(same);
+ o.r.state.up=.5;o.r.advance(250);o.r.state.utcMs+=250;o.rt.request();
+ assert.deepEqual(calls,[true],'altitude re-blend of the current refined record');
+ const a=Math.acos(2*o.r.state.fraction-1)-3*0.0416*2/109;o.r.state.fraction=(1+Math.cos(a))/2;o.r.advance(250);o.r.state.utcMs+=250;o.rt.request();
+ assert.equal(o.rt.state.visibleSource,'initial-v5');assert.equal(calls.at(-1),false,'expired predecessor: the successor replaces it at once');
+ const n=calls.length;o.rt.invalidate('r0041 same identity');assert.ok(calls.length>n&&calls.slice(n).every(x=>x===false),'invalidate successor: immediate');
+ const m=calls.length;o.r.doc.hidden=true;o.r.state.paused=true;o.r.events.get('visibilitychange')();o.r.doc.hidden=false;o.r.state.paused=false;o.r.events.get('visibilitychange')();
+ assert.ok(calls.length>m&&calls.slice(m).every(x=>x===false),'resume successor: immediate');
+});
+test('R41-RET-2: the native host defers a texture only for sameRecord, and a withdrawal drops a pending one',()=>{
+ const html=fs.readFileSync(path.join(root,'src/native/index.html'),'utf8');
+ const pub=html.slice(html.indexOf(' publish(canvas,sameRecord){'),html.indexOf(' fallback(){'));
+ assert.match(pub,/if\(sameRecord===true&&ph\.getAttribute\('href'\)&&\$\('\.c'\)\?\.classList\.contains\('moon-ready'\)/);
+ assert.equal((pub.match(/img\.decode\(\)/g)||[]).length,1,'one deferred path');
+ assert.match(html.slice(html.indexOf(' fallback(){'),html.indexOf(' fallback(){')+120),/_moonHrefPending=null;/);
+});

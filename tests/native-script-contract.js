@@ -46,26 +46,26 @@
   // non-adopting observe() diagnostic accessor; production getters unchanged). moon-refinement and
   // first-paint unchanged. Awaits independent source review with the R0036 candidate.
   // R0041 candidate rebind (issue 143, branch claude/r0041-moon-presence-phase-direction-20261116, main 47faae32 merged
-  // with 06b6e93b): moon-initial 067034c8 -> 5028abe6 (moon-native.mjs: record-signed drift, phaseDirection admission,
+  // with 06b6e93b): moon-initial 067034c8 -> 68e2b16e (moon-native.mjs: record-signed drift, phaseDirection admission,
   // directed calendar scene, the one-presenter guarantees on expiry, clear() and resume; moon-first-paint.mjs head
   // direction). moon-precision.mjs, moon-refinement and first-paint unchanged. CANDIDATE: awaits independent review.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'5028abe6d26236f4849f574ccb319b73e0e13931c1599f1b1aca2d5d97fed611',
+    'moon-initial':'68e2b16edfac6315d164da6a7c485a2329f5868e19a1ea56c78b464e58a75b52',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
-    // R0041 (issue 143) CANDIDATE, same branch: authored source 8026e42a (SalahMoonHost.capture phase-direction authority
+    // R0041 (issue 143) CANDIDATE, same branch: authored source c7f04df0 (SalahMoonHost.capture phase-direction authority
     // nativeLunarPhaseDirection, outside nativeLunarSnapshot; publish decode handling) and the legacy-Moon structural
-    // control f6157c06 of its generated index 0b5e7038. Awaits independent source review. Every entry below remains admitted.
-    '8026e42a210cd517c9a56c67416afee6408eab5f5af9fc9cb60c73aa32209ebb':Object.freeze({
+    // control d58b5540 of its generated index 429c2f83. Awaits independent source review. Every entry below remains admitted.
+    'c7f04df0219fd8396995ea074f4de92d84797f95f9730650da8ba264e8ad6715':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'candidate',path:'src/native/index.html',layout:'config,native'}),
-    'f6157c062e79ac360fdb2089cc3b7cdf54b5de13c44733286462232574b2ec22':Object.freeze({
+    'd58b55402e90f003f8fdb9b2a6ddd09f8fc539e6921dd5447beca78e3daf5988':Object.freeze({
       profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'candidate',path:'index.html',
-      parentSha256:'0b5e703866b0d2011bbf2e6135c41f92b36d43aa996c1ea431cd1436e64c67ae',
+      parentSha256:'429c2f83a1b3af6b74f05d9ef40ee1a8484b3d2402f0acdc0bf46557dca2ca7d',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):

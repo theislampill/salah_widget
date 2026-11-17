@@ -297,14 +297,14 @@ function mentions(name, tokens) {
       // R0036 re-bind (issue 103, on main a196351b at 26e79798, merged with main 47608f15): body d640373c... -> 12fe5ac6..., entry 3615841c... -> c2c827c7...; R0036 changes
       // only diagnostic reads (qaState, the CP9 wrapper), attempt-outcome/acquisition records and the settings GPS/Reset records,
       // not the pinned block, helper, clamp or call.
-      // R0041 candidate re-bind (issue 143, over main 47faae32, merged with main 06b6e93b): body 12fe5ac6... -> c3617811... -> a52d55c6... (candidate,
-      // resume: texture publication decodes only while presented); R0041 adds the phase-direction authority beside SalahMoonHost.capture and the
+      // R0041 candidate re-bind (issue 143, over main 47faae32, merged with main 06b6e93b): body 12fe5ac6... -> c3617811... -> a52d55c6... -> 377920b8... (candidate,
+      // resume: texture publication decodes only while presented; review: only for the same record); R0041 adds the phase-direction authority beside SalahMoonHost.capture and the
       // Moon texture publication, not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"a52d55c68745a8e0c9d72a5b8e8f463496fa9cb899594c4eb769e5d7c03a9011",'delegated native script changed');
+      assert.equal(digest(body),"377920b876dc366ef42acc61cea25d3cb687d2446336a4c30283ad88339914c1",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 73964824... -> 1cf18db5... -> 0b5e7038... (candidate) (generated from the R0041 authored sources above).
-      assert.equal(digest(source),"0b5e703866b0d2011bbf2e6135c41f92b36d43aa996c1ea431cd1436e64c67ae",'delegated current generated entry changed');
+      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 73964824... -> 1cf18db5... -> 0b5e7038... -> 429c2f83... (candidate) (generated from the R0041 authored sources above).
+      assert.equal(digest(source),"429c2f83a1b3af6b74f05d9ef40ee1a8484b3d2402f0acdc0bf46557dca2ca7d",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {

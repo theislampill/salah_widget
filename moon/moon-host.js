@@ -758,7 +758,7 @@ try{
  const canvas=document.createElement('canvas');canvas.width=300;canvas.height=300;
  let worker=null,url=null,disposed=false,ready=false,pending=null,accepted=null,serial=0,epoch=0,retryCount=0,clock=null,referenceScene=null,profileMode='calendar';
  let timer=null,deadline=null,startFrame=null,lastError=null,stopOffline=null,upperBytes=null,calendarBytes=null,textureUp=null,waitingPreview=null;
- let initialHeadEligible=true,bootCache='force-cache';
+ let initialHeadEligible=true,bootCache='force-cache',adoptions=0,publishedToken=null;
  // R0033 M1: the one recovery owner. Only the runtime starts workers (start()); at most
  // three automatic attempts per page lifetime at 30 s, 2 min, 10 min after each failure,
  // never while hidden, disposed, without a worker source or with a live worker. The QA
@@ -799,9 +799,12 @@ try{
   // This backing surface is immediately read by the native material sampler
   // and PNG publication. Keep its identical bytes in CPU-backed storage.
   if(textureUp===up)return false;textureUp=up;
+  // R0041 (review finding 5): the host may keep the presented vector texture until its replacement decodes ONLY when
+  // both are the SAME adopted record (a re-blend of the current surface for a new altitude weight), never across
+  // records: a withdrawn or expired predecessor is replaced at once, so no expired surface is retained.
   // R0033 M7: a blend/ImageData/publication throw withdraws this presentation and is
   // recorded; it never escapes request()/surface() and leaves nothing presentable.
-  try{const rgba=blendCalendarBytes(upperBytes,calendarBytes,up);canvas.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(rgba,canvas.width,canvas.height),0,0);window.SalahMoonHost?.publish(canvas);}
+  try{const rgba=blendCalendarBytes(upperBytes,calendarBytes,up);canvas.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(rgba,canvas.width,canvas.height),0,0);const same=publishedToken!==null&&publishedToken===accepted.token;publishedToken=accepted.token;window.SalahMoonHost?.publish(canvas,same);}
   catch(error){note(error);fallback('texture publication failure');return false;}
   return true;
  }
@@ -881,7 +884,7 @@ try{
   detail.adopt({linear:m.surfaceLinear,calendarLinear:m.calendarLinear,coverage:m.surfaceCoverage,size:m.surfaceSize,extent:m.surfaceExtent,identity:m.physicalIdentity});
   const prefixMs=performance.now()-began;
   canvas.width=m.width;canvas.height=m.height;upperBytes=m.rgba;calendarBytes=m.calendarRgba;textureUp=null;
-  accepted={id:record.id,key:record.key,scope:record.scope,epoch:record.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity,initial:m.kind==='initial'};
+  accepted={token:++adoptions,id:record.id,key:record.key,scope:record.scope,epoch:record.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity,initial:m.kind==='initial'};
   status.quality=m.diagnostics.quality.status;status.legacyFallback=false;status.visibleSource=m.kind==='result'?'refined-terrain':m.kind==='initial'?'initial-v5':'terrain-preview';status.last=m.diagnostics;status.phase=m.scene.fraction;
   syncTexture(capture());status.lastAdoption={at:began,prefixMs,totalMs:performance.now()-began,source:status.visibleSource};
  }
