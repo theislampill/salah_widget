@@ -923,8 +923,14 @@ try{
     adopt(result,record);if(!accepted)return;
     // R0041 presenter: the successor is composed in this task (as the preview and result paths do), so the
     // device-resolution disc never waits for the sky's next compose after any withdrawal or resume. A host that is
-    // composing right now (presentForCompose) is not re-entered: its own compose follows this adoption.
-    if(!hostComposing)try{window.SalahRealSky?.compose();}catch(error){note(error);}
+    // composing right now (presentForCompose) is not re-entered: its own compose follows this adoption. While the
+    // refined sky has no frame, the published atmospheric preview owns the sky (its ready class hides the SVG Moon), so
+    // it re-composes now; otherwise its sky (stars) would show through the slot until its next paint (R0041 identity
+    // route, witnessed in all three engines).
+    if(!hostComposing){
+     try{window.SalahRealSky?.compose();}catch(error){note(error);}
+     try{const c=document.querySelector('.c');if(c&&c.classList.contains('real-sky-preview-ready')&&!c.classList.contains('real-sky-composed'))window.SalahSkyPreview?.update?.();}catch(error){note(error);}
+    }
     // Retain stage timing for later diagnostics; no polling is needed during
     // the first presented frames. Publication is distinct from visible pixels.
     status.firstInitial??={capturedAt,publishedAt:performance.now(),generation:s.generation,sceneIdentity:s.sceneIdentity,renderMs:head?0:result.diagnostics.totalMs,headHandoff:!!head,headCapturedAt:head?.capturedAt??null,headRenderMs:head?result.diagnostics.totalMs:null};

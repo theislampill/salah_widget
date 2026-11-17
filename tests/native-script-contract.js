@@ -53,7 +53,7 @@
   // routes and compose after every initial adoption).
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'2326db88e185100bf37beda0a390e7c2e563787c2ded3b49f82ab239aac86cf0',
+    'moon-initial':'5028abe6d26236f4849f574ccb319b73e0e13931c1599f1b1aca2d5d97fed611',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
@@ -89,10 +89,10 @@
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0033 re-bind after merging main 48ba76db (R0032): authored source ed528a43 and the legacy-Moon structural control 09cf6f64 of its generated index d526dd35. Every entry below remains admitted.
     'ed528a4344a10f1dbc8fa260027e22edd80bfad5dba76ed78a7cc367a2eda217':Object.freeze({
-      profile:'current-authored-native',kind:'current-authored-source',commit:'978d4be9966e6ce3677960d6023b916feb94677f',path:'src/native/index.html',layout:'config,native'}),
-    '09cf6f641bbe3bf7b2ec010411c7f2998e8badb9d192b5f84c3f83f094f2bd01':Object.freeze({
-      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'978d4be9966e6ce3677960d6023b916feb94677f',path:'index.html',
-      parentSha256:'d526dd35e4117bd46f9c8d060b63ed2ded1326f486766d85c0b2ab703a11c354',
+      profile:'current-authored-native',kind:'current-authored-source',commit:'candidate',path:'src/native/index.html',layout:'config,native'}),
+    'f6157c062e79ac360fdb2089cc3b7cdf54b5de13c44733286462232574b2ec22':Object.freeze({
+      profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'candidate',path:'index.html',
+      parentSha256:'0b5e703866b0d2011bbf2e6135c41f92b36d43aa996c1ea431cd1436e64c67ae',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0033 (issue 100) Moon recovery and light eligibility, branch claude/r0033-moon-recovery-20261115 merged with main

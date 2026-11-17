@@ -119,3 +119,12 @@ test('R41-RES-4: a steady presented state is untouched by host composes (no poll
  assert.deepEqual(o.order,Array(5).fill('inner-compose:refined-terrain'));
  assert.equal(o.r.workers.at(-1).sent.length,sent);assert.equal(o.r.initialRenders,renders);
 });
+test('R41-RES-5: while the preview owns the sky, an adopted successor is composed by the preview in the same task',()=>{
+ for(const composed of [false,true]){
+  const o=settledRefined(),q=o.r.doc.querySelector;
+  o.r.doc.querySelector=sel=>sel==='.c'?{classList:{contains:k=>k==='real-sky-preview-ready'||(composed&&k==='real-sky-composed')}}:q(sel);
+  o.r.w.SalahSkyPreview={update(){o.order.push('preview-update:'+o.rt.state.visibleSource);}};o.order.length=0;
+  o.rt.invalidate('r0041 same-identity withdrawal');
+  assert.deepEqual(o.order.filter(x=>x.startsWith('preview')),composed?[]:['preview-update:initial-v5'],JSON.stringify({composed,order:o.order}));
+ }
+});
