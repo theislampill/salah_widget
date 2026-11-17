@@ -138,8 +138,8 @@
   detail.adopt({linear:m.surfaceLinear,calendarLinear:m.calendarLinear,coverage:m.surfaceCoverage,size:m.surfaceSize,extent:m.surfaceExtent,identity:m.physicalIdentity});
   const prefixMs=performance.now()-began;
   canvas.width=m.width;canvas.height=m.height;upperBytes=m.rgba;calendarBytes=m.calendarRgba;textureUp=null;
-  accepted={token:++adoptions,id:record.id,key:record.key,scope:record.scope,epoch:record.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity,initial:m.kind==='initial'};
-  status.quality=m.diagnostics.quality.status;status.legacyFallback=false;status.visibleSource=m.kind==='result'?'refined-terrain':m.kind==='initial'?'initial-v5':'terrain-preview';status.last=m.diagnostics;status.phase=m.scene.fraction;
+  accepted={token:++adoptions,id:record.id,key:record.key,scope:record.scope,epoch:record.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity,initial:m.kind==='initial'||m.kind==='phase-disc',phaseDisc:m.kind==='phase-disc'};
+  status.quality=m.diagnostics.quality.status;status.legacyFallback=false;status.visibleSource=m.kind==='result'?'refined-terrain':m.kind==='initial'?'initial-v5':m.kind==='phase-disc'?'phase-disc':'terrain-preview';status.last=m.diagnostics;status.phase=m.scene.fraction;
   syncTexture(capture());status.lastAdoption={at:began,prefixMs,totalMs:performance.now()-began,source:status.visibleSource};
  }
  function presentation(s){
@@ -168,8 +168,50 @@
   const record={id:'initial-head',key:key(original),scope:scope(original),epoch,scene:result.scene};
   return matches(record,s)?{result,record,capturedAt:first.capturedAt}:null;
  }
+ // R0041 presenter: the successor is composed in this task (as the preview and result paths do), so the
+ // device-resolution disc never waits for the sky's next compose after any withdrawal or resume. A host that is
+ // composing right now (presentForCompose) is not re-entered: its own compose follows this adoption. While the
+ // refined sky has no frame, the published atmospheric preview owns the sky (its ready class hides the SVG Moon), so
+ // it re-composes now; otherwise its sky (stars) would show through the slot until its next paint (R0041 identity
+ // route, witnessed in all three engines).
+ function composeAdopted(){
+  if(hostComposing)return;
+  try{window.SalahRealSky?.compose();}catch(error){note(error);}
+  try{const c=document.querySelector('.c');if(c&&c.classList.contains('real-sky-preview-ready')&&!c.classList.contains('real-sky-composed'))window.SalahSkyPreview?.update?.();}catch(error){note(error);}
+ }
+ // R0041 (owner decision 2026-11-17): the receiver-independent phase disc (moon-phase-disc.mjs) is a second PRODUCER
+ // for this same initial slot, used only while the start-up receiver cannot serve the current scene. It is adopted
+ // through the same adopt() and the same record, scope, epoch and .0416-device-pixel test, so there is still one
+ // presenter. The receiver's own eligibility and budget (R0033 M2, initialRetry) are not changed here: the receiver
+ // is called only from initialPresentation's unchanged block.
+ // cause = why the receiver cannot serve now (recoverable renderer unavailability), or null when it can.
+ const phaseDisc={state:'idle',cause:null,renders:0,lastMs:null,error:null,errorEpoch:-1};
+ function initialCause(now){
+  if(!window.SalahMoonInitial||initialRetry.state==='permanent')return window.SalahMoonInitialError!=null?'receiver-decode-failed':'receiver-missing';
+  if(initialRetry.state==='exhausted')return 'initial-exhausted';
+  return initialEligible(now)?null:'initial-waiting';
+ }
+ function phaseDiscPresentation(s,cause){
+  phaseDisc.cause=cause;
+  // No producer in scope, or a producer/presenter fault already recorded for this epoch: nothing is fabricated and
+  // the limitation is reported (state.phaseDisc, state.limitation). One attempt per epoch, never per frame.
+  if(typeof renderPhaseDisc!=='function'){phaseDisc.state='absent';phaseDisc.error='phase-disc producer not installed';return;}
+  if(phaseDisc.errorEpoch===epoch)return;
+  try{
+   const geometry=scene(s),record={id:'phase-disc',key:key(s),scope:scope(s),epoch,scene:geometry},result=renderPhaseDisc(geometry);
+   if(!matches(record,capture())){status.initialRejected=(status.initialRejected??0)+1;return;}
+   adopt(result,record);
+   if(!accepted){phaseDisc.state='failed';phaseDisc.error=String(status.reason??'presentation failure');phaseDisc.errorEpoch=epoch;return;}
+   composeAdopted();
+   phaseDisc.state='presented';phaseDisc.renders++;phaseDisc.lastMs=result.diagnostics.totalMs;phaseDisc.error=null;
+  }catch(error){phaseDisc.state='failed';phaseDisc.error=note(error);phaseDisc.errorEpoch=epoch;}
+ }
  function initialPresentation(s,capturedAt){
-  if(presentation(s)||s.presentationReady===false||s.initialWarranted===false||profileMode!=='calendar'||referenceScene||!window.SalahMoonInitial||!initialEligible(capturedAt))return;
+  const current=presentation(s);
+  if((current&&!accepted.phaseDisc)||s.presentationReady===false||s.initialWarranted===false||profileMode!=='calendar'||referenceScene)return;
+  // A presented phase disc is replaced in place as soon as the receiver may serve again (R0033 M2 eligibility).
+  const cause=initialCause(capturedAt);
+  if(cause){if(!current)phaseDiscPresentation(s,cause);return;}
   try{
    const head=takeInitialHead(s,capturedAt),geometry=head?.result.scene??scene(s);
    const record=head?.record??{id:'initial',key:key(s),scope:scope(s),epoch,scene:geometry};
@@ -178,16 +220,7 @@
    // phase bound before publication, including accelerated native time.
    if(matches(record,capture())){
     adopt(result,record);if(!accepted)return;
-    // R0041 presenter: the successor is composed in this task (as the preview and result paths do), so the
-    // device-resolution disc never waits for the sky's next compose after any withdrawal or resume. A host that is
-    // composing right now (presentForCompose) is not re-entered: its own compose follows this adoption. While the
-    // refined sky has no frame, the published atmospheric preview owns the sky (its ready class hides the SVG Moon), so
-    // it re-composes now; otherwise its sky (stars) would show through the slot until its next paint (R0041 identity
-    // route, witnessed in all three engines).
-    if(!hostComposing){
-     try{window.SalahRealSky?.compose();}catch(error){note(error);}
-     try{const c=document.querySelector('.c');if(c&&c.classList.contains('real-sky-preview-ready')&&!c.classList.contains('real-sky-composed'))window.SalahSkyPreview?.update?.();}catch(error){note(error);}
-    }
+    composeAdopted();
     // Retain stage timing for later diagnostics; no polling is needed during
     // the first presented frames. Publication is distinct from visible pixels.
     status.firstInitial??={capturedAt,publishedAt:performance.now(),generation:s.generation,sceneIdentity:s.sceneIdentity,renderMs:head?0:result.diagnostics.totalMs,headHandoff:!!head,headCapturedAt:head?.capturedAt??null,headRenderMs:head?result.diagnostics.totalMs:null};
@@ -195,6 +228,8 @@
   }catch(error){
    status.initialError=String(error.message??error);initialRetry.count++;initialRetry.epoch=epoch;
    initialRetry.notBefore=capturedAt+60000;initialRetry.state=initialRetry.count>=3?'exhausted':'waiting';
+   // The receiver failed for this scene in this task: the slot is not left empty for the wait.
+   if(!presentation(s))phaseDiscPresentation(s,'initial-throw');
   }
  }
  // R0041 resume (owner decision 1, issue 143): every sky host composes the Moon only through this runtime's handle.
@@ -397,7 +432,18 @@
   get state(){const s=capture(),current=presentation(s);return snapshot(s,current);},
   dispose(){if(disposed)return;clear('disposed');disposed=true;recovery.state='idle';recovery.nextAt=null;clearInterval(timer);clearTimeout(deadline);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;document.removeEventListener('visibilitychange',visibility);closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status='disposed';}
  };
- function snapshot(s,current){const target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});}
+ // R0041: when no truthful Moon can be constructed the limitation is REPORTED, never drawn over. null while a Moon is
+ // presented or while the slot is merely withheld (day, scene pending, hidden or paused).
+ function limitation(s,current){
+  if(disposed||current)return null;
+  if(!s)return 'no accepted native lunar scene (location, clock or phase unavailable)';
+  if(s.paused||s.presentationReady===false||s.initialWarranted===false)return null;
+  if(profileMode!=='calendar'||referenceScene)return 'reference view: only the refinement worker can render it';
+  if(phaseDisc.state==='failed')return 'phase-disc producer or presenter fault: '+phaseDisc.error;
+  if(phaseDisc.state==='absent')return 'start-up renderer unavailable ('+phaseDisc.cause+') and '+phaseDisc.error;
+  return null;
+ }
+ function snapshot(s,current){const target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},phaseDisc:{...phaseDisc,state:accepted?.phaseDisc&&current?'presented':phaseDisc.state==='presented'?'idle':phaseDisc.state},limitation:limitation(s,current),initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});}
  registered=window.SalahMoonRuntime;
  timer=setInterval(()=>poll(),250);
  // Full asset/decode/row preparation must not compete with the synchronous

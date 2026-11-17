@@ -232,7 +232,7 @@ async function main(){
   await check("legacy Moon structural branch admits its exact positive source before parser stop",async()=>{
     assert.equal(legacySource.split('src="moon/moon-host.js"').length-1,1,"legacy host is absent or ambiguous");
     // R0041 candidate rebind (issue 143): structural f57dcab8 (R0036, parent c2c827c7) -> 15b5f253 (parent beaa894d).
-    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'d58b55402e90f003f8fdb9b2a6ddd09f8fc539e6921dd5447beca78e3daf5988','retained structural input must be explicitly rebound on source change');
+    assert.equal(sourceProfiles.legacyMoon.sourceSha256,'50efa2dcd5ba10e5b02de843bd6d07df161adf2580884873a7ff90037c7ca6a0','retained structural input must be explicitly rebound on source change');
     const h=await setup('healthy',{source:legacySource});assert.match(h.report.error,/Controlled parser stop/);
     assert.equal(h.report.storageIsolated,true);assert.equal(h.realStorageCalls,0);
     assert.equal(h.report.sourceSha256,sourceProfiles.legacyMoon.sourceSha256);
