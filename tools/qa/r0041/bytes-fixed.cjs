@@ -12,7 +12,8 @@ const fs=require('node:fs');const {createEnv,launch}=require('./iso.cjs');
 const [root,outFile,label,engine,sceneFile]=process.argv.slice(2);
 const scenes=JSON.parse(fs.readFileSync(sceneFile,'utf8'));
 const FRAG='#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&simWx=0&simCloud=0&qa=1';
-const INSTR=`(()=>{window.__r41ws=[];const W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);window.__r41ws.push(this);}};})();`;
+// The Moon worker is the one that receives the Moon boot message (it carries workerSource); the refined-sky worker never does.
+const INSTR=`(()=>{window.__r41ws=[];const W=window.Worker;window.Worker=class extends W{constructor(u,o){super(u,o);window.__r41ws.push(this);}};const P=Worker.prototype.postMessage;Worker.prototype.postMessage=function(m,...t){if(m&&m.kind==='boot'&&typeof m.workerSource==='string')this.__r41moon=true;return P.call(this,m,...t);};})();`;
 (async()=>{
  const env=await createEnv({root});const out={label,engine,renders:[]};
  try{
@@ -24,11 +25,7 @@ const INSTR=`(()=>{window.__r41ws=[];const W=window.Worker;window.Worker=class e
   out.renders=await page.evaluate(async scenes=>{
    const hex=b=>Array.from(new Uint8Array(b),x=>x.toString(16).padStart(2,'0')).join('');
    const dig=async a=>a?hex(await crypto.subtle.digest('SHA-256',a.slice().buffer)):null;
-   const moonWorker=()=>window.__r41ws.find(w=>w.__r41moon)??null;
-   // The Moon worker is the one whose replies carry a lunar scene; tag it on the first such message.
-   for(const w of window.__r41ws)w.addEventListener('message',e=>{if(e.data?.scene?.fraction!=null)w.__r41moon=true;});
-   window.SalahMoonRuntime.refresh();await new Promise(r=>setTimeout(r,200));
-   let n=900000;const work=s=>new Promise((res,rej)=>{const w=window.__r41ws.find(x=>x.__r41moon)??window.__r41ws.at(-1);const id=++n;
+   let n=900000;const work=s=>new Promise((res,rej)=>{const w=window.__r41ws.find(x=>x.__r41moon);if(!w)return rej(new Error('Moon worker not identified'));const id=++n;
     const on=e=>{const m=e.data;if(m?.id!==id)return;if(m.kind==='result'){w.removeEventListener('message',on);res(m);}else if(m.kind==='error'){w.removeEventListener('message',on);rej(new Error(m.error));}};
     w.addEventListener('message',on);w.postMessage({kind:'render',id,identity:{id,key:'r0041-bytes',epoch:-1},scene:s});setTimeout(()=>rej(new Error('worker timeout')),240000);});
    const rows=[];
