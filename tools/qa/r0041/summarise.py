@@ -16,7 +16,7 @@ for f in sys.argv[2:]:
             base = sorted(x[2] for x in log if x[3] is not None and x[3] <= 1)
             b0 = base[len(base) // 2] if base else 0
             log = [[x[0], 1 if ((x[3] is not None and x[3] > 4) or x[2] >= b0 + 10) else 0] + x[2:] for x in log]
-            MEASURED = ('invalidate', 'resume', 'sky-invalidate', 'identity')
+            MEASURED = ('invalidate', 'resume', 'sky-invalidate', 'identity')  # noRecv/noRecvResume reuse these names
             allev = sorted(e['tMs'] for e in r.get('events', []))
             ev = [e['tMs'] for e in r.get('events', []) if e['name'] in MEASURED]
             per = []
@@ -34,7 +34,7 @@ for f in sys.argv[2:]:
                 per.append({'eventMs': t, 'absentFrames': sum(x[1] for x in seg), 'absentFromMs': start, 'presentAgainMs': stop,
                             'absentDurationMs': (stop - start) if (start is not None and stop is not None) else (None if start is None else 'open')})
             dprev = [x[5] for x in log if len(x) > 5 and x[5] is not None and not x[1]]
-            rows.append({'starBaseline': b0, 'absentReclassified': sum(x[1] for x in log), 'maxPresentFrameDeltaY': max(dprev) if dprev else None, 'renderJobsAfterSettle': r.get('renderJobsAfterSettle'), 'frames': r['frames'], 'meanFrameIntervalMs': r['meanFrameIntervalMs'], 'absentFramesAfterSettle': r['absentFramesAfterSettle'],
+            rows.append({'valid': r.get('valid'), 'invalidReasons': r.get('invalidReasons'), 'starBaseline': b0, 'absentReclassified': sum(x[1] for x in log), 'maxPresentFrameDeltaY': max(dprev) if dprev else None, 'renderJobsAfterSettle': r.get('renderJobsAfterSettle'), 'frames': r['frames'], 'meanFrameIntervalMs': r['meanFrameIntervalMs'], 'absentFramesAfterSettle': r['absentFramesAfterSettle'],
                          'perEvent': per, 'intervals': r['absentIntervals'][:8], 'rafMoonReadyOff': r['rafMoonReadyOff'], 'rafNotCurrent': r['rafNotCurrent'],
                          'startupFirstPresentMs': r.get('startupFirstPresentMs'), 'startupAbsentAfterFirstPresent': r.get('startupAbsentAfterFirstPresent')})
         out[os.path.basename(f) + '|' + key] = {'engine': d['engine'], 'dpr': d['dpr'], 'motion': d['motion'], 'route': d['route'], 'startISO': d['startISO'], 'runs': rows,

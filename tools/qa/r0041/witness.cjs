@@ -43,7 +43,10 @@ const SHIFT=`(()=>{const ND=Date,off=${Date.parse(startISO)}-ND.now();class D ex
 const RAF=`(()=>{window.__r41={frames:[],events:[],pageshow:[],renders:0};{const P=Worker.prototype.postMessage;Worker.prototype.postMessage=function(m,...t){if(m&&m.kind==='render'&&m.scene&&m.scene.fraction!=null)window.__r41.renders++;return P.call(this,m,...t);};}addEventListener('pageshow',e=>{if(e.persisted)window.__r41.pageshow.push({persisted:true,wall:performance.timeOrigin+performance.now()});});const tick=t=>{const c=document.querySelector('.c'),m=document.querySelector('.moon-mask-disc');let cur=null;try{cur=window.SalahMoonRuntime?.observe?.().current??null;}catch(e){}
  window.__r41.frames.push([Math.round(t*10)/10,c&&c.classList.contains('moon-ready')?1:0,m&&m.classList.contains('mask-on')?1:0,cur?1:0,c&&c.classList.contains('real-sky-composed')?1:0]);if(window.__r41.frames.length>20000)window.__r41.frames.shift();requestAnimationFrame(tick);};requestAnimationFrame(tick);})();`;
 const Y=(d,i)=>.2126*d[i]+.7152*d[i+1]+.0722*d[i+2];
-function discOf(img,rect,scale){
+function discOf(img,rect,_requested){
+  // The capture's own scale (image width / 325 CSS px), not the requested DPR: a Chromium screencast frame can arrive at
+  // CSS size even at DPR 2 (review finding 2: the DPR 2 cells then sampled outside the image and compared nothing).
+  const scale=img.width/325;
   const x0=Math.max(0,Math.floor(rect.x*scale)),y0=Math.max(0,Math.floor(rect.y*scale)),S=Math.floor(Math.min(rect.w,rect.h)*scale),cx=x0+S/2,cy=y0+S/2,disc=[],corner=[],pts=[];
   const W=img.width,H=img.height,at=(x,y)=>x<0||y<0||x>=W||y>=H?null:Y(img.data,4*(y*W+x));
   for(let y=y0;y<y0+S&&y<H;y++)for(let x=x0;x<x0+S&&x<W;x++){const r=Math.hypot(x+.5-cx,y+.5-cy),v=at(x,y);
@@ -114,6 +117,15 @@ async function oneRun(L,env,run){
       await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});
         document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));return w;});
       await page.waitForTimeout(6000);}}
+  else if(route==='noRecv'||route==='noRecvResume'){
+      // Real speed, receiver removed (a single receiver fault): every withdrawal then has no same-moment producer.
+      await page.evaluate(()=>{window.__r41keep=window.SalahMoonInitial;window.SalahMoonInitial=null;});
+      for(let k=0;k<2;k++){
+        if(route==='noRecv'){await pageMark('invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahMoonRuntime.invalidate('r0041-witness');return w;});}
+        else{await pageMark('hide',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});
+          await page.waitForTimeout(1000);
+          await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});}
+        await page.waitForTimeout(6000);}}
   else if(route==='identity12'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+27000000});return w;});await page.waitForTimeout(45000);}
   else if(route==='identity'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+3600000});return w;});await page.waitForTimeout(45000);}
   capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});
@@ -151,14 +163,23 @@ async function oneRun(L,env,run){
         const dPrev=prevDisc&&prevDisc.length===c.disc.length?+(c.disc.reduce((p,v,i)=>p+Math.abs(v-prevDisc[i]),0)/c.disc.length).toFixed(2):null;prevDisc=c.disc;
         // startup: dRef is meaningless before a reference; use stars and disc-vs-corner difference of the reference-free part
         const absent=c.absent;
-        frames.push({t:Math.round(s.t-r.t0),absent:absent?1:0,stars:c.stars,dRef:c.dRef==null?null:+c.dRef.toFixed(2),old:c.dOld!=null&&c.dOld<=4&&!(c.dNew!=null&&c.dNew<=4)?1:0,dPrev});
+        frames.push({t:Math.round(s.t-r.t0),absent:absent?1:0,stars:c.stars,dRef:c.dRef==null?null:+c.dRef.toFixed(2),old:c.dOld!=null&&c.dOld<=4&&!(c.dNew!=null&&c.dNew<=4)?1:0,dPrev,discN:c.disc.length});
         if(!absent&&firstPresent==null&&route!=='startup')firstPresent=s.t;
         if(absent&&cropDir&&run===0&&!out.cropSaved){fs.mkdirSync(cropDir,{recursive:true});fs.writeFileSync(path.join(cropDir,`${engine}-dpr${dpr}-${motion}-${route}-absent.png`),s.png);out.cropSaved=true;}}
       const afterSettle=route==='startup'?frames.slice(Math.max(0,frames.findIndex(f=>!f.absent))):frames.filter(f=>f.t>=r.settleWall-r.t0-3000);
       // absent intervals after settle
       const intervals=[];let open=null;for(const f of afterSettle){if(f.absent&&open==null)open=f.t;if(!f.absent&&open!=null){intervals.push({fromMs:open,toMs:f.t,durationMs:f.t-open});open=null;}}if(open!=null)intervals.push({fromMs:open,toMs:null,durationMs:null});
       const rafAfter=r.raf.filter(x=>x[0]+r.perfOrigin>=r.settleWall-3000);
-      out.runs.push({frames:frames.length,meanFrameIntervalMs:frames.length>1?+((frames.at(-1).t-frames[0].t)/(frames.length-1)).toFixed(1):null,
+      // Fail-closed validity (review finding 2): a run that measured nothing is INVALID, never a pass.
+      const invalid=[];const S=Math.floor(Math.min(r.rect.w,r.rect.h)*(decode(shots[0]||{png:Buffer.alloc(0)})?.width??325)/325);
+      const minDisc=Math.min(...frames.map(f=>f.discN));if(!frames.length||!(minDisc>=0.9*Math.PI*(.47*S)**2))invalid.push('empty or partial disc region ('+minDisc+' px)');
+      if(route!=='startup'&&frames.some(f=>f.t>=r.settleWall-r.t0&&f.dRef==null))invalid.push('frames without a reference comparison');
+      const EVR={invalidate:'invalidate',resume:'resume',pageshow:'resume',sky:'sky-invalidate',identity:'identity',identity12:'identity',noRecv:'invalidate',noRecvResume:'resume'};
+      if(EVR[route]&&!r.events.some(e=>e.name===EVR[route]))invalid.push('no forced event');
+      if(route==='resume'||route==='pageshow'||route==='noRecvResume'){const ev=[...r.events].sort((x,y)=>x.wall-y.wall);
+        for(let k=0;k<ev.length;k++)if(ev[k].name==='hide'){const t1=ev[k].wall-r.t0+30,t2=(ev[k+1]?.wall??Infinity)-r.t0-30,inside=frames.filter(f=>f.t>=t1&&f.t<t2);
+          if(inside.length&&!inside.some(f=>f.absent))invalid.push('hidden state not classified absent');}}
+      out.runs.push({valid:invalid.length===0,invalidReasons:[...new Set(invalid)],frames:frames.length,meanFrameIntervalMs:frames.length>1?+((frames.at(-1).t-frames[0].t)/(frames.length-1)).toFixed(1):null,
         absentFramesAfterSettle:afterSettle.filter(f=>f.absent).length,absentIntervals:intervals,events:r.events.map(e=>({name:e.name,tMs:e.wall-r.t0,persisted:e.persisted})),
         rafFrames:rafAfter.length,rafMoonReadyOff:rafAfter.filter(x=>!x[1]).length,rafMaskOff:rafAfter.filter(x=>!x[2]).length,rafNotCurrent:rafAfter.filter(x=>!x[3]).length,
         startupFirstPresentMs:route==='startup'?(frames.find(f=>!f.absent)||{}).t??null:undefined,startupAbsentAfterFirstPresent:route==='startup'?(()=>{const i=frames.findIndex(f=>!f.absent);return i<0?null:frames.slice(i).filter(f=>f.absent).length;})():undefined,
