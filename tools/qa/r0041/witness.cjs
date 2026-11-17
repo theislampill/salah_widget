@@ -79,7 +79,11 @@ async function oneRun(L,env,run){
   const settleWall=Date.now();const rendersAtSettle=await page.evaluate(()=>window.__r41.renders);
   const events=[];const mark=async name=>{events.push({name,wall:Date.now()});};
   // In-page wall time (performance.timeOrigin + now) of the forcing call itself, comparable with screencast timestamps.
-  const pageMark=async (name,fn)=>{const wall=await page.evaluate(fn);events.push({name,wall});};
+  // Chromium screencast timestamps share the page wall clock. Firefox and WebKit shots are timed on THIS process's clock,
+  // and their in-page performance.timeOrigin is offset from it by a variable amount (seen up to ~1 s in Firefox), so for
+  // them the event instant is this process's clock when the forcing call has RETURNED (conservative: a shot requested
+  // after it shows the post-event page).
+  const pageMark=async (name,fn)=>{const wall=await page.evaluate(fn);events.push({name,wall:engine==='chromium'?wall:Date.now(),pageWall:wall});};
   if(route==='startup'){await page.waitForTimeout(2000);}
   else if(route==='natural'){await mark('observe');await page.waitForTimeout(+(process.env.R41_SECONDS||130)*1000);}
   else if(route==='expiry'||route==='noSucc'||route==='noSuccThrow'){
@@ -110,10 +114,12 @@ async function oneRun(L,env,run){
   else if(route==='identity12'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+27000000});return w;});await page.waitForTimeout(45000);}
   else if(route==='identity'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+3600000});return w;});await page.waitForTimeout(45000);}
   capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});
+  // The Moon's rectangle after the run: a genuine identity change moves the Moon, so post-event frames are judged there.
+  const rectEnd=await page.evaluate(()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r?{x:r.x,y:r.y,w:r.width,h:r.height}:null;});
   await page.waitForTimeout(300);
   const raf=await page.evaluate(()=>window.__r41.frames);const rendersAtEnd=await page.evaluate(()=>window.__r41.renders);const perfOrigin=await page.evaluate(()=>performance.timeOrigin);
   await page.close();
-  return {shots,raf,perfOrigin,events,rect,settleWall,t0,errors,renderJobsAfterSettle:rendersAtEnd-rendersAtSettle};
+  return {shots,raf,perfOrigin,events,rect,rectEnd,settleWall,t0,errors,renderJobsAfterSettle:rendersAtEnd-rendersAtSettle};
 }
 (async()=>{
   const env=await createEnv({root});const out={engine,dpr:+dpr,motion,route,startISO,fragment:FRAG,runs:[]};
@@ -129,9 +135,14 @@ async function oneRun(L,env,run){
       const before=[...shots].reverse().find(s=>s.t<=r.settleWall);const last=shots.at(-1);
       const refOld=before&&route!=='startup'?discOf(decode(before),r.rect,scale).disc:null,refNew=(route==='identity'||route==='identity12'||route==='startup')&&last?discOf(decode(last),r.rect,scale).disc:null;
       const frames=[];let firstPresent=null,prevDisc=null,rolling=refOld;
+      // identity routes: the Moon moves with the identity. Post-event frames are judged at the END rectangle against the
+      // run's final frame there (refEnd); the OLD-identity attribution stays at the settled rectangle.
+      const identityRoute=route==='identity'||route==='identity12',evT=identityRoute&&r.events.length?r.events[0].wall:null;
+      const refEnd=identityRoute&&last&&r.rectEnd?discOf(decode(last),r.rectEnd,scale).disc:null;
       for(const s of shots){const img=decode(s);if(!img)continue;
         // natural: the reference ROLLS to the last PRESENT frame (the lit disc changes slowly at real speed over minutes)
-        const c=classify(img,r.rect,scale,route==='natural'?[rolling]:[refOld,refNew]);if(route==='natural'&&!c.absent&&s.t>r.settleWall)rolling=c.disc;
+        let c=classify(img,r.rect,scale,route==='natural'?[rolling]:[refOld,refNew]);
+        if(identityRoute&&evT!=null&&s.t>=evT&&refEnd){const old=c.dOld;c={...classify(img,r.rectEnd,scale,[refEnd]),dOld:old,dNew:null};}if(route==='natural'&&!c.absent&&s.t>r.settleWall)rolling=c.disc;
         // dPrev: mean |dY| over the disc against the previous captured frame (size of a visible swap, e.g. V5 -> refined)
         const dPrev=prevDisc&&prevDisc.length===c.disc.length?+(c.disc.reduce((p,v,i)=>p+Math.abs(v-prevDisc[i]),0)/c.disc.length).toFixed(2):null;prevDisc=c.disc;
         // startup: dRef is meaningless before a reference; use stars and disc-vs-corner difference of the reference-free part
