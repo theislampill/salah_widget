@@ -76,6 +76,9 @@ async function oneRun(L,env,run){
   await page.waitForFunction(()=>window.SalahMoonRuntime?.observe?.().state?.visibleSource==='refined-terrain',null,{timeout:240000,polling:250}).catch(()=>{});
   await page.waitForTimeout(3000);
   const rect=await page.evaluate(()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r?{x:r.x,y:r.y,w:r.width,h:r.height}:null;});
+  // Firefox/WebKit: the serial screenshot loop can hold ONE early request (taken on the blank card during load) across
+  // the whole settle, so "the last shot before settle" is not a valid reference there. Take a dedicated reference now.
+  const refPng=engine==='chromium'?null:await page.screenshot({scale:'device',animations:'allow',caret:'initial'});
   const settleWall=Date.now();const rendersAtSettle=await page.evaluate(()=>window.__r41.renders);
   const events=[];const mark=async name=>{events.push({name,wall:Date.now()});};
   // In-page wall time (performance.timeOrigin + now) of the forcing call itself, comparable with screencast timestamps.
@@ -119,7 +122,7 @@ async function oneRun(L,env,run){
   await page.waitForTimeout(300);
   const raf=await page.evaluate(()=>window.__r41.frames);const rendersAtEnd=await page.evaluate(()=>window.__r41.renders);const perfOrigin=await page.evaluate(()=>performance.timeOrigin);
   await page.close();
-  return {shots,raf,perfOrigin,events,rect,rectEnd,settleWall,t0,errors,renderJobsAfterSettle:rendersAtEnd-rendersAtSettle};
+  return {shots,raf,perfOrigin,events,rect,rectEnd,refPng,settleWall,t0,errors,renderJobsAfterSettle:rendersAtEnd-rendersAtSettle};
 }
 (async()=>{
   const env=await createEnv({root});const out={engine,dpr:+dpr,motion,route,startISO,fragment:FRAG,runs:[]};
@@ -132,7 +135,8 @@ async function oneRun(L,env,run){
       const scale=+dpr;const shots=r.shots.sort((a,b)=>a.t-b.t);
       // reference frames: the last frame before settle+0 (old identity) and the last frame of the run (new identity)
       const decode=s=>{try{return decodePng(s.png);}catch(e){return null;}};
-      const before=[...shots].reverse().find(s=>s.t<=r.settleWall);const last=shots.at(-1);
+      const before=r.refPng?{png:r.refPng}:[...shots].reverse().find(s=>s.t<=r.settleWall);const last=shots.at(-1);
+      if(cropDir&&before){fs.mkdirSync(cropDir,{recursive:true});fs.writeFileSync(path.join(cropDir,`${engine}-dpr${dpr}-${motion}-${route}-run${run}-reference.png`),before.png);}
       const refOld=before&&route!=='startup'?discOf(decode(before),r.rect,scale).disc:null,refNew=(route==='identity'||route==='identity12'||route==='startup')&&last?discOf(decode(last),r.rect,scale).disc:null;
       const frames=[];let firstPresent=null,prevDisc=null,rolling=refOld;
       // identity routes: the Moon moves with the identity. Post-event frames are judged at the END rectangle against the
