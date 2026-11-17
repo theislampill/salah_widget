@@ -1,0 +1,73 @@
+diff --git a/moon/src/moon-first-paint.mjs b/moon/src/moon-first-paint.mjs
+index fccb6670..deed5846 100644
+--- a/moon/src/moon-first-paint.mjs
++++ b/moon/src/moon-first-paint.mjs
+@@ -18,17 +18,6 @@ function nativeHeadMoonGeometry(moon,dpr){
+   backgroundLeft:left/dpr-originX,backgroundTop:top/dpr-originY,backgroundWidth:width/dpr,backgroundHeight:height/dpr};
+ }
+ 
+-// R0041: the head scene uses the same phase-direction authority as the Moon host (see moon-native.mjs
+-// directedCalendarScene): direction from the owner's own snapshot one minute apart; lit side stays on waxing.
+-function headPhaseDirection(owner,snapshot,sim,moon){
+- if(sim?.moon!=null||!Number.isFinite(snapshot.lat)||!Number.isFinite(snapshot.lon))return {};
+- const next=owner.snapshot(new Date(snapshot.utcMs+60000),snapshot.lat,snapshot.lon,sim),d=Math.acos(2*next.frac-1)-Math.acos(2*moon.frac-1);
+- return !Number.isFinite(d)?{}:{phaseDirection:Math.abs(d)<=1e-6?0:(d<0?1:-1)};
+-}
+-function headDirectedScene(owner,capture,profile){
+- const d=capture.phaseDirection;if((capture.timeScale??1)<=0||(d!==1&&d!==-1))return owner.scene(capture,profile);
+- const out=owner.scene({...capture,waxing:d===1},profile);out.sun=[out.sun[0],(capture.waxing?1:-1)*Math.abs(out.sun[1]),out.sun[2]];out.waxing=capture.waxing;out.leadDirection=d;return out;
+-}
+ function composeNativeHeadMoon(preview,snapshot,sim,owner,support){
+  if(!snapshot||snapshot.timeScale!==1||snapshot.paused||!Number.isFinite(snapshot.utcMs)||!Number.isFinite(snapshot.lat)||!Number.isFinite(snapshot.lon)||!Number.isFinite(snapshot.dpr))throw Error('Head Moon accepted input');
+  if(!preview?.raster?.starPreview)throw Error('Head Moon needs admitted catalogue preview');
+@@ -38,10 +27,10 @@ function composeNativeHeadMoon(preview,snapshot,sim,owner,support){
+  const opacity=Number(presentation.moonShow.toFixed(3));
+  if(opacity<=0)return {visible:false,moon,presentation,snapshot};
+  if(!support.initial)throw Error('Head Moon qualified initial unavailable');
+- const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,...headPhaseDirection(owner,snapshot,sim,moon),up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
++ const g=nativeHeadMoonGeometry(moon,snapshot.dpr),capture={...snapshot,fraction:moon.frac,waxing:moon.waxing,up:moon.up,phaseDiameter:g.phaseDiameter,maximumPhaseDiameter:g.maximumPhaseDiameter,
+   phaseQuantum:support.phaseQuantum(g.phaseDiameter),physicalFraction:support.canonicalFraction(moon.frac,g.phaseDiameter)};
+  let table,calendar;
+- const scene=headDirectedScene(owner,capture,support.profile),result=support.initial.render(scene,(surface,token)=>{table=surface;calendar=token;});
++ const scene=owner.scene(capture,support.profile),result=support.initial.render(scene,(surface,token)=>{table=surface;calendar=token;});
+  const r=preview.raster,E=r.effectiveExposure,sky=r.skyBackgroundLinear??r.backgroundLinear,stars=r.stellarLinear,diffuse=r.diffusePhysicalLinear;
+  const W=g.width,H=g.height,linear=new Float64Array(W*H*3),covered=new Uint8Array(W*H);
+  const ss=result.surfaceSize/(.96*result.surfaceExtent),ox=result.surfaceSize/2-.5*ss,oy=ox;
+diff --git a/moon/src/moon-native.mjs b/moon/src/moon-native.mjs
+index 9cd6a4ef..3d7bf95b 100644
+--- a/moon/src/moon-native.mjs
++++ b/moon/src/moon-native.mjs
+@@ -29,6 +29,7 @@
+  const profile=()=>profileMode==='reference'?{...MOON_DEFAULT_PROFILE,profile_id:'unboosted-v5-01',mode:'reference',lift:0}:{...MOON_DEFAULT_PROFILE};
+  function capture(withGeometry=true){
+   const h=window.SalahMoonHost;if(!h)return null;let s;try{s=h.capture();}catch{return null;}
++  if(s&&s.phaseDirection===undefined&&(s.timeScale??1)>0&&Number.isFinite(s.fraction)){const d=historyDirection(s);if(d!==undefined)s={...s,phaseDirection:d};}
+   // Native observation can initialize the explicit clock. Preserve it even
+   // when an empty surface query has no candidate needing geometric validation.
+   if(!withGeometry)return null;
+@@ -40,6 +41,12 @@
+   const maximumPhaseDiameter=Math.ceil(phaseDiameter*Math.max(1,Number.isFinite(s.maximumPresentationRatio)?s.maximumPresentationRatio:1));
+   return {...s,phaseDiameter,maximumPhaseDiameter,phaseQuantum:phaseQuantum(phaseDiameter),physicalFraction:canonicalFraction(s.fraction,phaseDiameter),profileMode,referenceIdentity:referenceScene?JSON.stringify(referenceScene):null};
+  }
++ // C2 VARIANT (evidence only): phase direction from successive native snapshots inside the Moon host.
++ let dirMemo={scope:null,alpha:null,dir:null};
++ function historyDirection(s){const sc=JSON.stringify([s.generation,s.sceneIdentity,s.waxing,s.dpr]),a=Math.acos(2*s.fraction-1);
++  if(dirMemo.scope!==sc){dirMemo={scope:sc,alpha:a,dir:null};return undefined;}
++  if(a!==dirMemo.alpha){const d=a-dirMemo.alpha;dirMemo.dir=Math.abs(d)<=1e-6?0:(d<0?1:-1);dirMemo.alpha=a;}
++  return dirMemo.dir??undefined;}
+  const key=s=>JSON.stringify([s.generation,s.sceneIdentity,s.physicalFraction,s.waxing,s.dpr,s.profileMode,s.referenceIdentity,s.phaseDiameter]);
+  // Geometry reuse and target authority are different predicates. A CSS-sized
+  // footprint crossing an integer or a phase bucket is not a location/seek epoch.
+diff --git a/src/native/index.html b/src/native/index.html
+index f977941f..4726cfcd 100644
+--- a/src/native/index.html
++++ b/src/native/index.html
+@@ -4707,7 +4707,7 @@ window.SalahMoonHost=Object.freeze({
+  capture(){
+   const identity=skySceneIdentity();
+   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
+-   fraction:moonSky.frac,waxing:!!moonSky.waxing,...nativeLunarPhaseDirection(),up:moonSky.up,
++   fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+    presentationReady:_skySceneKey!==null,initialWarranted:_skyMoonPresence>0,
+    maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
+    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
