@@ -2447,7 +2447,6 @@ function skySceneIdentity(){
   return [lat,lon,_cacheTz,FOLLOW_WALL_CLOCK?"wall":[_simBase,_simTz,_rafT0,TIMESCALE].join(":")].join("|");
 }
 let _skySceneKey=null,_skyCommitted=false,_skyMoonPresence=0;
-let _moonHrefPending=null;   // R0041: the texture data URL awaiting decode before it replaces the presented one
 let _skyInitialDocument=true;
 function finishInitialSkyDocument(){_skyInitialDocument=false;try{window.SalahMoonRuntime?.finishInitialDocument();}catch(e){recordRenderFault("moon-handoff",e);}}
 // PRAYER owns calls at boot and after accepted configuration invalidation, before builders.
@@ -4688,40 +4687,18 @@ function _closeSettings(){
 }
 function _toggleSettings(){ const c=document.querySelector(".c"); if(!c) return; c.classList.contains("settings-open")?_closeSettings():_openSettings(); }
 
-// R0041: the PHASE-DIRECTION authority, distinct from waxing (the lit limb, chi sign). For the minute snapshot that
-// moonSky holds: +1 while the phase angle alpha=acos(2f-1) falls over the next minute, -1 while it rises, 0 inside a
-// 1e-6 rad/min dead band. Near full and new Moon the two disagree for minutes to hours (ecliptic-longitude versus
-// right-ascension opposition); the Moon host's kinematic consumers (leading edge, drift, re-request) follow this sign.
-// Absent for simMoon overrides and without a location: consumers then keep the historical waxing sign. It lives
-// outside nativeLunarSnapshot so the accepted V5/CP9 material section stays byte-identical.
-let _moonDirMemo={min:null,frac:null,dir:null};
-function nativeLunarPhaseDirection(){
-  if(SIM.moon!=null||!(isFinite(+lat)&&isFinite(+lon))||!Number.isFinite(moonSky._epochMin)) return {};
-  if(_moonDirMemo.min!==moonSky._epochMin||_moonDirMemo.frac!==moonSky.frac){
-    const t=moonSky._epochMin*60000,a=Math.acos(2*moonIllum(new Date(t)).fraction-1),b=Math.acos(2*moonIllum(new Date(t+60000)).fraction-1),d=b-a;
-    _moonDirMemo={min:moonSky._epochMin,frac:moonSky.frac,dir:!Number.isFinite(d)?null:Math.abs(d)<=1e-6?0:(d<0?1:-1)};}
-  return _moonDirMemo.dir==null?{}:{phaseDirection:_moonDirMemo.dir};
-}
 // Authored MB1 boundary: this is the only producer of native phase/time identity.
 window.SalahMoonHost=Object.freeze({
  capture(){
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
-   fraction:moonSky.frac,waxing:!!moonSky.waxing,...nativeLunarPhaseDirection(),up:moonSky.up,
+   fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
    presentationReady:_skySceneKey!==null,initialWarranted:_skyMoonPresence>0,
    maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
    paused:document.hidden||!!$('.c')?.classList.contains('paused')};
  },
- // R0041 presenter: a texture REPLACEMENT keeps the PRESENTED texture until its successor image is decoded, so the SVG
- // Moon never shows an undecoded (empty) image. A texture that is not presented (no href, or withdrawn: no moon-ready,
- // e.g. after the hide withdrawal) is replaced at once, as before, so a withdrawn pre-hide Moon is never revealed. Identity
- // changes are covered by beginSkyScene's pending card, which hides the whole sky until the new scene commits.
- publish(canvas){const ph=$('.mphoto');if(ph){const url=canvas.toDataURL();
-  if(ph.getAttribute('href')&&$('.c')?.classList.contains('moon-ready')&&typeof Image==='function'&&typeof Image.prototype.decode==='function'){_moonHrefPending=url;const img=new Image();img.src=url;
-   img.decode().catch(()=>{}).then(()=>{if(_moonHrefPending!==url)return;_moonHrefPending=null;ph.setAttribute('href',url);updateSkySurface();noteMoonSurfaceChange();});}
-  else{_moonHrefPending=null;ph.setAttribute('href',url);}}
-  updateSkySurface();noteMoonSurfaceChange();},
+ publish(canvas){const ph=$('.mphoto');if(ph)ph.setAttribute('href',canvas.toDataURL());updateSkySurface();noteMoonSurfaceChange();},
  fallback(){
   // Resilience means a usable widget and the runtime's own bounded recovery
   // (R0033), not silently substituting the old Moon. The mask follows the same
