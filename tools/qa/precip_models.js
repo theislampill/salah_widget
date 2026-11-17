@@ -48,7 +48,7 @@
     sunKernel:{amp:0.55,sigmaPx:120},     // [convention] area-fraction rule approximated by a gaussian around the visible Sun, x (1 - cloud^2)
     moonKernel:{amp:0,sigmaPx:120},       // [visibility aid if > 0] REMOVED by default (review F-5: magnitude not derived)
     tile:{w:352,h:320,cap:9000},          // [convention] M2/M5 texture tile larger than the band in both axes (no in-frame repeat)
-    render:{alphaCap:0.92,lineMin:1,lineFloor:0.6,ytop:8,ybot:300,yfade:255,sunDimMinDeg:3},   // [convention] rendering licences
+    render:{alphaCap:0.92,lineMin:1,lineFloor:0.6,lineMax:2.2,ytop:8,ybot:300,yfade:255,sunDimMinDeg:3},   // [convention] rendering licences
   },window.__PM_PARAMS||{});
   let T=P.T,G=P.G;const DEG=Math.PI/180,W=325,H=530,YTOP=8,YBOT=300,YFADE=255;
   // camera: the refined-sky camera from the fragment (skyAz/skyAlt), defaults 180/45
@@ -230,7 +230,7 @@
       const a=D/2/1000,alpha=Math.min(P.render.alphaCap,G*4*F*a*a/(zz*Math.hypot(wnd.ur,v)*T)*(opt.comp||1))*yband(y);
       if(alpha<0.01||x<-60||x>W+60)continue;
       const e=envAtPx(x,y);g.strokeStyle=`rgba(${e[0]},${e[1]},${e[2]},${alpha.toFixed(3)})`;
-      g.lineWidth=Math.max(1,Math.min(2.2,F*D/1000/zz*1.0+0.6));g.beginPath();g.moveTo(x-ux*Lp,y-uy*Lp);g.lineTo(x,y);g.stroke();
+      g.lineWidth=Math.max(P.render.lineMin,Math.min(P.render.lineMax,F*D/1000/zz+P.render.lineFloor));g.beginPath();g.moveTo(x-ux*Lp,y-uy*Lp);g.lineTo(x,y);g.stroke();
       n++;sumA+=alpha;angs.push(Math.atan2(ux,uy)/DEG);lens.push(Lp);
     }
     const q=(a,p)=>{if(!a.length)return null;const b=a.slice().sort((x,y)=>x-y);return +b[Math.min(b.length-1,Math.floor(p*b.length))].toFixed(2);};

@@ -2,7 +2,7 @@
 // Precipitation MODEL comparison (research only, 2026-11-15): REAL-TIME native-size clips of the current product rain
 // and the M1-M5 prototypes (tools/qa/precip_models.js) in one page per scene, same mocked start time and seed.
 //   node tools/qa/precip_models_capture.cjs --pw <playwright package dir> --root <generated tree> --out <bulk dir>
-//        --only <regex on scene id> [--secs 4] [--list 1] [--throttle 1] [--models M3,M4,M5 (subset re-capture)]
+//        --only <regex on scene id> [--secs 4] [--list 1] [--throttle 1] [--models M3,M4,M5 (subset re-capture)] [--params <json file overriding P>]
 // Capture: Chromium, CDP Page.startScreencast (lossless PNG frames with compositor timestamps) while the mocked
 // clock RUNS at wall rate, so CSS animation, rAF cloud motion and the overlay run unassisted. Card 325x530, DPR 1.
 // Network: precip_eval_lib.cjs installs the catch-all route on the context before any page exists, continues only
@@ -46,8 +46,8 @@ function scenes(){const out=[],site=L.SITES.madinah;
     add(`orient-moderate-${wd}-az${az}`,'equinox','solar-noon','moderate',wd,{hash:az===180?'':`&skyAz=${az}`,models:['current','M1','M1:rigid','M2']});
   for(const rg of ['light','moderate','heavy'])add(`tlong-${rg}-w8`,'equinox','solar-noon',rg,'w8',{models:['M1','M1~67','M2','M2~67']});
   for(const rg of ['drizzle','light','moderate','heavy','showers'])add(`gain-${rg}-calm`,'equinox','solar-noon',rg,'calm',{models:['current','M1','M1^400','M2','M2^400','M3^400']});
-  for(const [blk,sc,wd] of [['bday','solar-noon','calm'],['bwind','solar-noon','w8'],['btwi','blue-hour','calm'],['bmoon','night-early','calm']])
-    for(const rg of Object.keys(CREG))out.push({id:`${blk}-${rg}`,date:'equinox',scene:sc,utcMs:at('equinox',sc),wx:{...CTRL,...CREG[rg],...WIND[wd]},rg,wd,models:MODELS_ALL,block:blk,secs:3.6});
+  for(const [blk,sc,wd,dk] of [['bday','solar-noon','calm','equinox'],['bwind','solar-noon','w8','equinox'],['btwi','blue-hour','calm','equinox'],['bmoon','night-early','calm','equinox'],['bdark','night-early','calm','newmoon']])
+    for(const rg of Object.keys(CREG))out.push({id:`${blk}-${rg}`,date:dk,scene:sc,utcMs:at(dk,sc),wx:{...CTRL,...CREG[rg],...WIND[wd]},rg,wd,models:MODELS_ALL,block:blk,secs:3.6});
   for(const rg of ['moderate','heavy']){
     const m=[];for(const sh of ['0.5-1','1-3','3-10'])for(const gn of [25,50,100,400])m.push(`M1@${sh}^${gn}`);
     out.push({id:`conv-${rg}`,date:'equinox',scene:'solar-noon',utcMs:at('equinox','solar-noon'),wx:{...CTRL,...CREG[rg],...WIND.calm},rg,wd:'calm',models:m,secs:3.6});
@@ -75,6 +75,7 @@ const RECTS=L.RECTS;
       meta.ready=await L.waitReady(s.page,{maxMs:16000});
       for(let i=0;i<40;i++){const st=await s.page.evaluate(L.STATE);if(st.header.wt&&st.qa&&st.qa.wxTruth&&st.qa.wxTruth.currentWeatherSource&&!/none|unavail/i.test(st.qa.wxTruth.currentWeatherSource))break;await s.page.waitForTimeout(250);}
       await s.page.waitForTimeout(2000);
+      if(a.params)await s.page.evaluate(p=>{window.__PM_PARAMS=p;},JSON.parse(fs.readFileSync(a.params,'utf8')));meta.params=a.params?JSON.parse(fs.readFileSync(a.params,'utf8')):null;
       await s.page.addScriptTag({content:overlay});
       meta.state=await s.page.evaluate(L.STATE);meta.rects=await s.page.evaluate(RECTS);
       const GEO=`(()=>{const r=s=>{const e=document.querySelector(s);if(!e)return null;const b=e.getBoundingClientRect();return [b.x,b.y,b.width,b.height].map(v=>+v.toFixed(2))};

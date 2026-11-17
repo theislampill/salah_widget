@@ -235,3 +235,27 @@ def engine_compare(sdir, out, seconds=3.4):
         outf.append(C)
     outf[0].save(out, save_all=True, append_images=outf[1:], duration=40, loop=0, quality=78, method=4)
     return out, n
+
+
+def blind_from_anims(anim_dir, scene_rx, out_dir, key_file, seed=20261116, start=0.3, seconds=3.0):
+    """Build an unlabelled pack from per-presentation clips (single process, fresh names, key written once).
+    Clips are cut from the encoded per-presentation WebPs (25 fps), i.e. a second lossy encoding."""
+    rnd = random.Random(seed); os.makedirs(out_dir, exist_ok=True)
+    key = json.load(open(key_file, encoding='utf8')) if os.path.exists(key_file) else {}   # resumable; written after every clip
+    done = {(v['scene'], v['model']) for v in key.values()}
+    files = sorted(f for f in os.listdir(anim_dir) if re.search(scene_rx, f) and f.endswith('.webp') and '--compare' not in f)
+    names = rnd.sample(range(10 ** 6), len(files))
+    os.makedirs(os.path.dirname(os.path.abspath(key_file)), exist_ok=True)
+    for f, n in zip(files, names):
+        if tuple(f[:-5].split('--')) in done:
+            continue
+        im = Image.open(os.path.join(anim_dir, f)); a, b = int(start * FPS), int((start + seconds) * FPS); tl = []
+        for k in range(getattr(im, 'n_frames', 1)):     # the encoder merges identical frames: expand by duration
+            im.seek(k); rep = max(1, round(im.info.get('duration', 1000 / FPS) / (1000 / FPS))); fr0 = im.convert('RGB'); tl += [fr0] * rep
+        tl += [tl[-1]] * max(0, b - len(tl))
+        fr = tl[a:b]
+        name = 'clip-%06d.webp' % n
+        fr[0].save(os.path.join(out_dir, name), save_all=True, append_images=fr[1:], duration=int(1000 / FPS), loop=0, quality=85, method=4)
+        sc, spec = f[:-5].split('--'); key[name] = {'scene': sc, 'model': spec, 'frames': len(fr)}
+        json.dump(key, open(key_file, 'w', encoding='utf8'), indent=1)
+    return len(key)
