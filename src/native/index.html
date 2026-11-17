@@ -4707,7 +4707,7 @@ window.SalahMoonHost=Object.freeze({
  capture(){
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
-   fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+   fraction:moonSky.frac,waxing:!!moonSky.waxing,...nativeLunarPhaseDirection(),up:moonSky.up,
    presentationReady:_skySceneKey!==null,initialWarranted:_skyMoonPresence>0,
    maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
