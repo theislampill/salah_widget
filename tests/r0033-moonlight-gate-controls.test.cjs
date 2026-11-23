@@ -1,3 +1,4 @@
+'use strict';
 // R0033 (issue 100) §11, last item: single-gate negative controls for native moonlight.
 // The authored native moon object (nativeLunarPresentation) withholds physical
 // moonlight through two independent gates: G-alt (moonUp, Moon below the horizon;
