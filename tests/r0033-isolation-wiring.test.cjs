@@ -78,6 +78,12 @@ test('R33-WIRE-05 file entry: an unrouted in-tree file: URL is logged, not an es
     const bad=await run({bypass:[{url}]},file,{url:inside});assert.equal(bad.verdict.ok,false,url);assert.equal(bad.verdict.escapes[0].kind,'bypassed-route');
   }
   const notFileCell=await run({bypass:[{url:inside}]});assert.equal(notFileCell.verdict.ok,false,'no fileRoot: an unrouted file: URL is an escape');
+  // The exemption is for file: URLs only: an unrouted request to the loopback fixture origin itself, which classify()
+  // would continue if it were routed, is still an escape (delta-review mutant F).
+  const originUnrouted=await run({bypass:[{url:ORIGIN+'/index.html',type:'document'}]});
+  assert.equal(originUnrouted.verdict.ok,false);assert.equal(originUnrouted.verdict.escapes[0].kind,'bypassed-route');assert.equal(originUnrouted.ledger.fileUnrouted.length,0);
+  const originUnroutedInFileCell=await run({bypass:[{url:ORIGIN+'/index.html'}]},{origin:ORIGIN,fileRoot:ROOT,fixture},{url:inside});
+  assert.equal(originUnroutedInFileCell.verdict.ok,false,'a file-entry policy does not exempt an unrouted http URL');
   const routed=await run({requests:[{url:inside}]},file,{url:inside});assert.equal(dispositions(routed.log)[inside],'continue');assert.equal(routed.verdict.ok,true);
 });
 
@@ -94,12 +100,12 @@ test('R33-WIRE-06 a late non-loopback server address is awaited and fails the ve
 });
 
 // The recipe end to end (smoke cell) in a child process against the fake: exit 0 when clean, exit 3 on any escape.
-function recipe(scenario){
+function recipe(scenario,cell='smoke'){
   const out=fs.mkdtempSync(path.join(os.tmpdir(),'r0033-wire-')),logFile=path.join(out,'fake-log.json');
-  try{const r=spawnSync(process.execPath,[path.join(ROOT,'tools','qa','r0033_remaining_cells.cjs'),'--cell','smoke','--root',ROOT,'--out',out,'--engine','chromium','--playwright',path.join(__dirname,'r0033-fake-playwright.cjs')],
+  try{const r=spawnSync(process.execPath,[path.join(ROOT,'tools','qa','r0033_remaining_cells.cjs'),'--cell',cell,'--root',ROOT,'--out',out,'--engine','chromium','--playwright',path.join(__dirname,'r0033-fake-playwright.cjs')],
       {encoding:'utf8',timeout:60000,env:{...process.env,R33_FAKE:JSON.stringify(scenario),R33_FAKE_LOG:logFile}});
-    const requests=JSON.parse(fs.readFileSync(path.join(out,'smoke-chromium-requests.json'),'utf8')),log=JSON.parse(fs.readFileSync(logFile,'utf8'));
-    return {status:r.status,stdout:r.stdout,stderr:r.stderr,requests,log};}
+    const requests=JSON.parse(fs.readFileSync(path.join(out,cell+'-chromium-requests.json'),'utf8')),log=JSON.parse(fs.readFileSync(logFile,'utf8'));
+    return {status:r.status,stdout:r.stdout,stderr:r.stderr,requests,log,line:r.stdout.trim()?JSON.parse(r.stdout.trim().split(/\r?\n/).pop()):null};}
   finally{fs.rmSync(out,{recursive:true,force:true});}
 }
 test('R33-WIRE-07 the recipe exits 0 on a clean run and 3 when any request escaped the route, whatever the cell reported',()=>{
@@ -111,4 +117,29 @@ test('R33-WIRE-07 the recipe exits 0 on a clean run and 3 when any request escap
   for(const scenario of [{bypass:[{url:'https://api.rainviewer.com/public/weather-maps.json'}]},{responses:[{url:'http://127.0.0.1/x',ip:'93.184.216.34'}]}]){
     const r=recipe(scenario);assert.equal(r.status,3,JSON.stringify(scenario));assert.match(r.stderr,/ISOLATION ESCAPE/);assert.equal(r.requests.verdict.ok,false);
   }
+});
+
+// Exit-code order and the secondload verdict (delta-review mutants I, J, K): a complete run whose accepting observation
+// fails exits 4, an incomplete one 2, and an isolation escape exits 3 whatever else the cell found.
+const HEALTHY={registered:true,status:'ready',visibleSource:'terrain-preview',current:true,pending:false,renders:1,recovery:{state:'idle',attempts:0,limit:3},retryCount:0,errors:[],boots:[{t:1,cache:'force-cache',offline:false}]};
+test('R33-WIRE-08 secondload: WITHIN-BASELINE exits 0; an unobserved or revalidating boot is OVER-BASELINE and exits 4; an escape still exits 3',()=>{
+  const ok=recipe({facts:HEALTHY},'secondload');
+  assert.equal(ok.status,0,ok.stderr);assert.equal(ok.line.result,'WITHIN-BASELINE');assert.equal(ok.line.withinBaseline,true);
+  for(const k of ['firstLoad','reload','newPageSameContext']){assert.equal(ok.line[k].checks.bootCacheObserved,true,k);assert.deepEqual(ok.line[k].bootCacheModes,['force-cache'],k);}
+  assert.ok(ok.log.some(e=>e.call==='reload'));
+  for(const boots of [[{t:1,cache:'no-cache'}],[],null]){
+    const bad=recipe({facts:{...HEALTHY,boots}},'secondload');
+    assert.equal(bad.status,4,JSON.stringify(boots)+bad.stderr);assert.equal(bad.line.result,'OVER-BASELINE');assert.equal(bad.line.firstLoad.checks.bootCacheObserved,false);
+  }
+  const retried=recipe({facts:{...HEALTHY,retryCount:1}},'secondload');assert.equal(retried.status,4);assert.equal(retried.line.firstLoad.checks.noRetry,false);
+  const recovering=recipe({facts:{...HEALTHY,recovery:{state:'scheduled',attempts:1}}},'secondload');assert.equal(recovering.status,4);
+  const escaped=recipe({facts:{...HEALTHY,boots:[{t:1,cache:'no-cache'}]},bypass:[{url:'https://api.open-meteo.com/v1/forecast'}]},'secondload');
+  assert.equal(escaped.status,3,'an escape outranks OVER-BASELINE');assert.match(escaped.stderr,/ISOLATION ESCAPE/);
+});
+test('R33-WIRE-09 smoke: a completed FAIL exits 4, a missing required case exits 2, and an escape outranks both',()=>{
+  const cases=Array.from({length:22},(_,i)=>({name:'case '+(i+1),expected:1,assertions:1,state:i===21?'failed':'executed',reason:null}));
+  const failing={status:'FAIL',pass:140,fail:1,skip:0,required:{cases,failed:1,missing:[]}};
+  assert.equal(recipe({smoke:failing}).status,4);
+  assert.equal(recipe({smoke:{...failing,status:'INCOMPLETE',required:{cases,failed:0,missing:['case 22']}}}).status,2);
+  const both=recipe({smoke:failing,bypass:[{url:'https://api.rainviewer.com/public/weather-maps.json'}]});assert.equal(both.status,3);assert.match(both.stderr,/ISOLATION ESCAPE/);
 });

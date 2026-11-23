@@ -1,13 +1,13 @@
 'use strict';
 // R0033 isolation wiring (issue 100): a hermetic fake of the small Playwright surface that
-// tools/qa/r0033_isolation.cjs and the smoke cell of tools/qa/r0033_remaining_cells.cjs use. No browser, no network.
+// tools/qa/r0033_isolation.cjs and the smoke and secondload cells of tools/qa/r0033_remaining_cells.cjs use. No browser, no network.
 // It records every call in order and, on goto(), replays a scripted set of synthetic requests: each request is
 // offered to every installed context route (the disposition the handler chose is recorded), then 'requestfinished'
 // (or 'requestfailed') is emitted for it; 'bypass' requests are emitted WITHOUT being offered to any route, as an
 // engine that does not route them would. Used in-process through create() and, as `--playwright <this file>`, by a
 // child recipe run, which reads its scenario from R33_FAKE (JSON) and writes its call log to R33_FAKE_LOG.
 const fs=require('node:fs');
-// scenario: {requests:[{url,type?,fail?}], bypass:[{url,type?,fail?}], responses:[{url,ip}], noRouteWebSocket?, smoke?}
+// scenario: {requests:[{url,type?,fail?}], bypass:[{url,type?,fail?}], responses:[{url,ip}], noRouteWebSocket?, smoke?, facts?}
 function create(scenario={},onLog=null){
   const log=[],note=e=>{log.push(e);if(onLog)onLog(log);};
   const guardState=()=>{try{return require('../tools/qa/v1_net_guard.cjs').state.installed;}catch{return null;}};
@@ -26,8 +26,10 @@ function create(scenario={},onLog=null){
             for(const spec of scenario.requests||[])await fire(spec,true);
             for(const spec of scenario.bypass||[])await fire(spec,false);
             for(const r of scenario.responses||[])emit('response',{url:()=>r.url,serverAddr:()=>new Promise(res=>setTimeout(()=>res({ipAddress:r.ip,port:443}),20))});},
-          waitForFunction:async()=>true,waitForTimeout:async()=>{},
-          evaluate:async()=>scenario.smoke??{status:'PASS',pass:1,fail:0,skip:0,required:{cases:Array.from({length:22},(_,i)=>({name:'case '+(i+1),expected:'pass',assertions:1,state:'PASS',reason:null})),failed:[],missing:[]}}};
+          waitForFunction:async()=>true,waitForTimeout:async()=>{},reload:async()=>{note({call:'reload'});},
+          // A recipe's Moon facts read (a string expression naming SalahMoonRuntime) answers scenario.facts when given;
+          // every other evaluate answers the smoke result.
+          evaluate:async expr=>scenario.facts&&typeof expr==='string'&&expr.includes('SalahMoonRuntime')?scenario.facts:scenario.smoke??{status:'PASS',pass:1,fail:0,skip:0,required:{cases:Array.from({length:22},(_,i)=>({name:'case '+(i+1),expected:'pass',assertions:1,state:'PASS',reason:null})),failed:[],missing:[]}}};
         Object.assign(ctx,{
           route:async(pattern,handler)=>{note({call:'route',pattern:String(pattern),pagesBefore:ctx.pages});routes.push({pattern:String(pattern),handler});},
           unroute:async()=>{note({call:'unroute'});routes.length=0;},unrouteAll:async()=>{note({call:'unrouteAll'});routes.length=0;},

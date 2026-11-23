@@ -22,7 +22,7 @@
 //        [--dpr 1|2|3] [--minutes 30] [--rate 4] [--samples 3] [--playwright <pkg>]
 // Output: one JSON line per cell on stdout (with the isolation verdict) and <out>/<cell>-<engine>[-dprN]-requests.json.
 // Exit: 0 complete, 1 error, 2 INCOMPLETE (a measurement could not be made), 3 isolation escape, 4 FAIL (measured,
-// and the cell's accepting observation does not hold; secondload only). An escape (3) overrides every other code.
+// and the cell's accepting observation does not hold; secondload, fileentry and smoke). An escape (3) overrides every other code.
 require('./v1_net_guard.cjs').install();                                  // before any other module can connect
 const iso=require('./r0033_isolation.cjs');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),{pathToFileURL}=require('node:url');
@@ -57,7 +57,9 @@ const SHIM=`(()=>{const nf=window.fetch.bind(window),iso=ms=>new Date(ms+3*36000
 // The boot cache mode is OBSERVED: the 'boot' message the page posts to the Moon worker carries it (moon-native
 // start()); that the worker then fetches the assets with that mode is read from source, not observed here.
 const PROBE=`(()=>{const R=window.__r0033={pollCalls:0,layoutReads:0,log:[],chunks:[],boots:[],withhold:0,self:0};
- if(typeof Worker==='function'){const pm=Worker.prototype.postMessage;Worker.prototype.postMessage=function(m,...r){if(m&&m.kind==='boot')R.boots.push({t:performance.now(),cache:m.cache??null,offline:!!m.offline});return pm.call(this,m,...r);};}
+ // Only the Moon worker's boot counts: it carries workerSource (moon-native start()); the real-sky worker also posts a
+ // {kind:'boot',pack} message, which has no cache mode and is not a Moon boot.
+ if(typeof Worker==='function'){const pm=Worker.prototype.postMessage;Worker.prototype.postMessage=function(m,...r){if(m&&m.kind==='boot'&&'workerSource' in m)R.boots.push({t:performance.now(),cache:m.cache??null,offline:!!m.offline});return pm.call(this,m,...r);};}
  R.observe=()=>{R.self++;try{return window.SalahMoonRuntime?.observe?.()??null;}finally{R.self--;}};   // the recipe's own reads are not counted
  const si=window.setInterval;window.setInterval=function(f,ms,...r){if(ms===250&&document.currentScript?.id==='moon-initial-code'&&typeof f==='function'){const g=f;f=function(){R.pollCalls++;return g.apply(this,arguments);};}return si.call(this,f,ms,...r);};
  const gb=Element.prototype.getBoundingClientRect;Element.prototype.getBoundingClientRect=function(){if(!R.self&&this.classList&&this.classList.contains('mphoto'))R.layoutReads++;return gb.call(this);};
@@ -100,7 +102,8 @@ const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,
    const first=await until(o.page,terrain,300000,500),n1=served.length;
    await o.page.reload();const second=await until(o.page,terrain,300000,500),n2=served.length;
    // The Playwright clock belongs to the context, so the second page shares the installed clock and the catch-all route.
-   const p2=await o.context.newPage();await p2.goto(base+'/index.html'+FROZEN);
+   // The probe is a page init script, so the new page needs its own copy (without it the boots are not observed).
+   const p2=await o.context.newPage();await p2.addInitScript(PROBE);await p2.goto(base+'/index.html'+FROZEN);
    const third=await until(p2,terrain,300000,500),n3=served.length;
    // Each load is judged on observations only: server asset requests (<= 2), the boot cache mode the page posted to
    // the worker ('force-cache' on every boot of a healthy load), recovery idle with no attempt and retryCount 0.
@@ -116,21 +119,28 @@ const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,
   }else if(cell==='fileentry'){
    // Armed by an init script, so the withheld chunk is the first one the first boot appends.
    const o=await open(S,pathToFileURL(path.join(root,'index.html')).href+FROZEN,{fileRoot:root,inits:['window.__r0033.withhold=1;']});
-   const failed=await until(o.page,f=>f.status==='unavailable'&&f.recovery?.state==='scheduled'&&f.recovery?.lastClass==='transport',120000);
+   const bootFail=await until(o.page,f=>f.status==='unavailable'&&f.recovery?.state==='scheduled'&&f.recovery?.lastClass==='transport',120000);
    const boot=await o.page.evaluate(()=>window.__r0033.chunks.slice());
    await o.page.clock.fastForward(31000);
    const back=await until(o.page,terrain,300000,500),chunks=await o.page.evaluate(()=>window.__r0033.chunks.slice());
    const attempt=chunks.slice(boot.length),names=attempt.map(c=>c.name),dup=names.filter((n,i)=>names.indexOf(n)!==i);
-   const withheld=boot.filter(c=>c.withheld).length;incomplete=!(failed.ok&&back.ok)||withheld!==1;
-   emit({entry:'file',withheldChunks:withheld,bootFailure:{ok:failed.ok,recovery:failed.f?.recovery??null,chunksAppended:boot},automaticAttempt:{terrain:back.ok,ms:back.ms,recovery:back.f?.recovery??null,retryCount:back.f?.retryCount??null,
-    chunkScriptsAppended:attempt.length,distinct:new Set(names).size,duplicates:dup,eachOnce:attempt.length>0&&dup.length===0},final:back.f,errors:o.errors});
+   const withheld=boot.filter(c=>c.withheld).length;incomplete=!(bootFail.ok&&back.ok)||withheld!==1;
+   // "Every chunk exactly once" is judged against the chunk scripts the served tree actually contains.
+   const inTree=fs.readdirSync(path.join(root,'moon','file-data')).filter(n=>n.endsWith('.js')).sort(),missingChunks=inTree.filter(n=>!names.includes(n));
+   // A complete run FAILS (exit 4) unless the one automatic attempt re-appended every chunk exactly once with no driver retry.
+   const everyChunkOnce=attempt.length===inTree.length&&dup.length===0&&missingChunks.length===0;failed=!incomplete&&!(everyChunkOnce&&back.f?.retryCount===0&&back.f?.recovery?.attempts===1);
+   emit({entry:'file',withheldChunks:withheld,bootFailure:{ok:bootFail.ok,recovery:bootFail.f?.recovery??null,chunksAppended:boot},automaticAttempt:{terrain:back.ok,ms:back.ms,recovery:back.f?.recovery??null,retryCount:back.f?.retryCount??null,
+    chunkScriptsAppended:attempt.length,chunkScriptsInTree:inTree.length,missingChunks,distinct:new Set(names).size,duplicates:dup,eachOnce:attempt.length>0&&dup.length===0,everyChunkOnce,result:incomplete?'INCOMPLETE':failed?'FAIL':'PASS'},final:back.f,errors:o.errors});
   }else if(cell==='smoke'){
    const C=await S.context({},{origin:base,fixture:null}),page=await C.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e.message).slice(0,160)));
    await page.goto(base+'/tests/smoke.html',{waitUntil:'domcontentloaded'});
    let r=null;try{await page.waitForFunction('!!window.__smoke',null,{timeout:300000});r=await page.evaluate('window.__smoke');}catch(e){r=null;}
+   // The page's own failure lines (its ok() writes the label and detail of every failed assertion into the DOM).
+   const failLines=await page.evaluate(()=>[...document.querySelectorAll('span.fail')].map(s=>s.textContent.trim().slice(0,240))).catch(()=>null);
    const cases=r?.required?.cases??[],pick=i=>cases[i]?{index:i+1,name:cases[i].name,expected:cases[i].expected,assertions:cases[i].assertions,state:cases[i].state,reason:cases[i].reason}:null;
-   incomplete=!r||r.status!=='PASS';
-   emit({instrument:'tests/smoke.html (unchanged)',status:r?.status??'TIMEOUT',pass:r?.pass??null,fail:r?.fail??null,skip:r?.skip??null,case21:pick(20),case22:pick(21),failed:r?.required?.failed??null,missing:r?.required?.missing??null,pageErrors:errors});
+   // Complete with a failed assertion is FAIL (exit 4); no result or a missing required case is INCOMPLETE (exit 2).
+   incomplete=!r||(r.required?.missing?.length??0)>0||!['PASS','FAIL'].includes(r.status);failed=!incomplete&&r.status!=='PASS';
+   emit({instrument:'tests/smoke.html (unchanged)',status:r?.status??'TIMEOUT',pass:r?.pass??null,fail:r?.fail??null,skip:r?.skip??null,case21:pick(20),case22:pick(21),failed:r?.required?.failed??null,missing:r?.required?.missing??null,failLines,pageErrors:errors});
   }else if(cell==='m5'){
    const cpu0=await rendererCpu(S),t0=Date.now();
    const o=await open(S,base+'/index.html'+HASH,{origin:base,clock:'2026-09-26T19:00:00Z',scale:dpr,motion:'no-preference'});
