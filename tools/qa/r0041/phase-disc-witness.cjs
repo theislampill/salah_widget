@@ -24,10 +24,13 @@
 // hide is not classified absent, no star lies behind the disc in the hidden shot, a segment has too few frames, or the
 // receiver was called outside the R0033 budget. --red runs the same recipe on a tree WITHOUT the phase disc (the
 // control): rules about the phase disc are skipped and absence is expected.
-// Usage: node phase-disc-witness.cjs <repoRoot> <outJson> <engine> <dpr> <motion:reduce|full> <startISO> [runs=1] [cropDir] [--red]
+// --loads=A|B|AB|H selects the loads (H: healthy start, receiver removed, ONE invalidation; reports only the hand-over
+// step between the refined Moon and the phase disc for the scene of <startISO>). --short ends Load A after the opacity
+// triple (no worker retry, no refined hand-over).
+// Usage: node phase-disc-witness.cjs <repoRoot> <outJson> <engine> <dpr> <motion:reduce|full> <startISO> [runs=1] [cropDir] [--red] [--loads=..] [--short]
 const fs=require('node:fs'),path=require('node:path');
 const {createEnv,launch}=require('./iso.cjs');const {decodePng}=require('./png.cjs');
-const argv=process.argv.slice(2),RED=argv.includes('--red'),[root,outFile,engine,dpr,motion,startISO,runsArg,cropDir]=argv.filter(a=>a!=='--red');
+const argv=process.argv.slice(2),RED=argv.includes('--red'),SHORT=argv.includes('--short'),LOADS=(argv.find(a=>a.startsWith('--loads='))?.slice(8)??'AB').split(''),[root,outFile,engine,dpr,motion,startISO,runsArg,cropDir]=argv.filter(a=>!a.startsWith('--'));
 // The Chromium screencast (every compositor frame) is the witness at pixel ratio 1. At other ratios its frames can
 // arrive at CSS size, so device-scale screenshots are used there, as in Firefox and WebKit.
 const CAST=engine==='chromium'&&+dpr===1;
@@ -65,7 +68,8 @@ const dist=(a,b)=>!a||!b||a.length!==b.length?null:a.reduce((p,v,i)=>p+Math.abs(
 function step(a,b){ // presented state a -> presented state b, disc pixels
   if(!a||!b||a.disc.length!==b.disc.length)return null;let s=0,sa=0,max=0,o8=0,o16=0;
   for(let i=0;i<a.disc.length;i++){const d=b.disc[i]-a.disc[i],q=Math.abs(d);s+=d;sa+=q;max=Math.max(max,q);if(q>8)o8++;if(q>16)o16++;}
-  return {pixels:a.disc.length,meanStep:+(s/a.disc.length).toFixed(2),meanAbs:+(sa/a.disc.length).toFixed(2),max:+max.toFixed(1),over8:o8,over16:o16,ringMeanAbs:+dist(a.corner,b.corner).toFixed(2)};
+  const mean=x=>x.disc.reduce((p,v)=>p+v,0)/x.disc.length;
+  return {pixels:a.disc.length,meanFrom:+mean(a).toFixed(2),meanTo:+mean(b).toFixed(2),shareOver16:+(100*o16/a.disc.length).toFixed(1),starLikeFrom:a.stars,starLikeTo:b.stars,meanStep:+(s/a.disc.length).toFixed(2),meanAbs:+(sa/a.disc.length).toFixed(2),max:+max.toFixed(1),over8:o8,over16:o16,ringMeanAbs:+dist(a.corner,b.corner).toFixed(2)};
 }
 const HIDE=()=>{window.__pdMark();const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;};
 const SHOW=()=>{window.__pdMark();const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;};
@@ -74,17 +78,19 @@ const PAGESHOW=()=>{window.__pdMark();const w=performance.timeOrigin+performance
 const INVALIDATE=()=>{window.__pdMark();const w=performance.timeOrigin+performance.now();window.SalahMoonRuntime.invalidate('r0041-phase-disc-witness');return w;};
 const STATE=()=>{const o=window.SalahMoonRuntime?.observe?.(),s=o?.state;return s?{visibleSource:s.visibleSource,current:o.current,initialEligible:s.initialEligible,initialRetry:s.initialRetry,phaseDisc:s.phaseDisc??null,limitation:s.limitation??null,lastAdoption:s.lastAdoption??null,firstInitial:s.firstInitial??null,recovery:s.recovery,status:s.status,constructionError:window.SalahMoonConstructionError??null,initialError:window.SalahMoonInitialError??null,receiverCalls:window.__pd?.receiverCalls??0}:null;};
 
+// qaState().moonTruth as the page reports it (the non-adopting diagnostic path, R0036).
+const TRUTH=()=>{const t=window.qaState?.().moonTruth;return t?{limitation:t.limitation??null,slotState:t.slotState??null,reason:t.reason??null,displayMode:t.displayMode,surfaceStatus:t.surface?.status,moonlightOpacity:t.moonlightOpacity}:null;};
 async function load(L,env,kind,run){
   const page=await L.context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e).slice(0,200)));
   if(kind==='A'){await page.addInitScript(DECODE_FAULT);for(const p of ASSETS)env.origins.policy[p]='404';}else for(const p of ASSETS)delete env.origins.policy[p];
   const raw=[],frames=[],kept={};let rect=null,cdp=null,capturing=true,busy=false;const t0=Date.now();
   // Frames are reduced to their disc measurement as they arrive; PNG bytes are kept only for named crops.
-  const drain=()=>{if(busy||!rect)return;busy=true;try{while(raw.length){const s=raw.shift();let img;try{img=decodePng(s.png);}catch(e){continue;}const m=measure(img,rect);frames.push({t:s.t,tag:s.tag??null,disc:Uint8ClampedArray.from(m.disc),stars:m.stars,ctrlStars:m.ctrlStars,S:m.S,mean:m.mean,mk:m.mk,png:frames.length<60?s.png:null});if(s.tag)kept[s.tag]={png:s.png,m};}}finally{busy=false;}};
+  const drain=()=>{if(busy||!rect)return;busy=true;try{while(raw.length){const s=raw.shift();let img;try{img=decodePng(s.png);}catch(e){continue;}const m=measure(img,rect);frames.push({t:s.t,done:s.done??s.t,tag:s.tag??null,disc:Uint8ClampedArray.from(m.disc),stars:m.stars,ctrlStars:m.ctrlStars,S:m.S,mean:m.mean,mk:m.mk,png:frames.length<60?s.png:null});if(s.tag)kept[s.tag]={png:s.png,m};}}finally{busy=false;}};
   if(CAST){cdp=await L.context.newCDPSession(page);
-    cdp.on('Page.screencastFrame',async f=>{raw.push({t:f.metadata.timestamp*1000,png:Buffer.from(f.data,'base64')});try{await cdp.send('Page.screencastFrameAck',{sessionId:f.sessionId});}catch(e){}drain();});}
+    cdp.on('Page.screencastFrame',async f=>{raw.push({t:f.metadata.timestamp*1000,done:f.metadata.timestamp*1000,png:Buffer.from(f.data,'base64')});try{await cdp.send('Page.screencastFrameAck',{sessionId:f.sessionId});}catch(e){}drain();});}
   await page.goto(`http://127.0.0.1:${env.origins.ports['127.0.0.1']}/index.html${FRAG}`,{waitUntil:'commit',timeout:120000});
   if(cdp)await cdp.send('Page.startScreencast',{format:'png',everyNthFrame:1,maxWidth:Math.round(325*+dpr),maxHeight:Math.round(530*+dpr)});
-  const shot=async tag=>{const t=Date.now();const png=await page.screenshot({scale:'device',animations:'allow',caret:'initial'});raw.push({t,png,tag});drain();};
+  const shot=async tag=>{const t=Date.now();const png=await page.screenshot({scale:'device',animations:'allow',caret:'initial'});raw.push({t,done:Date.now(),png,tag});drain();};
   const loop=(async()=>{if(cdp)return;while(capturing){try{await shot(null);}catch(e){await page.waitForTimeout(20);}}})();
   // The Moon's rectangle is native geometry (set by the first native paint), independent of any Moon renderer.
   await page.waitForFunction(()=>{const g=document.querySelector('.moon'),r=document.querySelector('.mphoto')?.getBoundingClientRect();return g&&g.getAttribute('transform')!=='translate(250 64) scale(0.62)'&&r&&r.width>0;},null,{timeout:60000,polling:50});
@@ -98,9 +104,10 @@ async function load(L,env,kind,run){
   if(kind==='A'){
     await page.waitForFunction(RED?()=>!!window.SalahMoonRuntime&&document.querySelector('.c')?.classList.contains('real-sky-preview-ready'):()=>window.SalahMoonRuntime?.observe?.().state?.visibleSource==='phase-disc',null,{timeout:90000,polling:100}).catch(()=>out.notes.push('start-up wait timed out'));
     await page.waitForTimeout(3000);out.armed=await page.evaluate(STATE);out.settleWall=CAST?await page.evaluate(()=>performance.timeOrigin+performance.now()):Date.now();
+    out.reportPresented=await page.evaluate(TRUTH);
     await tagged('refPD');
     for(let k=0;k<3;k++){await ev('invalidate','invalidate',INVALIDATE);await page.waitForTimeout(4000);}
-    for(let k=0;k<3;k++){await ev('resume','hide',HIDE);await page.waitForTimeout(1000);await ev('resume','resume',SHOW);await page.waitForTimeout(4000);}
+    for(let k=0;k<3;k++){await ev('resume','hide',HIDE);await page.waitForTimeout(k?1000:700);if(!k){out.reportHidden=await page.evaluate(TRUTH);await page.waitForTimeout(300);}await ev('resume','resume',SHOW);await page.waitForTimeout(4000);}
     for(let k=0;k<3;k++){await ev('pageshow','hide',PAGEHIDE);await page.waitForTimeout(1000);await ev('pageshow','resume',PAGESHOW);await page.waitForTimeout(4000);}
     // Opacity triple: stars are located in the shot with the Moon layers hidden and read back in the present shots.
     await ev('opacity','opacity-begin',()=>performance.timeOrigin+performance.now());
@@ -110,6 +117,7 @@ async function load(L,env,kind,run){
     await page.evaluate(()=>document.getElementById('r41-hide')?.remove());await page.waitForTimeout(400);await tagged('present2');
     await ev('opacity','opacity-end',()=>performance.timeOrigin+performance.now());
     out.renderMs=await page.evaluate(()=>{const s=window.SalahMoonRuntime?.observe?.().state;return s?{phaseDisc:s.phaseDisc?.lastMs??null,adoptionTotal:s.lastAdoption?.totalMs??null,adoptionPrefix:s.lastAdoption?.prefixMs??null,source:s.lastAdoption?.source??null}:null;});
+    if(!SHORT){
     // Restore the assets and retry the worker: the refined result replaces the phase disc.
     for(const p of ASSETS)delete env.origins.policy[p];
     await ev('handover','retry',()=>{const w=performance.timeOrigin+performance.now();window.SalahMoonRuntime.retry();return w;});
@@ -117,6 +125,7 @@ async function load(L,env,kind,run){
     if(!refined)out.notes.push('refined result did not arrive after retry');
     await ev('handover','refined',()=>performance.timeOrigin+performance.now());await page.waitForTimeout(3000);await tagged('refRefined');
     await ev('refinedInvalidate','invalidate',INVALIDATE);await page.waitForTimeout(7000);
+    }
   }else{
     const refined=await page.waitForFunction(()=>window.SalahMoonRuntime?.observe?.().state?.visibleSource==='refined-terrain',null,{timeout:240000,polling:250}).then(()=>true).catch(()=>false);
     if(!refined)out.notes.push('healthy start did not reach the refined Moon');
@@ -124,13 +133,15 @@ async function load(L,env,kind,run){
     // The V5 initial tier's own render time for comparison (rendered by the first-paint head on a healthy start).
     out.initialRenderMs=await page.evaluate(()=>{const f=window.SalahMoonRuntime?.observe?.().state?.firstInitial;return f?(f.headHandoff?f.headRenderMs:f.renderMs)??null:null;});
     await page.evaluate(()=>{window.__pdKeep=window.SalahMoonInitial;window.SalahMoonInitial=null;});out.armed=await page.evaluate(STATE);
-    for(let k=0;k<3;k++){await ev('missing','invalidate',INVALIDATE);if(k===0){await page.waitForTimeout(CAST?350:150);await tagged('refPD');}await page.waitForTimeout(6000);}
+    for(let k=0;k<(kind==='H'?1:3);k++){await ev('missing','invalidate',INVALIDATE);if(k===0){await page.waitForTimeout(CAST?350:150);await tagged('refPD');}await page.waitForTimeout(6000);}
     out.renderMs=await page.evaluate(()=>{const s=window.SalahMoonRuntime?.observe?.().state;return s?{phaseDisc:s.phaseDisc?.lastMs??null}:null;});
+    if(kind!=='H'){
     await page.evaluate(()=>{const k=window.__pdKeep;window.SalahMoonInitial={identity:k.identity,render(){window.__pd.receiverCalls++;throw new Error('r0041 witness: injected receiver failure');}};});
     for(let k=0;k<3;k++){await ev('exhausted','invalidate',INVALIDATE);await page.waitForTimeout(6000);}
     out.armedExhausted=await page.evaluate(STATE);
     for(let k=0;k<3;k++){await ev('exhausted','invalidate',INVALIDATE);await page.waitForTimeout(6000);}
     out.endState=await page.evaluate(STATE);
+    }
   }
   capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});await page.waitForTimeout(200);drain();
   out.raf=await page.evaluate(()=>window.__pd.frames);out.perfOrigin=await page.evaluate(()=>performance.timeOrigin);out.endState??=await page.evaluate(STATE);
@@ -143,20 +154,25 @@ function judge(r,run){
   const refPD=r.kept.refPD?.m??null,refR=r.kept.refRefined?.m??null;
   if(!r.frames.length){bad('no frames');return res;}
   const S=r.frames[0].S,need=.9*Math.PI*(.47*S)**2;if(r.frames.some(f=>f.disc.length<need))bad('empty or partial disc region');
-  if(!RED&&!refPD)bad('no phase-disc reference');if(r.kind==='B'&&!refR)bad('no refined reference');
+  if(!RED&&!refPD)bad('no phase-disc reference');if(r.kind!=='A'&&!refR)bad('no refined reference');
   // The phase-disc reference must itself be a Moon (not a blank) and must differ from the refined one.
   if(refPD&&refR){const d=dist(refPD.disc,refR.disc);res.referenceDistance=+d.toFixed(2);if(!RED&&(refPD.stars>=10||Math.abs(refPD.mean-refR.mean)>12||d<.5))bad('phase-disc reference is not a distinct presented Moon');}
   const classify=f=>{const dP=RED?null:dist(f.disc,refPD?.disc),dR=dist(f.disc,refR?.disc),ds=[dP,dR].filter(v=>v!=null);return {dP,dR,none:!ds.length,absent:f.stars>=10||(ds.length>0&&Math.min(...ds)>4)};};
-  const J=r.frames.map(f=>({t:f.t,tag:f.tag,mk:f.mk,mean:f.mean,stars:f.stars,ctrlStars:f.ctrlStars,png:f.png,...classify(f)}));
-  // A frame belongs to an event's segment when it is timed after the forcing call AND shows that event's marker: a
-  // frame composed before the call can be presented after it.
-  const segment=(from,to,label,mark)=>{const timed=J.filter(f=>f.t>=from&&f.t<to&&!f.tag),fr=mark==null?timed:timed.filter(f=>f.mk===mark),abs=fr.filter(f=>f.absent);let max=0,open=null;
-    for(const f of fr){if(f.absent&&open==null)open=f.t;if(!f.absent&&open!=null){max=Math.max(max,f.t-open);open=null;}}if(open!=null)max=Math.max(max,to-open);
+  const J=r.frames.map(f=>({t:f.t,done:f.done,tag:f.tag,mk:f.mk,mean:f.mean,stars:f.stars,ctrlStars:f.ctrlStars,png:f.png,...classify(f)}));
+  // ATTRIBUTION RULE. A capture belongs to an event when it SHOWS THAT EVENT'S MARKER (the marker is recoloured in the
+  // same task as the forcing call, so the capture shows the post-event document), it was completed at or after the call
+  // and it was requested before the next event. The request instant is NOT required to follow the call: a screenshot
+  // requested a few milliseconds before the forcing call returned and completed after it shows the post-event page and
+  // counts (review 2, R2-3; the earlier rule dropped exactly those captures). A capture timed after the call that still
+  // shows the previous marker is a frame composed before the call (counted separately as preEventFrames, not judged).
+  // straddling = counted captures whose request preceded the call.
+  const segment=(from,to,label,mark)=>{const timed=J.filter(f=>f.t>=from&&f.t<to&&!f.tag),fr=mark==null?timed:J.filter(f=>!f.tag&&f.mk===mark&&f.done>=from&&f.t<to),abs=fr.filter(f=>f.absent);let max=0,open=null;
+    for(const f of fr){if(f.absent&&open==null)open=Math.max(from,f.t);if(!f.absent&&open!=null){max=Math.max(max,f.done-open);open=null;}}if(open!=null)max=Math.max(max,to-open);
     if(fr.some(f=>f.none))bad(label+': frames without a reference comparison');
-    return {frames:fr.length,preEventFrames:timed.length-fr.length,blank:abs.length,blankAt:abs.slice(0,4).map(f=>Math.round(f.t-from)),maxAbsentMs:Math.round(max),minMean:fr.length?+Math.min(...fr.map(f=>f.mean)).toFixed(1):null};};
+    return {frames:fr.length,preEventFrames:mark==null?0:timed.filter(f=>f.mk!==mark).length,straddling:mark==null?0:fr.filter(f=>f.t<from).length,blank:abs.length,blankAt:abs.slice(0,4).map(f=>[Math.round(f.t-from),Math.round(f.done-from)]),maxAbsentMs:Math.round(max),minMean:fr.length?+Math.min(...fr.map(f=>f.mean)).toFixed(1):null};};
   const E=r.events,minFrames=CAST?20:5;
   const routeOf=name=>{const forcing=E.filter(e=>e.route===name&&(e.name==='invalidate'||e.name==='resume'));if(!RED&&forcing.some(e=>e.mark==null))bad(name+': event marker missing');const o={events:forcing.length,blank:0,maxAbsentMs:0,frames:0,eventsWithBlank:0,exercised:0};
-    for(const e of forcing){const i=E.indexOf(e),end=Math.min((E[i+1]?.wall??Infinity)-30,e.wall+4000),s=segment(e.wall,end,name,e.mark);o.frames+=s.frames;o.preEventFrames=(o.preEventFrames??0)+s.preEventFrames;if(s.blank)(o.blankAt??=[]).push(s.blankAt);o.blank+=s.blank;o.maxAbsentMs=Math.max(o.maxAbsentMs,s.maxAbsentMs);if(s.blank)o.eventsWithBlank++;
+    for(const e of forcing){const i=E.indexOf(e),end=Math.min((E[i+1]?.wall??Infinity)-30,e.wall+4000),s=segment(e.wall,end,name,e.mark);o.frames+=s.frames;o.preEventFrames=(o.preEventFrames??0)+s.preEventFrames;o.straddling=(o.straddling??0)+s.straddling;if(s.blank)(o.blankAt??=[]).push(s.blankAt);o.blank+=s.blank;o.maxAbsentMs=Math.max(o.maxAbsentMs,s.maxAbsentMs);if(s.blank)o.eventsWithBlank++;
       if(s.frames<minFrames)bad(name+': too few frames after an event ('+s.frames+')');
       // exercised: an animation frame within 3 s of the forcing call reports the phase disc as the current
       // source, and the phase-disc render count rose above its value before the call
@@ -166,9 +182,13 @@ function judge(r,run){
     if(!forcing.length)bad(name+': no forced event');if(!RED&&o.exercised!==forcing.length)bad(name+': the phase disc was not exercised after every event ('+o.exercised+'/'+forcing.length+')');
     return o;};
   // hidden intervals must classify absent (the classifier sees a withdrawn Moon)
-  for(const e of E.filter(e=>e.name==='hide')){const i=E.indexOf(e),inside=J.filter(f=>f.t>=e.wall+60&&f.t<(E[i+1]?.wall??Infinity)-60&&!f.tag);if(inside.length&&!inside.some(f=>f.absent))bad('hidden state not classified absent');}
+  for(const e of E.filter(e=>e.name==='hide')){const i=E.indexOf(e),inside=J.filter(f=>f.t>=e.wall+60&&f.done<(E[i+1]?.wall??Infinity)-60&&!f.tag&&(e.mark==null||f.mk===e.mark));if(inside.length&&!inside.some(f=>f.absent))bad('hidden state not classified absent');}
   if(r.kind==='A'){
-    if(!RED){const a=r.armed;if(!a||a.constructionError!=null||a.initialError==null||a.initialEligible!==false||a.initialRetry?.state!=='permanent'||a.visibleSource!=='phase-disc')bad('fault not armed (start-up decode failure)');}
+    if(!RED){const a=r.armed;if(!a||a.constructionError!=null||a.initialError==null||a.initialEligible!==false||a.initialRetry?.state!=='permanent'||a.visibleSource!=='phase-disc')bad('fault not armed (start-up decode failure)');
+      // The report on the diagnostic path: no limitation while presented or hidden; the disc is named as a phase disc.
+      const p=r.reportPresented,h=r.reportHidden;res.report={presented:p,hidden:h};
+      if(!p||p.limitation!==null||p.slotState!=='presented'||p.surfaceStatus!=='phase-disc')bad('report while presented: '+JSON.stringify(p));
+      if(!h||h.limitation!==null||h.slotState!=='withheld-hidden-or-paused'||/no truthful Moon/.test(h.reason??''))bad('report while hidden: '+JSON.stringify(h));}
     // start-up: from the first frame with a visible sky to the settle instant
     const firstSky=J.find(f=>f.ctrlStars>=3),sk=firstSky?segment(firstSky.t,r.settleWall,'startup'):null;
     if(!firstSky)bad('startup: the sky control patch never shows stars');
@@ -191,9 +211,9 @@ function judge(r,run){
     res.renderMs=r.renderMs;
   }else{
     if(!RED){const a=r.armed;if(!a||a.constructionError!=null||a.initialEligible!==false)bad('fault not armed (receiver removed)');
-      const x=r.armedExhausted;if(!x||x.initialRetry?.state!=='exhausted'||x.receiverCalls!==3)bad('fault not armed (budget not exhausted: '+JSON.stringify(x?.initialRetry)+', calls '+x?.receiverCalls+')');
-      if(r.endState?.receiverCalls!==3)bad('receiver called outside the R0033 budget ('+r.endState?.receiverCalls+')');}
-    for(const n of ['missing','exhausted'])res.routes[n]=routeOf(n);
+      const x=r.armedExhausted;if(r.kind==='B')if(!x||x.initialRetry?.state!=='exhausted'||x.receiverCalls!==3)bad('fault not armed (budget not exhausted: '+JSON.stringify(x?.initialRetry)+', calls '+x?.receiverCalls+')');
+      if(r.kind==='B'&&r.endState?.receiverCalls!==3)bad('receiver called outside the R0033 budget ('+r.endState?.receiverCalls+')');}
+    for(const n of r.kind==='H'?['missing']:['missing','exhausted'])res.routes[n]=routeOf(n);
     res.handover=step(refR,refPD);res.renderMs=r.renderMs;res.initialRenderMs=r.initialRenderMs;res.receiverCalls=r.endState?.receiverCalls??null;
   }
   // Auxiliary state view: animation frames that began without a current Moon while the document was visible, after settle.
@@ -205,15 +225,16 @@ function judge(r,run){
 
 (async()=>{
   const env=await createEnv({root});const out={engine,dpr:+dpr,motion,startISO,fragment:FRAG,red:RED,runs:[]};
+  let L=null;
   try{
-    const L=await launch(env,{engine,mode:'route',deviceScaleFactor:+dpr,reducedMotion:motion==='full'?'no-preference':'reduce'});
+    L=await launch(env,{engine,mode:'route',deviceScaleFactor:+dpr,reducedMotion:motion==='full'?'no-preference':'reduce'});
     await L.context.addInitScript(SHIFT);await L.context.addInitScript(RAF);
-    for(let run=0;run<RUNS;run++)for(const kind of ['A','B']){
+    for(let run=0;run<RUNS;run++)for(const kind of LOADS){
       const r=await load(L,env,kind,run),j=judge(r,run);out.runs.push({run,...j});
       console.log(engine,dpr,motion,'run',run,'load',kind,j.valid?'VALID':'INVALID '+JSON.stringify(j.invalid),JSON.stringify(j.routes),'opacity',JSON.stringify(j.opacity??null),'handover',JSON.stringify(j.handover??null),'renderMs',JSON.stringify(j.renderMs??null));
     }
-    await L.close();
-  }catch(e){out.error=String(e&&e.stack||e);console.error(out.error);}
+  }catch(e){out.error=String(e&&e.message||e).replace(/[A-Za-z]:[\\/][^\s'"]+/g,'<path>');console.error(out.error);}
+  finally{try{await L?.close();}catch(e){}}
   out.isolation=env.finish();
   const all=fs.existsSync(outFile)?JSON.parse(fs.readFileSync(outFile,'utf8')):{};all[[RED?'red':'candidate',engine,dpr,motion,startISO].join('|')]=out;fs.writeFileSync(outFile,JSON.stringify(all,null,1));
   console.log('isolation allowed',out.isolation.allowedExternal,JSON.stringify(out.isolation.totalRequests));
