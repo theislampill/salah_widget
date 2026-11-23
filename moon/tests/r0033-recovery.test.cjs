@@ -213,7 +213,7 @@ test('R33-08 embedded chunks replay on an automatic attempt; file chunk scripts 
 });
 
 // ---- M2: initial-tier transient failure ----------------------------------------
-test('R33-10 one transient initial render throw is re-attempted after 60 s and restores the V5 initial tier',()=>{
+test('R33-10 one transient initial render throw is re-attempted after 60 s and restores the V5 initial tier [pre-R0041 configuration: rig without the phase-disc unit; shipped-configuration case at the end of this file]',()=>{
  const r=rig({initial:true,initialThrows:1,deferWorker:true});r.rt().request();
  let s=r.rt().state;assert.equal(r.rt().surface(),null);assert.match(s.initialError,/injected/);assert.equal(s.initialEligible,false);
  r.tick(59750);assert.equal(r.initialRenders,1,'never re-attempted per frame/poll');
@@ -234,7 +234,7 @@ test('R33-10 a decode failure (SalahMoonInitialError) is permanent and never re-
  assert.equal(r.initialRenders,0);assert.equal(r.rt().state.initialEligible,false);assert.equal(r.rt().state.initialRetry.state,'permanent');
 });
 
-test('R33-11 initial throw plus worker failure: no permanent empty slot while either tier can recover',()=>{
+test('R33-11 initial throw plus worker failure: no permanent empty slot while either tier can recover [pre-R0041 configuration: rig without the phase-disc unit; shipped-configuration case at the end of this file]',()=>{
  const r=rig({initial:true,initialThrows:1});r.rt().request();r.workers[0].emit({kind:'boot-error',error:'controlled'});
  assert.equal(r.rt().surface(),null);r.tick(60250);
  assert.ok(r.rt().surface(),'initial tier re-attempt restores the opaque disc');assert.equal(r.workers.length,2,'and the refinement worker recovered');
@@ -339,4 +339,48 @@ test('R33-13 the tail still fails loudly on a source-identity mismatch and stays
  assert.equal(r.workers.length,1);
  assert.doesNotThrow(()=>r.run(tail));r.frames.forEach(f=>f(0));assert.equal(r.workers.length,1,'a duplicate tail never restarts refinement');
  assert.throws(()=>r.run(tail.replace(/\("[\s\S]*"\)/,'("wrong worker")')),/source identity/);
+});
+
+// ---- R0041 amendment (owner decision 2026-11-22, G3): the authorised fault fallback ------------------------------
+// The two cases above titled "[pre-R0041 configuration ...]" are the accepted R0033 record. Their bodies and assertions
+// are unchanged: their rig loads moon-precision.mjs and moon-native.mjs only, which is the configuration R0033 was
+// accepted on, WITHOUT the phase-disc unit, and there a receiver throw leaves surface() null. Since R0041 the shipped
+// bundle always carries that unit: a receiver throw no longer leaves the slot empty, because the authorised
+// renderer-failure fallback (an untextured, opaque, phase-correct disc) fills it through the same adopt(). The cases
+// below run the SHIPPED bundle (generated moon-host.js, real receiver, real phase disc) and assert the SAME M2 budget
+// at the SAME instants, plus the filled slot. No other R0033 requirement is amended (docs/state-contracts/R0033.md,
+// "R0041 amendment").
+function shipped(){
+ const {wrapper,tail}=generated(),r=realm();let clock=0,calls=0,throwsLeft=0;r.c.performance.now=()=>clock;
+ const state={utcMs:1e6,generation:0,sceneIdentity:'A',fraction:.6,waxing:true,up:1,dpr:1,timeScale:1,paused:false,presentationReady:true,initialWarranted:true};
+ r.w.SalahMoonHost.capture=()=>({...state,maximumPresentationRatio:1});r.run(wrapper);
+ const real=r.w.SalahMoonInitial;assert.equal(typeof real?.render,'function','the real embedded receiver decoded');
+ r.w.SalahMoonInitial={identity:real.identity,render(scene,consume){calls++;if(throwsLeft!==0){throwsLeft--;throw new Error('injected initial render failure');}return real.render(scene,consume);}};
+ const rt=()=>r.w.SalahMoonRuntime;
+ return {r,rt,tail,throws:n=>{throwsLeft=n;},get calls(){return calls;},
+  tick(ms,step=250){for(let t=0;t<ms;t+=step){const d=Math.min(step,ms-t);clock+=d;state.utcMs+=d;rt().request();}},
+  frames(){const f=[...r.frames.values()];r.frames.clear();f.forEach(g=>g(clock));}};
+}
+const fallbackPresented=b=>{const s=b.rt().state;assert.ok(b.rt().surface(),'the slot is filled');assert.equal(s.visibleSource,'phase-disc');assert.equal(s.slot,'presented-fault-fallback');assert.match(s.limitation,/^phase-disc fault fallback, untextured/);return s;};
+
+test('R33-10 (R0041 amendment, shipped configuration) one transient initial render throw is re-attempted after 60 s and restores the V5 initial tier; the fault fallback fills the slot meanwhile',()=>{
+ const b=shipped();b.throws(1);b.rt().request();
+ let s=fallbackPresented(b);assert.match(s.initialError,/injected/);assert.equal(s.initialEligible,false);
+ b.tick(59750);assert.equal(b.calls,1,'never re-attempted per frame/poll');fallbackPresented(b);
+ b.tick(500);s=b.rt().state;assert.equal(b.calls,2);assert.equal(s.visibleSource,'initial-v5');assert.ok(b.rt().surface());assert.equal(s.slot,'presented');assert.equal(s.limitation,null);
+ assert.equal(s.initialEligible,true);assert.match(s.initialError,/injected/,'the record is retained for diagnostics');
+});
+
+test('R33-10 (R0041 amendment, shipped configuration) a scene epoch is an eligibility event, at most one re-attempt each, and three throws exhaust the tier; the budget is not relaxed by the fallback',()=>{
+ const b=shipped();b.throws(-1);b.rt().request();
+ for(let i=0;i<10;i++){b.rt().invalidate('native beginSkyScene');b.rt().request();b.rt().request();}
+ assert.equal(b.calls,3);assert.equal(b.rt().state.initialRetry.state,'exhausted');fallbackPresented(b);
+ b.tick(3600000,5000);assert.equal(b.calls,3,'exhausted for the page');fallbackPresented(b);
+});
+
+test('R33-11 (R0041 amendment, shipped configuration) initial throw plus worker failure: the slot is never empty, and both tiers recover as before',()=>{
+ const b=shipped();b.r.run(b.tail);b.frames();b.frames();assert.equal(b.r.workers.length,1);
+ b.throws(1);b.rt().request();b.r.workers[0].onmessage({data:{kind:'boot-error',error:'controlled'}});
+ fallbackPresented(b);b.tick(60250);
+ assert.ok(b.rt().surface(),'initial tier re-attempt restores the V5 disc');assert.equal(b.rt().state.visibleSource,'initial-v5');assert.equal(b.r.workers.length,2,'and the refinement worker recovered');
 });
