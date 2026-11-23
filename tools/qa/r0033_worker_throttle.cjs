@@ -21,6 +21,12 @@
 //        the R33-09 measurement: unthrottled refinement samples, then the cap, an in-page worker calibration under the
 //        cap, throttled refinement samples (240 s product deadline; 200 s = 240/1.2 threshold), then uncap and a
 //        post-calibration. Durations are host-side wall time from SalahMoonRuntime.refresh() to the adopted result.
+//        Model: the whole renderer gets 1/R of ONE processor, so a single thread alone runs at 1/R; the multi-threaded
+//        refinement (about 55 CPU-s over about 2.6 busy cores) slows far more than R. A pessimistic single-core bound.
+//   --mode refine-throughput --method jobcap --rate R --dpr N --samples 3 --root <tree>
+//        concurrency-adjusted: the renderer is joined to the job uncapped, its mean busy cores B over the unthrottled
+//        refinements is measured by job accounting, and the cap is B/R cores; a 4-worker simultaneous calibration
+//        (expected per-loop slowdown 4/cap, +-20 %, job CPU +-10 % of the cap) decides validity.
 // Usage: node tools/qa/r0033_worker_throttle.cjs --mode <calibrate|refine> --method <m> --out <dir> [--rate 4] [--dpr 1]
 //        [--samples 3] [--reps 5] [--root <tree>] [--playwright <pkg>]
 // Output: one JSON line on stdout (with the isolation verdict) and <out>/<tag>-requests.json.
@@ -46,7 +52,17 @@ const CAL=`(()=>{const src='const w=new Uint8Array(${JSON.stringify(wasmBytes())
  'if(kind==="js"){for(let i=0;i<n;i++)r=(Math.imul(r,1664525)+1013904223)|0;}else r=inst.exports.run(n);postMessage({ms:performance.now()-t,r});};';
  let w=null;const worker=()=>w||(w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'}))));
  window.__cal=(kind,n)=>{if(kind==='js-main'){const t=performance.now();let r=1;for(let i=0;i<n;i++)r=(Math.imul(r,1664525)+1013904223)|0;return Promise.resolve({ms:performance.now()-t,r});}
-  return new Promise(res=>{const k=worker();k.onmessage=e=>res(e.data);k.postMessage({kind:kind==='js-worker'?'js':'wasm',n});});};})();`;
+  return new Promise(res=>{const k=worker();k.onmessage=e=>res(e.data);k.postMessage({kind:kind==='js-worker'?'js':'wasm',n});});};
+ // n dedicated workers running the JS loop at the same time; resolves to each worker's wall ms.
+ const pool=[];window.__calPar=(n,iters)=>{while(pool.length<n)pool.push(new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'}))));
+  return Promise.all(pool.slice(0,n).map(k=>new Promise(res=>{k.onmessage=e=>res(e.data.ms);k.postMessage({kind:'js',n:iters});})));};})();`;
+// Multi-worker calibration (refine-throughput): PAR_N simultaneous worker loops of N_PAR steps (about 1.2 s each
+// unthrottled, long enough to average a hard cap enforced in budget intervals). Under a cap of c cores (c < PAR_N)
+// each loop's expected slowdown is PAR_N/c. Tolerance, fixed before any run: the median per-loop ratio within
+// +-20 % of PAR_N/c, and the job CPU during that calibration within +-10 % of c.
+const PAR_N=4,N_PAR=1600000000,PAR_TOL=0.20,CAP_TOL=0.10;
+async function parBench(page,n){await page.evaluate(([k])=>window.__calPar(k,2e7),[PAR_N]);const reps=[];
+ for(let i=0;i<n;i++)reps.push(await page.evaluate(([k,m])=>window.__calPar(k,m),[PAR_N,N_PAR]));const all=reps.flat();return {reps,median:median(all),min:Math.min(...all),max:Math.max(...all)};}
 const median=x=>{const s=[...x].sort((p,q)=>p-q);return s.length?s[Math.floor((s.length-1)/2)]:null;};
 const stats=x=>{if(!x.length)return null;const s=[...x].sort((p,q)=>p-q),at=q=>s[Math.min(s.length-1,Math.ceil(q*s.length)-1)];return {n:s.length,min:s[0],median:at(.5),p95:at(.95),max:s[s.length-1]};};
 async function bench(page,kinds,n){const r={};for(const k of kinds){await page.evaluate(([k])=>window.__cal(k,2e7),[k]);   // warm-up (JIT tier-up)
@@ -59,7 +75,7 @@ function jobHelper(){
  let buf='';const waiting=[],lines=[];p.stdout.on('data',d=>{buf+=d;let i;while((i=buf.indexOf('\n'))>=0){const l=buf.slice(0,i).trim();buf=buf.slice(i+1);if(!l)continue;const o=JSON.parse(l);lines.push(o);const w=waiting.shift();if(w)w(o);}});
  let err='';p.stderr.on('data',d=>err+=d);
  const next=()=>new Promise(r=>waiting.push(r));const ready=next();
- const cmd=async c=>{const r=next();p.stdin.write(c+'\n');const o=await r;if(o.error&&o.op!=='account')throw Error('jobcap '+c+': error '+o.error+' '+err);return o;};
+ const cmd=async c=>{const r=next();p.stdin.write(c+'\n');const o=await r;if(o.error)throw Error('jobcap '+c+': error '+o.error+' '+err);return o;};
  return {ready,cmd,log:lines,close:async()=>{try{await cmd('quit');}catch{}p.stdin.end();}};}
 async function rendererPids(S){const c=await S.browser.newBrowserCDPSession(),r=await c.send('SystemInfo.getProcessInfo');await c.detach();return r.processInfo.filter(p=>p.type==='renderer').map(p=>p.id);}
 
@@ -101,7 +117,7 @@ const server=http.createServer((req,res)=>{const u=new URL(req.url,'http://x');
  const port=method==='cdp-worker'?await freePort():null;
  // cdp-worker only: the same isolated launch with one added argument (a loopback DevTools port).
  const P=port?{chromium:{launch:o=>PW.chromium.launch({...o,args:[...(o.args||[]),'--remote-debugging-address=127.0.0.1','--remote-debugging-port='+port]})}}:PW;
- const S=await iso.launch(P,'chromium');const tag=`${mode}-${method}${mode==='refine'?'-dpr'+dpr:''}${method==='none'||method==='affinity'?'':'-x'+rate}`;
+ const S=await iso.launch(P,'chromium');const tag=`${mode}-${method}${mode.startsWith('refine')?'-dpr'+dpr:''}${method==='none'||method==='affinity'?'':'-x'+rate}`;
  const emit=o=>console.log(JSON.stringify({mode,method,rate,version:S.browser.version(),logicalProcessors:require('node:os').cpus().length,...o,isolation:S.verdict()}));
  let job=null,incomplete=false;
  try{
@@ -160,8 +176,47 @@ const server=http.createServer((req,res)=>{const u=new URL(req.url,'http://x');
     refinementSlowdown:b&&t?t.median/b.median:null,p95ExceedsThreshold:killed||(t?t.p95>240000/1.2:null),errors,
     limits:['the cap limits all renderer processes together (main thread, compositor, the Moon worker and its row workers share 1/R of one logical processor); it is a single-slow-core device model, harsher than R-times-slower cores of the same count',
      'the GPU and browser processes are not capped','p95 over '+samples+' samples is the maximum','durations are host-side wall time from refresh() to the adopted result']});
+  }else if(mode==='refine-throughput'){
+   // Concurrency-adjusted model: the renderer is put in the job UNCAPPED first, its mean busy cores B is measured by job
+   // accounting over the unthrottled refinement samples, and the cap is then B/R cores, so the refinement's total CPU
+   // demand is served R times more slowly (an aggregate approximation of R-times-slower cores, not a per-thread throttle).
+   if(method!=='jobcap')throw Error('refine-throughput runs only with --method jobcap');
+   if(!root)throw Error('--root <tree> required');
+   await page.clock.install({time:Date.parse('2026-09-08T19:00:00Z')});await page.clock.resume();
+   await page.goto(base+'/index.html'+FROZEN);
+   const facts=()=>page.evaluate(FACTS);
+   const until=async(pred,ms,step=250)=>{const t0=Date.now();let f=null;while(Date.now()-t0<ms){f=await facts();if(pred(f))return {ok:true,f,ms:Date.now()-t0};await page.waitForTimeout(step);}return {ok:false,f,ms:Date.now()-t0};};
+   const refined=f=>f.visibleSource==='refined-terrain'&&f.status==='ready'&&!f.pending;
+   const first=await until(refined,600000,500);if(!first.ok)throw Error('no refined surface before the cap: '+JSON.stringify(first.f));
+   async function sample(){const before=await facts(),t=Date.now(),c0=await account();await page.evaluate(()=>window.SalahMoonRuntime.refresh());
+    const r=await until(f=>(f.renders>before.renders&&f.status==='ready'&&!f.pending)||f.status==='unavailable',300000,250);const c1=await account();
+    return {ms:Date.now()-t,cpuSeconds:((c1.user100ns+c1.kernel100ns)-(c0.user100ns+c0.kernel100ns))/1e7,busyCores:busyCores(c0,c1),completed:r.ok&&r.f.renders>before.renders,killed:r.f?.status==='unavailable',lastClass:r.f?.recovery?.lastClass??null,errors:r.f?.errors??null,workerTotalMs:r.f?.last?.totalMs??null};}
+   job=jobHelper();const created=await job.ready;if(created.error)throw Error('CreateJobObject error '+created.error);
+   const assigned=new Set();const assignAll=async()=>{for(const p of await rendererPids(S))if(!assigned.has(p)){await job.cmd('assign '+p);assigned.add(p);}};
+   await assignAll();
+   const kinds=['js-worker','wasm-worker'],calBefore=await bench(page,kinds,3),parBefore=await parBench(page,3);
+   const baseline=[];for(let i=0;i<samples;i++)baseline.push(await sample());
+   const done=baseline.filter(s=>s.completed);if(!done.length)throw Error('no unthrottled refinement completed');
+   const B=done.reduce((n,s)=>n+s.cpuSeconds,0)/done.reduce((n,s)=>n+s.ms/1000,0),capCores=B/rate,capRate=Math.max(1,Math.round(capCores*10000/cores)),capActual=capRate*cores/10000;
+   await assignAll();await job.cmd('cap '+capRate);let capped=true;
+   try{
+    const calDuring=await bench(page,kinds,3),p0=await account(),parDuring=await parBench(page,3),p1=await account();
+    const expectedPar=Math.max(1,PAR_N/capActual),parRatio=parDuring.median/parBefore.median,parCores=busyCores(p0,p1);
+    const parValid=Math.abs(parRatio/expectedPar-1)<=PAR_TOL&&Math.abs(parCores/capActual-1)<=CAP_TOL;
+    const a0=await account(),throttled=[];for(let i=0;i<samples;i++){const s=await sample();throttled.push(s);if(s.killed)break;}const a1=await account();
+    await job.cmd('uncap');capped=false;const calAfter=await bench(page,kinds,3);
+    const b=stats(done.map(s=>s.ms)),t=stats(throttled.filter(s=>s.completed).map(s=>s.ms)),killed=throttled.some(s=>s.killed);
+    incomplete=!parValid||!b||(!t&&!killed);
+    emit({model:'throughput (cap = measured busy cores / R)',dpr,samples,deadlineMs:240000,thresholdMs:240000/1.2,rendererPids:assigned.size,
+     unthrottledBusyCores:B,unthrottledCpuSecondsPerRefinement:stats(done.map(s=>s.cpuSeconds)),capCores:capActual,cpuRate:capRate,
+     calibration:{singleLoop:{before:calBefore,during:calDuring,slowdown:ratios(calBefore,calDuring),expected:Math.max(1,1/capActual),after:calAfter,recovered:ratios(calBefore,calAfter),informational:true},
+      multiWorker:{workers:PAR_N,iterations:N_PAR,before:parBefore,during:parDuring,perLoopSlowdown:parRatio,spread:[parDuring.min/parBefore.median,parDuring.max/parBefore.median],expected:expectedPar,jobBusyCores:parCores,tolerance:{ratio:PAR_TOL,cores:CAP_TOL},valid:parValid}},
+     baseline:{samples:baseline,ms:b},throttled:{samples:throttled,ms:t,killedByDeadline:killed},jobBusyCoresDuringThrottledSamples:busyCores(a0,a1),
+     refinementSlowdown:b&&t?t.median/b.median:null,targetSlowdown:rate,p95ExceedsThreshold:killed||(t?t.p95>240000/1.2:null),errors,
+     limits:['aggregate cap B/R approximates R-times-slower cores for the refinement as a whole; it is not a per-thread throttle: serial phases run faster than 1/R and parallel phases slower','one host (16 logical processors), Chromium only','the GPU and browser processes are not capped','p95 over '+samples+' samples is the maximum','durations are host-side wall time from refresh() to the adopted result']});
+   }finally{if(capped)await job.cmd('uncap').catch(()=>{});}
   }else throw Error('unknown mode '+mode);
  }catch(e){emit({error:String(e.stack||e).slice(0,600)});process.exitCode=1;}
- finally{if(job)await job.close();await S.settle();fs.writeFileSync(path.join(out,tag+'-requests.json'),JSON.stringify({mode,method,verdict:S.verdict(),requests:S.ledger.requests},null,1));await S.close();server.close();}
+ finally{if(job){await job.cmd('uncap').catch(()=>{});await job.close();}await S.settle();fs.writeFileSync(path.join(out,tag+'-requests.json'),JSON.stringify({mode,method,verdict:S.verdict(),requests:S.ledger.requests},null,1));await S.close();server.close();}
  const verdict=S.verdict();if(!verdict.ok){console.error('ISOLATION ESCAPE '+JSON.stringify(verdict.escapes));process.exitCode=3;}else if(!process.exitCode&&incomplete)process.exitCode=2;
 })();

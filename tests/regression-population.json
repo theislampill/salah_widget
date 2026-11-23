@@ -2136,7 +2136,7 @@
      "node",
      "tools/qa/r0033_worker_throttle.cjs",
      "--mode",
-     "<calibrate|refine>",
+     "<calibrate|refine|refine-throughput>",
      "--method",
      "<none|cdp-page|cdp-worker|jobcap|affinity>",
      "--rate",
@@ -2150,7 +2150,7 @@
      "--playwright",
      "<playwright package>"
     ],
-    "protocol": "one JSON line on stdout with the isolation verdict, <out>/<tag>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE (calibration outside +-15 % of the rate, or no measurement), 3 isolation escape (docs/state-contracts/R0033.md section 13.3)"
+    "protocol": "one JSON line on stdout with the isolation verdict, <out>/<tag>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE (calibration outside its tolerance, or no measurement), 3 isolation escape (docs/state-contracts/R0033.md section 13.3)"
    }
   }
  ]
