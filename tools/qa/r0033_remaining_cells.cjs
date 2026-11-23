@@ -6,7 +6,8 @@
 // rejected in-page; no geolocation permission is granted and no provider is contacted. The only pages opened are the
 // served tree's index.html (HTTP or file entry) and tests/smoke.html.
 // Moon facts are read through SalahMoonRuntime.observe() only (non-adopting, R0036), never .state/.surface().
-//   --cell secondload  R33-05  healthy boot asset requests (<= 2) and a second same-session load (reload, new page)
+//   --cell secondload  R33-05  healthy boot asset requests (<= 2) and a second same-session load (reload, new page);
+//                              each load must also post a 'force-cache' boot (observed) with recovery idle and no retry
 //   --cell fileentry   R33-08  file entry: one withheld chunk script fails the boot (class transport); the automatic
 //                              attempt appends every chunk script exactly once and the terrain returns
 //   --cell smoke       R33-22  unchanged tests/smoke.html; reports cases 21 and 22 (R0017 CASE-21/22) and the total
@@ -20,7 +21,8 @@
 // Usage: node tools/qa/r0033_remaining_cells.cjs --cell <c> --root <tree> --out <dir> --engine <chromium|firefox|webkit>
 //        [--dpr 1|2|3] [--minutes 30] [--rate 4] [--samples 3] [--playwright <pkg>]
 // Output: one JSON line per cell on stdout (with the isolation verdict) and <out>/<cell>-<engine>[-dprN]-requests.json.
-// Exit: 0 complete, 1 error, 2 INCOMPLETE (a measurement could not be made), 3 isolation escape.
+// Exit: 0 complete, 1 error, 2 INCOMPLETE (a measurement could not be made), 3 isolation escape, 4 FAIL (measured,
+// and the cell's accepting observation does not hold; secondload only). An escape (3) overrides every other code.
 require('./v1_net_guard.cjs').install();                                  // before any other module can connect
 const iso=require('./r0033_isolation.cjs');
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),{pathToFileURL}=require('node:url');
@@ -52,7 +54,10 @@ const SHIM=`(()=>{const nf=window.fetch.bind(window),iso=ms=>new Date(ms+3*36000
 // 250 ms poll is the interval created by the script with id moon-initial-code; its layout read is .mphoto's
 // getBoundingClientRect. The sampler reads observe() (pure) every 250 ms and records only changes; its own layout
 // reads are excluded from the count (they still happen: a stated perturbation of the CPU figures).
-const PROBE=`(()=>{const R=window.__r0033={pollCalls:0,layoutReads:0,log:[],chunks:[],withhold:0,self:0};
+// The boot cache mode is OBSERVED: the 'boot' message the page posts to the Moon worker carries it (moon-native
+// start()); that the worker then fetches the assets with that mode is read from source, not observed here.
+const PROBE=`(()=>{const R=window.__r0033={pollCalls:0,layoutReads:0,log:[],chunks:[],boots:[],withhold:0,self:0};
+ if(typeof Worker==='function'){const pm=Worker.prototype.postMessage;Worker.prototype.postMessage=function(m,...r){if(m&&m.kind==='boot')R.boots.push({t:performance.now(),cache:m.cache??null,offline:!!m.offline});return pm.call(this,m,...r);};}
  R.observe=()=>{R.self++;try{return window.SalahMoonRuntime?.observe?.()??null;}finally{R.self--;}};   // the recipe's own reads are not counted
  const si=window.setInterval;window.setInterval=function(f,ms,...r){if(ms===250&&document.currentScript?.id==='moon-initial-code'&&typeof f==='function'){const g=f;f=function(){R.pollCalls++;return g.apply(this,arguments);};}return si.call(this,f,ms,...r);};
  const gb=Element.prototype.getBoundingClientRect;Element.prototype.getBoundingClientRect=function(){if(!R.self&&this.classList&&this.classList.contains('mphoto'))R.layoutReads++;return gb.call(this);};
@@ -66,7 +71,7 @@ const FACTS=`(()=>{const m=window.SalahMoonRuntime,R=window.__r0033,o=R?R.observ
   recovery:s?.recovery??null,retryCount:s?.retryCount??null,errors:(s?.errors??[]).slice(-3),
   last:s?.last?{totalMs:s.last.totalMs??null,memoryBytes:s.last.memoryBytes??null,workers:s.last.rowScheduling?.workers??null}:null,
   phase:s?.phasePrecision?{diameterDevicePixels:s.phasePrecision.diameterDevicePixels,refreshThresholdDevicePixels:s.phasePrecision.refreshThresholdDevicePixels,signedPositionDrift:s.phasePrecision.signedPositionDrift}:null,
-  moonReady:c?c.classList.contains('moon-ready'):null,dpr:window.devicePixelRatio,now:performance.now(),pollCalls:R?.pollCalls??null,layoutReads:R?.layoutReads??null};})()`;
+  moonReady:c?c.classList.contains('moon-ready'):null,dpr:window.devicePixelRatio,now:performance.now(),pollCalls:R?.pollCalls??null,layoutReads:R?.layoutReads??null,boots:R?R.boots.slice():null};})()`;
 const HASH='#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&seed=1';
 const FROZEN=HASH+'&simTime=22:00&simWx=0&simMoon=0.5&simWax=1&simMoonAlt=20&simMoonH=42';   // the first slice's half-Moon scene
 async function open(S,url,{clock='2026-09-08T19:00:00Z',origin=null,fileRoot=null,scale=1,motion='reduce',inits=[]}={}){
@@ -87,7 +92,7 @@ async function rendererCpu(S){if(engine!=='chromium')return null;try{const c=awa
  return r.processInfo.filter(p=>p.type==='renderer').reduce((n,p)=>n+p.cpuTime,0);}catch(e){return null;}}
 const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,'hidden',{value:h,configurable:true});Object.defineProperty(document,'visibilityState',{value:h?'hidden':'visible',configurable:true});document.dispatchEvent(new Event('visibilitychange'));},hidden);
 (async()=>{await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
- const S=await iso.launch(PW,engine);let incomplete=false;const tag=`${cell}-${engine}${a.dpr?'-dpr'+dpr:''}${cell==='throttle'?'-x'+rate:''}`;
+ const S=await iso.launch(PW,engine);let incomplete=false,failed=false;const tag=`${cell}-${engine}${a.dpr?'-dpr'+dpr:''}${cell==='throttle'?'-x'+rate:''}`;
  const emit=o=>console.log(JSON.stringify({cell,engine,version:S.browser.version(),...o,isolation:S.verdict()}));
  try{
   if(cell==='secondload'){
@@ -97,10 +102,17 @@ const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,
    // The Playwright clock belongs to the context, so the second page shares the installed clock and the catch-all route.
    const p2=await o.context.newPage();await p2.goto(base+'/index.html'+FROZEN);
    const third=await until(p2,terrain,300000,500),n3=served.length;
-   const row=(r,from,to)=>({terrain:r.ok,ms:r.ms,serverAssetRequests:to-from,requests:served.slice(from,to).map(x=>({path:x.path,cacheControl:x.cacheControl,conditional:x.conditional})),recovery:r.f?.recovery??null,retryCount:r.f?.retryCount??null,status:r.f?.status??null});
-   incomplete=!(first.ok&&second.ok&&third.ok);
-   emit({declaredPolicy:'healthy boot: cache force-cache (moon-native bootCache); a later load of the same session is another healthy boot',firstLoad:row(first,0,n1),reload:row(second,n1,n2),newPageSameContext:row(third,n2,n3),
-    withinBaseline:n1<=2&&n2-n1<=2&&n3-n2<=2,limit:engine==='chromium'?'a Playwright route disables the Chromium HTTP cache: reuse cannot be shown here, only the request bound':null,errors:o.errors});
+   // Each load is judged on observations only: server asset requests (<= 2), the boot cache mode the page posted to
+   // the worker ('force-cache' on every boot of a healthy load), recovery idle with no attempt and retryCount 0.
+   const row=(r,from,to)=>{const boots=r.f?.boots??null,rec=r.f?.recovery??null,checks={assetRequestsAtMost2:to-from<=2,
+      bootCacheObserved:Array.isArray(boots)&&boots.length>0&&boots.every(b=>b.cache==='force-cache'),recoveryIdle:rec?.state==='idle'&&rec?.attempts===0,noRetry:r.f?.retryCount===0};
+    return {terrain:r.ok,ms:r.ms,serverAssetRequests:to-from,requests:served.slice(from,to).map(x=>({path:x.path,cacheControl:x.cacheControl,conditional:x.conditional})),
+     bootCacheModes:boots?boots.map(b=>b.cache):null,recovery:rec,retryCount:r.f?.retryCount??null,status:r.f?.status??null,checks,withinBaseline:Object.values(checks).every(Boolean)};};
+   const loads={firstLoad:row(first,0,n1),reload:row(second,n1,n2),newPageSameContext:row(third,n2,n3)};
+   incomplete=!(first.ok&&second.ok&&third.ok);const within=Object.values(loads).every(l=>l.withinBaseline);failed=!incomplete&&!within;
+   emit({result:incomplete?'INCOMPLETE':within?'WITHIN-BASELINE':'OVER-BASELINE',...loads,withinBaseline:incomplete?null:within,
+    cacheEvidence:'observed: the boot message cache mode and the request cache-control/conditional headers the server saw; the meaning of the boot mode for the worker fetch is read from source',
+    limit:engine==='chromium'?'a Playwright route disables the Chromium HTTP cache: reuse cannot be shown here, only the request bound':null,errors:o.errors});
   }else if(cell==='fileentry'){
    // Armed by an init script, so the withheld chunk is the first one the first boot appends.
    const o=await open(S,pathToFileURL(path.join(root,'index.html')).href+FROZEN,{fileRoot:root,inits:['window.__r0033.withhold=1;']});
@@ -126,8 +138,11 @@ const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,
    const perMinute=[];let prev=await facts(o.page);const begin=Date.now();
    for(let i=0;i<minutes&&first.ok;i++){await o.page.waitForTimeout(60000);const f=await facts(o.page);perMinute.push({minute:i+1,pollCalls:f.pollCalls-prev.pollCalls,layoutReads:f.layoutReads-prev.layoutReads,status:f.status,renders:f.renders});prev=f;}
    const windowMs=Date.now()-begin,cpu2=await rendererCpu(S),end=await facts(o.page),log=await o.page.evaluate(()=>window.__r0033.log.slice());
-   // Host-side request/result times from the transition log: a job is posted when status becomes 'rendering'; it ends at the next renders increment.
-   const jobs=[];let open1=null,renders=null;for(const e of log){if(renders===null)renders=e.renders;if(e.status==='rendering'&&e.pending&&!open1)open1={start:e.t};if(e.renders>renders){renders=e.renders;if(open1){jobs.push({start:open1.start,end:e.t,ms:e.t-open1.start});open1=null;}}}
+   // Host-side request/result times from the transition log: a job is posted when status becomes 'rendering' and moves
+   // to 'refining' at its first preview (moon-native), so a job whose preview lands inside one 250 ms sample is first
+   // seen as 'refining': either opens it (its start is then late by up to one sample). It ends at the next renders
+   // increment; an increment with no job seen open is counted, not dropped.
+   const jobs=[];let open1=null,renders=null,unopened=0;for(const e of log){if(renders===null)renders=e.renders;if((e.status==='rendering'||e.status==='refining')&&e.pending&&!open1)open1={start:e.t,seenAs:e.status};if(e.renders>renders){renders=e.renders;if(open1){jobs.push({start:open1.start,end:e.t,ms:e.t-open1.start,seenAs:open1.seenAs});open1=null;}else unopened++;}}
    const starts=jobs.map(j=>j.start),intervals=starts.slice(1).map((s,i)=>s-starts[i]),w0=first.ok?first.f.now:0,inWindow=jobs.filter(j=>j.start>=w0),busy=inWindow.reduce((n,j)=>n+j.ms,0);
    // (b) one hide/show after the window: time back to a refined surface and renderer CPU spent on it.
    let hideShow=null;if(first.ok){await setHidden(o.page,true);await o.page.waitForTimeout(2000);const hidden=await facts(o.page),c0=await rendererCpu(S),h0=Date.now();await setHidden(o.page,false);
@@ -135,7 +150,7 @@ const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,
    incomplete=!first.ok||perMinute.length<minutes||!(hideShow?.refinedAgain);
    emit({clock:'2026-09-26T19:00:00Z advancing at 1x (real Moon above the horizon)',dpr,windowMinutes:perMinute.length,windowMs,
     timeToRefined:{ok:first.ok,msFromLaunchOfPage:first.ok?refinedAt-t0:null,msAfterLoadEvent:first.ms,rendererCpuSeconds:cpu0!=null&&cpu1!=null?cpu1-cpu0:null,workerTotalMs:first.f?.last?.totalMs??null},
-    reRequest:{jobsCompleted:jobs.length,jobsInWindow:inWindow.length,intervalMs:stats(intervals),jobMs:stats(jobs.map(j=>j.ms)),busyFraction:windowMs>0?busy/windowMs:null,cancelled:end.cancelled,phase:end.phase},
+    reRequest:{jobsCompleted:jobs.length,jobsFirstSeenRefining:jobs.filter(j=>j.seenAs==='refining').length,completionsWithoutObservedStart:unopened,jobsInWindow:inWindow.length,intervalMs:stats(intervals),jobMs:stats(jobs.map(j=>j.ms)),busyFraction:windowMs>0?busy/windowMs:null,cancelled:end.cancelled,phase:end.phase},
     memory:{summedShardWasmBytes:end.last?.memoryBytes??null,shardWorkers:end.last?.workers??null,r0017ReferenceBytes:653262848,ratioToR0017:end.last?.memoryBytes?end.last.memoryBytes/653262848:null},
     poll:{perMinute,pollCallsPerMinute:stats(perMinute.map(m=>m.pollCalls)),layoutReadsPerMinute:stats(perMinute.map(m=>m.layoutReads))},
     windowRendererCpuSeconds:cpu1!=null&&cpu2!=null?cpu2-cpu1:null,hideShow,errors:o.errors,
@@ -170,6 +185,6 @@ const setHidden=(page,hidden)=>page.evaluate(h=>{Object.defineProperty(document,
     limits:['p95 over '+samples+' samples is the maximum','durations are host-side wall time from refresh() to the adopted result','when throttleReachedRefinement is false the row is not answered by this run']});
   }else throw Error('unknown cell '+cell);
  }catch(e){emit({error:String(e.stack||e).slice(0,600)});process.exitCode=1;}
- finally{fs.writeFileSync(path.join(out,tag+'-requests.json'),JSON.stringify({cell,engine,verdict:S.verdict(),served,requests:S.ledger.requests},null,1));await S.close();server.close();}
- const verdict=S.verdict();if(!verdict.ok){console.error('ISOLATION ESCAPE '+JSON.stringify(verdict.escapes));process.exitCode=3;}else if(!process.exitCode&&incomplete)process.exitCode=2;
+ finally{await S.settle();fs.writeFileSync(path.join(out,tag+'-requests.json'),JSON.stringify({cell,engine,verdict:S.verdict(),served,requests:S.ledger.requests},null,1));await S.close();server.close();}
+ const verdict=S.verdict();if(!verdict.ok){console.error('ISOLATION ESCAPE '+JSON.stringify(verdict.escapes));process.exitCode=3;}else if(!process.exitCode&&failed)process.exitCode=4;else if(!process.exitCode&&incomplete)process.exitCode=2;
 })();
