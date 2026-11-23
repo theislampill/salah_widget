@@ -49,6 +49,8 @@
   "tests/r0030-reset-authority-mutations.test.cjs",
   "tests/r0030-reset-authority.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
+  "tests/r0033-isolation-wiring.test.cjs",
+  "tests/r0033-isolation.test.cjs",
   "tests/r0033-lunar-surface-gate.test.cjs",
   "tests/r0036-acquisition-flags.test.cjs",
   "tests/r0036-diagnostic-purity.test.cjs",
@@ -1588,6 +1590,14 @@
   {
    "path": "tests/weather-renewal-fixture.cjs",
    "reason": "imported harness/fixture module, not an instrument"
+  },
+  {
+   "path": "tools/qa/r0033_isolation.cjs",
+   "reason": "imported isolation module of the R0033 native recipes (refusing proxy, catch-all route before any page, request ledger, escape verdict); its pure policy is tested by tests/r0033-isolation.test.cjs and its wiring against a fake Playwright by tests/r0033-isolation-wiring.test.cjs"
+  },
+  {
+   "path": "tests/r0033-fake-playwright.cjs",
+   "reason": "imported fake of the Playwright surface used by the R0033 isolation module and recipes (records call order, replays synthetic requests through the installed routes); harness of tests/r0033-isolation-wiring.test.cjs, not an instrument"
   }
  ],
  "exclusions": [
@@ -2059,6 +2069,62 @@
      "tests/r002f-renewal-matrix.cjs"
     ],
     "protocol": "node:test, two tests; each prints a diagnostic table of mean gaps and fails with every counterexample (candidate gap > main gap) listed (docs/state-contracts/R002F.md 1a)"
+   }
+  },
+  {
+   "path": "tools/qa/r0033_remaining_cells.cjs",
+   "reason": "native browser recipes for the remaining R0033 rows (Playwright Chromium/Firefox/WebKit, served generated tree or file entry, fixture prayer and weather, every browser started through tools/qa/r0033_isolation.cjs); measurements and smokes, not a headless unit instrument",
+   "owner": "R0033",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0033_remaining_cells.cjs",
+     "--cell",
+     "<secondload|fileentry|smoke|m5|throttle>",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engine",
+     "<chromium|firefox|webkit>",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line per cell with its isolation verdict, and <out>/<cell>-<engine>-requests.json (every request and its disposition); exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (measured, accepting observation does not hold; secondload, fileentry, smoke) (docs/state-contracts/R0033.md section 13)"
+   }
+  },
+  {
+   "path": "tools/qa/r0033_m6_lunar_divergence.mjs",
+   "reason": "Node-only research computation for R33-20 (authored refined-sky boundary and copied core, fixed instants, no browser, no network); it prints a record and asserts only its own self-check, so it is not a pass/fail regression instrument",
+   "owner": "R0033",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0033_m6_lunar_divergence.mjs",
+     "--out",
+     "<report.json>"
+    ],
+    "protocol": "the JSON report on stdout and at --out (or, with --instants <utc,...> --lat --lon, the same evaluation at those instants only); exit 1 when the local preview assembly is not byte-identical to renderNativeBackgroundPreview (docs/state-contracts/R0033.md section 14)"
+   }
+  },
+  {
+   "path": "tools/qa/r0033_r0007_ashen.cjs",
+   "reason": "native browser recipe for the controlled re-capture of the accepted R0007 warm-ashen case at an astronomically consistent instant (owner decision 2026-11-22; Playwright Chromium/Firefox, served generated tree, fixture prayer, weather and radar offline, every browser started through tools/qa/r0033_isolation.cjs); evidence capture, not a headless unit instrument",
+   "owner": "R0033",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0033_r0007_ashen.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engine",
+     "<chromium|firefox>",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "record.json, card and Moon crops at 1 s and 15 s, requests.json, one JSON line on stdout; exit 0 every check holds, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 14.5)"
    }
   }
  ]

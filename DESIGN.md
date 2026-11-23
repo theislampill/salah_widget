@@ -719,7 +719,10 @@ Common hash options:
   and the Moon worker scene only. The refined physical sky's lunar scattering (KS1991) is computed from the real
   ephemeris for the scene's UTC and location and is not overridden, so a simulated phase can disagree with it (for
   example a simulated new Moon on a date with a bright real Moon). Treat sky-brightness evidence from such scenes as
-  physical-sky evidence for the real Moon, or choose a date whose real phase is near the simulated one.
+  physical-sky evidence for the real Moon, or choose a date whose real phase is near the simulated one (for a "no
+  moonlight" scene, an instant with the real Moon below the horizon). Option (a) was confirmed by the owner decision
+  of 2026-11-22: no suppression, no visible SIM indicator and no sky-worker change under it; AGENTS.md's Moon
+  recipe carries the same qualification.
 - `qa=1` + `window.qaState()` — a structured snapshot (incl. `wxTruth`).
   Diagnostic reads are pure (R0036, docs/state-contracts/R0036.md): `qaState()`, its CP9 wrapper, the
   `debugMotion` overlay's 1 Hz read and the smoke instrument's Moon reads perform no storage write, no Moon
