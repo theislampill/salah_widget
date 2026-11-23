@@ -1,0 +1,49 @@
+# excerpt of scientific-js.log: TAP summary, then the first failing block (40 lines) if any
+# tests 305
+# suites 0
+# pass 304
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+
+not ok 196 - diffuse-off is bit-identical to all 12 captured CP6 cases
+  ---
+  duration_ms: 383.3862
+  type: 'test'
+  location: '<REDACTED:SCRATCH>\\tmp\\control-2\\cp9-science-1m5bmj3f\\science\\tests\\cp74_compositor.test.mjs:15:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + '8d6a35c4bf8d563a5d26c9829eca7cd3027fa8affc5abc83aa1d2fcbe0416517'
+    - '8b6af133990f531c1561dfb397062d65e71eae56bb0d589a1eb993c6c0f042ee'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '8b6af133990f531c1561dfb397062d65e71eae56bb0d589a1eb993c6c0f042ee'
+  actual: '8d6a35c4bf8d563a5d26c9829eca7cd3027fa8affc5abc83aa1d2fcbe0416517'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (<REDACTED:SCRATCH>/tmp/control-2/cp9-science-1m5bmj3f/science/tests/cp74_compositor.test.mjs:18:9)
+    Test.runInAsyncScope (node:async_hooks:228:14)
+    Test.run (node:internal/test_runner/test:1118:25)
+    Test.start (node:internal/test_runner/test:1015:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:358:17)
+  ...
+# Subtest: real-source light enters the linear frame once, and encoding happens only at the end
+ok 197 - real-source light enters the linear frame once, and encoding happens only at the end
+  ---
+  duration_ms: 9.0607
+  type: 'test'
+  ...
+# Subtest: radiance-to-pixel conversion uses V zero point and the solid angle exactly once
+ok 198 - radiance-to-pixel conversion uses V zero point and the solid angle exactly once
+  ---
+  duration_ms: 6.4179
+  type: 'test'
+  ...
+# Subtest: gas/cloud transport is once-only in the joined diffuse buffer
+ok 199 - gas/cloud transport is once-only in the joined diffuse buffer
+  ---
