@@ -11,7 +11,7 @@ const fs=require('node:fs');
 function create(scenario={},onLog=null){
   const log=[],note=e=>{log.push(e);if(onLog)onLog(log);};
   const guardState=()=>{try{return require('../tools/qa/v1_net_guard.cjs').state.installed;}catch{return null;}};
-  function engine(name){return {launch:async options=>{note({call:'launch',engine:name,guardInstalled:guardState(),proxy:options?.proxy??null,args:options?.args??[]});
+  function engine(name){return {launch:async options=>{note({call:'launch',engine:name,guardInstalled:guardState(),proxy:options?.proxy??null,args:options?.args??[],firefoxUserPrefs:options?.firefoxUserPrefs??null});
     const contexts=[];
     const browser={version:()=>'fake-1.0',contexts,
       newContext:async options=>{const routes=[],listeners={},ctx={options,routes,listeners,pages:0};contexts.push(ctx);note({call:'newContext',serviceWorkers:options?.serviceWorkers??null});

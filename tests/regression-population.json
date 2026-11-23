@@ -2090,7 +2090,7 @@
      "--playwright",
      "<playwright package>"
     ],
-    "protocol": "one JSON line per cell with its isolation verdict, and <out>/<cell>-<engine>-requests.json (every request and its disposition); exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (measured, accepting observation does not hold; secondload) (docs/state-contracts/R0033.md section 13)"
+    "protocol": "one JSON line per cell with its isolation verdict, and <out>/<cell>-<engine>-requests.json (every request and its disposition); exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (measured, accepting observation does not hold; secondload, fileentry, smoke) (docs/state-contracts/R0033.md section 13)"
    }
   },
   {
@@ -2104,7 +2104,27 @@
      "--out",
      "<report.json>"
     ],
-    "protocol": "the JSON report on stdout and at --out; exit 1 when the local preview assembly is not byte-identical to renderNativeBackgroundPreview (docs/state-contracts/R0033.md section 14)"
+    "protocol": "the JSON report on stdout and at --out (or, with --instants <utc,...> --lat --lon, the same evaluation at those instants only); exit 1 when the local preview assembly is not byte-identical to renderNativeBackgroundPreview (docs/state-contracts/R0033.md section 14)"
+   }
+  },
+  {
+   "path": "tools/qa/r0033_r0007_ashen.cjs",
+   "reason": "native browser recipe for the controlled re-capture of the accepted R0007 warm-ashen case at an astronomically consistent instant (owner decision 2026-11-22; Playwright Chromium/Firefox, served generated tree, fixture prayer, weather and radar offline, every browser started through tools/qa/r0033_isolation.cjs); evidence capture, not a headless unit instrument",
+   "owner": "R0033",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0033_r0007_ashen.cjs",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--engine",
+     "<chromium|firefox>",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "record.json, card and Moon crops at 1 s and 15 s, requests.json, one JSON line on stdout; exit 0 every check holds, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 14.5)"
    }
   }
  ]

@@ -13,6 +13,10 @@
 // encoded frames is the refined sky's lunar contribution in display bytes.
 // Usage: node tools/qa/r0033_m6_lunar_divergence.mjs [--out <report.json>]     (prints the report; exit 1 on a
 //        failed self-check: the local preview assembly must be byte-identical to renderNativeBackgroundPreview).
+//        node tools/qa/r0033_m6_lunar_divergence.mjs --instants <utc>[,<utc>...] --lat <deg> --lon <deg>
+//             [--sim-frac 0.01 --sim-wax 1 --sim-alt -20 --sim-h 42] [--out <file.json>]
+//        evaluates only the given instants at the given site (same evaluate(), same self-check) and prints
+//        {schema:'r0033-m6-instants/1', selfCheck, site, sim, instants}; the default report is unchanged by this mode.
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -85,6 +89,19 @@ const probe=snapshot('2026-09-26T19:00:00Z'),mine=preview(probe,physicalSkyState
 const theirBytes=encodeNativeFrame(theirs.raster.linear,theirs.raster.effectiveExposure);
 const selfCheck=mine.bytes.length===theirBytes.length&&mine.bytes.every((v,i)=>v===theirBytes[i])&&mine.raster.effectiveExposure===theirs.raster.effectiveExposure;
 
+if(args.instants){
+ // Instant mode (added for the R0007 warm-ashen re-capture, owner decision 2026-11-22): the same evaluate() at chosen
+ // instants and site, so a capture instant can be shown to be astronomically consistent with its simulated Moon.
+ const site={lat:Number(args.lat),lon:Number(args.lon)};
+ if(!Number.isFinite(site.lat)||!Number.isFinite(site.lon))throw new Error('--lat and --lon are required with --instants');
+ const sim={frac:Number(args['sim-frac']??0.01),waxing:String(args['sim-wax']??'1')==='1',alt:Number(args['sim-alt']??-20),H:Number(args['sim-h']??42)};
+ const out={schema:'r0033-m6-instants/1',selfCheck:{previewAssemblyByteIdenticalToProduct:selfCheck},site,sim,
+  instants:String(args.instants).split(',').map(u=>evaluate(u.trim(),sim,site))};
+ const body=JSON.stringify(out,null,1)+'\n';
+ if(args.out)fs.writeFileSync(path.resolve(args.out),body);
+ process.stdout.write(body);
+ if(!selfCheck)process.exitCode=1;
+}else{
 const NEW={frac:0.01,waxing:true,alt:20,H:42};
 const report={schema:'r0033-m6-lunar-divergence/1',fixture:{lat:24.47,lon:39.61,label:'Madinah (synthetic)',camera:snapshot('2026-01-01T00:00:00Z').camera,weather:'clear fixture, visibility 24 km'},
  selfCheck:{previewAssemblyByteIdenticalToProduct:selfCheck},
@@ -107,3 +124,4 @@ const text=JSON.stringify(report,null,1)+'\n';
 if(args.out)fs.writeFileSync(path.resolve(args.out),text);
 process.stdout.write(text);
 if(!selfCheck)process.exitCode=1;
+}

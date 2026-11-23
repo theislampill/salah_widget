@@ -28,6 +28,19 @@ const path=require('node:path'),http=require('node:http'),{fileURLToPath}=requir
 const guard=require('./v1_net_guard.cjs');
 const isLoopbackHost=h=>h!=null&&h!==''&&guard.isLoopback(String(h));   // 127/8, ::1, localhost (the R0036 guard's rule)
 
+const FIREFOX_PREFS=Object.freeze({
+  // The update-timer manager first fires 30 s after startup (app.update.timerFirstInterval); the application update
+  // URL comes from application.ini, not a pref, so the timers themselves are pushed beyond any cell.
+  'app.update.timerFirstInterval':2000000000,'app.update.timerMinimumDelay':2000000,'app.update.interval':2000000000,'app.update.background.interval':2000000000,
+  'app.update.auto':false,'app.update.enabled':false,'app.update.checkInstallTime':false,'app.update.disabledForTesting':true,
+  'app.update.url':'http://127.0.0.1:9/','app.update.url.override':'http://127.0.0.1:9/','extensions.update.enabled':false,'extensions.update.autoUpdateDefault':false,'extensions.getAddons.cache.enabled':false,
+  'extensions.systemAddon.update.enabled':false,'extensions.systemAddon.update.url':'http://127.0.0.1:9/','browser.safebrowsing.malware.enabled':false,'browser.safebrowsing.phishing.enabled':false,
+  'browser.safebrowsing.downloads.enabled':false,'browser.safebrowsing.downloads.remote.enabled':false,'browser.safebrowsing.provider.mozilla.updateURL':'',
+  'network.captive-portal-service.enabled':false,'network.connectivity-service.enabled':false,'browser.region.network.url':'','browser.search.update':false,
+  'services.settings.server':'http://127.0.0.1:9/','toolkit.telemetry.enabled':false,'datareporting.healthreport.uploadEnabled':false,'network.dns.disablePrefetch':true,'network.prefetch-next':false,
+  // Gecko Media Plugin manager (OpenH264/Widevine), whose update service is also on aus5.mozilla.org.
+  'media.gmp-manager.url':'http://127.0.0.1:9/','media.gmp-manager.updateEnabled':false,'media.gmp-provider.enabled':false,'media.gmp-gmpopenh264.enabled':false,'media.gmp-gmpopenh264.autoupdate':false,
+  'media.gmp-widevinecdm.enabled':false,'media.gmp-widevinecdm.autoupdate':false,'media.eme.enabled':false});
 // policy = {origin, fileRoot?, fixture?(URL)->body|null}. Returns {action:'continue'|'fulfill'|'abort', why, host, body?}.
 function classify(raw,policy){
   let u;try{u=new URL(raw);}catch{return {action:'abort',why:'unparseable',host:null};}
@@ -54,7 +67,10 @@ function verdict(ledger,nodeRefused=[]){
     ...ledger.offLoopbackResponses.map(x=>({...x,kind:'response-off-loopback'})),...ledger.proxyRefused.map(x=>({...x,kind:'reached-proxy'})),
     ...nodeRefused.map(x=>({...x,kind:'node-refused',refusal:x.kind}))];
   return {ok:escapes.length===0,escapes,seen:ledger.requests.length,continued:ledger.continued,fulfilled:ledger.fulfilled,aborted:ledger.aborted,
-    abortedHosts:[...new Set(ledger.requests.filter(r=>r.action==='abort'&&r.host).map(r=>r.host))],websockets:ledger.websockets.length,fileUnrouted:(ledger.fileUnrouted||[]).length};
+    abortedHosts:[...new Set(ledger.requests.filter(r=>r.action==='abort'&&r.host).map(r=>r.host))],websockets:ledger.websockets.length,fileUnrouted:(ledger.fileUnrouted||[]).length,
+    // Breakdown for the report only (ok above stays strict): escapes that could have left the machine versus attempts
+    // the refusing proxy or the Node guard answered without any outbound connection.
+    allowedOffLoopback:ledger.offLoopbackContinued.length+ledger.bypassed.length+ledger.offLoopbackResponses.length,refusedAtProxy:ledger.proxyRefused.length,refusedByNodeGuard:nodeRefused.length};
 }
 const strip=raw=>{try{const u=new URL(raw);return u.protocol==='data:'?'data:':u.protocol==='blob:'?'blob:':u.protocol+'//'+u.host+u.pathname;}catch{return String(raw).slice(0,80);}};
 
@@ -63,12 +79,17 @@ async function launch(PW,engine,{headless=true}={}){
   guard.install();
   const ledger=newLedger();
   const proxy=http.createServer((req,res)=>{ledger.proxyRefused.push({target:strip(req.url),at:Date.now()});res.writeHead(403);res.end('r0033 isolation');});
-  proxy.on('connect',(req,sock)=>{ledger.proxyRefused.push({target:String(req.url),at:Date.now()});sock.end('HTTP/1.1 403 Forbidden\r\n\r\n');});
+  proxy.on('connect',(req,sock)=>{ledger.proxyRefused.push({target:String(req.url),at:Date.now(),userAgent:String(req.headers['user-agent']??'').slice(0,160)});sock.end('HTTP/1.1 403 Forbidden\r\n\r\n');});
   proxy.on('upgrade',(req,sock)=>{ledger.proxyRefused.push({target:String(req.url),at:Date.now()});sock.destroy();});
   await new Promise(r=>proxy.listen(0,'127.0.0.1',r));
   const args=engine==='chromium'?['--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1','--disable-background-networking','--disable-component-update','--disable-domain-reliability','--no-pings','--disable-sync']:[];
   const pending=new Set(),settle=()=>Promise.allSettled([...pending]);
-  const browser=await PW[engine].launch({headless,args,proxy:{server:'http://127.0.0.1:'+proxy.address().port,bypass:'127.0.0.1,localhost'}});
+  // Firefox's own background services (application and add-on update checks, Safe Browsing, remote settings, captive
+  // portal and connectivity probes) are switched off: they are browser-level requests no page route sees. Should one
+  // still be attempted (the media-plugin manager also polls the update host) it reaches the refusing proxy, is answered 403 without any outbound connection, and is
+  // recorded as an escape (first observed 2026-11-22: two CONNECT attempts to aus5.mozilla.org:443, refused).
+  const firefoxUserPrefs=engine==='firefox'?FIREFOX_PREFS:undefined;
+  const browser=await PW[engine].launch({headless,args,firefoxUserPrefs,proxy:{server:'http://127.0.0.1:'+proxy.address().port,bypass:'127.0.0.1,localhost'}});
   async function context(options,policy){
     if(policy.origin&&!isLoopbackHost(new URL(policy.origin).hostname))throw new Error('r0033 isolation: fixture origin must be loopback');
     const ctx=await browser.newContext({...options,serviceWorkers:'block'}),routed=new WeakSet();
@@ -94,4 +115,4 @@ async function launch(PW,engine,{headless=true}={}){
   }
   return {browser,ledger,context,settle,verdict:()=>verdict(ledger,guard.state.refused),close:async()=>{await settle();await browser.close();await new Promise(r=>proxy.close(r));}};
 }
-module.exports={classify,verdict,newLedger,isLoopbackHost,launch};
+module.exports={classify,verdict,newLedger,isLoopbackHost,launch,FIREFOX_PREFS};

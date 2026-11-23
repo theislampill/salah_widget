@@ -35,6 +35,16 @@ test('R33-WIRE-01 the Node guard precedes the launch; both routes precede the fi
   assert.equal(log[at('newContext')].serviceWorkers,'block');
   assert.equal(log.some(e=>e.call==='unroute'||e.call==='unrouteAll'),false);
   for(const evt of ['requestfinished','requestfailed','response'])assert.ok(log.some(e=>e.call==='context.on'&&e.evt===evt),evt);
+  assert.equal(log[at('launch')].firefoxUserPrefs,null,'Chromium gets no Firefox prefs');
+});
+
+test('R33-WIRE-10 Firefox is launched with its background update, Safe Browsing and connectivity services off, behind the same proxy',async()=>{
+  const PW=fake.create({}),S=await iso.launch(PW,'firefox');
+  try{const l=PW.log.find(e=>e.call==='launch');assert.equal(l.engine,'firefox');assert.match(l.proxy.server,/^http:\/\/127\.0\.0\.1:\d+$/);
+    const p=l.firefoxUserPrefs;assert.ok(p);
+    for(const k of ['app.update.enabled','app.update.auto','extensions.update.enabled','extensions.systemAddon.update.enabled','browser.safebrowsing.malware.enabled','network.captive-portal-service.enabled','network.connectivity-service.enabled','media.gmp-provider.enabled','media.gmp-manager.updateEnabled'])assert.equal(p[k],false,k);
+    for(const k of ['media.gmp-manager.url','app.update.url','app.update.url.override','extensions.systemAddon.update.url','services.settings.server'])assert.match(p[k],/^http:\/\/127\.0\.0\.1:9\//,k);}
+  finally{await S.close();}
 });
 
 test('R33-WIRE-02 handler dispositions: fixture origin continues, the provider fixture is fulfilled, every non-loopback host is aborted',async()=>{
@@ -89,7 +99,7 @@ test('R33-WIRE-05 file entry: an unrouted in-tree file: URL is logged, not an es
 
 test('R33-WIRE-06 a late non-loopback server address is awaited and fails the verdict; a context without a WebSocket route is refused',async()=>{
   const {verdict}=await run({responses:[{url:ORIGIN+'/index.html',ip:'93.184.216.34'}]});
-  assert.equal(verdict.ok,false);assert.equal(verdict.escapes[0].kind,'response-off-loopback');
+  assert.equal(verdict.ok,false);assert.equal(verdict.escapes[0].kind,'response-off-loopback');assert.equal(verdict.allowedOffLoopback,1);assert.equal(verdict.refusedAtProxy,0);
   const clean=await run({responses:[{url:ORIGIN+'/index.html',ip:'127.0.0.1'}]});assert.equal(clean.verdict.ok,true);
   const L=await iso.launch(fake.create({responses:[{url:ORIGIN+'/x',ip:'93.184.216.34'}]}),'chromium');   // close() alone must also wait
   await (await (await L.context({},{origin:ORIGIN,fixture})).newPage()).goto(ORIGIN+'/x');await L.close();assert.equal(L.verdict().ok,false);
