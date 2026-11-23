@@ -856,7 +856,7 @@ try{
   // R0033 M7: a blend/ImageData/publication throw withdraws this presentation and is
   // recorded; it never escapes request()/surface() and leaves nothing presentable.
   try{const rgba=blendCalendarBytes(upperBytes,calendarBytes,up);canvas.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(rgba,canvas.width,canvas.height),0,0);const same=publishedToken!==null&&publishedToken===accepted.token;publishedToken=accepted.token;window.SalahMoonHost?.publish(canvas,same);}
-  catch(error){note(error);fallback('texture publication failure');return false;}
+  catch(error){note(error);presenterFault(fallback,'texture publication failure');return false;}
   return true;
  }
  function note(error){const message=String(error?.message??error);if(status.errors.at(-1)!==message)status.errors.push(message);status.errors=status.errors.slice(-8);return message;}
@@ -867,6 +867,10 @@ try{
  const matches=(record,s)=>sameScope(record,s)&&phaseError(record,s)<=PHASE_POSITION_BUDGET;
  // R0033 M4 presence predicate (named so the diagnostic observation reuses it; no second predicate).
  const presentableAt=s=>!!s&&(matches(accepted,s)||(!!waitingPreview&&matches(waitingPreview.record,s)));
+ // R0041 (review 3, R3-1): a presenter fault is reported from its OWN record, valid for the epoch it occurred in and
+ // until the next successful adoption; never from the free-standing status.reason, which outlives a recovered fault.
+ let faultRecord=null;
+ function presenterFault(withdraw,reason){withdraw(reason);faultRecord={reason,epoch};}
  function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;try{window.SalahMoonHost?.fallback();}catch(error){note(error);}detail.clear();}
  function revokeInitialHead(){initialHeadEligible=false;if(window.SalahFirstPaint?.moon)window.SalahFirstPaint.moon.result=null;}
  // R0041 presenter: withdraw the record's AUTHORITY without touching what is presented (detail canvas, reveal
@@ -937,6 +941,7 @@ try{
   canvas.width=m.width;canvas.height=m.height;upperBytes=m.rgba;calendarBytes=m.calendarRgba;textureUp=null;
   accepted={token:++adoptions,id:record.id,key:record.key,scope:record.scope,epoch:record.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity,initial:m.kind==='initial'||m.kind==='phase-disc',phaseDisc:m.kind==='phase-disc'};
   status.quality=m.diagnostics.quality.status;status.legacyFallback=false;status.visibleSource=m.kind==='result'?'refined-terrain':m.kind==='initial'?'initial-v5':m.kind==='phase-disc'?'phase-disc':'terrain-preview';status.last=m.diagnostics;status.phase=m.scene.fraction;
+  faultRecord=null;
   syncTexture(capture());status.lastAdoption={at:began,prefixMs,totalMs:performance.now()-began,source:status.visibleSource};
  }
  function presentation(s){
@@ -945,7 +950,7 @@ try{
   // identical DEM/material/profile/coverage, never the legacy normal-map image,
   // and is explicitly NOT labelled a final angular refinement.
   if(waitingPreview&&matches(waitingPreview.record,s)){const p=waitingPreview;waitingPreview=null;
-   try{adopt(p.message,p.record);}catch(error){note(error);fallback('presentation adoption failure');return false;}
+   try{adopt(p.message,p.record);}catch(error){note(error);presenterFault(fallback,'presentation adoption failure');return false;}
    return !!accepted;}
   return false;
  }
@@ -1168,8 +1173,10 @@ try{
   const b=[s.basis.slice(0,3),s.basis.slice(3,6),s.basis.slice(6)];for(let i=0;i<3;i++)for(let j=0;j<3;j++)if(Math.abs(b[i].reduce((a,x,k)=>a+x*b[j][k],0)-(i===j?1:0))>1e-10)throw new RangeError('Moon basis');
   return structuredClone(s);
  }
- // R0041 resume: the native host clears its own pause after this listener may already have run; one frame callback
- // (before the next paint) presents the successor when this turn could not, so the vector Moon is never left empty.
+ // R0041 resume: the native host clears its own pause after this listener may already have run. The task that clears
+ // the pause composes the Moon itself (owner decision 2026-11-22, G8: src/native/index.html setVis calls request() in
+ // that task), so restoration never ends an event task without the successor. The frame callback below stays as the
+ // backstop for a host that does not (it does nothing once a Moon is presentable).
  const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();if(!accepted)requestAnimationFrame(()=>{if(!document.hidden)presentForCompose();});}};
  // The handle is idempotent and refuses adoption once retired (ES21-07). It is
  // a pass-through: moon-detail.mjs stays byte-identical because it is a pinned
@@ -1232,12 +1239,14 @@ try{
  // R0041: the slot's state and, only when no truthful Moon can be constructed, the limitation. Nothing is drawn over a
  // limitation. It reads the native host's own record (nativeRead, set by the capture() the caller has just made), never
  // the geometry capture: observe() asks for no geometry when nothing is accepted, and that null is not an absent scene.
- // limitation is null while a Moon is presented, while the slot is withheld (hidden or paused, day, scene pending) and
- // while a presentation is merely awaited; it names absent information, a reference view or a fault otherwise.
- const PRESENTER_FAULTS=['texture publication failure','presentation adoption failure'];
+ // limitation is null while a V5 Moon is presented, while the slot is withheld (hidden or paused, day, scene pending)
+ // and while a presentation is merely awaited; it names the fault fallback, absent information, a reference view or a
+ // fault otherwise.
  function slotReport(current){
   if(disposed)return {slot:'disposed',limitation:null};
-  if(current)return {slot:'presented',limitation:null};
+  // R0041 G2 (owner decision 2026-11-22): a presented phase disc is a renderer-failure fallback and is disclosed as
+  // such (diagnostics only; nothing visible changes). Every other presented Moon reports no limitation.
+  if(current)return accepted?.phaseDisc?{slot:'presented-fault-fallback',limitation:'phase-disc fault fallback, untextured: start-up renderer unavailable ('+phaseDisc.cause+'); uniform sphere with the current phase, no lunar detail'}:{slot:'presented',limitation:null};
   const n=nativeRead;
   if(n&&n.paused===true)return {slot:'withheld-hidden-or-paused',limitation:null};
   if(n&&n.initialWarranted===false)return {slot:'withheld-day',limitation:null};
@@ -1245,7 +1254,7 @@ try{
   if(!admitted(n))return {slot:'information-absent',limitation:'no accepted native lunar scene (location, clock or phase unavailable)'};
   if(profileMode!=='calendar'||referenceScene)return {slot:'reference-view',limitation:'reference view: only the refinement worker can render it'};
   if(phaseDisc.state==='failed'&&phaseDisc.errorEpoch===epoch)return {slot:'fault',limitation:'phase-disc producer or presenter fault: '+phaseDisc.error};
-  if(PRESENTER_FAULTS.includes(status.reason))return {slot:'fault',limitation:'presenter fault: '+status.reason};
+  if(faultRecord&&faultRecord.epoch===epoch)return {slot:'fault',limitation:'presenter fault: '+faultRecord.reason};
   if(phaseDisc.state==='absent')return {slot:'renderer-unavailable',limitation:'start-up renderer unavailable ('+phaseDisc.cause+') and '+phaseDisc.error};
   return {slot:'awaiting',limitation:null};
  }

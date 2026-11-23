@@ -3996,17 +3996,20 @@ function _qaStateRead(){
       const surfaceStatus=refined?(phaseDisc?"phase-disc":initial?"v5-initial":"v5-terrain"):constructionError!=null?"construction-failed":lunarState?.status??"pending";
       const surfaceVisible=$(".c").classList.contains("moon-ready"),grp=+(A.moonGrp||0),disc=+(A.moonDisc||0);
       const phys=refined && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
+      // R0041 G2 (owner decision 2026-11-22): the untextured phase disc is a renderer-failure fallback, disclosed here
+      // (diagnostics only). Its light is the unchanged ephemeris rule: never more than the refined disc's at this instant.
+      const degraded=refined&&phaseDisc?"phase-disc fault fallback, untextured":null;
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
-        constructionError, limitation, slotState,
+        constructionError, limitation, slotState, degraded,
         observation:observation?{accepted:observation.accepted,waitingPreview:observation.waitingPreview,current:observation.current,wouldPresent:observation.wouldPresent,detailAvailable:observation.detailAvailable}:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
         surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?(phaseDisc?"uniform sphere under the V5 photometric law and profile; no lunar terrain or albedo (start-up renderer unavailable: "+(lunarState.phaseDisc?.cause??"unknown")+")":initial?"V5-derived receivers and canonical terrain horizons; full refinement pending":"V5 DEM intersections, terrain shadows and colour"):"unavailable"},
         physicalMoonVisible:phys, calendarMoonVisible:surfaceVisible && grp>0.01,
-        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?(phaseDisc?"phase-disc-calendar":initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
+        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?(phaseDisc?"phase-disc-fault-fallback":"physical"):grp>0.01?(phaseDisc?"phase-disc-calendar":initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
         moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?(phaseDisc?"uniform material with the initial Lambert Earth integral; no terrain":initial?"V5 material with initial Lambert Earth integral; full terrain refinement pending":"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only"):"surface unavailable",
-        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?(constructionError!=null?"Moon runtime construction failed (R0033 DG-1 = B): no disc and no moonlight; no legacy substitution":limitation!=null?"no truthful Moon can be constructed: "+limitation+"; no disc and no moonlight; no legacy substitution":"awaiting current terrain; no legacy substitution"):phys?null:(up?"near-new / cloud → subordinate calendar presentation":phaseDisc?"below horizon → phase-disc calendar phase (uniform sphere, no lunar detail); physical moonlight off":"below horizon → refined calendar phase; physical moonlight off") };
+        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?(constructionError!=null?"Moon runtime construction failed (R0033 DG-1 = B): no disc and no moonlight; no legacy substitution":limitation!=null?"no truthful Moon can be constructed: "+limitation+"; no disc and no moonlight; no legacy substitution":"awaiting current terrain; no legacy substitution"):phys?(phaseDisc?limitation:null):(up?"near-new / cloud → subordinate calendar presentation":phaseDisc?"below horizon → phase-disc calendar phase (uniform sphere, no lunar detail); physical moonlight off":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
 }
@@ -4307,7 +4310,13 @@ function startRenderLoop(){
   }
   function start(){ _wanted=true; if(_raf===null && !_running) _raf=requestAnimationFrame(loop); }   // a running frame reschedules itself in finally
   function stop(){ _wanted=false; if(_raf!==null){ cancelAnimationFrame(_raf); _raf=null; } }
-  function setVis(){ const on=visible(); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop(); }
+  // R0041 G8 (owner decision 2026-11-22): the task that CLEARS the pause (tab resume, back/forward restoration, the
+  // card scrolling back into view) composes the Moon before it ends, so no frame after restoration lacks it. The Moon
+  // runtime stays the one presenter (request() -> its own adopt()); this is the existing native read, made in this
+  // task instead of the next frame. It runs last and any Moon fault is contained: the frame loop is already
+  // scheduled, and prayer publication neither waits for nor depends on it (optional astronomy).
+  function setVis(){ const on=visible(), resumed=on&&!!cEl&&cEl.classList.contains("paused"); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop();
+    if(resumed){ try{ window.SalahMoonRuntime?.request(); updateSkySurface(); }catch(e){ recordRenderFault("moon-resume",e); } } }
   document.addEventListener("visibilitychange",setVis);
   if("IntersectionObserver" in window && cEl)
     new IntersectionObserver(es=>{ _onScreen=es[0].isIntersecting; setVis(); },{threshold:0}).observe(cEl);

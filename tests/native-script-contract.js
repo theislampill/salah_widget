@@ -53,7 +53,7 @@
   // moon-refinement and first-paint unchanged. CANDIDATE: awaits independent review.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'dc0a6948533d846ad222d331c8a9180d225f04815e377bad34fffcc027c710cd',
+    'moon-initial':'5aca14badb84914f2217ad9a0e58e0d13b94890fb8a8e14e7af489e6fa7f8476',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
@@ -65,11 +65,11 @@
     // slot state and limitation) and the legacy-Moon structural control of its generated index. Their current digests
     // are the two keys and the parentSha256 below (rebound by tools/qa/r0041/rebind-pins.cjs; no digest is repeated in
     // this comment). Awaits independent source review. Every entry below remains admitted.
-    '5c3927d7b1d7fd2a1737eaa8dd736d3aa5d645c11e8a1a591903879d83bfa20b':Object.freeze({
+    '7f9eb1514f8d96097273d1ce9be6607b82ccb0c6df41a5094508dab787401249':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'candidate',path:'src/native/index.html',layout:'config,native'}),
-    '55c4a2fcc1384d98e72464ea6ba6e18985a90d41d0a73f9f0af9fdfdf6780357':Object.freeze({
+    '794a0f878bdabb89f66e57464a1cb41aa7e6e9f5aa5e23050ef8784730d5d12a':Object.freeze({
       profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'candidate',path:'index.html',
-      parentSha256:'8bcf3ecb9dea1119b7a1e1b00f13c0ed8636a75c74588538b2b8a748d26e7ffd',
+      parentSha256:'675b182c2cab6541f33dfe95cbd1aa8d020d6aadf3dfdfd0c0a5d176bec8f3cb',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):

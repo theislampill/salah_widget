@@ -148,6 +148,8 @@ function boot({decodeFails=false,night=true}={}){
  const frames=()=>{const f=[...r.frames.values()];r.frames.clear();f.forEach(g=>g(clock));};
  return {r,rt,state,counts,real,wrap,advance,tick,expire,setHidden,frames,tail,throws:n=>{throwsLeft=n;},removeReceiver(){r.w.SalahMoonInitial=null;},restoreReceiver(){wrap();}};
 }
+// R0041 G2 (owner decision 2026-11-22): a presented phase disc is disclosed as the renderer-failure fallback it is.
+const FALLBACK=/^phase-disc fault fallback, untextured: start-up renderer unavailable \((receiver-missing|receiver-decode-failed|initial-exhausted|initial-waiting|initial-throw)\); uniform sphere with the current phase, no lunar detail$/;
 const presented=(b,source)=>{const s=b.rt().state;assert.equal(s.visibleSource,source);assert.equal(s.current,true);assert.ok(b.rt().surface(),'a presented surface');assert.equal(b.rt().presentable,true);return s;};
 
 test('R41-PD-1 (start-up failure: the embedded receiver does not decode): the first presentation is the phase disc; expiry, invalidation and resume keep it',()=>{
@@ -155,7 +157,7 @@ test('R41-PD-1 (start-up failure: the embedded receiver does not decode): the fi
  assert.equal(b.r.w.SalahMoonConstructionError,undefined,'a registered runtime: this is NOT the DG-1 = B construction failure');
  b.rt().request();let s=presented(b,'phase-disc');
  assert.equal(s.initialRetry.state,'permanent');assert.equal(s.initialEligible,false);assert.equal(s.phaseDisc.state,'presented');assert.equal(s.phaseDisc.cause,'receiver-decode-failed');
- assert.equal(s.quality,'phase-disc');assert.equal(s.limitation,null);assert.equal(s.legacyFallback,false);assert.equal(b.counts.clears,0);assert.ok(b.counts.composes>=1,'composed in the adopting task');
+ assert.equal(s.quality,'phase-disc');assert.equal(s.slot,'presented-fault-fallback');assert.match(s.limitation,FALLBACK);assert.equal(s.legacyFallback,false);assert.equal(b.counts.clears,0);assert.ok(b.counts.composes>=1,'composed in the adopting task');
  assert.ok(Math.abs(s.phasePrecision.signedPositionDrift)<=BOUND+1e-9);assert.equal(s.phasePrecision.maximumPositionErrorDevicePixels,BOUND);
  // Steady state: no re-render per poll.
  const renders=s.phaseDisc.renders;b.tick(5000);assert.equal(b.rt().state.phaseDisc.renders,renders,'never re-rendered per poll');
@@ -261,7 +263,7 @@ test('R41-PD-R33: the DG-1 = B construction-failure state is unchanged; the phas
  assert.match(r.w.SalahMoonConstructionError,/controlled interval failure/);assert.doesNotThrow(()=>r.run(tail));
 });
 
-test('R41-PD-LIGHT: light eligibility is the unchanged presence predicate (R0033 M4), so a presented phase disc carries the native light (owner gate G1, not settled)',()=>{
+test('R41-PD-LIGHT: light eligibility is the unchanged presence predicate (R0033 M4): a genuinely presented phase disc carries the light the ephemeris rules grant, and nothing else does (owner decision 2026-11-22, G1; magnitudes in R41-G1-*)',()=>{
  const b=boot({decodeFails:true});b.rt().request();const o=b.rt().observe();
  assert.equal(b.rt().presentable,true);assert.equal(o.current,true);assert.equal(o.wouldPresent,b.rt().presentable,'one predicate');
  assert.match(native,/get presentable\(\)\{if\(disposed\)return false;return presentableAt\(capture\(!!\(accepted\|\|waitingPreview\)\)\);\}/,'the predicate text is unchanged');
@@ -292,16 +294,21 @@ test('R41-PD-REPORT: on the observe() path the limitation is reported only when 
  // Scene pending: withheld.
  b=boot({decodeFails:true});b.state.presentationReady=false;b.rt().request();assert.deepEqual(report(b),{slot:'withheld-scene-pending',limitation:null,current:false});
  assert.equal(moonTruth(b).limitation,null);
- // Presented phase disc, above the horizon: no limitation; named as a phase disc.
- b=boot({decodeFails:true});b.rt().request();assert.deepEqual(report(b),{slot:'presented',limitation:null,current:true});
- t=moonTruth(b);assert.equal(t.limitation,null);assert.equal(t.slotState,'presented');assert.equal(t.surface.status,'phase-disc');assert.equal(t.surface.visibleSource,'phase-disc');
+ // Presented phase disc, above the horizon: disclosed as the untextured renderer-failure fallback (owner decision
+ // 2026-11-22, G2), with its cause; a distinct slot state, display mode and label. Never reported as absent information.
+ b=boot({decodeFails:true});b.rt().request();{const r0=report(b);assert.equal(r0.slot,'presented-fault-fallback');assert.equal(r0.current,true);assert.match(r0.limitation,FALLBACK);assert.match(r0.limitation,/receiver-decode-failed/);assert.doesNotMatch(r0.limitation,ABSENT);}
+ t=moonTruth(b);assert.match(t.limitation,FALLBACK);assert.equal(t.slotState,'presented-fault-fallback');assert.equal(t.surface.status,'phase-disc');assert.equal(t.surface.visibleSource,'phase-disc');
+ assert.equal(t.displayMode,'phase-disc-fault-fallback');assert.equal(t.degraded,'phase-disc fault fallback, untextured');assert.equal(t.reason,t.limitation);assert.equal(t.physicalMoonVisible,true);
+ // The healthy V5 tier in the same state reports no degradation at all.
+ {const h=boot();h.rt().request();assert.deepEqual(report(h),{slot:'presented',limitation:null,current:true});const th=moonTruth(h);assert.equal(th.displayMode,'physical');assert.equal(th.degraded,null);assert.equal(th.limitation,null);assert.equal(th.reason,null);assert.equal(th.surface.status,'v5-initial');}
  assert.match(t.surface.texture,/uniform sphere.*no lunar terrain or albedo.*receiver-decode-failed/);assert.match(t.earthshine,/uniform material/);
  // The same disc below the horizon: a phase-disc calendar presentation, never called refined.
- b.state.up=0;b.rt().request();t=moonTruth(b,{alt:-10});assert.equal(t.displayMode,'phase-disc-calendar');assert.match(t.reason,/phase-disc calendar phase/);assert.doesNotMatch(t.reason,/refined/);assert.equal(t.physicalMoonVisible,false);
+ b.state.up=0;b.rt().request();t=moonTruth(b,{alt:-10});assert.equal(t.displayMode,'phase-disc-calendar');assert.equal(t.degraded,'phase-disc fault fallback, untextured');assert.match(t.limitation,FALLBACK);assert.match(t.reason,/phase-disc calendar phase/);assert.doesNotMatch(t.reason,/refined/);assert.equal(t.physicalMoonVisible,false);
  // Hidden at night: withheld; the wording is the one main used, not a limitation.
  b.state.up=1;b.setHidden(true);assert.deepEqual(report(b),{slot:'withheld-hidden-or-paused',limitation:null,current:false});
  t=moonTruth(b);assert.equal(t.limitation,null);assert.equal(t.reason,AWAIT);
- b.setHidden(false);assert.equal(report(b).slot,'presented');
+ assert.equal(t.degraded,null,'nothing presented: nothing degraded to disclose');
+ b.setHidden(false);assert.equal(report(b).slot,'presented-fault-fallback');
  // Paused by the native host: withheld.
  b.state.paused=true;b.rt().request();assert.deepEqual(report(b),{slot:'withheld-hidden-or-paused',limitation:null,current:false});b.state.paused=false;
  // Publication fault on the phase-disc path: the fault text, not the absent-information text.
@@ -319,4 +326,173 @@ test('R41-PD-REPORT: on the observe() path the limitation is reported only when 
  // The adopting state getter agrees with the observation in every case above (one report, two readers).
  for(const make of [()=>boot({decodeFails:true,night:false}),()=>{const x=boot({decodeFails:true});x.state.fraction=NaN;return x;},()=>boot({decodeFails:true})]){
   const x=make();x.rt().request();const o=x.rt().observe().state,s=x.rt().state;assert.equal(o.slot,s.slot);assert.equal(o.limitation,s.limitation);}
+});
+
+// ---- Owner decisions of 2026-11-22 (G1, G2, G8) and review 3 advisories (R3-1, R3-2) ----------------------------
+// The native light chain is the AUTHORED text of src/native/index.html (nativeLunarPresentation, lunarPresentation,
+// moonSurfacePresentable), evaluated over the real runtime of the shipped bundle.
+const lightText=(()=>{const a=authored.indexOf('function nativeLunarPresentation('),z=authored.indexOf('// Presentability also changes outside render()',a);assert.ok(a>0&&z>a,'native light boundary');return authored.slice(a,z);})();
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+function nativeLight(runtime,{frac=.6,alt=30,solar=-30}={}){
+ const lunarPresentation=new Function('clamp','moonSky','window','$','_skySceneKey',lightText+';return lunarPresentation;')(clamp,{frac,alt},{SalahMoonRuntime:runtime},()=>({getAttribute:()=>'data:published'}),'scene');
+ return lunarPresentation(solar);
+}
+// moonTruth with the light the native chain grants for this runtime state (A.moonBeam is 0.6 x moonlight natively).
+function truthWithLight(b,scene){
+ const L=nativeLight(b.rt(),scene),o=b.rt().observe(),ready=!!o.current,{frac=.6,alt=30,solar=-30}=scene??{};
+ const t=new Function('moonNow','A','moonSky','window','$','_lastMoonPaint','_pbrReady','return '+truthText)(
+  ()=>({frac,waxing:true}),{day:solar>-3,moonAltitude:alt,moonGrp:1,moonDisc:1,moonlightIntensity:L.moonlight,moonBeam:.6*L.moonlight,moonObservation:null},{alt},
+  {SalahMoonRuntime:b.rt()},()=>({classList:{contains:()=>ready}}),null,false);
+ return {L,t};
+}
+
+test('R41-G1-NOLIGHT: no moonlight when the phase disc is not genuinely presented (hidden, paused, withheld, fault with an empty slot, absent information)',()=>{
+ const none=(b,why)=>{const {L,t}=truthWithLight(b);assert.equal(b.rt().presentable,false,why);assert.equal(L.moonlight,0,why);assert.equal(L.moonLightEligible,false,why);assert.equal(L.moonLightReason,'surface-unavailable',why);
+  assert.equal(L.moonGlow,0,why);assert.equal(L.moonLocalWash,0,why);assert.equal(t.moonlightOpacity,0,why);assert.equal(t.physicalMoonVisible,false,why);};
+ // Control: the same scene with the phase disc presented carries light, so the zeros below are not vacuous.
+ let b=boot({decodeFails:true});b.rt().request();presented(b,'phase-disc');assert.ok(truthWithLight(b).L.moonlight>0);assert.ok(truthWithLight(b).t.moonlightOpacity>0);
+ b.setHidden(true);none(b,'hidden');b.setHidden(false);presented(b,'phase-disc');
+ b.state.paused=true;b.rt().request();none(b,'paused');b.state.paused=false;
+ b=boot({decodeFails:true});b.state.presentationReady=false;b.rt().request();none(b,'scene pending');
+ b=boot({decodeFails:true,night:false});b.rt().request();none(b,'not warranted');
+ b=boot({decodeFails:true});b.counts.publishThrows=true;b.rt().request();assert.equal(b.rt().observe().state.slot,'fault');none(b,'publication fault, empty slot');
+ b=boot({decodeFails:true});b.state.fraction=NaN;b.rt().request();none(b,'absent information');
+ b=boot({decodeFails:true});none(b,'awaiting: nothing presented yet');
+ const r=rig({initial:false,deferWorker:true});r.c.renderPhaseDisc=()=>{throw new Error('injected phase-disc failure');};r.rt().request();
+ assert.equal(r.rt().presentable,false);assert.equal(nativeLight(r.rt()).moonlight,0,'producer fault, empty slot');
+});
+
+test('R41-G1-RULES: under a presented phase disc the ordinary ephemeris, horizon, phase and darkness rules still decide: new or below-horizon Moon and daylight give moonlightOpacity 0',()=>{
+ const b=boot({decodeFails:true});b.rt().request();presented(b,'phase-disc');
+ for(const [scene,reason] of [[{frac:.01,alt:30,solar:-30},'near-new'],[{frac:.02,alt:30,solar:-30},'near-new'],[{frac:.6,alt:-10,solar:-30},'below-horizon'],[{frac:.6,alt:-2,solar:-30},'below-horizon'],[{frac:.6,alt:30,solar:10},'daylight'],[{frac:.6,alt:30,solar:-3},'daylight']]){
+  const {L,t}=truthWithLight(b,scene);assert.equal(L.moonlight,0,reason);assert.equal(L.moonLightEligible,false,reason);assert.equal(L.moonLightReason,reason);assert.equal(t.moonlightOpacity,0,reason);assert.equal(t.physicalMoonVisible,false,reason);
+  assert.notEqual(t.displayMode,'phase-disc-fault-fallback','no physical label without light: '+reason);}
+ const {L,t}=truthWithLight(b,{frac:.6,alt:30,solar:-30});assert.equal(L.moonLightReason,'eligible');assert.ok(t.moonlightOpacity>0);
+});
+
+test('R41-G1-NEVERMORE: a renderer failure never raises illumination: for the same instant the phase disc grants exactly the light the V5 tiers grant, and an empty slot grants none',()=>{
+ const disc=boot({decodeFails:true});disc.rt().request();presented(disc,'phase-disc');
+ const v5=boot();v5.rt().request();presented(v5,'initial-v5');
+ const refined=boot();refined.r.run(refined.tail);refined.frames();refined.frames();refined.rt().request();
+ {const w=refined.r.workers[0];w.onmessage({data:{kind:'ready'}});const job=w.sent.findLast(m=>m.kind==='render'),n=job.scene.size,out=job.scene.outSize;
+  w.onmessage({data:{kind:'result',id:job.id,identity:job.identity,scene:structuredClone(job.scene),width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:n,surfaceExtent:job.scene.extent,
+   surfaceLinear:new Float32Array(n*n*3),calendarLinear:new Float32Array(n*n*3),surfaceCoverage:new Float32Array(n*n),physicalIdentity:'physical',profileIdentity:'profile',diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',quality:{status:'empirical-adaptive'}}}});}
+ presented(refined,'refined-terrain');
+ const empty=boot({decodeFails:true});empty.counts.publishThrows=true;empty.rt().request();
+ let n=0,lit=0;
+ for(const frac of [0,.01,.03,.07,.15,.5,.65,.92,1])for(const alt of [-28,-2,-1,0,4,20,60])for(const solar of [-40,-12,-6,-3,0,10]){
+  const s={frac,alt,solar},a=nativeLight(disc.rt(),s),b=nativeLight(v5.rt(),s),c=nativeLight(refined.rt(),s),e=nativeLight(empty.rt(),s);n++;if(c.moonlight>0)lit++;
+  assert.deepEqual(a,c,'phase disc equals refined: '+JSON.stringify(s));assert.deepEqual(b,c);assert.ok(a.moonlight<=c.moonlight);assert.equal(e.moonlight,0);assert.equal(e.moonGlow,0);}
+ assert.ok(n===378&&lit>20,'the grid is not vacuous');
+ // Structurally the light chain reads the ephemeris and ONE boolean; it cannot see which producer filled the slot.
+ assert.doesNotMatch(lightText,/visibleSource|phaseDisc|phase-disc|limitation|slotState|degraded|initial-v5|observe\(/);
+ assert.match(lightText,/function lunarPresentation\(solarElevation\)\{ const presented=moonSurfacePresentable\(\); _moonLightSurface=presented; return nativeLunarPresentation\(moonSky,solarElevation,!presented\); \}/);
+ assert.match(lightText,/const moonObject=surfaceFailed\?0:moonUp\*darkness\*phaseVis;/);
+});
+
+test('R41-G2-ORDINARY: with V5 material available the phase disc is never rendered or presented: start-up, polling, expiry, invalidation, hide and resume, identity change, below the horizon',()=>{
+ const b=boot();b.r.run(b.tail);b.frames();b.frames();
+ const never=why=>{const o=b.rt().observe().state;assert.equal(o.phaseDisc.renders,0,why);assert.notEqual(o.visibleSource,'phase-disc',why);assert.notEqual(o.slot,'presented-fault-fallback',why);assert.equal(o.phaseDisc.cause,null,why);};
+ b.rt().request();presented(b,'initial-v5');never('start-up');
+ b.tick(3000);never('polling');b.expire();b.rt().request();presented(b,'initial-v5');never('expiry');
+ b.rt().invalidate('r0041 g2');presented(b,'initial-v5');never('invalidation');
+ b.setHidden(true);never('hidden');b.advance(1000);b.setHidden(false);b.rt().request();presented(b,'initial-v5');never('resume');
+ b.state.sceneIdentity='B';b.advance(250);b.rt().request();presented(b,'initial-v5');never('identity change');
+ b.state.up=0;b.rt().request();presented(b,'initial-v5');never('below the horizon');
+ b.tick(61000,1000);never('a minute later');
+ const truth=moonTruth(b,{alt:-10});assert.equal(truth.degraded,null);assert.equal(truth.limitation,null);
+});
+
+test('R41-G2-V5FIRST: a valid worker record always displaces or pre-empts the phase disc; the phase disc is never an ordinary tier',()=>{
+ // Receiver permanently failed, so the phase disc is presented; a validated worker PREVIEW for the current scene
+ // replaces it in the message task, and later polls never go back to the phase disc while a V5 record is current.
+ const b=boot({decodeFails:true});b.r.run(b.tail);b.frames();b.frames();b.rt().request();presented(b,'phase-disc');
+ const w=b.r.workers[0];w.onmessage({data:{kind:'ready'}});const job=w.sent.findLast(m=>m.kind==='render'),n=job.scene.size,out=job.scene.outSize,renders=b.rt().state.phaseDisc.renders;
+ const message=kind=>({kind,id:job.id,identity:job.identity,scene:structuredClone(job.scene),width:out,height:out,rgba:new Uint8ClampedArray(out*out*4),calendarRgba:new Uint8ClampedArray(out*out*4),surfaceSize:n,surfaceExtent:job.scene.extent,
+  surfaceLinear:new Float32Array(n*n*3),calendarLinear:new Float32Array(n*n*3),surfaceCoverage:new Float32Array(n*n),physicalIdentity:'physical',profileIdentity:'profile',diagnostics:{kernel:'metric-radial-terrain-wasm-mb1',quality:{status:kind==='preview'?'preview':'empirical-adaptive'}}});
+ w.onmessage({data:message('preview')});let s=presented(b,'terrain-preview');assert.equal(s.slot,'presented');assert.equal(s.limitation,null);assert.equal(b.counts.clears,0,'in place');
+ b.tick(2000);s=presented(b,'terrain-preview');assert.equal(s.phaseDisc.renders,renders,'a current V5 record is never replaced by the phase disc');
+ w.onmessage({data:message('result')});presented(b,'refined-terrain');b.tick(2000);s=presented(b,'refined-terrain');assert.equal(s.phaseDisc.renders,renders);assert.equal(s.slot,'presented');
+ // Structure: one call site of the producer, reached only with a renderer-failure cause and nothing current; the
+ // worker cannot emit a phase disc; a presented phase disc is provisional (initial), so refinement is always requested.
+ assert.equal(native.match(/renderPhaseDisc\(/g).length,1);assert.equal(native.match(/phaseDiscPresentation\(/g).length,3,'the definition and two guarded calls');
+ assert.match(native,/const cause=initialCause\(capturedAt\);\n  if\(cause\)\{if\(!current\)phaseDiscPresentation\(s,cause\);return;\}/);
+ assert.match(native,/if\(!presentation\(s\)\)phaseDiscPresentation\(s,'initial-throw'\);/);
+ assert.match(native,/return initialEligible\(now\)\?null:'initial-waiting';/);
+ assert.match(native,/if\(!\['preview','result'\]\.includes\(m\.kind\)/);
+ assert.match(native,/initial:m\.kind==='initial'\|\|m\.kind==='phase-disc',phaseDisc:m\.kind==='phase-disc'/);
+ assert.match(native,/if\(matches\(accepted,s\)&&!\(accepted\.initial&&waitingPreview&&matches\(waitingPreview\.record,s\)\)\)return true;/);
+ assert.doesNotMatch(read('moon-worker.mjs'),/phase-disc|renderPhaseDisc/);assert.doesNotMatch(read('moon-first-paint.mjs'),/phase-disc|renderPhaseDisc/);
+});
+
+// G8 (owner decision 2026-11-22): on restoration the Moon is composed in the event task that clears the pause, never
+// in a later frame callback. setVis is the AUTHORED text of src/native/index.html, composed with the shipped bundle;
+// the Moon runtime's own visibilitychange listener runs BEFORE it, as in the page (the native pause is still set).
+const setVisText=(()=>{const m=/\n  function setVis\(\)\{[\s\S]*?\n(?=  document\.addEventListener\("visibilitychange",setVis\);)/.exec(authored);assert.ok(m,'setVis boundary');return m[0];})();
+function nativePause(b,{requestThrows=false}={}){
+ const classes=new Set(),log=[],cEl={classList:{contains:k=>classes.has(k),toggle(k,on){on?classes.add(k):classes.delete(k);},add(k){classes.add(k);}}};
+ Object.defineProperty(b.state,'paused',{get:()=>classes.has('paused'),enumerable:true,configurable:true});
+ const w=requestThrows?{SalahMoonRuntime:{request(){log.push('request');throw new Error('injected Moon fault');}}}:{get SalahMoonRuntime(){return b.rt();}};
+ const env={visible:()=>!b.r.c.document.hidden,rebaseCloudMotion(){},cEl,ADVANCING:false,start(){log.push('start');},stop(){log.push('stop');},window:w,updateSkySurface(){log.push('surface');},recordRenderFault(name,e){log.push('fault:'+name+':'+e.message);}};
+ return {log,classes,setVis:new Function(...Object.keys(env),setVisText+';return setVis;')(...Object.values(env))};
+}
+// The event task of a visibility change: every Moon-runtime listener first, then the native host's.
+const visibilityTask=(b,n,hidden)=>{b.setHidden(hidden);n.setVis();};
+
+test('R41-G8-1: back/forward restoration and tab resume end their event task with the Moon adopted, published and presentable (no frame callback, no poll)',()=>{
+ for(const [label,options,source] of [['healthy receiver',{},'initial-v5'],['receiver decode failure',{decodeFails:true},'phase-disc']]){
+  const b=boot(options),n=nativePause(b);n.setVis();assert.deepEqual(n.log,['start'],'boot: nothing resumed, the Moon is not touched');
+  b.rt().request();presented(b,source);
+  for(const route of ['back/forward','tab']){
+   // Leaving: pagehide (the asset owner disposes the refined sky and starts no preview hand-off), then hidden.
+   if(route==='back/forward')b.r.w.SalahRealSky=null;
+   visibilityTask(b,n,true);assert.equal(b.rt().observe().current,false,label+': hide withdraws (ISM-MOON-019 unchanged)');assert.equal(b.rt().presentable,false);
+   b.advance(1000);const publishes=b.counts.publishes,frames=b.r.frames.size;
+   // Restoring: the Moon runtime's listener runs while the native pause is still set, and adopts nothing ...
+   b.setHidden(false);assert.equal(b.rt().observe().current,false,label+': nothing adopted while the host still reads paused');
+   // ... then the native listener clears the pause. END OF THE EVENT TASK: no animation frame and no timer has run.
+   n.setVis();
+   const o=b.rt().observe();assert.equal(o.current,true,label+' '+route+': adopted in the event task');assert.equal(o.state.visibleSource,source);assert.equal(o.wouldPresent,true);
+   assert.equal(b.rt().presentable,true);assert.ok(b.counts.publishes>publishes,'published in the event task');assert.ok(Math.abs(o.state.phasePrecision.signedPositionDrift)<=BOUND+1e-9,'a current record, never the pre-hide one');
+   assert.equal(n.log.at(-1),'surface');assert.ok(n.log.lastIndexOf('start')<n.log.length-1,'the frame loop is scheduled before the Moon is touched');
+   // The frame callback that used to do this work now finds nothing to do.
+   const before=b.counts.publishes,renders=b.counts.receiver+b.rt().state.phaseDisc.renders;assert.ok(b.r.frames.size>=frames);b.frames();
+   assert.equal(b.counts.publishes,before,'the backstop frame callback adopts nothing more');assert.equal(b.counts.receiver+b.rt().state.phaseDisc.renders,renders);
+  }
+ }
+});
+
+test('R41-G8-2: the restoration composition is contained and narrow: a Moon fault cannot escape the task or stop the frame loop; boot, hide and a steady visible state do not touch the Moon',()=>{
+ const b=boot(),n=nativePause(b,{requestThrows:true});n.setVis();assert.deepEqual(n.log,['start']);
+ visibilityTask(b,n,true);assert.deepEqual(n.log,['start','stop'],'hide: no Moon call');
+ b.r.c.document.hidden=false;assert.doesNotThrow(()=>n.setVis());assert.deepEqual(n.log.slice(2),['start','request','fault:moon-resume:injected Moon fault']);
+ n.setVis();assert.deepEqual(n.log.slice(5),['start'],'already visible: no Moon call');
+ // Static: one guarded call, after the loop is (re)started; no prayer symbol in the function.
+ assert.match(setVisText,/if\(on\) start\(\); else stop\(\);\n    if\(resumed\)\{ try\{ window\.SalahMoonRuntime\?\.request\(\); updateSkySurface\(\); \}catch\(e\)\{ recordRenderFault\("moon-resume",e\); \} \} \}/);
+ assert.match(setVisText,/resumed=on&&!!cEl&&cEl\.classList\.contains\("paused"\)/);
+ assert.doesNotMatch(setVisText.replace(/\/\/[^\n]*/g,''),/prayer|timings|countdown|fetch|aladhan/i);
+});
+
+test('R41-R3-1: a recovered presenter fault is not reported again while the slot merely awaits its next record',()=>{
+ const b=boot();b.counts.publishThrows=true;b.rt().request();
+ assert.deepEqual(report(b),{slot:'fault',limitation:'presenter fault: texture publication failure',current:false});
+ b.counts.publishThrows=false;b.advance(250);b.rt().request();assert.deepEqual(report(b),{slot:'presented',limitation:null,current:true});
+ // A scene identity change, read before the next poll: awaiting, not the old fault.
+ b.state.sceneIdentity='B';assert.deepEqual(report(b),{slot:'awaiting',limitation:null,current:false});
+ assert.equal(moonTruth(b).reason,'awaiting current terrain; no legacy substitution');
+ b.advance(250);b.rt().request();assert.equal(report(b).slot,'presented');
+ // A same-scope expiry, read before the next poll: awaiting as well.
+ b.expire();assert.deepEqual(report(b),{slot:'awaiting',limitation:null,current:false});
+ b.rt().request();assert.equal(report(b).slot,'presented');
+ // A fault that is NOT recovered stays reported in its own epoch and stops being reported in the next one.
+ b.counts.publishThrows=true;b.rt().invalidate('r3-1');b.rt().request();assert.equal(report(b).slot,'fault');
+ b.rt().invalidate('next epoch');assert.deepEqual(report(b),{slot:'awaiting',limitation:null,current:false},'a fault of an earlier epoch is not current');
+});
+
+test('R41-R3-2: a phase-disc fault is reported only in the epoch it occurred in (the slot-report epoch guard)',()=>{
+ const r=rig({initial:false,deferWorker:true});r.c.renderPhaseDisc=()=>{throw new Error('injected phase-disc failure');};
+ r.rt().request();assert.equal(r.rt().observe().state.slot,'fault');
+ // invalidate() starts a new epoch and attempts nothing itself; a read before the next poll must not name the old fault.
+ r.rt().invalidate('new epoch');let o=r.rt().observe().state;assert.equal(o.slot,'awaiting');assert.equal(o.limitation,null);assert.equal(o.phaseDisc.state,'failed','the record itself is kept for diagnostics');
+ r.rt().request();o=r.rt().observe().state;assert.equal(o.slot,'fault','and the new epoch reports its own fault');assert.match(o.limitation,/injected phase-disc failure/);
 });

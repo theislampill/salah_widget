@@ -79,7 +79,7 @@ const INVALIDATE=()=>{window.__pdMark();const w=performance.timeOrigin+performan
 const STATE=()=>{const o=window.SalahMoonRuntime?.observe?.(),s=o?.state;return s?{visibleSource:s.visibleSource,current:o.current,initialEligible:s.initialEligible,initialRetry:s.initialRetry,phaseDisc:s.phaseDisc??null,limitation:s.limitation??null,lastAdoption:s.lastAdoption??null,firstInitial:s.firstInitial??null,recovery:s.recovery,status:s.status,constructionError:window.SalahMoonConstructionError??null,initialError:window.SalahMoonInitialError??null,receiverCalls:window.__pd?.receiverCalls??0}:null;};
 
 // qaState().moonTruth as the page reports it (the non-adopting diagnostic path, R0036).
-const TRUTH=()=>{const t=window.qaState?.().moonTruth;return t?{limitation:t.limitation??null,slotState:t.slotState??null,reason:t.reason??null,displayMode:t.displayMode,surfaceStatus:t.surface?.status,moonlightOpacity:t.moonlightOpacity}:null;};
+const TRUTH=()=>{const t=window.qaState?.().moonTruth;return t?{limitation:t.limitation??null,slotState:t.slotState??null,reason:t.reason??null,displayMode:t.displayMode,degraded:t.degraded??null,surfaceStatus:t.surface?.status,moonlightOpacity:t.moonlightOpacity}:null;};
 async function load(L,env,kind,run){
   const page=await L.context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e).slice(0,200)));
   if(kind==='A'){await page.addInitScript(DECODE_FAULT);for(const p of ASSETS)env.origins.policy[p]='404';}else for(const p of ASSETS)delete env.origins.policy[p];
@@ -187,7 +187,8 @@ function judge(r,run){
     if(!RED){const a=r.armed;if(!a||a.constructionError!=null||a.initialError==null||a.initialEligible!==false||a.initialRetry?.state!=='permanent'||a.visibleSource!=='phase-disc')bad('fault not armed (start-up decode failure)');
       // The report on the diagnostic path: no limitation while presented or hidden; the disc is named as a phase disc.
       const p=r.reportPresented,h=r.reportHidden;res.report={presented:p,hidden:h};
-      if(!p||p.limitation!==null||p.slotState!=='presented'||p.surfaceStatus!=='phase-disc')bad('report while presented: '+JSON.stringify(p));
+      // Owner decision 2026-11-22 (G2): a presented phase disc is disclosed as the untextured renderer-failure fallback.
+      if(!p||!/^phase-disc fault fallback, untextured: start-up renderer unavailable \(receiver-decode-failed\)/.test(p.limitation??'')||p.slotState!=='presented-fault-fallback'||p.degraded!=='phase-disc fault fallback, untextured'||p.displayMode!=='phase-disc-fault-fallback'||p.surfaceStatus!=='phase-disc')bad('report while presented: '+JSON.stringify(p));
       if(!h||h.limitation!==null||h.slotState!=='withheld-hidden-or-paused'||/no truthful Moon/.test(h.reason??''))bad('report while hidden: '+JSON.stringify(h));}
     // start-up: from the first frame with a visible sky to the settle instant
     const firstSky=J.find(f=>f.ctrlStars>=3),sk=firstSky?segment(firstSky.t,r.settleWall,'startup'):null;
