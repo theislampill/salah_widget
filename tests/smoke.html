@@ -493,7 +493,7 @@ async function run(){
     const grp=+ww.getComputedStyle(ww.document.querySelector(".c")).getPropertyValue("--moongrp");
     ok("calendar disc group opaque at deep night",grp>0.9,"--moongrp="+grp);
   });
-  await scene(base+"&simTime=01:00&simWx=0&simMoon=0.6&simWax=1&simMoonAlt=40&simMoonH=8","physical moon up: opaque + casts moonlight",(ww,q,ok)=>{
+  await calendarScene(base+"&simTime=01:00&simWx=0&simMoon=0.6&simWax=1&simMoonAlt=40&simMoonH=8","physical moon up: opaque + casts moonlight",(ww,q,ok)=>{
     const cs=ww.getComputedStyle(ww.document.querySelector(".c"));
     ok("--moongrp ~1",+cs.getPropertyValue("--moongrp")>0.9);ok("--moonocc ~1",+cs.getPropertyValue("--moonocc")>0.9);
     ok("physical moonlight is on",q.moonTruth.moonlightOpacity>0,q.moonTruth.moonlightOpacity);ok("moonSky fresh",q.moonTruth.moonSkyFresh===true);
