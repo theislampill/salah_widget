@@ -1,16 +1,17 @@
-'use strict';
-// R0033 (issue 100) §11 item 11: single-gate negative controls for native moonlight.
+// R0033 (issue 100) §11, last item: single-gate negative controls for native moonlight.
 // The authored native moon object (nativeLunarPresentation) withholds physical
-// moonlight through two independent gates: G-alt (moonUp, Moon below the horizon)
-// and G-new (phaseVis, near-new Moon). Smoke case 21 catches removing BOTH; this
-// instrument catches removing EITHER alone. It loads the whole generated native
-// runtime (root index.html, built from src/native/index.html) in the R001D VM
-// harness, with a stub Moon runtime that presents a current surface, so the
-// surface gate is open and only the gate under test can withhold light. Each
-// scene isolates ONE gate: a well-lit phase below the horizon (only G-alt
-// applies) and a near-new Moon high in the sky (only G-new applies); a lit,
-// above-horizon positive control keeps the test from passing vacuously.
-// Call/state behaviour only: no pixels, compositing or browser proof.
+// moonlight through two independent gates: G-alt (moonUp, Moon below the horizon;
+// ramp zero at or below -2 deg) and G-new (phaseVis, near-new Moon; ramp zero at or
+// below fraction 0.02). Smoke case 21 catches removing BOTH but neither alone; the
+// registered r0022-lunar-consumers-direct command already fails for either alone,
+// from a baseline that carries two declared failures. This instrument adds a fully
+// green baseline, per-gate isolation preconditions, reason assertions, a positive
+// control and scenes just outside each ramp's zero edge. It loads the whole
+// generated native runtime (root index.html, built from src/native/index.html) in
+// the R001D VM harness, with a stub Moon runtime that presents a current surface,
+// so the surface gate is open and only the gate under test can withhold light.
+// Only "exactly no light" is asserted at or below a zero edge; no ramp-interior
+// value is required. Call/state behaviour only: no pixels, compositing or browser proof.
 const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path');
 const {load,root}=require('./r001d-harness.cjs');
 const sourcePath=process.env.SALAH_R0033_ENTRY||path.join(root,'index.html');
@@ -61,6 +62,18 @@ test('R33-NC1 G-alt control: a well-lit (0.6) Moon at -20 deg casts no moonlight
 
 test('R33-NC2 G-new control: a near-new (0.01) Moon at +40 deg casts no moonlight (reason near-new)',()=>{
  const s=scene(0.01,40);
+ assert.ok(s.direct.moonUp===1,'scene isolates G-new: the horizon gate is fully open');
+ assertDark(s,'near-new');
+});
+
+test('R33-NC3 G-alt edge control: a well-lit (0.6) Moon at -2.5 deg, just below the ramp zero edge, casts no moonlight',()=>{
+ const s=scene(0.6,-2.5);
+ assert.ok(s.direct.phaseVis===1,'scene isolates G-alt: the phase gate is fully open');
+ assertDark(s,'below-horizon');
+});
+
+test('R33-NC4 G-new edge control: a 0.015 Moon at +40 deg, just below the phase zero edge, casts no moonlight',()=>{
+ const s=scene(0.015,40);
  assert.ok(s.direct.moonUp===1,'scene isolates G-new: the horizon gate is fully open');
  assertDark(s,'near-new');
 });
