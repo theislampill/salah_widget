@@ -165,7 +165,13 @@ A cycle PASSES only when, with **screenshot/clip evidence**:
 - D — Moon is **OPAQUE every night (no stars through the disc)** and **meaningfully present every night** — a new/
   below-horizon moon shows a faint **ashen opaque calendar disc with NO moonlight** (never blank, never faked
   light); the disc is **mostly in frame** so the phase reads. Earthshine correct across crescent/half/gibbous/full
-  (gibbous dark side faint **but textured, never a black cutout**).
+  (gibbous dark side faint **but textured, never a black cutout**). **Fault-path clause (owner decision 2026-11-22,
+  R0041):** in a genuine renderer-failure state only (the start-up Moon renderer missing, failed to decode, throwing
+  or with its retry budget spent, and no valid refined record), the slot may show the untextured phase disc. That
+  is an exception to the TEXTURE requirement alone — never to opacity or Moon presence, which hold in every state —
+  and it must be disclosed in `qaState().moonTruth` (`degraded`, `limitation`). The normal V5 Moon stays fully
+  textured; the plain disc is never an ordinary tier and never stands in for available V5 material
+  (`docs/state-contracts/R0041.md`).
 - E — Lunar corona (small, close) vs 22° halo (large ring) vs paraselenae (lateral, rare) are distinct + gated.
 - F — **Dawn is honest, not painted:** true dawn is the **real physical twilight sky** (dark at Fajr depth,
   brightening toward sunrise) + the Fajr marker — **no horizontal "true-dawn band."** False dawn is **fail-closed
@@ -215,6 +221,9 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
 - Sunrise marker drawn as a filled dot (it is a **ring**) or off the dashed line; Maghrib off the line; **Dhuhr
   on the apex**.
 - The moon's dark limb rendered as a **black cutout**, or a jaggy/stroked moon edge.
+- The **untextured phase disc shown outside a genuine renderer-failure state** (while the start-up receiver or a
+  valid refined record can serve the scene), shown **without its `moonTruth` disclosure**, or carrying more
+  moonlight than the refined disc would at that instant (gate D fault-path clause).
 - A **generic** glow standing in for a gated optical phenomenon.
 - **Claiming direct local rain/lightning observations from model or uncalibrated radar data**, or letting
   hourly forecasts overwrite current conditions in real time. The owner's PR42 policy explicitly permits
@@ -222,7 +231,8 @@ Judges list failures and residual approximations. **Screenshots/Δ — never the
   model effect permissions and direct-observation authority separate; see DESIGN.md. The live lane is a
   labelled model estimate; the synthetic present lane (`synthetic-present-v1`) is QA-only and never fed by a provider.
 - Clouds that **reseed / slideshow** on weather refresh or per render tick.
-- Replacing the accurate PBR moon lighting with a flat sprite; making physics "ugly".
+- Replacing the accurate PBR moon lighting with a flat sprite; making physics "ugly". (The gate D fault-path
+  clause is the one exception, and only to texture: a disclosed renderer-failure fallback, never a rendering tier.)
 
 ## Commit policy
 
