@@ -127,9 +127,11 @@ class IsoProxy{
 //       viewport, reducedMotion ('reduce'|'no-preference'), fonts (route mode: fulfil font hosts with stand-in faces)
 async function launch(env,opts){
   const PW=loadPlaywright();const {engine='chromium',mode='route',profileDir=null,reducedMotion='no-preference',viewport={width:325,height:530},
-    timezoneId='Asia/Riyadh',fonts=null,headless=true,shim={},extraArgs=[],deviceScaleFactor=1,ignoreDefaultArgs=undefined,extraPrefs={}}=opts;
+    timezoneId='Asia/Riyadh',fonts=null,headless=true,shim={},extraArgs=[],deviceScaleFactor=1,ignoreDefaultArgs=undefined,extraPrefs={},recordVideo=undefined}=opts;
   const log=env.log;const proxy={server:`http://127.0.0.1:${env.proxy.port}`,bypass:'<-loopback>'};
   const common={viewport,deviceScaleFactor,timezoneId,locale:'en-US',reducedMotion,serviceWorkers:'block',proxy};
+  // R0041 G6 addition: an optional Playwright recordVideo option (a local recording of the page; no network use).
+  if(recordVideo)common.recordVideo=recordVideo;
   // R0041 addition: ignoreDefaultArgs (Chromium: drop Playwright's --disable-back-forward-cache for the bfcache route)
   // and extraPrefs (Firefox prefs merged after the isolation prefs). Isolation layers unchanged.
   const launchOpts={headless};if(ignoreDefaultArgs)launchOpts.ignoreDefaultArgs=ignoreDefaultArgs;
