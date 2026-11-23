@@ -26,9 +26,12 @@ function refinedThenExpire(r,{up=1}={}){
 }
 const sceneGeometry=s=>({fraction:s.fraction,sun:s.sun,basis:s.basis,earth:s.earth,extent:s.extent,outSize:s.outSize,waxing:s.waxing,leadDirection:s.leadDirection});
 
-test('R41-CAL-SRC: the V5 calendar presentation has exactly two producers, the initial receiver and a worker result',()=>{
- // calendarBytes (the below-horizon calendar texture) is set only in adopt(), from an initial-receiver result or a
- // validated worker message; every other assignment withdraws it. No third (legacy or synthesised) producer exists.
+test('R41-CAL-SRC: calendar bytes are set only in adopt() from an adopted message; the receiver renders in one place; no legacy producer',()=>{
+ // calendarBytes (the below-horizon calendar texture) is set only in adopt(), from an adopted message; every other
+ // assignment withdraws it. The V5 calendar presentation proper has two producers, the initial receiver and a validated
+ // worker result. Since the owner decision of 2026-11-17 a third adoptable message exists, the receiver-independent
+ // phase disc (moon-phase-disc.mjs; its token is derived from its own uniform surface): see r0041-phase-disc.test.cjs.
+ // No legacy producer exists.
  const sets=[...native.matchAll(/calendarBytes=([^;,]+)/g)].map(m=>m[1]);
  assert.deepEqual([...new Set(sets)].sort(),['m.calendarRgba','null'].sort(),JSON.stringify(sets));
  assert.equal((native.match(/calendarBytes=m\.calendarRgba/g)||[]).length,1,'only adopt() sets it');

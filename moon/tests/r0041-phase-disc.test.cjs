@@ -7,6 +7,7 @@
 //    R33-11: those accepted cases run a rig that does not load the phase-disc unit and stay unamended; the twins assert
 //    the SAME receiver-call counts at the same instants in the shipped configuration, where the slot is filled.
 //  - Two fault cases use the UNMODIFIED R0033 rig with a counting stub producer.
+//  - R41-PD-REPORT reads the NON-ADOPTING observe() path and the authored qaState().moonTruth expression in each state.
 // Run: node --test moon/tests/r0041-phase-disc.test.cjs
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),crypto=require('node:crypto');
 const SRC=path.join(__dirname,'../src'),read=f=>fs.readFileSync(path.join(SRC,f),'utf8');
@@ -237,6 +238,8 @@ test('R41-PD-FAULT (presenter): a publication fault withdraws truthfully, is rep
 test('R41-PD-FAULT (producer, R0033 rig with a stub): a producer throw is reported once per epoch; a result that no longer matches is never adopted',()=>{
  let calls=0;const r=rig({initial:false,deferWorker:true});r.c.renderPhaseDisc=()=>{calls++;throw new Error('injected phase-disc failure');};
  r.rt().request();let s=r.rt().state;assert.equal(r.rt().surface(),null);assert.equal(s.phaseDisc.state,'failed');assert.match(s.limitation,/injected phase-disc failure/);
+ // The same report on the non-adopting observe() path (qaState reads this one): the fault text, not absent information.
+ {const o=r.rt().observe().state;assert.equal(o.slot,'fault');assert.match(o.limitation,/^phase-disc producer or presenter fault: .*injected phase-disc failure/);assert.doesNotMatch(o.limitation,/no accepted native lunar scene/);}
  r.tick(5000);assert.equal(calls,1,'one attempt per epoch');r.rt().invalidate('new epoch');r.rt().request();r.rt().request();assert.equal(calls,2);
  // The scene moves past the bound while the producer runs: the stale result is rejected, not presented.
  const q=rig({initial:false,deferWorker:true});Object.assign(q.state,{timeScale:1,fraction:.6,waxing:true});
@@ -248,6 +251,7 @@ test('R41-PD-FAULT (producer, R0033 rig with a stub): a producer throw is report
 test('R41-PD-ABSENT (R0033 rig, no unit): with no producer installed the accepted behaviour is exactly as before, and it is reported',()=>{
  const r=rig({initial:true,initialThrows:1,deferWorker:true});r.rt().request();const s=r.rt().state;
  assert.equal(r.rt().surface(),null);assert.equal(s.phaseDisc.state,'absent');assert.match(s.limitation,/start-up renderer unavailable \(initial-throw\) and phase-disc producer not installed/);
+ {const o=r.rt().observe().state;assert.equal(o.slot,'renderer-unavailable');assert.equal(o.limitation,s.limitation,'observe() reports the same limitation');}
 });
 
 test('R41-PD-R33: the DG-1 = B construction-failure state is unchanged; the phase disc cannot run without a runtime',()=>{
@@ -257,8 +261,62 @@ test('R41-PD-R33: the DG-1 = B construction-failure state is unchanged; the phas
  assert.match(r.w.SalahMoonConstructionError,/controlled interval failure/);assert.doesNotThrow(()=>r.run(tail));
 });
 
-test('R41-PD-LIGHT: light eligibility is the unchanged presence predicate (R0033 M4); the phase disc neither grants nor withholds it',()=>{
+test('R41-PD-LIGHT: light eligibility is the unchanged presence predicate (R0033 M4), so a presented phase disc carries the native light (owner gate G1, not settled)',()=>{
  const b=boot({decodeFails:true});b.rt().request();const o=b.rt().observe();
  assert.equal(b.rt().presentable,true);assert.equal(o.current,true);assert.equal(o.wouldPresent,b.rt().presentable,'one predicate');
  assert.match(native,/get presentable\(\)\{if\(disposed\)return false;return presentableAt\(capture\(!!\(accepted\|\|waitingPreview\)\)\);\}/,'the predicate text is unchanged');
+});
+
+// ---- the report, on the diagnostic path --------------------------------------------------------------------------
+// qaState().moonTruth reads SalahMoonRuntime.observe() only (R0036). observe() asks for no geometry when nothing is
+// accepted, so the limitation must not be derived from that null. The moonTruth expression is the authored text of
+// src/native/index.html, evaluated over the real runtime's observation.
+const authored=fs.readFileSync(path.join(__dirname,'../../src/native/index.html'),'utf8');
+const truthText=(()=>{const m=/moonTruth:(\(\(\)=>\{[\s\S]*?\n    \}\)\(\))/.exec(authored);assert.ok(m,'moonTruth expression boundary');return m[1];})();
+function moonTruth(b,{alt=20,day=false}={}){
+ const o=b.rt().observe(),ready=!!o.current;
+ return new Function('moonNow','A','moonSky','window','$','_lastMoonPaint','_pbrReady','return '+truthText)(
+  ()=>({frac:b.state.fraction,waxing:b.state.waxing}),{day,moonAltitude:alt,moonGrp:day?0:1,moonDisc:1,moonlightIntensity:alt>-.5?.4:0,moonBeam:alt>-.5?.3:0,moonObservation:null},{alt},
+  {SalahMoonRuntime:b.rt(),SalahMoonConstructionError:b.r.w.SalahMoonConstructionError},()=>({classList:{contains:()=>ready}}),null,false);
+}
+const report=b=>{const before=b.counts.publishes,o=b.rt().observe();assert.equal(b.counts.publishes,before,'observe() publishes nothing');return {slot:o.state.slot,limitation:o.state.limitation,current:o.current};};
+
+test('R41-PD-REPORT: on the observe() path the limitation is reported only when information is absent or a fault occurred; withheld and awaiting states report none',()=>{
+ const ABSENT=/no accepted native lunar scene/,AWAIT='awaiting current terrain; no legacy substitution';
+ // Awaiting: a night scene before the first presentation (nothing accepted yet).
+ let b=boot({decodeFails:true});assert.deepEqual(report(b),{slot:'awaiting',limitation:null,current:false});
+ let t=moonTruth(b);assert.equal(t.limitation,null);assert.equal(t.slotState,'awaiting');assert.equal(t.reason,AWAIT);assert.equal(t.displayMode,'surface-unavailable');
+ // Day: withheld, not a limitation.
+ b=boot({decodeFails:true,night:false});b.rt().request();assert.deepEqual(report(b),{slot:'withheld-day',limitation:null,current:false});
+ t=moonTruth(b,{day:true});assert.equal(t.limitation,null);assert.equal(t.slotState,'withheld-day');assert.match(t.reason,/daytime suppression/);
+ // Scene pending: withheld.
+ b=boot({decodeFails:true});b.state.presentationReady=false;b.rt().request();assert.deepEqual(report(b),{slot:'withheld-scene-pending',limitation:null,current:false});
+ assert.equal(moonTruth(b).limitation,null);
+ // Presented phase disc, above the horizon: no limitation; named as a phase disc.
+ b=boot({decodeFails:true});b.rt().request();assert.deepEqual(report(b),{slot:'presented',limitation:null,current:true});
+ t=moonTruth(b);assert.equal(t.limitation,null);assert.equal(t.slotState,'presented');assert.equal(t.surface.status,'phase-disc');assert.equal(t.surface.visibleSource,'phase-disc');
+ assert.match(t.surface.texture,/uniform sphere.*no lunar terrain or albedo.*receiver-decode-failed/);assert.match(t.earthshine,/uniform material/);
+ // The same disc below the horizon: a phase-disc calendar presentation, never called refined.
+ b.state.up=0;b.rt().request();t=moonTruth(b,{alt:-10});assert.equal(t.displayMode,'phase-disc-calendar');assert.match(t.reason,/phase-disc calendar phase/);assert.doesNotMatch(t.reason,/refined/);assert.equal(t.physicalMoonVisible,false);
+ // Hidden at night: withheld; the wording is the one main used, not a limitation.
+ b.state.up=1;b.setHidden(true);assert.deepEqual(report(b),{slot:'withheld-hidden-or-paused',limitation:null,current:false});
+ t=moonTruth(b);assert.equal(t.limitation,null);assert.equal(t.reason,AWAIT);
+ b.setHidden(false);assert.equal(report(b).slot,'presented');
+ // Paused by the native host: withheld.
+ b.state.paused=true;b.rt().request();assert.deepEqual(report(b),{slot:'withheld-hidden-or-paused',limitation:null,current:false});b.state.paused=false;
+ // Publication fault on the phase-disc path: the fault text, not the absent-information text.
+ b=boot({decodeFails:true});b.counts.publishThrows=true;b.rt().request();let r=report(b);
+ assert.equal(r.slot,'fault');assert.match(r.limitation,/^phase-disc producer or presenter fault: texture publication failure$/);assert.doesNotMatch(r.limitation,ABSENT);
+ t=moonTruth(b);assert.equal(t.slotState,'fault');assert.match(t.reason,/no truthful Moon can be constructed: phase-disc producer or presenter fault: texture publication failure/);
+ // Publication fault on the receiver path (healthy receiver): also a fault, named as the presenter's.
+ b=boot();b.counts.publishThrows=true;b.rt().request();r=report(b);assert.equal(r.slot,'fault');assert.equal(r.limitation,'presenter fault: texture publication failure');
+ // Absent information: no scene identity, and a non-finite phase.
+ b=boot({decodeFails:true});b.state.sceneIdentity=null;b.rt().request();r=report(b);assert.equal(r.slot,'information-absent');assert.match(r.limitation,ABSENT);
+ t=moonTruth(b);assert.match(t.limitation,ABSENT);assert.match(t.reason,/no truthful Moon can be constructed: no accepted native lunar scene/);
+ b=boot({decodeFails:true});b.state.fraction=NaN;b.rt().request();r=report(b);assert.equal(r.slot,'information-absent');assert.match(r.limitation,ABSENT);
+ // A reference view.
+ b=boot({decodeFails:true});b.rt().setProfile('reference');b.rt().request();r=report(b);assert.equal(r.slot,'reference-view');assert.match(r.limitation,/reference view/);
+ // The adopting state getter agrees with the observation in every case above (one report, two readers).
+ for(const make of [()=>boot({decodeFails:true,night:false}),()=>{const x=boot({decodeFails:true});x.state.fraction=NaN;return x;},()=>boot({decodeFails:true})]){
+  const x=make();x.rt().request();const o=x.rt().observe().state,s=x.rt().state;assert.equal(o.slot,s.slot);assert.equal(o.limitation,s.limitation);}
 });

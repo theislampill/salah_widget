@@ -4011,12 +4011,18 @@ try{
  const initialRetry={count:0,notBefore:0,epoch:-1,state:window.SalahMoonInitialError!=null||!window.SalahMoonInitial?'permanent':'idle'};
  const status={status:'loading',backend:'metric-terrain-wasm-mb1',renders:0,rejected:0,cancelled:0,errors:[],legacyFallback:false,quality:'pending',visibleSource:'awaiting-terrain',initialError:window.SalahMoonInitialError??null};
  const profile=()=>profileMode==='reference'?{...MOON_DEFAULT_PROFILE,profile_id:'unboosted-v5-01',mode:'reference',lift:0}:{...MOON_DEFAULT_PROFILE};
+ // The native host's own capture, before geometry. capture() returns null for an empty surface query by design, so a
+ // null capture does not mean the native scene is absent; the limitation report (slotReport) reads this record.
+ let nativeRead=null;
+ const admitted=s=>!!s&&typeof s.sceneIdentity==='string'&&Number.isSafeInteger(s.generation)&&s.generation>=0&&Number.isFinite(s.utcMs)&&Number.isFinite(s.fraction)&&s.fraction>=0&&s.fraction<=1&&typeof s.waxing==='boolean'&&(s.phaseDirection===undefined||[-1,0,1].includes(s.phaseDirection))&&Number.isFinite(s.up)&&Number.isFinite(s.dpr);
  function capture(withGeometry=true){
+  nativeRead=null;
   const h=window.SalahMoonHost;if(!h)return null;let s;try{s=h.capture();}catch{return null;}
+  nativeRead=s??null;
   // Native observation can initialize the explicit clock. Preserve it even
   // when an empty surface query has no candidate needing geometric validation.
   if(!withGeometry)return null;
-  if(!s||typeof s.sceneIdentity!=='string'||!Number.isSafeInteger(s.generation)||s.generation<0||!Number.isFinite(s.utcMs)||!Number.isFinite(s.fraction)||s.fraction<0||s.fraction>1||typeof s.waxing!=='boolean'||(s.phaseDirection!==undefined&&![-1,0,1].includes(s.phaseDirection))||!Number.isFinite(s.up)||!Number.isFinite(s.dpr))return null;
+  if(!admitted(s))return null;
   // The image rectangle encloses the lunar disc. Round up, so subpixel layout
   // noise cannot understate the bound; translation never changes this identity.
   const rect=document.querySelector('.mphoto')?.getBoundingClientRect();
@@ -4416,18 +4422,27 @@ try{
   get state(){const s=capture(),current=presentation(s);return snapshot(s,current);},
   dispose(){if(disposed)return;clear('disposed');disposed=true;recovery.state='idle';recovery.nextAt=null;clearInterval(timer);clearTimeout(deadline);if(startFrame!==null)cancelAnimationFrame(startFrame);startFrame=null;document.removeEventListener('visibilitychange',visibility);closeWorker();if(window.SalahMoonDetail===detail)window.SalahMoonDetail=null;detail.dispose();status.status='disposed';}
  };
- // R0041: when no truthful Moon can be constructed the limitation is REPORTED, never drawn over. null while a Moon is
- // presented or while the slot is merely withheld (day, scene pending, hidden or paused).
- function limitation(s,current){
-  if(disposed||current)return null;
-  if(!s)return 'no accepted native lunar scene (location, clock or phase unavailable)';
-  if(s.paused||s.presentationReady===false||s.initialWarranted===false)return null;
-  if(profileMode!=='calendar'||referenceScene)return 'reference view: only the refinement worker can render it';
-  if(phaseDisc.state==='failed')return 'phase-disc producer or presenter fault: '+phaseDisc.error;
-  if(phaseDisc.state==='absent')return 'start-up renderer unavailable ('+phaseDisc.cause+') and '+phaseDisc.error;
-  return null;
+ // R0041: the slot's state and, only when no truthful Moon can be constructed, the limitation. Nothing is drawn over a
+ // limitation. It reads the native host's own record (nativeRead, set by the capture() the caller has just made), never
+ // the geometry capture: observe() asks for no geometry when nothing is accepted, and that null is not an absent scene.
+ // limitation is null while a Moon is presented, while the slot is withheld (hidden or paused, day, scene pending) and
+ // while a presentation is merely awaited; it names absent information, a reference view or a fault otherwise.
+ const PRESENTER_FAULTS=['texture publication failure','presentation adoption failure'];
+ function slotReport(current){
+  if(disposed)return {slot:'disposed',limitation:null};
+  if(current)return {slot:'presented',limitation:null};
+  const n=nativeRead;
+  if(n&&n.paused===true)return {slot:'withheld-hidden-or-paused',limitation:null};
+  if(n&&n.initialWarranted===false)return {slot:'withheld-day',limitation:null};
+  if(n&&n.presentationReady===false)return {slot:'withheld-scene-pending',limitation:null};
+  if(!admitted(n))return {slot:'information-absent',limitation:'no accepted native lunar scene (location, clock or phase unavailable)'};
+  if(profileMode!=='calendar'||referenceScene)return {slot:'reference-view',limitation:'reference view: only the refinement worker can render it'};
+  if(phaseDisc.state==='failed'&&phaseDisc.errorEpoch===epoch)return {slot:'fault',limitation:'phase-disc producer or presenter fault: '+phaseDisc.error};
+  if(PRESENTER_FAULTS.includes(status.reason))return {slot:'fault',limitation:'presenter fault: '+status.reason};
+  if(phaseDisc.state==='absent')return {slot:'renderer-unavailable',limitation:'start-up renderer unavailable ('+phaseDisc.cause+') and '+phaseDisc.error};
+  return {slot:'awaiting',limitation:null};
  }
- function snapshot(s,current){const target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},phaseDisc:{...phaseDisc,state:accepted?.phaseDisc&&current?'presented':phaseDisc.state==='presented'?'idle':phaseDisc.state},limitation:limitation(s,current),initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});}
+ function snapshot(s,current){const target=(accepted??pending)?.scene;return structuredClone({...status,quality:current?status.quality:'pending',visibleSource:current?status.visibleSource:'awaiting-terrain',current,epoch,generation:s?.generation,pending:!!pending,accepted:accepted?{identity:accepted.physicalIdentity,profile:accepted.profileIdentity,scene:accepted.scene}:null,retryCount,workerAlive:!!worker,recovery:{...recovery},initialRetry:{...initialRetry},phaseDisc:{...phaseDisc,state:accepted?.phaseDisc&&current?'presented':phaseDisc.state==='presented'?'idle':phaseDisc.state},...slotReport(current),initialEligible:!!window.SalahMoonInitial&&initialEligible(performance.now()),currentNativeFraction:s?.fraction,phasePrecision:s?{diameterDevicePixels:s.phaseDiameter,quantumRadians:s.phaseQuantum,bucket:Math.round(Math.acos(2*s.fraction-1)/s.phaseQuantum),maximumPositionErrorDevicePixels:PHASE_POSITION_BUDGET,refreshThresholdDevicePixels:PHASE_POSITION_BUDGET/4,maximumNativePresentationDiameter:s.maximumPhaseDiameter,signedPositionDrift:accepted?phaseDrift(accepted,s):null,targetPositionErrorBound:target?.mode==='calendar-canonical'?s.phaseDiameter/2*Math.abs(Math.acos(2*target.fraction-1)-Math.acos(2*s.fraction-1)):null}:null,maximumCanonicalPhasePositionErrorAtD416:.0416,calendarProxyWeight:1-(s?.up??1),calendarProxy:'refined phase/relief scaled to at most the former .020×material mean luminance; zero physical moonlight'});}
  registered=window.SalahMoonRuntime;
  timer=setInterval(()=>poll(),250);
  // Full asset/decode/row preparation must not compete with the synchronous
@@ -7688,7 +7703,7 @@ function _qaStateRead(){
       const initial=lunarState?.visibleSource==="initial-v5";
       // R0041: the receiver-independent phase disc is named as what it is (a uniform sphere, no lunar detail), and a
       // state in which no truthful Moon can be constructed is reported as a limitation.
-      const phaseDisc=lunarState?.visibleSource==="phase-disc",limitation=typeof lunarState?.limitation==="string"?lunarState.limitation:null;
+      const phaseDisc=lunarState?.visibleSource==="phase-disc",limitation=typeof lunarState?.limitation==="string"?lunarState.limitation:null,slotState=typeof lunarState?.slot==="string"?lunarState.slot:null;
       // R0036: a construction failure recorded by the Moon builder's guard (R0033 DG-1 = B) is reported as such, not as
       // "awaiting"; the slot is then empty, so the runtime status cannot say it.
       const constructionError=!runtime&&typeof window.SalahMoonConstructionError==="string"?window.SalahMoonConstructionError:null;
@@ -7696,16 +7711,16 @@ function _qaStateRead(){
       const surfaceVisible=$(".c").classList.contains("moon-ready"),grp=+(A.moonGrp||0),disc=+(A.moonDisc||0);
       const phys=refined && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
-        constructionError, limitation,
+        constructionError, limitation, slotState,
         observation:observation?{accepted:observation.accepted,waitingPreview:observation.waitingPreview,current:observation.current,wouldPresent:observation.wouldPresent,detailAvailable:observation.detailAvailable}:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
         surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?(phaseDisc?"uniform sphere under the V5 photometric law and profile; no lunar terrain or albedo (start-up renderer unavailable: "+(lunarState.phaseDisc?.cause??"unknown")+")":initial?"V5-derived receivers and canonical terrain horizons; full refinement pending":"V5 DEM intersections, terrain shadows and colour"):"unavailable"},
         physicalMoonVisible:phys, calendarMoonVisible:surfaceVisible && grp>0.01,
-        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?(initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
+        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?(phaseDisc?"phase-disc-calendar":initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
         moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?(phaseDisc?"uniform material with the initial Lambert Earth integral; no terrain":initial?"V5 material with initial Lambert Earth integral; full terrain refinement pending":"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only"):"surface unavailable",
-        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?(constructionError!=null?"Moon runtime construction failed (R0033 DG-1 = B): no disc and no moonlight; no legacy substitution":limitation!=null?"no truthful Moon can be constructed: "+limitation+"; no disc and no moonlight; no legacy substitution":"awaiting current terrain; no legacy substitution"):phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
+        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?(constructionError!=null?"Moon runtime construction failed (R0033 DG-1 = B): no disc and no moonlight; no legacy substitution":limitation!=null?"no truthful Moon can be constructed: "+limitation+"; no disc and no moonlight; no legacy substitution":"awaiting current terrain; no legacy substitution"):phys?null:(up?"near-new / cloud → subordinate calendar presentation":phaseDisc?"below horizon → phase-disc calendar phase (uniform sphere, no lunar detail); physical moonlight off":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
 }

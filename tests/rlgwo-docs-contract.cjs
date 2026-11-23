@@ -297,15 +297,15 @@ function mentions(name, tokens) {
       // R0036 re-bind (issue 103, on main a196351b at 26e79798, merged with main 47608f15): body d640373c... -> 12fe5ac6..., entry 3615841c... -> c2c827c7...; R0036 changes
       // only diagnostic reads (qaState, the CP9 wrapper), attempt-outcome/acquisition records and the settings GPS/Reset records,
       // not the pinned block, helper, clamp or call.
-      // R0041 candidate re-bind (issue 143, over main 47faae32, merged with main 06b6e93b): body 12fe5ac6... -> c3617811... -> a52d55c6... -> 377920b8... -> ea3388cd... (candidate,
+      // R0041 candidate re-bind (issue 143, over main 47faae32, merged with main 06b6e93b): body 12fe5ac6... -> c3617811... -> a52d55c6... -> 377920b8... -> ea3388cd... -> e0f178f3... (candidate,
       // resume: texture publication decodes only while presented; review: only for the same record; phase disc: truthful moonTruth labels for the receiver-independent
-      // phase disc and a reported limitation); R0041 adds the phase-direction authority beside SalahMoonHost.capture and the
+      // phase disc, the slot state and a limitation reported only when one exists); R0041 adds the phase-direction authority beside SalahMoonHost.capture and the
       // Moon texture publication, not the pinned block, helper, clamp or call.
-      assert.equal(digest(body),"ea3388cd45459b68d1824c762dae391a0e5a75d4a2a3f7fc610caed7fb91429b",'delegated native script changed');
+      assert.equal(digest(body),"e0f178f3b09c593b769a58e92947844b3404fd8b7605279883b257b970042e15",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 73964824... -> 1cf18db5... -> 0b5e7038... -> 429c2f83... -> 4965456b... (candidate) (generated from the R0041 authored sources above).
-      assert.equal(digest(source),"4965456bdc3deb009b35d3d532e5d7f3a3ea809d58c7cbcc8e2510ba3ec30aec",'delegated current generated entry changed');
+      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 73964824... -> 1cf18db5... -> 0b5e7038... -> 429c2f83... -> 4965456b... -> 8bcf3ecb... (candidate) (generated from the R0041 authored sources above).
+      assert.equal(digest(source),"8bcf3ecb9dea1119b7a1e1b00f13c0ed8636a75c74588538b2b8a748d26e7ffd",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {

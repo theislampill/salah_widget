@@ -48,24 +48,28 @@
   // R0041 candidate rebind (issue 143, branch claude/r0041-moon-presence-phase-direction-20261116, main 47faae32 merged
   // with 06b6e93b): moon-initial 067034c8 -> 68e2b16e (moon-native.mjs: record-signed drift, phaseDirection admission,
   // directed calendar scene, the one-presenter guarantees on expiry, clear() and resume; moon-first-paint.mjs head
-  // direction). moon-precision.mjs, moon-refinement and first-paint unchanged. CANDIDATE: awaits independent review.
+  // direction), then rebound for the receiver-independent phase disc (moon-phase-disc.mjs and its wiring, slot state
+  // and limitation report in moon-native.mjs); the current value is the pin below. moon-precision.mjs,
+  // moon-refinement and first-paint unchanged. CANDIDATE: awaits independent review.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
-    'moon-initial':'1996728ee03bd6f5914218d95b1ac8c4075a36a9807aa716c02e1feefea9c0d0',
+    'moon-initial':'dc0a6948533d846ad222d331c8a9180d225f04815e377bad34fffcc027c710cd',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
   // Complete older or authored documents need an independent identity, not
   // merely fewer surviving script tags. Current generated semantic mutants remain admissible:
   // no current native-body digest is pinned here.
   const RETAINED_INPUTS=Object.freeze({
-    // R0041 (issue 143) CANDIDATE, same branch: authored source c7f04df0 (SalahMoonHost.capture phase-direction authority
-    // nativeLunarPhaseDirection, outside nativeLunarSnapshot; publish decode handling) and the legacy-Moon structural
-    // control d58b5540 of its generated index 429c2f83. Awaits independent source review. Every entry below remains admitted.
-    'bf6c58cf96cc7cf072342a58bf70219ddbb49383ea442d54d33cef0b58f85363':Object.freeze({
+    // R0041 (issue 143) CANDIDATE, same branch: the authored source (SalahMoonHost.capture phase-direction authority
+    // nativeLunarPhaseDirection, outside nativeLunarSnapshot; publish decode handling; moonTruth labels for the phase disc,
+    // slot state and limitation) and the legacy-Moon structural control of its generated index. Their current digests
+    // are the two keys and the parentSha256 below (rebound by tools/qa/r0041/rebind-pins.cjs; no digest is repeated in
+    // this comment). Awaits independent source review. Every entry below remains admitted.
+    '5c3927d7b1d7fd2a1737eaa8dd736d3aa5d645c11e8a1a591903879d83bfa20b':Object.freeze({
       profile:'current-authored-native',kind:'current-authored-source',commit:'candidate',path:'src/native/index.html',layout:'config,native'}),
-    '50efa2dcd5ba10e5b02de843bd6d07df161adf2580884873a7ff90037c7ca6a0':Object.freeze({
+    '55c4a2fcc1384d98e72464ea6ba6e18985a90d41d0a73f9f0af9fdfdf6780357':Object.freeze({
       profile:'retained-legacy-moon-structural-control',kind:'structural-control',commit:'candidate',path:'index.html',
-      parentSha256:'4965456bdc3deb009b35d3d532e5d7f3a3ea809d58c7cbcc8e2510ba3ec30aec',
+      parentSha256:'8bcf3ecb9dea1119b7a1e1b00f13c0ed8636a75c74588538b2b8a748d26e7ffd',
       transform:'Remove both complete Moon initial/refinement tags once; append the exact legacy file flag and moon-host tag before </body>; all other bytes unchanged.',
       layout:'config,first-paint,native,sky,moon-file,moon-host'}),
     // R0036 (issue 103) diagnostic purity, branch claude/r0036-diagnostic-purity-20261115 over main a196351b at 26e79798 (merged with main 47608f15 at 00f65298):
