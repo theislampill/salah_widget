@@ -2126,6 +2126,32 @@
     ],
     "protocol": "record.json, card and Moon crops at 1 s and 15 s, requests.json, one JSON line on stdout; exit 0 every check holds, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 14.5)"
    }
+  },
+  {
+   "path": "tools/qa/r0033_worker_throttle.cjs",
+   "reason": "native browser recipe for row R33-09 (Playwright Chromium on Windows, every browser started through tools/qa/r0033_isolation.cjs, synthetic fixtures): calibrates CPU-slowdown methods with a fixed worker benchmark and measures the Moon refinement under a Windows Job Object CPU hard cap on the renderer processes (helper tools/qa/r0033_jobcap.ps1); a measurement, not a headless unit instrument",
+   "owner": "R0033",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0033_worker_throttle.cjs",
+     "--mode",
+     "<calibrate|refine>",
+     "--method",
+     "<none|cdp-page|cdp-worker|jobcap|affinity>",
+     "--rate",
+     "<4|6>",
+     "--dpr",
+     "<1|3>",
+     "--root",
+     "<tree>",
+     "--out",
+     "<fresh dir>",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line on stdout with the isolation verdict, <out>/<tag>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE (calibration outside +-15 % of the rate, or no measurement), 3 isolation escape (docs/state-contracts/R0033.md section 13.3)"
+   }
   }
  ]
 }
