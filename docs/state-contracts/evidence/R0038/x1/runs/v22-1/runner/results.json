@@ -1,0 +1,74 @@
+{
+  "status": "PASS",
+  "oracleUnchanged": true,
+  "commands": [
+    {
+      "name": "viewer-build",
+      "command": [
+        "<REDACTED:PYTHON311-DIR>\\python.exe",
+        "tools/build_cp75_viewer.py"
+      ],
+      "exitCode": 0,
+      "seconds": 0.375
+    },
+    {
+      "name": "scientific-js",
+      "command": [
+        "node",
+        "--test",
+        "--test-reporter=tap",
+        "--test-concurrency=1",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\astronomy.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\catalogue.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\catalogue2.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\controller.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp4.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp4_oracle.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp4_scenarios.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp5_optics.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp5_spectral.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp6_atmosphere.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp6_bridge.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp6_compositor.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp6_fixture.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp7-diffuse.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp74_binding.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp74_compositor.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp74_transport.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp75_assets.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp75_engine.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp75_prepared.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp75_queue.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp75_stream.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp75_worker_client.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\cp7_registered_runtime.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\integration.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\ontology.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\oracle.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\photometry.test.mjs",
+        "<REDACTED:SCRATCH>\\tmp\\v22-1\\cp9-science-g1t48g1q\\science\\tests\\renderer.test.mjs"
+      ],
+      "exitCode": 0,
+      "seconds": 30.983999999999924
+    },
+    {
+      "name": "scientific-python",
+      "command": [
+        "<REDACTED:PYTHON311-DIR>\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "*_test.py",
+        "-v"
+      ],
+      "exitCode": 0,
+      "seconds": 5.156000000000176
+    }
+  ],
+  "node": "v22.16.0",
+  "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+  "scope": "Retained scientific tests and builders in an isolated copy. One documented seal test may skip when the historical checkpoint runtime is not supplied. No scientific source or threshold edits."
+}

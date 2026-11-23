@@ -301,7 +301,11 @@ Serve the folder statically and open `index.html#lat=24.47&lon=39.61&label=Madin
 - **Weather-truth QA**: `&simWx=95&simPrecip=0` must downgrade (no thunder/rain); `&simWx=95&simPrecip=5` keeps
   thunder; check `qaState().wxTruth` for the source/reason chain.
 - Moon: `&simMoon=0.08&simWax=1&simMoonAlt=20&simMoonH=42` (crescent), `&simMoon=0.92…` (gibbous), `&simMoon=0.98…`
-  (full); thin-cloud halo/corona via `&simWx=2&simCloud=30` on a moon scene.
+  (full); thin-cloud halo/corona via `&simWx=2&simCloud=30` on a moon scene. `simMoon*` drives the native disc,
+  the native moonlight and the Moon worker scene only; it does not override the refined sky's real-ephemeris
+  lunar-scattering inputs. Lunar-light or whole-sky evidence made under `simMoon*` must therefore use a clock instant
+  at which the real Moon is consistent with the simulated one (for example below the horizon for a "no moonlight"
+  scene), or state the divergence (DESIGN.md "URL parameters"; `docs/state-contracts/R0033.md` §14).
 - **Live motion**: load real-time (no `simTime`) and **watch ~15–60s** — clouds must drift/morph, stars
   scintillate, sky breathe. `&debugMotion=1` shows rAF/s, cloud-paint/s, reduced-motion, paused, **cloud Δ 10s/60s**,
   star Δ, reason. `&motion=full` forces motion under OS reduced-motion. `&timeScale=1800` fast-forwards a day.
