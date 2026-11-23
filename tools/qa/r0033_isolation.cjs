@@ -14,7 +14,16 @@
 //     everything else is aborted. Every request is logged with its disposition.
 //   - verdict() fails on ANY escape: a non-loopback request that was continued, a request that finished without
 //     passing the route, a response whose server address is not loopback, a proxy hit, or a Node-side refusal.
-// classify() and verdict() are pure and are unit-tested without a browser (tests/r0033-isolation.test.cjs).
+//     One class of unrouted request is not an escape: in a file-entry cell an engine may load file: URLs without
+//     offering them to the route. Such a request is classified after the fact by the same classify(); a file: URL
+//     inside the served tree is logged as 'file-entry-unrouted' (no network is involved), and any other unrouted
+//     request, including every http(s)/ws one and a file: URL outside the tree, stays a 'bypassed-route' escape.
+//   - A context without routeWebSocket is refused (fail closed); close() and settle() wait for the pending
+//     server-address checks so a late off-loopback response cannot be lost.
+// classify() and verdict() are pure and are unit-tested without a browser (tests/r0033-isolation.test.cjs). The
+// wiring (route before any page, dispositions, ledger bookkeeping, bypass listeners, the recipes' exit 3) is tested
+// against a fake Playwright (tests/r0033-isolation-wiring.test.cjs). The handler looks classify() up through the
+// exports so that test can substitute a broken policy and prove the ledger still records the escape.
 const path=require('node:path'),http=require('node:http'),{fileURLToPath}=require('node:url');
 const guard=require('./v1_net_guard.cjs');
 const isLoopbackHost=h=>h!=null&&h!==''&&guard.isLoopback(String(h));   // 127/8, ::1, localhost (the R0036 guard's rule)
@@ -38,14 +47,14 @@ function classify(raw,policy){
   }
   return {action:'abort',why:'scheme',host:host||null};
 }
-function newLedger(){return {requests:[],continued:0,fulfilled:0,aborted:0,offLoopbackContinued:[],bypassed:[],offLoopbackResponses:[],websockets:[],proxyRefused:[]};}
+function newLedger(){return {requests:[],continued:0,fulfilled:0,aborted:0,offLoopbackContinued:[],bypassed:[],fileUnrouted:[],offLoopbackResponses:[],websockets:[],proxyRefused:[]};}
 // Pure: the ledger (plus Node-side refusals) decides. ok is false on any escape.
 function verdict(ledger,nodeRefused=[]){
   const escapes=[...ledger.offLoopbackContinued.map(x=>({...x,kind:'continued-off-loopback'})),...ledger.bypassed.map(x=>({...x,kind:'bypassed-route'})),
     ...ledger.offLoopbackResponses.map(x=>({...x,kind:'response-off-loopback'})),...ledger.proxyRefused.map(x=>({...x,kind:'reached-proxy'})),
     ...nodeRefused.map(x=>({...x,kind:'node-refused',refusal:x.kind}))];
   return {ok:escapes.length===0,escapes,seen:ledger.requests.length,continued:ledger.continued,fulfilled:ledger.fulfilled,aborted:ledger.aborted,
-    abortedHosts:[...new Set(ledger.requests.filter(r=>r.action==='abort'&&r.host).map(r=>r.host))],websockets:ledger.websockets.length};
+    abortedHosts:[...new Set(ledger.requests.filter(r=>r.action==='abort'&&r.host).map(r=>r.host))],websockets:ledger.websockets.length,fileUnrouted:(ledger.fileUnrouted||[]).length};
 }
 const strip=raw=>{try{const u=new URL(raw);return u.protocol==='data:'?'data:':u.protocol==='blob:'?'blob:':u.protocol+'//'+u.host+u.pathname;}catch{return String(raw).slice(0,80);}};
 
@@ -58,23 +67,31 @@ async function launch(PW,engine,{headless=true}={}){
   proxy.on('upgrade',(req,sock)=>{ledger.proxyRefused.push({target:String(req.url),at:Date.now()});sock.destroy();});
   await new Promise(r=>proxy.listen(0,'127.0.0.1',r));
   const args=engine==='chromium'?['--host-resolver-rules=MAP * ~NOTFOUND , EXCLUDE 127.0.0.1','--disable-background-networking','--disable-component-update','--disable-domain-reliability','--no-pings','--disable-sync']:[];
+  const pending=new Set(),settle=()=>Promise.allSettled([...pending]);
   const browser=await PW[engine].launch({headless,args,proxy:{server:'http://127.0.0.1:'+proxy.address().port,bypass:'127.0.0.1,localhost'}});
   async function context(options,policy){
     if(policy.origin&&!isLoopbackHost(new URL(policy.origin).hostname))throw new Error('r0033 isolation: fixture origin must be loopback');
     const ctx=await browser.newContext({...options,serviceWorkers:'block'}),routed=new WeakSet();
     await ctx.route('**/*',route=>{
-      const request=route.request(),raw=request.url(),c=classify(raw,policy);routed.add(request);
+      const request=route.request(),raw=request.url(),c=module.exports.classify(raw,policy);routed.add(request);
       ledger.requests.push({n:ledger.requests.length,action:c.action,why:c.why,host:c.host,url:strip(raw),type:request.resourceType()});
       if(c.action==='continue'){ledger.continued++;if(c.host&&!isLoopbackHost(c.host))ledger.offLoopbackContinued.push({url:strip(raw)});return route.continue();}
       if(c.action==='fulfill'){ledger.fulfilled++;return route.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:typeof c.body==='string'?c.body:JSON.stringify(c.body)});}
       ledger.aborted++;return route.abort();
     });
-    if(typeof ctx.routeWebSocket==='function')await ctx.routeWebSocket(/.*/,ws=>{ledger.websockets.push({url:strip(ws.url())});ws.close();});
-    const settled=request=>{const raw=request.url();if(!routed.has(request)&&!/^(data|blob|about):/.test(raw))ledger.bypassed.push({url:strip(raw)});};
+    if(typeof ctx.routeWebSocket!=='function'){await ctx.close().catch(()=>{});throw new Error('r0033 isolation: this Playwright has no routeWebSocket; no context is opened without the WebSocket route');}
+    await ctx.routeWebSocket(/.*/,ws=>{ledger.websockets.push({url:strip(ws.url())});ws.close();});
+    const settled=request=>{const raw=request.url();if(routed.has(request)||/^(data|blob|about):/.test(raw))return;
+      // Unrouted: an in-tree file: URL of a file-entry cell is logged, never continued by us and involves no network;
+      // anything else that finished without passing the route is an escape.
+      if(/^file:/i.test(raw)&&module.exports.classify(raw,policy).action==='continue'){ledger.fileUnrouted.push({url:strip(raw)});
+        ledger.requests.push({n:ledger.requests.length,action:'continue',why:'file-entry-unrouted',host:null,url:strip(raw),type:request.resourceType()});return;}
+      ledger.bypassed.push({url:strip(raw)});};
     ctx.on('requestfinished',settled);ctx.on('requestfailed',settled);
-    ctx.on('response',response=>{response.serverAddr().then(a=>{if(a&&a.ipAddress&&!isLoopbackHost(a.ipAddress))ledger.offLoopbackResponses.push({url:strip(response.url()),ip:a.ipAddress});}).catch(()=>{});});
+    ctx.on('response',response=>{const p=response.serverAddr().then(a=>{if(a&&a.ipAddress&&!isLoopbackHost(a.ipAddress))ledger.offLoopbackResponses.push({url:strip(response.url()),ip:a.ipAddress});}).catch(()=>{});
+      pending.add(p);p.finally(()=>pending.delete(p));});
     return {context:ctx,newPage:()=>ctx.newPage()};   // the route above exists before any page can
   }
-  return {browser,ledger,context,verdict:()=>verdict(ledger,guard.state.refused),close:async()=>{await browser.close();await new Promise(r=>proxy.close(r));}};
+  return {browser,ledger,context,settle,verdict:()=>verdict(ledger,guard.state.refused),close:async()=>{await settle();await browser.close();await new Promise(r=>proxy.close(r));}};
 }
 module.exports={classify,verdict,newLedger,isLoopbackHost,launch};

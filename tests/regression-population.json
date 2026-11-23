@@ -49,6 +49,7 @@
   "tests/r0030-reset-authority-mutations.test.cjs",
   "tests/r0030-reset-authority.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
+  "tests/r0033-isolation-wiring.test.cjs",
   "tests/r0033-isolation.test.cjs",
   "tests/r0033-lunar-surface-gate.test.cjs",
   "tests/r0036-acquisition-flags.test.cjs",
@@ -1592,7 +1593,11 @@
   },
   {
    "path": "tools/qa/r0033_isolation.cjs",
-   "reason": "imported isolation module of the R0033 native recipes (refusing proxy, catch-all route before any page, request ledger, escape verdict); its pure policy is tested by tests/r0033-isolation.test.cjs"
+   "reason": "imported isolation module of the R0033 native recipes (refusing proxy, catch-all route before any page, request ledger, escape verdict); its pure policy is tested by tests/r0033-isolation.test.cjs and its wiring against a fake Playwright by tests/r0033-isolation-wiring.test.cjs"
+  },
+  {
+   "path": "tests/r0033-fake-playwright.cjs",
+   "reason": "imported fake of the Playwright surface used by the R0033 isolation module and recipes (records call order, replays synthetic requests through the installed routes); harness of tests/r0033-isolation-wiring.test.cjs, not an instrument"
   }
  ],
  "exclusions": [
@@ -2085,7 +2090,7 @@
      "--playwright",
      "<playwright package>"
     ],
-    "protocol": "one JSON line per cell with its isolation verdict, and <out>/<cell>-<engine>-requests.json (every request and its disposition); exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape (docs/state-contracts/R0033.md section 13)"
+    "protocol": "one JSON line per cell with its isolation verdict, and <out>/<cell>-<engine>-requests.json (every request and its disposition); exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (measured, accepting observation does not hold; secondload) (docs/state-contracts/R0033.md section 13)"
    }
   },
   {
