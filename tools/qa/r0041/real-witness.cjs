@@ -20,6 +20,11 @@
 //     first listener of the restoring event) is classified from the Moon-slot pixels: ABSENT when the disc region is
 //     closer to the absent reference (Moon layers hidden by an injected style, recorded at the end) than to the present
 //     reference (the settled Moon before the first event).
+//     Frames that show the HIDE marker are judged separately (staleFrames): the document is hidden then, so a recorded
+//     frame with that marker is the page as it was left at hide, presented before any restoring event has run. On a
+//     back/forward-cache restoration such frames are what the viewer sees first; no script of the page can change them.
+//     On that route the frames between the other document and the first restored frame that still show the PREVIOUS
+//     restoration's marker are counted too (the browser's cached pre-hide frame).
 //   - SHOTS: a serial screenshot burst for 2.5 s after the restoration, classified the same way against screenshot
 //     references. Screenshots paint on demand, so they can catch a document state between the event task and the next
 //     animation frame that a compositor frame would not show.
@@ -44,7 +49,7 @@ const DECODE_FAULT=`(()=>{const a=window.atob;window.atob=function(s){if(typeof 
 const PAL=[[255,0,0],[0,255,0],[0,0,255],[255,255,0],[255,0,255],[0,255,255],[255,128,0],[255,255,255]];
 // In-page instrument. Marker state c: 0 before the first event, odd while hidden, even (2k) after restoration k;
 // the control (Moon layers hidden by a style) shows the eighth colour.
-const INSTR=`(()=>{const PAL=${JSON.stringify(PAL)};const R=window.__rw={ev:[],c:0,phase:'visible',frames:[],control:false,burst:0};let mk=null;
+const INSTR=`(()=>{if(location.pathname.endsWith('/away.html'))return;const PAL=${JSON.stringify(PAL)};const R=window.__rw={ev:[],c:0,phase:'visible',frames:[],control:false,burst:0};let mk=null;
  const paint=()=>{if(!mk){if(!document.documentElement)return;mk=document.createElement('div');mk.id='rw-mark';mk.style.cssText='position:fixed;right:0;bottom:0;width:12px;height:12px;z-index:2147483647;pointer-events:none';document.documentElement.appendChild(mk);}mk.style.background='rgb('+PAL[R.control?7:R.c%7]+')';};
  const st=()=>{let o=null;try{o=window.SalahMoonRuntime&&window.SalahMoonRuntime.observe?window.SalahMoonRuntime.observe():null;}catch(e){}const c=document.querySelector('.c'),has=k=>!!(c&&c.classList.contains(k));
   return {t:+performance.now().toFixed(1),hidden:document.hidden,cur:!!(o&&o.current),src:o&&o.state?o.state.visibleSource:null,slot:o&&o.state?o.state.slot:null,paused:has('paused'),ready:has('moon-ready'),preview:has('real-sky-preview-ready'),composed:has('real-sky-composed'),detail:!!(window.SalahMoonDetail&&window.SalahMoonDetail.state&&window.SalahMoonDetail.state.visible)};};
@@ -182,7 +187,13 @@ const sha256=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('h
         if(ctl.some(v=>v!=='absent'))out.void.push('the absent control is not classified absent in the recording');
         for(let k=1;k<=EVENTS;k++){const mine=frames.map((f,i)=>({i,f})).filter(x=>x.f.marker===(2*k)%7).map(x=>({i:x.i,...classify(x.f.disc,vP,vA)}));
           const bad=mine.filter(x=>x.verdict!=='present');
-          video.perRestoration.push({k,frames:mine.length,firstFrame:mine[0]?.i??null,absent:mine.filter(x=>x.verdict==='absent').length,far:mine.filter(x=>x.verdict==='far').length,maxDPresent:mine.length?Math.max(...mine.map(x=>x.dP)):null,minDAbsent:mine.length?Math.min(...mine.map(x=>x.dA)):null,notPresentFrames:bad.slice(0,12)});
+          // Stale frames: directly before this restoration's first frame, back to the other document (bfcache) or to
+          // the previous restoration's frames.
+          const firstMine=mine[0]?.i??-1,hideMarker=(2*k-1)%7,prevMarker=(2*k-2)%7,stale={hiddenState:0,hiddenStateWithoutMoon:0,preHide:0,preHideWithoutMoon:0};
+          for(let i=firstMine-1;i>=0;i--){const m=frames[i].marker;if(m===hideMarker){stale.hiddenState++;if(classify(frames[i].disc,vP,vA).verdict!=='present')stale.hiddenStateWithoutMoon++;}
+            else if(m===prevMarker&&route==='bfcache'){stale.preHide++;if(classify(frames[i].disc,vP,vA).verdict!=='present')stale.preHideWithoutMoon++;}else break;}
+          stale.milliseconds=(stale.hiddenState+stale.preHide)*40;
+          video.perRestoration.push({k,staleFrames:stale,frames:mine.length,firstFrame:mine[0]?.i??null,absent:mine.filter(x=>x.verdict==='absent').length,far:mine.filter(x=>x.verdict==='far').length,maxDPresent:mine.length?Math.max(...mine.map(x=>x.dP)):null,minDAbsent:mine.length?Math.min(...mine.map(x=>x.dA)):null,notPresentFrames:bad.slice(0,12)});
           if(mine.length<15)out.void.push(`restoration ${k}: only ${mine.length} recorded frames show its marker`);}
         video.hiddenStateFrames=frames.filter(f=>f.marker>0&&f.marker<7&&f.marker%2===1).length;
       }
@@ -191,17 +202,21 @@ const sha256=f=>crypto.createHash('sha256').update(fs.readFileSync(f)).digest('h
     out.perRestoration=out.restorations.map(r=>({...r,screenshots:judgeShots(r.k),video:video?.perRestoration?.find(x=>x.k===r.k)??null}));delete out.restorations;
     for(const r of out.perRestoration)if(r.screenshots.withEventMarker<5)out.void.push(`restoration ${r.k}: only ${r.screenshots.withEventMarker} screenshots show its marker`);
     void refShot;
-    const judged={videoFrames:0,videoWithoutMoon:0,shots:0,shotsWithoutMoon:0};
-    for(const r of out.perRestoration){judged.videoFrames+=r.video?.frames??0;judged.videoWithoutMoon+=(r.video?.absent??0)+(r.video?.far??0);judged.shots+=r.screenshots.withEventMarker;judged.shotsWithoutMoon+=r.screenshots.absent+r.screenshots.far;}
+    const judged={videoFrames:0,videoWithoutMoon:0,shots:0,shotsWithoutMoon:0,staleHiddenStateFrames:0,staleHiddenStateFramesWithoutMoon:0,stalePreHideFrames:0};
+    for(const r of out.perRestoration){judged.staleHiddenStateFrames+=r.video?.staleFrames?.hiddenState??0;judged.staleHiddenStateFramesWithoutMoon+=r.video?.staleFrames?.hiddenStateWithoutMoon??0;judged.stalePreHideFrames+=r.video?.staleFrames?.preHide??0;judged.videoFrames+=r.video?.frames??0;judged.videoWithoutMoon+=(r.video?.absent??0)+(r.video?.far??0);judged.shots+=r.screenshots.withEventMarker;judged.shotsWithoutMoon+=r.screenshots.absent+r.screenshots.far;}
     out.judged=judged;out.adoptedAtDispatchEnd=out.perRestoration.filter(r=>r.adoptedAtDispatchEnd===true).length+' of '+EVENTS;
   }catch(e){out.void.push('judgement error: '+String(e.stack||e).slice(0,300));}
   fs.rmSync(videoDir,{recursive:true,force:true});
   out.valid=out.void.length===0;
-  out.verdict=!out.valid?'VOID':(out.judged.videoWithoutMoon===0&&out.judged.shotsWithoutMoon===0?'NO FRAME WITHOUT THE MOON':'FRAMES WITHOUT THE MOON');
+  // Two separate statements: frames composed after the restoring event began (its marker), and stale frames of the
+  // page as it was left at hide. On the 'active' route the page stays on screen while "hidden", so its hide-marker
+  // frames are frames of the hidden interval, not of the restoration.
+  out.verdict=!out.valid?'VOID':(out.judged.videoWithoutMoon===0&&out.judged.shotsWithoutMoon===0?'NO FRAME WITHOUT THE MOON AFTER THE RESTORING EVENT':'FRAMES WITHOUT THE MOON AFTER THE RESTORING EVENT')
+    +(out.valid&&route!=='active'?(out.judged.staleHiddenStateFramesWithoutMoon?`; ${out.judged.staleHiddenStateFramesWithoutMoon} STALE HIDDEN-STATE FRAMES WITHOUT THE MOON BEFORE IT`:'; NO STALE HIDDEN-STATE FRAME'):'');
   const slim={...out};if(slim.log){slim.log={events:slim.log.ev.filter(e=>e.n!=='longtask'),animationFrameCount:slim.log.frames.length};}
   fs.writeFileSync(path.join(outDir,LABEL+'.json'),JSON.stringify(slim,null,1));
   console.log(JSON.stringify({label:LABEL,verdict:out.verdict,void:out.void,lifecycle:out.lifecycle,judged:out.judged,adoptedAtDispatchEnd:out.adoptedAtDispatchEnd,
-    perRestoration:(out.perRestoration||[]).map(r=>({k:r.k,event:r.event,persisted:r.persisted,end:r.adoptedAtDispatchEnd,src:r.sourceAtDispatchEnd,ms:r.visibilityDispatchMs,raf:r.adoptedAtFirstFrame,long:r.longTasks,video:r.video&&[r.video.frames,r.video.absent,r.video.far,r.video.maxDPresent],shots:[r.screenshots.withEventMarker,r.screenshots.absent,r.screenshots.far,r.screenshots.maxDPresent]})),
+    perRestoration:(out.perRestoration||[]).map(r=>({k:r.k,event:r.event,persisted:r.persisted,end:r.adoptedAtDispatchEnd,src:r.sourceAtDispatchEnd,ms:r.visibilityDispatchMs,raf:r.adoptedAtFirstFrame,long:r.longTasks,stale:r.video&&r.video.staleFrames,video:r.video&&[r.video.frames,r.video.absent,r.video.far,r.video.maxDPresent],shots:[r.screenshots.withEventMarker,r.screenshots.absent,r.screenshots.far,r.screenshots.maxDPresent]})),
     video:out.video&&{frames:out.video.frames,refs:out.video.references,control:[out.video.controlFramesAbsent,out.video.controlFramesJudged]},refs:out.references,isolation:out.isolation?.allowedExternal},null,0));
   process.exit(out.valid?0:2);
 })();
