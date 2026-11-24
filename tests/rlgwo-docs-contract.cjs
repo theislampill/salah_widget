@@ -304,8 +304,8 @@ function mentions(name, tokens) {
       assert.equal(digest(body),"1ed706aea368140400574d12e4320e5aae1434fe74a721e1db22b6b0db5a2bbb",'delegated native script changed');
       // R0034 re-bind (issue 101): entry 3a93bfc9... -> dbc77c67...; R0034 changes only bundled real-sky modules
       // (first-paint script and native-sky bundle), not the native body (ae528330 unchanged) or the pinned block.
-      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 73964824... -> 1cf18db5... -> 0b5e7038... -> 429c2f83... -> 4965456b... -> 8bcf3ecb... -> 675b182c... (candidate) (generated from the R0041 authored sources above).
-      assert.equal(digest(source),"675b182c2cab6541f33dfe95cbd1aa8d020d6aadf3dfdfd0c0a5d176bec8f3cb",'delegated current generated entry changed');
+      // R0041 candidate re-bind (issue 143): entry c2c827c7... -> 73964824... -> 1cf18db5... -> 0b5e7038... -> 429c2f83... -> 4965456b... -> 8bcf3ecb... -> 675b182c... -> 88411488... (candidate; preview-clear route) (generated from the R0041 authored sources above).
+      assert.equal(digest(source),"88411488017ea590e6b4c5a21adc143977c0907089eabb80b0cbe8f0ba18a8a1",'delegated current generated entry changed');
       clampLine = clamps[0];
       eligibility = helper + '\n' + wrapper + '\n' + calls[0];
     } else if (source.includes('function lunarPresentation(')) {
