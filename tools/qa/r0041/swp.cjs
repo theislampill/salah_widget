@@ -94,10 +94,12 @@ async function runCell(L,env,cell,dir){const hung=[];
   // Firefox and WebKit: shot starts at least PACE ms apart (an unpaced loop over four headed pages starved Firefox's
   // protocol: screenshot, evaluate and close calls timed out); Chromium's full-page shots are slower than this anyway.
   const PACE=+(process.env.R41_PACE_MS||40);let lastStart=0;
+  // R41_SHOT_MS (2026-11-24): bound of one screenshot call (default 8000 ms, as before); WebKit preview cells timed out.
+  const SHOT_MS=+(process.env.R41_SHOT_MS||8000);
   const loop=(async()=>{while(capturing){if(!rect){await new Promise(r=>setTimeout(r,50));continue;}const r=rect;
     if(!FULL){const w=lastStart+PACE-Date.now();if(w>0)await new Promise(q=>setTimeout(q,w));lastStart=Date.now();}
     const clip={x:Math.max(0,Math.floor(r.x)),y:Math.max(0,Math.floor(r.y))};clip.width=Math.min(W-clip.x,Math.ceil(r.x+r.w)-clip.x);clip.height=Math.min(H-clip.y,Math.ceil(r.y+r.h)-clip.y);
-    const t0=Date.now();let png;try{png=await T(page.screenshot(FULL?{scale:'device',animations:'allow',caret:'initial'}:{clip,scale:'device',animations:'allow',caret:'initial'}),8000,'screenshot',hung);if(png==='timeout')continue;}catch(e){await new Promise(r=>setTimeout(r,30));continue;}const t1=Date.now();
+    const t0=Date.now();let png;try{png=await T(page.screenshot(FULL?{scale:'device',animations:'allow',caret:'initial'}:{clip,scale:'device',animations:'allow',caret:'initial'}),SHOT_MS,'screenshot',hung);if(png==='timeout')continue;}catch(e){await new Promise(r=>setTimeout(r,30));continue;}const t1=Date.now();
     let img;try{img=decodePng(png);}catch(e){continue;}
     let t=t0,markerOk=null;
     if(FULL){const k=img.width/W,small={data:new Uint8Array(W*H*4)};for(let y=H-16;y<H;y++)for(let x=W-48;x<W;x++){const si=4*(Math.floor(y*k)*img.width+Math.floor(x*k)),di=4*(y*W+x);small.data[di]=img.data[si];small.data[di+1]=img.data[si+1];small.data[di+2]=img.data[si+2];}
