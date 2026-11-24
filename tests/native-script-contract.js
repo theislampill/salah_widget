@@ -52,7 +52,7 @@
   // and limitation report in moon-native.mjs); the current value is the pin below. moon-precision.mjs,
   // moon-refinement and first-paint unchanged. CANDIDATE: awaits independent review.
   const SPLIT_PINS=Object.freeze({
-    'first-paint':'94f1927e521acffc6112ddd2dbe6866952b60c0eb966901741fc155cd7d91980',
+    'first-paint':'9b60b9b5b64c8e84a112c6a82e45ce6f193a8c9f7719380a7d3faa66f6bc99c9',
     'moon-initial':'dcede55ceca5cf562727a6ad024d58192b8ee686cc2a250d4bd855762e2e77ab',
     'moon-refinement':'93afaebdcb06b2d15d7d5381a90f0c976b3e465f70937cc7121045b186691117'
   });
