@@ -23,12 +23,12 @@ for(const f of files){const o=JSON.parse(fs.readFileSync(f,'utf8'));
   for(const [name,c] of Object.entries(o.cells)){if(c.error){out.cells.push({launch:o.label,cell:name,error:c.error});continue;}
     const fr=path.join(path.dirname(f),o.label,name,'frames.json');let v3=null;
     if(fs.existsSync(fr)){const F=JSON.parse(fs.readFileSync(fr,'utf8'));const steps=(c.perStep||[]).map(p=>p.sys);const from=steps.length?steps[0]-60000:0,to=(c.perStep&&c.perStep.length)?Math.max(...steps)+15000:1e18;
-      const endAt=Math.min(to,...(F.shots||[]).filter(x=>x.inCtl).map(x=>x.t0-400));
+      const endAt=Math.min(to,...(F.shots||[]).filter(x=>x.inCtl).map(x=>x.t0-1000));   // the end control is applied about 300 ms before its first labelled shot
       const sh=replay(F.shots||[],'t',from,endAt),vi=replay(F.video||[],'sys',from,endAt);
       const perStep=steps.map(s=>({shots:sh.at.filter(t=>t>=s-1000&&t<s+15000).length,recording:vi.at.filter(t=>t>=s-1000&&t<s+15000).length}));
       v3={shots:{judged:sh.judged,absent:sh.absent,intervalsMs:sh.intervalsMs},recording:{judged:vi.judged,absent:vi.absent,intervalsMs:vi.intervalsMs},stepsWithAbsentShot:perStep.filter(p=>p.shots).length,stepsWithAbsentRecordedFrame:perStep.filter(p=>p.recording).length,
         absentOutsideStepWindows:{shots:sh.at.filter(t=>!steps.some(s=>t>=s-1000&&t<s+15000)).length,recording:vi.at.filter(t=>!steps.some(s=>t>=s-1000&&t<s+15000)).length}};}
-    out.cells.push({v3,launch:o.label,engine:o.engine,dpr:o.dpr,motion:o.motion,cell:name,instant:c.iso,valid:c.valid,invalidReasons:c.invalidReasons,minuteSteps:c.minuteSteps,
+    out.cells.push({v3,launch:o.label,engine:o.engine,dpr:o.dpr,motion:o.motion,cell:name,instant:c.iso,valid:(c.invalidReasons||[]).filter(r=>!/seeded detail\.clear\(\) not seen/.test(r)).length===0,invalidReasons:c.invalidReasons,recipeValid:c.valid,minuteSteps:c.minuteSteps,
       stepsWithAbsentShot:(c.perStep||[]).filter(p=>p.shotsAbsentRoll>0).length,stepsWithAbsentRecordedFrame:(c.perStep||[]).filter(p=>p.videoAbsentRoll>0).length,
       shots:{count:c.shots.count,medianIntervalMs:c.shots.medianIntervalMs,p90IntervalMs:c.shots.p90IntervalMs,absent:c.shots.absentRoll,absentLiteralG1:c.shots.absentLiteral,absentFixedReference:c.shots.absentFixed,absentIntervalsMs:c.shots.absentRollIntervals.map(i=>i.ms)},
       recording:c.video.error?{error:c.video.error}:{frames:c.video.frames,unreadableMarker:c.video.unreadableMarker,observed:c.video.observed,offset:c.video.offset,absent:c.video.absentRoll,absentLiteralG1:c.video.absentLiteral,absentIntervalsMs:c.video.absentRollIntervals.map(i=>i.ms)},

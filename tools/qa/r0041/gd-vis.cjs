@@ -129,8 +129,8 @@ async function runCell(L,env,cell,dir){const hung=[];
   ctlFrom=Date.now()+300;await T(page.evaluate(()=>{const st=document.createElement('style');st.textContent='.moon-detail-canvas,.sky .moon,.mphoto{visibility:hidden!important}';document.head.appendChild(st);}),10000,'control-style',hung);await new Promise(r=>setTimeout(r,1800));ctlTo=Date.now();
   capturing=false;await T(loop,15000,'loop-end',hung);clearInterval(rectTimer);
   let inpage=await T(page.evaluate(()=>({log:window.__gd.log,light:window.__gd.light,jobs:window.__gd.jobs,seed:window.__gd.seed})),20000,'inpage-read',hung);if(inpage==='timeout')inpage={log:[],light:[],jobs:[],seed:[],swaps:[],forced:[],truth:null};
-  const video=page.video();await T(page.close(),20000,'page-close',hung);await T(ctx.close(),30000,'context-close',hung);
-  let vpath=video?await T(video.path(),10000,'video-path',hung):null;if(vpath==='timeout')vpath=null;
+  const video=page.video();await T(page.close(),90000,'page-close',hung);await T(ctx.close(),120000,'context-close',hung);
+  let vpath=video?await T(video.path(),60000,'video-path',hung):null;if(vpath==='timeout')vpath=null;
   return {hung,pageCreatedSys,settleSys,settledOk,endAt,ctlFrom,ctlTo,seedFrom,seedTo,hideFrom,hideTo,shots,inpage,errors,vpath};
 }
 async function analyseVideo(cell,r,dir){
@@ -162,7 +162,7 @@ function intervalsOf(list,key,tkey){const out=[];let open=null,last=null;for(con
   const out={schema:'r0041-gd-vis/1',label,root:path.basename(path.resolve(root)),engine,dpr:DPR,motion,headed:true,browserVersion:L.browser?.version?.()??null,secondsAfterSettle:SECONDS,fragment:FRAG,cells:{}};
   let results;
   try{results=await Promise.all(CELLS.map(c=>{const dir=path.join(outDir,label,c.name);fs.mkdirSync(dir,{recursive:true});return runCell(L,env,c,dir).then(r=>({c,r,dir}),e=>({c,error:String(e.stack||e).slice(0,600),dir}));}));}
-  finally{await L.close().catch(()=>{});}
+  finally{const closed=await T(L.close().catch(()=>{}),180000,'browser-close',null);if(closed==='timeout'){try{L.browser?.process?.()?.kill();}catch(e){}out.browserCloseTimedOut=true;}}
   const iso=env.finish();out.isolation={allowedExternal:iso.allowedExternal,externalAttempts:iso.externalAttempts,totalRequests:iso.totalRequests,byLayerHostOutcome:iso.externalByLayerHostOutcome};
   for(const {c,r,dir,error} of results){
     if(error){out.cells[c.name]={error};continue;}
@@ -204,5 +204,5 @@ function intervalsOf(list,key,tkey){const out=[];let open=null,last=null;for(con
   }
   fs.writeFileSync(path.join(outDir,label+'.json'),JSON.stringify(out,null,1));
   console.log('isolation allowed',out.isolation.allowedExternal);
-  if(out.isolation.allowedExternal!==0)process.exit(2);
+  process.exit(out.isolation.allowedExternal!==0?2:0);   // explicit: a browser that would not close must not hold the recipe open
 })().catch(e=>{console.error(e);process.exit(1);});
