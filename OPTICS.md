@@ -178,7 +178,9 @@ arc-sun azimuth — a halo centred mid-screen away from the sun is a bug.
 `moonLightEligible` decision (`moonLume` is zero when it is false), and the `lunarhalo`/`paraselene` forces apply
 only when it is true. It is false near-new, below the horizon, by day, and with no presented Moon surface
 (`surface-unavailable`, R0033). Earthshine is not a light permission: it belongs to the opaque disc's material and
-stays visible on the calendar Moon when `moonLightEligible` is false.
+stays visible on the calendar Moon when `moonLightEligible` is false. The R0041 fault-path phase disc (an untextured,
+disclosed renderer-failure fallback) changes none of this: the light record under it equals the record under the V5
+tier for the same instant, and it never raises any lunar optic (`docs/state-contracts/R0041.md` §7.2).
 
 ### Paraselenae / moondogs — *production + `&debugOptic=paraselene`*
 - **Gate:** `moonParhelia = cirrus·moonLume·clamp((14−moonSky.alt)/16)` — rare; bright moon + cirrus + low moon.
