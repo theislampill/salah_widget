@@ -48,6 +48,7 @@ Rules:
 | R0034 | #101 | FINAL-DELIVERED | 6889716103 | `<!-- R0034-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0034.md |
 | R0030 | #97 | FINAL-DELIVERED | 6889975516 | `<!-- R0030-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0030.md |
 | R003A | #124 | FINAL-DELIVERED | 6892806875 | `<!-- R003A-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R003A.md |
+| R0038 | #105 | FINAL-DELIVERED | 7119129445 | `<!-- R0038-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0038.md |
 
 Kind `FINAL-DELIVERED` marks a final certificate whose first line carries no commit SHA (the rows
 above, work orders closed after the R0028 population was drafted). Its bound commits, pull requests and
@@ -78,6 +79,10 @@ stated tree in the repository. "Main commit" is the merge commit on `main` that 
 | R0034 | #132 (amendment R0034-A1) reviewed head `cb41e59863699a4dd40967f5f2ad7bcc750ef01c`; merged head `cf5d25cf5115615225a7f1fdaa0cff98539b197e` (runner-only delta, independently confirmed) | `90cccd2f29ff779838631493c1cb7f3ff9b8cbc6` | `0fe3df8aeaecfb5c24c8434562e1422124c4c2c8` |
 | R0030 | #129 reviewed head `9f428524`; merged head `126620c737874e7d831eeb5ad97d8601c18349d2` (merge-only delta plus contract wording, independently confirmed) | `2722590f8352931d13272e2a11bdf81374d7ff08` | `762ef9db62558a596c760983198596590a876480` |
 | R003A | #135 reviewed head `6f2a7290`; merged head `a96ebae3c63ccdd0a2b80d9504b863d02e92bfdf` (merges of `main` and three added tests, independently confirmed) | `ebb2704eb35ea2427df4ad6508b459719ff4e6a2` | `a8d6dcaf5cfe47366cafff6544e116945a8e23c4` |
+| R0038 | #141 `18cc1cdcba5020dd06f9bf01fd26b2ab05bb416a` (census) | `47608f15302f09ec441263476514a2e7b2b23fb8` | `9fcd8da9fa62f48f26fcfa4088198f860058711e` |
+| R0038 | #146 reviewed head `a239667f`; merged head `d9692636876dbe22b9d3feabbc1a9f127e58a95b` (row R38-X1; review text corrections) | `13f752a3f435cf8ae5aecbd4654f0e4d9e005500` | `8cb6e14ea1c6bffc79771c81c856acbad4f64c78` |
+| R0038 | #152 `362b7e42c7fdfb80a243f9163a481ac2fbbc20de` (F-1 and F-12 tests) | `d33adfa050d0cc0bfa0b74d2a9059d3f75c94ba5` | `1336e464a005af9c6cc5a8aae51e0f395cd0e729` |
+| R0038 | #153 `62ad032d81dfc485ea002106e3240e88624895ed` (closure reconciliation, documentation and registry) | `0bde96591b0bb415df31050eb179a5fad4bc8abe` | `0a1b020edcd167594a7f832403a332515b2f4231` |
 
 The R0034 certificate is dated 2026-11-15; the two Pages readback runs it cites are 43598595161 (`bf79d00f`) and
 43679602224 (`90cccd2f`), each `VERDICT identical`, 128 served files. Its contract text is updated in

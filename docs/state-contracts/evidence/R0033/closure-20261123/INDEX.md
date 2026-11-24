@@ -65,7 +65,9 @@ Moon box (the disc plus 14 px).
 | halfcloud | Firefox | 0/0 ; 0/0 (Moon box 0/0) | 0/0 ; 0/0 | 0/0 ; 0/0 | 3 (isolation, below) |
 | halfcloud | WebKit | 0/0 ; 0/0 (Moon box 0/0) | 0/0 ; 0/0 | 0/0 ; 0/0 | 0 |
 
-**Verdict: IDENTICAL in all six cells.** The before and after cards are byte-identical on repeats 1 and 2. In the
+**Verdict: IDENTICAL in all six cells, on repeat loads 1 and 2.** The before and after cards are byte-identical on
+repeats 1 and 2; first loads are excluded (below), and nothing here characterises every initial load or every
+healthy scene as pixel-identical. In the
 halfcloud cells every load had `moon-ready` and `--moonbeam` 0.405 on both trees; in the dayclear cells no load had
 `moon-ready` and `--moonbeam` was 0.
 
@@ -77,7 +79,7 @@ independent review re-ran the Chromium halfcloud cell with the order swapped (`a
 delta 30, 7,205 px inside the Moon box, on the first load of `a196351b` only; before vs after on repeats 1 and 2 stayed
 0. A re-run in the original order gave 0 for every comparison. The effect follows load order, not the tree, and
 including first loads before vs after stays within each tree's own repeat noise. This is why repeat 0 is excluded
-from the verdict. The cause was not investigated.
+from the verdict. The cause was not investigated and is not established.
 
 ## R33-11: initial-tier failure together with worker failure (main `d33adfa0`)
 
