@@ -8,7 +8,7 @@ const files=['src/native/index.html','real-sky/native-sky.css','real-sky/native-
  ...fs.readdirSync(path.join(root,'real-sky')).filter(f=>/^native-.*\.mjs$/.test(f)).map(f=>'real-sky/'+f),
  ...fs.readdirSync(path.join(root,'moon/src')).filter(f=>f.endsWith('.mjs')).map(f=>'moon/src/'+f)];
 const PATTERNS=[
- ['detail-clear',/SalahMoonDetail\??\.clear\(|\bdetail\.clear\(\)|mark\.detail\.clear\(\)|\binner\.clear\(\)/g],
+ ['detail-clear',/SalahMoonDetail\??\.clear\(|\bdetail\.clear\(\)|mark\.detail\.clear\(\)|\binner\.clear\(\)|\.clearFor\(/g],
  ['detail-canvas-visibility',/cv\.style\.visibility\s*=|visibility:'(?:visible|hidden)'/g],
  ['css-moon-hide',/\.moon\{visibility:hidden\}|\.mphoto,[^{]*\.moccluder[^{]*\{visibility:hidden/g],
  ['css-mask-disc',/\.moon-mask-disc(?:\.mask-on)?\{/g],
@@ -16,10 +16,10 @@ const PATTERNS=[
 ];
 // Reviewed writers: file -> pattern -> count. Owner of each, per R0041 section B.5a.
 const REVIEWED={
- 'moon/src/moon-native.mjs':{'detail-clear':2},            // fallback() (presenter-owned withdrawal) and the handle's clear() pass-through
+ 'moon/src/moon-native.mjs':{'detail-clear':3},            // fallback() (presenter-owned withdrawal), the handle's clear() pass-through and its owner-scoped clearFor()
  'moon/src/moon-detail.mjs':{'detail-canvas-visibility':4}, // initial hidden, clear(), compose() show, state read (pinned source)
  'real-sky/native-host.mjs':{'detail-clear':1},            // L90 sky withdrawal -> through the handle (the SVG Moon takes over; witnessed: 0 absent frames)
- 'real-sky/native-preview-host.mjs':{'detail-clear':2},    // L47 preview clear and L63 awaiting -> through the handle
+ 'real-sky/native-preview-host.mjs':{'detail-clear':3},    // preview clear (clearFor('atmospheric-preview'); full clear when awaiting input or without clearFor) and the awaiting re-entry -> through the handle
  'real-sky/native-first-paint.mjs':{'css-moon-hide':1},    // head first paint: SVG Moon hidden while the head Moon is composed (startup route)
  'real-sky/native-sky.css':{'css-moon-hide':2},            // composed / preview-ready: SVG Moon hidden while the detail presents
  'src/native/index.html':{'css-moon-hide':1,'css-mask-disc':2,'reveal-class-write':3}, // .c:not(.moon-ready) .moon; mask transition; updateSkySurface (2) + beginSkyScene remove

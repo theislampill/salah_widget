@@ -1183,7 +1183,12 @@ try{
  // initial-receiver source (tools/build_moon.py validate_initial_sources).
  // It is acquired at the registration boundary; a throw before the runtime is
  // complete releases exactly this wrapper's detail, slot, listener and timers.
- const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},compose(frame,encode){if(!retired)presentForCompose();return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
+ // R0041 preview-clear route: clearFor(owner) lets a sky host withdraw only the detail IT composed. When the refined
+ // sky composed the presented disc (skyOwner 'refined-sky'), a clear by the atmospheric preview leaves it presented:
+ // its authority is the refined frame (native-host currentness fences) and this runtime's accepted record (poll and
+ // fallback() above, which clear unconditionally), so nothing invalid is kept. Before, the preview hid it while
+ // .real-sky-composed hid the SVG Moon: an empty slot until the refined sky's next compose (contract section 11.10).
+ const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},clearFor(owner){const st=inner.state;if(st?.visible&&st.skyOwner&&st.skyOwner!==owner)return false;inner.clear();return true;},compose(frame,encode){if(!retired)presentForCompose();return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
  let registered=null;
  try{
  document.addEventListener('visibilitychange',visibility);
