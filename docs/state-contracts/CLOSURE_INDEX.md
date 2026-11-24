@@ -49,6 +49,7 @@ Rules:
 | R0030 | #97 | FINAL-DELIVERED | 6889975516 | `<!-- R0030-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0030.md |
 | R003A | #124 | FINAL-DELIVERED | 6892806875 | `<!-- R003A-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R003A.md |
 | R0038 | #105 | FINAL-DELIVERED | 7119129445 | `<!-- R0038-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0038.md |
+| R0033 | #100 | FINAL-DELIVERED | 7119252340 | `<!-- R0033-FINAL-CERTIFICATE -->` | - | docs/state-contracts/R0033.md |
 
 Kind `FINAL-DELIVERED` marks a final certificate whose first line carries no commit SHA (the rows
 above, work orders closed after the R0028 population was drafted). Its bound commits, pull requests and
@@ -83,6 +84,12 @@ stated tree in the repository. "Main commit" is the merge commit on `main` that 
 | R0038 | #146 reviewed head `a239667f`; merged head `d9692636876dbe22b9d3feabbc1a9f127e58a95b` (row R38-X1; review text corrections) | `13f752a3f435cf8ae5aecbd4654f0e4d9e005500` | `8cb6e14ea1c6bffc79771c81c856acbad4f64c78` |
 | R0038 | #152 `362b7e42c7fdfb80a243f9163a481ac2fbbc20de` (F-1 and F-12 tests) | `d33adfa050d0cc0bfa0b74d2a9059d3f75c94ba5` | `1336e464a005af9c6cc5a8aae51e0f395cd0e729` |
 | R0038 | #153 `62ad032d81dfc485ea002106e3240e88624895ed` (closure reconciliation, documentation and registry) | `0bde96591b0bb415df31050eb179a5fad4bc8abe` | `0a1b020edcd167594a7f832403a332515b2f4231` |
+| R0033 | #139 `95703e5a399b0ea811e3db97cd65eb03002666d5` | `a196351b401c73094f07f19fb1f6096942904f14` | `e327bfc9aeadd9d1278d33078c857cfb07d2fef9` |
+| R0033 | #147 `1fa6123ae36914d70daa3e049f88a3d086bef2bd` | `a589cdf6e49bc92d7eb15191cccf25804e63c262` | `696040f6962563c785da61ff7b3dcf96f27217b2` |
+| R0033 | #148 `2b160825768d68c6f2edada3a022ff646788e3fc` | `88a6cebe34692d838a7c2e157a306fc247a777b0` | `58fe4d72d45c7527a961f726ccc561ea2bd4b6c1` |
+| R0033 | #150 `0c9cf063afbc9b1e929c8a9071c470891317e442` (test-only) | `50a46a4d2647b029e99b4f878f6cf04854d0b898` | `030af3861e8f8ad46f2f3a07451803f31877ce04` |
+| R0033 | #149 `ce3989144a14a8aa53407042858ce9f8fe676914` (evidence and QA tooling) | `1db21c5863ca59a8323935ebd475c59ec05e2656` | `96527a1b1235b40ea2fcdcf2b00474d4d1d558dd` |
+| R0033 | #151 `45789d786308edcb15c1814229f673854007839c` (documentation only) | `ff4d83d62b7077c441ee3b3e8103c27cf2647e17` | `bd697175bf4e9618492a66d825ae5cc9211189d6` |
 
 The R0034 certificate is dated 2026-11-15; the two Pages readback runs it cites are 43598595161 (`bf79d00f`) and
 43679602224 (`90cccd2f`), each `VERDICT identical`, 128 served files. Its contract text is updated in
