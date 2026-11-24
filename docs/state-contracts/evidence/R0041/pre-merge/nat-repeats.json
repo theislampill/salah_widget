@@ -1,0 +1,1553 @@
+{
+ "schema": "r0041-nat-repeats/1",
+ "date": "2026-11-24",
+ "tree": "x-r0041 e92d75e2 (candidate only)",
+ "configurations": "section C.3: reducedMotion reduce, 3 engines x ratio 1 and 2; cells full 2026-11-24T16:30Z, fullctl 2026-11-23T16:30Z (seeded), new 2027-01-07T19:30Z, newctl 2027-01-06T19:30Z",
+ "recipe": "r2, r3: tools/qa/r0041/gd-vis.cjs <tree> <out> <engine> <dpr> reduce <200|300> <label> <cells> (Chromium and WebKit 200 s, Firefox 300 s, as section C.3), then tools/qa/r0041/nat.cjs; r1: the 650 s launches of section 11.13",
+ "criterion": "issue 143 R41-NAT: jobs <= max(control) + 1; seconds below refined <= max(control) + 5",
+ "isolation": {
+  "nat-chromium-1-reduce-r2": {
+   "allowedExternal": 0,
+   "browserVersion": "148.0.7778.96"
+  },
+  "nat-chromium-1-reduce-r3": {
+   "allowedExternal": 0,
+   "browserVersion": "148.0.7778.96"
+  },
+  "nat-chromium-2-reduce-r2": {
+   "allowedExternal": 0,
+   "browserVersion": "148.0.7778.96"
+  },
+  "nat-chromium-2-reduce-r3": {
+   "allowedExternal": 0,
+   "browserVersion": "148.0.7778.96"
+  },
+  "nat-firefox-1-reduce-r2": {
+   "allowedExternal": 0,
+   "browserVersion": "150.0.2"
+  },
+  "nat-firefox-1-reduce-r3": {
+   "allowedExternal": 0,
+   "browserVersion": "150.0.2"
+  },
+  "nat-firefox-2-reduce-r2": {
+   "allowedExternal": 0,
+   "browserVersion": "150.0.2"
+  },
+  "nat-firefox-2-reduce-r3": {
+   "allowedExternal": 0,
+   "browserVersion": "150.0.2"
+  },
+  "nat-webkit-1-reduce-r2": {
+   "allowedExternal": 0,
+   "browserVersion": "26.4"
+  },
+  "nat-webkit-1-reduce-r3": {
+   "allowedExternal": 0,
+   "browserVersion": "26.4"
+  },
+  "nat-webkit-2-reduce-r2": {
+   "allowedExternal": 0,
+   "browserVersion": "26.4"
+  },
+  "nat-webkit-2-reduce-r3": {
+   "allowedExternal": 0,
+   "browserVersion": "26.4"
+  }
+ },
+ "summary": {
+  "chromium-1-reduce": {
+   "launches": 3,
+   "windowCells": 6,
+   "windowBelowRefinedMax": 0,
+   "windowJobsMax": 0,
+   "controlCellsRead": 6,
+   "controlCellsUnread": 0,
+   "controlBelowRefinedMax": 0,
+   "controlJobs": [
+    0,
+    1
+   ],
+   "withinControlSpread": true
+  },
+  "chromium-2-reduce": {
+   "launches": 3,
+   "windowCells": 6,
+   "windowBelowRefinedMax": 0,
+   "windowJobsMax": 0,
+   "controlCellsRead": 6,
+   "controlCellsUnread": 0,
+   "controlBelowRefinedMax": 0,
+   "controlJobs": [
+    0,
+    2
+   ],
+   "withinControlSpread": true
+  },
+  "firefox-1-reduce": {
+   "launches": 3,
+   "windowCells": 6,
+   "windowBelowRefinedMax": 0,
+   "windowJobsMax": 0,
+   "controlCellsRead": 2,
+   "controlCellsUnread": 4,
+   "controlBelowRefinedMax": 0,
+   "controlJobs": [
+    0
+   ],
+   "withinControlSpread": true
+  },
+  "firefox-2-reduce": {
+   "launches": 3,
+   "windowCells": 6,
+   "windowBelowRefinedMax": 0,
+   "windowJobsMax": 0,
+   "controlCellsRead": 6,
+   "controlCellsUnread": 0,
+   "controlBelowRefinedMax": 0,
+   "controlJobs": [
+    1,
+    2
+   ],
+   "withinControlSpread": true
+  },
+  "webkit-1-reduce": {
+   "launches": 3,
+   "windowCells": 6,
+   "windowBelowRefinedMax": 0,
+   "windowJobsMax": 0,
+   "controlCellsRead": 6,
+   "controlCellsUnread": 0,
+   "controlBelowRefinedMax": 0,
+   "controlJobs": [
+    0,
+    1
+   ],
+   "withinControlSpread": true
+  },
+  "webkit-2-reduce": {
+   "launches": 3,
+   "windowCells": 6,
+   "windowBelowRefinedMax": 0,
+   "windowJobsMax": 0,
+   "controlCellsRead": 6,
+   "controlCellsUnread": 0,
+   "controlBelowRefinedMax": 0,
+   "controlJobs": [
+    0,
+    2
+   ],
+   "withinControlSpread": true
+  }
+ },
+ "rows": [
+  {
+   "launch": "cand-chromium-1-reduce",
+   "cell": "full",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 15.13,
+   "observedSeconds": 650.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-chromium-1-reduce",
+   "cell": "fullctl",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 20.6,
+   "observedSeconds": 650.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-chromium-1-reduce",
+   "cell": "new",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 15.34,
+   "observedSeconds": 650.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-chromium-1-reduce",
+   "cell": "newctl",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 17.35,
+   "observedSeconds": 650.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-chromium-2-reduce",
+   "cell": "full",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 13.86,
+   "observedSeconds": 650.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-chromium-2-reduce",
+   "cell": "fullctl",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 17.87,
+   "observedSeconds": 650.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 2,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-chromium-2-reduce",
+   "cell": "new",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 14.12,
+   "observedSeconds": 651,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-chromium-2-reduce",
+   "cell": "newctl",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 15.13,
+   "observedSeconds": 650.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 2,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-1-reduce",
+   "cell": "full",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 40.09,
+   "observedSeconds": 631.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-1-reduce",
+   "cell": "fullctl",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": false,
+   "startupSeconds": null,
+   "observedSeconds": 0,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [],
+   "jobs": null,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-1-reduce",
+   "cell": "new",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 40.36,
+   "observedSeconds": 631.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-1-reduce",
+   "cell": "newctl",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": false,
+   "startupSeconds": null,
+   "observedSeconds": 0,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [],
+   "jobs": null,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-2-reduce",
+   "cell": "full",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 42.69,
+   "observedSeconds": 631,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-2-reduce",
+   "cell": "fullctl",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 57.29,
+   "observedSeconds": 631.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 2,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-2-reduce",
+   "cell": "new",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 41.66,
+   "observedSeconds": 631,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-firefox-2-reduce",
+   "cell": "newctl",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 47.07,
+   "observedSeconds": 630.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 2,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-1-reduce",
+   "cell": "full",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 24.06,
+   "observedSeconds": 617.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-1-reduce",
+   "cell": "fullctl",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 29.98,
+   "observedSeconds": 617.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-1-reduce",
+   "cell": "new",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 23.79,
+   "observedSeconds": 617.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-1-reduce",
+   "cell": "newctl",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 26.85,
+   "observedSeconds": 617.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-2-reduce",
+   "cell": "full",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 24.81,
+   "observedSeconds": 535.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-2-reduce",
+   "cell": "fullctl",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 32.12,
+   "observedSeconds": 535.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 2,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-2-reduce",
+   "cell": "new",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 25.91,
+   "observedSeconds": 531,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "cand-webkit-2-reduce",
+   "cell": "newctl",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 27.58,
+   "observedSeconds": 529,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 2,
+   "repeat": "r1",
+   "secondsAfterSettle": 650,
+   "source": "nat-seconds-below-refined.json (section 11.13)"
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r2",
+   "cell": "full",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.05,
+   "observedSeconds": 200.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r2",
+   "cell": "fullctl",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 13.81,
+   "observedSeconds": 200.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r2",
+   "cell": "new",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.81,
+   "observedSeconds": 200.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r2",
+   "cell": "newctl",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 11.78,
+   "observedSeconds": 200.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r3",
+   "cell": "full",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.31,
+   "observedSeconds": 200.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r3",
+   "cell": "fullctl",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 14.09,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r3",
+   "cell": "new",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.55,
+   "observedSeconds": 200.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-1-reduce-r3",
+   "cell": "newctl",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 12.04,
+   "observedSeconds": 200.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r2",
+   "cell": "full",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.28,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r2",
+   "cell": "fullctl",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 13.3,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r2",
+   "cell": "new",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.78,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r2",
+   "cell": "newctl",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 11.03,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r3",
+   "cell": "full",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.52,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r3",
+   "cell": "fullctl",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 13.79,
+   "observedSeconds": 201,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r3",
+   "cell": "new",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 10.3,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-chromium-2-reduce-r3",
+   "cell": "newctl",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 11.05,
+   "observedSeconds": 200.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r2",
+   "cell": "full",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 30.35,
+   "observedSeconds": 292,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r2",
+   "cell": "fullctl",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": false,
+   "startupSeconds": null,
+   "observedSeconds": 0,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [],
+   "jobs": null,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r2",
+   "cell": "new",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 33.66,
+   "observedSeconds": 292,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r2",
+   "cell": "newctl",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": false,
+   "startupSeconds": null,
+   "observedSeconds": 0,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [],
+   "jobs": null,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r3",
+   "cell": "full",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 31.67,
+   "observedSeconds": 291.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r3",
+   "cell": "fullctl",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 48.16,
+   "observedSeconds": 291.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r3",
+   "cell": "new",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 33.41,
+   "observedSeconds": 291.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-1-reduce-r3",
+   "cell": "newctl",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 38.17,
+   "observedSeconds": 291.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r2",
+   "cell": "full",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 32.02,
+   "observedSeconds": 291.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r2",
+   "cell": "fullctl",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 45.99,
+   "observedSeconds": 291.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r2",
+   "cell": "new",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 33.63,
+   "observedSeconds": 290.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r2",
+   "cell": "newctl",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 37.48,
+   "observedSeconds": 291.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r2",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r3",
+   "cell": "full",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 31.38,
+   "observedSeconds": 291.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r3",
+   "cell": "fullctl",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 46.28,
+   "observedSeconds": 291,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r3",
+   "cell": "new",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 33.72,
+   "observedSeconds": 290.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-firefox-2-reduce-r3",
+   "cell": "newctl",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 36.7,
+   "observedSeconds": 291.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 1,
+   "repeat": "r3",
+   "secondsAfterSettle": 300,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r2",
+   "cell": "full",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 19.53,
+   "observedSeconds": 191,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r2",
+   "cell": "fullctl",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 24.09,
+   "observedSeconds": 191.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r2",
+   "cell": "new",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 19.51,
+   "observedSeconds": 191.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r2",
+   "cell": "newctl",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 21.75,
+   "observedSeconds": 191.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r3",
+   "cell": "full",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 18.31,
+   "observedSeconds": 191.5,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r3",
+   "cell": "fullctl",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 24.5,
+   "observedSeconds": 191,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r3",
+   "cell": "new",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 18.98,
+   "observedSeconds": 191,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-1-reduce-r3",
+   "cell": "newctl",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 21.27,
+   "observedSeconds": 191,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r2",
+   "cell": "full",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 19.64,
+   "observedSeconds": 180.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r2",
+   "cell": "fullctl",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 24.12,
+   "observedSeconds": 179.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r2",
+   "cell": "new",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 19.98,
+   "observedSeconds": 183.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r2",
+   "cell": "newctl",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 20.68,
+   "observedSeconds": 183,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r2",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r3",
+   "cell": "full",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 19.58,
+   "observedSeconds": 181.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r3",
+   "cell": "fullctl",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 24.34,
+   "observedSeconds": 180.3,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r3",
+   "cell": "new",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 19.41,
+   "observedSeconds": 183,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  },
+  {
+   "launch": "nat-webkit-2-reduce-r3",
+   "cell": "newctl",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "settled": true,
+   "startupSeconds": 20.47,
+   "observedSeconds": 183.8,
+   "belowRefinedSeconds": 0,
+   "notCurrentSeconds": 0,
+   "sourcesSeen": [
+    "refined-terrain"
+   ],
+   "jobs": 0,
+   "repeat": "r3",
+   "secondsAfterSettle": 200,
+   "source": "this round",
+   "absentShots": null
+  }
+ ]
+}
