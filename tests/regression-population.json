@@ -2162,6 +2162,28 @@
     ],
     "protocol": "one JSON line on stdout with the isolation verdict, <out>/<tag>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE (calibration outside its tolerance, or no measurement), 3 isolation escape (docs/state-contracts/R0033.md section 13.3)"
    }
+  },
+  {
+   "path": "tools/qa/r0033_closure_cells.cjs",
+   "reason": "native browser recipe for the R0033 closure audit (rows R33-17, R33-11, R33-15; Playwright Chromium/Firefox/WebKit, served generated trees, fixture prayer and weather, faults injected from the harness, every browser started through tools/qa/r0033_isolation.cjs); measurements and pixel comparisons, not a headless unit instrument",
+   "owner": "R0033",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0033_closure_cells.cjs",
+     "--cell",
+     "<neutrality|twotier|cloudlight>",
+     "--root",
+     "<tree> (neutrality: --before <tree> --after <tree>)",
+     "--out",
+     "<fresh dir>",
+     "--engine",
+     "<chromium|firefox|webkit>",
+     "--playwright",
+     "<playwright package>"
+    ],
+    "protocol": "one JSON line on stdout and <out>/result.json with the isolation verdict, card and Moon-slot PNGs, <out>/<cell>-<engine>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 15.5)"
+   }
   }
  ]
 }
