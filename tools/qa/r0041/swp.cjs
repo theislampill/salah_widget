@@ -146,7 +146,7 @@ async function analyseVideo(cell,r,dir){
     const base=Math.floor(prevSys/40),cand=[-1,0,1].map(w=>(Math.floor(base/4096)+w)*4096+mk.slot).sort((a,b)=>Math.abs(a-base)-Math.abs(b-base))[0],sys=cand*40;
     // A blank (all-white) loading frame reads as a valid all-white marker: reject frames before the page painted, and
     // any decoded instant more than 3 s away from the previous one (a misread).
-    {let wsum=0;for(let k=0;k<VW*3*20;k+=3)wsum+=buf[k];if(wsum/(VW*20)>=250||(i>0&&Math.abs(sys-prevSys)>3000&&prevSys!==r.pageCreatedSys)){frames.push({i,bad:1});return;}}
+    {let wsum=0;for(let k=0;k<VW*3*20;k+=3)wsum+=buf[k];if(wsum/(VW*20)>=200||(i>0&&Math.abs(sys-prevSys)>3000&&prevSys!==r.pageCreatedSys)){frames.push({i,bad:1});return;}}
     prevSys=sys;
     const rc=rectAt(r.inpage.log,sys);if(!rc){frames.push({i,sys,norect:1});return;}
     const s=disc(buf,VW,VH,3,rc.x+DX,rc.y+DY,rc.w);if(!refFixed&&sys>r.settleSys){refFixed=s.d;vbase=judge(s,null,null,0).starsPt;refRoll={d:s.d,mean:judge(s,null,null,0).mean,key:s.key};lastPresent=sys;}
