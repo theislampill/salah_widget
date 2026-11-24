@@ -44,7 +44,10 @@ export function startNativeSkyPreview(){
   status.retained=true;status.reason=reason;status.publication={utcMs:s.utcMs,ageMs:Math.abs(s.utcMs-first.utcMs),at:performance.now(),retained:true,source:'initial-head'};return true;
  }
  function retireFirstPaint(){document.querySelector('#native-first-paint')?.remove();window.SalahFirstPaint=null;}
- function clear(reason){clearedReceipt=host.reconcileClouds();solarPublication.cancel();pendingValue=null;if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;window.SalahMoonDetail?.clear();retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
+ // R0041: the preview withdraws only the Moon detail it owns (the presenter's clearFor). A disc the refined sky composed
+ // stays: hiding it left an empty slot under .real-sky-composed (contract section 11.10). all=true (awaiting input:
+ // no sky owner is current) keeps the historical full withdrawal, as does a detail handle without clearFor.
+ function clear(reason,all=false){clearedReceipt=host.reconcileClouds();solarPublication.cancel();pendingValue=null;if(!card.classList.contains('real-sky-composed'))card.style.removeProperty('--native-sun-cloud-mask');value=null;previewFrame=null;const d=window.SalahMoonDetail;if(all||!d?.clearFor)window.SalahMoonDetail?.clear();else d.clearFor('atmospheric-preview');retireFirstPaint();status.status='pending';status.retained=false;status.reason=reason;card.classList.remove('real-sky-preview-ready');canvas.style.visibility='hidden';}
  // R0034 (ISM-SKY-017) awaiting-input is a state with one entry. Entry runs the
  // full withdrawal once. Re-entry (every frame while there are no coordinates, or
  // while paused) repeats an effect only when its own input changed: the cloud
@@ -55,7 +58,7 @@ export function startNativeSkyPreview(){
  function detailMark(){const d=window.SalahMoonDetail,st=d?.state;return {detail:d,renders:st?.renders,visible:st?.visible};}
  function awaitInput(){
   if(!awaiting){
-   clear('accepted target unavailable or hidden');card.classList.add('real-sky-awaiting-input');
+   clear('accepted target unavailable or hidden',true);card.classList.add('real-sky-awaiting-input');
    awaiting={receipt:clearedReceipt,...detailMark()};return;
   }
   if(!host.cloudsCurrent(awaiting.receipt))awaiting.receipt=host.reconcileClouds();
