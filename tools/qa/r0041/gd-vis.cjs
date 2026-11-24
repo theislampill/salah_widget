@@ -156,7 +156,11 @@ async function analyseVideo(cell,r,dir){
     const s=disc(buf,VW,VH,3,rc.x+DX,rc.y+DY,rc.w);if(!refFixed&&sys>r.settleSys){refFixed=s.d;vbase=judge(s,null,null,0).starsPt;refRoll={d:s.d,mean:judge(s,null,null,0).mean,key:s.key};lastPresent=sys;}
     const j=judge(s,refFixed,refRoll,vbase);const inCtl=r.ctlFrom&&sys>=r.ctlFrom&&sys<=r.ctlTo,inSeed=(r.seedFrom&&sys>=r.seedFrom-50&&sys<=r.seedTo+250)?1:(r.hideFrom&&sys>=r.hideFrom-50&&sys<=r.hideTo+250)?2:0;
     if(!j.absentRoll&&!inCtl&&!inSeed&&sys>r.settleSys&&(!refRoll||sys-lastPresent>=1000||refRoll.key!==s.key)){refRoll={d:s.d,mean:j.mean,key:s.key};lastPresent=sys;}
-    frames.push({i,sys,stars:j.stars,starsLit:j.starsLit,absentLiteral:j.absentLiteral?1:0,dFixed:j.dFixed,dRoll:j.dRoll,mean:j.mean,absentRoll:j.absentRoll?1:0,absentFixed:j.absentFixed?1:0,inCtl:inCtl?1:0,inSeed});
+    // whole-frame control: mean luma of the prayer-list area (CSS x 20-300, y 300-470, every 3rd pixel), far from the
+    // Moon. A recording whose whole frame shifts (seen in Firefox recordings: sky, header, list and Moon darken together
+    // for a few frames) shows it here; the aggregate does not judge such frames as Moon events and counts them apart.
+    let fm=0,fn=0;for(let y=300+DY;y<470+DY;y+=3)for(let x=20+DX;x<300+DX;x+=3){const k=3*(y*VW+x);fm+=.2126*buf[k]+.7152*buf[k+1]+.0722*buf[k+2];fn++;}
+    frames.push({i,sys,fm:+(fm/fn).toFixed(1),stars:j.stars,starsLit:j.starsLit,absentLiteral:j.absentLiteral?1:0,dFixed:j.dFixed,dRoll:j.dRoll,mean:j.mean,absentRoll:j.absentRoll?1:0,absentFixed:j.absentFixed?1:0,inCtl:inCtl?1:0,inSeed});
     if((j.absentRoll||inSeed)&&sys>r.settleSys&&saved<80){const x0=Math.max(0,Math.floor(rc.x)-4),y0=Math.max(0,Math.floor(rc.y)-4),w=Math.min(VW-x0,Math.ceil(rc.w)+8),h=Math.min(VH-y0,Math.ceil(rc.w)+8),o=Buffer.alloc(3*w*h);
       for(let y=0;y<h;y++)buf.copy(o,3*w*y,3*(VW*(y0+y)+x0),3*(VW*(y0+y)+x0+w));fs.writeFileSync(path.join(vcrops,`v-${sys}-${j.absentRoll?'A':'p'}${inSeed?'-seed':''}.png`),encodePng(w,h,o));saved++;}});
   return {file:path.basename(final),bytes:fs.statSync(final).size,frames,offset:cal};

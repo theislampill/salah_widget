@@ -9,17 +9,20 @@
 const fs=require('node:fs'),path=require('node:path');
 const [outFile,label,...files]=process.argv.slice(2);
 const out={schema:'r0041-gd-aggregate/1',label,rule:'v3: stars>=10 || dMean>4 || (dRoll>4 && dMean>1)',launches:[],cells:[]};
-function replay(list,tKey,from,to){let refMean=null,refT=-1e18,abs=[];const res=[],seedN={},seedA={};let ctlN=0,ctlA=0;
+function replay(list,tKey,from,to){let refMean=null,refT=-1e18,refFm=null,abs=[];const res=[],seedN={},seedA={};let ctlN=0,ctlA=0,shifted=0;
   let started=false;for(const f of list){const t=f[tKey];if(f.dFixed!=null)started=true;if(t==null||f.mean==null||!started)continue;   // frames before the settled reference (and its star baseline) exist are not judged
 const excl=f.inSeed||f.inCtl;
-    if(refMean==null&&t>from&&!excl&&f.stars<10){refMean=f.mean;refT=t;}
+    if(refMean==null&&t>from&&!excl&&f.stars<10){refMean=f.mean;refT=t;if(f.fm!=null)refFm=f.fm;}
+    // recordings only: a frame whose whole-frame control (fm) moved > 6 codes from the reference frame's is a recording
+    // artifact (the whole picture shifted), counted apart and not judged as a Moon event
+    if(f.fm!=null&&refFm!=null&&Math.abs(f.fm-refFm)>6&&!excl){if(t>from&&t<to)shifted++;continue;}
     const dMean=refMean==null?0:Math.abs(f.mean-refMean),a=f.stars>=10||dMean>4||((f.dRoll??0)>4&&dMean>1);
-    if(!a&&!excl&&t-refT>=1000){refMean=f.mean;refT=t;}
+    if(!a&&!excl&&t-refT>=1000){refMean=f.mean;refT=t;if(f.fm!=null)refFm=f.fm;}
     if(t>from&&t<to&&!excl)res.push({t,a});
     if(f.inSeed){seedN[f.inSeed]=(seedN[f.inSeed]||0)+1;if(a)seedA[f.inSeed]=(seedA[f.inSeed]||0)+1;}
     if(f.inCtl){ctlN++;if(a)ctlA++;}}
   const iv=[];let open=null;for(const x of res){if(x.a&&open==null)open=x.t;if(!x.a&&open!=null){iv.push(x.t-open);open=null;}}if(open!=null)iv.push(null);
-  return {judged:res.length,absent:res.filter(x=>x.a).length,intervalsMs:iv,at:res.filter(x=>x.a).map(x=>x.t),positiveControls:{seedFrames:seedN,seedAbsent:seedA,endControlFrames:ctlN,endControlAbsent:ctlA}};}
+  return {judged:res.length,absent:res.filter(x=>x.a).length,wholeFrameShiftNotJudged:shifted,intervalsMs:iv,at:res.filter(x=>x.a).map(x=>x.t),positiveControls:{seedFrames:seedN,seedAbsent:seedA,endControlFrames:ctlN,endControlAbsent:ctlA}};}
 for(const f of files){const o=JSON.parse(fs.readFileSync(f,'utf8'));
   out.launches.push({label:o.label,tree:o.root,engine:o.engine,dpr:o.dpr,motion:o.motion,browserVersion:o.browserVersion,secondsAfterSettle:o.secondsAfterSettle,isolation:o.isolation});
   for(const [name,c] of Object.entries(o.cells)){if(c.error){out.cells.push({launch:o.label,cell:name,error:c.error});continue;}
@@ -29,7 +32,7 @@ for(const f of files){const o=JSON.parse(fs.readFileSync(f,'utf8'));
       const sh=replay(F.shots||[],'t',from,endAt),vi=replay(F.video||[],'sys',from,endAt);
       const perStep=steps.map(s=>({shots:sh.at.filter(t=>t>=s-1000&&t<s+15000).length,recording:vi.at.filter(t=>t>=s-1000&&t<s+15000).length}));
       const vc=(F.video||[]).filter(x=>x.inCtl);v3ctl={reanalysed:!!F.videoReanalysed,recordingControlFrames:vc.length,recordingControlAbsent:vc.filter(x=>x.absentRoll).length};
-      v3={shots:{judged:sh.judged,absent:sh.absent,intervalsMs:sh.intervalsMs,controls:sh.positiveControls},recording:{judged:vi.judged,absent:vi.absent,intervalsMs:vi.intervalsMs,controls:vi.positiveControls},stepsWithAbsentShot:perStep.filter(p=>p.shots).length,stepsWithAbsentRecordedFrame:perStep.filter(p=>p.recording).length,
+      v3={shots:{judged:sh.judged,absent:sh.absent,intervalsMs:sh.intervalsMs,controls:sh.positiveControls},recording:{judged:vi.judged,absent:vi.absent,wholeFrameShiftNotJudged:vi.wholeFrameShiftNotJudged,intervalsMs:vi.intervalsMs,controls:vi.positiveControls},stepsWithAbsentShot:perStep.filter(p=>p.shots).length,stepsWithAbsentRecordedFrame:perStep.filter(p=>p.recording).length,
         absentOutsideStepWindows:{shots:sh.at.filter(t=>!steps.some(s=>t>=s-1000&&t<s+15000)).length,recording:vi.at.filter(t=>!steps.some(s=>t>=s-1000&&t<s+15000)).length}};}
     out.cells.push({v3,launch:o.label,engine:o.engine,dpr:o.dpr,motion:o.motion,cell:name,instant:c.iso,valid:(c.invalidReasons||[]).filter(r=>!/seeded detail\.clear\(\) not seen/.test(r)).filter(r=>!(v3ctl&&v3ctl.reanalysed&&/absent control not classified absent in the recording/.test(r)&&v3ctl.recordingControlFrames>0&&v3ctl.recordingControlAbsent>=v3ctl.recordingControlFrames*0.5)).length===0,v3ctl,invalidReasons:c.invalidReasons,recipeValid:c.valid,minuteSteps:c.minuteSteps,
       stepsWithAbsentShot:(c.perStep||[]).filter(p=>p.shotsAbsentRoll>0).length,stepsWithAbsentRecordedFrame:(c.perStep||[]).filter(p=>p.videoAbsentRoll>0).length,
