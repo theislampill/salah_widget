@@ -115,9 +115,22 @@ settled: the same 66-pixel difference appears between two loads of the old tree,
 variation (as in contract section 7.7). Half settled: A vs A was 0 in both runs, while A vs this branch differed by
 64 card pixels (3 in the Moon slot, largest difference 4 codes) in run 1 and 51 card pixels (Moon slot identical) in
 run 2. The changing count and the crescent's 66-pixel noise suggest run-to-run variation of the settled-after-load
-state, but these runs do not show that: a startup-timing consequence of the change (for example a preview clear
-during the start-up hand-over that now leaves the refined disc presented) is not excluded. Not investigated
-further within the time box. Evidence `pixel-identity-{crescent,half,half2}.json`.
+state, but these runs alone do not show that. Evidence `pixel-identity-{crescent,half,half2}.json`.
+
+Independent review result (half-Moon scene, 8 alternating loads per tree, Chromium ratio 1, reduced motion, same
+frozen clock, fixture and settle rule, 0 allowed non-loopback requests). States by card hash / Moon-slot hash:
+
+| Card / Moon slot | Old tree `a06e9ae5` | This branch |
+|---|---|---|
+| `bf54` / `79e9` | 4 | 5 |
+| `83dd` / `b557` | 4 | 2 |
+| `fe69` / `b557` | 0 | 1 |
+
+The presenter state was the same in every load (refined-sky owner, visible, composed). The 64-pixel / 3-in-slot
+difference above is the first two states against each other; both trees produce both, so it is run-to-run variation.
+The third state appeared once, on this branch only. Its Moon slot equals a state the old tree produces; its
+differences are in the header belt (rows 17-39, at most 15 codes) and are not visible at ×4. No Moon-slot state is
+unique to this branch. Limit: eight loads per tree cannot rule out a rare start-up effect.
 
 ## Checks
 
@@ -137,8 +150,14 @@ further within the time box. Evidence `pixel-identity-{crescent,half,half2}.json
 - The before rate exists only for Chromium ratio 2 full motion; ratio 1 and reduced motion were measured on this
   branch only (0), so for them the result shows absence of the defect, not a measured reduction.
 - Recordings are compositor captures, not display captures or human viewing.
-- Other routes that call the preview's `clear()` while the refined sky owns the disc (preview paint failures and
-  deadline misses while composed) take the same guarded path; they were not exercised natively.
+- Inside the preview host, `clear()` cannot run while the refined sky is composed: `paintFailed`
+  (`real-sky/native-preview-host.mjs:80`), the publication step (`:95`) and `update()` (`:150`) return first when
+  `.real-sky-composed` is set, and production starts the refined sky with `physical=true`, so the refined disc is
+  always composed under that class. Preview paint-failure and deadline clears therefore cannot leave a refined disc.
+  The guarded route is reached only by external callers (`SalahSkyPreview.clear`), which run after the refined host
+  has withdrawn or while it owns a current disc.
+- The native ratio 2 headline (0 of 72) was not independently reproduced by the review. WebKit was not obtained;
+  Safari was not tested.
 - The test's detail is a stand-in that reports `moon-detail.mjs`'s state fields; the real canvas is exercised only
   natively.
 
@@ -160,5 +179,5 @@ to its owners (refined host currentness fences, Moon runtime `fallback`). Unchan
 re-entry (full withdrawal), refined host clear, runtime fallback. Documented: this note. Enforced:
 `moon/src/moon-native.mjs` handle `clearFor`, `real-sky/native-preview-host.mjs` `clear`. Verified: VM
 `tests/r0041-preview-clear.test.cjs` R41-PC-1..5, census; native Chromium (ratio 1 and 2, both motions)
-and Firefox (ratio 1, full motion) 0 of 36; WebKit NOT OBTAINED (invalid cells). Not verified: preview paint-failure and deadline clears while composed; Safari. No status change
+and Firefox (ratio 1, full motion) 0 of 36; WebKit NOT OBTAINED (invalid cells). Not verified: WebKit (not obtained); Safari; independent reproduction of the native ratio 2 headline. No status change
 proposed."

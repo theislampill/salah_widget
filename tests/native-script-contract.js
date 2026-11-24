@@ -49,8 +49,12 @@
   // with 06b6e93b): moon-initial 067034c8 -> 68e2b16e (moon-native.mjs: record-signed drift, phaseDirection admission,
   // directed calendar scene, the one-presenter guarantees on expiry, clear() and resume; moon-first-paint.mjs head
   // direction), then rebound for the receiver-independent phase disc (moon-phase-disc.mjs and its wiring, slot state
-  // and limitation report in moon-native.mjs); the current value is the pin below. moon-precision.mjs,
-  // moon-refinement and first-paint unchanged. CANDIDATE: awaits independent review.
+  // and limitation report in moon-native.mjs); the current value is the pin below. moon-precision.mjs and
+  // moon-refinement unchanged by that rebind. CANDIDATE: awaits independent review.
+  // R0041 preview-clear correction rebind (branch claude/r0041-preview-clear-20261124 over a06e9ae5): first-paint
+  // 94f1927e -> 9b60b9b5, because the first-paint block holds the preview host (startNativeSkyPreview, whose clear()
+  // now withdraws through SalahMoonDetail.clearFor); moon-initial 5aca14ba -> dcede55c, because that block holds the
+  // moon-native wrapper that gains clearFor(owner). moon-refinement unchanged. Values below; awaits review.
   const SPLIT_PINS=Object.freeze({
     'first-paint':'9b60b9b5b64c8e84a112c6a82e45ce6f193a8c9f7719380a7d3faa66f6bc99c9',
     'moon-initial':'dcede55ceca5cf562727a6ad024d58192b8ee686cc2a250d4bd855762e2e77ab',
