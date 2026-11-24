@@ -1,0 +1,166 @@
+{
+ "schema": "r0041-net-negative/1",
+ "host": "r0041-letthrough.test",
+ "loopbackListenerOnly": true,
+ "cases": [
+  {
+   "engine": "chromium",
+   "case": "control",
+   "fetch": {
+    "error": "TypeError: Failed to fetch"
+   },
+   "finishThrew": false,
+   "allowedExternal": 0,
+   "externalAttempts": 3,
+   "byLayer": {
+    "route r0041-letthrough.test aborted": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test failed:net::ERR_BLOCKED_BY_CLIENT.Inspector": 1
+   },
+   "expected": "finish passes, 0 allowed",
+   "ok": true
+  },
+  {
+   "engine": "chromium",
+   "case": "route-let-through",
+   "fetch": {
+    "error": "TypeError: Failed to fetch"
+   },
+   "finishThrew": false,
+   "allowedExternal": 0,
+   "externalAttempts": 3,
+   "byLayer": {
+    "proxy r0041-letthrough.test blocked": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test failed:net::ERR_FAILED": 1
+   },
+   "expected": "finish throws",
+   "ok": false
+  },
+  {
+   "engine": "chromium",
+   "case": "proxy-let-through",
+   "fetch": {
+    "status": 200,
+    "body": "loopback stand-in"
+   },
+   "finishThrew": true,
+   "error": "ISOLATION FAILURE: 2 non-loopback request(s) allowed through: [{\"layer\":\"proxy\",\"host\":\"r0041-letthrough.test\",\"path\":\"/probe\",\"outcome\":\"LET-THROUGH (test variant, loopback stand-in)\",\"t0\":1795515164642},{\"layer\":\"browser\",\"host\":\"r0041-letthrough.test\",\"url\":\"http://r0041-letthrough.test/probe\",\"o",
+   "allowedExternal": 2,
+   "byLayer": {
+    "proxy r0041-letthrough.test LET-THROUGH (test variant, loopback stand-in)": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test finished-UNEXPECTED": 1
+   },
+   "expected": "finish throws",
+   "ok": true
+  },
+  {
+   "engine": "firefox",
+   "case": "control",
+   "fetch": {
+    "error": "TypeError: NetworkError when attempting to fetch resource."
+   },
+   "finishThrew": true,
+   "error": "ISOLATION FAILURE: 1 non-loopback request(s) allowed through: [{\"layer\":\"browser\",\"host\":\"r0041-letthrough.test\",\"url\":\"http://r0041-letthrough.test/probe\",\"outcome\":\"finished-UNEXPECTED\",\"t0\":1795515166559}]",
+   "allowedExternal": 1,
+   "byLayer": {
+    "proxy r0041-letthrough.test blocked": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test finished-UNEXPECTED": 1
+   },
+   "expected": "finish passes, 0 allowed",
+   "ok": false
+  },
+  {
+   "engine": "firefox",
+   "case": "route-let-through",
+   "fetch": {
+    "error": "TypeError: NetworkError when attempting to fetch resource."
+   },
+   "finishThrew": true,
+   "error": "ISOLATION FAILURE: 1 non-loopback request(s) allowed through: [{\"layer\":\"browser\",\"host\":\"r0041-letthrough.test\",\"url\":\"http://r0041-letthrough.test/probe\",\"outcome\":\"finished-UNEXPECTED\",\"t0\":1795515168388}]",
+   "allowedExternal": 1,
+   "byLayer": {
+    "proxy r0041-letthrough.test blocked": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test finished-UNEXPECTED": 1
+   },
+   "expected": "finish throws",
+   "ok": true
+  },
+  {
+   "engine": "firefox",
+   "case": "proxy-let-through",
+   "fetch": {
+    "status": 200,
+    "body": "loopback stand-in"
+   },
+   "finishThrew": true,
+   "error": "ISOLATION FAILURE: 2 non-loopback request(s) allowed through: [{\"layer\":\"proxy\",\"host\":\"r0041-letthrough.test\",\"path\":\"/probe\",\"outcome\":\"LET-THROUGH (test variant, loopback stand-in)\",\"t0\":1795515170275},{\"layer\":\"browser\",\"host\":\"r0041-letthrough.test\",\"url\":\"http://r0041-letthrough.test/probe\",\"o",
+   "allowedExternal": 2,
+   "byLayer": {
+    "proxy r0041-letthrough.test LET-THROUGH (test variant, loopback stand-in)": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test finished-UNEXPECTED": 1
+   },
+   "expected": "finish throws",
+   "ok": true
+  },
+  {
+   "engine": "webkit",
+   "case": "control",
+   "fetch": {
+    "error": "TypeError: Load failed"
+   },
+   "finishThrew": false,
+   "allowedExternal": 0,
+   "externalAttempts": 3,
+   "byLayer": {
+    "route r0041-letthrough.test aborted": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test failed:Blocked by Web Inspector": 1
+   },
+   "expected": "finish passes, 0 allowed",
+   "ok": true
+  },
+  {
+   "engine": "webkit",
+   "case": "route-let-through",
+   "fetch": {
+    "error": "TypeError: Load failed"
+   },
+   "finishThrew": false,
+   "allowedExternal": 0,
+   "externalAttempts": 3,
+   "byLayer": {
+    "proxy r0041-letthrough.test blocked": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test failed:Origin http://127.0.0.1:49643 is not allowed by Access-Control-Allow-Origin. Status code: 403": 1
+   },
+   "expected": "finish throws",
+   "ok": false
+  },
+  {
+   "engine": "webkit",
+   "case": "proxy-let-through",
+   "fetch": {
+    "status": 200,
+    "body": "loopback stand-in"
+   },
+   "finishThrew": true,
+   "error": "ISOLATION FAILURE: 2 non-loopback request(s) allowed through: [{\"layer\":\"proxy\",\"host\":\"r0041-letthrough.test\",\"path\":\"/probe\",\"outcome\":\"LET-THROUGH (test variant, loopback stand-in)\",\"t0\":1795515172663},{\"layer\":\"browser\",\"host\":\"r0041-letthrough.test\",\"url\":\"http://r0041-letthrough.test/probe\",\"o",
+   "allowedExternal": 2,
+   "byLayer": {
+    "proxy r0041-letthrough.test LET-THROUGH (test variant, loopback stand-in)": 1,
+    "browser r0041-letthrough.test issued": 1,
+    "browser r0041-letthrough.test finished-UNEXPECTED": 1
+   },
+   "expected": "finish throws",
+   "ok": true
+  }
+ ],
+ "loopbackListenerHits": 3,
+ "unrouteCalls": [],
+ "pass": false
+}

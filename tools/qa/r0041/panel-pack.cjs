@@ -6,6 +6,7 @@
 //   native/        native-size (device-pixel) shots around the step when the run saved them (swp.cjs strip flag)
 // and key.json mapping item IDs to their source (tree, engine, DPR, motion, cell) - for the integrator, NOT for judges.
 // Blinding: item IDs are shuffled with a seeded PRNG; window and control cells, and the two trees, get no label.
+// PANEL_FILTER (env): a regular expression the launch label must match.
 // Usage: node panel-pack.cjs <outDir> <seed> <steps=3> <runDir>[,<runDir>...]
 //   each runDir is "<tree tag>|<directory holding <label>.json and <label>/<cell>/>"
 const fs=require('node:fs'),path=require('node:path'),{execFileSync}=require('node:child_process');
@@ -13,7 +14,7 @@ const [outDir,seedArg,stepsArg,runsArg]=process.argv.slice(2);const STEPS=+(step
 let seed=+seedArg||1;const rnd=()=>{seed=(seed*1103515245+12345)%2147483648;return seed/2147483648;};
 fs.mkdirSync(outDir,{recursive:true});const items=[];
 for(const spec of runsArg.split(',')){const [tag,dir]=spec.split('|');
-  for(const f of fs.readdirSync(dir).filter(f=>f.endsWith('.json'))){const o=JSON.parse(fs.readFileSync(path.join(dir,f),'utf8'));if(!o.cells)continue;
+  for(const f of fs.readdirSync(dir).filter(f=>f.endsWith('.json'))){const o=JSON.parse(fs.readFileSync(path.join(dir,f),'utf8'));if(!o.cells)continue;if(process.env.PANEL_FILTER&&!new RegExp(process.env.PANEL_FILTER).test(o.label))continue;
     for(const [cell,c] of Object.entries(o.cells)){if(c.error||!c.video||c.video.error)continue;const cdir=path.join(dir,o.label,cell),fr=path.join(cdir,'frames.json');if(!fs.existsSync(fr))continue;
       const frames=JSON.parse(fs.readFileSync(fr,'utf8')).video||[];
       for(const st of (c.perStep||[]).slice(0,STEPS)){const near=frames.filter(v=>v.sys!=null&&Math.abs(v.sys-st.sys)<60);if(!near.length)continue;
