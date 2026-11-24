@@ -104,7 +104,11 @@ async function runCell(L,env,cell,dir){const hung=[];
   // Chromium: full-page shots (a clipped Chromium screenshot re-sizes the recording's screencast), timed by the marker
   // they show; Firefox and WebKit: shots clipped to the Moon square (faster), timed by request/return on the system clock.
   const FULL=engine==='chromium';
-  const loop=(async()=>{while(capturing){if(!rect){await page.waitForTimeout(50);continue;}const r=rect;
+  // Firefox and WebKit: shot starts at least PACE ms apart (an unpaced loop over four headed pages starved Firefox's
+  // protocol: screenshot, evaluate and close calls timed out); Chromium's full-page shots are slower than this anyway.
+  const PACE=+(process.env.R41_PACE_MS||40);let lastStart=0;
+  const loop=(async()=>{while(capturing){if(!rect){await new Promise(r=>setTimeout(r,50));continue;}const r=rect;
+    if(!FULL){const w=lastStart+PACE-Date.now();if(w>0)await new Promise(q=>setTimeout(q,w));lastStart=Date.now();}
     const clip={x:Math.max(0,Math.floor(r.x)),y:Math.max(0,Math.floor(r.y))};clip.width=Math.min(W-clip.x,Math.ceil(r.x+r.w)-clip.x);clip.height=Math.min(H-clip.y,Math.ceil(r.y+r.h)-clip.y);
     const t0=Date.now();let png;try{png=await T(page.screenshot(FULL?{scale:'device',animations:'allow',caret:'initial'}:{clip,scale:'device',animations:'allow',caret:'initial'}),8000,'screenshot',hung);if(png==='timeout')continue;}catch(e){await new Promise(r=>setTimeout(r,30));continue;}const t1=Date.now();
     let img;try{img=decodePng(png);}catch(e){continue;}
