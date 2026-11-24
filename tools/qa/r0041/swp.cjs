@@ -20,7 +20,7 @@ const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:chil
 const {createEnv,launch}=require('./iso.cjs');const {decodePng}=require('./png.cjs');
 const [root,outDir,engine,dprArg,motion,secArg,label,cellArg]=process.argv.slice(2);
 const DPR=+dprArg,SECONDS=+secArg,W=325,H=530,VW=326,VH=530;
-const CELLS=cellArg.split(',').map(c=>{const [name,rest]=c.split('=');const k=rest.lastIndexOf(':'),iso=/Z$/.test(rest)?rest:rest.slice(0,k),flags=(/Z$/.test(rest)?'':rest.slice(k+1)).split('+').filter(Boolean);return {name,iso,flags,seed:false,startMs:Date.parse(iso)};});
+const CELLS=(cellArg||"").split(',').filter(Boolean).map(c=>{const [name,rest]=c.split('=');const k=rest.lastIndexOf(':'),iso=/Z$/.test(rest)?rest:rest.slice(0,k),flags=(/Z$/.test(rest)?'':rest.slice(k+1)).split('+').filter(Boolean);return {name,iso,flags,seed:false,startMs:Date.parse(iso)};});
 const FRAG='#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&simWx=0&simCloud=0&qa=1'+(motion==='full'?'&motion=full':'');
 const PAL=[[0,0,0],[255,0,0],[0,255,0],[0,0,255],[255,255,0],[255,0,255],[0,255,255],[255,255,255]];
 const shift=ms=>`(()=>{const ND=Date,sys=ND.now.bind(ND),off=${ms}-sys();window.__sysNow=sys;class D extends ND{constructor(...a){super(...(a.length?a:[sys()+off]));}static now(){return sys()+off;}}window.Date=D;})();`;
@@ -135,11 +135,11 @@ async function runCell(L,env,cell,dir){const hung=[];
 }
 async function analyseVideo(cell,r,dir){
   if(!r.vpath||!fs.existsSync(r.vpath))return {error:'no recording'};
-  const final=path.join(dir,cell.name+'.webm');fs.copyFileSync(r.vpath,final);
+  const final=path.join(dir,cell.name+'.webm');if(r.vpath!==final)fs.copyFileSync(r.vpath,final);
   const frames=[];let refFixed=null,refRoll=null,vbase=null,lastPresent=0,prevSys=r.pageCreatedSys;const vcrops=path.join(dir,'vcrops');fs.mkdirSync(vcrops,{recursive:true});let saved=0;
   // calibrate the recording's offset: the (dx, dy) that reads the marker best over frames 100-160 of the recording
   let cal=null;{const sample=[];await decodeVideo(final,(buf,i)=>{if(i>=100&&i<160&&i%3===0)sample.push(Buffer.from(buf));});let best=null;
-    for(let dx=-6;dx<=8;dx++)for(let dy=-6;dy<=4;dy++){let ok=0;for(const b of sample)if(readMarker(b,VW,3,dx,dy).worst<=90)ok++;if(!best||ok>best.ok)best={dx,dy,ok};}cal=best;}
+    for(let dx=-6;dx<=8;dx++)for(let dy=-6;dy<=4;dy++){let ok=0,sum=0;for(const b of sample){const w=readMarker(b,VW,3,dx,dy).worst;sum+=w;if(w<=90)ok++;}if(!best||ok>best.ok||(ok===best.ok&&sum<best.sum))best={dx,dy,ok,sum};}cal=best;}   // ties: the smallest summed palette distance
   const DX=cal?cal.dx:0,DY=cal?cal.dy:0;
   await decodeVideo(final,(buf,i)=>{const mk=readMarker(buf,VW,3,DX,DY);if(mk.worst>200){frames.push({i,bad:1});return;}
     // unwrap the 12-bit slot to the system clock near the previous frame (or the expected time)
@@ -154,7 +154,15 @@ async function analyseVideo(cell,r,dir){
   return {file:path.basename(final),bytes:fs.statSync(final).size,frames,offset:cal};
 }
 function intervalsOf(list,key,tkey){const out=[];let open=null,last=null;for(const f of list){if(f[key]&&open==null)open=f[tkey];if(!f[key]&&open!=null){out.push({from:open,to:f[tkey],ms:f[tkey]-open});open=null;}last=f[tkey];}if(open!=null)out.push({from:open,to:null,ms:null});return out;}
-(async()=>{
+// Re-analysis of a finished cell's recording (same detector), e.g. after a mis-calibrated offset:
+//   node <recipe> --reanalyse <cellDir>   (reads frames.json and <cell>.webm there; rewrites frames.json's recording part)
+if(process.argv[2]==='--reanalyse'){(async()=>{const dir=process.argv[3],name=path.basename(dir),F=JSON.parse(fs.readFileSync(path.join(dir,'frames.json'),'utf8'));
+  const sh=F.shots,ctl=sh.filter(x=>x.inCtl),seed=F.inpage.seed||[],g=k=>(seed.find(x=>x[k]!=null)||{})[k]??null,settle=(sh.find(x=>x.dFixed!=null)||sh[0]).t0;
+  const r={vpath:path.join(dir,name+'.webm'),inpage:F.inpage,pageCreatedSys:F.inpage.log[0][0]-1000,settleSys:settle,ctlFrom:ctl.length?ctl[0].t0:null,ctlTo:ctl.length?ctl.at(-1).t0:null,
+    seedFrom:g('clear'),seedTo:g('clear')!=null?g('clear')+300:null,hideFrom:g('hide'),hideTo:g('hide')!=null?g('hide')+300:null};
+  const v=await analyseVideo({name},r,dir);F.video=v.frames;F.videoReanalysed={offset:v.offset,at:new Date().toISOString()};fs.writeFileSync(path.join(dir,'frames.json'),JSON.stringify(F));
+  console.log(name,'offset',JSON.stringify(v.offset),'frames',v.frames.length,'unreadable',v.frames.filter(f=>f.bad).length);process.exit(0);})().catch(e=>{console.error(e);process.exit(1);});}
+else (async()=>{
   fs.mkdirSync(outDir,{recursive:true});
   const env=await createEnv({root});
   const extraArgs=engine==='chromium'?['--disable-features=NetworkPrediction,OptimizationHints,MediaRouter,CalculateNativeWinOcclusion','--disable-backgrounding-occluded-windows',...(DPR>1?['--force-device-scale-factor='+DPR]:[])]:[];
