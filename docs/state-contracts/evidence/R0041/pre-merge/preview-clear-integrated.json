@@ -93,6 +93,65 @@
      }
     }
    ]
+  },
+  "pv-webkit-2-full": {
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "full",
+   "browserVersion": "26.4",
+   "secondsAfterSettle": 300,
+   "isolation": 0,
+   "tree": "x-r0041",
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 4,
+     "per": [
+      {
+       "absentFrames": 28
+      },
+      {
+       "absentFrames": 28
+      },
+      {
+       "absentFrames": 27
+      },
+      {
+       "absentFrames": 26
+      }
+     ],
+     "recordedJudged": 7491,
+     "recordedAbsentTotal": 781,
+     "absentNotNearClear": 672,
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 60,
+      "absent": 60
+     },
+     "swaps": {
+      "adopt": 1,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 3235
+     },
+     "videoUnreadable": 14,
+     "videoFrames": 8367,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ],
+   "note": "detector false positive from +265 s: after a refinement adoption at +250 s and a 0.1 CSS px slot move at +265 s the point-like count rose from 9 to 39 above the baseline (all 42 point-like pixels of a flagged shot lie on the lit surface, neighbour means 60-128; none on the dark side); disc mean 100.6-101.2 in all 7,423 recorded frames and >=100.2 in all 3,544 shots of the observation (hidden-Moon control 42.7); 33 clears before +265 s: 0 followed by an ABSENT frame; the last 4 clears fall in the flagged window and are not judged by rule v3 (present by the disc mean)",
+   "flaggedFrameCrop": "preview-webkit-2-flagged-present-frame.png"
   }
  }
 }
