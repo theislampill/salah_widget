@@ -147,6 +147,9 @@ async function launch(env,opts){
   // A persistent context opens one about:blank page at launch; it has made no request. Record it, then route.
   const preexisting=context.pages().map(p=>p.url());
   const decisions=env.routeDecisions;
+  // R0041 addition (2026-11-24): prepare() is applied to the launch context and to every further context made by
+  // newContext() in the same browser (several isolated contexts in ONE browser process); the layers are unchanged.
+  const prepare=async context=>{
   if(mode==='route'){
     await context.route('**/*',async route=>{const r=route.request();const u=r.url();let host='';try{host=new URL(u).hostname;}catch{}
       const rec={layer:'route',host,type:r.resourceType(),url:u.slice(0,160),t0:Date.now()};
@@ -165,7 +168,11 @@ async function launch(env,opts){
       // a finished non-loopback request is only acceptable if a fixture fulfilled it (route layer); the shim never issues one
       const fulfilled=decisions.some(d=>d.url===r.url().slice(0,160)&&d.outcome==='fulfilled-fixture');env.observed.push({layer:'browser',host,url:r.url().slice(0,200),outcome:fulfilled?'finished-fixture':'finished-UNEXPECTED',t0:Date.now()});}});
   context.on('requestfailed',r=>{let host='';try{host=new URL(r.url()).hostname;}catch{}env.observed.push({layer:'browser',host,url:r.url().slice(0,200),outcome:'failed:'+(r.failure()?.errorText||''),t0:Date.now()});});
-  return {browser,context,preexisting,close:async()=>{await context.close();if(browser)await browser.close();}};
+  };
+  await prepare(context);
+  const extra=[];
+  const newContext=async(overrides={})=>{if(!browser)throw new Error('newContext needs a non-persistent launch');const c=await browser.newContext({...common,...overrides,proxy});await prepare(c);extra.push(c);return c;};
+  return {browser,context,preexisting,newContext,close:async()=>{for(const c of extra)await c.close().catch(()=>{});await context.close();if(browser)await browser.close();}};
 }
 
 async function createEnv({root,extra}={}){
