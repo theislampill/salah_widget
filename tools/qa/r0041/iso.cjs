@@ -95,6 +95,7 @@ class Origins{
   }
   async start(labels=['127.0.0.1','localhost']){
     for(const label of labels){const s=http.createServer((req,res)=>this.handle(req,res,label,'origin-direct'));
+      s.on('connection',sock=>sock.on('error',()=>{}));
       await new Promise(r=>s.listen(0,'127.0.0.1',r));this.servers.push(s);this.ports[label]=s.address().port;}
     return this;}
   url(label,p){return `http://${label}:${this.ports[label]}${p}`;}
@@ -112,12 +113,14 @@ class IsoProxy{
         this.log.push({layer:'proxy',host:host+':'+port,path:u.pathname,outcome:'blocked-unknown-loopback-port',t0:Date.now()});res.writeHead(502);return res.end();}
       this.log.push({layer:'proxy',host,path:u?u.pathname:req.url,method:req.method,outcome:'blocked',upgrade:req.headers.upgrade||null,t0:Date.now()});
       res.writeHead(403,{'content-type':'text/plain','cache-control':'no-store'});res.end('blocked by isolation proxy');});
-    this.server.on('connect',(req,sock)=>{const [host]=String(req.url).split(':');
+    this.server.on('connect',(req,sock)=>{sock.on('error',()=>{});const [host]=String(req.url).split(':');
       this.log.push({layer:'proxy',host,path:'CONNECT '+req.url,method:'CONNECT',outcome:'blocked',t0:Date.now()});
       try{sock.end('HTTP/1.1 403 Forbidden\r\n\r\n');}catch{}});
-    this.server.on('upgrade',(req,sock)=>{let host='';try{host=new URL(req.url).hostname;}catch{}
+    this.server.on('upgrade',(req,sock)=>{sock.on('error',()=>{});let host='';try{host=new URL(req.url).hostname;}catch{}
       this.log.push({layer:'proxy',host,path:req.url,method:'UPGRADE',outcome:'blocked',t0:Date.now()});try{sock.end('HTTP/1.1 403 Forbidden\r\n\r\n');}catch{}});
     this.server.on('clientError',(e,sock)=>{try{sock.destroy();}catch{}});
+    // R0041 addition (2026-11-24): a reset client socket (ECONNRESET) must not crash the harness process.
+    this.server.on('connection',sock=>sock.on('error',()=>{}));
     await new Promise(r=>this.server.listen(0,'127.0.0.1',r));this.port=this.server.address().port;return this;}
   close(){this.server.close();}
 }
