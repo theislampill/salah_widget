@@ -72,8 +72,12 @@ halfcloud cells every load had `moon-ready` and `--moonbeam` 0.405 on both trees
 A first load in a fresh browser sometimes differs from later loads of the same tree, outside the Moon box: 1 px in
 Firefox and WebKit by day, 51 px in Chromium at night. It happened on the `8990c36d` side in each case, because that
 tree is loaded first. An unrecorded trial run (Chromium, halfcloud, without warm-up) showed the same effect at
-10,777 px, maximum delta 30, mostly inside the Moon box, on the first load only. This is why repeat 0 is excluded from
-the verdict. The cause was not investigated.
+10,777 px, maximum delta 30, mostly inside the Moon box, on the first load only (its outputs were not kept). The
+independent review re-ran the Chromium halfcloud cell with the order swapped (`a196351b` first): 10,706 px, maximum
+delta 30, 7,205 px inside the Moon box, on the first load of `a196351b` only; before vs after on repeats 1 and 2 stayed
+0. A re-run in the original order gave 0 for every comparison. The effect follows load order, not the tree, and
+including first loads before vs after stays within each tree's own repeat noise. This is why repeat 0 is excluded
+from the verdict. The cause was not investigated.
 
 ## R33-11: initial-tier failure together with worker failure (main `d33adfa0`)
 
