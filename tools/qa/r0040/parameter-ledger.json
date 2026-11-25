@@ -1,0 +1,346 @@
+[
+  {
+    "name": "T",
+    "value": 0.016666666666666666,
+    "unit": "s",
+    "classification": "PC",
+    "basis": "display-frame exposure; fourfold contrast relative to 1/15 s",
+    "owner": "G1"
+  },
+  {
+    "name": "G",
+    "value": 100,
+    "unit": "multiplier",
+    "classification": "PC",
+    "basis": "Chosen contrast multiplier before area, velocity, clipping and compositing. Near and tile caps differ.",
+    "owner": "G-1"
+  },
+  {
+    "name": "nearShell",
+    "value": [
+      0.5,
+      1
+    ],
+    "unit": "m",
+    "classification": "PC",
+    "basis": "declared sampling shells and resolvability",
+    "owner": "G1"
+  },
+  {
+    "name": "nearDmin",
+    "value": 0.3,
+    "unit": "mm",
+    "classification": "PC",
+    "basis": "declared sampling shells and resolvability",
+    "owner": "G1"
+  },
+  {
+    "name": "tailShell",
+    "value": [
+      0.7,
+      1.5
+    ],
+    "unit": "m",
+    "classification": "PC",
+    "basis": "declared sampling shells and resolvability",
+    "owner": "G1"
+  },
+  {
+    "name": "tailDmin",
+    "value": 1.5,
+    "unit": "mm",
+    "classification": "PC",
+    "basis": "declared sampling shells and resolvability",
+    "owner": "G1"
+  },
+  {
+    "name": "midSlabs",
+    "value": [
+      [
+        1.5,
+        3
+      ],
+      [
+        3,
+        10
+      ]
+    ],
+    "unit": "m",
+    "classification": "PC",
+    "basis": "declared sampling shells and resolvability",
+    "owner": "G1"
+  },
+  {
+    "name": "midDmin",
+    "value": 0.3,
+    "unit": "mm",
+    "classification": "PC",
+    "basis": "declared sampling shells and resolvability",
+    "owner": "G1"
+  },
+  {
+    "name": "resolvablePx",
+    "value": 3,
+    "unit": "px",
+    "classification": "PC",
+    "basis": "declared sampling shells and resolvability",
+    "owner": "G1"
+  },
+  {
+    "name": "frustumK",
+    "value": 0.4505,
+    "unit": "m³ per m³",
+    "classification": "PJ",
+    "basis": "325 × 292 /(3 × 265²), rounded for the default 90 degree FOV",
+    "owner": "geometry"
+  },
+  {
+    "name": "dsd",
+    "value": {
+      "mp": [
+        8000,
+        4.1
+      ],
+      "drizzle": [
+        30000,
+        5.7
+      ],
+      "convective": [
+        1400,
+        3
+      ],
+      "exp": -0.21
+    },
+    "unit": "m⁻³ mm⁻¹; mm⁻¹; dimensionless",
+    "classification": "PJ conditional / UE mapping",
+    "basis": "MP stratiform relation; alternative spectra recalled. Mapping every 80–82 shower to the convective spectrum is unverified. The inline low-rate floor changes effective slope.",
+    "owner": "fixed spectra conditional on evidence; class mapping pending"
+  },
+  {
+    "name": "vt",
+    "value": "atlas+GK",
+    "unit": "m/s",
+    "classification": "PJ conditional",
+    "basis": "Family label only. Actual branches use hard-coded Atlas coefficient and Gunn–Kinzer values; see terminal-speed in the inline ledger.",
+    "owner": "fixed fit; small-drop applicability conditional"
+  },
+  {
+    "name": "baseMPerC",
+    "value": 125,
+    "unit": "m/K",
+    "classification": "PJ approximation",
+    "basis": "parcel LCL plus numerical clamps; actual rain-deck base unverified",
+    "owner": "unverified for rain"
+  },
+  {
+    "name": "baseMin",
+    "value": 100,
+    "unit": "m",
+    "classification": "PC",
+    "basis": "Chosen lower clamp on estimated LCL; actual rain-deck base unverified.",
+    "owner": "fixed study assumption; rain applicability pending"
+  },
+  {
+    "name": "baseMax",
+    "value": 2000,
+    "unit": "m",
+    "classification": "PC",
+    "basis": "Chosen upper clamp on estimated LCL; actual rain-deck base unverified.",
+    "owner": "fixed study assumption; rain applicability pending"
+  },
+  {
+    "name": "eyeLevel",
+    "value": 0.8,
+    "unit": "fraction",
+    "classification": "PJ approximate",
+    "basis": "(2/10)^(1/7) ≈ .795; 1/7 does not establish the local wind profile",
+    "owner": "G11a"
+  },
+  {
+    "name": "gustPeak",
+    "value": 3,
+    "unit": "factor",
+    "classification": "UE",
+    "basis": "gust statistic converted to an assumed standard deviation",
+    "owner": "G11c"
+  },
+  {
+    "name": "gustScaleS",
+    "value": 8,
+    "unit": "s",
+    "classification": "UE",
+    "basis": "chosen time scale",
+    "owner": "G11c"
+  },
+  {
+    "name": "shaftPathKm",
+    "value": 1.5,
+    "unit": "km",
+    "classification": "UE",
+    "basis": "assumed path/trailing geometry",
+    "owner": "by name"
+  },
+  {
+    "name": "shaftTrail",
+    "value": 0.21,
+    "unit": "slope",
+    "classification": "UE",
+    "basis": "assumed path/trailing geometry",
+    "owner": "by name"
+  },
+  {
+    "name": "fibrePathKm",
+    "value": 0.6,
+    "unit": "km",
+    "classification": "UE",
+    "basis": "assumed path/trailing geometry",
+    "owner": "by name"
+  },
+  {
+    "name": "minRateMmH",
+    "value": 0.1,
+    "unit": "mm/h",
+    "classification": "UE",
+    "basis": "Historical category-only toggle fabricates a rate; revised study rejects the toggle.",
+    "owner": "excluded"
+  },
+  {
+    "name": "rateFactor",
+    "value": 4,
+    "unit": "per hour conversion",
+    "classification": "PJ conditional",
+    "basis": "3600/900 only, study reads admitted interval directly",
+    "owner": "physical"
+  },
+  {
+    "name": "drizzleSigmaZero",
+    "value": true,
+    "unit": "boolean",
+    "classification": "PC",
+    "basis": "withhold separate drizzle extinction to avoid double counting",
+    "owner": "G2"
+  },
+  {
+    "name": "struct",
+    "value": {
+      "drizzle": [
+        0.05,
+        8
+      ],
+      "light": [
+        0.1,
+        8
+      ],
+      "moderate": [
+        0.2,
+        8
+      ],
+      "heavy": [
+        0.45,
+        3.5
+      ],
+      "heavySheets": [
+        0.35,
+        2.5
+      ],
+      "rModerate": 2.5,
+      "rHeavy": 7.6
+    },
+    "unit": "amplitude/s and mm/h",
+    "classification": "UE",
+    "basis": "Chosen amplitudes, time scales and rate breaks. Separate field-noise, smoothing, masking and spawn parameters are in the inline ledger.",
+    "owner": "by name"
+  },
+  {
+    "name": "showersVeil",
+    "value": "field-only",
+    "unit": "mode",
+    "classification": "PJ constraint / PC localization",
+    "basis": "Cell-mean rate alone does not establish local rain. Using a constructed field for spatial localization is a convention; the revised M3 shower study withdraws the whole output without support.",
+    "owner": "fixed evidence constraint; field assumptions by name"
+  },
+  {
+    "name": "m4StreakFrac",
+    "value": 0.15,
+    "unit": "fraction",
+    "classification": "UE",
+    "basis": "historical fibre-family thinning",
+    "owner": "by name"
+  },
+  {
+    "name": "fibre",
+    "value": {
+      "count": 70,
+      "lenBasePx": 10,
+      "lenGainPx": 60,
+      "widthPx": [
+        2,
+        5
+      ],
+      "colour": 0.8
+    },
+    "unit": "count/px/fraction",
+    "classification": "UE",
+    "basis": "historical M4/M5 draw constants",
+    "owner": "by name"
+  },
+  {
+    "name": "sunKernel",
+    "value": {
+      "amp": 0,
+      "sigmaPx": 120
+    },
+    "unit": "relative amplitude / px",
+    "classification": "PC, UE if nonzero",
+    "basis": "kernels disabled, historical width shown for provenance",
+    "owner": "excluded gain"
+  },
+  {
+    "name": "moonKernel",
+    "value": {
+      "amp": 0,
+      "sigmaPx": 120
+    },
+    "unit": "relative amplitude / px",
+    "classification": "PC, UE if nonzero",
+    "basis": "kernels disabled, historical width shown for provenance",
+    "owner": "excluded gain"
+  },
+  {
+    "name": "tile",
+    "value": {
+      "w": 352,
+      "h": 320,
+      "cap": 100000
+    },
+    "unit": "px / expected samples per slab",
+    "classification": "PC / UE if rescaled",
+    "basis": "352 × 320 canvas. Strict mode rejects expected demand above 100,000 samples per slab, before rounding each diameter bin and drawing wrap copies. Realized samples can exceed 100,000 at scale 1. Original clip profile used 9,000 with compensation.",
+    "owner": "dimensions fixed in study; budget G-9; rescale excluded"
+  },
+  {
+    "name": "render",
+    "value": {
+      "alphaCap": 0.92,
+      "lineMin": 1,
+      "lineFloor": 0,
+      "lineMax": 2.2,
+      "ytop": 8,
+      "ybot": 300,
+      "yfade": 255,
+      "sunDimMinDeg": 3
+    },
+    "unit": "relative alpha, px, degrees",
+    "classification": "PC / UE if additive floor",
+    "basis": "Near cap, min/max widths and zero additive width are effective near controls. Row extents and Sun floor are declarations duplicated by inline literals. Texture has its own 0.9 cap and 1 px width.",
+    "owner": "G-1/G-7; nonzero additive floor excluded"
+  },
+  {
+    "name": "enforceDeclaredGain",
+    "value": true,
+    "unit": "boolean",
+    "classification": "PC integrity control",
+    "basis": "Strict research guard enforces zero additive floor/kernels and rejects shell/tile compensating gains. The guard grants no evidence for perceptual gain or source custody.",
+    "owner": "fixed strict study"
+  }
+]

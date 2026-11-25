@@ -46,6 +46,10 @@
   "tests/r0024-response-zone.test.cjs",
   "tests/r0024-weather.test.cjs",
   "tests/r0028-closure-index.test.cjs",
+  "tests/r002f-a2-architecture.test.cjs",
+  "tests/r002f-a2-preview-transaction.test.cjs",
+  "tests/r002f-a2-quarantine.test.cjs",
+  "tests/r002f-a2-resume-observer.test.cjs",
   "tests/r0030-reset-authority-mutations.test.cjs",
   "tests/r0030-reset-authority.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
@@ -53,6 +57,8 @@
   "tests/r0033-isolation.test.cjs",
   "tests/r0033-lunar-surface-gate.test.cjs",
   "tests/r0033-moonlight-gate-controls.test.cjs",
+  "tests/r0035-replay.test.cjs",
+  "tests/r0035-star-scope.test.cjs",
   "tests/r0036-acquisition-flags.test.cjs",
   "tests/r0036-diagnostic-purity.test.cjs",
   "tests/r0036-outcome-records.test.cjs",
@@ -61,6 +67,13 @@
   "tests/r0038-f12-moon-lightkey-reset.test.cjs",
   "tests/r003a-cloud-wind-truth.test.cjs",
   "tests/r003a-docs-truth.test.cjs",
+  "tests/r003f-candidates.test.cjs",
+  "tests/r003f-horizon.test.cjs",
+  "tests/r003f-network.test.cjs",
+  "tests/r003f-p1.test.cjs",
+  "tests/r0040-options.test.cjs",
+  "tests/r0040-parameters.test.cjs",
+  "tests/r0040-rain-controls.test.cjs",
   "tests/r0041-presenter-census.test.cjs",
   "tests/r0041-preview-clear.test.cjs",
   "tests/radar-acquisition-scope.test.cjs",
@@ -1481,6 +1494,75 @@
     "real-sky/native-host.mjs",
     "real-sky/native-preview.mjs"
    ]
+  },
+  {
+   "name": "r003f-surface-gains",
+   "owner": "R003F",
+   "argv": [
+    "node",
+    "tools/qa/r003f_gain.cjs",
+    "--size",
+    "160",
+    "--out",
+    "{receipt}/r003f-gains.json"
+   ],
+   "protocol": "case-lines",
+   "expectedCases": 18,
+   "covers": [
+    "tools/qa/r003f_gain.cjs"
+   ],
+   "inputs": [
+    "tools/qa/r003f_gain.cjs",
+    "moon/asset-manifest.json",
+    "moon/moon_kernel.wasm",
+    "moon/assets/dem.bin.gz",
+    "moon/assets/colour.bin.gz",
+    "moon/src/asset-digest.mjs",
+    "moon/src/surface_v5.mjs",
+    "moon/src/moon-detail.mjs",
+    "moon/src/moon-calendar.mjs",
+    "moon/src/moon-engine.mjs",
+    "moon/src/moon-quality.mjs",
+    "moon/src/moon-precision.mjs"
+   ],
+   "timeout": 300
+  },
+  {
+   "name": "r003f-publication-paths",
+   "owner": "R003F",
+   "argv": [
+    "node",
+    "tools/qa/r003f_material.cjs",
+    "--out",
+    "{receipt}/r003f-publication-paths.json"
+   ],
+   "protocol": "case-lines",
+   "expectedCases": 1,
+   "timeout": 360,
+   "covers": [
+    "tools/qa/r003f_material.cjs"
+   ],
+   "inputs": [
+    "tools/qa/r003f_material.cjs",
+    "tools/qa/r003f_variants.cjs",
+    "index.html",
+    "moon/src/moon-calendar.mjs",
+    "moon/src/moon-initial.mjs",
+    "moon/src/moon-initial-compact.mjs",
+    "moon/src/moon-engine.mjs",
+    "moon/src/moon-detail.mjs",
+    "moon/src/moon-quality.mjs",
+    "moon/src/asset-digest.mjs",
+    "moon/src/surface_v5.mjs",
+    "moon/asset-manifest.json",
+    "moon/initial-compact-manifest.json",
+    "moon/moon_kernel.wasm",
+    "moon/assets/dem.bin.gz",
+    "moon/assets/colour.bin.gz",
+    "docs/state-contracts/evidence/R003F/compact-initial-gains.json",
+    "docs/state-contracts/evidence/R003F/surface-gains.json",
+    "real-sky/native-cloud-transfer.mjs"
+   ]
   }
  ],
  "modules": [
@@ -1611,6 +1693,45 @@
   {
    "path": "tests/r0033-fake-playwright.cjs",
    "reason": "imported fake of the Playwright surface used by the R0033 isolation module and recipes (records call order, replays synthetic requests through the installed routes); harness of tests/r0033-isolation-wiring.test.cjs, not an instrument"
+  },
+  {
+   "path": "tests/r0040-rain-controls.cjs",
+   "reason": "R0040 synthetic source fixture, comparator and optional baseline measurement CLI imported by r0040-rain-controls.test.cjs"
+  },
+  {
+   "path": "tools/qa/r003f_p1.cjs",
+   "owner": "R003F",
+   "reason": "R003F same-session reference mask and clipped-annulus pixel statistics, tested by tests/r003f-p1.test.cjs"
+  },
+  {
+   "path": "tests/r003f-matrix-fixture.cjs",
+   "owner": "R003F",
+   "reason": "Synthetic transport and RGBA controls for the private native matrix entry test."
+  },
+  {
+   "path": "tools/qa/r003f_capture.cjs",
+   "owner": "R003F",
+   "reason": "Loopback serving and common fixture, native telemetry and UI masks for both capture entries."
+  },
+  {
+   "path": "tools/qa/r003f_diagnostics.cjs",
+   "owner": "R003F",
+   "reason": "P1 CIELAB, terrain, occlusion, terminator, motion and buckle statistics exercised in tests/r003f-candidates.test.cjs."
+  },
+  {
+   "path": "tools/qa/r003f_grid.cjs",
+   "owner": "R003F",
+   "reason": "Phase, weather, altitude, repeat and engine/DPR axes for private capture and sheet completeness."
+  },
+  {
+   "path": "tools/qa/r003f_receipt.cjs",
+   "owner": "R003F",
+   "reason": "Native archive replay and artifact binding invoked by the private sheet collector and adversarial fixture tests."
+  },
+  {
+   "path": "tools/qa/r003f_motion.cjs",
+   "owner": "R003F",
+   "reason": "F-TR-2 accelerated native capture, consumed-minute alignment, lossless clip and DB3 comparison."
   }
  ],
  "exclusions": [
@@ -2187,6 +2308,197 @@
     ],
     "protocol": "one JSON line on stdout and <out>/result.json with the isolation verdict, card and Moon-slot PNGs, <out>/<cell>-<engine>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 15.5)"
    }
+  },
+  {
+   "path": "tests/r0040-gain-controls.cjs",
+   "reason": "exercises the separately pinned rain research prototype after applying the R0040 research patch",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tests/r0040-gain-controls.cjs",
+     "<patched research checkout>"
+    ],
+    "protocol": "assertion exit status; R40-C1 cap, additive width and light-kernel negative controls"
+   }
+  },
+  {
+   "path": "tools/qa/r0040/capture.cjs",
+   "reason": "External-browser research recipe requiring an explicit generated checkout and native engine.",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0040/capture.cjs",
+     "<playwright>",
+     "<patched research tree>",
+     "<generated tree>",
+     "<fresh dir>",
+     "<engine>",
+     "<block>",
+     "<condition>",
+     "<model>"
+    ],
+    "protocol": "Exit 0 writes raw PNGs and capture.json. Qualification requires an independent lossless_pack.py verdict."
+   }
+  },
+  {
+   "path": "tools/qa/r0040/native-options.cjs",
+   "reason": "External-browser research recipe requiring an explicit generated checkout and native engine.",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0040/native-options.cjs",
+     "<playwright>",
+     "<research tree>",
+     "<generated patched tree>",
+     "<fresh dir>",
+     "<engine>"
+    ],
+    "protocol": "Exit 0 writes measured computed styles, full-card PNGs and native-options.json. Human judgement remains separate."
+   }
+  },
+  {
+   "path": "tools/qa/r003f_owner_baseline.cjs",
+   "reason": "native P1 B0 measurement requires a git archive, isolated Playwright engine and PNG decoder; network refusal and escape controls run in tests/r003f-network.test.cjs",
+   "owner": "R003F",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r003f_owner_baseline.cjs",
+     "--root",
+     "<runtime git archive>",
+     "--out",
+     "<fresh owner-private directory>",
+     "--engine",
+     "<chromium|firefox|webkit>",
+     "--dpr",
+     "<1|2>"
+    ],
+    "protocol": "summary.json, network.jsonl, outside-repeat.jsonl, and four synthetic card PNGs. Exit 0 measured, 2 incomplete, 3 isolation failure, 4 calendar-light Andon."
+   }
+  },
+  {
+   "path": "tools/qa/r003f_matrix.cjs",
+   "owner": "R003F",
+   "reason": "Native P1 scenes require a Playwright engine, pngjs, a git archive and private output. F-TR-2 also requires ffmpeg.",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r003f_matrix.cjs",
+     "--root",
+     "<runtime git archive>",
+     "--id",
+     "<ID from --list>",
+     "--engine",
+     "<engine>",
+     "--dpr",
+     "<DPR>",
+     "--out",
+     "<fresh private directory>"
+    ],
+    "protocol": "summary.json and frame hashes, network ledger, pixel census and (for motion) 1 fps clip. Exit 0 acquired, 2 incomplete, 3 isolation, 4 Andon."
+   }
+  },
+  {
+   "path": "tools/qa/r003f_sheets.py",
+   "owner": "R003F",
+   "reason": "Private owner sheets and cross-cell summaries require an acquired native capture population.",
+   "recipe": {
+    "argv": [
+     "python",
+     "tools/qa/r003f_sheets.py",
+     "--reports",
+     "<native captures>",
+     "--out",
+     "<fresh private directory>"
+    ],
+    "protocol": "Verified input hashes, PNG sheets and sheets.json with missing cells; exit 2 if incomplete."
+   }
+  },
+  {
+   "path": "tools/qa/r003f_sky_sublayer.cjs",
+   "owner": "R003F",
+   "reason": "Offline numerical sky field and lunar projection research matrix; the expensive full/owner runs are retained as evidence, with compulsory publication-path controls registered separately.",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r003f_sky_sublayer.cjs",
+     "--out",
+     "<fresh receipt>"
+    ],
+    "protocol": "Nine canonical fractions, both senses, three physical sky fields, both receiver tiers, eight treatments. --owner runs two fractions with empirical-adaptive reference and calendar. Exit zero only after the complete numerical receipt is written."
+   }
+  },
+  {
+   "path": "tools/qa/r003f_transition_sublayer.cjs",
+   "owner": "R003F",
+   "reason": "Dedicated offline research sweep across 85 altitude and 100 advancing clear-sky geometry/phase cells, using the production native sky engine and synthetic presentation footprint. Not a native browser capture.",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r003f_transition_sublayer.cjs",
+     "--out",
+     "<fresh receipt>"
+    ],
+    "protocol": "Numerical transition-sublayer receipt, raw geometry and lit values, bounded DB1/DB3 controls; exit zero after the entire sweep runs."
+   }
+  },
+  {
+   "path": "tools/qa/r002f_a2_resume.cjs",
+   "reason": "R002F-A2 bounded source-state observation recipe; not a native-pixel acceptance test. It records stale/current results and a test-only synchronous-render positive control. Observer controls run in tests/r002f-a2-resume-observer.test.cjs. --require-current intentionally exits 1 when the measured source differs at either checkpoint.",
+   "owner": "R002F-A2 (issue 96)",
+   "recipe": [
+    "node",
+    "tools/qa/r002f_a2_resume.cjs",
+    "index.html",
+    "<new-output.json>"
+   ],
+   "protocol": "JSON r002f-a2-resume-source/2; executed config, source and fixture hashes, independently specified fields, callback and fault evidence, and explicit VM-only limits; errors exit 2"
+  },
+  {
+   "path": "tools/qa/r002f_a2_architecture.cjs",
+   "reason": "R002F-A2 experimental shared prayer publisher, single preview upload, and actual admission predicates; does not install production changes. Its controls run in the registered architecture test.",
+   "owner": "R002F-A2 (issue 96)",
+   "recipe": [
+    "node",
+    "tools/qa/r002f_a2_architecture.cjs",
+    "<new-output.json>"
+   ],
+   "protocol": "JSON r002f-a2-architecture/1; source-state and fixture hashes, explicit limits; errors exit 2. --prepare writes three preimage-bound research patches to a fresh directory."
+  },
+  {
+   "path": "tools/qa/r002f_a2_quarantine.cjs",
+   "reason": "R002F-A2 opt-in runtime transformation evaluating hidden-data quarantine with the real lifecycle source and boundary doubles; no production policy adoption. Controls run in the registered quarantine test.",
+   "owner": "R002F-A2 (issue 96)",
+   "recipe": [
+    "node",
+    "tools/qa/r002f_a2_quarantine.cjs",
+    "<new-output.json>"
+   ],
+   "protocol": "JSON r002f-a2-quarantine/1; original and transformed source hashes, hide/re-admission/fault/revocation controls; errors exit 2."
+  },
+  {
+   "path": "tools/qa/r002f-transaction/materialize.cjs",
+   "reason": "Emit the disposable transaction source patch and digest manifest against reviewed preimages.",
+   "owner": "R002F-A2 research, issue 96",
+   "recipe": [
+    "node",
+    "tools/qa/r002f-transaction/materialize.cjs",
+    "<fresh-output-dir>"
+   ],
+   "protocol": "Exit 0 for a fresh successful materialization; nonzero on drift or existing destination."
+  },
+  {
+   "path": "tools/qa/r002f-transaction/experiment.cjs",
+   "reason": "Record individual write and selection events from the actual preview and projection source. The registered transaction tests assert the results.",
+   "owner": "R002F-A2 research, issue 96",
+   "recipe": [
+    "node",
+    "tools/qa/r002f-transaction/experiment.cjs"
+   ],
+   "protocol": "Print source-only JSON; nonzero on an acquisition/fixture error."
   }
  ]
 }

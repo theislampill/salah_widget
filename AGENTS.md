@@ -250,7 +250,10 @@ never the check colour. After a merge, the delivery step reads the public bytes 
 `tools/qualification/delivery_identity.py --commit <merge sha>` (workflow `delivery-identity.yml`); a
 certificate cites that receipt, and only an `identical` verdict for the exact commit. The suites job installs
 exactly two hash-locked wheels (`numpy`, `scipy`, `tools/qualification/gate-requirements.txt`) that the vendor
-scientific suite imports; it is the gate's only network use beyond checkout and pinned actions. Declared counts are
+scientific suite imports. It also installs the exact integrity-locked `pngjs@7.0.0` package from
+`tools/qualification/node/package-lock.json` into runner temporary storage for the R003F PNG evidence controls,
+with lifecycle scripts, audit and funding requests disabled. These are the gate's only package downloads beyond
+checkout and pinned actions. Declared counts are
 host-conditional: the Linux runner declares three fewer entries (R28-L12/L14/L17, condition `symlink-unavailable`)
 than a host that cannot create symlinks.
 See `docs/state-contracts/R002A.md`.

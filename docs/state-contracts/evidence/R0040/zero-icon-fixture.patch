@@ -1,0 +1,12 @@
+--- a/tests/r0040-rain-controls.test.cjs
++++ b/tests/r0040-rain-controls.test.cjs
+@@ -42,7 +42,8 @@
+   for (const category of ['rain', 'overcast']) {
+     for (const row of zeroRows) {
+       row.category = category;
+-      row.icon = cells.amounts.find(v => v.lane === row.lane && v.category === category && v.inputAmount !== 0).icon;
++      const iconInput = category === 'rain' ? {code:63,amount:1.25} : {code:3,amount:null};
++      row.icon = cells.amounts.find(v => v.lane === row.lane && v.inputCode === iconInput.code && v.inputAmount === iconInput.amount).icon;
+       const label = (row.lane === 'live' ? 'Current: Model estimate' : 'Current: SIM weather preview') +
+         ' — ' + category + '; no measurable amount; not observed';
+       row.title = row.ariaLabel = row.currentText = label;
