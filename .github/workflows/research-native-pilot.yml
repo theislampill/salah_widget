@@ -28,6 +28,9 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /tools/qa/hosted-native/
+            /docs/state-contracts/R0040-native-capture-preflight.md
+            /docs/state-contracts/evidence/R0040/native-capture-preflight.json
+            /docs/state-contracts/evidence/R0040/native-capture-preparation-controls.json
             /.github/workflows/research-native-pilot.yml
       - name: Set up pinned Node runtime
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
@@ -78,6 +81,11 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /tools/qa/precip_eval_lib.cjs
+            /tools/qa/precip_models_geom.js
+            /tools/qa/precip_declared_gain.json
+            /tools/qa/precip_models.js
+            /tools/qa/precip_models_capture.cjs
+            /tools/qa/precip_models_post.py
       - name: Create fresh private capture root
         id: private
         shell: bash

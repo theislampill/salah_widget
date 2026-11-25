@@ -28,11 +28,11 @@ privately with the observations.
 
 ### Conditional campaign selection and evidence retention
 
-The checked-in follow-up campaign selects corrected Chromium R003F B0 at DPR1,
-R0035 timing with its existing guard-disable and preview-members diagnostics,
-then R002F at DPR3 for two rounds of both sections. Evidence retention remains
-disabled. Original default-guard and guard-disabled full-scope failures are
-preserved. R0040's separate capture preparation continues independently.
+The checked-in follow-up selects one revised R0040 Chromium capture on genuine
+main (`bday`, `moderate`, `M1`, common dispersion), corrected R003F B0 at DPR2,
+then R002F DPR1 for five rounds of prayer restoration only. The rain capture always uses its reviewed
+final-state wrapper; generic evidence retention remains disabled. Previous
+option-cell, lunar, star and preview results remain separate, unchanged evidence.
 Campaigns can set these optional fields after the preceding evidence has been
 inspected:
 
@@ -42,6 +42,7 @@ inspected:
 | `evidenceRetention` | A boolean, default `false`. When `true`, selected R0040/R0035 lanes execute their exact original source through the reviewed supplemental wrappers. R003F/R002F commands are unchanged. |
 | `r0035` | Optional dictionary with `guard: default` or `off`, `scope: all` or `preview-members`, and `mode: both`, `timing` or `capture`. Defaults preserve the original commands. Explicit controls require selected R0035 observations. Unknown fields and values are rejected. |
 | `r003fHarness` | `published` (the original recipe, default) or `corrected-b0` (source-pinned MIME correction and full-UI admission). The latter requires selected R003F observations and separately admitted helper preparation. |
+| `r0040Mode` | `options` (unchanged nine-option default) or `capture` (only reviewed Chromium/bday/moderate/M1/common on genuine main). Capture requires selected R0040, separate guarded preparation and its final-state wrapper. |
 
 Unknown, duplicate, empty or malformed selections are rejected. R002F selection
 must agree with `r002f.enabled` in both directions. When `workOrders` is absent,
@@ -52,6 +53,18 @@ The selection, retention mode, diagnostic controls and every argument remain in 
 receipts. Selection limits observations; the existing common source preparation
 and original star-plan guards still run. R002F preparation remains conditional
 on its enabled/selected state.
+
+R0040 capture preparation is also conditional. The workflow acquires all six
+historical helper/model/profile inputs and three reviewed preflight documents;
+the research checkout already includes the required two complete patches and
+12 declared inputs. Both actual preparation-entry exit zero and successful
+guarded-recipe child receipts are required. The planner invokes the reviewed
+read-only source guard on all six patched historical files, 12 research inputs,
+116 generated members and 177 main runtime files. An incomplete optional rain
+preparation blocks only that selected lane. Original patch receipts and partial
+logs remain under private capture; disposable source remains under `work`.
+The native wrapper repeats source admission before any original driver or
+Playwright import. Exact commands and paths are in [LANES.md](LANES.md).
 
 The guard-disabled diagnostic adds only `r35guard=off` to both experimental
 arms. This existing lab switch removes both guard suspension and the guard's
@@ -160,6 +173,16 @@ passed qualification. A failed admission stays `FAIL`; missing acquisition stays
 `INCOMPLETE`. Abnormal namespace completion overrides any inner pass, retains both
 records and stops all later lanes as `ISOLATION_UNCONFIRMED` unless an actual
 isolation failure is already recorded.
+
+The revised R0040 capture has the separate status
+`ADMITTED_FOR_OFFLINE_VERIFICATION`, requiring actual child exit zero, its raw
+report and the exact final wrapper receipt after cleanup. Native qualification
+remains `NOT_VERIFIED`; `OBSERVED` is an acquisition summary and cannot claim
+that the lossless verifier passed. Missing/partial custody remains incomplete,
+and original or late acquisition failures remain failed. After private retrieval,
+run the unchanged `lossless_pack.py cell` with `pins-revised.json` in the existing
+Pillow/cryptography environment. No package is added to hosted acquisition and
+no original frame-count, gap, average-rate or pixel gate changes.
 
 For an instrumented R0040/R0035 child, exit `86` instead records
 `EXTERNAL_CONTINUATION_VETOED`: the wrapper prevented an attempted external

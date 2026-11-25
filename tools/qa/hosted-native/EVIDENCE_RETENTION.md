@@ -69,6 +69,15 @@ default invocations. Later campaigns are described in [LANES.md](LANES.md), incl
 conditional work-order selection and
 `--retain-evidence`/campaign `evidenceRetention` controls.
 
+The later revised rain capture has a separate source packet and final-state
+wrapper, described in [R0040_CAPTURE_RETENTION.md](R0040_CAPTURE_RETENTION.md).
+`r0040Mode: capture` selects that bounded cell and always retains its terminal
+admission, even when generic `evidenceRetention` is false. The original capture
+report is necessary but insufficient: the actual child and cleanup receipt must
+also complete. Its successful status is `ADMITTED_FOR_OFFLINE_VERIFICATION`;
+the original lossless verifier still runs after private retrieval. The source
+preparation entry and its child receipts remain separate in private capture.
+
 ## Invocation and exact binding
 
 The coordinator supplies the existing `SALAH_HOSTED_NATIVE_ISOLATION_RECEIPT`.

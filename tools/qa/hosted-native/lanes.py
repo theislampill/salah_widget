@@ -12,16 +12,104 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 
 from prepare import BASELINE, RESEARCH, digest, validate_prepared, verify_generated, write_json
 from r002f_prepare import BASE_INDEX, COMBINED_INDEX, BASE_INVENTORY, COMBINED_INVENTORY, PATCH
+from r0040_capture_prepare import load_contract as load_r0040_contract
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
 WORK_ORDERS = ('R0040', 'R003F', 'R0035', 'R002F')
 STAR_DEFAULTS = {'guard': 'default', 'scope': 'all', 'mode': 'both'}
 R003F_MATERIALIZATION = 'fab2e2ad49a14eee2ba715fb75365fa4b0abfa48a1d8b60247343ad29b1021e5'
+R0040_MANIFEST = HERE.parents[2]/'docs/state-contracts/evidence/R0040/native-capture-preflight.json'
+R0040_MANIFEST_SHA256 = '267f2fd8ac130c049430ffdaa0fd50b72457c60084b49360346748cc940f6b73'
+R0040_CAPTURE_WRAPPER_SHA256 = 'd252e345225c0d3565c0c2a321324ca206083ba371eb43654193d422f9b2235f'
+R0040_PREPARER_SHA256 = '4ba6328ee9fe96aec4a96109c58d0d67e0d3e434756829fbe247816bcd001f68'
+
+
+def rain_mode(value, selected, engine):
+    if not isinstance(value, str) or value not in ('options', 'capture'):
+        raise ValueError('unsupported R0040 mode')
+    if value == 'capture' and ('R0040' not in selected or engine != 'chromium'):
+        raise ValueError('R0040 capture requires selected R0040 and the reviewed Chromium cell')
+    return value
+
+
+def admit_r0040(prepared, work, process_path, entry_path, out, node, module):
+    """The actual outer exit and unchanged read-only source guard both gate capture."""
+    admission = {'status': 'INCOMPLETE'}
+    try:
+        work, process_path, entry_path = (Path(p).absolute() for p in (work, process_path, entry_path))
+        for path in (process_path, entry_path):
+            if any(p.is_symlink() for p in (path, *path.parents)) or not path.is_file():
+                raise ValueError('regular R0040 preparation receipts required')
+        entry = json.loads(entry_path.read_text())
+        admission['entryReceipt'] = {'path': str(entry_path), 'sha256': digest(entry_path)}
+        if (entry.get('protocol') != 'r0040-capture-preparation-entry/1'
+                or type(entry.get('returncode')) is not int or entry['returncode'] != 0
+                or entry.get('timedOut') is not False or entry.get('wrapperSha256') != R0040_PREPARER_SHA256
+                or entry.get('retentionError')):
+            raise ValueError('R0040 preparation entry did not complete successfully')
+        child = json.loads(process_path.read_text())
+        admission['processReceipt'] = {'path': str(process_path), 'sha256': digest(process_path)}
+        if (child.get('protocol') != 'r0040-capture-preparation-process/1' or child.get('status') != 'PREPARED'
+                or child.get('nativeStatus') != 'NOT_RUN' or type(child.get('returncode')) is not int
+                or child['returncode'] != 0 or child.get('timedOut') is not False):
+            raise ValueError('R0040 guarded recipe child did not complete successfully')
+        research = Path(prepared['sources']['research']['root']).resolve()
+        historical = Path(prepared['sources']['historical']['root']).resolve()
+        main = Path(prepared['trees']['main']['root']).resolve()
+        expected_inputs = {'manifest': str(R0040_MANIFEST), 'research': str(research), 'historical': str(historical),
+                           'main': str(main), 'out': str(work)}
+        if child.get('inputs') != expected_inputs:
+            raise ValueError('R0040 preparation input paths differ from this campaign')
+        if (digest(HERE/'r0040_capture_prepare.py') != R0040_PREPARER_SHA256
+                or digest(HERE/'retain_r0040_capture.cjs') != R0040_CAPTURE_WRAPPER_SHA256):
+            raise ValueError('R0040 preparation or capture source differs from review')
+        manifest, _ = load_r0040_contract(R0040_MANIFEST)
+        original = work/'receipts/prepared.json'
+        options = {'driver': str(research/'tools/qa/r0040/capture.cjs'), 'manifest': str(R0040_MANIFEST),
+                   'prepared': str(original), 'preparationProcess': str(process_path),
+                   'evidence': str(out/'r0040-chromium-capture-retention')}
+        argv = list(map(str, (module, work/'historical', main, out/'r0040-chromium-capture',
+                              'chromium', 'bday', 'moderate', 'M1')))
+        # This exported guard imports no browser. It rechecks the actual twelve
+        # research, six patched historical, 116 generated and 177 runtime files.
+        check = ('const m=require(process.argv[1]); '
+                 'process.stdout.write(JSON.stringify(m.verifySources(JSON.parse(process.argv[2]),JSON.parse(process.argv[3]))));')
+        env = dict(os.environ, R0040_DISPERSION='common')
+        for key in ('R0040_OPTIONS', 'NODE_OPTIONS'): env.pop(key, None)
+        try:
+            result = subprocess.run([str(node), '-e', check, str(HERE/'retain_r0040_capture.cjs'),
+                                     json.dumps(options), json.dumps(argv)], cwd=research, env=env,
+                                    capture_output=True, text=True, timeout=90)
+        except subprocess.TimeoutExpired as error:
+            def retained(value):
+                return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
+            admission['sourceCheck'] = {'returncode': None, 'timedOut': True,
+                                        'stdout': retained(error.stdout), 'stderr': retained(error.stderr)}
+            raise
+        admission['sourceCheck'] = {'returncode': result.returncode, 'timedOut': False}
+        if result.returncode != 0:
+            admission['sourceCheck'].update(stdout=result.stdout, stderr=result.stderr)
+            raise ValueError('R0040 actual source admission failed: '+result.stderr)
+        checked = json.loads(result.stdout)
+        wanted = {'historical': manifest['stages'][-1]['files'], 'research': manifest['researchInputs'],
+                  'main': manifest['main']['runtimeFiles']}
+        if (checked.get('sources') != wanted or {k: len(v) for k, v in wanted.items()}
+                != {'historical': 6, 'research': 12, 'main': 177}
+                or checked.get('custody', {}).get('manifestSha256') != R0040_MANIFEST_SHA256):
+            raise ValueError('R0040 actual source admission population or custody is incomplete')
+        admission.update(status='PASS', work=str(work), manifest=str(R0040_MANIFEST), prepared=str(original),
+                         process=str(process_path), wrapperSha256=R0040_CAPTURE_WRAPPER_SHA256,
+                         sourceCustody=checked['custody'], verifiedPopulation={k: len(v) for k, v in wanted.items()},
+                         expectedCapture=manifest['plannedNativeCell']['expectedCapture'], pins=manifest['pins'])
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, subprocess.SubprocessError) as error:
+        admission['reason'] = str(error)
+    return admission
 
 
 def moon_harness(value, selected):
@@ -147,7 +235,8 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
               engine='chromium', r003f_dpr=1, include_r002f=False, r002f_preparation=None,
               r002f_dpr=1, r002f_rounds=1, r002f_section='all', work_orders=None, retain_evidence=False,
               r0035_guard='default', r0035_scope='all', r0035_mode='both',
-              r003f_harness='published', r003f_preparation=None):
+              r003f_harness='published', r003f_preparation=None,
+              r0040_mode='options', r0040_preparation=None):
     if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
         raise ValueError('unsupported engine or R003F DPR')
     if (type(include_r002f) is not bool or type(r002f_dpr) is not int or r002f_dpr not in (1, 2, 3)
@@ -155,6 +244,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
             or r002f_section not in ('all', 'prayer', 'preview')):
         raise ValueError('unsupported R002F campaign controls')
     selected = selected_work_orders(work_orders, include_r002f)
+    rain_mode(r0040_mode, selected, engine)
     moon_harness(r003f_harness, selected)
     stars = star_controls({'guard': r0035_guard, 'scope': r0035_scope, 'mode': r0035_mode})
     if stars != STAR_DEFAULTS and 'R0035' not in selected:
@@ -186,12 +276,35 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         entries.append(row)
         return row
 
-    rain = lane(f'r0040-{engine}', 'R0040', 1, 720, 'r0040-options', 'native-options.json',
-                {'0': 'MEASURED', '1': 'FAIL'})
-    rain['argv'] = list(map(str, [node, research / 'tools/qa/r0040/native-options.cjs', module,
-                                 historical, roots['r0040'], rain['output'], engine]))
-    rain['result']['expectedCells'] = ['day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
-                                      'reduced-none', 'reduced-still', 'motion-full', 'dry']
+    if r0040_mode == 'capture':
+        rain = lane('r0040-chromium-capture', 'R0040', 1, 180, 'r0040-capture', 'capture.json',
+                    {'0': 'ADMITTED_FOR_OFFLINE_VERIFICATION', '1': 'FAIL', '86': 'EXTERNAL_CONTINUATION_VETOED'})
+        admission = r0040_preparation or {'status': 'INCOMPLETE', 'reason': 'R0040 capture preparation is missing'}
+        rain['preparation'] = admission
+        rain['env']['R0040_DISPERSION'] = 'common'; rain['clearEnv'] = ['R0040_OPTIONS']
+        evidence = str(out/(rain['id']+'-retention'))
+        rain['stopAllOnExit'] = [86]
+        rain['evidenceRetention'] = {'instrumented': True, 'output': evidence, 'timingComparableToOriginal': False,
+                                    'overhead': 'Host request/error/cleanup serialization and fsync; PNGs are hashed after capture. No added CDP frame listener or per-frame copies.'}
+        rain['result']['finalAdmissionPath'] = str(Path(evidence)/'final-admission.json')
+        rain['argv'] = []
+        if admission.get('status') == 'PASS':
+            original = list(map(str, [node, research/'tools/qa/r0040/capture.cjs', module,
+                                      Path(admission['work'])/'historical', roots['main'], rain['output'],
+                                      'chromium', 'bday', 'moderate', 'M1']))
+            rain['evidenceRetention']['originalArgv'] = original
+            rain['argv'] = [str(node), str(HERE/'retain_r0040_capture.cjs'), '--driver', original[1],
+                            '--manifest', admission['manifest'], '--prepared', admission['prepared'],
+                            '--preparation-process', admission['process'], '--evidence', evidence, '--', *original[2:]]
+            rain['result'].update(expectedCapture=admission['expectedCapture'], pins=admission['pins'],
+                                  wrapperSha256=R0040_CAPTURE_WRAPPER_SHA256)
+    else:
+        rain = lane(f'r0040-{engine}', 'R0040', 1, 720, 'r0040-options', 'native-options.json',
+                    {'0': 'MEASURED', '1': 'FAIL'})
+        rain['argv'] = list(map(str, [node, research / 'tools/qa/r0040/native-options.cjs', module,
+                                     historical, roots['r0040'], rain['output'], engine]))
+        rain['result']['expectedCells'] = ['day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
+                                          'reduced-none', 'reduced-still', 'motion-full', 'dry']
 
     moon = lane(f'r003f-b0-{engine}-dpr{r003f_dpr}', 'R003F', r003f_dpr, 900, 'r003f-b0', 'summary.json',
                 {'0': 'MEASURED', '1': 'FAIL', '2': 'INCOMPLETE', '3': 'ISOLATION FAIL', '4': 'ANDON'})
@@ -244,6 +357,8 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         for row in entries:
             if row['workOrder'] not in ('R0040', 'R0035'):
                 continue
+            if row['result']['kind'] == 'r0040-capture':
+                continue
             original = row['argv']
             evidence = str(out/(row['id']+'-retention'))
             wrapper = HERE/('retain_r0040.cjs' if row['workOrder'] == 'R0040' else 'retain_r0035.py')
@@ -261,6 +376,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
             'workOrders': selected, 'evidenceRetention': retain_evidence,
             'r0035Controls': stars,
             'r003fHarness': r003f_harness,
+            'r0040Mode': r0040_mode,
             'r0035PlanPath': str(star_plan_path), 'r0035Plan': star_plan, 'lanes': entries,
             'failurePolicy': {'isolation': 'stop all observations', 'R003FAndon': 'stop R003F progression',
                               'externalContinuationVeto': 'stop all observations; prevented continuation is not an actual network escape',
@@ -314,6 +430,10 @@ def main():
     parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0'), default='published')
     parser.add_argument('--r003f-prepared', type=Path)
     parser.add_argument('--r003f-process', type=Path)
+    parser.add_argument('--r0040-mode', choices=('options', 'capture'), default='options')
+    parser.add_argument('--r0040-work', type=Path)
+    parser.add_argument('--r0040-process', type=Path)
+    parser.add_argument('--r0040-entry-process', type=Path)
     parser.add_argument('--work-orders', nargs='+')
     parser.add_argument('--retain-evidence', action='store_true')
     parser.add_argument('--r0035-guard', choices=('default', 'off'), default='default')
@@ -339,6 +459,11 @@ def main():
                  if args.r002f_prepared and args.r002f_process else None)
         r003f = (admit_r003f(args.r003f_prepared, args.r003f_process)
                  if args.r003f_harness == 'corrected-b0' else None)
+        r0040 = (admit_r0040(prepared, args.r0040_work, args.r0040_process, args.r0040_entry_process,
+                             out, args.node, args.node_modules/'playwright')
+                 if args.r0040_mode == 'capture' else None)
+        if r0040 and r0040['status'] == 'PASS':
+            roots.append(Path(r0040['work']))
         if r003f and r003f['status'] == 'PASS':
             roots.append(Path(r003f['root']))
         if r002f and r002f['status'] == 'PASS':
@@ -357,7 +482,8 @@ def main():
                          r002f_rounds=args.r002f_rounds, r002f_section=args.r002f_section,
                          work_orders=args.work_orders, retain_evidence=args.retain_evidence,
                          r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode,
-                         r003f_harness=args.r003f_harness, r003f_preparation=r003f)
+                         r003f_harness=args.r003f_harness, r003f_preparation=r003f,
+                         r0040_mode=args.r0040_mode, r0040_preparation=r0040)
         check_star_plan(prepared, plan['r0035Plan'])
         write_json(Path(plan['r0035PlanPath']), plan['r0035Plan'])
         plan['preparedReceipt'] = {'path': str(args.prepared.resolve()), 'sha256': digest(args.prepared)}

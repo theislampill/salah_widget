@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Offline preparation/admission controls. No browser is imported or launched."""
 import hashlib
+import copy
 import importlib.util
 import json
 import os
@@ -10,6 +11,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -197,6 +199,121 @@ class LaneControls(unittest.TestCase):
         self.assertEqual(moon['exitStatuses']['3'], 'ISOLATION FAIL')
         self.assertEqual(moon['exitStatuses']['4'], 'ANDON')
         self.assertEqual(moon['stopScopeOnAndon'], 'R003F')
+
+    def rain_admission(self):
+        manifest = json.loads((ROOT/'docs/state-contracts/evidence/R0040/native-capture-preflight.json').read_text())
+        return {'status': 'PASS', 'work': '/private/work/rain-capture',
+                'manifest': str(ROOT/'docs/state-contracts/evidence/R0040/native-capture-preflight.json'),
+                'prepared': '/private/work/rain-capture/receipts/prepared.json',
+                'process': '/private/control/rain-preparation/process.json',
+                'wrapperSha256': 'd252e345225c0d3565c0c2a321324ca206083ba371eb43654193d422f9b2235f',
+                'expectedCapture': manifest['plannedNativeCell']['expectedCapture'], 'pins': manifest['pins']}
+
+    def test_capture_plan_uses_exact_revised_cell_and_separate_private_retention(self):
+        admission = self.rain_admission()
+        original = self.plan()
+        plan = self.plan(r0040_mode='capture', r0040_preparation=admission)
+        self.assertEqual(plan['r0040Mode'], 'capture')
+        rain = plan['lanes'][0]
+        self.assertEqual(plan['lanes'][1:], original['lanes'][1:])
+        self.assertEqual(rain['id'], 'r0040-chromium-capture')
+        self.assertEqual(rain['timeoutSeconds'], 180)
+        expected = ['/dependencies/node', str(HERE/'retain_r0040_capture.cjs'),
+                    '--driver', '/sources/research/tools/qa/r0040/capture.cjs',
+                    '--manifest', admission['manifest'], '--prepared', admission['prepared'],
+                    '--preparation-process', admission['process'], '--evidence', rain['evidenceRetention']['output'],
+                    '--', '/dependencies/node_modules/playwright', '/private/work/rain-capture/historical',
+                    '/private/prepared/trees/main', rain['output'], 'chromium', 'bday', 'moderate', 'M1']
+        self.assertEqual(rain['argv'], expected)
+        self.assertEqual(rain['env']['R0040_DISPERSION'], 'common')
+        self.assertEqual(rain['clearEnv'], ['R0040_OPTIONS'])
+        self.assertNotIn('R0040_OPTIONS', rain['env'])
+        self.assertEqual(rain['stopAllOnExit'], [86])
+        self.assertEqual(rain['result']['kind'], 'r0040-capture')
+        self.assertEqual(rain['result']['path'], str(Path(rain['output'])/'capture.json'))
+        self.assertEqual(rain['result']['expectedCapture'], admission['expectedCapture'])
+        for name in ('output', 'stdout', 'stderr'):
+            self.assertTrue(Path(rain[name]).is_relative_to(self.base))
+        self.assertTrue(Path(rain['result']['finalAdmissionPath']).is_relative_to(self.base))
+        self.assertNotEqual(Path(rain['result']['finalAdmissionPath']).parent, Path(rain['output']))
+        self.assertNotIn('--capture', rain['argv'])
+        self.assertEqual(self.plan(r0040_mode='capture', r0040_preparation=admission,
+                                   retain_evidence=True)['lanes'][0]['argv'], expected)
+
+    def test_capture_missing_or_failed_preparation_blocks_only_rain(self):
+        original = self.plan(include_r002f=True)
+        for admission in (None, {'status': 'INCOMPLETE', 'reason': 'missing historical model'}):
+            plan = self.plan(include_r002f=True, r0040_mode='capture', r0040_preparation=admission)
+            self.assertEqual(plan['lanes'][1:], original['lanes'][1:])
+            self.assertEqual(plan['lanes'][0]['preparation']['status'], 'INCOMPLETE')
+            self.assertEqual(plan['lanes'][0]['argv'], [])
+        for change in ({'r0040_mode': 'capture', 'engine': 'webkit'},
+                       {'r0040_mode': 'capture', 'work_orders': ['R0035']},
+                       {'r0040_mode': True}, {'r0040_mode': 'lossless-pass'}):
+            with self.assertRaises(ValueError): self.plan(**change)
+
+    def test_capture_admission_requires_both_process_levels_and_complete_source_checks(self):
+        manifest_path = ROOT/'docs/state-contracts/evidence/R0040/native-capture-preflight.json'
+        manifest = json.loads(manifest_path.read_text())
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); work = root/'work'; process = root/'process.json'; entry = root/'entry.json'
+            successful = {'protocol': 'r0040-capture-preparation-entry/1', 'returncode': 0, 'timedOut': False,
+                          'wrapperSha256': sha(HERE/'r0040_capture_prepare.py')}
+            child = {'protocol': 'r0040-capture-preparation-process/1', 'status': 'PREPARED',
+                     'returncode': 0, 'timedOut': False, 'nativeStatus': 'NOT_RUN',
+                     'inputs': {'manifest': str(manifest_path), 'research': '/sources/research',
+                                'historical': '/sources/history', 'main': '/private/prepared/trees/main', 'out': str(work)}}
+            checked = {'sources': {'historical': manifest['stages'][-1]['files'],
+                                   'research': manifest['researchInputs'], 'main': manifest['main']['runtimeFiles']},
+                       'custody': {'manifestSha256': self.lanes.R0040_MANIFEST_SHA256}}
+            def admit():
+                return self.lanes.admit_r0040(self.prepared, work, process, entry, self.base,
+                                              Path('/dependencies/node'), Path('/dependencies/node_modules/playwright'))
+            process.write_text(json.dumps(child)); entry.write_text(json.dumps(successful))
+            with patch.object(self.lanes.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=json.dumps(checked), stderr='')) as verify:
+                result = admit()
+                self.assertEqual(result['status'], 'PASS', result)
+                self.assertEqual(result['verifiedPopulation'], {'historical': 6, 'research': 12, 'main': 177})
+                command = verify.call_args.args[0]
+                self.assertIn('verifySources', command[2])
+                self.assertIn(str(HERE/'retain_r0040_capture.cjs'), command)
+                self.assertEqual(verify.call_args.kwargs['env']['R0040_DISPERSION'], 'common')
+                self.assertNotIn('R0040_OPTIONS', verify.call_args.kwargs['env'])
+            for body in ({**successful, 'returncode': 2}, {**successful, 'returncode': False},
+                         {**successful, 'timedOut': True}, {**successful, 'protocol': 'wrong'}):
+                entry.write_text(json.dumps(body))
+                with patch.object(self.lanes.subprocess, 'run') as verify:
+                    self.assertEqual(admit()['status'], 'INCOMPLETE'); verify.assert_not_called()
+            entry.write_text(json.dumps(successful))
+            for body in ({**child, 'returncode': 1}, {**child, 'timedOut': True}, {**child, 'status': 'INCOMPLETE'}):
+                process.write_text(json.dumps(body))
+                with patch.object(self.lanes.subprocess, 'run') as verify:
+                    self.assertEqual(admit()['status'], 'INCOMPLETE'); verify.assert_not_called()
+            process.write_text(json.dumps(child))
+            for group in ('historical', 'research', 'main'):
+                partial = copy.deepcopy(checked); partial['sources'][group].pop(next(iter(partial['sources'][group])))
+                with patch.object(self.lanes.subprocess, 'run', return_value=SimpleNamespace(returncode=0, stdout=json.dumps(partial), stderr='')):
+                    self.assertEqual(admit()['status'], 'INCOMPLETE')
+            with patch.object(self.lanes.subprocess, 'run', return_value=SimpleNamespace(returncode=1, stdout='', stderr='actual source drift')):
+                self.assertEqual(admit()['status'], 'INCOMPLETE')
+            with patch.object(self.lanes.subprocess, 'run', side_effect=subprocess.TimeoutExpired(
+                    'source guard', 90, output=b'partial source receipt', stderr=b'partial source diagnostic')):
+                timed = admit()
+                self.assertEqual(timed['status'], 'INCOMPLETE')
+                self.assertEqual(timed['sourceCheck']['stdout'], 'partial source receipt')
+                self.assertEqual(timed['sourceCheck']['stderr'], 'partial source diagnostic')
+
+    def test_capture_sparse_checkout_contains_every_historical_and_orchestration_input(self):
+        workflow = (ROOT/'.github/workflows/research-native-pilot.yml').read_text()
+        historical = workflow.split('path: historical', 1)[1].split('- name:', 1)[0]
+        manifest = json.loads((ROOT/'docs/state-contracts/evidence/R0040/native-capture-preflight.json').read_text())
+        for name in manifest['historical']['files']:
+            self.assertIn('/'+name+'\n', historical)
+        orchestration = workflow.split('path: orchestration', 1)[1].split('- name:', 1)[0]
+        for name in ('docs/state-contracts/R0040-native-capture-preflight.md',
+                     'docs/state-contracts/evidence/R0040/native-capture-preflight.json',
+                     'docs/state-contracts/evidence/R0040/native-capture-preparation-controls.json'):
+            self.assertIn('/'+name+'\n', orchestration)
 
     def test_star_arms_share_build_and_correct_active_predicate(self):
         """Independent roots, guessed active predicates or changed scene flags invalidate comparison."""

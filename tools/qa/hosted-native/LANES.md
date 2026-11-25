@@ -46,7 +46,7 @@ The output must be absent and outside the input trees. It contains:
 | `trees/r0035` | One materialized lab shared by both experimental write arms |
 | `trees/r003f` | Git-blob-verified copy of baseline `index.html`, `config.js`, `moon`, `real-sky` and `tests/r0002-ordinary.json`; every copied body/mode is bound to HEAD and recorded in the private manifest |
 
-The baseline clone shares local Git objects with the supplied baseline checkout;
+The detached baseline worktree shares local Git objects with the supplied baseline checkout;
 keep that checkout available through the observation. Preparation builds main
 and R0040 twice. R0035's published materializer runs its first canonical build;
 preparation runs its second. Every second build must report 0 written, 117
@@ -102,7 +102,9 @@ canonical order above. Without the selection switch, the existing three work
 orders are emitted, plus R002F when enabled. The initial hosted campaign enabled
 R002F and contained all four work orders and five command rows. R0035 defaults
 to both timing and capture with their original dependency. The checked-in
-follow-up selects corrected R003F B0, R0035 timing and R002F DPR3/two rounds.
+follow-up selects the revised R0040 capture cell, corrected R003F B0 at DPR2,
+then R002F DPR1 with five rounds of prayer restoration only. Previously obtained native results remain
+separate observations; this campaign does not repeat preview capture.
 
 Selection limits observation commands. Common source preparation and the
 original star-plan validation remain unchanged. The coordinator checks the
@@ -179,7 +181,7 @@ its request ledger. All outputs and logs remain private, including failures.
 
 ### Optional supplemental retention
 
-`--retain-evidence` wraps only selected R0040/R0035 commands. The hosted campaign
+`--retain-evidence` wraps selected original R0040 option/R0035 commands. The hosted campaign
 equivalent is `evidenceRetention: true`; absence means `false`. Both wrappers
 come from the coordinator checkout and execute the hash-pinned original drivers
 from the immutable research checkout. The unchanged original argument suffix
@@ -203,10 +205,10 @@ receipt stops every later lane. Actual namespace exit 86, timeout, abnormal exit
 or missing receipt still takes precedence. R003F's separate isolation exit 3
 and workstream Andon exit 4 remain unchanged.
 
-The current follow-up campaign uses corrected R003F B0, guard-disabled R0035
-preview-members timing and R002F DPR3/two rounds; retention remains disabled. The changed campaign follows the
-actual preceding observations. Further selections and instrumentation remain
-conditional on inspecting the new results.
+The revised R0040 capture mode below always uses its own final-state wrapper,
+independently of `evidenceRetention`. Setting that flag as well does not wrap it
+twice. The current follow-up leaves generic retention disabled. Further
+selections and instrumentation remain conditional on inspecting actual results.
 
 `--engine firefox` or `--engine webkit` emits the same bounded initial plan for
 that installed engine. `--r003f-dpr 2` changes only R003F; the other two existing
@@ -217,6 +219,77 @@ WebKit timing with native reduced/full-motion and phase/glass coverage, and
 R0040's remaining motion/lossless-capture rows. Admission failures require
 diagnosis before credit; R003F Andon stops its progression. None of these rows
 supplies physical-device or human evaluation.
+
+## Optional revised R0040 capture
+
+`--r0040-mode options|capture` is available in both planner and observer;
+`campaign.json` uses `r0040Mode`. The absent-field/CLI default is `options`, with
+the unchanged nine-cell invocation above. `capture` requires selected R0040 and
+Chromium. It names only `chromium / bday / moderate / M1 / common`, DPR1, genuine
+main. It does not select a different model, engine, dispersion or product arm.
+
+After successful common preparation, the coordinator executes the exact entry
+in [R0040_CAPTURE_PREPARATION.md](R0040_CAPTURE_PREPARATION.md). Disposable
+patched sources are under `/task/work/r0040-capture`, outside private capture.
+The two preparation layers are deliberately separate:
+
+| Private path | Custody |
+|---|---|
+| `r0040-preparation-entry.json` | Coordinator-observed **entry** return code, timeout, source hash and command |
+| `r0040-preparation.stdout`, `.stderr` | Actual entry streams, including failed/late finalization |
+| `r0040-preparation/process.json` | Guarded-recipe **child** status and exact source/preparation receipt binding |
+| `r0040-preparation/recipe.stdout`, `.stderr` | Guarded-recipe streams and partial exceptions |
+| `r0040-preparation-original/*` | Unmodified original recipe receipt and patch logs, including completed stages of a failed attempt |
+
+The planner receives these additional arguments:
+
+```sh
+--r0040-mode capture \
+--r0040-work /task/work/r0040-capture \
+--r0040-process /task/capture/r0040-preparation/process.json \
+--r0040-entry-process /task/capture/r0040-preparation-entry.json
+```
+
+It requires actual entry exit zero, child exit zero, no timeout or receipt-copy
+failure, and matching input paths. It then calls the reviewed capture wrapper's
+read-only `verifySources` export, without importing a browser. That function
+checks all **six** patched historical sources, **12** immutable research inputs,
+the **116** generated main members and **177** main runtime files, complete patch
+stages, hashes, actual clean main HEAD and the original preparation receipt.
+The native wrapper repeats its source check before importing the driver.
+Failed or missing optional preparation yields an explicit `NOT_RUN` rain lane
+with preparation `INCOMPLETE`; the other selected prepared lanes may continue.
+No option-driver fallback is substituted for a failed capture request.
+
+The original positional capture command is preserved behind
+`retain_r0040_capture.cjs`; see [R0040_CAPTURE_RETENTION.md](R0040_CAPTURE_RETENTION.md)
+for the full CLI and source hashes. The lane ID is `r0040-chromium-capture`.
+`R0040_DISPERSION=common` is the only added environment value, and
+`R0040_OPTIONS` is removed from the actual child environment. Original
+`capture.json` and PNGs stay under that lane's fresh output; the journal and
+`final-admission.json` are separate in `r0040-chromium-capture-retention`.
+Every path remains private. The capture process-group bound is **180 seconds**;
+preparation entry is bounded to **240 seconds**, containing its unchanged
+180-second recipe bound. Read-only planner verification has a 90-second child
+bound within a 120-second planner bound. The overall observation ceiling still
+applies, and unreached selected lanes remain `NOT_RUN`.
+
+Acquisition requires actual capture child exit zero, the original report with
+the pinned source/cell metadata, its exact final-receipt hash, successful
+context/browser/server cleanup, and the final wrapper receipt. The resulting
+status is **`ADMITTED_FOR_OFFLINE_VERIFICATION`**, with native qualification
+`NOT_VERIFIED` and human acceptance `OUTSTANDING`. Overall `OBSERVED` can contain
+this acquisition status alongside other admitted observations; it never means
+the lossless verifier passed. A missing or partial receipt is `INCOMPLETE`, a
+recorded acquisition/original failure stays `FAIL`, and timeout retains partial
+originals. Prevented continuation retains exit 86 and stops all later lanes;
+actual abnormal outer namespace completion retains precedence.
+
+After private retrieval, the coordinator runs the unchanged
+`lossless_pack.py cell <capture.json> --pins <pins-revised.json>` with its existing
+Pillow/cryptography environment. No new hosted package is acquired. The exact
+frame count, gap, average-rate, audit-match, pixel, geometry and visibility gates
+remain the original verifier's responsibility. No cadence tolerance is widened.
 
 ## Optional R002F preparation and command
 
@@ -266,6 +339,13 @@ engine/DPR distinction without importing Playwright or launching a browser.
 They also verify optional-preparation failure retention, the frozen R002F
 command/hash, its exact private paths and the R002B sparse-checkout inclusion.
 The source materialization command above is the separate real-build check.
+The registered capture preparation and retention commands contribute 10 and 16
+additional controls. Central controls run an actual guarded-recipe child on
+small pinned fixtures, reject its second-stage postimage, preserve the successful
+first stage and both original/final logs, and keep independent lanes runnable.
+They also reject absent/status-only capture receipts, altered metadata, changed
+CLI/environment, missing source population and late outer failures. These are
+offline instrument controls, not native capture evidence.
 
 The registered retention controls run the actual source-pinned recipe functions
 with browser doubles. The coordinator controls additionally prove campaign
