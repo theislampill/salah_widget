@@ -1,0 +1,858 @@
+{
+ "schema": "r0041-gd-aggregate/1",
+ "label": "R41-VIS spot check on the integrated tree, Chromium (2026-11-24)",
+ "rule": "v3: stars>=10 || dMean>4 || (dRoll>4 && dMean>1)",
+ "launches": [
+  {
+   "label": "vis-chromium-1-reduce",
+   "tree": "x-r0041",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "browserVersion": "148.0.7778.96",
+   "secondsAfterSettle": 650,
+   "isolation": {
+    "allowedExternal": 0,
+    "externalAttempts": 83,
+    "totalRequests": {
+     "originServed": 28,
+     "proxyBlocked": 71,
+     "routeDecisions": 32,
+     "browserObserved": 32
+    },
+    "byLayerHostOutcome": {
+     "proxy clients2.google.com blocked": 1,
+     "proxy accounts.google.com blocked": 7,
+     "proxy www.google.com blocked": 18,
+     "proxy content-autofill.googleapis.com blocked": 40,
+     "proxy android.clients.google.com blocked": 5,
+     "route fonts.googleapis.com aborted": 4,
+     "browser fonts.googleapis.com issued": 4,
+     "browser fonts.googleapis.com failed:net::ERR_BLOCKED_BY_CLIENT.Inspector": 4
+    }
+   }
+  },
+  {
+   "label": "vis-chromium-2-full",
+   "tree": "x-r0041",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "full",
+   "browserVersion": "148.0.7778.96",
+   "secondsAfterSettle": 650,
+   "isolation": {
+    "allowedExternal": 0,
+    "externalAttempts": 84,
+    "totalRequests": {
+     "originServed": 28,
+     "proxyBlocked": 72,
+     "routeDecisions": 32,
+     "browserObserved": 32
+    },
+    "byLayerHostOutcome": {
+     "proxy clients2.google.com blocked": 1,
+     "proxy accounts.google.com blocked": 7,
+     "proxy www.google.com blocked": 19,
+     "proxy content-autofill.googleapis.com blocked": 40,
+     "proxy android.clients.google.com blocked": 5,
+     "route fonts.googleapis.com aborted": 4,
+     "browser fonts.googleapis.com issued": 4,
+     "browser fonts.googleapis.com failed:net::ERR_BLOCKED_BY_CLIENT.Inspector": 4
+    }
+   }
+  }
+ ],
+ "cells": [
+  {
+   "v3": {
+    "shots": {
+     "judged": 6797,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 15,
+      "endControlAbsent": 15
+     }
+    },
+    "recording": {
+     "judged": 16237,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 37,
+      "endControlAbsent": 37
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-1-reduce",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "cell": "full",
+   "instant": "2026-11-24T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 37,
+    "recordingControlAbsent": 37
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 1,
+   "shots": {
+    "count": 6802,
+    "medianIntervalMs": 95,
+    "p90IntervalMs": 104,
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16572,
+    "unreadableMarker": 0,
+    "observed": 16251,
+    "offset": {
+     "dx": -1,
+     "dy": 1,
+     "ok": 20,
+     "sum": 222.375
+    },
+    "absent": 5,
+    "absentLiteralG1": 5,
+    "absentIntervalsMs": [
+     240
+    ]
+   },
+   "refinementJobs": 0,
+   "acceptedRecordChanges": 0,
+   "light": {
+    "distinct": 12,
+    "values": [
+     "0.599 physical"
+    ],
+    "phaseFraction": 1,
+    "moonAltitudeDeg": 30.6
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 15,
+    "shotsAbsent": 15,
+    "videoFrames": 37,
+    "videoAbsent": 37
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 6761,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {
+       "1": 11
+      },
+      "seedAbsent": {
+       "1": 4
+      },
+      "endControlFrames": 61,
+      "endControlAbsent": 61
+     }
+    },
+    "recording": {
+     "judged": 16206,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {
+       "1": 15,
+       "2": 15
+      },
+      "seedAbsent": {
+       "1": 2,
+       "2": 9
+      },
+      "endControlFrames": 62,
+      "endControlAbsent": 62
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-1-reduce",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "cell": "fullctl",
+   "instant": "2026-11-23T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 62,
+    "recordingControlAbsent": 62
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 1,
+   "shots": {
+    "count": 6784,
+    "medianIntervalMs": 95,
+    "p90IntervalMs": 104,
+    "absent": 0,
+    "absentLiteralG1": 6773,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16660,
+    "unreadableMarker": 0,
+    "observed": 16221,
+    "offset": {
+     "dx": 0,
+     "dy": 0,
+     "ok": 20,
+     "sum": 225.6875
+    },
+    "absent": 47,
+    "absentLiteralG1": 16221,
+    "absentIntervalsMs": [
+     null
+    ]
+   },
+   "refinementJobs": 1,
+   "acceptedRecordChanges": 1,
+   "light": {
+    "distinct": 12,
+    "values": [
+     "0.594 physical"
+    ],
+    "phaseFraction": 0.989,
+    "moonAltitudeDeg": 42.3
+   },
+   "seed": {
+    "detailClear": {
+     "shots": 5,
+     "shotsAbsent": 1,
+     "videoFrames": 15,
+     "videoAbsent": 2
+    },
+    "styleHide300ms": {
+     "shots": 6,
+     "shotsAbsent": 3,
+     "videoFrames": 15,
+     "videoAbsent": 9
+    }
+   },
+   "absentControl": {
+    "shots": 61,
+    "shotsAbsent": 61,
+    "videoFrames": 62,
+    "videoAbsent": 62
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 6777,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 17,
+      "endControlAbsent": 17
+     }
+    },
+    "recording": {
+     "judged": 16236,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 37,
+      "endControlAbsent": 37
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-1-reduce",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "cell": "new",
+   "instant": "2027-01-07T19:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 37,
+    "recordingControlAbsent": 37
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 6784,
+    "medianIntervalMs": 95,
+    "p90IntervalMs": 104,
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16592,
+    "unreadableMarker": 0,
+    "observed": 16251,
+    "offset": {
+     "dx": -1,
+     "dy": 0,
+     "ok": 20,
+     "sum": 231.5
+    },
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 0,
+   "acceptedRecordChanges": 0,
+   "light": {
+    "distinct": 1,
+    "values": [
+     "0 refined-calendar"
+    ],
+    "phaseFraction": 0,
+    "moonAltitudeDeg": -65.5
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 17,
+    "shotsAbsent": 17,
+    "videoFrames": 37,
+    "videoAbsent": 37
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 6775,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 26,
+      "endControlAbsent": 26
+     }
+    },
+    "recording": {
+     "judged": 16235,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 62,
+      "endControlAbsent": 62
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-1-reduce",
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "cell": "newctl",
+   "instant": "2027-01-06T19:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 62,
+    "recordingControlAbsent": 62
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 6780,
+    "medianIntervalMs": 95,
+    "p90IntervalMs": 104,
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16616,
+    "unreadableMarker": 0,
+    "observed": 16249,
+    "offset": {
+     "dx": -1,
+     "dy": 0,
+     "ok": 20,
+     "sum": 227.1875
+    },
+    "absent": 0,
+    "absentLiteralG1": 16249,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 1,
+   "acceptedRecordChanges": 1,
+   "light": {
+    "distinct": 1,
+    "values": [
+     "0 refined-calendar"
+    ],
+    "phaseFraction": 0.015,
+    "moonAltitudeDeg": -76.2
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 26,
+    "shotsAbsent": 26,
+    "videoFrames": 62,
+    "videoAbsent": 62
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 2047,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 6,
+      "endControlAbsent": 6
+     }
+    },
+    "recording": {
+     "judged": 16238,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 36,
+      "endControlAbsent": 36
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-2-full",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "full",
+   "cell": "full",
+   "instant": "2026-11-24T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 36,
+    "recordingControlAbsent": 36
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 1,
+   "shots": {
+    "count": 2047,
+    "medianIntervalMs": 318,
+    "p90IntervalMs": 362,
+    "absent": 0,
+    "absentLiteralG1": 2047,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16607,
+    "unreadableMarker": 0,
+    "observed": 16252,
+    "offset": {
+     "dx": 0,
+     "dy": 1,
+     "ok": 20,
+     "sum": 232.1875
+    },
+    "absent": 3,
+    "absentLiteralG1": 13,
+    "absentIntervalsMs": [
+     280
+    ]
+   },
+   "refinementJobs": 0,
+   "acceptedRecordChanges": 0,
+   "light": {
+    "distinct": 12,
+    "values": [
+     "0.599 physical"
+    ],
+    "phaseFraction": 1,
+    "moonAltitudeDeg": 30.6
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 6,
+    "shotsAbsent": 6,
+    "videoFrames": 36,
+    "videoAbsent": 36
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 2042,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {
+       "1": 5
+      },
+      "seedAbsent": {
+       "1": 1
+      },
+      "endControlFrames": 25,
+      "endControlAbsent": 25
+     }
+    },
+    "recording": {
+     "judged": 16204,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {
+       "1": 15,
+       "2": 14
+      },
+      "seedAbsent": {
+       "2": 7
+      },
+      "endControlFrames": 62,
+      "endControlAbsent": 62
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-2-full",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "full",
+   "cell": "fullctl",
+   "instant": "2026-11-23T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 62,
+    "recordingControlAbsent": 62
+   },
+   "invalidReasons": [
+    "seeded detail.clear() not seen"
+   ],
+   "recipeValid": false,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 1,
+   "shots": {
+    "count": 2053,
+    "medianIntervalMs": 317,
+    "p90IntervalMs": 362,
+    "absent": 0,
+    "absentLiteralG1": 2048,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16681,
+    "unreadableMarker": 0,
+    "observed": 16218,
+    "offset": {
+     "dx": 0,
+     "dy": 1,
+     "ok": 20,
+     "sum": 237.0625
+    },
+    "absent": 64,
+    "absentLiteralG1": 16218,
+    "absentIntervalsMs": [
+     null
+    ]
+   },
+   "refinementJobs": 2,
+   "acceptedRecordChanges": 2,
+   "light": {
+    "distinct": 12,
+    "values": [
+     "0.594 physical"
+    ],
+    "phaseFraction": 0.989,
+    "moonAltitudeDeg": 42.3
+   },
+   "seed": {
+    "detailClear": {
+     "shots": 3,
+     "shotsAbsent": 0,
+     "videoFrames": 15,
+     "videoAbsent": 0
+    },
+    "styleHide300ms": {
+     "shots": 2,
+     "shotsAbsent": 1,
+     "videoFrames": 14,
+     "videoAbsent": 7
+    }
+   },
+   "absentControl": {
+    "shots": 25,
+    "shotsAbsent": 25,
+    "videoFrames": 62,
+    "videoAbsent": 62
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 2049,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 6,
+      "endControlAbsent": 6
+     }
+    },
+    "recording": {
+     "judged": 16238,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 43,
+      "endControlAbsent": 43
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-2-full",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "full",
+   "cell": "new",
+   "instant": "2027-01-07T19:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 43,
+    "recordingControlAbsent": 43
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 2050,
+    "medianIntervalMs": 318,
+    "p90IntervalMs": 359,
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16610,
+    "unreadableMarker": 0,
+    "observed": 16251,
+    "offset": {
+     "dx": 0,
+     "dy": -1,
+     "ok": 20,
+     "sum": 241.125
+    },
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 0,
+   "acceptedRecordChanges": 0,
+   "light": {
+    "distinct": 1,
+    "values": [
+     "0 refined-calendar"
+    ],
+    "phaseFraction": 0,
+    "moonAltitudeDeg": -65.5
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 6,
+    "shotsAbsent": 6,
+    "videoFrames": 43,
+    "videoAbsent": 43
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 2046,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 5,
+      "endControlAbsent": 5
+     }
+    },
+    "recording": {
+     "judged": 16245,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 35,
+      "endControlAbsent": 35
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "vis-chromium-2-full",
+   "engine": "chromium",
+   "dpr": 2,
+   "motion": "full",
+   "cell": "newctl",
+   "instant": "2027-01-06T19:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 35,
+    "recordingControlAbsent": 35
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 11,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 2047,
+    "medianIntervalMs": 318,
+    "p90IntervalMs": 359,
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 16620,
+    "unreadableMarker": 0,
+    "observed": 16253,
+    "offset": {
+     "dx": 0,
+     "dy": 1,
+     "ok": 20,
+     "sum": 222.8125
+    },
+    "absent": 0,
+    "absentLiteralG1": 0,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 2,
+   "acceptedRecordChanges": 2,
+   "light": {
+    "distinct": 1,
+    "values": [
+     "0 refined-calendar"
+    ],
+    "phaseFraction": 0.015,
+    "moonAltitudeDeg": -76.2
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 5,
+    "shotsAbsent": 5,
+    "videoFrames": 35,
+    "videoAbsent": 35
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  }
+ ]
+}

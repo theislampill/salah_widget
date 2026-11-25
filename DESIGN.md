@@ -327,7 +327,15 @@ dew point alone is not a water-droplet column and cannot enable a corona.
   `docs/state-contracts/R0033.md`.
 - **Earthshine**: a smooth curve `es = 0.09 + 0.34·(1−frac)^1.7` (steeper-than-linear toward full) × albedo —
   moderate ashen glow at thin crescent (the lit crescent still dominates), faint **textured** terrain at gibbous
-  (never a black cutout), a small floor at full.
+  (never a black cutout), a small floor at full. The one exception to texture is the disclosed renderer-failure
+  fallback of AGENTS gate D's fault-path clause (R0041): an opaque, phase-correct, untextured disc shown only while
+  no V5 material can serve the scene; it is never a rendering tier and grants no light beyond the ephemeris rules.
+- **Lead direction and swap ordering (R0041).** The refinement scene's leading edge follows the direction in which
+  the phase angle actually moves over the next minute (`nativeLunarPhaseDirection`, ±1, 0 in a 1e−6 rad/min dead band),
+  not the waxing flag, which still decides only the lit limb; near full and new Moon the two disagree for minutes to
+  hours. `simMoon*` overrides and a frozen clock carry no direction and keep the historical waxing-signed lead. A
+  same-scope swap adopts and composes its successor in the same task before anything presented is withdrawn; the
+  historical withdrawal runs only when no successor exists (`docs/state-contracts/R0041.md`).
 - **Two distinct lunar optics**, gated by admitted cloud type/fog: a **22° ice halo** (`.mhalo`, a discrete ring with
   a dark inner gap, red-inner/blue-outer, from cirrus) vs a **droplet corona** (`.mcorona`, a small near-white
   aureole with pastel rings hugging the disc, from altostratus/fog, not humidity alone). The generic `.mglow` is subtle and

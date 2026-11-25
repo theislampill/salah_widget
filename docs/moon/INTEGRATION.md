@@ -33,6 +33,14 @@ runtime cannot be constructed at all, no Moon is shown and no moonlight is cast
 (`SalahMoonConstructionError`); see `docs/state-contracts/R0033.md`.
 There is no UI-thread terrain fallback and no private astronomical clock.
 
+Lead direction and swap ordering (R0041, `docs/state-contracts/R0041.md`): the native owner supplies
+`phaseDirection` with each capture (the sign of the phase angle's motion over the next minute, 0 in a dead band,
+absent for `simMoon` overrides), and the calendar scene's lead, `phaseDrift` and the re-request skips follow it
+instead of the waxing flag; a same-scope expiry or same-identity `clear()` adopts and composes the successor tier
+before anything presented is withdrawn. Only in a genuine renderer-failure state with nothing current does the
+runtime present the disclosed, untextured phase disc (AGENTS gate D fault-path clause), which grants no light beyond
+the ephemeris rules.
+
 ## Data and outputs
 
 `moon/assets/` is the compressed, lossless UInt16 terrain/material representation.

@@ -1,0 +1,666 @@
+{
+ "schema": "r0041-gd-aggregate/1",
+ "label": "R41-SWP integrated tree, Firefox and WebKit missing modes (2026-11-24)",
+ "rule": "v3: stars>=10 || dMean>4 || (dRoll>4 && dMean>1)",
+ "launches": [
+  {
+   "label": "swp-firefox-1-reduce-inval",
+   "tree": "x-r0041",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "browserVersion": "150.0.2",
+   "secondsAfterSettle": 75,
+   "isolation": {
+    "allowedExternal": 0,
+    "externalAttempts": 5,
+    "totalRequests": {
+     "originServed": 8,
+     "proxyBlocked": 3,
+     "routeDecisions": 0,
+     "browserObserved": 8
+    },
+    "byLayerHostOutcome": {
+     "proxy fonts.googleapis.com blocked": 1,
+     "proxy aus5.mozilla.org blocked": 2,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:NS_BINDING_ABORTED": 1
+    }
+   }
+  },
+  {
+   "label": "swp-firefox-1-reduce-ts60",
+   "tree": "x-r0041",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "browserVersion": "150.0.2",
+   "secondsAfterSettle": 75,
+   "isolation": {
+    "allowedExternal": 0,
+    "externalAttempts": 5,
+    "totalRequests": {
+     "originServed": 8,
+     "proxyBlocked": 3,
+     "routeDecisions": 0,
+     "browserObserved": 8
+    },
+    "byLayerHostOutcome": {
+     "proxy fonts.googleapis.com blocked": 1,
+     "proxy aus5.mozilla.org blocked": 2,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:NS_BINDING_ABORTED": 1
+    }
+   }
+  },
+  {
+   "label": "swp-firefox-2-full-inval",
+   "tree": "x-r0041",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "full",
+   "browserVersion": "150.0.2",
+   "secondsAfterSettle": 75,
+   "isolation": {
+    "allowedExternal": 0,
+    "externalAttempts": 5,
+    "totalRequests": {
+     "originServed": 8,
+     "proxyBlocked": 3,
+     "routeDecisions": 0,
+     "browserObserved": 8
+    },
+    "byLayerHostOutcome": {
+     "proxy fonts.googleapis.com blocked": 1,
+     "proxy aus5.mozilla.org blocked": 2,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:NS_BINDING_ABORTED": 1
+    }
+   }
+  },
+  {
+   "label": "swp-webkit-1-full-inval",
+   "tree": "x-r0041",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "full",
+   "browserVersion": "26.4",
+   "secondsAfterSettle": 75,
+   "isolation": {
+    "allowedExternal": 0,
+    "externalAttempts": 3,
+    "totalRequests": {
+     "originServed": 7,
+     "proxyBlocked": 0,
+     "routeDecisions": 22,
+     "browserObserved": 22
+    },
+    "byLayerHostOutcome": {
+     "route fonts.googleapis.com aborted": 1,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:Blocked by Web Inspector": 1
+    }
+   }
+  },
+  {
+   "label": "swp-webkit-2-reduce-inval",
+   "tree": "x-r0041",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "browserVersion": "26.4",
+   "secondsAfterSettle": 75,
+   "isolation": {
+    "allowedExternal": 0,
+    "externalAttempts": 3,
+    "totalRequests": {
+     "originServed": 7,
+     "proxyBlocked": 0,
+     "routeDecisions": 22,
+     "browserObserved": 22
+    },
+    "byLayerHostOutcome": {
+     "route fonts.googleapis.com aborted": 1,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:Blocked by Web Inspector": 1
+    }
+   }
+  }
+ ],
+ "cells": [
+  {
+   "v3": {
+    "shots": {
+     "judged": 1134,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 36,
+      "endControlAbsent": 36
+     }
+    },
+    "recording": {
+     "judged": 1206,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 37,
+      "endControlAbsent": 37
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "swp-firefox-1-reduce-inval",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "cell": "s1",
+   "instant": "2026-11-18T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 37,
+    "recordingControlAbsent": 37
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 1,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 1761,
+    "medianIntervalMs": 41,
+    "p90IntervalMs": 47,
+    "absent": 0,
+    "absentLiteralG1": 1761,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 4115,
+    "unreadableMarker": 8,
+    "observed": 1875,
+    "offset": {
+     "dx": 5,
+     "dy": 0,
+     "ok": 20,
+     "sum": 264
+    },
+    "absent": 0,
+    "absentLiteralG1": 1875,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 12,
+   "acceptedRecordChanges": 2,
+   "swaps": {
+    "adopt": 24,
+    "adoptRefused": 0,
+    "clear": 0,
+    "compose": 300
+   },
+   "forced": 12,
+   "truthAtEnd": {
+    "displayMode": "physical",
+    "degraded": null,
+    "limitation": null,
+    "moonlightOpacity": 0.456,
+    "source": "terrain-preview"
+   },
+   "light": {
+    "distinct": 2,
+    "values": [
+     "0.456 physical"
+    ],
+    "phaseFraction": 0.646,
+    "moonAltitudeDeg": 59.6
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 36,
+    "shotsAbsent": 36,
+    "videoFrames": 37,
+    "videoAbsent": 37
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 1011,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 32,
+      "endControlAbsent": 32
+     }
+    },
+    "recording": {
+     "judged": 1113,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 63,
+      "endControlAbsent": 63
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "swp-firefox-1-reduce-ts60",
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "cell": "s1",
+   "instant": "2026-11-18T16:30:00Z",
+   "valid": false,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 63,
+    "recordingControlAbsent": 63
+   },
+   "invalidReasons": [
+    "never reached refined-terrain"
+   ],
+   "recipeValid": false,
+   "minuteSteps": 1,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 1700,
+    "medianIntervalMs": 42,
+    "p90IntervalMs": 48,
+    "absent": 0,
+    "absentLiteralG1": 1700,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 4217,
+    "unreadableMarker": 23,
+    "observed": 1875,
+    "offset": {
+     "dx": 5,
+     "dy": -1,
+     "ok": 20,
+     "sum": 258.9375
+    },
+    "absent": 0,
+    "absentLiteralG1": 1875,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 6,
+   "acceptedRecordChanges": 6,
+   "swaps": {
+    "adopt": 13,
+    "adoptRefused": 0,
+    "clear": 0,
+    "compose": 5415
+   },
+   "forced": 0,
+   "truthAtEnd": {
+    "displayMode": "physical",
+    "degraded": null,
+    "limitation": null,
+    "moonlightOpacity": 0.46,
+    "source": "initial-v5"
+   },
+   "light": {
+    "distinct": 12,
+    "values": [
+     "0.458 physical"
+    ],
+    "phaseFraction": 0.657,
+    "moonAltitudeDeg": 38.7
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 32,
+    "shotsAbsent": 32,
+    "videoFrames": 63,
+    "videoAbsent": 63
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 1029,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 36,
+      "endControlAbsent": 36
+     }
+    },
+    "recording": {
+     "judged": 1102,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 62,
+      "endControlAbsent": 62
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "swp-firefox-2-full-inval",
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "full",
+   "cell": "s1",
+   "instant": "2026-11-18T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 62,
+    "recordingControlAbsent": 62
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 1,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 1746,
+    "medianIntervalMs": 41,
+    "p90IntervalMs": 47,
+    "absent": 0,
+    "absentLiteralG1": 1746,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 4218,
+    "unreadableMarker": 8,
+    "observed": 1875,
+    "offset": {
+     "dx": 5,
+     "dy": 0,
+     "ok": 20,
+     "sum": 251.9375
+    },
+    "absent": 0,
+    "absentLiteralG1": 1875,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 12,
+   "acceptedRecordChanges": 2,
+   "swaps": {
+    "adopt": 24,
+    "adoptRefused": 0,
+    "clear": 0,
+    "compose": 1189
+   },
+   "forced": 12,
+   "truthAtEnd": {
+    "displayMode": "physical",
+    "degraded": null,
+    "limitation": null,
+    "moonlightOpacity": 0.456,
+    "source": "terrain-preview"
+   },
+   "light": {
+    "distinct": 2,
+    "values": [
+     "0.456 physical"
+    ],
+    "phaseFraction": 0.646,
+    "moonAltitudeDeg": 59.6
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 36,
+    "shotsAbsent": 36,
+    "videoFrames": 62,
+    "videoAbsent": 62
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 922,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 32,
+      "endControlAbsent": 32
+     }
+    },
+    "recording": {
+     "judged": 1089,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 63,
+      "endControlAbsent": 63
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "swp-webkit-1-full-inval",
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "full",
+   "cell": "s1",
+   "instant": "2026-11-18T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 63,
+    "recordingControlAbsent": 63
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 1,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 1588,
+    "medianIntervalMs": 47,
+    "p90IntervalMs": 48,
+    "absent": 0,
+    "absentLiteralG1": 1588,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 2731,
+    "unreadableMarker": 14,
+    "observed": 1875,
+    "offset": {
+     "dx": -1,
+     "dy": 1,
+     "ok": 20,
+     "sum": 219.8125
+    },
+    "absent": 0,
+    "absentLiteralG1": 1875,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 12,
+   "acceptedRecordChanges": 1,
+   "swaps": {
+    "adopt": 24,
+    "adoptRefused": 0,
+    "clear": 0,
+    "compose": 1165
+   },
+   "forced": 12,
+   "truthAtEnd": {
+    "displayMode": "physical",
+    "degraded": null,
+    "limitation": null,
+    "moonlightOpacity": 0.456,
+    "source": "terrain-preview"
+   },
+   "light": {
+    "distinct": 2,
+    "values": [
+     "0.455 physical",
+     "0.456 physical"
+    ],
+    "phaseFraction": 0.646,
+    "moonAltitudeDeg": 59.6
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 32,
+    "shotsAbsent": 32,
+    "videoFrames": 63,
+    "videoAbsent": 63
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  },
+  {
+   "v3": {
+    "shots": {
+     "judged": 492,
+     "absent": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 19,
+      "endControlAbsent": 19
+     }
+    },
+    "recording": {
+     "judged": 1060,
+     "absent": 0,
+     "wholeFrameShiftNotJudged": 0,
+     "intervalsMs": [],
+     "controls": {
+      "seedFrames": {},
+      "seedAbsent": {},
+      "endControlFrames": 57,
+      "endControlAbsent": 57
+     }
+    },
+    "stepsWithAbsentShot": 0,
+    "stepsWithAbsentRecordedFrame": 0,
+    "absentOutsideStepWindows": {
+     "shots": 0,
+     "recording": 0
+    }
+   },
+   "launch": "swp-webkit-2-reduce-inval",
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "cell": "s1",
+   "instant": "2026-11-18T16:30:00Z",
+   "valid": true,
+   "v3ctl": {
+    "reanalysed": false,
+    "recordingControlFrames": 57,
+    "recordingControlAbsent": 57
+   },
+   "invalidReasons": [],
+   "recipeValid": true,
+   "minuteSteps": 1,
+   "stepsWithAbsentShot": 0,
+   "stepsWithAbsentRecordedFrame": 0,
+   "shots": {
+    "count": 873,
+    "medianIntervalMs": 84,
+    "p90IntervalMs": 92,
+    "absent": 0,
+    "absentLiteralG1": 873,
+    "absentFixedReference": 0,
+    "absentIntervalsMs": []
+   },
+   "recording": {
+    "frames": 2760,
+    "unreadableMarker": 15,
+    "observed": 1875,
+    "offset": {
+     "dx": -1,
+     "dy": 1,
+     "ok": 20,
+     "sum": 235.4375
+    },
+    "absent": 0,
+    "absentLiteralG1": 1875,
+    "absentIntervalsMs": []
+   },
+   "refinementJobs": 12,
+   "acceptedRecordChanges": 1,
+   "swaps": {
+    "adopt": 12,
+    "adoptRefused": 0,
+    "clear": 0,
+    "compose": 265
+   },
+   "forced": 12,
+   "truthAtEnd": {
+    "displayMode": "physical",
+    "degraded": null,
+    "limitation": null,
+    "moonlightOpacity": 0.456,
+    "source": "terrain-preview"
+   },
+   "light": {
+    "distinct": 2,
+    "values": [
+     "0.455 physical",
+     "0.456 physical"
+    ],
+    "phaseFraction": 0.646,
+    "moonAltitudeDeg": 59.6
+   },
+   "seed": null,
+   "absentControl": {
+    "shots": 19,
+    "shotsAbsent": 19,
+    "videoFrames": 57,
+    "videoAbsent": 57
+   },
+   "hiddenSamples": 0,
+   "pageErrors": 0
+  }
+ ]
+}

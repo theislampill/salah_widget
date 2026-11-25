@@ -1,0 +1,157 @@
+{
+ "schema": "r0041-preview-clear-integrated/1",
+ "date": "2026-11-24",
+ "tree": "integrated branch (merge of the preview-clear correction)",
+ "recipe": "tools/qa/r0041/swp.cjs <tree> <out> <engine> <dpr> full 300 <label> p1=2026-11-18T16:30:00Z:preview (ONE cell per launch, headed, R41_SHOT_MS=30000); per clear: tools/qa/r0041/pv-clear.cjs",
+ "window": "a clear counts as followed by absence if >=1 v3-ABSENT recorded frame lies in [call-40 ms, call+1000 ms)",
+ "ratioCheck": "device-pixel crops of the Moon square are 218 px for a 107.8 CSS px slot at ratio 2 (109 px at ratio 1)",
+ "launches": {
+  "pv-webkit-1-full": {
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "full",
+   "browserVersion": "26.4",
+   "secondsAfterSettle": 300,
+   "isolation": 0,
+   "tree": "x-r0041",
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 0,
+     "per": [],
+     "recordedJudged": 7485,
+     "recordedAbsentTotal": 0,
+     "absentNotNearClear": [],
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 62,
+      "absent": 62
+     },
+     "swaps": {
+      "adopt": 0,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 4386
+     },
+     "videoUnreadable": 15,
+     "videoFrames": 8363,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ]
+  },
+  "pv-firefox-2-full": {
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "full",
+   "browserVersion": "150.0.2",
+   "secondsAfterSettle": 300,
+   "isolation": 0,
+   "tree": "x-r0041",
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 0,
+     "per": [],
+     "recordedJudged": 7488,
+     "recordedAbsentTotal": 0,
+     "absentNotNearClear": [],
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 38,
+      "absent": 38
+     },
+     "swaps": {
+      "adopt": 1,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 4561
+     },
+     "videoUnreadable": 21,
+     "videoFrames": 9883,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ]
+  },
+  "pv-webkit-2-full": {
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "full",
+   "browserVersion": "26.4",
+   "secondsAfterSettle": 300,
+   "isolation": 0,
+   "tree": "x-r0041",
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 4,
+     "per": [
+      {
+       "absentFrames": 28
+      },
+      {
+       "absentFrames": 28
+      },
+      {
+       "absentFrames": 27
+      },
+      {
+       "absentFrames": 26
+      }
+     ],
+     "recordedJudged": 7491,
+     "recordedAbsentTotal": 781,
+     "absentNotNearClear": 672,
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 60,
+      "absent": 60
+     },
+     "swaps": {
+      "adopt": 1,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 3235
+     },
+     "videoUnreadable": 14,
+     "videoFrames": 8367,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ],
+   "note": "detector false positive from +265 s: after a refinement adoption at +250 s and a 0.1 CSS px slot move at +265 s the point-like count rose from 9 to 39 above the baseline (all 42 point-like pixels of a flagged shot lie on the lit surface, neighbour means 60-128; none on the dark side); disc mean 100.6-101.2 in all 7,423 recorded frames and >=100.2 in all 3,544 shots of the observation (hidden-Moon control 42.7); 33 clears before +265 s: 0 followed by an ABSENT frame; the last 4 clears fall in the flagged window and are not judged by rule v3 (present by the disc mean)",
+   "flaggedFrameCrop": "preview-webkit-2-flagged-present-frame.png"
+  }
+ }
+}

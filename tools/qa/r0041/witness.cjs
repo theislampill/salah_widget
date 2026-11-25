@@ -1,0 +1,195 @@
+'use strict';
+// R0041 (issue 143) forced-route Moon-presence witness. Native recipe; NOT part of the node glob.
+// Proves Moon presence from PAINTED PIXELS (never from classes or flags): every captured frame of the Moon rectangle
+// is classified PRESENT / ABSENT inside the disc mask:
+//   disc set = pixels within 0.47 x side of the rectangle centre; Y = 0.2126R + 0.7152G + 0.0722B (sRGB codes)
+//   stars    = POINT-LIKE bright disc pixels: Y exceeds the mean of its 8 neighbours at distance 2 by > 30 and exceeds
+//              the corner-sky median by > 30 (corner = r >= 0.53 x side). Lunar relief and the limb are not point-like.
+//   dRef     = mean |Y - Y_ref| over the disc against the run's reference frame(s): the settled frame before the
+//              forced event and, for identity-change routes, the settled frame at the end of the run
+//   ABSENT   if stars >= 10 or dRef > 4 against every reference.
+// Capture: Chromium uses the DevTools screencast (every composited frame, compositor timestamps); Firefox and WebKit
+// use a screenshot loop (capture interval reported; events shorter than it can be missed). A screenshot is attributed to
+// its REQUEST instant: one requested after a forcing call returned shows the post-event page (conservative for blanks).
+// In-page, per animation frame, the reveal classes and observe().current are logged with rAF timestamps so that
+// "indicators match pixels" can be checked.
+// Routes (forced in a real page of the product; Date shifted to the chosen night, real speed):
+//   startup   - from navigation; after the first PRESENT frame no frame may be ABSENT
+//   natural   - real speed, no forcing, R41_SECONDS (default 130) after settle; reference rolls to the last PRESENT frame
+//   expiry    - same-scope expiry: fragment &timeScale=60 makes jobs outlast the validity window
+//   noSucc    - same as expiry with window.SalahMoonInitial removed (no immediately available successor)
+//   noSuccThrow - same as expiry with every receiver render throwing (R0033 initial-tier budget waiting/exhausted)
+//   invalidate- SalahMoonRuntime.invalidate('r0041-witness') x3 (R0033 F-1 route, same identity)
+//   resume    - document.hidden overridden true -> visibilitychange (bubbling, as the browser's) -> 1 s -> false ->
+//               visibilitychange, x3
+//   bfcache   - navigate to a loopback JSON document, 1 s, history back, x3; measured from the in-page pageshow
+//               (persisted) instant. When the engine does not restore from the back/forward cache the run records
+//               'bfcache-reload' and stops (that is a fresh startup, not this route).
+//   pageshow  - the bfcache lifecycle synthesised in spec order (pagehide persisted, hidden; 1 s; visible, pageshow
+//               persisted), x3, measured from the resume call
+//   sky       - SalahRealSky.invalidate('r0041-witness') x3 (sky-host lifecycle)
+//   identity  - SalahClock.set({rate:1,utcMs:now+3600 s}) (genuine clock/identity change)
+//   identity12- SalahClock.set({rate:1,utcMs:now+7.5 h}) from 2026-11-18 16:30 Z: lit gibbous (alt 60) -> below-horizon (
+//               vs below-horizon calendar disc), so frames can be attributed to the OLD or NEW identity.
+// Every launch goes through iso.cjs (proxy, resolver rules, catch-all route before navigation, finish() throws on
+// any allowed non-loopback request).
+// Usage: node witness.cjs <repoRoot> <outJson> <engine> <dpr> <motion:reduce|full> <route> <startISO> [runs=1] [cropDir]
+const fs=require('node:fs'),path=require('node:path');
+const {createEnv,launch}=require('./iso.cjs');const {decodePng}=require('./png.cjs');
+const [root,outFile,engine,dpr,motion,route,startISO,runsArg,cropDir]=process.argv.slice(2);
+const RUNS=+(runsArg||1);
+const FRAG='#lat=24.47&lon=39.61&label=Madinah&method=4&tz=Asia%2FRiyadh&units=c&simWx=0&simCloud=0&qa=1'+(motion==='full'?'&motion=full':'')+((route==='expiry'||route==='noSucc'||route==='noSuccThrow')?'&timeScale=60':'');
+const SHIFT=`(()=>{const ND=Date,off=${Date.parse(startISO)}-ND.now();class D extends ND{constructor(...a){super(...(a.length?a:[ND.now()+off]));}static now(){return ND.now()+off;}}window.Date=D;})();`;
+const RAF=`(()=>{window.__r41={frames:[],events:[],pageshow:[],renders:0};{const P=Worker.prototype.postMessage;Worker.prototype.postMessage=function(m,...t){if(m&&m.kind==='render'&&m.scene&&m.scene.fraction!=null)window.__r41.renders++;return P.call(this,m,...t);};}addEventListener('pageshow',e=>{if(e.persisted)window.__r41.pageshow.push({persisted:true,wall:performance.timeOrigin+performance.now()});});const tick=t=>{const c=document.querySelector('.c'),m=document.querySelector('.moon-mask-disc');let cur=null;try{cur=window.SalahMoonRuntime?.observe?.().current??null;}catch(e){}
+ window.__r41.frames.push([Math.round(t*10)/10,c&&c.classList.contains('moon-ready')?1:0,m&&m.classList.contains('mask-on')?1:0,cur?1:0,c&&c.classList.contains('real-sky-composed')?1:0]);if(window.__r41.frames.length>20000)window.__r41.frames.shift();requestAnimationFrame(tick);};requestAnimationFrame(tick);})();`;
+const Y=(d,i)=>.2126*d[i]+.7152*d[i+1]+.0722*d[i+2];
+function discOf(img,rect,_requested){
+  // The capture's own scale (image width / 325 CSS px), not the requested DPR: a Chromium screencast frame can arrive at
+  // CSS size even at DPR 2 (review finding 2: the DPR 2 cells then sampled outside the image and compared nothing).
+  const scale=img.width/325;
+  const x0=Math.max(0,Math.floor(rect.x*scale)),y0=Math.max(0,Math.floor(rect.y*scale)),S=Math.floor(Math.min(rect.w,rect.h)*scale),cx=x0+S/2,cy=y0+S/2,disc=[],corner=[],pts=[];
+  const W=img.width,H=img.height,at=(x,y)=>x<0||y<0||x>=W||y>=H?null:Y(img.data,4*(y*W+x));
+  for(let y=y0;y<y0+S&&y<H;y++)for(let x=x0;x<x0+S&&x<W;x++){const r=Math.hypot(x+.5-cx,y+.5-cy),v=at(x,y);
+    if(r<=.47*S){disc.push(v);if(r<=.47*S-3){let m=0,n=0;for(const [dx,dy] of [[2,0],[-2,0],[0,2],[0,-2],[2,2],[2,-2],[-2,2],[-2,-2]]){const u=at(x+dx,y+dy);if(u!=null){m+=u;n++;}}pts.push(v-(n?m/n:v));}else pts.push(0);}
+    else if(r>=.53*S)corner.push(v);}
+  return {disc,corner,pts};
+}
+const median=a=>{const s=[...a].sort((p,q)=>p-q);return s[s.length>>1]??0;};
+function classify(img,rect,scale,refs){
+  const {disc,corner,pts}=discOf(img,rect,scale),sky=median(corner),stars=disc.filter((v,i)=>pts[i]>30&&v>sky+30).length;
+  const dRefs=refs.filter(Boolean).filter(r=>r.length===disc.length).map(r=>disc.reduce((p,v,i)=>p+Math.abs(v-r[i]),0)/disc.length);
+  const dRef=dRefs.length?Math.min(...dRefs):null;
+  const dOld=dRefs.length>0&&refs[0]&&refs[0].length===disc.length?disc.reduce((p,v,i)=>p+Math.abs(v-refs[0][i]),0)/disc.length:null;
+  const dNew=refs[1]&&refs[1].length===disc.length?disc.reduce((p,v,i)=>p+Math.abs(v-refs[1][i]),0)/disc.length:null;
+  return {stars,dRef,absent:stars>=10||(dRef!=null&&dRef>4),disc,dOld,dNew};
+}
+async function oneRun(L,env,run){
+  const page=await L.context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e).slice(0,200)));
+  const shots=[];let cdp=null;const t0=Date.now();
+  const scale=+dpr;
+  if(engine==='chromium'){
+    cdp=await L.context.newCDPSession(page);
+    cdp.on('Page.screencastFrame',async f=>{shots.push({t:f.metadata.timestamp*1000,png:Buffer.from(f.data,'base64')});try{await cdp.send('Page.screencastFrameAck',{sessionId:f.sessionId});}catch(e){}});
+  }
+  await page.goto(`http://127.0.0.1:${env.origins.ports['127.0.0.1']}/index.html${FRAG}`,{waitUntil:'commit',timeout:120000});
+  if(cdp)await cdp.send('Page.startScreencast',{format:'png',everyNthFrame:1,maxWidth:Math.round(325*scale),maxHeight:Math.round(530*scale)});
+  let capturing=true;
+  const loop=(async()=>{if(cdp)return;while(capturing){try{const t=Date.now();const png=await page.screenshot({scale:'device',animations:'allow',caret:'initial'});shots.push({t,png});}catch(e){await page.waitForTimeout(20);}}})();
+  // settle: first refined result presented
+  await page.waitForFunction(()=>window.SalahMoonRuntime?.observe?.().state?.visibleSource==='refined-terrain',null,{timeout:240000,polling:250}).catch(()=>{});
+  await page.waitForTimeout(3000);
+  const rect=await page.evaluate(()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r?{x:r.x,y:r.y,w:r.width,h:r.height}:null;});
+  // Firefox/WebKit: the serial screenshot loop can hold ONE early request (taken on the blank card during load) across
+  // the whole settle, so "the last shot before settle" is not a valid reference there. Take a dedicated reference now.
+  const refPng=engine==='chromium'?null:await page.screenshot({scale:'device',animations:'allow',caret:'initial'});
+  const settleWall=Date.now();const rendersAtSettle=await page.evaluate(()=>window.__r41.renders);
+  const events=[];const mark=async name=>{events.push({name,wall:Date.now()});};
+  // In-page wall time (performance.timeOrigin + now) of the forcing call itself, comparable with screencast timestamps.
+  // Chromium screencast timestamps share the page wall clock. Firefox and WebKit shots are timed on THIS process's clock,
+  // and their in-page performance.timeOrigin is offset from it by a variable amount (seen up to ~1 s in Firefox), so for
+  // them the event instant is this process's clock when the forcing call has RETURNED (conservative: a shot requested
+  // after it shows the post-event page).
+  const pageMark=async (name,fn)=>{const wall=await page.evaluate(fn);events.push({name,wall:engine==='chromium'?wall:Date.now(),pageWall:wall});};
+  if(route==='startup'){await page.waitForTimeout(2000);}
+  else if(route==='natural'){await mark('observe');await page.waitForTimeout(+(process.env.R41_SECONDS||130)*1000);}
+  else if(route==='expiry'||route==='noSucc'||route==='noSuccThrow'){
+      // noSucc: receiver removed after construction (missing receiver); noSuccThrow: receiver kept but every render throws,
+      // so R0033's initial-tier budget is spent (waiting -> exhausted) -- the two conditions of owner decision 2.
+      if(route==='noSucc')await page.evaluate(()=>{window.__r41keep=window.SalahMoonInitial;window.SalahMoonInitial=null;});
+      if(route==='noSuccThrow')await page.evaluate(()=>{const k=window.SalahMoonInitial;window.SalahMoonInitial={identity:k.identity,render(){throw new Error('r0041 witness: injected receiver failure');}};});
+      await mark('observe');await page.waitForTimeout(45000);}
+  else if(route==='invalidate'){for(let k=0;k<3;k++){await pageMark('invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahMoonRuntime.invalidate('r0041-witness');return w;});await page.waitForTimeout(5000);}}
+  else if(route==='sky'){for(let k=0;k<3;k++){await pageMark('sky-invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahRealSky?.invalidate('r0041-witness');return w;});await page.waitForTimeout(6000);}}
+  else if(route==='resume'){for(let k=0;k<3;k++){await pageMark('hide',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});
+      await page.waitForTimeout(1000);await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});await page.waitForTimeout(4000);}}
+  else if(route==='bfcache'){for(let k=0;k<3;k++){await mark('hide');await page.goto(`http://127.0.0.1:${env.origins.ports['127.0.0.1']}/moon/BUILD.json`,{waitUntil:'load'});await page.waitForTimeout(1000);
+      await page.goBack({waitUntil:'commit'});await page.waitForTimeout(4000);
+      const shows=await page.evaluate(()=>window.__r41?.pageshow??null);if(!shows||!shows.length){events.push({name:'bfcache-reload',wall:Date.now()});break;}
+      const last=shows.at(-1);events.push({name:last.persisted?'resume':'bfcache-reload',wall:last.wall,persisted:last.persisted});}}
+  else if(route==='pageshow'){for(let k=0;k<3;k++){
+      // Back/forward-cache lifecycle, synthesised in spec order because no engine restores from bfcache under Playwright
+      // (Chromium: BackForwardCacheDisabledForDelegate; Firefox, WebKit: the page reloads): pagehide(persisted) ->
+      // hidden visibilitychange; 1 s; visible visibilitychange -> pageshow(persisted). The asset owner suspends and
+      // resumes on these events exactly as on a real restore.
+      await pageMark('hide',()=>{const w=performance.timeOrigin+performance.now();window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));
+        Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'hidden'});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});
+      await page.waitForTimeout(1000);
+      await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});Object.defineProperty(document,'visibilityState',{configurable:true,get:()=>'visible'});
+        document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));return w;});
+      await page.waitForTimeout(6000);}}
+  else if(route==='noRecv'||route==='noRecvResume'){
+      // Real speed, receiver removed (a single receiver fault): every withdrawal then has no same-moment producer.
+      await page.evaluate(()=>{window.__r41keep=window.SalahMoonInitial;window.SalahMoonInitial=null;});
+      for(let k=0;k<2;k++){
+        if(route==='noRecv'){await pageMark('invalidate',()=>{const w=performance.timeOrigin+performance.now();window.SalahMoonRuntime.invalidate('r0041-witness');return w;});}
+        else{await pageMark('hide',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});
+          await page.waitForTimeout(1000);
+          await pageMark('resume',()=>{const w=performance.timeOrigin+performance.now();Object.defineProperty(document,'hidden',{configurable:true,get:()=>false});document.dispatchEvent(new Event('visibilitychange',{bubbles:true}));return w;});}
+        await page.waitForTimeout(6000);}}
+  else if(route==='identity12'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+27000000});return w;});await page.waitForTimeout(45000);}
+  else if(route==='identity'){await pageMark('identity',()=>{const w=performance.timeOrigin+performance.now();window.SalahClock.set({rate:1,utcMs:Date.now()+3600000});return w;});await page.waitForTimeout(45000);}
+  capturing=false;await loop;if(cdp)await cdp.send('Page.stopScreencast').catch(()=>{});
+  // The Moon's rectangle after the run: a genuine identity change moves the Moon, so post-event frames are judged there.
+  const rectEnd=await page.evaluate(()=>{const r=document.querySelector('.mphoto')?.getBoundingClientRect();return r?{x:r.x,y:r.y,w:r.width,h:r.height}:null;});
+  await page.waitForTimeout(300);
+  const raf=await page.evaluate(()=>window.__r41.frames);const rendersAtEnd=await page.evaluate(()=>window.__r41.renders);const perfOrigin=await page.evaluate(()=>performance.timeOrigin);
+  await page.close();
+  return {shots,raf,perfOrigin,events,rect,rectEnd,refPng,settleWall,t0,errors,renderJobsAfterSettle:rendersAtEnd-rendersAtSettle};
+}
+(async()=>{
+  const env=await createEnv({root});const out={engine,dpr:+dpr,motion,route,startISO,fragment:FRAG,runs:[]};
+  try{
+    const L=await launch(env,{engine,mode:'route',deviceScaleFactor:+dpr,reducedMotion:motion==='full'?'no-preference':'reduce',
+      ...(route==='bfcache'?{ignoreDefaultArgs:engine==='chromium'?['--disable-back-forward-cache']:undefined,extraPrefs:{'browser.sessionhistory.max_total_viewers':8}}:{})});
+    await L.context.addInitScript(SHIFT);await L.context.addInitScript(RAF);
+    for(let run=0;run<RUNS;run++){
+      const r=await oneRun(L,env,run);if(!r.rect){out.runs.push({error:'no Moon rectangle',errors:r.errors});continue;}
+      const scale=+dpr;const shots=r.shots.sort((a,b)=>a.t-b.t);
+      // reference frames: the last frame before settle+0 (old identity) and the last frame of the run (new identity)
+      const decode=s=>{try{return decodePng(s.png);}catch(e){return null;}};
+      const before=r.refPng?{png:r.refPng}:[...shots].reverse().find(s=>s.t<=r.settleWall);const last=shots.at(-1);
+      if(cropDir&&before){fs.mkdirSync(cropDir,{recursive:true});fs.writeFileSync(path.join(cropDir,`${engine}-dpr${dpr}-${motion}-${route}-run${run}-reference.png`),before.png);}
+      const refOld=before&&route!=='startup'?discOf(decode(before),r.rect,scale).disc:null,refNew=(route==='identity'||route==='identity12'||route==='startup')&&last?discOf(decode(last),r.rect,scale).disc:null;
+      const frames=[];let firstPresent=null,prevDisc=null,rolling=refOld;
+      // identity routes: the Moon moves with the identity. Post-event frames are judged at the END rectangle against the
+      // run's final frame there (refEnd); the OLD-identity attribution stays at the settled rectangle.
+      const identityRoute=route==='identity'||route==='identity12',evT=identityRoute&&r.events.length?r.events[0].wall:null;
+      const refEnd=identityRoute&&last&&r.rectEnd?discOf(decode(last),r.rectEnd,scale).disc:null;
+      for(const s of shots){const img=decode(s);if(!img)continue;
+        // natural: the reference ROLLS to the last PRESENT frame (the lit disc changes slowly at real speed over minutes)
+        let c=classify(img,r.rect,scale,route==='natural'?[rolling]:[refOld,refNew]);
+        if(identityRoute&&evT!=null&&s.t>=evT&&refEnd){const old=c.dOld;c={...classify(img,r.rectEnd,scale,[refEnd]),dOld:old,dNew:null};}if(route==='natural'&&!c.absent&&s.t>r.settleWall)rolling=c.disc;
+        // dPrev: mean |dY| over the disc against the previous captured frame (size of a visible swap, e.g. V5 -> refined)
+        const dPrev=prevDisc&&prevDisc.length===c.disc.length?+(c.disc.reduce((p,v,i)=>p+Math.abs(v-prevDisc[i]),0)/c.disc.length).toFixed(2):null;prevDisc=c.disc;
+        // startup: dRef is meaningless before a reference; use stars and disc-vs-corner difference of the reference-free part
+        const absent=c.absent;
+        frames.push({t:Math.round(s.t-r.t0),absent:absent?1:0,stars:c.stars,dRef:c.dRef==null?null:+c.dRef.toFixed(2),old:c.dOld!=null&&c.dOld<=4&&!(c.dNew!=null&&c.dNew<=4)?1:0,dPrev,discN:c.disc.length});
+        if(!absent&&firstPresent==null&&route!=='startup')firstPresent=s.t;
+        if(absent&&cropDir&&run===0&&!out.cropSaved){fs.mkdirSync(cropDir,{recursive:true});fs.writeFileSync(path.join(cropDir,`${engine}-dpr${dpr}-${motion}-${route}-absent.png`),s.png);out.cropSaved=true;}}
+      const afterSettle=route==='startup'?frames.slice(Math.max(0,frames.findIndex(f=>!f.absent))):frames.filter(f=>f.t>=r.settleWall-r.t0-3000);
+      // absent intervals after settle
+      const intervals=[];let open=null;for(const f of afterSettle){if(f.absent&&open==null)open=f.t;if(!f.absent&&open!=null){intervals.push({fromMs:open,toMs:f.t,durationMs:f.t-open});open=null;}}if(open!=null)intervals.push({fromMs:open,toMs:null,durationMs:null});
+      const rafAfter=r.raf.filter(x=>x[0]+r.perfOrigin>=r.settleWall-3000);
+      // Fail-closed validity (review finding 2): a run that measured nothing is INVALID, never a pass.
+      const invalid=[];const S=Math.floor(Math.min(r.rect.w,r.rect.h)*(decode(shots[0]||{png:Buffer.alloc(0)})?.width??325)/325);
+      const minDisc=Math.min(...frames.map(f=>f.discN));if(!frames.length||!(minDisc>=0.9*Math.PI*(.47*S)**2))invalid.push('empty or partial disc region ('+minDisc+' px)');
+      if(route!=='startup'&&frames.some(f=>f.t>=r.settleWall-r.t0&&f.dRef==null))invalid.push('frames without a reference comparison');
+      const EVR={invalidate:'invalidate',resume:'resume',pageshow:'resume',sky:'sky-invalidate',identity:'identity',identity12:'identity',noRecv:'invalidate',noRecvResume:'resume'};
+      if(EVR[route]&&!r.events.some(e=>e.name===EVR[route]))invalid.push('no forced event');
+      if(route==='resume'||route==='pageshow'||route==='noRecvResume'){const ev=[...r.events].sort((x,y)=>x.wall-y.wall);
+        for(let k=0;k<ev.length;k++)if(ev[k].name==='hide'){const t1=ev[k].wall-r.t0+30,t2=(ev[k+1]?.wall??Infinity)-r.t0-30,inside=frames.filter(f=>f.t>=t1&&f.t<t2);
+          if(inside.length&&!inside.some(f=>f.absent))invalid.push('hidden state not classified absent');}}
+      out.runs.push({valid:invalid.length===0,invalidReasons:[...new Set(invalid)],frames:frames.length,meanFrameIntervalMs:frames.length>1?+((frames.at(-1).t-frames[0].t)/(frames.length-1)).toFixed(1):null,
+        absentFramesAfterSettle:afterSettle.filter(f=>f.absent).length,absentIntervals:intervals,events:r.events.map(e=>({name:e.name,tMs:e.wall-r.t0,persisted:e.persisted})),
+        rafFrames:rafAfter.length,rafMoonReadyOff:rafAfter.filter(x=>!x[1]).length,rafMaskOff:rafAfter.filter(x=>!x[2]).length,rafNotCurrent:rafAfter.filter(x=>!x[3]).length,
+        startupFirstPresentMs:route==='startup'?(frames.find(f=>!f.absent)||{}).t??null:undefined,startupAbsentAfterFirstPresent:route==='startup'?(()=>{const i=frames.findIndex(f=>!f.absent);return i<0?null:frames.slice(i).filter(f=>f.absent).length;})():undefined,
+        pageErrors:r.errors,renderJobsAfterSettle:r.renderJobsAfterSettle,frameLog:frames.map(f=>[f.t,f.absent,f.stars,f.dRef,f.old,f.dPrev]),
+        oldIdentityFramesAfterEvent:route==='identity12'&&r.events.length?frames.filter(f=>f.t>r.events[0].wall-r.t0&&f.old).length:undefined});
+      console.log(engine,dpr,motion,route,'run',run,'frames',frames.length,'absentAfterSettle',afterSettle.filter(f=>f.absent).length,'intervals',JSON.stringify(intervals.slice(0,6)));
+    }
+    await L.close();
+  }catch(e){out.error=String(e&&e.stack||e);console.error(out.error);}
+  out.isolation=env.finish();
+  const all=fs.existsSync(outFile)?JSON.parse(fs.readFileSync(outFile,'utf8')):{};all[[engine,dpr,motion,route,startISO].join('|')]=out;fs.writeFileSync(outFile,JSON.stringify(all,null,1));
+  console.log('isolation allowed',out.isolation.allowedExternal,JSON.stringify(out.isolation.totalRequests));
+})().catch(e=>{console.error(e);process.exit(1);});

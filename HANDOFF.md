@@ -3,6 +3,20 @@
 Context for a fresh agent picking up this repo. The durable design/process docs already exist — read those first
 and don't expect this file to repeat them.
 
+## R0041 Moon lead direction and presence (issue 143)
+
+Read [the R0041 state contract](docs/state-contracts/R0041.md) before changing the Moon host, its presenter or the
+native capture. What it changes: the refinement lead follows the phase angle's actual motion
+(`nativeLunarPhaseDirection`; the waxing flag still decides only the lit limb; `simMoon*` keeps today's lead); every
+Moon-host swap adopts and composes its successor before anything is withdrawn (one presenter, the runtime-owned detail
+handle); a tab return composes the Moon in the task that clears the pause; and, only in a genuine renderer-failure
+state, the disclosed untextured phase disc (AGENTS gate D fault-path clause, owner decision 2026-11-22). Owner-accepted
+tradeoff (2026-11-24): the first new frame after a tab return comes later than on main (about 130–191 ms against
+60–83 ms; one machine, Chromium, instrumented), never described as no regression. Named limits: Safari not tested;
+real Firefox and WebKit restoration unverified; the first-visible-frame guarantee on back-navigation unmet (G9,
+routed to the R002F lifecycle follow-up); the stale prayer first frame after a hidden interval is pre-existing and
+routed there too. R0041 is not accepted; merge authority is conditional on contract section 11.
+
 ## R000B corrective engineering
 
 Read [the R000B state contract](docs/state-contracts/R000B.md) before continuing

@@ -1,0 +1,9 @@
+40a41
+>   if(s.phaseDirection===undefined&&(s.timeScale??1)>0){const d=historyDirection(s);if(d!==undefined)s={...s,phaseDirection:d};}
+42a44,49
+>  // C2 PROTOTYPE (scratch only): phase direction from successive native snapshots inside the Moon host.
+>  let dirMemo={scope:null,alpha:null,dir:null};
+>  function historyDirection(s){const sc=JSON.stringify([s.generation,s.sceneIdentity,s.waxing,s.dpr]),a=Math.acos(2*s.fraction-1);
+>   if(dirMemo.scope!==sc){dirMemo={scope:sc,alpha:a,dir:null};return undefined;}
+>   if(a!==dirMemo.alpha){const d=a-dirMemo.alpha;dirMemo.dir=Math.abs(d)<=1e-6?0:(d<0?1:-1);dirMemo.alpha=a;}
+>   return dirMemo.dir??undefined;}

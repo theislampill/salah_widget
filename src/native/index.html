@@ -2447,6 +2447,7 @@ function skySceneIdentity(){
   return [lat,lon,_cacheTz,FOLLOW_WALL_CLOCK?"wall":[_simBase,_simTz,_rafT0,TIMESCALE].join(":")].join("|");
 }
 let _skySceneKey=null,_skyCommitted=false,_skyMoonPresence=0;
+let _moonHrefPending=null;   // R0041: the texture data URL awaiting decode before it replaces the presented one
 let _skyInitialDocument=true;
 function finishInitialSkyDocument(){_skyInitialDocument=false;try{window.SalahMoonRuntime?.finishInitialDocument();}catch(e){recordRenderFault("moon-handoff",e);}}
 // PRAYER owns calls at boot and after accepted configuration invalidation, before builders.
@@ -3986,23 +3987,29 @@ function _qaStateRead(){
       // R0036 I-D2: the non-adopting observation (R0033's presence predicate); never surface()/state/detailEnabled.
       const runtime=window.SalahMoonRuntime,observation=typeof runtime?.observe==="function"?runtime.observe():null,refined=!!observation?.surface,lunarState=observation?.state;
       const initial=lunarState?.visibleSource==="initial-v5";
+      // R0041: the receiver-independent phase disc is named as what it is (a uniform sphere, no lunar detail), and a
+      // state in which no truthful Moon can be constructed is reported as a limitation.
+      const phaseDisc=lunarState?.visibleSource==="phase-disc",limitation=typeof lunarState?.limitation==="string"?lunarState.limitation:null,slotState=typeof lunarState?.slot==="string"?lunarState.slot:null;
       // R0036: a construction failure recorded by the Moon builder's guard (R0033 DG-1 = B) is reported as such, not as
       // "awaiting"; the slot is then empty, so the runtime status cannot say it.
       const constructionError=!runtime&&typeof window.SalahMoonConstructionError==="string"?window.SalahMoonConstructionError:null;
-      const surfaceStatus=refined?(initial?"v5-initial":"v5-terrain"):constructionError!=null?"construction-failed":lunarState?.status??"pending";
+      const surfaceStatus=refined?(phaseDisc?"phase-disc":initial?"v5-initial":"v5-terrain"):constructionError!=null?"construction-failed":lunarState?.status??"pending";
       const surfaceVisible=$(".c").classList.contains("moon-ready"),grp=+(A.moonGrp||0),disc=+(A.moonDisc||0);
       const phys=refined && surfaceVisible && up && !A.day && (A.moonlightIntensity||0)>0.02;
+      // R0041 G2 (owner decision 2026-11-22): the untextured phase disc is a renderer-failure fallback, disclosed here
+      // (diagnostics only). Its light is the unchanged ephemeris rule: never more than the refined disc's at this instant.
+      const degraded=refined&&phaseDisc?"phase-disc fault fallback, untextured":null;
       return { phaseFraction:+(mp.frac||0).toFixed(3), waxing:!!mp.waxing, moonAltitudeDeg:+(+alt).toFixed(1), moonSkyFresh:_lastMoonPaint?_lastMoonPaint.fresh:null,
-        constructionError,
+        constructionError, limitation, slotState, degraded,
         observation:observation?{accepted:observation.accepted,waitingPreview:observation.waitingPreview,current:observation.current,wouldPresent:observation.wouldPresent,detailAvailable:observation.detailAvailable}:null,
         lastConsumed:_lastMoonPaint, currentGeometry:A.moonObservation||null,   // current recomputation is explicitly separate from the consumed frame
         lunarLight:_lastMoonPaint&&_lastMoonPaint.status==="completed"?_lastMoonPaint.observation.light:null,
-        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?(initial?"V5-derived receivers and canonical terrain horizons; full refinement pending":"V5 DEM intersections, terrain shadows and colour"):"unavailable"},
+        surface:{status:surfaceStatus,quality:lunarState?.quality??"pending",visibleSource:refined?lunarState.visibleSource:"awaiting-terrain",identity:refined?lunarState.accepted?.identity:null,legacyDecoded:_pbrReady,legacyVisible:false,texture:refined?(phaseDisc?"uniform sphere under the V5 photometric law and profile; no lunar terrain or albedo (start-up renderer unavailable: "+(lunarState.phaseDisc?.cause??"unknown")+")":initial?"V5-derived receivers and canonical terrain horizons; full refinement pending":"V5 DEM intersections, terrain shadows and colour"):"unavailable"},
         physicalMoonVisible:phys, calendarMoonVisible:surfaceVisible && grp>0.01,
-        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?"physical":grp>0.01?(initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
+        displayMode:A.day?"day-suppressed":(!surfaceVisible?"surface-unavailable":phys?(phaseDisc?"phase-disc-fault-fallback":"physical"):grp>0.01?(phaseDisc?"phase-disc-calendar":initial?"initial-calendar":"refined-calendar"):"debug-hidden"),
         moonSkyOpacity:+grp.toFixed(3), moonCalendarOpacity:+grp.toFixed(3), moonFeatureOpacity:+disc.toFixed(3),
-        moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?(initial?"V5 material with initial Lambert Earth integral; full terrain refinement pending":"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only"):"surface unavailable",
-        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?(constructionError!=null?"Moon runtime construction failed (R0033 DG-1 = B): no disc and no moonlight; no legacy substitution":"awaiting current terrain; no legacy substitution"):phys?null:(up?"near-new / cloud → subordinate calendar presentation":"below horizon → refined calendar phase; physical moonlight off") };
+        moonlightOpacity:+(A.moonBeam||0).toFixed(3),earthshine:refined?(phaseDisc?"uniform material with the initial Lambert Earth integral; no terrain":initial?"V5 material with initial Lambert Earth integral; full terrain refinement pending":"Unchanged V5 finite Earth illumination; below-horizon emphasis is display-only"):"surface unavailable",
+        reason:A.day?"daytime suppression (calendar chip persists in header/footer)":!surfaceVisible?(constructionError!=null?"Moon runtime construction failed (R0033 DG-1 = B): no disc and no moonlight; no legacy substitution":limitation!=null?"no truthful Moon can be constructed: "+limitation+"; no disc and no moonlight; no legacy substitution":"awaiting current terrain; no legacy substitution"):phys?(phaseDisc?limitation:null):(up?"near-new / cloud → subordinate calendar presentation":phaseDisc?"below horizon → phase-disc calendar phase (uniform sphere, no lunar detail); physical moonlight off":"below horizon → refined calendar phase; physical moonlight off") };
     })()
   };
 }
@@ -4303,7 +4310,13 @@ function startRenderLoop(){
   }
   function start(){ _wanted=true; if(_raf===null && !_running) _raf=requestAnimationFrame(loop); }   // a running frame reschedules itself in finally
   function stop(){ _wanted=false; if(_raf!==null){ cancelAnimationFrame(_raf); _raf=null; } }
-  function setVis(){ const on=visible(); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop(); }
+  // R0041 G8 (owner decision 2026-11-22): the task that CLEARS the pause (tab resume, back/forward restoration, the
+  // card scrolling back into view) composes the Moon before it ends, so no frame after restoration lacks it. The Moon
+  // runtime stays the one presenter (request() -> its own adopt()); this is the existing native read, made in this
+  // task instead of the next frame. It runs last and any Moon fault is contained: the frame loop is already
+  // scheduled, and prayer publication neither waits for nor depends on it (optional astronomy).
+  function setVis(){ const on=visible(), resumed=on&&!!cEl&&cEl.classList.contains("paused"); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop();
+    if(resumed){ try{ window.SalahMoonRuntime?.request(); updateSkySurface(); }catch(e){ recordRenderFault("moon-resume",e); } } }
   document.addEventListener("visibilitychange",setVis);
   if("IntersectionObserver" in window && cEl)
     new IntersectionObserver(es=>{ _onScreen=es[0].isIntersecting; setVis(); },{threshold:0}).observe(cEl);
@@ -4687,19 +4700,42 @@ function _closeSettings(){
 }
 function _toggleSettings(){ const c=document.querySelector(".c"); if(!c) return; c.classList.contains("settings-open")?_closeSettings():_openSettings(); }
 
+// R0041: the PHASE-DIRECTION authority, distinct from waxing (the lit limb, chi sign). For the minute snapshot that
+// moonSky holds: +1 while the phase angle alpha=acos(2f-1) falls over the next minute, -1 while it rises, 0 inside a
+// 1e-6 rad/min dead band. Near full and new Moon the two disagree for minutes to hours (ecliptic-longitude versus
+// right-ascension opposition); the Moon host's kinematic consumers (leading edge, drift, re-request) follow this sign.
+// Absent for simMoon overrides and without a location: consumers then keep the historical waxing sign. It lives
+// outside nativeLunarSnapshot so the accepted V5/CP9 material section stays byte-identical.
+let _moonDirMemo={min:null,frac:null,dir:null};
+function nativeLunarPhaseDirection(){
+  if(SIM.moon!=null||!(isFinite(+lat)&&isFinite(+lon))||!Number.isFinite(moonSky._epochMin)) return {};
+  if(_moonDirMemo.min!==moonSky._epochMin||_moonDirMemo.frac!==moonSky.frac){
+    const t=moonSky._epochMin*60000,a=Math.acos(2*moonIllum(new Date(t)).fraction-1),b=Math.acos(2*moonIllum(new Date(t+60000)).fraction-1),d=b-a;
+    _moonDirMemo={min:moonSky._epochMin,frac:moonSky.frac,dir:!Number.isFinite(d)?null:Math.abs(d)<=1e-6?0:(d<0?1:-1)};}
+  return _moonDirMemo.dir==null?{}:{phaseDirection:_moonDirMemo.dir};
+}
 // Authored MB1 boundary: this is the only producer of native phase/time identity.
 window.SalahMoonHost=Object.freeze({
  capture(){
   const identity=skySceneIdentity();
   return {utcMs:simNow(),generation:_runtimeGeneration,sceneIdentity:identity,
-   fraction:moonSky.frac,waxing:!!moonSky.waxing,up:moonSky.up,
+   fraction:moonSky.frac,waxing:!!moonSky.waxing,...nativeLunarPhaseDirection(),up:moonSky.up,
    presentationReady:_skySceneKey!==null,initialWarranted:_skyMoonPresence>0,
    maximumPresentationRatio:MOON_SCALE_MAX/(MOON_SCALE_MIN+(MOON_SCALE_MAX-MOON_SCALE_MIN)*clamp(moonSky.up)),
    dpr:Math.max(.5,Math.min(4,window.devicePixelRatio||1)),timeScale:TIMESCALE,
    paused:document.hidden||!!$('.c')?.classList.contains('paused')};
  },
- publish(canvas){const ph=$('.mphoto');if(ph)ph.setAttribute('href',canvas.toDataURL());updateSkySurface();noteMoonSurfaceChange();},
+ // R0041 presenter: the runtime passes sameRecord=true only when the new texture re-blends the SAME adopted (current)
+ // record. Only then is the presented texture kept until its successor decodes, so the SVG Moon never shows an
+ // undecoded image of a current surface. Any other replacement (a new record after expiry, withdrawal, resume or
+ // identity change; or nothing presented) is set at once, as on main, so no expired or withdrawn surface is retained.
+ publish(canvas,sameRecord){const ph=$('.mphoto');if(ph){const url=canvas.toDataURL();
+  if(sameRecord===true&&ph.getAttribute('href')&&$('.c')?.classList.contains('moon-ready')&&typeof Image==='function'&&typeof Image.prototype.decode==='function'){_moonHrefPending=url;const img=new Image();img.src=url;
+   img.decode().catch(()=>{}).then(()=>{if(_moonHrefPending!==url)return;_moonHrefPending=null;ph.setAttribute('href',url);updateSkySurface();noteMoonSurfaceChange();});}
+  else{_moonHrefPending=null;ph.setAttribute('href',url);}}
+  updateSkySurface();noteMoonSurfaceChange();},
  fallback(){
+  _moonHrefPending=null;   // R0041: a withdrawn record's pending texture is never applied after its withdrawal
   // Resilience means a usable widget and the runtime's own bounded recovery
   // (R0033), not silently substituting the old Moon. The mask follows the same
   // admission as the material surface; light eligibility follows the same change.

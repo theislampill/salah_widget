@@ -1,0 +1,110 @@
+{
+ "schema": "r0041-preview-clear-reduced/1",
+ "date": "2026-11-24",
+ "tree": "x-r0041 e92d75e2",
+ "recipe": "tools/qa/r0041/swp.cjs <tree> <out> <engine> 1 reduce 300 <label> p1=2026-11-18T16:30:00Z:preview (ONE cell per launch, headed, R41_SHOT_MS=30000); per clear: tools/qa/r0041/pv-clear.cjs",
+ "window": "a clear counts as followed by absence if >=1 v3-ABSENT recorded frame lies in [call-40 ms, call+1000 ms)",
+ "launches": {
+  "pv-firefox-1-reduce": {
+   "engine": "firefox",
+   "dpr": 1,
+   "motion": "reduce",
+   "browserVersion": "150.0.2",
+   "secondsAfterSettle": 300,
+   "isolation": {
+    "allowedExternal": 0,
+    "byLayerHostOutcome": {
+     "proxy fonts.googleapis.com blocked": 1,
+     "proxy aus5.mozilla.org blocked": 2,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:NS_BINDING_ABORTED": 1
+    }
+   },
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 0,
+     "per": [],
+     "recordedJudged": 7488,
+     "recordedAbsentTotal": 0,
+     "absentNotNearClear": [],
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 63,
+      "absent": 63
+     },
+     "swaps": {
+      "adopt": 0,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 1378
+     },
+     "videoUnreadable": 20,
+     "videoFrames": 9706,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ]
+  },
+  "pv-webkit-1-reduce": {
+   "engine": "webkit",
+   "dpr": 1,
+   "motion": "reduce",
+   "browserVersion": "26.4",
+   "secondsAfterSettle": 300,
+   "isolation": {
+    "allowedExternal": 0,
+    "byLayerHostOutcome": {
+     "route fonts.googleapis.com aborted": 1,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:Blocked by Web Inspector": 1
+    }
+   },
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 0,
+     "per": [],
+     "recordedJudged": 7485,
+     "recordedAbsentTotal": 0,
+     "absentNotNearClear": [],
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 61,
+      "absent": 61
+     },
+     "swaps": {
+      "adopt": 0,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 1398
+     },
+     "videoUnreadable": 14,
+     "videoFrames": 8336,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ]
+  }
+ }
+}
