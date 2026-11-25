@@ -6,10 +6,10 @@ const assert = require('node:assert/strict');
 const {fixture} = require('./weather-no-timetable-fixture.cjs');
 const {provider} = require('./weather-renewal-fixture.cjs');
 
-async function sample({amount, code = 63, windFrom = 270, speed = 8, hash = '', source}) {
+async function sample({amount, code = 63, windFrom = 270, speed = 8, gust = 8, hash = '', source}) {
   const fetch = provider({code, mutate(_host, body) {
     Object.assign(body.current, {precipitation: amount, rain: amount, showers: 0,
-      wind_speed_10m: speed, wind_direction_10m: windFrom});
+      wind_gusts_10m: gust, wind_speed_10m: speed, wind_direction_10m: windFrom});
     body.hourly.precipitation.fill(amount);
     return body;
   }});
@@ -151,4 +151,4 @@ if (require.main === module) {
     if (args.includes('--check') && Object.values(checks).includes(false)) process.exitCode = 1;
   }).catch(error => { console.error(error); process.exitCode = 2; });
 }
-module.exports = {measure, assess, expectedOpacity};
+module.exports = {sample, measure, assess, expectedOpacity};

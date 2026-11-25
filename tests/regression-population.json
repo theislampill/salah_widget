@@ -61,6 +61,7 @@
   "tests/r0038-f12-moon-lightkey-reset.test.cjs",
   "tests/r003a-cloud-wind-truth.test.cjs",
   "tests/r003a-docs-truth.test.cjs",
+  "tests/r0040-options.test.cjs",
   "tests/r0040-rain-controls.test.cjs",
   "tests/r0041-presenter-census.test.cjs",
   "tests/r0041-preview-clear.test.cjs",
@@ -2204,6 +2205,43 @@
      "<patched research checkout>"
     ],
     "protocol": "assertion exit status; R40-C1 cap, additive width and light-kernel negative controls"
+   }
+  },
+  {
+   "path": "tools/qa/r0040/capture.cjs",
+   "reason": "External-browser research recipe requiring an explicit generated checkout and native engine.",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0040/capture.cjs",
+     "<playwright>",
+     "<patched research tree>",
+     "<generated tree>",
+     "<fresh dir>",
+     "<engine>",
+     "<block>",
+     "<condition>",
+     "<model>"
+    ],
+    "protocol": "Exit 0 writes raw PNGs and capture.json. Qualification requires an independent lossless_pack.py verdict."
+   }
+  },
+  {
+   "path": "tools/qa/r0040/native-options.cjs",
+   "reason": "External-browser research recipe requiring an explicit generated checkout and native engine.",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0040/native-options.cjs",
+     "<playwright>",
+     "<research tree>",
+     "<generated patched tree>",
+     "<fresh dir>",
+     "<engine>"
+    ],
+    "protocol": "Exit 0 writes measured computed styles, full-card PNGs and native-options.json. Human judgement remains separate."
    }
   }
  ]
