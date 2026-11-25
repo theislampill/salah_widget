@@ -564,6 +564,39 @@ class LaneControls(unittest.TestCase):
         target = '/docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json'
         self.assertEqual(workflow.count(target), 2)
 
+    def test_stage_option_keeps_default_argv_and_requires_selected_timing(self):
+        before=self.plan();after=self.plan(r0035_stages=False)
+        self.assertEqual([r['argv'] for r in before['lanes']],[r['argv'] for r in after['lanes']])
+        for controls in ({'r0035_stages':'yes'}, {'r0035_stages':True},
+                         {'r0035_stages':True,'r0035_mode':'capture'},
+                         {'r0035_stages':True,'r0035_mode':'timing','retain_evidence':True}):
+            with self.subTest(controls=controls),self.assertRaises(ValueError):self.plan(**controls)
+        with self.assertRaises(ValueError):self.plan(work_orders=['R0040'],r0035_stages=True,r0035_mode='timing')
+
+    def test_stage_plan_binds_venv_original_arguments_and_preparation_hash(self):
+        admission={'status':'PASS','root':'/private/derived','process':'/private/stage/process.json',
+                   'identity':'/private/stage/identity.json','plan':'/private/stage/plan.json',
+                   'custody':{'process':{'sha256':'a'*64}}}
+        plan=self.plan(work_orders=['R0035'],r0035_stages=True,r0035_mode='timing',r0035_guard='off',
+                       r0035_stage_preparation=admission)
+        self.assertEqual(len(plan['lanes']),1);row=plan['lanes'][0]
+        original=row['evidenceRetention']['originalArgv']
+        self.assertEqual(original,['/dependencies/venv/bin/python','/sources/research/tools/r0035/native_trials.py',
+            admission['plan'],row['output'],'--engine','chromium','--rounds','1','--seconds','15','--clock','ordinary',
+            '--scene','dark','--motion','normal'])
+        self.assertEqual(row['argv'],[original[0],str(HERE/'observe_r0035_stages.py'),'--driver',original[1],
+            '--identity',admission['identity'],'--preparation-process',admission['process'],'--preparation-sha256','a'*64,
+            '--evidence',row['evidenceRetention']['output'],'--',*original[2:]])
+        self.assertEqual(row['stopAllOnExit'],[86]);self.assertFalse(row['evidenceRetention']['timingComparableToOriginal'])
+        self.assertEqual(row['result']['kind'],'r0035-trials');self.assertEqual(row['result']['expectedRows'],3)
+
+    def test_failed_stage_preparation_has_no_uninstrumented_fallback_or_phantom_capture(self):
+        plan=self.plan(work_orders=['R0040','R0035'],r0035_stages=True,r0035_mode='timing',
+                       r0035_stage_preparation={'status':'INCOMPLETE','reason':'original source failure'})
+        rain,star=plan['lanes'];self.assertTrue(rain['argv']);self.assertEqual(star['argv'],[])
+        self.assertEqual(star['preparation']['status'],'INCOMPLETE');self.assertEqual(star['dependsOn'],[])
+        self.assertEqual(star['id'],'r0035-chromium-timing')
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

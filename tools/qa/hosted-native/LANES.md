@@ -102,9 +102,9 @@ canonical order above. Without the selection switch, the existing three work
 orders are emitted, plus R002F when enabled. The initial hosted campaign enabled
 R002F and contained all four work orders and five command rows. R0035 defaults
 to both timing and capture with their original dependency. The checked-in
-follow-up selects the revised R0040 capture cell, corrected R003F B0 at DPR2,
-then R002F DPR1 with five rounds of prayer restoration only. Previously obtained native results remain
-separate observations; this campaign does not repeat preview capture.
+follow-up selects only R0035 Chromium timing with guard off, all-source replay
+scope and explicit preparation-stage observations. Previously obtained native
+results remain separate; no other workstream is repeated by this campaign.
 
 Selection limits observation commands. Common source preparation and the
 original star-plan validation remain unchanged. The coordinator checks the
@@ -148,6 +148,44 @@ failures remain intact and no production guard policy is selected. The existing
 remove all preparation of the accepted full source or establish a magnitude
 cutoff. Timing-only selects one timing row; capture-only selects one capture row
 without a nonexistent timing dependency. Both retains the original dependency.
+
+### Optional preparation-stage diagnostic
+
+`--r0035-stages` (campaign `r0035Stages: true`) is an explicit opt-in. Its absent
+or false value preserves the original argv. It requires selected R0035 timing
+only, and cannot combine with the per-event `--retain-evidence` wrapper.
+The current diagnostic retains one round, 15 seconds, all three arms, ordinary
+clock, dark scene and normal motion. It changes no original predicate or cadence
+gate and supplies no production guard or replay-scope decision.
+
+After successful common preparation, `r0035_stage_materialize.py` runs as a
+separate bounded child. The coordinator retains its actual return code, timeout,
+stdout/stderr, exact argv, original source plan, original preparation/process
+receipts and original lab identity under private
+`capture/r0035-stage-preparation`. The derivative stays under
+`work/r0035-stages`. Both its own identity and distinct plan are retained
+privately. A failed or incomplete optional preparation emits a blocked stage
+row with empty argv; selected independent work orders remain available.
+
+The planner checks actual exit zero, current source hashes, complete original
+and derived byte populations, and exact current source flags. Native invocation
+passes the expected preparation receipt SHA-256 to
+`observe_r0035_stages.py`. That wrapper verifies current namespace and successful
+preparation before loading the original driver, and separately re-admits the
+original plan plus diagnostic derivative. The original source checker remains
+strict; changed bytes never satisfy its original reconstruction receipt.
+
+The original `summary.json` and each `trial.json` are unchanged. Separate stage
+receipts bind each raw observation and original trial hash, the final original
+summary, source identities, selected argv and preparation receipt. Classification
+requires the exact three-arm population, including main's expected absence of
+stage instrumentation. Raw prefixes survive stage validation errors; unavailable
+page extraction is separately identified. Original failures remain `FAIL`,
+timeouts remain incomplete, and veto/outer namespace precedence is unchanged.
+Complete original admission plus complete supplemental custody yields only
+`OBSERVED_STAGE_DIAGNOSTIC`. All timing is explicitly instrumented, with no
+estimated overhead subtraction and no worker/page clock subtraction. See
+[R0035_STAGES.md](R0035_STAGES.md).
 
 ### Corrected lunar baseline
 
@@ -313,7 +351,8 @@ from the campaign result.
 
 The workflow reads validated `campaign.json` directly. Its engine and R003F DPR,
 and the R002F enable/DPR/round/section values, are propagated into each isolated
-phase, together with selected work orders and supplemental-retention mode.
+phase, together with selected work orders, stage diagnostic controls and
+supplemental-retention mode.
 A later engine or DPR observation can therefore use a new campaign
 without editing the probe or published recipes. Each such observation still
 requires its own actual native admission.
@@ -352,3 +391,11 @@ with browser doubles. The coordinator controls additionally prove campaign
 option propagation, unchanged default invocations, distinct instrumented outputs,
 selected-population completeness and veto/outer-failure precedence. None of those
 controls launches a native browser or supplies a product acceptance result.
+
+The registered stage controls execute 15 Python cases and 12 Node cases against
+the actual original sources. Central controls additionally run the actual
+materializer on bounded source/Git fixtures and the original native driver with
+explicit browser doubles. They bind preparation status, source flags, native
+receipt population and original reports through final classification; exit zero
+with a failed original admission remains failed. These controls do not observe
+native rendering or measure instrumentation overhead.

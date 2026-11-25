@@ -18,7 +18,10 @@ import sys
 import time
 
 from lanes import (selected_work_orders, star_controls, STAR_DEFAULTS, moon_harness, BASE_INDEX, R003F_MATERIALIZATION,
-                   rain_mode, R0040_MANIFEST, R0040_CAPTURE_WRAPPER_SHA256, digest)
+                   rain_mode, R0040_MANIFEST, R0040_CAPTURE_WRAPPER_SHA256, digest, stage_mode, original_star_plan,
+                   R0035_STAGE_WRAPPER_SHA256, R0035_STAGE_MATERIALIZER_SHA256)
+import r0035_stage_materialize as stage_material
+from observe_r0035_stages import inspect as inspect_stage_trace
 
 CAP_FIELDS = ('CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb')
 RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
@@ -27,6 +30,7 @@ HERE = Path(__file__).resolve().parent
 ISOLATION_EXIT = 86
 VETO_STATUS = 'EXTERNAL_CONTINUATION_VETOED'
 CAPTURE_ADMITTED = 'ADMITTED_FOR_OFFLINE_VERIFICATION'
+STAGES_OBSERVED = 'OBSERVED_STAGE_DIAGNOSTIC'
 VETO_REASON = ('retention wrapper prevented external continuation before the real continue action; '
                'not evidence of an actual network escape')
 
@@ -50,9 +54,10 @@ def read_campaign(path):
     rain_mode(value.get('r0040Mode', 'options'), selected, value['engine'])
     if 'r0035' in value and (not isinstance(value['r0035'], dict) or 'R0035' not in selected):
         raise ValueError('explicit R0035 controls require a dictionary and selected R0035')
-    star_controls(value.get('r0035'))
+    stars = star_controls(value.get('r0035'))
     if type(value.get('evidenceRetention', False)) is not bool:
         raise ValueError('evidence retention must be boolean')
+    stage_mode(value.get('r0035Stages', False), selected, stars, value.get('evidenceRetention', False))
     return value
 
 
@@ -73,6 +78,11 @@ def star_arguments(args):
     return [part for key, value in star_campaign(args).items() for part in ('--r0035-'+key, value)]
 
 
+def stage_campaign(args):
+    return stage_mode(getattr(args, 'r0035_stages', False), campaign_selection(args),
+                      star_campaign(args), getattr(args, 'retain_evidence', False))
+
+
 def moon_campaign(args):
     return moon_harness(getattr(args, 'r003f_harness', 'published'), campaign_selection(args))
 
@@ -91,9 +101,11 @@ def admit_plan(plan, args):
     selected = campaign_selection(args)
     stars = star_campaign(args)
     retention = getattr(args, 'retain_evidence', False)
+    stages = stage_campaign(args)
     if (plan.get('protocol') != 'salah-hosted-native-lanes/1' or plan.get('sequential') is not True
             or plan.get('workOrders') != selected or plan.get('evidenceRetention') is not retention
             or plan.get('r0035Controls', STAR_DEFAULTS) != stars
+            or plan.get('r0035Stages', False) is not stages
             or plan.get('r003fHarness', 'published') != moon_campaign(args)
             or plan.get('r0040Mode', 'options') != rain_campaign(args)
             or not isinstance(plan.get('lanes'), list)):
@@ -116,9 +128,55 @@ def admit_plan(plan, args):
         instrumented = isinstance(evidence, dict) and evidence.get('instrumented') is True
         if (('evidenceRetention' in lane and not instrumented)
                 or instrumented != (rain_capture and lane['workOrder'] == 'R0040'
+                                    or stages and lane['workOrder'] == 'R0035'
                                     or retention and lane['workOrder'] in ('R0040', 'R0035'))
                 or instrumented and not retained_lane(lane)):
             raise ValueError('lane retention mode differs from the selected campaign')
+        if ('stageObservation' in lane) != (stages and lane['workOrder'] == 'R0035'):
+            raise ValueError('stage observation differs from selected campaign')
+        if lane['workOrder'] == 'R0035' and stages:
+            preparation = lane.get('preparation'); report = lane.get('result', {})
+            target = args.task/'capture/lanes'/lane['id']; evidence_path = target.with_name(target.name+'-stages')
+            if (not isinstance(preparation, dict) or preparation.get('status') not in ('PASS','INCOMPLETE')
+                    or lane.get('stageObservation') != {'protocol': 'r0035-stage-diagnostic/1', 'instrumented': True}
+                    or lane.get('engine') != engine or lane.get('dpr') != 1 or lane.get('timeoutSeconds') != 480
+                    or lane.get('output') != str(target) or report.get('kind') != 'r0035-trials'
+                    or report.get('path') != str(target/'summary.json') or report.get('expectedRows') != 3
+                    or report.get('expectedArms') != ['main','unmodified','mitigated'] or report.get('capture') is not False
+                    or report.get('requiresEveryRowAdmitted') is not True
+                    or report.get('stageWrapperSha256') != R0035_STAGE_WRAPPER_SHA256
+                    or report.get('stageDriverPath') != str(evidence_path/'driver.json')
+                    or evidence.get('output') != str(evidence_path) or evidence.get('timingComparableToOriginal') is not False):
+                raise ValueError('stage lane source, private paths or population differs')
+            if preparation['status'] == 'INCOMPLETE':
+                if lane.get('argv') != []:
+                    raise ValueError('unprepared stage lane cannot execute a substitute recipe')
+            else:
+                original = evidence.get('originalArgv', [])
+                if (not isinstance(original, list) or len(original) != 16
+                        or original[1] != str(Path(lane['cwd'])/'tools/r0035/native_trials.py')
+                        or original[2:] != [preparation['plan'], str(target), '--engine', engine, '--rounds', '1',
+                                            '--seconds', '15', '--clock', 'ordinary', '--scene', 'dark', '--motion', 'normal']
+                        or preparation.get('wrapperSha256') != R0035_STAGE_WRAPPER_SHA256
+                        or preparation.get('materializerSha256') != R0035_STAGE_MATERIALIZER_SHA256
+                        or not isinstance(preparation.get('custody'), dict)
+                        or lane.get('argv') != [original[0], str(HERE/'observe_r0035_stages.py'), '--driver', original[1],
+                            '--identity', preparation['identity'], '--preparation-process', preparation['process'],
+                            '--preparation-sha256', preparation['custody']['process']['sha256'],
+                            '--evidence', str(evidence_path), '--', *original[2:]]):
+                    raise ValueError('stage lane does not bind original argv and preparation custody')
+                folder = args.task/'capture/r0035-stage-preparation'
+                if any(preparation[key] != str(folder/name) for key, name in
+                       (('process','process.json'),('identity','identity.json'),('plan','plan.json'))):
+                    raise ValueError('stage lane preparation path differs from this campaign')
+                source_row = preparation['custody']['originalSourcePlan']
+                source_path = Path(source_row['path']); source = json.loads(source_path.read_text())
+                expected_source = original_star_plan({'trees': {
+                    'main': {'root': source['arms']['main']['root']},
+                    'r0035': {'root': source['arms']['unmodified']['root']}}}, stars['guard'], stars['scope'])
+                if (digest(source_path) != source_row['sha256'] or source != expected_source
+                        or source != plan.get('r0035Plan')):
+                    raise ValueError('stage lane current source flags differ from this campaign')
         if lane['workOrder'] == 'R0040' and rain_capture:
             preparation = lane.get('preparation'); report = lane.get('result', {})
             target = args.task/'capture/lanes'/lane['id']; evidence_path = target.with_name(target.name+'-retention')
@@ -380,6 +438,92 @@ def r0040_capture_status(body, lane, returncode, timed_out):
     return {**result, 'status': CAPTURE_ADMITTED}
 
 
+def r0035_stage_status(lane, returncode, timed_out):
+    """Supplemental custody cannot replace an original qualification or exit."""
+    result = {'status': 'INCOMPLETE', 'timingClass': 'instrumented-stage-observation',
+              'nativeQualification': 'UNCHANGED_ORIGINAL_REPORT_ONLY', 'humanAcceptance': 'OUTSTANDING'}
+    need = stage_material.need
+    def read(path, expected=None):
+        path = Path(path).absolute()
+        need(path.is_file() and not any(p.is_symlink() for p in (path,*path.parents)), 'regular stage evidence required')
+        raw = path.read_bytes(); sha = hashlib.sha256(raw).hexdigest()
+        need(expected is None or expected == sha, 'stage evidence digest mismatch')
+        return json.loads(raw), {'path': str(path), 'sha256': sha}
+    try:
+        final, receipt = read(lane['result']['stageDriverPath']); result['receipt'] = receipt
+        preparation = lane['preparation']; evidence = Path(lane['evidenceRetention']['output'])
+        original = lane['evidenceRetention']['originalArgv']; custody = preparation['custody']
+        need(returncode == 0 and not timed_out, 'stage child did not complete normally')
+        need(final.get('protocol') == 'r0035-stage-driver/1' and final.get('status') == 'OBSERVED'
+             and type(final.get('trials')) is int and final['trials'] == lane['result']['expectedRows']
+             and final.get('observationErrors') == [] and final.get('originalException') is None
+             and final.get('continuationVetoed') is False and final.get('originalArgv') == original[2:]
+             and final.get('timingClass') == result['timingClass']
+             and final.get('nativeQualification') == result['nativeQualification']
+             and final.get('wrapperSha256') == R0035_STAGE_WRAPPER_SHA256
+             and final.get('identitySha256') == custody['identitySha256'] and final.get('preparation') == custody,
+             'stage driver receipt is incomplete or has different custody')
+        read(preparation['process'], custody['process']['sha256'])
+        plan, _ = read(preparation['plan'], custody['planSha256'])
+        read(preparation['identity'], custody['identitySha256'])
+        isolation_path = Path(lane['output']).parents[1]/'isolation'/lane['id']/'receipt.json'
+        isolation, isolation_receipt = read(isolation_path)
+        need(final.get('isolation') == {'file': str(isolation_path), 'sha256': isolation_receipt['sha256']}
+             and isolation.get('protocol') == 'salah-hosted-native-isolation/1' and isolation.get('passed') is True
+             and isolation.get('browserControl', {}).get('passed') is True, 'stage current isolation receipt is missing')
+        wanted = {name: stage_material.pins()['files']['tools/r0035/'+name]['sha256']
+                  for name in ('native_trials.py','trial_admission.py','trial_clock.js')}
+        need(final.get('sources') == [{'name': 'tools/r0035/'+name,
+                'file': str(Path(original[1]).with_name(name)), 'sha256': sha} for name,sha in wanted.items()],
+             'stage original driver/helper closure differs')
+        summary, summary_receipt = read(lane['result']['path'])
+        need(final.get('originalSummary') == summary_receipt, 'stage original summary is not bound')
+        expected = lane['result']['expectedArms']
+        rows = final.get('observations')
+        need(isinstance(summary, list) and len(summary) == 3 and isinstance(rows, list) and len(rows) == 3
+             and len({r.get('path') for r in rows if isinstance(r,dict)}) == 3,
+             'stage selected trial population is missing or duplicated')
+        wanted_paths = []
+        summary_keys = ('arm','commit','clock','scene','motion','capture','observedProducerDuringTrial','qualification',
+                        'p95FrameMs','p99FrameMs','maxFrameMs','framesOver50Ms','admitted')
+        for ordinal, label in enumerate(expected,1):
+            path = evidence/f'trial-{ordinal:03}-{label}.json'; wanted_paths.append(path)
+            row = rows[ordinal-1]
+            need(row.get('ordinal') == ordinal and row.get('arm') == label and row.get('path') == str(path),
+                 'stage selected trial identity differs')
+            trial, _ = read(path,row['sha256'])
+            target = Path(lane['output'])/('01-'+label); report, report_receipt = read(target/'trial.json')
+            need(trial.get('protocol') == 'r0035-stage-trial/1' and trial.get('ordinal') == ordinal and trial.get('arm') == label
+                 and trial.get('timingClass') == result['timingClass'] and trial.get('contextClosed') is True
+                 and trial.get('originalOutput') == str(target) and trial.get('originalReport') == report_receipt
+                 and not trial.get('originalException') and not trial.get('continuationVeto'), 'stage original trial custody differs')
+            need(summary[ordinal-1] == {key: report[key] for key in summary_keys}, 'original summary differs from original trial')
+            need(report.get('arm') == label and report.get('scope') == stage_material.KIND
+                 and all(report.get(key) == plan['arms'][label][key] for key in ('root','commit'))
+                 and report.get('flags') == plan['arms'][label]['flags'].lstrip('&')
+                 and report.get('driverSha256') == wanted and report.get('engine') == lane['engine']
+                 and report.get('capture') is False and report.get('scene') == 'dark'
+                 and report.get('motion') == 'normal' and report.get('clock') == 'ordinary',
+                 'stage original trial source or selected cell differs')
+            need(trial.get('originalArguments',{}).get('plan') == preparation['plan']
+                 and trial['originalArguments'].get('output') == lane['output']
+                 and trial.get('originalMeasuredWindow') == {k:report['trace'][k] for k in ('start','end')},
+                 'stage original arguments or measured window differ')
+            observations = trial.get('observations')
+            need(isinstance(observations,list) and len(observations) == 1, 'stage page population is incomplete')
+            observed = observations[0]
+            if label == 'main':
+                need(observed == {'status':'NOT_APPLICABLE','trace':None}, 'main has unexpected stage instrumentation')
+            else:
+                need(observed.get('status') == 'OBSERVED' and observed.get('intervals') == inspect_stage_trace(observed.get('trace')),
+                     'stage raw trace validation is incomplete')
+        need(set(evidence.glob('trial-*.json')) == set(wanted_paths), 'stage evidence population has extra or missing members')
+        result['status'] = 'OBSERVED'
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        result['reason'] = str(error)
+    return result
+
+
 def classify_lane(lane, returncode, timed_out=False):
     kind = lane['result']['kind']
     result = {'status': 'INCOMPLETE', 'stopAll': False, 'returncode': returncode, 'timedOut': timed_out}
@@ -389,6 +533,13 @@ def classify_lane(lane, returncode, timed_out=False):
         return {**result, 'status': VETO_STATUS, 'stopAll': True, 'reason': VETO_REASON}
     if returncode == ISOLATION_EXIT or kind == 'r003f-b0' and returncode == 3:
         return {**result, 'status': 'ISOLATION_FAIL', 'stopAll': True}
+    if kind == 'r0035-trials' and 'stageObservation' in lane:
+        original = classify_lane({k:v for k,v in lane.items() if k != 'stageObservation'}, returncode, timed_out)
+        supplemental = r0035_stage_status(lane,returncode,timed_out)
+        status = original['status']
+        if status == 'PASS': status = STAGES_OBSERVED if supplemental['status'] == 'OBSERVED' else 'INCOMPLETE'
+        return {**original, 'status': status, 'originalStatus': original['status'], 'stageObservation': supplemental,
+                'timingClass': 'instrumented-stage-observation', 'nativeQualification': 'UNCHANGED_ORIGINAL_REPORT_ONLY'}
     try: body = json.loads(Path(lane['result']['path']).read_text())
     except (OSError, ValueError): body = None
     if kind == 'r002f-probe':
@@ -453,7 +604,7 @@ def classify_lane(lane, returncode, timed_out=False):
 def namespace_status(lane, process, inner):
     """An inner observation cannot overrule abnormal wrapper completion."""
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED)
+                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, STAGES_OBSERVED)
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
@@ -464,6 +615,12 @@ def namespace_status(lane, process, inner):
                     and inner.get('timedOut') is False and inner.get('nativeQualification') == 'NOT_VERIFIED')
     if admitted and lane.get('result', {}).get('kind') == 'r0040-capture' and inner['status'] == 'PASS':
         admitted = False  # This lane can admit acquisition, never report a cadence PASS.
+    if admitted and inner['status'] == STAGES_OBSERVED:
+        admitted = ('stageObservation' in lane and inner.get('returncode') == 0 and inner.get('timedOut') is False
+                    and inner.get('originalStatus') == 'PASS' and inner.get('stageObservation',{}).get('status') == 'OBSERVED'
+                    and inner.get('timingClass') == 'instrumented-stage-observation'
+                    and inner.get('nativeQualification') == 'UNCHANGED_ORIGINAL_REPORT_ONLY')
+    if admitted and 'stageObservation' in lane and inner['status'] == 'PASS': admitted = False
     result = {**(inner if admitted else {}), 'id': lane['id'],
               'innerStatus': inner, 'namespaceProcess': process}
     if process['returncode'] == ISOLATION_EXIT or admitted and inner['status'] == 'ISOLATION_FAIL':
@@ -501,6 +658,42 @@ def controls(args, runtime, label):
     return str(path)
 
 
+def prepare_stages(args, runtime, destination):
+    """Optional child failure remains private evidence and blocks only its lane."""
+    folder = args.task/'capture/r0035-stage-preparation'; folder.mkdir(mode=0o700)
+    derived = args.task/'work/r0035-stages'
+    driver = args.research/'tools/r0035/native_trials.py'
+    command = [runtime['python'], str(HERE/'r0035_stage_materialize.py'), '--driver', str(driver),
+               '--plan', str(folder/'source-plan.json'), '--out', str(derived),
+               '--receipt', str(folder/'identity.json'), '--plan-out', str(folder/'plan.json')]
+    try:
+        prepared_path = destination/'receipts/prepared.json'
+        prepared = json.loads(prepared_path.read_text())
+        shutil.copy2(prepared_path, folder/'original-prepared.json')
+        shutil.copy2(args.task/'capture/preparation-process.json', folder/'original-preparation-process.json')
+        shutil.copy2(Path(prepared['trees']['r0035']['root'])/'r0035-lab-identity.json', folder/'original-lab-identity.json')
+        stars = star_campaign(args)
+        write_json(folder/'source-plan.json', original_star_plan(prepared, stars['guard'], stars['scope']))
+        optional = run_bounded(command, str(HERE), dict(os.environ), folder/'stdout', folder/'stderr', 240)
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        optional = {'returncode': None, 'timedOut': False, 'error': str(error)}
+    record = {**optional, 'protocol': 'r0035-stage-preparation-process/1', 'argv': command,
+              'cwd': str(HERE), 'timeoutSeconds': 240, 'root': str(derived),
+              'materializerSha256': digest(HERE/'r0035_stage_materialize.py')}
+    for key, path in {'driver': driver, 'sourcePlan': folder/'source-plan.json',
+                      'originalPreparation': folder/'original-prepared.json',
+                      'originalPreparationProcess': folder/'original-preparation-process.json',
+                      'originalLabIdentity': folder/'original-lab-identity.json',
+                      'identity': folder/'identity.json', 'plan': folder/'plan.json'}.items():
+        try:
+            if path.is_file() and not path.is_symlink():
+                record[key] = {'path': str(path), 'sha256': digest(path)}
+        except OSError as error:
+            record['retentionError'] = str(error)
+    write_json(folder/'process.json', record)
+    return record
+
+
 def inside(args, runtime):
     selected = campaign_selection(args)
     label = args.lane or 'preparation'
@@ -518,6 +711,8 @@ def inside(args, runtime):
             shutil.copytree(destination/'receipts', args.task/'capture'/'preparation')
         write_json(args.task/'capture'/'preparation-process.json', result)
         if result['returncode'] or result['timedOut']: return 2
+        if stage_campaign(args):
+            prepare_stages(args, runtime, destination)
         r0040_destination = args.task/'work'/'r0040-capture'
         if rain_campaign(args) == 'capture':
             command = [runtime['python'], str(HERE/'r0040_capture_prepare.py'), '--manifest', str(R0040_MANIFEST),
@@ -583,6 +778,8 @@ def inside(args, runtime):
                    '--node-modules', runtime['modules'], '--pngjs', runtime['pngjs'], '--engine', args.engine,
                    '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)), '--work-orders', *selected]
         command += star_arguments(args)
+        if stage_campaign(args):
+            command += ['--r0035-stages', '--r0035-stage-process', str(args.task/'capture/r0035-stage-preparation/process.json')]
         command += ['--r003f-harness', moon_campaign(args)]
         command += ['--r0040-mode', rain_campaign(args)]
         if rain_campaign(args) == 'capture':
@@ -600,7 +797,7 @@ def inside(args, runtime):
                         '--r002f-dpr', str(args.r002f_dpr), '--r002f-rounds', str(args.r002f_rounds),
                         '--r002f-section', args.r002f_section]
         plan = run_bounded(command, str(HERE), dict(os.environ), args.task/'capture'/'lanes.json',
-                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) == 'capture' else 30)
+                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) == 'capture' or stage_campaign(args) else 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
     plan = json.loads((args.task/'capture'/'lanes.json').read_text())
     lane = next(x for x in admit_plan(plan, args) if x['id'] == args.lane)
@@ -635,6 +832,7 @@ def isolated_command(args, runtime, phase, lane=None):
              '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)), '--work-orders', *selected,
              '--inside', '--phase', phase, '--outer-netns', os.readlink('/proc/self/ns/net')]
     inner += star_arguments(args)
+    if stage_campaign(args): inner.append('--r0035-stages')
     inner += ['--r003f-harness', moon_campaign(args)]
     inner += ['--r0040-mode', rain_campaign(args)]
     if getattr(args, 'retain_evidence', False):
@@ -655,10 +853,12 @@ def outside(args, runtime):
     deadline = time.monotonic() + 2640  # leaves sealing/upload time within the job ceiling
     preparation = run_bounded(isolated_command(args, runtime, 'prepare'), str(HERE), parent_env,
                               capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
-                              (1920 if getattr(args, 'r002f', False) else 1020) + (330 if rain_campaign(args) == 'capture' else 0))
+                              (1920 if getattr(args, 'r002f', False) else 1020) + (330 if rain_campaign(args) == 'capture' else 0)
+                              + (240 if stage_campaign(args) else 0))
     overall = {'protocol': 'salah-hosted-native-observation/1', 'engine': args.engine,
                'workOrders': selected, 'evidenceRetention': getattr(args, 'retain_evidence', False),
                'r0035Controls': star_campaign(args),
+               'r0035Stages': stage_campaign(args),
                'r003fHarness': moon_campaign(args),
                'r0040Mode': rain_campaign(args),
                'preparation': preparation, 'lanes': [], 'status': 'INCOMPLETE'}
@@ -696,7 +896,7 @@ def outside(args, runtime):
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED) for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, STAGES_OBSERVED) for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     write_json(capture/'observation.json', overall)
     return 0 if overall['status'] == 'OBSERVED' else 2
@@ -716,6 +916,7 @@ def main():
     parser.add_argument('--r0035-guard', choices=('default', 'off'), default='default')
     parser.add_argument('--r0035-scope', choices=('all', 'preview-members'), default='all')
     parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
+    parser.add_argument('--r0035-stages', action='store_true')
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
@@ -739,11 +940,13 @@ def main():
             args.work_orders = campaign.get('workOrders'); args.retain_evidence = campaign.get('evidenceRetention', False)
             args.r003f_harness = campaign.get('r003fHarness', 'published')
             args.r0040_mode = campaign.get('r0040Mode', 'options')
+            args.r0035_stages = campaign.get('r0035Stages', False)
             for key, value in star_controls(campaign.get('r0035')).items():
                 setattr(args, 'r0035_'+key, value)
             write_json(args.task/'capture'/'campaign.json', campaign)
         args.work_orders = campaign_selection(args)
         star_campaign(args)
+        stage_campaign(args)
         moon_campaign(args)
         rain_campaign(args)
         return inside(args, runtime) if args.inside else outside(args, runtime)

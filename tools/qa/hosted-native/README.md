@@ -28,11 +28,11 @@ privately with the observations.
 
 ### Conditional campaign selection and evidence retention
 
-The checked-in follow-up selects one revised R0040 Chromium capture on genuine
-main (`bday`, `moderate`, `M1`, common dispersion), corrected R003F B0 at DPR2,
-then R002F DPR1 for five rounds of prayer restoration only. The rain capture always uses its reviewed
-final-state wrapper; generic evidence retention remains disabled. Previous
-option-cell, lunar, star and preview results remain separate, unchanged evidence.
+The checked-in follow-up selects only R0035 Chromium timing, with guard off,
+all-source replay scope and explicit preparation-stage observations. It keeps
+the existing one-round, 15-second dark/normal/ordinary-clock cell and all three
+arms. Generic per-event evidence retention remains disabled. Previous rain,
+lunar, star and return observations remain separate, unchanged evidence.
 Campaigns can set these optional fields after the preceding evidence has been
 inspected:
 
@@ -41,6 +41,7 @@ inspected:
 | `workOrders` | A nonempty list of distinct identifiers from `R0040`, `R003F`, `R0035`, `R002F`; only those observation lanes run, in the existing canonical order. R0035 defaults to both timing and capture. |
 | `evidenceRetention` | A boolean, default `false`. When `true`, selected R0040/R0035 lanes execute their exact original source through the reviewed supplemental wrappers. R003F/R002F commands are unchanged. |
 | `r0035` | Optional dictionary with `guard: default` or `off`, `scope: all` or `preview-members`, and `mode: both`, `timing` or `capture`. Defaults preserve the original commands. Explicit controls require selected R0035 observations. Unknown fields and values are rejected. |
+| `r0035Stages` | Boolean, default `false`. Requires selected R0035 timing only and `evidenceRetention: false`. Admits a separate disposable source derivative and keeps private preparation-stage evidence. It never silently falls back to the uninstrumented driver. |
 | `r003fHarness` | `published` (the original recipe, default) or `corrected-b0` (source-pinned MIME correction and full-UI admission). The latter requires selected R003F observations and separately admitted helper preparation. |
 | `r0040Mode` | `options` (unchanged nine-option default) or `capture` (only reviewed Chromium/bday/moderate/M1/common on genuine main). Capture requires selected R0040, separate guarded preparation and its final-state wrapper. |
 
@@ -48,7 +49,7 @@ Unknown, duplicate, empty or malformed selections are rejected. R002F selection
 must agree with `r002f.enabled` in both directions. When `workOrders` is absent,
 the previous population is retained: R0040, R003F, R0035, plus R002F when enabled.
 The initial campaign had four work orders and five command rows; the current
-follow-up has three work orders and three command rows.
+follow-up has one work order and one timing command row.
 The selection, retention mode, diagnostic controls and every argument remain in private
 receipts. Selection limits observations; the existing common source preparation
 and original star-plan guards still run. R002F preparation remains conditional
@@ -66,10 +67,10 @@ logs remain under private capture; disposable source remains under `work`.
 The native wrapper repeats source admission before any original driver or
 Playwright import. Exact commands and paths are in [LANES.md](LANES.md).
 
-The guard-disabled diagnostic adds only `r35guard=off` to both experimental
+The guard flag alone adds `r35guard=off` to both experimental
 arms. This existing lab switch removes both guard suspension and the guard's
-gain ramp; it cannot isolate those two effects. Main, the shared lab, amplitude,
-glass, margin, the 15-second dark/normal/ordinary-clock trial, source identity,
+gain ramp; it cannot isolate those two effects. Main, amplitude,
+glass, margin, the 15-second dark/normal/ordinary-clock trial, source checks,
 active producer predicate and original 100 ms cadence admission are unchanged.
 Selecting `preview-members` changes that existing scope flag symmetrically; it
 is a diagnostic population, not an accepted production cutoff. A timing-only
@@ -77,6 +78,22 @@ campaign omits capture deliberately, and a capture-only campaign has no phantom
 timing dependency. Missing selected rows still become incomplete observations.
 None of these controls fixes or erases the original failures, adopts a guard
 policy, or supplies performance acceptance.
+
+Stage observation adds a separately guarded copy of the lab, changing only two
+identified modules through reversible transformations. The original strict
+checker still admits the intact source plan and rejects the derivative when
+claimed as unmodified. The optional preparation retains its actual child exit,
+streams, original source receipts, derivative identity and distinct plan.
+Failure blocks only the selected stage lane. Before loading the original driver,
+the native wrapper requires the bound successful preparation receipt and current
+namespace; it then rechecks the full original/derived byte populations and flags.
+
+Private stage evidence lives beside the unchanged native outputs in
+`<lane-id>-stages`. It retains startup/warmup, same-clock intervals, and raw
+prefixes even when validation rejects them. Added markers and small reply
+metadata have uncalibrated overhead. There are no new pixel copies or per-frame
+host writes. See [R0035_STAGES.md](R0035_STAGES.md) for exact source binding and
+interpretation limits.
 
 The original lunar HTTP helper does not serve CSS with its proper MIME type.
 The earlier raw B0 receipt remains `MEASURED`, with a separate derived
@@ -173,6 +190,15 @@ passed qualification. A failed admission stays `FAIL`; missing acquisition stays
 `INCOMPLETE`. Abnormal namespace completion overrides any inner pass, retains both
 records and stops all later lanes as `ISOLATION_UNCONFIRMED` unless an actual
 isolation failure is already recorded.
+
+A stage diagnostic needs both the unchanged original summary/trials and a
+complete, source-bound supplemental driver receipt. Every trial observation is
+hashed and correlated with its original report. The coordinator preserves the
+original classification separately. An original failed admission remains `FAIL`
+even when supplemental extraction completed. If every original admission passes
+and stage custody is complete, the distinct status is
+`OBSERVED_STAGE_DIAGNOSTIC`; it supplies no product acceptance or uninstrumented
+performance claim. Missing, malformed or incomplete stage evidence cannot pass.
 
 The revised R0040 capture has the separate status
 `ADMITTED_FOR_OFFLINE_VERIFICATION`, requiring actual child exit zero, its raw

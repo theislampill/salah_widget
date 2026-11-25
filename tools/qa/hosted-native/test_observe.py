@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 import sys
 import tempfile
+import time
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -284,7 +285,16 @@ class Verdict(unittest.TestCase):
         self.assertTrue(result['timedOut'])
         pid = int(pidfile.read_text())
         stat = Path('/proc')/str(pid)/'stat'
-        self.assertTrue(not stat.exists() or stat.read_text().split()[2] == 'Z')
+        # Group signalling can precede the descendant's scheduled exit. Observe
+        # that exit with a bound; do not confuse one transient /proc read with a
+        # surviving descendant, and never change the production kill sequence.
+        deadline=time.monotonic()+1
+        while True:
+            try: state=stat.read_text().split()[2]
+            except FileNotFoundError: state=None
+            if state in (None,'Z') or time.monotonic()>=deadline:break
+            time.sleep(.01)
+        self.assertIn(state,(None,'Z'))
 
 
 class OuterBoundary(unittest.TestCase):
@@ -606,6 +616,7 @@ class Campaign(unittest.TestCase):
                     self.assertIs(args.retain_evidence, retained)
                     self.assertIs(args.r002f, 'R002F' in orders)
                     self.assertEqual(M.star_campaign(args), M.star_controls(data.get('r0035')))
+                    self.assertIs(M.stage_campaign(args), data.get('r0035Stages',False))
                     self.assertEqual(M.moon_campaign(args), data.get('r003fHarness','published'))
                     self.assertEqual(M.rain_campaign(args), data.get('r0040Mode','options'))
                     self.assertEqual((args.r002f_dpr, args.r002f_rounds, args.r002f_section),
@@ -908,6 +919,205 @@ class RainCapture(unittest.TestCase):
         self.assertEqual([row['status'] for row in report['lanes']],['NOT_RUN','PASS'])
         self.assertEqual(report['lanes'][0]['preparationStatus'],'INCOMPLETE')
         self.assertEqual(report['status'],'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
+
+
+class StageIntegration(unittest.TestCase):
+    def setUp(self):
+        import lanes
+        import r0035_stage_controls as fixtures
+        self.planner=lanes;self.fixtures=fixtures;self.fixture=fixtures.StageEntryControls()
+        self.fixture.setUp();self.root=self.fixture.root
+        self.base,self.source,self.source_path=self.fixture.source_fixture()
+        self.baseline=patch.object(lanes,'BASELINE',self.source['arms']['main']['commit']);self.baseline.start()
+        self.task=self.root/'task';(self.task/'capture').mkdir(parents=True)
+        self.prepared={'protocol':'salah-hosted-native-preparation/1','status':'PREPARED',
+            'sources':{'research':{'root':str(self.fixture.driver_path.parents[2])},'historical':{'root':'/bounded/history'}},
+            'trees':{'main':{'root':self.source['arms']['main']['root']},'r0035':{'root':str(self.base)},
+                     'r0040':{'root':'/bounded/rain'},'r003f':{'root':'/bounded/moon'}}}
+        self.prepared_path=self.task/'work/prepared/receipts/prepared.json'
+        M.write_json(self.prepared_path,self.prepared)
+        M.write_json(self.task/'capture/preparation-process.json',{'returncode':0,'timedOut':False})
+        self.args=SimpleNamespace(task=self.task,research=self.fixture.driver_path.parents[2],baseline=self.root/'main',
+            historical=Path('/bounded/history'),engine='chromium',work_orders=['R0035'],r002f=False,
+            retain_evidence=False,r0035_guard='off',r0035_scope='all',r0035_mode='timing',r0035_stages=True)
+        self.runtime={'python':sys.executable,'node':'/bounded/node','modules':'/bounded/modules','pngjs':'/bounded/pngjs'}
+        self.folder=self.task/'capture/r0035-stage-preparation'
+    def tearDown(self):
+        self.baseline.stop();self.fixture.tearDown()
+    def prepared_plan(self):
+        result=M.prepare_stages(self.args,self.runtime,self.task/'work/prepared')
+        self.assertEqual(result['returncode'],0)
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all')
+        self.assertEqual(admission['status'],'PASS',admission)
+        (self.task/'capture/lanes').mkdir()
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),
+            work_orders=self.args.work_orders,r0035_guard='off',r0035_mode='timing',r0035_stages=True,
+            r0035_stage_preparation=admission)
+        return plan,plan['lanes'][-1]
+    def test_actual_preparation_and_planner_admit_only_current_source_flags_and_zero_exit(self):
+        plan,lane=self.prepared_plan();self.assertEqual(M.admit_plan(plan,self.args),[lane])
+        self.assertEqual((self.folder/'original-prepared.json').read_bytes(),self.prepared_path.read_bytes())
+        self.assertEqual((self.folder/'original-lab-identity.json').read_bytes(),(self.base/'r0035-lab-identity.json').read_bytes())
+        rejected=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','default','all')
+        self.assertEqual(rejected['status'],'INCOMPLETE');self.assertIn('flags',rejected['reason'])
+        original=(self.folder/'process.json').read_bytes()
+        for change in ({'returncode':7},{'returncode':True},{'timedOut':True},{'retentionError':'bounded retention fault'}):
+            value=json.loads(original);value.update(change);M.write_json(self.folder/'process.json',value)
+            with self.subTest(change=change):
+                self.assertEqual(self.planner.admit_r0035_stages(self.prepared,self.prepared_path,
+                    self.folder/'process.json','off','all')['status'],'INCOMPLETE')
+
+    def test_native_wrapper_refuses_changed_preparation_before_original_import(self):
+        import observe_r0035_stages as observer
+        plan,lane=self.prepared_plan();argv=lane['argv'][2:]
+        process=self.folder/'process.json';body=json.loads(process.read_bytes());body['returncode']=7;M.write_json(process,body)
+        loader=self.fixture.loader
+        with patch.object(observer.material,'support',return_value=loader),patch.object(loader,'verify_isolation',return_value={}),\
+             patch.object(loader,'load_driver',side_effect=AssertionError('original driver must not load')) as load:
+            with self.assertRaisesRegex(ValueError,'changed after planning'):observer.main(argv)
+            argv[argv.index('--preparation-sha256')+1]=M.digest(process)
+            with self.assertRaisesRegex(ValueError,'did not complete'):observer.main(argv)
+            load.assert_not_called()
+        self.assertFalse(Path(lane['output']).exists());self.assertFalse(Path(lane['evidenceRetention']['output']).exists())
+
+    def test_stage_selection_and_namespace_forwarding_cannot_be_omitted_or_substituted(self):
+        plan,lane=self.prepared_plan()
+        self.assertEqual(M.admit_plan({**plan,'lanes':[]},self.args)[0]['preparation']['status'],'INCOMPLETE')
+        for changed in ({**plan,'lanes':[lane,lane]},{**plan,'r0035Stages':False}):
+            with self.assertRaises(ValueError):M.admit_plan(changed,self.args)
+        changed=copy.deepcopy(plan);changed['lanes'][0]['argv'][1]='unwrapped.py'
+        with self.assertRaises(ValueError):M.admit_plan(changed,self.args)
+        changed=copy.deepcopy(plan);changed['r0035Controls']['guard']='default'
+        with self.assertRaises(ValueError):M.admit_plan(changed,self.args)
+        command=M.isolated_command(self.args,self.runtime,'prepare')
+        self.assertEqual(command.count('--r0035-stages'),1)
+        self.args.r0035_stages=False
+        self.assertNotIn('--r0035-stages',M.isolated_command(self.args,self.runtime,'prepare'))
+
+    def test_explicit_stage_campaign_rejects_ignored_or_contradictory_controls(self):
+        value={'schemaVersion':1,'engine':'chromium','r003fDpr':1,'workOrders':['R0035'],
+               'r002f':{'enabled':False,'dpr':1,'rounds':1,'section':'all'},
+               'r0035':{'guard':'off','scope':'all','mode':'timing'},'r0035Stages':True}
+        path=self.root/'campaign.json';M.write_json(path,value);self.assertEqual(M.read_campaign(path),value)
+        for change in ({'r0035Stages':'yes'},{'r0035Stages':1},{'r0035Stages':None},{'evidenceRetention':True},
+                       {'workOrders':['R0040']},{'r0035':{'guard':'off','scope':'all','mode':'both'}}):
+            M.write_json(path,{**value,**change})
+            with self.subTest(change=change),self.assertRaises(ValueError):M.read_campaign(path)
+
+    def test_inside_preparation_forwards_actual_stage_custody_to_the_planner(self):
+        self.args.phase='prepare';self.args.lane=None;calls=[];real_run=M.run_bounded
+        def run(argv,cwd,env,stdout,stderr,timeout):
+            calls.append(argv)
+            if Path(argv[1]).name=='r0035_stage_materialize.py':return real_run(argv,cwd,env,stdout,stderr,timeout)
+            return {'returncode':0,'timedOut':False}
+        with patch.object(M,'controls',return_value='bounded-isolation-receipt'),patch.object(M,'run_bounded',side_effect=run),\
+             patch.dict(os.environ,{},clear=False):
+            self.assertEqual(M.inside(self.args,self.runtime),0)
+        self.assertEqual([Path(c[1]).name for c in calls],['prepare.py','r0035_stage_materialize.py','lanes.py'])
+        planner=calls[-1];self.assertIn('--r0035-stages',planner)
+        self.assertEqual(planner[planner.index('--r0035-stage-process')+1],str(self.folder/'process.json'))
+        self.assertEqual(json.loads((self.folder/'process.json').read_text())['returncode'],0)
+
+    def test_optional_stage_source_failure_retains_streams_and_allows_other_selected_lane(self):
+        self.args.work_orders=['R0040','R0035']
+        def failed(argv,cwd,env,stdout,stderr,timeout):
+            M.write_json(Path(argv[argv.index('--out')+1])/'partial.json',{'stage':'bounded failure'})
+            stdout.write_text('retained partial stdout');stderr.write_text('retained source failure')
+            return {'returncode':7,'timedOut':False}
+        with patch.object(M,'run_bounded',side_effect=failed):
+            result=M.prepare_stages(self.args,self.runtime,self.task/'work/prepared')
+        self.assertEqual(result['returncode'],7);self.assertEqual((self.folder/'stderr').read_text(),'retained source failure')
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all')
+        self.assertEqual(admission['status'],'INCOMPLETE')
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),
+            work_orders=self.args.work_orders,r0035_guard='off',r0035_mode='timing',r0035_stages=True,
+            r0035_stage_preparation=admission)
+        M.write_json(self.task/'capture/lanes.json',plan);calls=[]
+        def run(argv,*args):
+            calls.append(argv)
+            if argv[0]=='lane':M.write_json(self.task/'capture/lane-status/r0040-chromium.json',
+                {'id':'r0040-chromium','status':'PASS','stopAll':False,'returncode':0,'timedOut':False})
+            return {'returncode':0,'timedOut':False}
+        with patch.object(M,'isolated_command',side_effect=lambda a,r,phase,lane=None:[phase,lane]),patch.object(M,'run_bounded',side_effect=run):
+            self.assertEqual(M.outside(self.args,self.runtime),2)
+        self.assertEqual(calls,[['prepare',None],['lane','r0040-chromium']])
+        self.assertEqual(json.loads((self.task/'capture/observation.json').read_text())['lanes'][1]['status'],'NOT_RUN')
+
+    def run_original_with_stages(self,failed=False):
+        import observe_r0035_stages as observer
+        import types
+        plan,lane=self.prepared_plan();driver=self.fixture.loader.load_driver(self.fixture.driver_path)
+        driver.start_server=lambda *args:'http://127.0.0.1:8765'
+        class Browser:
+            version='bounded-original-driver';ordinal=0
+            def close(self):pass
+            def new_context(inner,**kwargs):
+                inner.ordinal+=1;label=['main','unmodified','mitigated'][inner.ordinal-1]
+                context=self.fixtures.fixtures.FakeBrowser(driver).context;original=context.page.evaluate
+                def evaluate(expression,*values):
+                    if expression==observer.READ_STAGES:return None if label=='main' else self.fixtures.stage_trace()
+                    if expression==driver.READ:
+                        result=self.fixtures.fixtures.scene()
+                        if failed and label=='unmodified':result['prayersReady']=False
+                        return result
+                    if 'window.__r0035.end=' in expression:
+                        publication=None if label=='main' else {'start':1000,'end':3000,'overflow':False,
+                            'initial':{'status':'active','tier':'refined','identity':'accepted'},
+                            'events':[{'kind':'publication','at':t,'epoch':1,'tier':'refined','identity':'accepted',
+                                'utcMs':1000+t,'ageMs':0,'changed':True,'nonempty':True} for t in range(1000,3001,80)]}
+                        return {'start':1000,'end':3000,'frames':list(range(1000,3000,16)),
+                            'states':[dict(self.fixtures.fixtures.scene(),t=1100),dict(self.fixtures.fixtures.scene(),t=2100)],
+                            'publication':publication}
+                    return original(expression,*values)
+                context.page.evaluate=evaluate;return context
+        browser=Browser()
+        class Playwright:
+            def __enter__(self):return SimpleNamespace(chromium=SimpleNamespace(launch=lambda:browser))
+            def __exit__(self,*args):pass
+        api=types.ModuleType('playwright.sync_api');api.sync_playwright=Playwright;api.TimeoutError=self.fixtures.fixtures.BrowserTimeout
+        path=self.task/'capture/isolation'/lane['id']/'receipt.json'
+        M.write_json(path,{'protocol':'salah-hosted-native-isolation/1','passed':True,'browserControl':{'passed':True},
+                          'uid':1001,'netns':'net:[200]','outerNetns':'net:[100]'})
+        with patch.object(observer.material,'support',return_value=self.fixture.loader),\
+             patch.object(self.fixture.loader,'load_driver',return_value=driver),\
+             patch.dict(sys.modules,{'playwright.sync_api':api}),\
+             patch.dict(os.environ,{'SALAH_HOSTED_NATIVE_ISOLATION_RECEIPT':str(path)}),\
+             patch.object(os,'getuid',return_value=1001),patch.object(os,'readlink',return_value='net:[200]'):
+            observer.main(lane['argv'][2:])
+        return plan,lane
+
+    def test_actual_original_driver_and_stage_receipts_preserve_failed_admission_at_exit_zero(self):
+        plan,lane=self.run_original_with_stages(failed=True)
+        verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],'FAIL');self.assertEqual(verdict['originalStatus'],'FAIL')
+        self.assertEqual(verdict['stageObservation']['status'],'OBSERVED',verdict)
+        self.assertEqual(json.loads(Path(lane['result']['path']).read_text())[1]['qualification']['verdict'],'failed')
+
+    def test_stage_success_requires_all_original_reports_and_distinct_complete_evidence(self):
+        plan,lane=self.run_original_with_stages();verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],M.STAGES_OBSERVED,verdict)
+        self.assertEqual(verdict['originalStatus'],'PASS')
+        path=Path(lane['result']['stageDriverPath']);raw=path.read_bytes()
+        for change in ({'observations':[]},{'trials':2},{'status':'INCOMPLETE'},{'identitySha256':'0'*64}):
+            body=json.loads(raw);body.update(change);M.write_json(path,body)
+            self.assertEqual(M.classify_lane(lane,0)['status'],'INCOMPLETE')
+        path.write_bytes(raw)
+        original=Path(lane['output'])/'01-unmodified/trial.json';original.write_bytes(original.read_bytes()+b'\n')
+        self.assertEqual(M.classify_lane(lane,0)['status'],'INCOMPLETE')
+
+    def test_stage_veto_timeout_and_outer_namespace_failure_keep_precedence(self):
+        plan,lane=self.prepared_plan()
+        inner=M.classify_lane(lane,86);self.assertEqual(inner['status'],M.VETO_STATUS);self.assertTrue(inner['stopAll'])
+        inner['id']=lane['id']
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)['status'],M.VETO_STATUS)
+        self.assertEqual(M.namespace_status(lane,{'returncode':86,'timedOut':False},inner)['status'],'ISOLATION_FAIL')
+        self.assertEqual(M.namespace_status(lane,{'returncode':1,'timedOut':False},inner)['status'],'ISOLATION_UNCONFIRMED')
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':True},inner)['status'],'ISOLATION_UNCONFIRMED')
+        self.assertEqual(M.classify_lane(lane,-15,True)['status'],'INCOMPLETE')
+        bogus={'id':lane['id'],'status':'PASS','stopAll':False,'returncode':0,'timedOut':False}
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},bogus)['status'],'ISOLATION_UNCONFIRMED')
 
 
 if __name__ == '__main__': unittest.main()
