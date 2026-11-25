@@ -1595,7 +1595,7 @@
     "-v"
    ],
    "protocol": "unittest-cases",
-   "expectedCases": 44,
+   "expectedCases": 47,
    "covers": [
     "tools/qa/hosted-native/test_observe.py"
    ],
@@ -1621,7 +1621,7 @@
     "-v"
    ],
    "protocol": "unittest-cases",
-   "expectedCases": 19,
+   "expectedCases": 21,
    "covers": [
     "tools/qa/hosted-native/test_lanes.py"
    ],
@@ -1635,7 +1635,16 @@
     "tools/r0035/trial_admission.py",
     "tools/qa/hosted-native/r002f_prepare.py",
     "tools/qa/hosted-native/r002f_probe.cjs",
-    ".github/workflows/research-native-pilot.yml"
+    ".github/workflows/research-native-pilot.yml",
+    "tools/qa/hosted-native/r003f_materialize.cjs",
+    "tools/qa/hosted-native/r003f_ui.cjs",
+    "tools/qa/r003f_owner_baseline.cjs",
+    "tools/qa/r003f_capture.cjs",
+    "tools/qa/r003f_p1.cjs",
+    "tools/qa/r003f_grid.cjs",
+    "tools/qa/r0033_isolation.cjs",
+    "tools/qa/v1_net_guard.cjs",
+    "real-sky/native-sky.css"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -1747,6 +1756,33 @@
     "moon/tests/host.test.cjs"
    ],
    "timeout": 120
+  },
+  {
+   "name": "hosted-native-r003f-harness-controls",
+   "owner": "R003F",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r003f_harness_controls.cjs"
+   ],
+   "protocol": "auto",
+   "expectedCases": 30,
+   "covers": [
+    "tools/qa/hosted-native/r003f_harness_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r003f_harness_controls.cjs",
+    "tools/qa/hosted-native/r003f_materialize.cjs",
+    "tools/qa/hosted-native/r003f_ui.cjs",
+    "tools/qa/r003f_owner_baseline.cjs",
+    "tools/qa/r003f_capture.cjs",
+    "tools/qa/r003f_p1.cjs",
+    "tools/qa/r003f_grid.cjs",
+    "tools/qa/r0033_isolation.cjs",
+    "tools/qa/v1_net_guard.cjs",
+    "real-sky/native-sky.css"
+   ]
   }
  ],
  "modules": [
@@ -1863,10 +1899,6 @@
    "reason": "imported harness/fixture module, not an instrument"
   },
   {
-   "path": "tools/qa/r0033_isolation.cjs",
-   "reason": "imported isolation module of the R0033 native recipes (refusing proxy, catch-all route before any page, request ledger, escape verdict); its pure policy is tested by tests/r0033-isolation.test.cjs and its wiring against a fake Playwright by tests/r0033-isolation-wiring.test.cjs"
-  },
-  {
    "path": "tests/r0033-fake-playwright.cjs",
    "reason": "imported fake of the Playwright surface used by the R0033 isolation module and recipes (records call order, replays synthetic requests through the installed routes); harness of tests/r0033-isolation-wiring.test.cjs, not an instrument"
   },
@@ -1875,29 +1907,14 @@
    "reason": "R0040 synthetic source fixture, comparator and optional baseline measurement CLI imported by r0040-rain-controls.test.cjs"
   },
   {
-   "path": "tools/qa/r003f_p1.cjs",
-   "owner": "R003F",
-   "reason": "R003F same-session reference mask and clipped-annulus pixel statistics, tested by tests/r003f-p1.test.cjs"
-  },
-  {
    "path": "tests/r003f-matrix-fixture.cjs",
    "owner": "R003F",
    "reason": "Synthetic transport and RGBA controls for the private native matrix entry test."
   },
   {
-   "path": "tools/qa/r003f_capture.cjs",
-   "owner": "R003F",
-   "reason": "Loopback serving and common fixture, native telemetry and UI masks for both capture entries."
-  },
-  {
    "path": "tools/qa/r003f_diagnostics.cjs",
    "owner": "R003F",
    "reason": "P1 CIELAB, terrain, occlusion, terminator, motion and buckle statistics exercised in tests/r003f-candidates.test.cjs."
-  },
-  {
-   "path": "tools/qa/r003f_grid.cjs",
-   "owner": "R003F",
-   "reason": "Phase, weather, altitude, repeat and engine/DPR axes for private capture and sheet completeness."
   },
   {
    "path": "tools/qa/r003f_receipt.cjs",
@@ -2521,26 +2538,6 @@
      "<model>"
     ],
     "protocol": "Exit 0 writes raw PNGs and capture.json. Qualification requires an independent lossless_pack.py verdict."
-   }
-  },
-  {
-   "path": "tools/qa/r003f_owner_baseline.cjs",
-   "reason": "native P1 B0 measurement requires a git archive, isolated Playwright engine and PNG decoder; network refusal and escape controls run in tests/r003f-network.test.cjs",
-   "owner": "R003F",
-   "recipe": {
-    "argv": [
-     "node",
-     "tools/qa/r003f_owner_baseline.cjs",
-     "--root",
-     "<runtime git archive>",
-     "--out",
-     "<fresh owner-private directory>",
-     "--engine",
-     "<chromium|firefox|webkit>",
-     "--dpr",
-     "<1|2>"
-    ],
-    "protocol": "summary.json, network.jsonl, outside-repeat.jsonl, and four synthetic card PNGs. Exit 0 measured, 2 incomplete, 3 isolation failure, 4 calendar-light Andon."
    }
   },
   {

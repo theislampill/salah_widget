@@ -21,6 +21,15 @@ HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
 WORK_ORDERS = ('R0040', 'R003F', 'R0035', 'R002F')
 STAR_DEFAULTS = {'guard': 'default', 'scope': 'all', 'mode': 'both'}
+R003F_MATERIALIZATION = 'fab2e2ad49a14eee2ba715fb75365fa4b0abfa48a1d8b60247343ad29b1021e5'
+
+
+def moon_harness(value, selected):
+    if value not in ('published', 'corrected-b0') or not isinstance(value, str):
+        raise ValueError('unsupported R003F harness')
+    if value == 'corrected-b0' and 'R003F' not in selected:
+        raise ValueError('corrected R003F harness requires selected R003F observations')
+    return value
 
 
 def star_controls(value=None):
@@ -91,10 +100,54 @@ def admit_r002f(path, process_path=None):
     return admission
 
 
+def admit_r003f(path, process_path):
+    """Bind the reviewed corrected helpers to their exact deterministic receipt."""
+    admission = {'status': 'INCOMPLETE'}
+    try:
+        path, process_path = Path(path).absolute(), Path(process_path).absolute()
+        if path.is_symlink() or process_path.is_symlink():
+            raise ValueError('R003F preparation receipts must be regular files')
+        process = json.loads(process_path.read_text())
+        admission['processReceipt'] = {'path': str(process_path), 'sha256': digest(process_path)}
+        if (type(process.get('returncode')) is not int or process['returncode'] != 0
+                or process.get('timedOut') is not False):
+            raise ValueError('R003F materialization process did not complete successfully')
+        if digest(path) != R003F_MATERIALIZATION:
+            raise ValueError('R003F materialization differs from the reviewed receipt')
+        body = json.loads(path.read_text()); root = path.parent
+        if any(parent.is_symlink() for parent in (root, *root.parents)):
+            raise ValueError('R003F materialized source uses a symlinked ancestor')
+        if (body.get('protocol') != 'R003F/corrected-harness/1' or body.get('status') != 'PREPARED'
+                or body.get('materializerSha256') != digest(HERE/'r003f_materialize.cjs')):
+            raise ValueError('R003F materializer identity mismatch')
+        outputs = {}
+        for member in body['outputFiles']:
+            relative = Path(member['path']); source = root/relative
+            if relative.is_absolute() or '..' in relative.parts:
+                raise ValueError('R003F materialized member escaped its source root')
+            if (not source.is_file() or any(item.is_symlink() for item in (source, *source.parents))
+                    or source.stat().st_size != member['bytes'] or digest(source) != member['sha256']):
+                raise ValueError('R003F materialized helper changed: '+member['path'])
+            outputs[member['path']] = member['sha256']
+        harness = {'protocol': 'R003F/corrected-harness/1', 'kind': 'corrected MIME and native UI admission',
+                   'materializationSha256': R003F_MATERIALIZATION,
+                   'driverSha256': outputs['tools/qa/r003f_owner_baseline.cjs'],
+                   'captureHelperSha256': outputs['tools/qa/r003f_capture.cjs'],
+                   'uiHelperSha256': outputs['tools/qa/hosted-native/r003f_ui.cjs']}
+        if harness['uiHelperSha256'] != digest(HERE/'r003f_ui.cjs'):
+            raise ValueError('R003F UI helper differs from orchestration')
+        admission.update(status='PASS', root=str(root), harness=harness,
+                         receipt={'path': str(path), 'sha256': R003F_MATERIALIZATION})
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        admission['reason'] = str(error)
+    return admission
+
+
 def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
               engine='chromium', r003f_dpr=1, include_r002f=False, r002f_preparation=None,
               r002f_dpr=1, r002f_rounds=1, r002f_section='all', work_orders=None, retain_evidence=False,
-              r0035_guard='default', r0035_scope='all', r0035_mode='both'):
+              r0035_guard='default', r0035_scope='all', r0035_mode='both',
+              r003f_harness='published', r003f_preparation=None):
     if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
         raise ValueError('unsupported engine or R003F DPR')
     if (type(include_r002f) is not bool or type(r002f_dpr) is not int or r002f_dpr not in (1, 2, 3)
@@ -102,6 +155,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
             or r002f_section not in ('all', 'prayer', 'preview')):
         raise ValueError('unsupported R002F campaign controls')
     selected = selected_work_orders(work_orders, include_r002f)
+    moon_harness(r003f_harness, selected)
     stars = star_controls({'guard': r0035_guard, 'scope': r0035_scope, 'mode': r0035_mode})
     if stars != STAR_DEFAULTS and 'R0035' not in selected:
         raise ValueError('R0035 diagnostic controls require selected R0035 observations')
@@ -146,6 +200,14 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                                  '--playwright', module, '--pngjs', pngjs]))
     moon['result']['expectedCaptures'] = ['offset', 'b0', 'b0-repeat', 'reference']
     moon['stopAllOnExit'] = [3]
+    if r003f_harness == 'corrected-b0':
+        admission = r003f_preparation or {'status': 'INCOMPLETE', 'reason': 'corrected R003F preparation is missing'}
+        moon['preparation'] = admission
+        if admission.get('status') == 'PASS':
+            moon['argv'][1] = str(Path(admission['root'])/'tools/qa/r003f_owner_baseline.cjs')
+            moon['result'].update(expectedHarness=admission['harness'], expectedIndexSha256=BASE_INDEX)
+        else:
+            moon['argv'] = []
 
     for capture in (False, True):
         label = 'capture' if capture else 'timing'
@@ -198,6 +260,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
             'scope': 'Selected native observations only; no work-order acceptance or owner selection.',
             'workOrders': selected, 'evidenceRetention': retain_evidence,
             'r0035Controls': stars,
+            'r003fHarness': r003f_harness,
             'r0035PlanPath': str(star_plan_path), 'r0035Plan': star_plan, 'lanes': entries,
             'failurePolicy': {'isolation': 'stop all observations', 'R003FAndon': 'stop R003F progression',
                               'externalContinuationVeto': 'stop all observations; prevented continuation is not an actual network escape',
@@ -248,6 +311,9 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
+    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0'), default='published')
+    parser.add_argument('--r003f-prepared', type=Path)
+    parser.add_argument('--r003f-process', type=Path)
     parser.add_argument('--work-orders', nargs='+')
     parser.add_argument('--retain-evidence', action='store_true')
     parser.add_argument('--r0035-guard', choices=('default', 'off'), default='default')
@@ -271,6 +337,10 @@ def main():
         roots = [Path(row['root']).resolve() for group in ('sources', 'trees') for row in prepared[group].values()]
         r002f = (admit_r002f(args.r002f_prepared, args.r002f_process)
                  if args.r002f_prepared and args.r002f_process else None)
+        r003f = (admit_r003f(args.r003f_prepared, args.r003f_process)
+                 if args.r003f_harness == 'corrected-b0' else None)
+        if r003f and r003f['status'] == 'PASS':
+            roots.append(Path(r003f['root']))
         if r002f and r002f['status'] == 'PASS':
             roots.extend(Path(row['root']).resolve() for row in r002f['trees'].values())
         if any(root == out or root in out.parents for root in roots):
@@ -286,7 +356,8 @@ def main():
                          include_r002f=args.r002f, r002f_preparation=r002f, r002f_dpr=args.r002f_dpr,
                          r002f_rounds=args.r002f_rounds, r002f_section=args.r002f_section,
                          work_orders=args.work_orders, retain_evidence=args.retain_evidence,
-                         r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode)
+                         r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode,
+                         r003f_harness=args.r003f_harness, r003f_preparation=r003f)
         check_star_plan(prepared, plan['r0035Plan'])
         write_json(Path(plan['r0035PlanPath']), plan['r0035Plan'])
         plan['preparedReceipt'] = {'path': str(args.prepared.resolve()), 'sha256': digest(args.prepared)}

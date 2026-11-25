@@ -102,7 +102,7 @@ canonical order above. Without the selection switch, the existing three work
 orders are emitted, plus R002F when enabled. The initial hosted campaign enabled
 R002F and contained all four work orders and five command rows. R0035 defaults
 to both timing and capture with their original dependency. The checked-in
-follow-up selects only R0035 timing and R002F DPR2/two rounds.
+follow-up selects corrected R003F B0, R0035 timing and R002F DPR3/two rounds.
 
 Selection limits observation commands. Common source preparation and the
 original star-plan validation remain unchanged. The coordinator checks the
@@ -147,6 +147,30 @@ remove all preparation of the accepted full source or establish a magnitude
 cutoff. Timing-only selects one timing row; capture-only selects one capture row
 without a nonexistent timing dependency. Both retains the original dependency.
 
+### Corrected lunar baseline
+
+`--r003f-harness corrected-b0` (campaign `r003fHarness: corrected-b0`) selects
+the separately identified correction described in [R003F-HARNESS.md](R003F-HARNESS.md).
+Default `published` preserves the original recipe. The corrected selection is
+invalid when R003F is unselected. Its disposable source is prepared outside
+private capture; only the materialization receipt and process streams enter
+private capture. Both actual process success and the exact reviewed receipt are
+required. The planner rechecks all seven output helpers, rejects symlinks and
+changed bytes, and emits a blocked lane without an executable fallback if
+preparation is incomplete.
+
+The existing R003F lane ID, generated runtime, capture paths, original arguments,
+900-second budget and exit meanings stay the same. Only the driver source path
+changes to the admitted disposable correction. The plan names `r003fHarness`
+and the complete expected helper identity; the coordinator rejects a mislabeled
+uncorrected lane. A corrected successful report must bind that identity, the
+baseline index, engine/DPR and all four expected captures with both UI receipts.
+The pinned corrected driver owns semantic UI admission; the coordinator checks
+receipt presence/identity and cannot substitute a `MEASURED` status alone.
+Original physical assertions precede UI admission, and isolation/Andon outcomes
+retain priority over missing or mismatched corrected-report metadata. The raw
+earlier B0 report is preserved with its derived harness-faithfulness rejection.
+
 The existing R0040 and R0035 recipes do not persist a detailed request ledger.
 Their pre-page fixture/abort routes remain unchanged; the coordinator retains
 its independent network-boundary controls. No missing ledger or fixture
@@ -179,8 +203,8 @@ receipt stops every later lane. Actual namespace exit 86, timeout, abnormal exit
 or missing receipt still takes precedence. R003F's separate isolation exit 3
 and workstream Andon exit 4 remain unchanged.
 
-The current follow-up campaign uses guard-disabled R0035 timing and R002F
-DPR2/two rounds; retention remains disabled. The changed campaign follows the
+The current follow-up campaign uses corrected R003F B0, guard-disabled R0035
+preview-members timing and R002F DPR3/two rounds; retention remains disabled. The changed campaign follows the
 actual preceding observations. Further selections and instrumentation remain
 conditional on inspecting the new results.
 

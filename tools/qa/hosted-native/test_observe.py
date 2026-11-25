@@ -83,6 +83,31 @@ class Verdict(unittest.TestCase):
         if data is not None: p.write_text(json.dumps(data))
         return {'id': 'test', 'workOrder': 'R003F', 'result': {'kind': kind, 'path': str(p)}}
 
+    def test_corrected_r003f_requires_harness_identity_population_and_both_ui_receipts(self):
+        harness = {'protocol': 'R003F/corrected-harness/1', 'driverSha256': 'frozen-control-driver'}
+        ui = {'protocol': 'R003F/native-ui/1', 'status': 'PASS', 'failures': [], 'observed': {'control': True}}
+        body = {'protocol': 'R003F/P1/B0-owner/2', 'status': 'MEASURED', 'isolation': {'ok': True},
+                'engine': 'chromium', 'dpr': 1, 'indexSha256': M.BASE_INDEX, 'harness': harness,
+                'captures': {key: {'state': {'nativeUi': copy.deepcopy(ui)}, 'nativeUiAfter': copy.deepcopy(ui)}
+                             for key in ('offset', 'b0', 'b0-repeat', 'reference')}}
+        def classify(value, code=0):
+            lane = self.lane('r003f-b0', value); lane.update(engine='chromium', dpr=1)
+            lane['result'].update(expectedHarness=harness, expectedIndexSha256=M.BASE_INDEX,
+                                  expectedCaptures=['offset', 'b0', 'b0-repeat', 'reference'])
+            return M.classify_lane(lane, code)
+        self.assertEqual(classify(body)['status'], 'PASS')
+        for mutate in (lambda b:b.pop('harness'), lambda b:b['harness'].update(driverSha256='changed'),
+                       lambda b:b.update(engine='webkit'), lambda b:b.update(dpr=2),
+                       lambda b:b.update(indexSha256='wrong'), lambda b:b['captures'].pop('reference'),
+                       lambda b:b['captures']['b0'].pop('nativeUiAfter'),
+                       lambda b:b['captures']['b0']['state']['nativeUi'].update(status='INCOMPLETE'),
+                       lambda b:b['captures']['b0']['nativeUiAfter'].update(failures=['displaced UI']),
+                       lambda b:b['captures']['b0']['nativeUiAfter'].pop('observed')):
+            changed=copy.deepcopy(body); mutate(changed)
+            with self.subTest(change=changed): self.assertEqual(classify(changed)['status'], 'INCOMPLETE')
+        self.assertEqual(classify({'status':'FAIL (Andon)'}, 4)['status'], 'ANDON')
+        self.assertEqual(classify({'isolation':{'ok':False}}, 3)['status'], 'ISOLATION_FAIL')
+
     def test_r0035_exit_zero_does_not_override_failed_admission(self):
         l = self.lane('r0035-trials', [{'admitted': True}, {'admitted': False}])
         self.assertEqual(M.classify_lane(l, 0)['status'], 'INCOMPLETE')
@@ -446,6 +471,51 @@ class OuterBoundary(unittest.TestCase):
 
 
 class Campaign(unittest.TestCase):
+    def test_corrected_moon_campaign_controls_cannot_be_ignored_or_substituted(self):
+        value={'schemaVersion':1,'engine':'chromium','r003fDpr':1,'workOrders':['R003F'],
+               'r003fHarness':'corrected-b0','r002f':{'enabled':False,'dpr':1,'rounds':1,'section':'all'}}
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'campaign.json'; path.write_text(json.dumps(value))
+            self.assertEqual(M.read_campaign(path), value)
+            for change in ({'r003fHarness':True},{'r003fHarness':'fixed'},{'workOrders':['R0040']}):
+                path.write_text(json.dumps({**value,**change}))
+                with self.assertRaises(ValueError): M.read_campaign(path)
+        args=SimpleNamespace(engine='chromium',work_orders=['R003F'],r002f=False,r003f_harness='corrected-b0')
+        plan=campaign_plan([{'id':'r003f-b0-chromium-dpr1','workOrder':'R003F'}], ['R003F'])
+        with self.assertRaises(ValueError): M.admit_plan(plan,args)
+        with self.assertRaises(ValueError): M.admit_plan({**plan,'r003fHarness':'corrected-b0'},args)
+        missing=M.admit_plan({**plan,'r003fHarness':'corrected-b0','lanes':[]},args)
+        self.assertEqual(len(missing),1)
+        self.assertEqual(missing[0]['preparation']['status'],'INCOMPLETE')
+
+    def test_corrected_moon_preparation_failure_preserves_receipts_and_other_lanes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            task=Path(tmp); (task/'capture').mkdir()
+            args=SimpleNamespace(task=task,research=Path('/sources/research'),baseline=Path('/sources/main'),
+                                 historical=Path('/sources/history'),engine='chromium',phase='prepare',lane=None,
+                                 work_orders=['R0040','R003F'],r002f=False,r003f_harness='corrected-b0')
+            runtime={'python':'/runtime/python','node':'/runtime/node','modules':'/runtime/modules','pngjs':'/runtime/pngjs'}
+            calls=[]
+            def bounded(argv,cwd,env,stdout,stderr,timeout):
+                calls.append(argv); Path(stdout).parent.mkdir(parents=True,exist_ok=True)
+                Path(stdout).write_text('partial stdout'); Path(stderr).write_text('partial stderr')
+                if Path(argv[1]).name=='prepare.py':
+                    target=task/'work/prepared/receipts'; target.mkdir(parents=True)
+                    (target/'prepared.json').write_text('{"status":"PREPARED"}')
+                if Path(argv[1]).name=='r003f_materialize.cjs':
+                    target=Path(argv[argv.index('--out')+1]); target.mkdir(parents=True)
+                    (target/'materialization.json').write_text('{"status":"INCOMPLETE"}')
+                    return {'returncode':2,'timedOut':False}
+                return {'returncode':0,'timedOut':False}
+            with patch.object(M,'controls',return_value='/private/admitted.json'),patch.object(M,'run_bounded',side_effect=bounded),patch.dict(os.environ,{},clear=True):
+                self.assertEqual(M.inside(args,runtime),0)
+            self.assertEqual([Path(x[1]).name for x in calls],['prepare.py','r003f_materialize.cjs','lanes.py'])
+            planner=calls[-1]
+            self.assertEqual(planner[planner.index('--r003f-harness')+1],'corrected-b0')
+            self.assertEqual(planner[planner.index('--r003f-prepared')+1],str(task/'work/r003f-corrected/materialization.json'))
+            self.assertEqual(json.loads((task/'capture/r003f-preparation-process.json').read_text())['returncode'],2)
+            self.assertEqual((task/'capture/r003f-materialization.json').read_text(),'{"status":"INCOMPLETE"}')
+            self.assertEqual((task/'capture/r003f-preparation.stderr').read_text(),'partial stderr')
     def test_star_diagnostic_controls_reject_ignored_or_invalid_requests(self):
         data = {'schemaVersion': 1, 'engine': 'chromium', 'r003fDpr': 1, 'workOrders': ['R0035'],
                 'r002f': {'enabled': False, 'dpr': 1, 'rounds': 1, 'section': 'all'},
@@ -510,9 +580,13 @@ class Campaign(unittest.TestCase):
         selected.update(workOrders=['R0035', 'R0040'], evidenceRetention=True,
                         r0035={'guard': 'off', 'scope': 'preview-members', 'mode': 'timing'})
         selected['r002f']['enabled'] = False
+        corrected = copy.deepcopy(baseline)
+        corrected.update(workOrders=['R003F'],r003fHarness='corrected-b0')
+        corrected['r002f']['enabled'] = False
         current = json.loads(unchanged)
         for data, orders, retained in ((baseline, ['R0040', 'R003F', 'R0035', 'R002F'], False),
                                        (selected, ['R0040', 'R0035'], True),
+                                       (corrected, ['R003F'], False),
                                        (current, M.selected_work_orders(current.get('workOrders'),
                                         current['r002f']['enabled']), current.get('evidenceRetention', False))):
             with self.subTest(retained=retained), tempfile.TemporaryDirectory() as tmp:
@@ -530,6 +604,7 @@ class Campaign(unittest.TestCase):
                     self.assertIs(args.retain_evidence, retained)
                     self.assertIs(args.r002f, 'R002F' in orders)
                     self.assertEqual(M.star_campaign(args), M.star_controls(data.get('r0035')))
+                    self.assertEqual(M.moon_campaign(args), data.get('r003fHarness','published'))
                     self.assertEqual((args.r002f_dpr, args.r002f_rounds, args.r002f_section),
                                      tuple(data['r002f'][key] for key in ('dpr', 'rounds', 'section')))
                     self.assertEqual(json.loads((task/'capture'/'campaign.json').read_text()), data)
@@ -583,14 +658,16 @@ class Campaign(unittest.TestCase):
         args = SimpleNamespace(task=Path('/task'), research=Path('/sources/research'), baseline=Path('/sources/main'),
                                historical=Path('/sources/history'), engine='webkit', r002f=True, r002f_dpr=3,
                                r002f_rounds=2, r002f_section='preview', r003f_dpr=2,
-                               work_orders=['R0035', 'R002F'], retain_evidence=True,
+                               work_orders=['R003F', 'R0035', 'R002F'], retain_evidence=True,
+                               r003f_harness='corrected-b0',
                                r0035_guard='off', r0035_scope='preview-members', r0035_mode='timing')
         runtime = {'node': '/dependencies/node', 'python': '/dependencies/python', 'modules': '/dependencies/modules'}
         argv = M.isolated_command(args, runtime, 'lane', 'r002f-webkit-dpr3')
         self.assertIn('--r002f', argv)
         start = argv.index('--work-orders')+1
-        self.assertEqual(argv[start:start+2], args.work_orders)
+        self.assertEqual(argv[start:start+3], args.work_orders)
         self.assertIn('--retain-evidence', argv)
+        self.assertEqual(argv[argv.index('--r003f-harness')+1],'corrected-b0')
         for key, value in (('--r0035-guard', 'off'), ('--r0035-scope', 'preview-members'), ('--r0035-mode', 'timing')):
             self.assertEqual(argv[argv.index(key)+1], value)
         for key, value in (('--engine', 'webkit'), ('--r003f-dpr', '2'), ('--r002f-dpr', '3'),

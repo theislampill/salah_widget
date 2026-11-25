@@ -16,7 +16,7 @@ import subprocess
 import sys
 import time
 
-from lanes import selected_work_orders, star_controls, STAR_DEFAULTS
+from lanes import selected_work_orders, star_controls, STAR_DEFAULTS, moon_harness, BASE_INDEX, R003F_MATERIALIZATION
 
 CAP_FIELDS = ('CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb')
 RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
@@ -43,6 +43,7 @@ def read_campaign(path):
     if 'workOrders' in value and not isinstance(value['workOrders'], list):
         raise ValueError('work-order selection must be a list')
     selected = selected_work_orders(value.get('workOrders'), r002f['enabled'])
+    moon_harness(value.get('r003fHarness', 'published'), selected)
     if 'r0035' in value and (not isinstance(value['r0035'], dict) or 'R0035' not in selected):
         raise ValueError('explicit R0035 controls require a dictionary and selected R0035')
     star_controls(value.get('r0035'))
@@ -68,6 +69,10 @@ def star_arguments(args):
     return [part for key, value in star_campaign(args).items() for part in ('--r0035-'+key, value)]
 
 
+def moon_campaign(args):
+    return moon_harness(getattr(args, 'r003f_harness', 'published'), campaign_selection(args))
+
+
 def retained_lane(lane):
     evidence = lane.get('evidenceRetention')
     return isinstance(evidence, dict) and evidence.get('instrumented') is True and 86 in lane.get('stopAllOnExit', [])
@@ -81,6 +86,7 @@ def admit_plan(plan, args):
     if (plan.get('protocol') != 'salah-hosted-native-lanes/1' or plan.get('sequential') is not True
             or plan.get('workOrders') != selected or plan.get('evidenceRetention') is not retention
             or plan.get('r0035Controls', STAR_DEFAULTS) != stars
+            or plan.get('r003fHarness', 'published') != moon_campaign(args)
             or not isinstance(plan.get('lanes'), list)):
         raise ValueError('unadmitted lane plan or campaign controls')
     engine = args.engine
@@ -102,6 +108,24 @@ def admit_plan(plan, args):
                 or instrumented != (retention and lane['workOrder'] in ('R0040', 'R0035'))
                 or instrumented and not retained_lane(lane)):
             raise ValueError('lane retention mode differs from the selected campaign')
+        if lane['workOrder'] == 'R003F' and moon_campaign(args) == 'corrected-b0':
+            preparation = lane.get('preparation'); report = lane.get('result', {})
+            if not isinstance(preparation, dict) or preparation.get('status') not in ('PASS', 'INCOMPLETE'):
+                raise ValueError('corrected R003F lane lacks preparation admission')
+            if preparation['status'] == 'INCOMPLETE':
+                if lane.get('argv') != []:
+                    raise ValueError('unprepared corrected R003F lane cannot execute a substitute recipe')
+            else:
+                harness = preparation.get('harness'); argv = lane.get('argv', [])
+                if (not isinstance(harness, dict) or harness.get('protocol') != 'R003F/corrected-harness/1'
+                        or harness.get('materializationSha256') != R003F_MATERIALIZATION
+                        or report.get('expectedHarness') != harness or report.get('kind') != 'r003f-b0'
+                        or report.get('expectedIndexSha256') != BASE_INDEX
+                        or report.get('expectedCaptures') != ['offset', 'b0', 'b0-repeat', 'reference']
+                        or lane.get('engine') != engine or lane.get('dpr') != getattr(args, 'r003f_dpr', 1)
+                        or len(argv) < 2 or not isinstance(preparation.get('root'), str)
+                        or argv[1] != str(Path(preparation['root'])/'tools/qa/r003f_owner_baseline.cjs')):
+                    raise ValueError('corrected R003F lane does not bind its admitted helpers and result')
         actual[lane['id']] = lane
     return [actual.get(identifier, {'id': identifier, 'workOrder': order, 'timeoutSeconds': timeout,
                                    'preparation': {'status': 'INCOMPLETE',
@@ -300,6 +324,20 @@ def classify_lane(lane, returncode, timed_out=False):
     if kind == 'r003f-b0':
         passed = (isinstance(body, dict) and body.get('status') == 'MEASURED'
                   and body.get('isolation', {}).get('ok') is True)
+        if 'expectedHarness' in lane['result']:
+            def complete_ui(receipt):
+                return (isinstance(receipt, dict) and receipt.get('protocol') == 'R003F/native-ui/1'
+                        and receipt.get('status') == 'PASS' and receipt.get('failures') == []
+                        and isinstance(receipt.get('observed'), dict) and bool(receipt['observed']))
+            captures = body.get('captures') if isinstance(body, dict) else None
+            passed = (passed and body.get('protocol') == 'R003F/P1/B0-owner/2'
+                      and body.get('engine') == lane['engine'] and type(body.get('dpr')) is int
+                      and body['dpr'] == lane['dpr'] and body.get('harness') == lane['result']['expectedHarness']
+                      and body.get('indexSha256') == lane['result']['expectedIndexSha256']
+                      and isinstance(captures, dict) and set(captures) == set(lane['result']['expectedCaptures'])
+                      and all(isinstance(row, dict) and isinstance(row.get('state'), dict)
+                              and complete_ui(row['state'].get('nativeUi')) and complete_ui(row.get('nativeUiAfter'))
+                              for row in captures.values()))
     elif kind == 'r0040-options':
         cells = body.get('cells', []) if isinstance(body, dict) else []
         passed = (isinstance(cells, list) and len(cells) == len(RAIN_CELLS)
@@ -383,6 +421,21 @@ def inside(args, runtime):
             shutil.copytree(destination/'receipts', args.task/'capture'/'preparation')
         write_json(args.task/'capture'/'preparation-process.json', result)
         if result['returncode'] or result['timedOut']: return 2
+        r003f_destination = args.task/'work'/'r003f-corrected'
+        if moon_campaign(args) == 'corrected-b0':
+            command = [runtime['node'], str(HERE/'r003f_materialize.cjs'), '--source', str(args.research),
+                       '--out', str(r003f_destination)]
+            try:
+                optional = run_bounded(command, str(HERE), dict(os.environ),
+                                       args.task/'capture'/'r003f-preparation.stdout',
+                                       args.task/'capture'/'r003f-preparation.stderr', 60)
+            except (OSError, ValueError) as error:
+                optional = {'returncode': None, 'timedOut': False, 'error': str(error)}
+            write_json(args.task/'capture'/'r003f-preparation-process.json',
+                       {**optional, 'argv': command, 'cwd': str(HERE), 'timeoutSeconds': 60})
+            materialization = r003f_destination/'materialization.json'
+            if materialization.is_file() and not materialization.is_symlink():
+                shutil.copy2(materialization, args.task/'capture'/'r003f-materialization.json')
         r002f_destination = args.task/'work'/'r002f-prepared'
         if getattr(args, 'r002f', False):
             command = [runtime['python'], str(HERE/'r002f_prepare.py'), '--research', str(args.research),
@@ -411,6 +464,10 @@ def inside(args, runtime):
                    '--node-modules', runtime['modules'], '--pngjs', runtime['pngjs'], '--engine', args.engine,
                    '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)), '--work-orders', *selected]
         command += star_arguments(args)
+        command += ['--r003f-harness', moon_campaign(args)]
+        if moon_campaign(args) == 'corrected-b0':
+            command += ['--r003f-prepared', str(r003f_destination/'materialization.json'),
+                        '--r003f-process', str(args.task/'capture'/'r003f-preparation-process.json')]
         if getattr(args, 'retain_evidence', False):
             command.append('--retain-evidence')
         if getattr(args, 'r002f', False):
@@ -449,6 +506,7 @@ def isolated_command(args, runtime, phase, lane=None):
              '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)), '--work-orders', *selected,
              '--inside', '--phase', phase, '--outer-netns', os.readlink('/proc/self/ns/net')]
     inner += star_arguments(args)
+    inner += ['--r003f-harness', moon_campaign(args)]
     if getattr(args, 'retain_evidence', False):
         inner.append('--retain-evidence')
     if getattr(args, 'r002f', False):
@@ -471,6 +529,7 @@ def outside(args, runtime):
     overall = {'protocol': 'salah-hosted-native-observation/1', 'engine': args.engine,
                'workOrders': selected, 'evidenceRetention': getattr(args, 'retain_evidence', False),
                'r0035Controls': star_campaign(args),
+               'r003fHarness': moon_campaign(args),
                'preparation': preparation, 'lanes': [], 'status': 'INCOMPLETE'}
     write_json(capture/'observation.json', overall)
     if preparation['returncode'] or preparation['timedOut']:
@@ -519,6 +578,7 @@ def main():
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--campaign', type=Path)
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
+    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0'), default='published')
     parser.add_argument('--work-orders', nargs='+')
     parser.add_argument('--retain-evidence', action='store_true')
     parser.add_argument('--r0035-guard', choices=('default', 'off'), default='default')
@@ -545,11 +605,13 @@ def main():
             args.r002f = campaign['r002f']['enabled']; args.r002f_dpr = campaign['r002f']['dpr']
             args.r002f_rounds = campaign['r002f']['rounds']; args.r002f_section = campaign['r002f']['section']
             args.work_orders = campaign.get('workOrders'); args.retain_evidence = campaign.get('evidenceRetention', False)
+            args.r003f_harness = campaign.get('r003fHarness', 'published')
             for key, value in star_controls(campaign.get('r0035')).items():
                 setattr(args, 'r0035_'+key, value)
             write_json(args.task/'capture'/'campaign.json', campaign)
         args.work_orders = campaign_selection(args)
         star_campaign(args)
+        moon_campaign(args)
         return inside(args, runtime) if args.inside else outside(args, runtime)
     except Exception as exc:
         write_json(args.task/'capture'/('coordinator-error-'+(args.lane or args.phase or 'outer')+'.json'),

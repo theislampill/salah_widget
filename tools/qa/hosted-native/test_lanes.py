@@ -267,6 +267,53 @@ class LaneControls(unittest.TestCase):
         finally:
             sys.path.pop(0)
 
+    def test_corrected_moon_plan_keeps_original_runtime_and_requires_admitted_helpers(self):
+        original = self.plan(work_orders=['R003F'])['lanes'][0]
+        missing = self.plan(work_orders=['R003F'], r003f_harness='corrected-b0')['lanes'][0]
+        self.assertEqual(missing['argv'], [])
+        self.assertEqual(missing['preparation']['status'], 'INCOMPLETE')
+        admission = {'status': 'PASS', 'root': '/private/work/corrected-b0',
+                     'harness': {'protocol': 'R003F/corrected-harness/1'}}
+        plan = self.plan(work_orders=['R003F'], r003f_harness='corrected-b0', r003f_preparation=admission)
+        corrected = plan['lanes'][0]
+        self.assertEqual(plan['r003fHarness'], 'corrected-b0')
+        self.assertEqual(corrected['argv'][1], '/private/work/corrected-b0/tools/qa/r003f_owner_baseline.cjs')
+        self.assertEqual(corrected['argv'][2:], original['argv'][2:])
+        self.assertEqual(corrected['result']['expectedHarness'], admission['harness'])
+        for key in ('timeoutSeconds', 'exitStatuses', 'stopAllOnExit', 'stopScopeOnAndon'):
+            self.assertEqual(corrected[key], original[key])
+        with self.assertRaises(ValueError): self.plan(work_orders=['R0040'], r003f_harness='corrected-b0')
+
+    def test_corrected_moon_admission_rechecks_exact_materialization_and_process(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); target = root/'corrected'; process = root/'process.json'
+            built = subprocess.run(['node', str(HERE/'r003f_materialize.cjs'), '--source', str(ROOT), '--out', str(target)],
+                                   capture_output=True, text=True)
+            self.assertEqual(built.returncode, 0, built.stderr)
+            process.write_text(json.dumps({'returncode': 0, 'timedOut': False}))
+            receipt = target/'materialization.json'
+            admitted = self.lanes.admit_r003f(receipt, process)
+            self.assertEqual(admitted['status'], 'PASS', admitted)
+            self.assertEqual(admitted['root'], str(target))
+            self.assertEqual(admitted['harness']['materializationSha256'], sha(receipt))
+            for status in ({'returncode': 2, 'timedOut': False}, {'returncode': 0, 'timedOut': True},
+                           {'returncode': False, 'timedOut': False}, {'returncode': 0}):
+                process.write_text(json.dumps(status))
+                self.assertEqual(self.lanes.admit_r003f(receipt, process)['status'], 'INCOMPLETE')
+            process.write_text(json.dumps({'returncode': 0, 'timedOut': False}))
+            helper=target/'tools/qa/r003f_capture.cjs'; original=helper.read_bytes()
+            helper.write_bytes(original+b'\n// drift\n')
+            self.assertEqual(self.lanes.admit_r003f(receipt, process)['status'], 'INCOMPLETE')
+            helper.write_bytes(original)
+            moved=root/'elsewhere.cjs'; helper.rename(moved); helper.symlink_to(moved)
+            self.assertEqual(self.lanes.admit_r003f(receipt, process)['status'], 'INCOMPLETE')
+            helper.unlink(); moved.rename(helper)
+            original_receipt=receipt.read_bytes(); receipt.write_text('{"status":"PREPARED"}')
+            self.assertEqual(self.lanes.admit_r003f(receipt, process)['status'], 'INCOMPLETE')
+            receipt.write_bytes(original_receipt)
+            self.assertEqual(self.lanes.admit_r003f(receipt, None)['status'], 'INCOMPLETE')
+            self.assertEqual(self.lanes.admit_r003f(receipt, process)['status'], 'PASS')
+
     def test_diagnostic_population_and_scope_do_not_create_phantom_dependencies(self):
         plan = self.plan(work_orders=['R0035'], r0035_mode='capture', r0035_scope='preview-members')
         self.assertEqual([row['id'] for row in plan['lanes']], ['r0035-chromium-capture'])

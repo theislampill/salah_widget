@@ -28,11 +28,11 @@ privately with the observations.
 
 ### Conditional campaign selection and evidence retention
 
-The checked-in follow-up campaign selects Chromium R0035 timing with its
-existing guard-disable diagnostic, then R002F at DPR2 for two rounds of both
-sections. Evidence retention remains disabled. The original default-guard
-failures are preserved; R003F awaits a corrected harness-faithful baseline,
-and R0040's separate capture preparation continues independently.
+The checked-in follow-up campaign selects corrected Chromium R003F B0 at DPR1,
+R0035 timing with its existing guard-disable and preview-members diagnostics,
+then R002F at DPR3 for two rounds of both sections. Evidence retention remains
+disabled. Original default-guard and guard-disabled full-scope failures are
+preserved. R0040's separate capture preparation continues independently.
 Campaigns can set these optional fields after the preceding evidence has been
 inspected:
 
@@ -41,12 +41,13 @@ inspected:
 | `workOrders` | A nonempty list of distinct identifiers from `R0040`, `R003F`, `R0035`, `R002F`; only those observation lanes run, in the existing canonical order. R0035 defaults to both timing and capture. |
 | `evidenceRetention` | A boolean, default `false`. When `true`, selected R0040/R0035 lanes execute their exact original source through the reviewed supplemental wrappers. R003F/R002F commands are unchanged. |
 | `r0035` | Optional dictionary with `guard: default` or `off`, `scope: all` or `preview-members`, and `mode: both`, `timing` or `capture`. Defaults preserve the original commands. Explicit controls require selected R0035 observations. Unknown fields and values are rejected. |
+| `r003fHarness` | `published` (the original recipe, default) or `corrected-b0` (source-pinned MIME correction and full-UI admission). The latter requires selected R003F observations and separately admitted helper preparation. |
 
 Unknown, duplicate, empty or malformed selections are rejected. R002F selection
 must agree with `r002f.enabled` in both directions. When `workOrders` is absent,
 the previous population is retained: R0040, R003F, R0035, plus R002F when enabled.
 The initial campaign had four work orders and five command rows; the current
-follow-up has two work orders and two command rows.
+follow-up has three work orders and three command rows.
 The selection, retention mode, diagnostic controls and every argument remain in private
 receipts. Selection limits observations; the existing common source preparation
 and original star-plan guards still run. R002F preparation remains conditional
@@ -63,6 +64,19 @@ campaign omits capture deliberately, and a capture-only campaign has no phantom
 timing dependency. Missing selected rows still become incomplete observations.
 None of these controls fixes or erases the original failures, adopts a guard
 policy, or supplies performance acceptance.
+
+The original lunar HTTP helper does not serve CSS with its proper MIME type.
+The earlier raw B0 receipt remains `MEASURED`, with a separate derived
+`INCOMPLETE` disposition for full-widget harness faithfulness. Corrected B0
+uses fresh disposable helpers whose exact inputs, guarded transformations and
+outputs are bound by a reviewed deterministic materialization receipt. Product
+and stylesheet bytes are unchanged. The planner rechecks every helper and the
+actual preparation process status, then binds the native report to that exact
+harness, engine/DPR, main index and four-capture population. Both UI observations
+per capture must be retained; the pinned driver performs the full UI predicate
+checks after every unchanged original physical assertion. Original Andon and
+isolation precedence remain intact. Failed optional materialization blocks only
+R003F and retains its private receipts/streams. See [R003F-HARNESS.md](R003F-HARNESS.md).
 
 Instrumented lanes retain separate fresh `<lane-id>-retention` directories
 beside the original outputs. Their unchanged result paths, kinds, admission

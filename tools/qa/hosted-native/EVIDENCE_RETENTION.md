@@ -63,9 +63,10 @@ are not display presentation timestamps. A supplementary failure screenshot is
 taken after the fault and cannot be relabeled as the exact failing frame.
 
 No product source, generated delivery, V1, vendor or original recipe is changed.
-Coordinator integration registers these offline controls and adds optional
-instrumented commands; the checked-in campaign and default invocations remain
-unchanged. See [LANES.md](LANES.md) for conditional work-order selection and
+The initial coordinator integration registered these offline controls and added
+optional instrumented commands without changing that initial campaign or the
+default invocations. Later campaigns are described in [LANES.md](LANES.md), including
+conditional work-order selection and
 `--retain-evidence`/campaign `evidenceRetention` controls.
 
 ## Invocation and exact binding
