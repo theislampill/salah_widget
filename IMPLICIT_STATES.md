@@ -1635,7 +1635,7 @@ Original audit: **N14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 - **Invariants.** one star owner in the shipped app
 - **Invalid, duplicate, stale or concurrent risks.** no scintillation producer in the shipped app (grep: none in preview modules; refined strength 0); AGENTS gate I and DESIGN.md L438-450 describe CSS twinkle (PRA-F-11)
 - **Status evidence.** D: DESIGN.md stale; `docs/real-sky/QUALIFICATION.md` ~L130-132 discloses the CP9 setting · I: digest-free text substitution · V: unit
-- **Work orders.** none
+- **Work orders.** R0035 ([issue 102](https://github.com/theislampill/salah_widget/issues/102)). The [catalogue scope experiment](docs/state-contracts/R0035-catalogue-scope.md) measures refined-only source diagnostics and center RGB responses on the worker-returned raster, before host acceptance. Candidate performance and visual acceptance remain open. The [independent experimental reconstruction](docs/state-contracts/R0035.md) adds a disposable presentation-rate producer and changed-rectangle qualification controls.
 - **Accepted evidence.** `tests/real-sky/cp9-scintillation.test.mjs` (asserts disabled strength); `r0022-lunar-consumers` star cases fail against the generated entry (since before f71fef6c)
 - **Tests.** `tests/real-sky/cp9-scintillation.test.mjs`, `tests/r0022-lunar-consumers.cjs`
 - **Observed facts.** integrator confirmed strength 0, CSS `display:none!important`, and no `scintill`/`twinkl` token in `native-star-preview.mjs`/`native-preview*.mjs`/`native-host.mjs`
@@ -2535,6 +2535,7 @@ Original audit: **new (NEW-D-05; OM-05 adds sticky acquisition flags)** · Lane 
 - **Actors and ownership.** `&debugMotion=1` (1 Hz), QA drivers
 - **Invalid, duplicate, stale or concurrent risks.** in the generated app star telemetry always reports `starΔ 0.000`/`starAnim OFF` (the stub empties `.stars`); `qaState()` writes a storage probe; `autoDetectStatus` can stick at `pending` when a newer generation supersedes boot (OM-05) (PRA-F-11, PRA-F-15)
 - **Status evidence.** D: AGENTS/DESIGN describe the source implementation · I: implicit · V: partial
+- **R0035 experimental star telemetry.** The [disposable reconstruction](docs/state-contracts/R0035.md) observes the actual published factor and displayed center delta. The shipped and historical star diagnostics retain their original disposition.
 - **Accepted evidence.** r001d-* (lifecycle only)
 - **Tests.** `tests/r001d-*.cjs`
 - **Findings.** [PRA-F-11](docs/audit/post-rlgwo/FINDINGS.md#pra-f-11), [PRA-F-15](docs/audit/post-rlgwo/FINDINGS.md#pra-f-15)
