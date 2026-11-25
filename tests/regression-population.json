@@ -46,9 +46,13 @@
   "tests/r0024-response-zone.test.cjs",
   "tests/r0024-weather.test.cjs",
   "tests/r0028-closure-index.test.cjs",
+  "tests/r002b-pages-payload.test.cjs",
+  "tests/r002f-a2-architecture.test.cjs",
+  "tests/r002f-a2-preview-transaction.test.cjs",
+  "tests/r002f-a2-quarantine.test.cjs",
+  "tests/r002f-a2-resume-observer.test.cjs",
   "tests/r0030-reset-authority-mutations.test.cjs",
   "tests/r0030-reset-authority.test.cjs",
-  "tests/r002b-pages-payload.test.cjs",
   "tests/r0033-isolation-wiring.test.cjs",
   "tests/r0033-isolation.test.cjs",
   "tests/r0033-lunar-surface-gate.test.cjs",
@@ -2187,6 +2191,61 @@
     ],
     "protocol": "one JSON line on stdout and <out>/result.json with the isolation verdict, card and Moon-slot PNGs, <out>/<cell>-<engine>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 15.5)"
    }
+  },
+  {
+   "path": "tools/qa/r002f_a2_resume.cjs",
+   "reason": "R002F-A2 bounded source-state observation recipe; not a native-pixel acceptance test. It records stale/current results and a test-only synchronous-render positive control. Observer controls run in tests/r002f-a2-resume-observer.test.cjs. --require-current intentionally exits 1 when the measured source differs at either checkpoint.",
+   "owner": "R002F-A2 (issue 96)",
+   "recipe": [
+    "node",
+    "tools/qa/r002f_a2_resume.cjs",
+    "index.html",
+    "<new-output.json>"
+   ],
+   "protocol": "JSON r002f-a2-resume-source/2; executed config, source and fixture hashes, independently specified fields, callback and fault evidence, and explicit VM-only limits; errors exit 2"
+  },
+  {
+   "path": "tools/qa/r002f_a2_architecture.cjs",
+   "reason": "R002F-A2 experimental shared prayer publisher, single preview upload, and actual admission predicates; does not install production changes. Its controls run in the registered architecture test.",
+   "owner": "R002F-A2 (issue 96)",
+   "recipe": [
+    "node",
+    "tools/qa/r002f_a2_architecture.cjs",
+    "<new-output.json>"
+   ],
+   "protocol": "JSON r002f-a2-architecture/1; source-state and fixture hashes, explicit limits; errors exit 2. --prepare writes three preimage-bound research patches to a fresh directory."
+  },
+  {
+   "path": "tools/qa/r002f_a2_quarantine.cjs",
+   "reason": "R002F-A2 opt-in runtime transformation evaluating hidden-data quarantine with the real lifecycle source and boundary doubles; no production policy adoption. Controls run in the registered quarantine test.",
+   "owner": "R002F-A2 (issue 96)",
+   "recipe": [
+    "node",
+    "tools/qa/r002f_a2_quarantine.cjs",
+    "<new-output.json>"
+   ],
+   "protocol": "JSON r002f-a2-quarantine/1; original and transformed source hashes, hide/re-admission/fault/revocation controls; errors exit 2."
+  },
+  {
+   "path": "tools/qa/r002f-transaction/materialize.cjs",
+   "reason": "Emit the disposable transaction source patch and digest manifest against reviewed preimages.",
+   "owner": "R002F-A2 research, issue 96",
+   "recipe": [
+    "node",
+    "tools/qa/r002f-transaction/materialize.cjs",
+    "<fresh-output-dir>"
+   ],
+   "protocol": "Exit 0 for a fresh successful materialization; nonzero on drift or existing destination."
+  },
+  {
+   "path": "tools/qa/r002f-transaction/experiment.cjs",
+   "reason": "Record individual write and selection events from the actual preview and projection source. The registered transaction tests assert the results.",
+   "owner": "R002F-A2 research, issue 96",
+   "recipe": [
+    "node",
+    "tools/qa/r002f-transaction/experiment.cjs"
+   ],
+   "protocol": "Print source-only JSON; nonzero on an acquisition/fixture error."
   }
  ]
 }

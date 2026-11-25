@@ -1,0 +1,9 @@
+--- a/moon/tests/r0041-phase-disc.test.cjs
++++ b/moon/tests/r0041-phase-disc.test.cjs
+@@ -436,0 +437,6 @@
++ // Supply both newly called functions from the ordinary generated prayer VM.
++ // The existing restoration assertions and the Moon-only source restriction
++ // below still execute unmodified in this supplemental fixture.
++ const prayerRealm=require('../../tests/r001d-harness.cjs').load();
++ env.runRenderStage=prayerRealm.run('runRenderStage');
++ env.publishRestoredPrayerResearch=prayerRealm.run('publishRestoredPrayerResearch');

@@ -1,0 +1,156 @@
+--- a/moon/src/moon-native.mjs
++++ b/moon/src/moon-native.mjs
+@@ -9,9 +9,10 @@
+  const script=document.currentScript;
+  // A fully embedded document has no relative assets, including in an opaque iframe.
+  const base=window.__SALAH_MOON_EMBEDDED__?(document.baseURI||'about:blank'):new URL(window.__SALAH_MOON_INLINE__?'moon/':'.',script?.src||document.baseURI).href;
+- const canvas=document.createElement('canvas');canvas.width=300;canvas.height=300;
++ let canvas=document.createElement('canvas');canvas.width=300;canvas.height=300;
+  let worker=null,url=null,disposed=false,ready=false,pending=null,accepted=null,serial=0,epoch=0,retryCount=0,clock=null,referenceScene=null,profileMode='calendar';
+  let timer=null,deadline=null,startFrame=null,lastError=null,stopOffline=null,upperBytes=null,calendarBytes=null,textureUp=null,waitingPreview=null;
++ let hiddenQuarantineResearch=null,reusableResearch=null,preparingResearch=false,reusesResearch=0;
+  let initialHeadEligible=true,bootCache='force-cache',adoptions=0,publishedToken=null;
+  // R0033 M1: the one recovery owner. Only the runtime starts workers (start()); at most
+  // three automatic attempts per page lifetime at 30 s, 2 min, 10 min after each failure,
+@@ -80,12 +81,13 @@
+  // until the next successful adoption; never from the free-standing status.reason, which outlives a recovered fault.
+  let faultRecord=null;
+  function presenterFault(withdraw,reason){withdraw(reason);faultRecord={reason,epoch};}
+- function fallback(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;try{window.SalahMoonHost?.fallback();}catch(error){note(error);}detail.clear();}
++ function fallback(reason){reusableResearch=null;accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;try{window.SalahMoonHost?.fallback();}catch(error){note(error);}detail.clear();}
+  function revokeInitialHead(){initialHeadEligible=false;if(window.SalahFirstPaint?.moon)window.SalahFirstPaint.moon.result=null;}
+  // R0041 presenter: withdraw the record's AUTHORITY without touching what is presented (detail canvas, reveal
+  // classes). Used only where a successor for the SAME identity is adopted in this same task.
+- function withdrawAuthority(reason){accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;}
++ function withdrawAuthority(reason){reusableResearch=null;accepted=null;upperBytes=null;calendarBytes=null;textureUp=null;status.legacyFallback=false;status.quality='pending';status.visibleSource='awaiting-terrain';status.reason=reason;}
+  function clear(reason,initialDocument=false){
++  if(reason!=="document hidden")hiddenQuarantineResearch=null;
+   if(!initialDocument)revokeInitialHead();
+   const presented=accepted?.scope??null;
+   epoch++;serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;try{worker?.postMessage({kind:'cancel'});}catch(error){note(error);/* A crashed worker cannot veto withdrawal. */}status.cancelled++;
+@@ -151,6 +153,8 @@
+   accepted={token:++adoptions,id:record.id,key:record.key,scope:record.scope,epoch:record.epoch,scene:m.scene,physicalIdentity:m.physicalIdentity,profileIdentity:m.profileIdentity,initial:m.kind==='initial'||m.kind==='phase-disc',phaseDisc:m.kind==='phase-disc'};
+   status.quality=m.diagnostics.quality.status;status.legacyFallback=false;status.visibleSource=m.kind==='result'?'refined-terrain':m.kind==='initial'?'initial-v5':m.kind==='phase-disc'?'phase-disc':'terrain-preview';status.last=m.diagnostics;status.phase=m.scene.fraction;
+   faultRecord=null;
++  reusableResearch=m.kind==='result'?narrowResearch(m,accepted):null;
++  hiddenQuarantineResearch=null;
+   syncTexture(capture());status.lastAdoption={at:began,prefixMs,totalMs:performance.now()-began,source:status.visibleSource};
+  }
+  function presentation(s){
+@@ -257,12 +261,80 @@
+   if(initialRetry.state==='permanent'||initialRetry.state==='exhausted')return false;
+   return initialRetry.count===0||initialRetry.epoch!==epoch||now>=initialRetry.notBefore;
+  }
++
++ // Retain the five validated, dedicated views. Never keep the worker envelope or pooled intermediates.
++ function narrowResearch(m,record){
++  if(![m.physicalIdentity,m.profileIdentity].every(x=>typeof x==='string'&&x.trim())||
++     m.physicalIdentity!==record.physicalIdentity||m.profileIdentity!==record.profileIdentity||
++     JSON.stringify(record.scene.profile)!==JSON.stringify(profile()))return null;
++  const {rgba,calendarRgba,surfaceLinear,calendarLinear,surfaceCoverage,width,height,surfaceSize,surfaceExtent}=m;
++  const views=[rgba,calendarRgba,surfaceLinear,calendarLinear,surfaceCoverage];
++  if(views.some(v=>v.byteOffset!==0||v.byteLength!==v.buffer.byteLength)||new Set(views.map(v=>v.buffer)).size!==5)return null;
++  return {record,rgba,calendarRgba,surfaceLinear,calendarLinear,surfaceCoverage,width,height,surfaceSize,surfaceExtent,
++    bytes:views.reduce((n,v)=>n+v.byteLength,0)};
++ }
++ function custodyCurrentResearch(saved,s){
++  const r=saved.data.record,c=saved.clock;
++  return !!s&&!disposed&&epoch===saved.resumeEpoch&&r.scope===scope(s)&&phaseError(r,s)<=PHASE_POSITION_BUDGET&&
++   (s.timeScale??1)===c.rate&&Math.abs((s.utcMs-c.utcMs)-(performance.now()-c.now)*c.rate)<=1000&&
++   s.presentationReady!==false&&s.initialWarranted!==false&&profileMode==='calendar'&&!referenceScene;
++ }
++ // Diagnostic observation keeps the original capture and empty-layout behavior.
++ // Only production polling and the request's final presentation read consume custody.
++ function lifecycleCaptureResearch(){
++  const s=capture();
++  if(hiddenQuarantineResearch&&!custodyCurrentResearch(hiddenQuarantineResearch,s))hiddenQuarantineResearch=null;
++  return s;
++ }
++ function stashHiddenResearch(){
++  const data=reusableResearch;
++  if(!accepted||data?.record!==accepted||!clock){hiddenQuarantineResearch=null;return;}
++  const saved={data,clock:{...clock},resumeEpoch:epoch};
++  hiddenQuarantineResearch=custodyCurrentResearch(saved,capture())?{...saved,resumeEpoch:epoch+1}:null;
++ }
++ function readmitHiddenResearch(saved,s){
++  const data=saved.data,original=data.record,began=performance.now();
++  const authorized=state=>hiddenQuarantineResearch===saved&&!accepted&&custodyCurrentResearch(saved,state)&&!state.paused&&!document.hidden;
++  let staged=null,previous=null,committed=null;
++  preparingResearch=true;
++  try{
++   if(!authorized(s))return;
++   // Stage on private owners. Reentrant preparation can publish a successor without the abandoned attempt touching its detail or canvas.
++   staged=startMoonDetail();
++   const prepared=staged.adopt({linear:data.surfaceLinear,calendarLinear:data.calendarLinear,coverage:data.surfaceCoverage,size:data.surfaceSize,extent:data.surfaceExtent,identity:original.physicalIdentity});
++   if(prepared===false)throw Error('quarantine detail preparation declined');
++   const prefixMs=performance.now()-began;
++   const up=Math.max(0,Math.min(1,s.up)),next=document.createElement('canvas');
++   next.width=data.width;next.height=data.height;
++   const bytes=blendCalendarBytes(data.rgba,data.calendarRgba,up);
++   next.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(bytes,next.width,next.height),0,0);
++   const fresh=capture();
++   if(!authorized(fresh)||Math.max(0,Math.min(1,fresh.up))!==up)return;
++   previous=activeDetailResearch;activeDetailResearch=staged;staged=null;
++   canvas=next;upperBytes=data.rgba;calendarBytes=data.calendarRgba;textureUp=up;
++   accepted=committed={...original,token:++adoptions,epoch};publishedToken=committed.token;
++   reusableResearch={...data,record:committed};hiddenQuarantineResearch=null;faultRecord=null;
++   status.status='ready';status.quality='empirical-adaptive';status.visibleSource='refined-terrain';status.phase=original.scene.fraction;
++   window.SalahMoonHost?.publish(canvas,false);
++   if(accepted===committed){
++    status.lastAdoption={at:began,prefixMs,totalMs:performance.now()-began,source:status.visibleSource};
++    reusesResearch++;composeAdopted();
++   }
++  }catch(error){note(error);if(committed&&accepted===committed)fallback('quarantine publication failure');}
++  finally{
++   if(saved===hiddenQuarantineResearch)hiddenQuarantineResearch=null;
++   if(staged&&staged!==activeDetailResearch)staged.dispose();
++   if(previous&&previous!==activeDetailResearch)previous.dispose();
++   preparingResearch=false;
++  }
++ }
+  function poll(force=false){
+-  if(disposed)return;const s=capture(),now=performance.now();recoverIfDue(now);
++  if(disposed)return;const s=lifecycleCaptureResearch(),now=performance.now();recoverIfDue(now);
+   if(!s){revokeInitialHead();if(accepted||pending)clear('invalid native lunar scene');clock=null;status.status='waiting-native';return;}
+   const jump=clockDiscontinuous(s,now);
+   if(jump)clear('native clock discontinuity');clock={utcMs:s.utcMs,now,rate:s.timeScale??1};
+-  if(s.paused){revokeInitialHead();if(pending||accepted)clear('native paused');status.status='paused';return;}
++  if(document.hidden||s.paused){revokeInitialHead();if(pending||accepted)clear('native paused');status.status='paused';return;}
++  if(hiddenQuarantineResearch&&!preparingResearch){readmitHiddenResearch(hiddenQuarantineResearch,s);return poll(force);}
+   if((accepted&&!sameScope(accepted,s))||(pending&&!sameScope(pending,s)))clear('native lunar target changed');
+   if(pending&&!matches(pending,s)){
+    serial++;pending=null;waitingPreview=null;clearTimeout(deadline);deadline=null;
+@@ -386,7 +458,7 @@
+  // the pause composes the Moon itself (owner decision 2026-11-22, G8: src/native/index.html setVis calls request() in
+  // that task), so restoration never ends an event task without the successor. The frame callback below stays as the
+  // backstop for a host that does not (it does nothing once a Moon is presentable).
+- const visibility=()=>{if(document.hidden){clear('document hidden');status.status='paused';}else{clock=null;poll();if(!accepted)requestAnimationFrame(()=>{if(!document.hidden)presentForCompose();});}};
++ const visibility=()=>{if(document.hidden){stashHiddenResearch();clear('document hidden');status.status='paused';}else{clock=null;poll();if(!accepted)requestAnimationFrame(()=>{if(!document.hidden)presentForCompose();});}};
+  // The handle is idempotent and refuses adoption once retired (ES21-07). It is
+  // a pass-through: moon-detail.mjs stays byte-identical because it is a pinned
+  // initial-receiver source (tools/build_moon.py validate_initial_sources).
+@@ -397,12 +469,14 @@
+  // its authority is the refined frame (native-host currentness fences) and this runtime's accepted record (poll and
+  // fallback() above, which clear unconditionally), so nothing invalid is kept. Before, the preview hid it while
+  // .real-sky-composed hid the SVG Moon: an empty slot until the refined sky's next compose (contract section 11.10).
+- const detail=(inner=>{let retired=false;return {adopt(s){if(retired)return false;return inner.adopt(s);},clear(){inner.clear();},clearFor(owner){const st=inner.state;if(st?.visible&&st.skyOwner&&st.skyOwner!==owner)return false;inner.clear();return true;},compose(frame,encode){if(!retired)presentForCompose();return inner.compose(frame,encode);},get available(){return !retired&&inner.available;},get state(){return inner.state;},dispose(){if(retired)return;retired=true;inner.dispose();}};})(startMoonDetail());
++ let activeDetailResearch=startMoonDetail();
++ const detail=(()=>{let retired=false;return {adopt(s){if(retired)return false;return activeDetailResearch.adopt(s);},clear(){activeDetailResearch.clear();},clearFor(owner){const st=activeDetailResearch.state;if(st?.visible&&st.skyOwner&&st.skyOwner!==owner)return false;activeDetailResearch.clear();return true;},compose(frame,encode){if(!retired)presentForCompose();return activeDetailResearch.compose(frame,encode);},get available(){return !retired&&activeDetailResearch.available;},get state(){return activeDetailResearch.state;},dispose(){if(retired)return;retired=true;activeDetailResearch.dispose();}};})();
+  let registered=null;
+  try{
+  document.addEventListener('visibilitychange',visibility);
+  window.SalahMoonDetail=detail;
+  window.SalahMoonRuntime={
++  get quarantineResearch(){return {records:hiddenQuarantineResearch?1:0,reuses:reusesResearch,bytes:hiddenQuarantineResearch?.data.bytes??0};},
+   installWorkerSource(source){
+    if(disposed)return false;
+    if(typeof source!=='string'||source.length>MOON_WORKER_PIN.bytes)throw Error('Moon worker source identity');
+@@ -425,7 +499,7 @@
+      return syncTexture(s)?presentation(capture()):!!accepted;
+     }
+    }
+-   poll();return presentation(capture());
++   poll();return presentation(lifecycleCaptureResearch());
+   },
+   surface(){const s=capture(!!(accepted||waitingPreview));if(!presentation(s))return null;syncTexture(s);return accepted?canvas:null;},
+   // R0033 M4: the pure presence predicate. True iff presentation() would return true

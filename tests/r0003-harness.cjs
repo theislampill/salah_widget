@@ -104,7 +104,7 @@ function harness(options={}){
     slice("let _lastBolt=-1, _lastRender=null;","function updateSimClock(n){")+"\n"+
     slice("let _loopStarted=false;","// ——————————————————————— in-widget settings"));
   async function advance(to){assert.ok(to>=elapsed);let budget=0;while(true){await settle();const next=[...timers].filter(([,t])=>t.at<=to).sort((a,b)=>a[1].at-b[1].at)[0];if(!next)break;if(++budget>200)throw Error("fixture timer bound");const [id,t]=next;timers.delete(id);const at=Math.max(elapsed,t.at);wall+=at-elapsed;elapsed=at;t.fn();}wall+=to-elapsed;elapsed=to;await settle();}
-  async function frame(){const pending=[...frames];frames.clear();for(const [,fn]of pending)fn(elapsed);await settle();}
+  async function frame(){const pending=[...frames];frames.clear();for(const [,fn]of pending)fn(elapsed);await settle();return pending.length;}
   // Transport tests begin after the explicit two rendering opportunities and
   // posted task. Do not turn those callbacks into synchronous production work;
   // dedicated critical-path tests retain and assert the intermediate states.
@@ -122,4 +122,6 @@ function cfg(lat,label=String(lat),extra={}){return {lat,lon:lat,tz:"UTC",label,
 function req(h,day="07-09-2026",lat=null){return h.requests.find(r=>r.url.includes(`/timings/${day}?`)&&(lat===null||new URL(r.url).searchParams.get("latitude")===String(lat)));}
 
 
-module.exports={source,sourcePath,copy,record,harness,cfg,req,settle};
+// Bind the config string evaluated by each VM, including an explicit request-config override.
+const configSha256=crypto.createHash("sha256").update(config).digest("hex");
+module.exports={source,sourcePath,configSha256,copy,record,harness,cfg,req,settle};
