@@ -98,12 +98,20 @@ jobs:
         shell: bash
         run: |
           python -m pip install --disable-pip-version-check --no-deps --only-binary=:all: --require-hashes             -r tools/qualification/gate-requirements.txt
+      - name: Install the hash-locked PNG codec for capture replay
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/gate-node"
+          cp tools/qualification/node/package{,-lock}.json "$RUNNER_TEMP/gate-node/"
+          npm ci --prefix "$RUNNER_TEMP/gate-node" --ignore-scripts --no-audit --no-fund
       - name: Run the registered population under the exact ledger
         timeout-minutes: 35
         shell: bash
         run: |
           export TMP="$RUNNER_TEMP/gate-tmp" TEMP="$RUNNER_TEMP/gate-tmp" TMPDIR="$RUNNER_TEMP/gate-tmp"
           mkdir -p "$TMPDIR"
+          export NODE_PATH="$RUNNER_TEMP/gate-node/node_modules"
           python tools/qualification/qualification_gate.py suites --out "$RUNNER_TEMP/gate/suites"
       - name: Retain the runner receipt and logs
         if: always()

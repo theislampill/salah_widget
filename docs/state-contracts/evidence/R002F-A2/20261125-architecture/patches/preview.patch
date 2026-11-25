@@ -1,0 +1,21 @@
+--- a/real-sky/native-preview-host.mjs
++++ b/real-sky/native-preview-host.mjs
+@@ -102,6 +102,8 @@
+      // or its identity. A failed candidate must not be called a retained frame.
+      const nextFrame=pixels||!previewFrame?{preview:true,raster:next.raster,current:()=>nativeResultCurrent(next.job,host.capture(false))}:previewFrame;
+      window.SalahMoonDetail?.compose(nextFrame,encodeNativeFrame);
++     let complete=image;
++     if(pixels){const bytes=new Uint8ClampedArray(pixels.data);bytes.set(image.data,0);complete=new ImageData(bytes,pixels.width,pixels.height);}
+     const published=host.capture(false);
+      if(published.paused||!publishable(next,published)){
+      missed(next,'preview final publication lacks currentness headroom',published);clear('preview final publication expired');return retryPreview(retried);
+@@ -109,8 +111,7 @@
+      if(!host.cloudsCurrent(capture.cloudAuthority)){missed(next,'preview cloud authority superseded during detail composition');return retryPreview(retried);}
+      // The decoded mask, immutable foreground and completed detail commit in
+      // one turn. Until here the previous background and ownership stay intact.
+-     if(pixels)ctx.putImageData(pixels,0,0);
+-     ctx.putImageData(image,0,0);card.style.setProperty('--native-sun-cloud-mask',solarMask);
++     ctx.putImageData(complete,0,0);card.style.setProperty('--native-sun-cloud-mask',solarMask);
+      previousMoonBottom=bottom;previewFrame=nextFrame;value=next;baseBytes=base;if(pixels)paintedCatalogueRevision=revision;
+      Object.assign(status,{status:'ready',quality:next.quality,retained:false,utcMs:next.utcMs,native:next.native,solarAltitudeDeg:next.raster.physicalState.sun.altDeg,display:next.raster.displayPresentation,diagnostics:next.diagnostics,catalogue:next.raster.starPreview??null,reason:null});
+     canvas.style.visibility='visible';retireFirstPaint();card.classList.add('real-sky-preview-ready');
