@@ -735,6 +735,7 @@ Original audit: **new (independent review omission)** · Lane papers: none (adde
 Original audit: **N08** · Lane papers: [B](docs/audit/post-rlgwo/lanes/B-weather-location.md) · Status D / I / V: **PEX / PEX / EIV** · Historical disposition: *partly resolved*
 
 - **Scope and decision.** Whether a current-model record and hourly track exist for the current target, and whether a request is issued.
+- **Precipitation quantities.** The provider documents total precipitation, large-scale rain and convective showers as preceding-interval accumulations. The R0040 [provider definitions and numerical controls](docs/state-contracts/R0040.md#provider-and-physical-parameters) give the interval-to-rate conversion and its limits.
 - **Sources.** `src/native/index.html` state ~L1263, admission ~L1300-1368, `weatherEligibility`/`selectedWeather` ~L1369-1383, `loadWx` ~L1405, `wxFetchJson` ~L1421-1445, `fetchWeather` ~L1446-1476, `startWeather` ~L3652, `resetForNewLocation` ~L3717-3726
 - **State dimensions.** current {none, admitted-eligible, admitted-ineligible, sim, forecast-derived}; track {none, admitted}; slot; attempt stage {fetch, body, settled}; cache envelope (≤6 h); retry record (ISM-WX-003)
 - **Transitions.**
@@ -1725,6 +1726,7 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 Original audit: **N16** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **PEX / IMS / PEX** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Which particles show and when lightning may flash.
+- **R0040 branch evidence.** Source-publication controls reproduce the interval, wind projection and live/SIM amount discrepancies on main. Their measured cells and the separate prototype gain control are recorded in [R0040](docs/state-contracts/R0040.md). The [research parameter inventory](docs/state-contracts/R0040.md#r40-c1-prototype-parameter-inventory) traces near/texture saturation, cloud-support thresholds and layer conventions to their executable sources. The acceptance codes await the owner gates.
 - **Sources.** `src/native/index.html` `buildWeather` ~L2255-2268, `tieRainToClouds` ~L2882-2894, `genLightning` ~L3460-3475, `paint` ~L3302-3305, `withdrawWeatherEffects` L2722-2729
 - **State dimensions.** particle pool; `_rainTiedFx`; per-particle `display`; `data-precip`, `data-lightning`; `_lastBolt`
 - **Transitions.**

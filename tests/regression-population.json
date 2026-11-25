@@ -61,6 +61,9 @@
   "tests/r0038-f12-moon-lightkey-reset.test.cjs",
   "tests/r003a-cloud-wind-truth.test.cjs",
   "tests/r003a-docs-truth.test.cjs",
+  "tests/r0040-options.test.cjs",
+  "tests/r0040-parameters.test.cjs",
+  "tests/r0040-rain-controls.test.cjs",
   "tests/r0041-presenter-census.test.cjs",
   "tests/r0041-preview-clear.test.cjs",
   "tests/radar-acquisition-scope.test.cjs",
@@ -1611,6 +1614,10 @@
   {
    "path": "tests/r0033-fake-playwright.cjs",
    "reason": "imported fake of the Playwright surface used by the R0033 isolation module and recipes (records call order, replays synthetic requests through the installed routes); harness of tests/r0033-isolation-wiring.test.cjs, not an instrument"
+  },
+  {
+   "path": "tests/r0040-rain-controls.cjs",
+   "reason": "R0040 synthetic source fixture, comparator and optional baseline measurement CLI imported by r0040-rain-controls.test.cjs"
   }
  ],
  "exclusions": [
@@ -2186,6 +2193,56 @@
      "<playwright package>"
     ],
     "protocol": "one JSON line on stdout and <out>/result.json with the isolation verdict, card and Moon-slot PNGs, <out>/<cell>-<engine>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 15.5)"
+   }
+  },
+  {
+   "path": "tests/r0040-gain-controls.cjs",
+   "reason": "exercises the separately pinned rain research prototype after applying the R0040 research patch",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tests/r0040-gain-controls.cjs",
+     "<patched research checkout>"
+    ],
+    "protocol": "assertion exit status; R40-C1 cap, additive width and light-kernel negative controls"
+   }
+  },
+  {
+   "path": "tools/qa/r0040/capture.cjs",
+   "reason": "External-browser research recipe requiring an explicit generated checkout and native engine.",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0040/capture.cjs",
+     "<playwright>",
+     "<patched research tree>",
+     "<generated tree>",
+     "<fresh dir>",
+     "<engine>",
+     "<block>",
+     "<condition>",
+     "<model>"
+    ],
+    "protocol": "Exit 0 writes raw PNGs and capture.json. Qualification requires an independent lossless_pack.py verdict."
+   }
+  },
+  {
+   "path": "tools/qa/r0040/native-options.cjs",
+   "reason": "External-browser research recipe requiring an explicit generated checkout and native engine.",
+   "owner": "R0040",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/r0040/native-options.cjs",
+     "<playwright>",
+     "<research tree>",
+     "<generated patched tree>",
+     "<fresh dir>",
+     "<engine>"
+    ],
+    "protocol": "Exit 0 writes measured computed styles, full-card PNGs and native-options.json. Human judgement remains separate."
    }
   }
  ]
