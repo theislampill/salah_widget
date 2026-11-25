@@ -3,9 +3,10 @@
 // Run on the patched authored source in a disposable checkout, before the builder.
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const {createHash} = require('node:crypto');
 const {measure, assess, sample} = require('../../../tests/r0040-rain-controls.cjs');
 const {fixture} = require('../../../tests/weather-no-timetable-fixture.cjs');
-const {scene, B} = require('../../../tests/weather-renewal-fixture.cjs');
+const {scene, provider, B} = require('../../../tests/weather-renewal-fixture.cjs');
 if (process.argv.length !== 3) throw Error('usage: node evaluate-options.cjs PATCHED_AUTHORED_INDEX');
 const template = fs.readFileSync(process.argv[2], 'utf8');
 const bind = options => template.replace('const rainExperiment =', 'window.__R0040_OPTIONS__=' + JSON.stringify(options) + ';\nconst rainExperiment =');
@@ -21,8 +22,88 @@ async function magnitudes(source, k) {
   }
   return rows;
 }
+async function timetableTransition(source, missing, lane) {
+  const fetch = provider({code:63, mutate(_host, body) {
+    Object.assign(body.current, {precipitation:null, rain:null, showers:null});
+    body.hourly.precipitation.fill(null);
+  }});
+  const hash = lane === 'live' ? '' : '&simCloud=95&simWx=63&simPrecip=unavailable';
+  const h = await fixture({source, fetch, hash});
+  h.run(`window.SalahNativeSkyHost.cloudLighting=()=>({sun:{altDeg:40,azDeg:90},utcMs:simNow(),sample:()=>null});
+    const savedTimetable=today, heldRecord=selectedWeather();`);
+  const frames = [];
+  for (const transition of ['render()', 'today=null;render()', 'today=savedTimetable;render()']) {
+    h.run(transition);
+    const frame = JSON.parse(JSON.stringify(h.run(`(()=>{
+      const c=document.querySelector('.c'), d=weatherDecision();
+      return {timetable:!!model(), sameAdmittedRecord:d.record===heldRecord, source:d.record?.src,
+        code:d.record?.code, cover:d.record?.cloud, quantity:d.model.quantity, sunDeg:window.SalahNativeSkyHost.cloudLighting().sun.altDeg,
+        headerCode:_lastWeatherHeader?.code, icon:document.querySelector('#wi').textContent, sceneCode:d.sceneCode,
+        scene:c.dataset.fx, rainPermission:d.visualPermissions.rain, precip:c.dataset.precip,
+        sunray:c.style.getPropertyValue('--sunray')};
+    })()`)));
+    const cover = missing === 'cover';
+    assert.deepEqual(frame, {timetable:frames.length!==1, sameAdmittedRecord:true,
+      source:lane==='live'?'current':'sim', code:63, cover:95, quantity:null, sunDeg:40,
+      headerCode:63, icon:'🌧️', sceneCode:cover?3:63, scene:cover?'overcast':'rain',
+      rainPermission:false, precip:'off', sunray:cover?'0.140':'0.160'},
+      lane + '/' + missing + ' publication at ' + transition);
+    frames.push(frame);
+  }
+  return {lane,missing,frames};
+}
+function checkPolicyIcons(amounts, missing, zero) {
+  const result = [];
+  for (const lane of ['live','sim']) {
+    // A cover-styled missing-rain row still carries the rain icon. Identify
+    // the two reference icons by independent inputs, never by the painted look.
+    const input = (code, amount) => {
+      const matches = amounts.filter(r=>r.lane===lane && r.inputCode===code && r.inputAmount===amount);
+      assert.equal(matches.length,1,'one input cell for '+[lane,code,amount]);
+      return matches[0];
+    };
+    const wet = input(63,1.25), dry = input(3,null);
+    assert.ok(wet.icon && dry.icon && wet.icon!==dry.icon);
+    for (const [amount, policy] of [[null,missing],[0,zero]]) {
+      const row = input(63,amount);
+      const expectedIcon = amount===null || policy==='category' ? wet.icon : dry.icon;
+      assert.equal(row.icon,expectedIcon,'wrong icon for '+[lane,amount,policy]);
+      assert.equal(row.category,policy==='cover'?'overcast':'rain');
+      assert.equal(row.quantity,amount);
+      assert.equal(row.amountState,amount===null?'unknown':'dry');
+      assert.equal(row.particles,'off');
+      assert.equal(Number(row.opacity),0);
+      result.push({lane,inputCode:63,amount,policy,icon:row.icon,scene:row.category});
+    }
+  }
+  return result;
+}
+
+async function previewIntervals(source) {
+  const rows = [];
+  for (const sourceKind of ['forecast','sim']) for (const amount of [null,0,1.25]) {
+    const hash = sourceKind==='sim' ? '&simWx=63&simPrecip='+ (amount??'unavailable') : '&timeScale=2';
+    const fetch = provider({code:63, mutate(_host,body){body.hourly.precipitation.fill(amount);}});
+    const h = await fixture({source,hash,fetch});
+    const row = JSON.parse(JSON.stringify(h.run(`(()=>{
+      const d=weatherDecision(), w=d.record, q=d.model.quantity;
+      return {src:w.src,amount:w.precip,hasCurrentInterval:Object.hasOwn(w,'currentIntervalSec'),
+        hasAmountInterval:Object.hasOwn(w,'precipIntervalSec'),amountInterval:w.precipIntervalSec??null,
+        hasValidAt:Object.hasOwn(w,'currentValidAt'),hasRetrievedAt:Object.hasOwn(w,'retrievedAt'),
+        rate:q?.averageRateMmH??null,liveEligible:weatherEligibility(w).eligible};
+    })()`)));
+    assert.deepEqual(row,{src:sourceKind,amount,hasCurrentInterval:false,hasAmountInterval:amount!==null,
+      amountInterval:amount===null?null:3600,hasValidAt:false,hasRetrievedAt:false,rate:amount,liveEligible:false});
+    rows.push(row);
+  }
+  return rows;
+}
 async function main() {
-  const policies = [], physical = [];
+  const policies = [], physical = [], timetable = [], iconChecks = [];
+  const intervals=await previewIntervals(bind(option));
+  for (const lane of ['live','sim']) for (const missing of ['cover','category']) {
+    timetable.push(await timetableTransition(bind({...option,missing}),missing,lane));
+  }
   for (const missing of ['category','cover']) for (const zero of ['category','cover']) {
     const cells = await measure(bind({...option,missing,zero}));
     const checks = assess(cells);
@@ -32,6 +113,16 @@ async function main() {
     const zeroRows = cells.amounts.filter(r => r.inputCode === 63 && r.inputAmount === 0);
     assert.ok(zeroRows.every(r=>r.category === (zero==='cover'?'overcast':'rain')));
     assert.equal(cells.simOmitted.quantity,2);
+    const icons=checkPolicyIcons(cells.amounts,missing,zero);
+    for (const amount of [null,0]) {
+      const wrong=structuredClone(cells.amounts);
+      for (const row of wrong.filter(r=>r.inputCode===63 && r.inputAmount===amount)) {
+        const wrongCode=amount===null || zero==='category' ? 3 : 63;
+        row.icon=wrong.find(r=>r.lane===row.lane && r.inputCode===wrongCode && r.inputAmount===(wrongCode===3?null:1.25)).icon;
+      }
+      assert.throws(()=>checkPolicyIcons(wrong,missing,zero),/wrong icon/);
+    }
+    iconChecks.push({missing,zero,icons,mutatedZeroAndUnknownRejected:true});
     policies.push({missing,zero,checks,missingScene:missingRows[0].category,zeroScene:zeroRows[0].category});
   }
   for (const eyeLevel of [0.8,1]) {
@@ -82,6 +173,6 @@ async function main() {
     expiry.push({code,rate:precipitation*4,lastWetMs:last.t,firstWithheldMs:after[0].t,
       checkedThroughMs:after.at(-1).t,afterExpiryMutantRejected:true});
   }
-  console.log(JSON.stringify({expiry,evidence:'Research variant running in synthetic DOM. No browser pixels.',policies,physical,ordinalMutantRejected:ordinal.some(r=>!r.within3deg),profiles,styles},null,2));
+  console.log(JSON.stringify({authoredSha256:createHash('sha256').update(template).digest('hex'),timetable,intervals,iconChecks,expiry,evidence:'Research variant running in synthetic DOM. No browser pixels.',policies,physical,ordinalMutantRejected:ordinal.some(r=>!r.within3deg),profiles,styles},null,2));
 }
 main().catch(e=>{console.error(e);process.exitCode=1});

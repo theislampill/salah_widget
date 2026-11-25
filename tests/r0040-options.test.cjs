@@ -12,6 +12,14 @@ test('R0040 gated authored variants agree across lanes and withdraw on the expir
     execFileSync('git',['apply','--whitespace=error','-'],{cwd:tmp,input:patch});
     const text=execFileSync(process.execPath,[path.join(root,'tools/qa/r0040/evaluate-options.cjs'),source],{encoding:'utf8'});
     const result=JSON.parse(text);
+    assert.equal(result.timetable.length,4);
+    assert.deepEqual(result.timetable.map(row=>row.frames.map(frame=>frame.sunray)),[
+      ['0.140','0.140','0.140'],['0.160','0.160','0.160'],
+      ['0.140','0.140','0.140'],['0.160','0.160','0.160']
+    ]);
+    assert.equal(result.intervals.length,6);
+    assert.equal(result.iconChecks.length,4);
+    assert.ok(result.iconChecks.every(row=>row.icons.length===4 && row.mutatedZeroAndUnknownRejected));
     assert.equal(result.policies.length,4);
     assert.equal(result.physical.length,2);
     assert.equal(result.expiry.length,2);
