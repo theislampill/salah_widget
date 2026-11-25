@@ -1,0 +1,49 @@
+--- a/src/native/index.html
++++ b/src/native/index.html
+@@ -3786,13 +3786,7 @@
+   $(".arc").innerHTML="";$(".times").innerHTML=prayers.map(k=>`<div class="p" data-prayer-key="${k}"><b>${k}</b><span class="tm">—</span></div>`).join("");
+   const p=$(".bar>i");p.style.width="";p.style.visibility="hidden";_lastRender=null;
+ }
+-function render(){
+-  _frameFaults.clear(); _frameRecorded=new WeakSet();         // this render's own fault set (P-3 receipt truth)
+-  if(!simulationReady()){ runRenderStage("prayer",withdrawnPrayerStage);runRenderStage("weather-header",()=>paintWeatherHeader(weatherHeader(weatherDecision(),false)));return; }
+-  setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
+-  // PRAYER STAGE FIRST (R002C P-1): nothing below reads optional-stage state, so the timetable, countdown,
+-  // rows and calendar are published before any optional producer can fail. If the prayer stage itself
+-  // fails (P-2), the truthful withdrawal replaces it — a frozen previous countdown never stays as if current.
++function publishPrayerStageResearch(){
+   let M=null, prayerPublished=false, modelDone=false;
+   try{
+     M=model(); modelDone=true;
+@@ -3826,6 +3820,22 @@
+     // No receipt describes a frame that was not published. When the withdrawal itself was what failed, it is not retried this frame.
+     if(M || !modelDone) runRenderStage("prayer-withdrawal",withdrawnPrayerStage);
+   }
++  return {M,prayerPublished};
++}
++function publishRestoredPrayerResearch(){
++  _lastRender=null; // prayer publication is not a newly composed sky receipt
++  if(!runRenderStage("resume-prayer-day",maintainPrayerDay)){runRenderStage("prayer-withdrawal",withdrawnPrayerStage);return;}
++  if(!simulationReady()){runRenderStage("prayer",withdrawnPrayerStage);return;}
++  publishPrayerStageResearch();
++}
++function render(){
++  _frameFaults.clear(); _frameRecorded=new WeakSet();         // this render's own fault set (P-3 receipt truth)
++  if(!simulationReady()){ runRenderStage("prayer",withdrawnPrayerStage);runRenderStage("weather-header",()=>paintWeatherHeader(weatherHeader(weatherDecision(),false)));return; }
++  setLocLabel();                                              // keep the header location label in sync with runtime config (local mode / settings panel)
++  // PRAYER STAGE FIRST (R002C P-1): nothing below reads optional-stage state, so the timetable, countdown,
++  // rows and calendar are published before any optional producer can fail. If the prayer stage itself
++  // fails (P-2), the truthful withdrawal replaces it — a frozen previous countdown never stays as if current.
++  const {M,prayerPublished}=publishPrayerStageResearch();
+   runRenderStage("weather-sync",syncWeather);                 // sim/fast-forward: pull weather from the forecast track at simTime
+   if(!M || !prayerPublished){
+     let d=null; runRenderStage("weather-decision",()=>{ d=weatherDecision(); });
+@@ -4316,7 +4326,7 @@
+   // task instead of the next frame. It runs last and any Moon fault is contained: the frame loop is already
+   // scheduled, and prayer publication neither waits for nor depends on it (optional astronomy).
+   function setVis(){ const on=visible(), resumed=on&&!!cEl&&cEl.classList.contains("paused"); rebaseCloudMotion(!on); if(cEl){ cEl.classList.toggle("paused",!on); if(ADVANCING) cEl.classList.add("fast"); } if(on) start(); else stop();
+-    if(resumed){ try{ window.SalahMoonRuntime?.request(); updateSkySurface(); }catch(e){ recordRenderFault("moon-resume",e); } } }
++    if(resumed){ runRenderStage("resume-prayer",publishRestoredPrayerResearch); try{ window.SalahMoonRuntime?.request(); updateSkySurface(); }catch(e){ recordRenderFault("moon-resume",e); } } }
+   document.addEventListener("visibilitychange",setVis);
+   if("IntersectionObserver" in window && cEl)
+     new IntersectionObserver(es=>{ _onScreen=es[0].isIntersecting; setVis(); },{threshold:0}).observe(cEl);
