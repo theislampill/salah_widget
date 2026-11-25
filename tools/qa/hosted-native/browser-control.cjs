@@ -9,6 +9,21 @@ const digest = async file => {
   for await (const chunk of fs.createReadStream(file)) hash.update(chunk);
   return hash.digest('hex');
 };
+async function refuseExternalThenReadLoopback(browser, page, origin, marker, report) {
+  let denied;
+  try { await page.goto('http://192.0.2.1:443/network-boundary-marker', {timeout:10000}); }
+  catch (error) { denied=String(error.message); }
+  assert.ok(denied && /ERR_(NETWORK|ADDRESS)_UNREACHABLE|ERR_INTERNET_DISCONNECTED/.test(denied),
+    'TEST-NET navigation did not fail at the routing boundary');
+  report.externalNavigationError=denied;
+  // Chromium can commit chrome-error:// after goto rejects. Close that document
+  // before the second positive control; retain the same browser and boundary.
+  await page.close();
+  const after=await browser.newPage({serviceWorkers:'block'});
+  await after.goto(origin+'/after');
+  assert.equal(await after.textContent('body'),marker);
+  report.postNegativePage='fresh-page-same-browser';
+}
 async function main() {
   assert.ok(process.getuid() > 0);
   const marker = crypto.randomBytes(24).toString('hex');
@@ -37,14 +52,7 @@ async function main() {
     }
     assert.ok(processes.length, 'no live browser executable identity');
     report.processes = processes;
-    let denied;
-    try { await page.goto('http://192.0.2.1:443/network-boundary-marker', {timeout:10000}); }
-    catch (error) { denied=String(error.message); }
-    assert.ok(denied && /ERR_(NETWORK|ADDRESS)_UNREACHABLE|ERR_INTERNET_DISCONNECTED/.test(denied),
-      'TEST-NET navigation did not fail at the routing boundary');
-    report.externalNavigationError=denied;
-    await page.goto('http://127.0.0.1:'+server.address().port+'/after');
-    assert.equal(await page.textContent('body'),marker);
+    await refuseExternalThenReadLoopback(browser,page,'http://127.0.0.1:'+server.address().port,marker,report);
     assert.ok(hits>=2); report.loopbackRequests=hits; report.passed=true;
   } catch (error) { report.error=String(error.stack||error); process.exitCode=1; }
   finally {
@@ -53,4 +61,5 @@ async function main() {
     fs.writeFileSync(output, JSON.stringify(report,null,2)+'\n',{mode:0o600,flag:'wx'});
   }
 }
-main().catch(error=>{console.error(error);process.exitCode=1;});
+module.exports={refuseExternalThenReadLoopback};
+if(require.main===module)main().catch(error=>{console.error(error);process.exitCode=1;});

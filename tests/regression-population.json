@@ -1634,6 +1634,24 @@
     "PYTHONUTF8": "1",
     "PYTHONDONTWRITEBYTECODE": "1"
    }
+  },
+  {
+   "name": "hosted-native-browser-control",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/browser-control.test.cjs"
+   ],
+   "protocol": "auto",
+   "covers": [
+    "tools/qa/hosted-native/browser-control.test.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/browser-control.test.cjs",
+    "tools/qa/hosted-native/browser-control.cjs"
+   ]
   }
  ],
  "modules": [
@@ -2096,7 +2114,7 @@
      "--playwright",
      "<playwright package>"
     ],
-    "protocol": "one JSON line per healthy scene / motion cell / fault cell on stdout and <out>/report.json (R2C-13/R2C-14; docs/state-contracts/R002C.md §5)"
+    "protocol": "one JSON line per healthy scene / motion cell / fault cell on stdout and <out>/report.json (R2C-13/R2C-14; docs/state-contracts/R002C.md \u00a75)"
    }
   },
   {
@@ -2131,7 +2149,7 @@
      "<tree>",
      "1800"
     ],
-    "protocol": "one JSON summary line of per-stage entry offsets (docs/state-contracts/R002C.md §3a)"
+    "protocol": "one JSON summary line of per-stage entry offsets (docs/state-contracts/R002C.md \u00a73a)"
    }
   },
   {
@@ -2193,7 +2211,7 @@
      "--playwright",
      "<playwright package>"
     ],
-    "protocol": "one JSON line per engine/pair cell and a final summary line {decision: DEFECT ESTABLISHED | NO DEFECT ESTABLISHED | INCOMPLETE}; <out>/report.json and .cn crops; exit 3 when INCOMPLETE (docs/state-contracts/R002E.md §2)"
+    "protocol": "one JSON line per engine/pair cell and a final summary line {decision: DEFECT ESTABLISHED | NO DEFECT ESTABLISHED | INCOMPLETE}; <out>/report.json and .cn crops; exit 3 when INCOMPLETE (docs/state-contracts/R002E.md \u00a72)"
    }
   },
   {
@@ -2575,20 +2593,6 @@
     "tools/qa/r002f-transaction/experiment.cjs"
    ],
    "protocol": "Print source-only JSON; nonzero on an acquisition/fixture error."
-  },
-  {
-   "path": "tools/qa/hosted-native/browser-control.cjs",
-   "owner": "R002F-A2/R0035/R0040/R003F",
-   "reason": "Requires actual pinned Chromium inside a new loopback-only namespace. No route stubs.",
-   "recipe": {
-    "argv": [
-     "node",
-     "tools/qa/hosted-native/browser-control.cjs",
-     "<playwright-module>",
-     "<private-json>"
-    ],
-    "protocol": "Exit 0 only after sandboxed loopback/TEST-NET/loopback controls and actual executable identity."
-   }
   },
   {
    "path": "tools/qa/hosted-native/acquire.sh",
