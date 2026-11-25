@@ -1635,7 +1635,7 @@ Original audit: **N14** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 - **Invariants.** one star owner in the shipped app
 - **Invalid, duplicate, stale or concurrent risks.** no scintillation producer in the shipped app (grep: none in preview modules; refined strength 0); AGENTS gate I and DESIGN.md L438-450 describe CSS twinkle (PRA-F-11)
 - **Status evidence.** D: DESIGN.md stale; `docs/real-sky/QUALIFICATION.md` ~L130-132 discloses the CP9 setting · I: digest-free text substitution · V: unit
-- **Work orders.** none
+- **Work orders.** R0035 ([issue 102](https://github.com/theislampill/salah_widget/issues/102)). The [catalogue scope experiment](docs/state-contracts/R0035-catalogue-scope.md) measures refined-only source diagnostics and center RGB responses on the worker-returned raster, before host acceptance. Candidate performance and visual acceptance remain open.
 - **Accepted evidence.** `tests/real-sky/cp9-scintillation.test.mjs` (asserts disabled strength); `r0022-lunar-consumers` star cases fail against the generated entry (since before f71fef6c)
 - **Tests.** `tests/real-sky/cp9-scintillation.test.mjs`, `tests/r0022-lunar-consumers.cjs`
 - **Observed facts.** integrator confirmed strength 0, CSS `display:none!important`, and no `scintill`/`twinkl` token in `native-star-preview.mjs`/`native-preview*.mjs`/`native-host.mjs`
