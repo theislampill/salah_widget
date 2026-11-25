@@ -24,6 +24,8 @@ checkout at `df644ef60156b67b5c487395176369bcec7a0d7b`, tree
 `src`, `real-sky`, `tools`, `moon`, `vendor`, `v1` and `tests` directories.
 Research also needs the R0040 compressed option patch. Baseline needs its root
 generated entries and inventory. Sparse checkouts may omit unrelated evidence.
+When R002F is enabled, both checkouts also need exactly
+`docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json`.
 Preparation checks actual source bytes against the pinned Git blobs, including
 materialized files whose changes could be hidden by sparse status.
 
@@ -42,7 +44,7 @@ The output must be absent and outside the input trees. It contains:
 | `trees/main` | A real disposable clean baseline checkout, retaining the published star driver's Git guard |
 | `trees/r0040` | Disposable authored option patch and canonical generated outputs |
 | `trees/r0035` | One materialized lab shared by both experimental write arms |
-| `trees/r003f` | `git archive` of baseline `index.html`, `config.js`, `moon`, `real-sky` and `tests/r0002-ordinary.json` |
+| `trees/r003f` | Git-blob-verified copy of baseline `index.html`, `config.js`, `moon`, `real-sky` and `tests/r0002-ordinary.json`; every copied body/mode is bound to HEAD and recorded in the private manifest |
 
 The baseline clone shares local Git objects with the supplied baseline checkout;
 keep that checkout available through the observation. Preparation builds main
@@ -98,6 +100,7 @@ children. Each recipe creates its own fresh `output` directory.
 | R003F Chromium DPR1 | Offset, B0, repeat B0 and unboosted reference; original 150 s refinement gates | Exit 0 is `MEASURED`; 2 is `INCOMPLETE`; 3 is isolation failure and stops every lane; 4 is an Andon and stops R003F progression. Original sandbox, refusing proxy, WebSocket guard and assertions remain unchanged. |
 | R0035 Chromium timing | One 15 s dark/normal/ordinary-clock round, all three arms, DPR1 | Exit 0 alone proves no admission. Inspect every summary row's `admitted` and `qualification` fields. |
 | R0035 Chromium capture | Separate one-round 15 s PNG acquisition after the timing attempt | It has separate output and classification. `dependsOn` requires that timing finished; a capture cannot erase a failed timing result. PNG acquisition bounds are separate from presentation timing. |
+| Optional R002F Chromium DPR1 | One round of real offscreen restoration at Fajr/Maghrib/midnight, plus native preview upload-fault retention and clock-discontinuity withdrawal | Exact protocol, observer/source identities and complete requested report population are required. Original `FAIL`, `INCOMPLETE` and `INCONCLUSIVE` are preserved. No presented-frame or elapsed-cost claim. |
 
 The R0035 comparison uses the published `independent-reconstruction` plan.
 `main` is clean baseline. `unmodified` and `mitigated` share one lab identity.
@@ -123,6 +126,32 @@ R0040's remaining motion/lossless-capture rows. Admission failures require
 diagnosis before credit; R003F Andon stops its progression. None of these rows
 supplies physical-device or human evaluation.
 
+## Optional R002F preparation and command
+
+The coordinator first runs the unchanged common preparation, then separately
+runs the guarded `r002f_prepare.py` wrapper. It retains the optional process
+result even if the build fails or times out. The planner receives
+`--r002f --r002f-prepared /task/work/r002f-prepared/build-result.json`
+and `--r002f-process /task/capture/r002f-preparation-process.json`, plus
+`--r002f-dpr`, `--r002f-rounds` and `--r002f-section`. See [R002F.md](R002F.md) for
+the full builder and native CLI, immutable hashes and source contract.
+
+Before emitting a runnable R002F command, the planner checks successful process
+completion, build receipt custody, both actual generated inventories and the
+reviewed probe SHA-256. It adds a 900-second lane using explicit Playwright,
+baseline/candidate and output paths, with `--timeout-ms 60000`. All output and
+streams are beneath the private lane directory; both disposable source arms
+remain outside capture. Failed or missing optional preparation adds an explicit
+blocked row with an empty argv, while the existing four command rows remain
+unchanged. The coordinator never executes that blocked row and never hides it
+from the campaign result.
+
+The workflow reads validated `campaign.json` directly. Its engine and R003F DPR,
+and the R002F enable/DPR/round/section values, are propagated into each isolated
+phase. A later engine or DPR observation can therefore use a new campaign
+without editing the probe or published recipes. Each such observation still
+requires its own actual native admission.
+
 The original R0040 cover option remains 85/86 against the original fixtures;
 the separate input-keyed reference fixture's 86/86 does not replace it. R0035's
 original producer remains unavailable, and this lab is an independent
@@ -141,4 +170,6 @@ reapplication of the real pinned option patch and reuse of failed output.
 They check actual recipe argv, the unchanged star flag parser, shared lab
 identity, the active producer probe, separate timing/capture outputs and the
 engine/DPR distinction without importing Playwright or launching a browser.
+They also verify optional-preparation failure retention, the frozen R002F
+command/hash, its exact private paths and the R002B sparse-checkout inclusion.
 The source materialization command above is the separate real-build check.

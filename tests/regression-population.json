@@ -1595,13 +1595,14 @@
     "-v"
    ],
    "protocol": "unittest-cases",
-   "expectedCases": 24,
+   "expectedCases": 32,
    "covers": [
     "tools/qa/hosted-native/test_observe.py"
    ],
    "inputs": [
     "tools/qa/hosted-native/test_observe.py",
-    "tools/qa/hosted-native/observe.py"
+    "tools/qa/hosted-native/observe.py",
+    "tools/qa/hosted-native/campaign.json"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -1617,7 +1618,7 @@
     "-v"
    ],
    "protocol": "unittest-cases",
-   "expectedCases": 8,
+   "expectedCases": 14,
    "covers": [
     "tools/qa/hosted-native/test_lanes.py"
    ],
@@ -1628,7 +1629,10 @@
     "docs/state-contracts/evidence/R0040/phase1-options.patch.gz",
     "src/native/index.html",
     "tools/r0035/native_trials.py",
-    "tools/r0035/trial_admission.py"
+    "tools/r0035/trial_admission.py",
+    "tools/qa/hosted-native/r002f_prepare.py",
+    "tools/qa/hosted-native/r002f_probe.cjs",
+    ".github/workflows/research-native-pilot.yml"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -1652,6 +1656,46 @@
     "tools/qa/hosted-native/browser-control.test.cjs",
     "tools/qa/hosted-native/browser-control.cjs"
    ]
+  },
+  {
+   "name": "r002f-hosted-native-controls",
+   "owner": "R002F-A2 (issue 96)",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r002f_probe_controls.cjs"
+   ],
+   "protocol": "auto",
+   "covers": [
+    "tools/qa/hosted-native/r002f_probe_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r002f_probe_controls.cjs",
+    "tools/qa/hosted-native/r002f_probe.cjs",
+    "tools/qa/hosted-native/r002f_prepare.py",
+    "index.html",
+    "config.js",
+    "tests/r0003-harness.cjs",
+    "tests/r0002-harness.cjs",
+    "tests/r0002-ordinary.json",
+    "tools/qa/r002f_a2_resume.cjs",
+    "tools/qa/r002f_a2_architecture.cjs",
+    "tools/qa/r002f_a2_quarantine.cjs",
+    "tools/qa/r002f-transaction/materialize.cjs",
+    "tools/qa/r002f-transaction/preview-stage.js",
+    "tools/qa/r002f-transaction/detail-stage.js",
+    "src/native/index.html",
+    "real-sky/native-preview-host.mjs",
+    "real-sky/native-composition.mjs",
+    "real-sky/native-host-hooks.js",
+    "moon/src/moon-native.mjs",
+    "moon/src/moon-detail.mjs",
+    "moon/src/moon-calendar.mjs",
+    "moon/src/moon-precision.mjs",
+    "moon/tests/host.test.cjs"
+   ],
+   "timeout": 120
   }
  ],
  "modules": [
@@ -1677,14 +1721,6 @@
   },
   {
    "path": "tests/r0001-browser-fixture.cjs",
-   "reason": "imported harness/fixture module, not an instrument"
-  },
-  {
-   "path": "tests/r0002-harness.cjs",
-   "reason": "imported harness/fixture module, not an instrument"
-  },
-  {
-   "path": "tests/r0003-harness.cjs",
    "reason": "imported harness/fixture module, not an instrument"
   },
   {
@@ -2538,51 +2574,6 @@
     ],
     "protocol": "Numerical transition-sublayer receipt, raw geometry and lit values, bounded DB1/DB3 controls; exit zero after the entire sweep runs."
    }
-  },
-  {
-   "path": "tools/qa/r002f_a2_resume.cjs",
-   "reason": "R002F-A2 bounded source-state observation recipe; not a native-pixel acceptance test. It records stale/current results and a test-only synchronous-render positive control. Observer controls run in tests/r002f-a2-resume-observer.test.cjs. --require-current intentionally exits 1 when the measured source differs at either checkpoint.",
-   "owner": "R002F-A2 (issue 96)",
-   "recipe": [
-    "node",
-    "tools/qa/r002f_a2_resume.cjs",
-    "index.html",
-    "<new-output.json>"
-   ],
-   "protocol": "JSON r002f-a2-resume-source/2; executed config, source and fixture hashes, independently specified fields, callback and fault evidence, and explicit VM-only limits; errors exit 2"
-  },
-  {
-   "path": "tools/qa/r002f_a2_architecture.cjs",
-   "reason": "R002F-A2 experimental shared prayer publisher, single preview upload, and actual admission predicates; does not install production changes. Its controls run in the registered architecture test.",
-   "owner": "R002F-A2 (issue 96)",
-   "recipe": [
-    "node",
-    "tools/qa/r002f_a2_architecture.cjs",
-    "<new-output.json>"
-   ],
-   "protocol": "JSON r002f-a2-architecture/1; source-state and fixture hashes, explicit limits; errors exit 2. --prepare writes three preimage-bound research patches to a fresh directory."
-  },
-  {
-   "path": "tools/qa/r002f_a2_quarantine.cjs",
-   "reason": "R002F-A2 opt-in runtime transformation evaluating hidden-data quarantine with the real lifecycle source and boundary doubles; no production policy adoption. Controls run in the registered quarantine test.",
-   "owner": "R002F-A2 (issue 96)",
-   "recipe": [
-    "node",
-    "tools/qa/r002f_a2_quarantine.cjs",
-    "<new-output.json>"
-   ],
-   "protocol": "JSON r002f-a2-quarantine/1; original and transformed source hashes, hide/re-admission/fault/revocation controls; errors exit 2."
-  },
-  {
-   "path": "tools/qa/r002f-transaction/materialize.cjs",
-   "reason": "Emit the disposable transaction source patch and digest manifest against reviewed preimages.",
-   "owner": "R002F-A2 research, issue 96",
-   "recipe": [
-    "node",
-    "tools/qa/r002f-transaction/materialize.cjs",
-    "<fresh-output-dir>"
-   ],
-   "protocol": "Exit 0 for a fresh successful materialization; nonzero on drift or existing destination."
   },
   {
    "path": "tools/qa/r002f-transaction/experiment.cjs",

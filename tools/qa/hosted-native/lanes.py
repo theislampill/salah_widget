@@ -14,13 +14,62 @@ import os
 from pathlib import Path
 import sys
 
-from prepare import BASELINE, RESEARCH, digest, validate_prepared, write_json
+from prepare import BASELINE, RESEARCH, digest, validate_prepared, verify_generated, write_json
+from r002f_prepare import BASE_INDEX, COMBINED_INDEX, BASE_INVENTORY, COMBINED_INVENTORY, PATCH
+
+HERE = Path(__file__).resolve().parent
+R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
+
+
+def admit_r002f(path, process_path=None):
+    """A failed optional build remains a blocked lane, not a failed common plan."""
+    admission = {'status': 'INCOMPLETE'}
+    try:
+        if process_path is not None:
+            process_path = Path(process_path).resolve()
+            process = json.loads(process_path.read_text())
+            admission['processReceipt'] = {'path': str(process_path), 'sha256': digest(process_path)}
+            if (not isinstance(process, dict) or type(process.get('returncode')) is not int
+                    or process['returncode'] != 0 or process.get('timedOut') is not False):
+                raise ValueError('R002F preparation process did not complete successfully')
+        path = Path(path).resolve()
+        body = json.loads(path.read_text())
+        admission['receipt'] = {'path': str(path), 'sha256': digest(path)}
+        if (body.get('protocol') != 'r002f-hosted-build/1' or body.get('status') != 'PASS'
+                or body.get('baseProvenance') != BASELINE or body.get('researchProvenance') != RESEARCH
+                or body.get('wrapperSha256') != digest(HERE/'r002f_prepare.py')
+                or body.get('patch', {}).get('patch') != PATCH):
+            raise ValueError('R002F build receipt is absent, incomplete or has wrong custody')
+        trees = {}
+        for arm, index, inventory in (('baseline', BASE_INDEX, BASE_INVENTORY),
+                                      ('candidate', COMBINED_INDEX, COMBINED_INVENTORY)):
+            record = body.get('arms', {}).get(arm, {})
+            builds = record.get('builds', [])
+            if (record.get('path') != arm or record.get('indexSha256') != index
+                    or record.get('inventorySha256') != inventory or len(builds) != 2
+                    or any(run.get('indexSha256') != index for run in builds)
+                    or any(builds[-1].get(k) != v for k, v in {'written': 0, 'removed': 0, 'unchanged': 117}.items())):
+                raise ValueError('R002F generated arm receipt is incomplete: '+arm)
+            root = path.parent/arm
+            verified = verify_generated(root, {'index.html': index, 'GENERATED.json': inventory})
+            trees[arm] = {**verified, 'root': str(root)}
+        if digest(HERE/'r002f_probe.cjs') != R002F_PROBE_SHA256:
+            raise ValueError('R002F probe differs from the reviewed source')
+        admission.update(status='PASS', trees=trees)
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        admission['reason'] = str(error)
+    return admission
 
 
 def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
-              engine='chromium', r003f_dpr=1):
-    if engine not in ('chromium', 'firefox', 'webkit') or r003f_dpr not in (1, 2):
+              engine='chromium', r003f_dpr=1, include_r002f=False, r002f_preparation=None,
+              r002f_dpr=1, r002f_rounds=1, r002f_section='all'):
+    if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
         raise ValueError('unsupported engine or R003F DPR')
+    if (type(include_r002f) is not bool or type(r002f_dpr) is not int or r002f_dpr not in (1, 2, 3)
+            or type(r002f_rounds) is not int or not 1 <= r002f_rounds <= 10
+            or r002f_section not in ('all', 'prayer', 'preview')):
+        raise ValueError('unsupported R002F campaign controls')
     research = Path(prepared['sources']['research']['root'])
     historical = Path(prepared['sources']['historical']['root'])
     roots = {key: Path(value['root']) for key, value in prepared['trees'].items()}
@@ -73,6 +122,20 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
             star['argv'].append('--capture')
             star['dependsOn'] = [entries[-2]['id']]
             star['dependencyPolicy'] = 'finished; retain failed timing, classify captures independently'
+    if include_r002f:
+        admission = r002f_preparation or {'status': 'INCOMPLETE', 'reason': 'requested R002F preparation is missing'}
+        probe = lane(f'r002f-{engine}-dpr{r002f_dpr}', 'R002F', r002f_dpr, 900,
+                     'r002f-probe', 'result.json', {'0': 'PASS', '1': 'FAIL', '2': 'INCOMPLETE or INCONCLUSIVE'})
+        probe['preparation'] = admission
+        probe['result'].update(expectedRounds=r002f_rounds, expectedSection=r002f_section,
+                               expectedObserverSha256=R002F_PROBE_SHA256)
+        probe['argv'] = []
+        if admission.get('status') == 'PASS':
+            trees = admission['trees']
+            probe['argv'] = list(map(str, [node, HERE/'r002f_probe.cjs', '--playwright', module,
+                                          '--baseline', trees['baseline']['root'], '--candidate', trees['candidate']['root'],
+                                          '--out', probe['output'], '--engine', engine, '--dpr', r002f_dpr,
+                                          '--rounds', r002f_rounds, '--section', r002f_section, '--timeout-ms', 60000]))
     return {'schemaVersion': 1, 'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
             'scope': 'Initial native observations only; no work-order acceptance or owner selection.',
             'r0035PlanPath': str(star_plan_path), 'r0035Plan': star_plan, 'lanes': entries,
@@ -124,6 +187,12 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
+    parser.add_argument('--r002f', action='store_true')
+    parser.add_argument('--r002f-prepared', type=Path)
+    parser.add_argument('--r002f-process', type=Path)
+    parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
+    parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
+    parser.add_argument('--r002f-section', choices=('all', 'prayer', 'preview'), default='all')
     args = parser.parse_args()
     os.umask(0o077)
     admitted_out = None
@@ -133,6 +202,10 @@ def main():
         out = args.out.resolve()
         prepared = validate_prepared(args.prepared.resolve())
         roots = [Path(row['root']).resolve() for group in ('sources', 'trees') for row in prepared[group].values()]
+        r002f = (admit_r002f(args.r002f_prepared, args.r002f_process)
+                 if args.r002f_prepared and args.r002f_process else None)
+        if r002f and r002f['status'] == 'PASS':
+            roots.extend(Path(row['root']).resolve() for row in r002f['trees'].values())
         if any(root == out or root in out.parents for root in roots):
             raise ValueError('plan output must be outside source trees')
         out.mkdir(parents=True, mode=0o700)
@@ -142,7 +215,9 @@ def main():
         dependency(args.node_modules / 'playwright', 'playwright', '1.62.1')
         dependency(args.pngjs, 'pngjs', '7.0.0')
         plan = make_plan(prepared, out, python_playwright=args.python_playwright, node=args.node,
-                         node_modules=args.node_modules, pngjs=args.pngjs, engine=args.engine, r003f_dpr=args.r003f_dpr)
+                         node_modules=args.node_modules, pngjs=args.pngjs, engine=args.engine, r003f_dpr=args.r003f_dpr,
+                         include_r002f=args.r002f, r002f_preparation=r002f, r002f_dpr=args.r002f_dpr,
+                         r002f_rounds=args.r002f_rounds, r002f_section=args.r002f_section)
         check_star_plan(prepared, plan['r0035Plan'])
         write_json(Path(plan['r0035PlanPath']), plan['r0035Plan'])
         plan['preparedReceipt'] = {'path': str(args.prepared.resolve()), 'sha256': digest(args.prepared)}

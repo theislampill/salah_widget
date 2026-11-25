@@ -52,6 +52,7 @@ jobs:
             !/docs/moon/evidence/**
             !/docs/state-contracts/evidence/**
             /docs/state-contracts/evidence/R0040/**
+            /docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json
       - name: Receive immutable clean baseline
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -66,6 +67,7 @@ jobs:
             !/docs/rlgwo-execution/**
             !/docs/moon/evidence/**
             !/docs/state-contracts/evidence/**
+            /docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json
       - name: Receive immutable historical rain helper
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -106,8 +108,7 @@ jobs:
         run: |
           set -euo pipefail
           native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          native_engine="$(python3 -c 'import json; print(json.load(open("orchestration/tools/qa/hosted-native/campaign.json"))["engine"])')"
-          if python3 orchestration/tools/qa/hosted-native/observe.py --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical" --engine "$native_engine" > "$native_task/capture/observation.stdout" 2> "$native_task/capture/observation.stderr"; then
+          if python3 orchestration/tools/qa/hosted-native/observe.py --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical" --campaign orchestration/tools/qa/hosted-native/campaign.json > "$native_task/capture/observation.stdout" 2> "$native_task/capture/observation.stderr"; then
             echo 'OBSERVATION_COMPLETE; recipe results are private'
           else
             echo 'OBSERVATION_INCOMPLETE; all obtained evidence will be sealed'

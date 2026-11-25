@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
@@ -29,6 +30,35 @@ def sha(path):
 
 
 class PreparationControls(unittest.TestCase):
+    def test_runtime_subset_needs_no_omitted_promisor_blob(self):
+        """Even a path-selected git archive fetched omitted blobs on the hosted runner."""
+        prepare = module('prepare')
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); origin = root/'origin'; origin.mkdir()
+            env = {**os.environ, 'GIT_CONFIG_GLOBAL': os.devnull, 'GIT_CONFIG_NOSYSTEM': '1', 'GIT_TERMINAL_PROMPT': '0'}
+            def git(cwd, *args):
+                return subprocess.check_output(['git', *args], cwd=cwd, env=env, stderr=subprocess.PIPE, text=True).strip()
+            git(origin, 'init', '-q'); git(origin, 'config', 'uploadpack.allowFilter', 'true')
+            (origin/'runtime').mkdir()
+            (origin/'runtime/required').write_text('exact served runtime\n')
+            (origin/'omitted-archive').write_text('not acquired and not needed\n')
+            git(origin, 'add', '.')
+            git(origin, '-c', 'user.name=Control', '-c', 'user.email=control.invalid', 'commit', '-qm', 'fixture')
+            source = root/'partial'
+            git(root, 'clone', '--filter=blob:none', '--depth', '1', '--no-checkout', origin.as_uri(), str(source))
+            git(source, 'sparse-checkout', 'set', '--no-cone', '/runtime/')
+            git(source, 'checkout', '--detach', 'HEAD')
+            head, tree = git(source, 'rev-parse', 'HEAD'), git(source, 'rev-parse', 'HEAD^{tree}')
+            origin.rename(root/'origin-unavailable')
+            destination = root/'served'
+            with patch.object(prepare, 'BASELINE', head), patch.object(prepare, 'RUNTIME_PATHS', ('runtime',)):
+                rows = prepare.materialize_runtime(source, destination)
+            self.assertEqual(set(rows), {'runtime/required'})
+            self.assertEqual((destination/'runtime/required').read_text(), 'exact served runtime\n')
+            self.assertEqual(rows['runtime/required']['gitBlob'], git(source, 'rev-parse', 'HEAD:runtime/required'))
+            self.assertEqual(prepare.git_identity(source, head, tree)['tree'], tree)
+            self.assertFalse((destination/'omitted-archive').exists())
+
     def test_shallow_partial_baseline_stays_real_and_clean_without_available_remote(self):
         """The hosted clone tried to transfer omitted archive blobs after networking was removed."""
         prepare = module('prepare')
@@ -206,6 +236,82 @@ class LaneControls(unittest.TestCase):
         self.assertEqual(rain['dpr'], 1)
         self.assertEqual(timing['dpr'], 1)
         self.assertEqual(moon['dpr'], 2)
+
+    def test_r002f_uses_exact_probe_and_disposable_arms_with_private_outputs(self):
+        admission = {'status': 'PASS', 'receipt': {'path': '/private/r002f-build/build-result.json', 'sha256': 'a'*64},
+                     'trees': {'baseline': {'root': '/private/r002f-build/baseline'},
+                               'candidate': {'root': '/private/r002f-build/candidate'}}}
+        ordinary = self.plan(engine='webkit', r003f_dpr=2)
+        plan = self.plan(engine='webkit', r003f_dpr=2, include_r002f=True, r002f_preparation=admission,
+                         r002f_dpr=3, r002f_rounds=2, r002f_section='preview')
+        self.assertEqual(plan['lanes'][:4], ordinary['lanes'])
+        lane = plan['lanes'][-1]
+        self.assertEqual(lane['id'], 'r002f-webkit-dpr3')
+        self.assertEqual(lane['workOrder'], 'R002F')
+        self.assertEqual(lane['argv'][:2], ['/dependencies/node', str(HERE/'r002f_probe.cjs')])
+        values = dict(zip(lane['argv'][2::2], lane['argv'][3::2]))
+        self.assertEqual(values, {'--playwright': '/dependencies/node_modules/playwright',
+                                 '--baseline': '/private/r002f-build/baseline',
+                                 '--candidate': '/private/r002f-build/candidate', '--out': lane['output'],
+                                 '--engine': 'webkit', '--dpr': '3', '--rounds': '2',
+                                 '--section': 'preview', '--timeout-ms': '60000'})
+        for key in ('output', 'stdout', 'stderr'):
+            self.assertTrue(Path(lane[key]).is_relative_to(self.base))
+        self.assertEqual(lane['timeoutSeconds'], 900)
+        self.assertEqual(lane['result']['path'], str(Path(lane['output'])/'result.json'))
+        self.assertEqual(lane['result']['expectedObserverSha256'],
+                         '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f')
+        self.assertEqual(lane['result']['expectedRounds'], 2)
+        self.assertEqual(lane['result']['expectedSection'], 'preview')
+        self.assertFalse(Path(values['--candidate']).is_relative_to(self.base))
+
+    def test_failed_or_missing_r002f_preparation_emits_explicit_blocked_lane(self):
+        ordinary = self.plan()
+        for admission in (None, {'status': 'INCOMPLETE', 'reason': 'controlled preparation failure'}):
+            plan = self.plan(include_r002f=True, r002f_preparation=admission)
+            self.assertEqual(plan['lanes'][:4], ordinary['lanes'])
+            lane = plan['lanes'][-1]
+            self.assertEqual(lane['workOrder'], 'R002F')
+            self.assertEqual(lane['preparation']['status'], 'INCOMPLETE')
+            self.assertEqual(lane['argv'], [])
+
+    def test_r002f_preparation_admission_rejects_missing_or_status_only_receipts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)/'build-result.json'
+            for data in (None, {'status': 'PASS'}, {'protocol': 'r002f-hosted-build/1', 'status': 'PASS'}):
+                if data is not None: path.write_text(json.dumps(data))
+                admission = self.lanes.admit_r002f(path)
+                self.assertEqual(admission['status'], 'INCOMPLETE')
+                self.assertIn('reason', admission)
+
+    def test_r002f_preparation_admission_rechecks_both_actual_generated_trees(self):
+        from r002f_prepare import BASE_COMMIT, RESEARCH_COMMIT, BASE_INDEX, COMBINED_INDEX, BASE_INVENTORY, COMBINED_INVENTORY, PATCH
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); path = root/'build-result.json'
+            body = {'protocol': 'r002f-hosted-build/1', 'status': 'PASS', 'baseProvenance': BASE_COMMIT,
+                    'researchProvenance': RESEARCH_COMMIT, 'wrapperSha256': sha(HERE/'r002f_prepare.py'),
+                    'patch': {'patch': PATCH}, 'arms': {}}
+            for arm, index, inventory in (('baseline', BASE_INDEX, BASE_INVENTORY), ('candidate', COMBINED_INDEX, COMBINED_INVENTORY)):
+                (root/arm).mkdir()
+                body['arms'][arm] = {'path': arm, 'indexSha256': index, 'inventorySha256': inventory,
+                                     'builds': [{'indexSha256': index}, {'indexSha256': index, 'written': 0, 'removed': 0, 'unchanged': 117}]}
+            path.write_text(json.dumps(body))
+            with patch.object(self.lanes, 'verify_generated', return_value={'fileCount': 116}) as verify:
+                self.assertEqual(self.lanes.admit_r002f(path)['status'], 'PASS')
+                self.assertEqual([call.args[0] for call in verify.call_args_list], [root/'baseline', root/'candidate'])
+            with patch.object(self.lanes, 'verify_generated', side_effect=ValueError('changed actual bytes')):
+                self.assertEqual(self.lanes.admit_r002f(path)['status'], 'INCOMPLETE')
+            process = root/'process.json'
+            for result in ({'returncode': 2, 'timedOut': False}, {'returncode': 0, 'timedOut': True}):
+                process.write_text(json.dumps(result))
+                with patch.object(self.lanes, 'verify_generated') as verify:
+                    self.assertEqual(self.lanes.admit_r002f(path, process)['status'], 'INCOMPLETE')
+                    verify.assert_not_called()
+
+    def test_sparse_checkouts_retain_exact_v1_pages_receipt_for_both_build_inputs(self):
+        workflow = (ROOT/'.github/workflows/research-native-pilot.yml').read_text()
+        target = '/docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json'
+        self.assertEqual(workflow.count(target), 2)
 
 
 if __name__ == '__main__':

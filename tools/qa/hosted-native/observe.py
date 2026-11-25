@@ -10,6 +10,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import socket
 import subprocess
 import sys
@@ -20,6 +21,21 @@ RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
               'reduced-none', 'reduced-still', 'motion-full', 'dry')
 HERE = Path(__file__).resolve().parent
 ISOLATION_EXIT = 86
+
+
+def read_campaign(path):
+    value = json.loads(Path(path).read_text())
+    if (not isinstance(value, dict) or value.get('schemaVersion') != 1
+            or value.get('engine') not in ('chromium', 'firefox', 'webkit')
+            or type(value.get('r003fDpr')) is not int or value['r003fDpr'] not in (1, 2)):
+        raise ValueError('unsupported hosted campaign')
+    r002f = value.get('r002f')
+    if (not isinstance(r002f, dict) or type(r002f.get('enabled')) is not bool
+            or type(r002f.get('dpr')) is not int or r002f['dpr'] not in (1, 2, 3)
+            or type(r002f.get('rounds')) is not int or not 1 <= r002f['rounds'] <= 10
+            or r002f.get('section') not in ('all', 'prayer', 'preview')):
+        raise ValueError('unsupported R002F campaign controls')
+    return value
 
 
 def write_json(path, value):
@@ -117,6 +133,68 @@ def run_bounded(argv, cwd, env, stdout, stderr, timeout):
             'elapsedSeconds': time.monotonic() - started}
 
 
+def r002f_report_status(body, lane, returncode, timed_out):
+    """A complete selected population is necessary for PASS, never a status word."""
+    if not isinstance(body, dict) or body.get('protocol') != 'r002f-hosted-native/1':
+        return 'FAIL' if returncode == 1 else 'INCOMPLETE'
+    pairs, preview = body.get('prayerPairs'), body.get('preview')
+    def verdict(row):
+        value = row.get('verdict') if isinstance(row, dict) else None
+        return value.get('status') if isinstance(value, dict) else None
+    recorded = [verdict(row) for group in (pairs, preview) if isinstance(group, list) for row in group]
+    if body.get('status') == 'FAIL' or 'FAIL' in recorded:
+        return 'FAIL'
+    if body.get('status') in ('INCOMPLETE', 'INCONCLUSIVE'):
+        return body['status']
+    if timed_out or not isinstance(pairs, list) or not isinstance(preview, list):
+        return 'INCOMPLETE'
+    expected = lane['result']
+    rounds, section = expected.get('expectedRounds'), expected.get('expectedSection')
+    if (type(rounds) is not int or not 1 <= rounds <= 10 or section not in ('all', 'prayer', 'preview')
+            or type(body.get('dpr')) is not int or type(body.get('rounds')) is not int
+            or body.get('engine') != lane.get('engine') or body.get('dpr') != lane.get('dpr')
+            or body.get('rounds') != rounds or body.get('section') != section
+            or not expected.get('expectedObserverSha256')
+            or body.get('observerSha256') != expected['expectedObserverSha256']):
+        return 'INCOMPLETE'
+    sources = body.get('sources')
+    for arm, index in (('baseline', '88411488017ea590e6b4c5a21adc143977c0907089eabb80b0cbe8f0ba18a8a1'),
+                       ('candidate', '55a8bdbc7b7ab5cb53ede3b58c0ef1e4101c7c89bc6936860bd4bc5f3acb8fe2')):
+        source = sources.get(arm) if isinstance(sources, dict) else None
+        if not isinstance(source, dict) or source.get('indexSha256') != index:
+            return 'INCOMPLETE'
+    wanted_pairs = {(scenario, round_) for round_ in range(1, rounds + 1)
+                    for scenario in ('fajr', 'maghrib', 'midnight')} if section != 'preview' else set()
+    actual_pairs = []
+    for row in pairs:
+        if not isinstance(row, dict) or type(row.get('round')) is not int or not isinstance(row.get('scenario'), str):
+            return 'INCOMPLETE'
+        actual_pairs.append((row['scenario'], row['round']))
+        if any(row.get(arm) != f'{arm}-{row["scenario"]}-{row["round"]}.json' for arm in ('baseline', 'candidate')):
+            return 'INCOMPLETE'
+    wanted_preview = {'baseline', 'candidate'} if section != 'prayer' else set()
+    actual_preview = []
+    for row in preview:
+        if not isinstance(row, dict) or not isinstance(row.get('arm'), str) or row.get('file') != row['arm']+'-preview.json':
+            return 'INCOMPLETE'
+        actual_preview.append(row['arm'])
+    if (len(actual_pairs) != len(wanted_pairs) or set(actual_pairs) != wanted_pairs
+            or len(actual_preview) != len(wanted_preview) or set(actual_preview) != wanted_preview):
+        return 'INCOMPLETE'
+    statuses = [verdict(row) for row in pairs]
+    for row in preview:
+        if row['arm'] == 'baseline' and verdict(row) != 'OBSERVED':
+            return 'INCOMPLETE'
+        statuses.append('PASS' if row['arm'] == 'baseline' and verdict(row) == 'OBSERVED' else verdict(row))
+    if any(status not in ('PASS', 'INCONCLUSIVE') for status in statuses):
+        return 'INCOMPLETE'
+    if 'INCONCLUSIVE' in statuses:
+        return 'INCONCLUSIVE'
+    if returncode == 1:
+        return 'FAIL'
+    return 'PASS' if body.get('status') == 'PASS' and statuses and returncode == 0 else 'INCOMPLETE'
+
+
 def classify_lane(lane, returncode, timed_out=False):
     kind = lane['result']['kind']
     result = {'status': 'INCOMPLETE', 'stopAll': False, 'returncode': returncode, 'timedOut': timed_out}
@@ -124,6 +202,8 @@ def classify_lane(lane, returncode, timed_out=False):
         return {**result, 'status': 'ISOLATION_FAIL', 'stopAll': True}
     try: body = json.loads(Path(lane['result']['path']).read_text())
     except (OSError, ValueError): body = None
+    if kind == 'r002f-probe':
+        return {**result, 'status': r002f_report_status(body, lane, returncode, timed_out)}
     # Preserve observed recipe failures even if later acquisition is interrupted.
     # Return codes alone do not distinguish failed admission from missing evidence.
     if kind == 'r003f-b0':
@@ -159,8 +239,6 @@ def classify_lane(lane, returncode, timed_out=False):
                   and sorted(r.get('arm', '') for r in body) == sorted(expected_arms * (expected_rows // len(expected_arms))))
         passed = passed and all(r.get('admitted') is True and r.get('qualification', {}).get('verdict') == 'passed'
                                 for r in body)
-    elif kind == 'r002f-probe':
-        passed = isinstance(body, dict) and body.get('status') == 'PASS'
     else:
         raise ValueError('unknown recipe result kind')
     result['status'] = 'PASS' if returncode == 0 and passed else ('FAIL' if declared == 'FAIL' else 'INCOMPLETE')
@@ -170,7 +248,7 @@ def classify_lane(lane, returncode, timed_out=False):
 def namespace_status(lane, process, inner):
     """An inner observation cannot overrule abnormal wrapper completion."""
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'ANDON', 'ISOLATION_FAIL')
+                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL')
                 and isinstance(inner.get('stopAll'), bool))
     result = {**(inner if admitted else {}), 'id': lane['id'],
               'innerStatus': inner, 'namespaceProcess': process}
@@ -221,15 +299,42 @@ def inside(args, runtime):
         result = run_bounded(command, str(HERE), dict(os.environ),
                              args.task/'capture'/'preparation.stdout', args.task/'capture'/'preparation.stderr', 900)
         # Source bodies are public and reproducible; seal only private receipts/logs.
-        import shutil
         if (destination/'receipts').exists():
             shutil.copytree(destination/'receipts', args.task/'capture'/'preparation')
         write_json(args.task/'capture'/'preparation-process.json', result)
         if result['returncode'] or result['timedOut']: return 2
+        r002f_destination = args.task/'work'/'r002f-prepared'
+        if getattr(args, 'r002f', False):
+            command = [runtime['python'], str(HERE/'r002f_prepare.py'), '--research', str(args.research),
+                       '--baseline', str(args.baseline), '--out', str(r002f_destination), '--node', runtime['node']]
+            try:
+                optional = run_bounded(command, str(HERE), dict(os.environ),
+                                       args.task/'capture'/'r002f-preparation.stdout',
+                                       args.task/'capture'/'r002f-preparation.stderr', 900)
+            except (OSError, ValueError) as error:
+                optional = {'returncode': None, 'timedOut': False, 'error': str(error)}
+            write_json(args.task/'capture'/'r002f-preparation-process.json',
+                       {**optional, 'argv': command, 'cwd': str(HERE), 'timeoutSeconds': 900})
+            # The wrapper writes only receipts/logs at its root. Its source arms
+            # and materialized patch stay outside the encrypted evidence capture.
+            retained = args.task/'capture'/'r002f-preparation'
+            retained.mkdir(mode=0o700)
+            if r002f_destination.exists():
+                for path in sorted(r002f_destination.iterdir()):
+                    if path.is_file() and not path.is_symlink() and path.suffix in ('.json', '.stdout', '.stderr'):
+                        shutil.copy2(path, retained/path.name)
+            # Failed optional preparation is interpreted by the planner as a
+            # blocked R002F lane; it cannot erase the already prepared recipes.
         command = [runtime['python'], str(HERE/'lanes.py'), '--plan-json', '--prepared',
                    str(destination/'receipts'/'prepared.json'), '--out', str(args.task/'capture'/'lanes'),
                    '--python-playwright', runtime['python'], '--node', runtime['node'],
-                   '--node-modules', runtime['modules'], '--pngjs', runtime['pngjs'], '--engine', args.engine]
+                   '--node-modules', runtime['modules'], '--pngjs', runtime['pngjs'], '--engine', args.engine,
+                   '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1))]
+        if getattr(args, 'r002f', False):
+            command += ['--r002f', '--r002f-prepared', str(r002f_destination/'build-result.json'),
+                        '--r002f-process', str(args.task/'capture'/'r002f-preparation-process.json'),
+                        '--r002f-dpr', str(args.r002f_dpr), '--r002f-rounds', str(args.r002f_rounds),
+                        '--r002f-section', args.r002f_section]
         plan = run_bounded(command, str(HERE), dict(os.environ), args.task/'capture'/'lanes.json',
                            args.task/'capture'/'plan.stderr', 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
@@ -254,7 +359,11 @@ def isolated_command(args, runtime, phase, lane=None):
                             runtime['modules'], args.baseline, args.research)
     inner = [runtime['python'], str(HERE/'observe.py'), '--task', str(args.task), '--research', str(args.research),
              '--baseline', str(args.baseline), '--historical', str(args.historical), '--engine', args.engine,
+             '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)),
              '--inside', '--phase', phase, '--outer-netns', os.readlink('/proc/self/ns/net')]
+    if getattr(args, 'r002f', False):
+        inner += ['--r002f', '--r002f-dpr', str(args.r002f_dpr), '--r002f-rounds', str(args.r002f_rounds),
+                  '--r002f-section', args.r002f_section]
     if lane: inner += ['--lane', lane]
     return ['/usr/bin/sudo', '-n', '/usr/bin/unshare', '--net', '--pid', '--fork', '--mount-proc',
             '--kill-child=KILL', '/bin/bash', str(HERE/'namespace.sh'), str(os.getuid()), str(os.getgid()),
@@ -266,7 +375,8 @@ def outside(args, runtime):
     parent_env = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C.UTF-8', 'LC_ALL': 'C.UTF-8'}
     deadline = time.monotonic() + 2640  # leaves sealing/upload time within the job ceiling
     preparation = run_bounded(isolated_command(args, runtime, 'prepare'), str(HERE), parent_env,
-                              capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr', 1020)
+                              capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
+                              1920 if getattr(args, 'r002f', False) else 1020)
     overall = {'protocol': 'salah-hosted-native-observation/1', 'engine': args.engine,
                'preparation': preparation, 'lanes': [], 'status': 'INCOMPLETE'}
     write_json(capture/'observation.json', overall)
@@ -276,10 +386,18 @@ def outside(args, runtime):
     plan = json.loads((capture/'lanes.json').read_text())
     if plan.get('protocol') != 'salah-hosted-native-lanes/1' or plan.get('sequential') is not True:
         raise ValueError('unadmitted lane plan')
+    if getattr(args, 'r002f', False):
+        identifier = f'r002f-{args.engine}-dpr{args.r002f_dpr}'
+        if not any(lane.get('id') == identifier and lane.get('workOrder') == 'R002F' for lane in plan['lanes']):
+            plan['lanes'].append({'id': identifier, 'workOrder': 'R002F', 'timeoutSeconds': 900,
+                                  'preparation': {'status': 'INCOMPLETE', 'reason': 'requested R002F lane is missing from the plan'}})
     stopped = set(); stop_all = False
     for lane in plan['lanes']:
         remaining = deadline - time.monotonic()
-        if remaining <= 75:
+        if lane.get('preparation', {}).get('status', 'PASS') != 'PASS':
+            status = {'id': lane['id'], 'status': 'NOT_RUN', 'preparationStatus': 'INCOMPLETE',
+                      'reason': lane['preparation'].get('reason', 'lane preparation incomplete')}
+        elif remaining <= 75:
             status = {'id': lane['id'], 'status': 'NOT_RUN', 'reason': 'bounded observation budget exhausted'}
         elif stop_all or lane['workOrder'] in stopped:
             status = {'id': lane['id'], 'status': 'NOT_RUN', 'reason': 'isolation or scoped Andon'}
@@ -307,6 +425,12 @@ def main():
     for name in ('task', 'research', 'baseline', 'historical'):
         parser.add_argument('--'+name, type=Path, required=True)
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
+    parser.add_argument('--campaign', type=Path)
+    parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
+    parser.add_argument('--r002f', action='store_true')
+    parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
+    parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
+    parser.add_argument('--r002f-section', choices=('all', 'prayer', 'preview'), default='all')
     parser.add_argument('--inside', action='store_true')
     parser.add_argument('--phase', choices=('prepare', 'lane'))
     parser.add_argument('--outer-netns'); parser.add_argument('--lane')
@@ -318,6 +442,12 @@ def main():
     signal.signal(signal.SIGINT, interrupted)
     runtime = json.loads((args.task/'runtime.json').read_text())
     try:
+        if args.campaign:
+            campaign = read_campaign(args.campaign)
+            args.engine = campaign['engine']; args.r003f_dpr = campaign['r003fDpr']
+            args.r002f = campaign['r002f']['enabled']; args.r002f_dpr = campaign['r002f']['dpr']
+            args.r002f_rounds = campaign['r002f']['rounds']; args.r002f_section = campaign['r002f']['section']
+            write_json(args.task/'capture'/'campaign.json', campaign)
         return inside(args, runtime) if args.inside else outside(args, runtime)
     except Exception as exc:
         write_json(args.task/'capture'/('coordinator-error-'+(args.lane or args.phase or 'outer')+'.json'),

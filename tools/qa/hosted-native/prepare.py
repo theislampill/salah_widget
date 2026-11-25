@@ -15,7 +15,6 @@ import shutil
 import signal
 import subprocess
 import sys
-import tarfile
 import time
 
 RESEARCH = '55d1b3edb66d2c35679707120b01ee1d3455e4a3'
@@ -205,28 +204,12 @@ def build(root, label, commands, second=False):
     return result
 
 
-def archive_runtime(source, destination, commands):
-    archive = destination.with_suffix('.tar')
-    commands.run('r003f-archive', ['git', '-C', str(source), 'archive', '--format=tar',
-                                '--output=' + str(archive), BASELINE, *RUNTIME_PATHS], source)
-    destination.mkdir()
-    seen = set()
-    with tarfile.open(archive, 'r:') as packed:
-        for member in packed:
-            name = PurePosixPath(member.name)
-            if name.is_absolute() or '..' in name.parts or member.name in seen or not (member.isdir() or member.isfile()):
-                raise ValueError('unsafe runtime archive member')
-            seen.add(member.name)
-            target = destination / member.name
-            if member.isdir():
-                target.mkdir(parents=True, exist_ok=True)
-            else:
-                target.parent.mkdir(parents=True, exist_ok=True)
-                with packed.extractfile(member) as src, target.open('xb') as dst:
-                    shutil.copyfileobj(src, dst)
-                target.chmod(member.mode & 0o777)
-    archive.unlink()
-    rows = checked_files(source, RUNTIME_PATHS)
+def materialize_runtime(source, destination):
+    # Path-selected git archive still requested unrelated promisor blobs on the
+    # hosted shallow checkout. All runtime bytes are already acquired; copy them
+    # only after comparing each body and mode to its actual HEAD blob identity.
+    destination.mkdir(mode=0o700)
+    rows = checked_files(source, RUNTIME_PATHS, destination)
     verify_files(destination, rows)
     return rows
 
@@ -310,9 +293,11 @@ def prepare(research, baseline, historical, out):
         report['trees']['r0035'] = first
 
         b0 = trees / 'r003f'
-        files = archive_runtime(baseline, b0, commands)
+        files = materialize_runtime(baseline, b0)
         write_json(receipts / 'r003f-runtime-files.json', files)
         report['trees']['r003f'] = {'root': str(b0), 'sha256': {'index.html': digest(b0 / 'index.html')},
+                                   'materialization': 'git-blob-verified-runtime-subset',
+                                   'sourceCommit': BASELINE, 'sourceTree': BASELINE_TREE,
                                    'manifest': str(receipts / 'r003f-runtime-files.json'),
                                    'manifestSha256': digest(receipts / 'r003f-runtime-files.json')}
         verify_files(research, research_files)
