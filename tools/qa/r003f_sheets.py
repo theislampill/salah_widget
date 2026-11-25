@@ -6,7 +6,6 @@ import json
 import subprocess
 from pathlib import Path
 import math
-from PIL import Image, ImageDraw
 
 NAMES = ["B0", "B0-T", "B1c", "B1c-T", "B4", "B4-T", "B6", "B6-T"]
 LABELS = NAMES + ["reference", "physical +20"]
@@ -24,6 +23,8 @@ def read_images(directory, report):
 
 
 def sheet(out, title, panels, scale, full=False):
+    from PIL import Image, ImageDraw
+
     blocks, hashes = [], []
     for label, (image_path, meta) in panels:
         with Image.open(image_path) as source:
