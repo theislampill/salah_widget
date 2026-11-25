@@ -237,6 +237,93 @@ class LaneControls(unittest.TestCase):
         self.assertEqual(timing['dpr'], 1)
         self.assertEqual(moon['dpr'], 2)
 
+    def test_selection_keeps_both_star_lanes_and_omits_unselected_workstreams(self):
+        plan = self.plan(work_orders=['R0035'])
+        self.assertEqual(plan['workOrders'], ['R0035'])
+        self.assertEqual([row['id'] for row in plan['lanes']],
+                         ['r0035-chromium-timing', 'r0035-chromium-capture'])
+        self.assertEqual(plan['lanes'][1]['dependsOn'], [plan['lanes'][0]['id']])
+        self.assertFalse(plan['evidenceRetention'])
+        plan = self.plan(work_orders=['R002F', 'R0040'], include_r002f=True)
+        self.assertEqual([row['workOrder'] for row in plan['lanes']], ['R0040', 'R002F'])
+        self.assertEqual(plan['lanes'][-1]['preparation']['status'], 'INCOMPLETE')
+
+    def test_guard_off_is_a_shared_diagnostic_change_with_original_admission(self):
+        original = self.plan(work_orders=['R0035'])
+        diagnostic = self.plan(work_orders=['R0035'], r0035_guard='off', r0035_mode='timing')
+        self.assertEqual([row['id'] for row in diagnostic['lanes']], ['r0035-chromium-timing'])
+        self.assertEqual(diagnostic['lanes'][0], original['lanes'][0])
+        self.assertEqual(diagnostic['r0035Plan']['arms']['main'], original['r0035Plan']['arms']['main'])
+        for arm in ('unmodified', 'mitigated'):
+            before, after = original['r0035Plan']['arms'][arm], diagnostic['r0035Plan']['arms'][arm]
+            self.assertEqual(after, {**before, 'flags': before['flags']+'&r35guard=off'})
+            self.assertEqual(after['producerProbe'], {'path': 'stars.status', 'equals': 'active'})
+        sys.path.insert(0, str(ROOT/'tools/r0035'))
+        try:
+            import native_trials
+            native_trials.verify_reconstructed_flags(diagnostic['r0035Plan']['arms'])
+            for name, arm in diagnostic['r0035Plan']['arms'].items():
+                native_trials.producer_flags(name, arm['flags'], True)
+        finally:
+            sys.path.pop(0)
+
+    def test_diagnostic_population_and_scope_do_not_create_phantom_dependencies(self):
+        plan = self.plan(work_orders=['R0035'], r0035_mode='capture', r0035_scope='preview-members')
+        self.assertEqual([row['id'] for row in plan['lanes']], ['r0035-chromium-capture'])
+        self.assertEqual(plan['lanes'][0]['dependsOn'], [])
+        self.assertNotIn('dependencyPolicy', plan['lanes'][0])
+        for name in ('unmodified', 'mitigated'):
+            self.assertIn('&r35scope=preview-members&', plan['r0035Plan']['arms'][name]['flags'])
+        for controls in ({'r0035_guard': True}, {'r0035_guard': 'ignore'}, {'r0035_scope': 'bright'},
+                         {'r0035_mode': ''}, {'r0035_mode': ['timing']}):
+            with self.subTest(controls=controls), self.assertRaises(ValueError):
+                self.plan(work_orders=['R0035'], **controls)
+        with self.assertRaises(ValueError):
+            self.plan(work_orders=['R0040'], r0035_guard='off')
+
+    def test_selection_rejects_empty_unknown_duplicate_and_contradictory_orders(self):
+        for orders in ([], ['R0035', 'R0035'], ['R9999'], 'R0035', [35], [None]):
+            with self.subTest(orders=orders), self.assertRaises(ValueError):
+                self.plan(work_orders=orders)
+        for orders, enabled in ((['R002F'], False), (['R0040'], True)):
+            with self.subTest(orders=orders, enabled=enabled), self.assertRaises(ValueError):
+                self.plan(work_orders=orders, include_r002f=enabled)
+        for retention in ('yes', 1, None):
+            with self.subTest(retention=retention), self.assertRaises(ValueError):
+                self.plan(retain_evidence=retention)
+
+    def test_retention_preserves_original_argv_results_and_separate_private_outputs(self):
+        original = self.plan(include_r002f=True)
+        retained = self.plan(include_r002f=True, retain_evidence=True)
+        self.assertFalse(original['evidenceRetention'])
+        self.assertTrue(retained['evidenceRetention'])
+        self.assertEqual(original['workOrders'], ['R0040', 'R003F', 'R0035', 'R002F'])
+        destinations = []
+        for before, after in zip(original['lanes'], retained['lanes']):
+            if before['workOrder'] not in ('R0040', 'R0035'):
+                self.assertEqual(before, after)
+                continue
+            self.assertEqual(before['result'], after['result'])
+            for key in ('output', 'stdout', 'stderr', 'cwd', 'env', 'dependsOn', 'timeoutSeconds'):
+                self.assertEqual(before[key], after[key])
+            argv = after['argv']; evidence = after['evidenceRetention']
+            self.assertEqual(argv[0], before['argv'][0])
+            self.assertEqual(argv[argv.index('--driver')+1], before['argv'][1])
+            self.assertEqual(argv[argv.index('--')+1:], before['argv'][2:])
+            wrapper = 'retain_r0040.cjs' if before['workOrder'] == 'R0040' else 'retain_r0035.py'
+            self.assertEqual(argv[1], str(HERE/wrapper))
+            self.assertEqual(evidence['originalArgv'], before['argv'])
+            self.assertIs(evidence['instrumented'], True)
+            self.assertIs(evidence['timingComparableToOriginal'], False)
+            self.assertIn('fsync', evidence['overhead'])
+            self.assertEqual(argv[argv.index('--evidence')+1], evidence['output'])
+            self.assertTrue(Path(evidence['output']).is_relative_to(self.base))
+            self.assertNotEqual(evidence['output'], after['output'])
+            self.assertEqual(after['stopAllOnExit'], [86])
+            self.assertEqual(after['exitStatuses']['86'], 'EXTERNAL_CONTINUATION_VETOED')
+            destinations.append(evidence['output'])
+        self.assertEqual(len(set(destinations)), 3)
+
     def test_r002f_uses_exact_probe_and_disposable_arms_with_private_outputs(self):
         admission = {'status': 'PASS', 'receipt': {'path': '/private/r002f-build/build-result.json', 'sha256': 'a'*64},
                      'trees': {'baseline': {'root': '/private/r002f-build/baseline'},

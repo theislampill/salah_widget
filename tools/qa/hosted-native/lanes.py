@@ -19,6 +19,36 @@ from r002f_prepare import BASE_INDEX, COMBINED_INDEX, BASE_INVENTORY, COMBINED_I
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
+WORK_ORDERS = ('R0040', 'R003F', 'R0035', 'R002F')
+STAR_DEFAULTS = {'guard': 'default', 'scope': 'all', 'mode': 'both'}
+
+
+def star_controls(value=None):
+    """Existing recipe options only; no admission, time or owner-policy changes."""
+    if value is None:
+        value = {}
+    choices = {'guard': ('default', 'off'), 'scope': ('all', 'preview-members'),
+               'mode': ('both', 'timing', 'capture')}
+    if (not isinstance(value, dict) or any(key not in choices for key in value)
+            or any(not isinstance(v, str) or v not in choices[k] for k, v in value.items())):
+        raise ValueError('unsupported R0035 diagnostic controls')
+    return {**STAR_DEFAULTS, **value}
+
+
+def selected_work_orders(value, include_r002f):
+    """An absent selection retains the existing CLI population; empty is invalid."""
+    if type(include_r002f) is not bool:
+        raise ValueError('R002F enabled must be boolean')
+    if value is None:
+        value = [order for order in WORK_ORDERS if order != 'R002F' or include_r002f]
+    if (not isinstance(value, list) or not value
+            or any(not isinstance(order, str) or order not in WORK_ORDERS for order in value)
+            or len(set(value)) != len(value)):
+        raise ValueError('work-order selection must be a nonempty list of distinct known identifiers')
+    if ('R002F' in value) != include_r002f:
+        raise ValueError('R002F enabled and work-order selection disagree')
+    # Selection does not reorder dependencies or change the reviewed lane order.
+    return [order for order in WORK_ORDERS if order in value]
 
 
 def admit_r002f(path, process_path=None):
@@ -63,13 +93,20 @@ def admit_r002f(path, process_path=None):
 
 def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
               engine='chromium', r003f_dpr=1, include_r002f=False, r002f_preparation=None,
-              r002f_dpr=1, r002f_rounds=1, r002f_section='all'):
+              r002f_dpr=1, r002f_rounds=1, r002f_section='all', work_orders=None, retain_evidence=False,
+              r0035_guard='default', r0035_scope='all', r0035_mode='both'):
     if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
         raise ValueError('unsupported engine or R003F DPR')
     if (type(include_r002f) is not bool or type(r002f_dpr) is not int or r002f_dpr not in (1, 2, 3)
             or type(r002f_rounds) is not int or not 1 <= r002f_rounds <= 10
             or r002f_section not in ('all', 'prayer', 'preview')):
         raise ValueError('unsupported R002F campaign controls')
+    selected = selected_work_orders(work_orders, include_r002f)
+    stars = star_controls({'guard': r0035_guard, 'scope': r0035_scope, 'mode': r0035_mode})
+    if stars != STAR_DEFAULTS and 'R0035' not in selected:
+        raise ValueError('R0035 diagnostic controls require selected R0035 observations')
+    if type(retain_evidence) is not bool:
+        raise ValueError('evidence retention must be boolean')
     research = Path(prepared['sources']['research']['root'])
     historical = Path(prepared['sources']['historical']['root'])
     roots = {key: Path(value['root']) for key, value in prepared['trees'].items()}
@@ -78,7 +115,8 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
     arms = {'main': {'root': str(roots['main']), 'commit': BASELINE, 'flags': ''}}
     for label, writes in (('unmodified', 'full'), ('mitigated', 'changed')):
         arms[label] = {'root': str(roots['r0035']), 'commit': RESEARCH,
-                       'flags': f'&r35arm={writes}&r35scope=all&r35amplitude=1&r35glass=0.5&r35margin=4',
+                       'flags': f'&r35arm={writes}&r35scope={r0035_scope}&r35amplitude=1&r35glass=0.5&r35margin=4'
+                                + ('&r35guard=off' if r0035_guard == 'off' else ''),
                        'producerProbe': {'path': 'stars.status', 'equals': 'active'}}
     star_plan = {'kind': 'independent-reconstruction', 'arms': arms}
     entries = []
@@ -111,6 +149,8 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
 
     for capture in (False, True):
         label = 'capture' if capture else 'timing'
+        if r0035_mode not in ('both', label):
+            continue
         star = lane(f'r0035-{engine}-{label}', 'R0035', 1, 480, 'r0035-trials', 'summary.json',
                     {'0': 'INSPECT ADMISSION', '1': 'INCOMPLETE'})
         star['argv'] = list(map(str, [python_playwright, research / 'tools/r0035/native_trials.py',
@@ -120,8 +160,9 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                               requiresEveryRowAdmitted=True, capture=capture)
         if capture:
             star['argv'].append('--capture')
-            star['dependsOn'] = [entries[-2]['id']]
-            star['dependencyPolicy'] = 'finished; retain failed timing, classify captures independently'
+            if r0035_mode == 'both':
+                star['dependsOn'] = [entries[-2]['id']]
+                star['dependencyPolicy'] = 'finished; retain failed timing, classify captures independently'
     if include_r002f:
         admission = r002f_preparation or {'status': 'INCOMPLETE', 'reason': 'requested R002F preparation is missing'}
         probe = lane(f'r002f-{engine}-dpr{r002f_dpr}', 'R002F', r002f_dpr, 900,
@@ -136,10 +177,30 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                                           '--baseline', trees['baseline']['root'], '--candidate', trees['candidate']['root'],
                                           '--out', probe['output'], '--engine', engine, '--dpr', r002f_dpr,
                                           '--rounds', r002f_rounds, '--section', r002f_section, '--timeout-ms', 60000]))
+    entries = [row for row in entries if row['workOrder'] in selected]
+    if retain_evidence:
+        for row in entries:
+            if row['workOrder'] not in ('R0040', 'R0035'):
+                continue
+            original = row['argv']
+            evidence = str(out/(row['id']+'-retention'))
+            wrapper = HERE/('retain_r0040.cjs' if row['workOrder'] == 'R0040' else 'retain_r0035.py')
+            row['argv'] = [original[0], str(wrapper), '--driver', original[1], '--evidence', evidence,
+                           '--', *original[2:]]
+            row['evidenceRetention'] = {
+                'instrumented': True, 'originalArgv': original, 'output': evidence,
+                'timingComparableToOriginal': False,
+                'overhead': 'Host serialization, hashing, fsync and evidence copies affect timing/capture; '
+                            'these are instrumented observations, not original performance measurements.'}
+            row['exitStatuses']['86'] = 'EXTERNAL_CONTINUATION_VETOED'
+            row['stopAllOnExit'] = [86]
     return {'schemaVersion': 1, 'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
-            'scope': 'Initial native observations only; no work-order acceptance or owner selection.',
+            'scope': 'Selected native observations only; no work-order acceptance or owner selection.',
+            'workOrders': selected, 'evidenceRetention': retain_evidence,
+            'r0035Controls': stars,
             'r0035PlanPath': str(star_plan_path), 'r0035Plan': star_plan, 'lanes': entries,
             'failurePolicy': {'isolation': 'stop all observations', 'R003FAndon': 'stop R003F progression',
+                              'externalContinuationVeto': 'stop all observations; prevented continuation is not an actual network escape',
                               'ordinaryLaneFailure': 'retain outputs; independent lanes may continue',
                               'timeout': 'coordinator kills child process group and retains private logs'},
             'followUp': [
@@ -187,6 +248,11 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
+    parser.add_argument('--work-orders', nargs='+')
+    parser.add_argument('--retain-evidence', action='store_true')
+    parser.add_argument('--r0035-guard', choices=('default', 'off'), default='default')
+    parser.add_argument('--r0035-scope', choices=('all', 'preview-members'), default='all')
+    parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-prepared', type=Path)
     parser.add_argument('--r002f-process', type=Path)
@@ -197,6 +263,7 @@ def main():
     os.umask(0o077)
     admitted_out = None
     try:
+        selected_work_orders(args.work_orders, args.r002f)
         if args.out.exists() or args.out.is_symlink():
             raise ValueError('fresh plan output required')
         out = args.out.resolve()
@@ -217,7 +284,9 @@ def main():
         plan = make_plan(prepared, out, python_playwright=args.python_playwright, node=args.node,
                          node_modules=args.node_modules, pngjs=args.pngjs, engine=args.engine, r003f_dpr=args.r003f_dpr,
                          include_r002f=args.r002f, r002f_preparation=r002f, r002f_dpr=args.r002f_dpr,
-                         r002f_rounds=args.r002f_rounds, r002f_section=args.r002f_section)
+                         r002f_rounds=args.r002f_rounds, r002f_section=args.r002f_section,
+                         work_orders=args.work_orders, retain_evidence=args.retain_evidence,
+                         r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode)
         check_star_plan(prepared, plan['r0035Plan'])
         write_json(Path(plan['r0035PlanPath']), plan['r0035Plan'])
         plan['preparedReceipt'] = {'path': str(args.prepared.resolve()), 'sha256': digest(args.prepared)}

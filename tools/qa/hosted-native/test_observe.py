@@ -24,6 +24,11 @@ def admitted_snapshot():
             'externalSocketErrno': 101}
 
 
+def campaign_plan(lanes, orders, retained=False):
+    return {'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
+            'workOrders': orders, 'evidenceRetention': retained, 'lanes': lanes}
+
+
 class Admission(unittest.TestCase):
     def test_accepts_only_fresh_loopback_namespace_without_privilege(self):
         M.validate_snapshot(admitted_snapshot(), 'net:[100]')
@@ -134,6 +139,43 @@ class Verdict(unittest.TestCase):
         l = self.lane('r0040-options', {'cells': cells[:-1] + [cells[0]]})
         self.assertEqual(M.classify_lane(l, 0)['status'], 'INCOMPLETE')
 
+    def test_retained_child_veto_is_prevented_continuation_even_with_complete_report(self):
+        lane = self.lane('r0040-options', {'cells': [{'id': x} for x in M.RAIN_CELLS]})
+        lane.update(workOrder='R0040', stopAllOnExit=[86], evidenceRetention={'instrumented': True})
+        result = M.classify_lane(lane, 86)
+        self.assertEqual(result['status'], 'EXTERNAL_CONTINUATION_VETOED')
+        self.assertEqual(result['returncode'], 86)
+        self.assertTrue(result['stopAll'])
+        self.assertIn('prevented', result['reason'])
+        self.assertIn('not evidence of an actual network escape', result['reason'])
+
+    def test_retention_failure_exit_cannot_be_overridden_by_original_success_report(self):
+        cases = [('r0040-options', {'cells': [{'id': x} for x in M.RAIN_CELLS]}, 'FAIL'),
+                 ('r0035-trials', [{'arm': arm, 'admitted': True, 'qualification': {'verdict': 'passed'}}
+                                   for arm in ('main', 'unmodified', 'mitigated')], 'INCOMPLETE')]
+        for kind, report, expected in cases:
+            lane = self.lane(kind, report)
+            lane.update(stopAllOnExit=[86], evidenceRetention={'instrumented': True})
+            self.assertEqual(M.classify_lane(lane, 1)['status'], expected)
+
+    def test_namespace_veto_receipt_never_overrules_outer_boundary_failure(self):
+        lane = {'id': 'retained', 'stopAllOnExit': [86], 'evidenceRetention': {'instrumented': True}}
+        inner = {'id': 'retained', 'status': 'EXTERNAL_CONTINUATION_VETOED',
+                 'returncode': 86, 'stopAll': True, 'reason': 'prevented external continuation'}
+        result = M.namespace_status(lane, {'returncode': 0, 'timedOut': False}, inner)
+        self.assertEqual(result['status'], 'EXTERNAL_CONTINUATION_VETOED')
+        self.assertTrue(result['stopAll'])
+        for process, expected in (({'returncode': 86, 'timedOut': False}, 'ISOLATION_FAIL'),
+                                  ({'returncode': -9, 'timedOut': True}, 'ISOLATION_UNCONFIRMED'),
+                                  ({'returncode': 1, 'timedOut': False}, 'ISOLATION_UNCONFIRMED')):
+            result = M.namespace_status(lane, process, inner)
+            self.assertEqual(result['status'], expected)
+            self.assertEqual(result['innerStatus'], inner)
+            self.assertEqual(result['namespaceProcess'], process)
+        for changes in ({'returncode': 0}, {'stopAll': False}, {'status': 'PASS', 'stopAll': True}):
+            result = M.namespace_status(lane, {'returncode': 0, 'timedOut': False}, {**inner, **changes})
+            self.assertEqual(result['status'], 'ISOLATION_UNCONFIRMED')
+
     def r002f(self, *, section='all', rounds=1):
         body = {'protocol': 'r002f-hosted-native/1', 'status': 'PASS', 'engine': 'chromium',
                 'dpr': 1, 'rounds': rounds, 'section': section,
@@ -225,18 +267,18 @@ class OuterBoundary(unittest.TestCase):
             capture = task/'capture'; capture.mkdir()
             lanes = [{'id': name, 'workOrder': 'R0035', 'timeoutSeconds': 5,
                       'result': {'kind': 'r0035-trials', 'path': str(capture/(name+'.json'))}}
-                     for name in ('first', 'second')]
-            (capture/'lanes.json').write_text(json.dumps({'protocol': 'salah-hosted-native-lanes/1',
-                                                         'sequential': True, 'lanes': lanes}))
+                     for name in ('r0035-chromium-timing', 'r0035-chromium-capture')]
+            (capture/'lanes.json').write_text(json.dumps(campaign_plan(lanes, ['R0035'])))
             calls = []
             def run(argv, *_args):
                 calls.append(argv)
                 if len(calls) == 1:
                     return {'returncode': 0, 'timedOut': False}
                 if inner_status is not None:
-                    M.write_json(capture/'lane-status'/'first.json', inner_status)
+                    inner_status['id'] = lanes[0]['id']
+                    M.write_json(capture/'lane-status'/(lanes[0]['id']+'.json'), inner_status)
                 return namespace_result
-            args = SimpleNamespace(task=task, engine='chromium')
+            args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0035'])
             with patch.object(M, 'isolated_command', side_effect=lambda *a: ['isolated']), \
                  patch.object(M, 'run_bounded', side_effect=run):
                 code = M.outside(args, {})
@@ -266,12 +308,12 @@ class OuterBoundary(unittest.TestCase):
             with self.subTest(include_blocked=include_blocked), tempfile.TemporaryDirectory() as tmp:
                 task = Path(tmp); capture = task/'capture'; capture.mkdir()
                 lanes = [{'id': name, 'workOrder': order, 'timeoutSeconds': 5}
-                         for name, order in (('rain', 'R0040'), ('moon', 'R003F'), ('stars', 'R0035'))]
+                         for name, order in (('r0040-chromium', 'R0040'), ('r003f-b0-chromium-dpr1', 'R003F'),
+                                             ('r0035-chromium-timing', 'R0035'), ('r0035-chromium-capture', 'R0035'))]
                 if include_blocked:
                     lanes.insert(0, {'id': 'r002f-chromium-dpr1', 'workOrder': 'R002F', 'timeoutSeconds': 900,
                                      'preparation': {'status': 'INCOMPLETE', 'reason': 'controlled build failure'}})
-                (capture/'lanes.json').write_text(json.dumps({'protocol': 'salah-hosted-native-lanes/1',
-                                                             'sequential': True, 'lanes': lanes}))
+                (capture/'lanes.json').write_text(json.dumps(campaign_plan(lanes, ['R0040', 'R003F', 'R0035', 'R002F'])))
                 calls = []
                 def run(argv, *_args):
                     calls.append(argv)
@@ -287,14 +329,151 @@ class OuterBoundary(unittest.TestCase):
                 report = json.loads((capture/'observation.json').read_text())
                 by_id = {row['id']: row for row in report['lanes']}
                 self.assertEqual(code, 2)
-                self.assertEqual([by_id[name]['status'] for name in ('rain', 'moon', 'stars')], ['PASS']*3)
+                self.assertEqual([by_id[name]['status'] for name in ('r0040-chromium', 'r003f-b0-chromium-dpr1',
+                                                                   'r0035-chromium-timing', 'r0035-chromium-capture')], ['PASS']*4)
                 self.assertEqual(by_id['r002f-chromium-dpr1']['status'], 'NOT_RUN')
                 self.assertEqual(by_id['r002f-chromium-dpr1']['preparationStatus'], 'INCOMPLETE')
-                self.assertEqual(len(calls), 4, 'only preparation and the three admitted lanes execute')
+                self.assertEqual(len(calls), 5, 'only preparation and the four admitted lanes execute')
                 self.assertEqual(report['status'], 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
+
+    def test_each_missing_selected_lane_is_retained_as_not_run(self):
+        expected = [('r0040-chromium', 'R0040'), ('r003f-b0-chromium-dpr1', 'R003F'),
+                    ('r0035-chromium-timing', 'R0035'), ('r0035-chromium-capture', 'R0035'),
+                    ('r002f-chromium-dpr1', 'R002F')]
+        orders = ['R0040', 'R003F', 'R0035', 'R002F']
+        args = SimpleNamespace(engine='chromium', r003f_dpr=1, r002f=True, r002f_dpr=1, work_orders=orders)
+        for missing in ([identifier] for identifier, _ in expected):
+            lanes = [{'id': identifier, 'workOrder': order} for identifier, order in expected if identifier not in missing]
+            admitted = M.admit_plan(campaign_plan(lanes, orders), args)
+            self.assertEqual([row['id'] for row in admitted], [identifier for identifier, _ in expected])
+            row = next(row for row in admitted if row['id'] in missing)
+            self.assertEqual(row['preparation']['status'], 'INCOMPLETE')
+            self.assertIn('missing from the plan', row['preparation']['reason'])
+        self.assertEqual(len(M.admit_plan(campaign_plan([], orders), args)), 5)
+
+    def test_duplicate_wrong_identity_or_unselected_lanes_are_rejected_before_execution(self):
+        args = SimpleNamespace(engine='chromium', r002f=False, work_orders=['R0035'])
+        timing = {'id': 'r0035-chromium-timing', 'workOrder': 'R0035'}
+        capture = {'id': 'r0035-chromium-capture', 'workOrder': 'R0035'}
+        for rows in ([timing, timing, capture], [timing, {'id': 'unknown', 'workOrder': 'R0035'}],
+                     [timing, {'id': 'r0035-firefox-capture', 'workOrder': 'R0035'}],
+                     [timing, {**capture, 'workOrder': 'R0040'}],
+                     [timing, capture, {'id': 'r0040-chromium', 'workOrder': 'R0040'}]):
+            with self.subTest(rows=rows), self.assertRaises(ValueError):
+                M.admit_plan(campaign_plan(rows, ['R0035']), args)
+        for metadata in ({'workOrders': ['R0040']}, {'evidenceRetention': True}):
+            with self.subTest(metadata=metadata), self.assertRaises(ValueError):
+                M.admit_plan({**campaign_plan([timing, capture], ['R0035']), **metadata}, args)
+        for evidence in ({'evidenceRetention': {'instrumented': True}}, {'evidenceRetention': 'yes'}):
+            with self.subTest(evidence=evidence), self.assertRaises(ValueError):
+                M.admit_plan(campaign_plan([{**timing, **evidence}, capture], ['R0035']), args)
+        args.retain_evidence = True
+        with self.assertRaises(ValueError):
+            M.admit_plan(campaign_plan([timing, capture], ['R0035'], True), args)
+
+    def test_missing_selected_capture_or_empty_plan_cannot_yield_observed_campaign(self):
+        for present in (['r0035-chromium-timing'], []):
+            with self.subTest(present=present), tempfile.TemporaryDirectory() as tmp:
+                task = Path(tmp); capture = task/'capture'; capture.mkdir()
+                lanes = [{'id': name, 'workOrder': 'R0035', 'timeoutSeconds': 5} for name in present]
+                (capture/'lanes.json').write_text(json.dumps(campaign_plan(lanes, ['R0035'])))
+                calls = []
+                def run(argv, *_args):
+                    calls.append(argv)
+                    if argv[0] == 'lane':
+                        M.write_json(capture/'lane-status'/(argv[1]+'.json'),
+                                     {'id': argv[1], 'status': 'PASS', 'returncode': 0, 'stopAll': False})
+                    return {'returncode': 0, 'timedOut': False}
+                args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0035'])
+                with patch.object(M, 'isolated_command', side_effect=lambda _a, _r, phase, lane=None: [phase, lane]), \
+                     patch.object(M, 'run_bounded', side_effect=run):
+                    self.assertEqual(M.outside(args, {}), 2)
+                report = json.loads((capture/'observation.json').read_text())
+                self.assertEqual(report['status'], 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
+                self.assertEqual(len(calls), 1+len(present))
+                self.assertEqual(len(report['lanes']), 2)
+                self.assertEqual(report['lanes'][-1]['id'], 'r0035-chromium-capture')
+                self.assertEqual(report['lanes'][-1]['status'], 'NOT_RUN')
+                self.assertEqual(report['lanes'][-1]['preparationStatus'], 'INCOMPLETE')
+
+    def test_veto_stops_later_selected_lanes_without_claiming_network_escape(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            task = Path(tmp); capture = task/'capture'; capture.mkdir()
+            lanes = [{'id': name, 'workOrder': order, 'timeoutSeconds': 5,
+                      'stopAllOnExit': [86], 'evidenceRetention': {'instrumented': True}}
+                     for name, order in (('r0040-chromium', 'R0040'),
+                                         ('r0035-chromium-timing', 'R0035'), ('r0035-chromium-capture', 'R0035'))]
+            (capture/'lanes.json').write_text(json.dumps(campaign_plan(lanes, ['R0040', 'R0035'], True)))
+            calls = []
+            def run(argv, *_args):
+                calls.append(argv)
+                if argv[0] == 'lane':
+                    M.write_json(capture/'lane-status'/(argv[1]+'.json'),
+                                 {'id': argv[1], 'status': 'EXTERNAL_CONTINUATION_VETOED', 'returncode': 86,
+                                  'stopAll': True, 'reason': 'prevented external continuation'})
+                return {'returncode': 0, 'timedOut': False}
+            args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0040', 'R0035'], retain_evidence=True)
+            with patch.object(M, 'isolated_command', side_effect=lambda _a, _r, phase, lane=None: [phase, lane]), \
+                 patch.object(M, 'run_bounded', side_effect=run):
+                self.assertEqual(M.outside(args, {}), 2)
+            report = json.loads((capture/'observation.json').read_text())
+            self.assertEqual(report['status'], 'EXTERNAL_CONTINUATION_VETOED')
+            self.assertEqual(len(calls), 2)
+            self.assertEqual([row['status'] for row in report['lanes']], ['EXTERNAL_CONTINUATION_VETOED', 'NOT_RUN', 'NOT_RUN'])
+            self.assertIn('prevented', report['lanes'][-1]['reason'])
+
+    def test_selected_independent_campaign_does_not_repeat_an_earlier_andon_workstream(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            task = Path(tmp); capture = task/'capture'; capture.mkdir()
+            earlier = task/'earlier-observation.json'; earlier.write_text('{"status":"ANDON","workOrder":"R003F"}\n')
+            original = earlier.read_bytes()
+            lanes = [{'id': name, 'workOrder': 'R0035', 'timeoutSeconds': 5}
+                     for name in ('r0035-chromium-timing', 'r0035-chromium-capture')]
+            (capture/'lanes.json').write_text(json.dumps(campaign_plan(lanes, ['R0035'])))
+            calls = []
+            def run(argv, *_args):
+                calls.append(argv)
+                if argv[0] == 'lane':
+                    M.write_json(capture/'lane-status'/(argv[1]+'.json'),
+                                 {'id': argv[1], 'status': 'PASS', 'returncode': 0, 'stopAll': False})
+                return {'returncode': 0, 'timedOut': False}
+            args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0035'])
+            with patch.object(M, 'isolated_command', side_effect=lambda _a, _r, phase, lane=None: [phase, lane]), \
+                 patch.object(M, 'run_bounded', side_effect=run):
+                self.assertEqual(M.outside(args, {}), 0)
+            self.assertEqual(calls, [['prepare', None], ['lane', 'r0035-chromium-timing'], ['lane', 'r0035-chromium-capture']])
+            self.assertEqual(earlier.read_bytes(), original)
 
 
 class Campaign(unittest.TestCase):
+    def test_star_diagnostic_controls_reject_ignored_or_invalid_requests(self):
+        data = {'schemaVersion': 1, 'engine': 'chromium', 'r003fDpr': 1, 'workOrders': ['R0035'],
+                'r002f': {'enabled': False, 'dpr': 1, 'rounds': 1, 'section': 'all'},
+                'r0035': {'guard': 'off', 'scope': 'all', 'mode': 'timing'}}
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp)/'campaign.json'; path.write_text(json.dumps(data))
+            self.assertEqual(M.read_campaign(path), data)
+            for controls in (None, [], 'off', {'guard': True}, {'guard': 'disabled'},
+                             {'scope': 'bright'}, {'mode': 'none'}, {'seconds': 60}):
+                path.write_text(json.dumps({**data, 'r0035': controls}))
+                with self.subTest(controls=controls), self.assertRaises(ValueError): M.read_campaign(path)
+            path.write_text(json.dumps({**data, 'workOrders': ['R0040']}))
+            with self.assertRaises(ValueError): M.read_campaign(path)
+
+    def test_star_selected_mode_and_config_cannot_be_satisfied_by_a_different_plan(self):
+        args = SimpleNamespace(engine='chromium', work_orders=['R0035'], r002f=False,
+                               r0035_guard='off', r0035_scope='all', r0035_mode='timing')
+        timing = {'id': 'r0035-chromium-timing', 'workOrder': 'R0035'}
+        controls = {'guard': 'off', 'scope': 'all', 'mode': 'timing'}
+        plan = {**campaign_plan([timing], ['R0035']), 'r0035Controls': controls}
+        self.assertEqual([row['id'] for row in M.admit_plan(plan, args)], [timing['id']])
+        missing = M.admit_plan({**plan, 'lanes': []}, args)
+        self.assertEqual(len(missing), 1)
+        self.assertEqual(missing[0]['preparation']['status'], 'INCOMPLETE')
+        for change in ({'r0035Controls': {'guard': 'default', 'scope': 'all', 'mode': 'timing'}},
+                       {'lanes': [timing, {'id': 'r0035-chromium-capture', 'workOrder': 'R0035'}]}):
+            with self.subTest(change=change), self.assertRaises(ValueError): M.admit_plan({**plan, **change}, args)
+
     def test_campaign_controls_are_bounded_and_not_silently_coerced(self):
         data = {'schemaVersion': 1, 'engine': 'webkit', 'r003fDpr': 2,
                 'r002f': {'enabled': True, 'dpr': 3, 'rounds': 2, 'section': 'preview'}}
@@ -309,13 +488,63 @@ class Campaign(unittest.TestCase):
             for change in ({'engine': 'safari'}, {'r003fDpr': 3}, {'r003fDpr': True}):
                 path.write_text(json.dumps({**data, **change}))
                 with self.assertRaises(ValueError): M.read_campaign(path)
+            for change in ({'workOrders': []}, {'workOrders': None}, {'workOrders': ['R0035', 'R0035']}, {'workOrders': ['unknown']},
+                           {'workOrders': 'R0035'}, {'workOrders': [35]}, {'workOrders': ['R0035']},
+                           {'evidenceRetention': 'yes'}, {'evidenceRetention': 1}, {'evidenceRetention': None}):
+                path.write_text(json.dumps({**data, **change}))
+                with self.assertRaises(ValueError): M.read_campaign(path)
+            broken = copy.deepcopy(data); broken['r002f']['enabled'] = False; broken['workOrders'] = ['R002F']
+            path.write_text(json.dumps(broken))
+            with self.assertRaises(ValueError): M.read_campaign(path)
+            selected = copy.deepcopy(data); selected['r002f']['enabled'] = False
+            selected.update(workOrders=['R0040', 'R0035'], evidenceRetention=True)
+            path.write_text(json.dumps(selected))
+            self.assertEqual(M.read_campaign(path), selected)
+
+    def test_campaign_file_reaches_outer_dispatch_with_unchanged_defaults_and_explicit_options(self):
+        checked_in = Path(__file__).with_name('campaign.json')
+        unchanged = checked_in.read_bytes()
+        baseline = {'schemaVersion': 1, 'engine': 'chromium', 'r003fDpr': 1,
+                    'r002f': {'enabled': True, 'dpr': 1, 'rounds': 1, 'section': 'all'}}
+        selected = copy.deepcopy(baseline)
+        selected.update(workOrders=['R0035', 'R0040'], evidenceRetention=True,
+                        r0035={'guard': 'off', 'scope': 'preview-members', 'mode': 'timing'})
+        selected['r002f']['enabled'] = False
+        current = json.loads(unchanged)
+        for data, orders, retained in ((baseline, ['R0040', 'R003F', 'R0035', 'R002F'], False),
+                                       (selected, ['R0040', 'R0035'], True),
+                                       (current, M.selected_work_orders(current.get('workOrders'),
+                                        current['r002f']['enabled']), current.get('evidenceRetention', False))):
+            with self.subTest(retained=retained), tempfile.TemporaryDirectory() as tmp:
+                task = Path(tmp); (task/'runtime.json').write_text('{}')
+                campaign = task/'input-campaign.json'; campaign.write_text(json.dumps(data))
+                argv = ['observe.py', '--task', str(task), '--research', '/sources/research',
+                        '--baseline', '/sources/main', '--historical', '/sources/history', '--campaign', str(campaign)]
+                prior_umask = os.umask(0o077)
+                try:
+                    with patch.object(sys, 'argv', argv), patch.object(M.signal, 'signal'), \
+                         patch.object(M, 'outside', return_value=0) as dispatch:
+                        self.assertEqual(M.main(), 0)
+                    args = dispatch.call_args.args[0]
+                    self.assertEqual(args.work_orders, orders)
+                    self.assertIs(args.retain_evidence, retained)
+                    self.assertIs(args.r002f, 'R002F' in orders)
+                    self.assertEqual(M.star_campaign(args), M.star_controls(data.get('r0035')))
+                    self.assertEqual((args.r002f_dpr, args.r002f_rounds, args.r002f_section),
+                                     tuple(data['r002f'][key] for key in ('dpr', 'rounds', 'section')))
+                    self.assertEqual(json.loads((task/'capture'/'campaign.json').read_text()), data)
+                finally:
+                    os.umask(prior_umask)
+        self.assertEqual(checked_in.read_bytes(), unchanged)
 
     def test_optional_preparation_failure_preserves_plan_and_seals_only_receipts(self):
         with tempfile.TemporaryDirectory() as tmp:
             task = Path(tmp); (task/'capture').mkdir()
             args = SimpleNamespace(task=task, research=Path('/sources/research'), baseline=Path('/sources/main'),
                                    historical=Path('/sources/history'), engine='firefox', phase='prepare', lane=None,
-                                   r002f=True, r002f_dpr=2, r002f_rounds=2, r002f_section='prayer', r003f_dpr=2)
+                                   r002f=True, r002f_dpr=2, r002f_rounds=2, r002f_section='prayer', r003f_dpr=2,
+                                   work_orders=['R0040', 'R0035', 'R002F'], retain_evidence=True,
+                                   r0035_guard='off', r0035_scope='preview-members', r0035_mode='timing')
             runtime = {'python': '/dependencies/python', 'node': '/dependencies/node',
                        'modules': '/dependencies/modules', 'pngjs': '/dependencies/modules/pngjs'}
             calls = []
@@ -340,6 +569,11 @@ class Campaign(unittest.TestCase):
             for key, value in (('--r003f-dpr', '2'), ('--r002f-dpr', '2'), ('--r002f-rounds', '2'), ('--r002f-section', 'prayer')):
                 self.assertEqual(planner[planner.index(key)+1], value)
             self.assertIn('--r002f-prepared', planner)
+            start = planner.index('--work-orders')+1
+            self.assertEqual(planner[start:start+3], args.work_orders)
+            self.assertIn('--retain-evidence', planner)
+            for key, value in (('--r0035-guard', 'off'), ('--r0035-scope', 'preview-members'), ('--r0035-mode', 'timing')):
+                self.assertEqual(planner[planner.index(key)+1], value)
             self.assertEqual(planner[planner.index('--r002f-process')+1], str(task/'capture'/'r002f-preparation-process.json'))
             self.assertTrue((task/'capture'/'r002f-preparation'/'build-result.json').is_file())
             self.assertTrue((task/'capture'/'r002f-preparation'/'candidate-build-1.stderr').is_file())
@@ -348,13 +582,39 @@ class Campaign(unittest.TestCase):
     def test_namespace_command_preserves_the_selected_campaign_controls(self):
         args = SimpleNamespace(task=Path('/task'), research=Path('/sources/research'), baseline=Path('/sources/main'),
                                historical=Path('/sources/history'), engine='webkit', r002f=True, r002f_dpr=3,
-                               r002f_rounds=2, r002f_section='preview', r003f_dpr=2)
+                               r002f_rounds=2, r002f_section='preview', r003f_dpr=2,
+                               work_orders=['R0035', 'R002F'], retain_evidence=True,
+                               r0035_guard='off', r0035_scope='preview-members', r0035_mode='timing')
         runtime = {'node': '/dependencies/node', 'python': '/dependencies/python', 'modules': '/dependencies/modules'}
         argv = M.isolated_command(args, runtime, 'lane', 'r002f-webkit-dpr3')
         self.assertIn('--r002f', argv)
+        start = argv.index('--work-orders')+1
+        self.assertEqual(argv[start:start+2], args.work_orders)
+        self.assertIn('--retain-evidence', argv)
+        for key, value in (('--r0035-guard', 'off'), ('--r0035-scope', 'preview-members'), ('--r0035-mode', 'timing')):
+            self.assertEqual(argv[argv.index(key)+1], value)
         for key, value in (('--engine', 'webkit'), ('--r003f-dpr', '2'), ('--r002f-dpr', '3'),
                            ('--r002f-rounds', '2'), ('--r002f-section', 'preview')):
             self.assertEqual(argv[argv.index(key)+1], value)
+
+    def test_retained_veto_writes_actual_child_status_before_normal_coordinator_completion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            task = Path(tmp); capture = task/'capture'; capture.mkdir()
+            identifier = 'r0040-chromium'
+            lane = {'id': identifier, 'workOrder': 'R0040', 'argv': ['offline-driver-control'], 'cwd': str(task),
+                    'stdout': str(capture/'driver.stdout'), 'stderr': str(capture/'driver.stderr'), 'timeoutSeconds': 5,
+                    'stopAllOnExit': [86], 'evidenceRetention': {'instrumented': True},
+                    'result': {'kind': 'r0040-options', 'path': str(capture/'absent-original-report.json')}}
+            (capture/'lanes.json').write_text(json.dumps(campaign_plan([lane], ['R0040'], True)))
+            args = SimpleNamespace(task=task, engine='chromium', phase='lane', lane=identifier,
+                                   work_orders=['R0040'], retain_evidence=True)
+            with patch.object(M, 'controls', return_value='/private/isolation.json'), patch.dict(os.environ), \
+                 patch.object(M, 'run_bounded', return_value={'returncode': 86, 'timedOut': False}):
+                self.assertEqual(M.inside(args, {}), 0)
+            receipt = json.loads((capture/'lane-status'/(identifier+'.json')).read_text())
+            self.assertEqual(receipt['returncode'], 86)
+            self.assertEqual(receipt['status'], 'EXTERNAL_CONTINUATION_VETOED')
+            self.assertTrue(receipt['stopAll'])
 
 
 if __name__ == '__main__': unittest.main()

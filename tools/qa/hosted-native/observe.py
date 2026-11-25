@@ -16,11 +16,16 @@ import subprocess
 import sys
 import time
 
+from lanes import selected_work_orders, star_controls, STAR_DEFAULTS
+
 CAP_FIELDS = ('CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb')
 RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
               'reduced-none', 'reduced-still', 'motion-full', 'dry')
 HERE = Path(__file__).resolve().parent
 ISOLATION_EXIT = 86
+VETO_STATUS = 'EXTERNAL_CONTINUATION_VETOED'
+VETO_REASON = ('retention wrapper prevented external continuation before the real continue action; '
+               'not evidence of an actual network escape')
 
 
 def read_campaign(path):
@@ -35,7 +40,73 @@ def read_campaign(path):
             or type(r002f.get('rounds')) is not int or not 1 <= r002f['rounds'] <= 10
             or r002f.get('section') not in ('all', 'prayer', 'preview')):
         raise ValueError('unsupported R002F campaign controls')
+    if 'workOrders' in value and not isinstance(value['workOrders'], list):
+        raise ValueError('work-order selection must be a list')
+    selected = selected_work_orders(value.get('workOrders'), r002f['enabled'])
+    if 'r0035' in value and (not isinstance(value['r0035'], dict) or 'R0035' not in selected):
+        raise ValueError('explicit R0035 controls require a dictionary and selected R0035')
+    star_controls(value.get('r0035'))
+    if type(value.get('evidenceRetention', False)) is not bool:
+        raise ValueError('evidence retention must be boolean')
     return value
+
+
+def campaign_selection(args):
+    if type(getattr(args, 'retain_evidence', False)) is not bool:
+        raise ValueError('evidence retention must be boolean')
+    return selected_work_orders(getattr(args, 'work_orders', None), getattr(args, 'r002f', False))
+
+
+def star_campaign(args):
+    controls = star_controls({key: getattr(args, 'r0035_'+key, default) for key, default in STAR_DEFAULTS.items()})
+    if controls != STAR_DEFAULTS and 'R0035' not in campaign_selection(args):
+        raise ValueError('R0035 diagnostic controls require selected R0035 observations')
+    return controls
+
+
+def star_arguments(args):
+    return [part for key, value in star_campaign(args).items() for part in ('--r0035-'+key, value)]
+
+
+def retained_lane(lane):
+    evidence = lane.get('evidenceRetention')
+    return isinstance(evidence, dict) and evidence.get('instrumented') is True and 86 in lane.get('stopAllOnExit', [])
+
+
+def admit_plan(plan, args):
+    """Require the selected identities; preserve missing observations as blocked rows."""
+    selected = campaign_selection(args)
+    stars = star_campaign(args)
+    retention = getattr(args, 'retain_evidence', False)
+    if (plan.get('protocol') != 'salah-hosted-native-lanes/1' or plan.get('sequential') is not True
+            or plan.get('workOrders') != selected or plan.get('evidenceRetention') is not retention
+            or plan.get('r0035Controls', STAR_DEFAULTS) != stars
+            or not isinstance(plan.get('lanes'), list)):
+        raise ValueError('unadmitted lane plan or campaign controls')
+    engine = args.engine
+    population = [(f'r0040-{engine}', 'R0040', 720),
+                  (f'r003f-b0-{engine}-dpr{getattr(args, "r003f_dpr", 1)}', 'R003F', 900),
+                  (f'r0035-{engine}-timing', 'R0035', 480), (f'r0035-{engine}-capture', 'R0035', 480),
+                  (f'r002f-{engine}-dpr{getattr(args, "r002f_dpr", 1)}', 'R002F', 900)]
+    population = [row for row in population if row[1] != 'R0035'
+                  or stars['mode'] == 'both' or row[0].endswith('-'+stars['mode'])]
+    expected = {identifier: (order, timeout) for identifier, order, timeout in population if order in selected}
+    actual = {}
+    for lane in plan['lanes']:
+        if (not isinstance(lane, dict) or not isinstance(lane.get('id'), str) or lane['id'] not in expected
+                or lane['id'] in actual or lane.get('workOrder') != expected[lane['id']][0]):
+            raise ValueError('duplicate, unknown or unselected lane identity')
+        evidence = lane.get('evidenceRetention')
+        instrumented = isinstance(evidence, dict) and evidence.get('instrumented') is True
+        if (('evidenceRetention' in lane and not instrumented)
+                or instrumented != (retention and lane['workOrder'] in ('R0040', 'R0035'))
+                or instrumented and not retained_lane(lane)):
+            raise ValueError('lane retention mode differs from the selected campaign')
+        actual[lane['id']] = lane
+    return [actual.get(identifier, {'id': identifier, 'workOrder': order, 'timeoutSeconds': timeout,
+                                   'preparation': {'status': 'INCOMPLETE',
+                                                   'reason': f'requested {order} lane {identifier} is missing from the plan'}})
+            for identifier, (order, timeout) in expected.items()]
 
 
 def write_json(path, value):
@@ -198,6 +269,10 @@ def r002f_report_status(body, lane, returncode, timed_out):
 def classify_lane(lane, returncode, timed_out=False):
     kind = lane['result']['kind']
     result = {'status': 'INCOMPLETE', 'stopAll': False, 'returncode': returncode, 'timedOut': timed_out}
+    if 'evidenceRetention' in lane:
+        result['evidenceRetention'] = lane['evidenceRetention']
+    if returncode == 86 and retained_lane(lane):
+        return {**result, 'status': VETO_STATUS, 'stopAll': True, 'reason': VETO_REASON}
     if returncode == ISOLATION_EXIT or kind == 'r003f-b0' and returncode == 3:
         return {**result, 'status': 'ISOLATION_FAIL', 'stopAll': True}
     try: body = json.loads(Path(lane['result']['path']).read_text())
@@ -248,12 +323,16 @@ def classify_lane(lane, returncode, timed_out=False):
 def namespace_status(lane, process, inner):
     """An inner observation cannot overrule abnormal wrapper completion."""
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL')
+                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS)
                 and isinstance(inner.get('stopAll'), bool))
+    if admitted:
+        admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
+    if admitted and inner['status'] == VETO_STATUS:
+        admitted = retained_lane(lane) and inner.get('returncode') == 86 and inner['stopAll'] is True
     result = {**(inner if admitted else {}), 'id': lane['id'],
               'innerStatus': inner, 'namespaceProcess': process}
     if process['returncode'] == ISOLATION_EXIT or admitted and inner['status'] == 'ISOLATION_FAIL':
-        result.update(status='ISOLATION_FAIL', stopAll=True)
+        result.update(status='ISOLATION_FAIL', stopAll=True, reason='namespace boundary reported isolation failure')
     elif process['returncode'] != 0 or process['timedOut'] or not admitted:
         result.update(status='ISOLATION_UNCONFIRMED', stopAll=True,
                       reason='namespace completion or inner admission receipt is unconfirmed')
@@ -288,6 +367,7 @@ def controls(args, runtime, label):
 
 
 def inside(args, runtime):
+    selected = campaign_selection(args)
     label = args.lane or 'preparation'
     receipt = controls(args, runtime, label)
     if not receipt: return ISOLATION_EXIT
@@ -329,7 +409,10 @@ def inside(args, runtime):
                    str(destination/'receipts'/'prepared.json'), '--out', str(args.task/'capture'/'lanes'),
                    '--python-playwright', runtime['python'], '--node', runtime['node'],
                    '--node-modules', runtime['modules'], '--pngjs', runtime['pngjs'], '--engine', args.engine,
-                   '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1))]
+                   '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)), '--work-orders', *selected]
+        command += star_arguments(args)
+        if getattr(args, 'retain_evidence', False):
+            command.append('--retain-evidence')
         if getattr(args, 'r002f', False):
             command += ['--r002f', '--r002f-prepared', str(r002f_destination/'build-result.json'),
                         '--r002f-process', str(args.task/'capture'/'r002f-preparation-process.json'),
@@ -339,7 +422,7 @@ def inside(args, runtime):
                            args.task/'capture'/'plan.stderr', 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
     plan = json.loads((args.task/'capture'/'lanes.json').read_text())
-    lane = next(x for x in plan['lanes'] if x['id'] == args.lane)
+    lane = next(x for x in admit_plan(plan, args) if x['id'] == args.lane)
     env = dict(os.environ)
     # Recipe env is declarative data from the reviewed planner; arbitrary variables
     # cannot restore a credential/proxy/loader setting that the wrapper removed.
@@ -351,16 +434,23 @@ def inside(args, runtime):
     verdict = classify_lane(lane, result['returncode'], result['timedOut'])
     write_json(args.task/'capture'/'lane-status'/(args.lane+'.json'), {**result, **verdict, 'id': args.lane})
     # All in-namespace descendants are also killed when the namespace init exits.
-    return ISOLATION_EXIT if verdict['stopAll'] else 0
+    # A retained child veto is carried by its admitted receipt, including its
+    # actual exit 86. Normal coordinator completion does not claim child success;
+    # outer 86 remains reserved for an actual namespace/boundary failure.
+    return ISOLATION_EXIT if verdict['stopAll'] and verdict['status'] != VETO_STATUS else 0
 
 
 def isolated_command(args, runtime, phase, lane=None):
+    selected = campaign_selection(args)
     env = clean_environment(runtime['node'], runtime['python'], args.task, args.task/'node-browsers',
                             runtime['modules'], args.baseline, args.research)
     inner = [runtime['python'], str(HERE/'observe.py'), '--task', str(args.task), '--research', str(args.research),
              '--baseline', str(args.baseline), '--historical', str(args.historical), '--engine', args.engine,
-             '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)),
+             '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)), '--work-orders', *selected,
              '--inside', '--phase', phase, '--outer-netns', os.readlink('/proc/self/ns/net')]
+    inner += star_arguments(args)
+    if getattr(args, 'retain_evidence', False):
+        inner.append('--retain-evidence')
     if getattr(args, 'r002f', False):
         inner += ['--r002f', '--r002f-dpr', str(args.r002f_dpr), '--r002f-rounds', str(args.r002f_rounds),
                   '--r002f-section', args.r002f_section]
@@ -371,6 +461,7 @@ def isolated_command(args, runtime, phase, lane=None):
 
 
 def outside(args, runtime):
+    selected = campaign_selection(args)
     capture = args.task/'capture'
     parent_env = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C.UTF-8', 'LC_ALL': 'C.UTF-8'}
     deadline = time.monotonic() + 2640  # leaves sealing/upload time within the job ceiling
@@ -378,21 +469,17 @@ def outside(args, runtime):
                               capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
                               1920 if getattr(args, 'r002f', False) else 1020)
     overall = {'protocol': 'salah-hosted-native-observation/1', 'engine': args.engine,
+               'workOrders': selected, 'evidenceRetention': getattr(args, 'retain_evidence', False),
+               'r0035Controls': star_campaign(args),
                'preparation': preparation, 'lanes': [], 'status': 'INCOMPLETE'}
     write_json(capture/'observation.json', overall)
     if preparation['returncode'] or preparation['timedOut']:
         overall['status'] = 'ISOLATION_FAIL' if preparation['returncode'] == ISOLATION_EXIT else 'INCOMPLETE'
         write_json(capture/'observation.json', overall); return 2
     plan = json.loads((capture/'lanes.json').read_text())
-    if plan.get('protocol') != 'salah-hosted-native-lanes/1' or plan.get('sequential') is not True:
-        raise ValueError('unadmitted lane plan')
-    if getattr(args, 'r002f', False):
-        identifier = f'r002f-{args.engine}-dpr{args.r002f_dpr}'
-        if not any(lane.get('id') == identifier and lane.get('workOrder') == 'R002F' for lane in plan['lanes']):
-            plan['lanes'].append({'id': identifier, 'workOrder': 'R002F', 'timeoutSeconds': 900,
-                                  'preparation': {'status': 'INCOMPLETE', 'reason': 'requested R002F lane is missing from the plan'}})
-    stopped = set(); stop_all = False
-    for lane in plan['lanes']:
+    lanes = admit_plan(plan, args)
+    stopped = set(); stop_all = False; stop_reason = None
+    for lane in lanes:
         remaining = deadline - time.monotonic()
         if lane.get('preparation', {}).get('status', 'PASS') != 'PASS':
             status = {'id': lane['id'], 'status': 'NOT_RUN', 'preparationStatus': 'INCOMPLETE',
@@ -400,7 +487,8 @@ def outside(args, runtime):
         elif remaining <= 75:
             status = {'id': lane['id'], 'status': 'NOT_RUN', 'reason': 'bounded observation budget exhausted'}
         elif stop_all or lane['workOrder'] in stopped:
-            status = {'id': lane['id'], 'status': 'NOT_RUN', 'reason': 'isolation or scoped Andon'}
+            status = {'id': lane['id'], 'status': 'NOT_RUN',
+                      'reason': stop_reason if stop_all else 'workstream stopped by scoped Andon'}
         else:
             result = run_bounded(isolated_command(args, runtime, 'lane', lane['id']), str(HERE), parent_env,
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
@@ -409,11 +497,15 @@ def outside(args, runtime):
             try: inner = json.loads(path.read_text())
             except (OSError, ValueError): inner = None
             status = namespace_status(lane, result, inner)
-            if status.get('stopAll'): stop_all = True
+            if status.get('stopAll'):
+                stop_all = True
+                stop_reason = status.get('reason', status['status'])
             if status['status'] == 'ANDON': stopped.add(lane['workOrder'])
+        status['workOrder'] = lane['workOrder']
         overall['lanes'].append(status); write_json(capture/'observation.json', overall)
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
-                         'ISOLATION_UNCONFIRMED' if stop_all else
+                         'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
+                         VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
                          'OBSERVED' if overall['lanes'] and all(x['status'] == 'PASS' for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     write_json(capture/'observation.json', overall)
@@ -427,6 +519,11 @@ def main():
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--campaign', type=Path)
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
+    parser.add_argument('--work-orders', nargs='+')
+    parser.add_argument('--retain-evidence', action='store_true')
+    parser.add_argument('--r0035-guard', choices=('default', 'off'), default='default')
+    parser.add_argument('--r0035-scope', choices=('all', 'preview-members'), default='all')
+    parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
@@ -447,7 +544,12 @@ def main():
             args.engine = campaign['engine']; args.r003f_dpr = campaign['r003fDpr']
             args.r002f = campaign['r002f']['enabled']; args.r002f_dpr = campaign['r002f']['dpr']
             args.r002f_rounds = campaign['r002f']['rounds']; args.r002f_section = campaign['r002f']['section']
+            args.work_orders = campaign.get('workOrders'); args.retain_evidence = campaign.get('evidenceRetention', False)
+            for key, value in star_controls(campaign.get('r0035')).items():
+                setattr(args, 'r0035_'+key, value)
             write_json(args.task/'capture'/'campaign.json', campaign)
+        args.work_orders = campaign_selection(args)
+        star_campaign(args)
         return inside(args, runtime) if args.inside else outside(args, runtime)
     except Exception as exc:
         write_json(args.task/'capture'/('coordinator-error-'+(args.lane or args.phase or 'outer')+'.json'),

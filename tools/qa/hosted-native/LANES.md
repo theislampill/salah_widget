@@ -94,6 +94,24 @@ without a shell, under the coordinator's isolation boundary. The coordinator
 must create the stream files exclusively, preserve timeout output and clean up
 children. Each recipe creates its own fresh `output` directory.
 
+The plan also records `workOrders` and the boolean `evidenceRetention` mode.
+`--work-orders` accepts a nonempty list drawn from `R0040 R003F R0035 R002F`.
+Identifiers must be distinct and known, and selecting R002F requires `--r002f`;
+enabling R002F while excluding it is also rejected. Selection preserves the
+canonical order above. Without the selection switch, the existing three work
+orders are emitted, plus R002F when enabled. The initial hosted campaign enabled
+R002F and contained all four work orders and five command rows. R0035 defaults
+to both timing and capture with their original dependency. The checked-in
+follow-up selects only R0035 timing and R002F DPR2/two rounds.
+
+Selection limits observation commands. Common source preparation and the
+original star-plan validation remain unchanged. The coordinator checks the
+exact selected lane identities, including engine/DPR and the selected R0035 rows.
+Missing selected rows are retained as `NOT_RUN` with preparation `INCOMPLETE`;
+duplicates, unknown rows and unselected work-order commands are rejected before
+execution. Earlier failure/Andon evidence remains unchanged when a later
+campaign selects independent work orders.
+
 | Initial invocation | Exact scope | Result interpretation |
 |---|---|---|
 | R0040 Chromium | Nine published option cells: day rain/drizzle/thunder, night, twilight, reduced none/still, motion override and dry; DPR1 | Exit 0 plus all nine `native-options.json` cells establishes that recipe's observations. Exit 1 retains preceding PNGs and failure logs. |
@@ -110,11 +128,61 @@ Their flags differ only in `r35arm=full` versus `changed`; both have
 before command emission. These experimental settings select no production
 amplitude, glass or magnitude policy.
 
+The planner also accepts `--r0035-guard default|off`,
+`--r0035-scope all|preview-members` and `--r0035-mode both|timing|capture`.
+The corresponding campaign dictionary is `r0035` with `guard`, `scope` and
+`mode`; its defaults are recorded as `r0035Controls` in the plan and observation.
+Default controls leave every original lane argument and star-plan entry
+unchanged. Nondefault controls require selected R0035 observations, and the
+coordinator requires the plan's controls to match the requested campaign.
+
+`guard: off` adds `r35guard=off` symmetrically to the two experimental arms.
+The existing lab switch removes suspension and its gain ramp, so the result
+is explicitly a diagnostic ablation. It does not change main, source admission,
+producer `active` admission, the original 100 ms cadence gate, amplitude,
+glass, margin, duration, scene, motion or ordinary clock. Earlier default-guard
+failures remain intact and no production guard policy is selected. The existing
+`preview-members` scope is another symmetric diagnostic population; it does not
+remove all preparation of the accepted full source or establish a magnitude
+cutoff. Timing-only selects one timing row; capture-only selects one capture row
+without a nonexistent timing dependency. Both retains the original dependency.
+
 The existing R0040 and R0035 recipes do not persist a detailed request ledger.
 Their pre-page fixture/abort routes remain unchanged; the coordinator retains
 its independent network-boundary controls. No missing ledger or fixture
 consumption evidence may be inferred from kernel isolation. R003F does persist
 its request ledger. All outputs and logs remain private, including failures.
+
+### Optional supplemental retention
+
+`--retain-evidence` wraps only selected R0040/R0035 commands. The hosted campaign
+equivalent is `evidenceRetention: true`; absence means `false`. Both wrappers
+come from the coordinator checkout and execute the hash-pinned original drivers
+from the immutable research checkout. The unchanged original argument suffix
+follows `--`, including `--capture`; the Python venv path is preserved. Original
+result kinds, report paths, expected populations and admission rules are unchanged.
+
+Each instrumented lane adds an `evidenceRetention` object with its original
+argv, distinct private `<lane-id>-retention` output, and explicit timing/capture
+overhead. Host serialization, hashing, fsync and copying affect observations.
+These measurements cannot be treated as uninstrumented performance evidence.
+No supplemental journal replaces an original success report, and an actual
+nonzero child exit remains nonzero even if the original report is complete.
+The direct native CLIs and source/partial-evidence protocol are documented in
+[EVIDENCE_RETENTION.md](EVIDENCE_RETENTION.md).
+
+Instrumented lanes declare `stopAllOnExit: [86]`. This means
+`EXTERNAL_CONTINUATION_VETOED`: an attempted external continuation was prevented
+before the real action, not an observed network escape. The coordinator writes
+the inner verdict with actual child exit 86 and then exits normally; its admitted
+receipt stops every later lane. Actual namespace exit 86, timeout, abnormal exit
+or missing receipt still takes precedence. R003F's separate isolation exit 3
+and workstream Andon exit 4 remain unchanged.
+
+The current follow-up campaign uses guard-disabled R0035 timing and R002F
+DPR2/two rounds; retention remains disabled. The changed campaign follows the
+actual preceding observations. Further selections and instrumentation remain
+conditional on inspecting the new results.
 
 `--engine firefox` or `--engine webkit` emits the same bounded initial plan for
 that installed engine. `--r003f-dpr 2` changes only R003F; the other two existing
@@ -143,12 +211,13 @@ baseline/candidate and output paths, with `--timeout-ms 60000`. All output and
 streams are beneath the private lane directory; both disposable source arms
 remain outside capture. Failed or missing optional preparation adds an explicit
 blocked row with an empty argv, while the existing four command rows remain
-unchanged. The coordinator never executes that blocked row and never hides it
+unchanged under the default selection. The coordinator never executes that blocked row and never hides it
 from the campaign result.
 
 The workflow reads validated `campaign.json` directly. Its engine and R003F DPR,
 and the R002F enable/DPR/round/section values, are propagated into each isolated
-phase. A later engine or DPR observation can therefore use a new campaign
+phase, together with selected work orders and supplemental-retention mode.
+A later engine or DPR observation can therefore use a new campaign
 without editing the probe or published recipes. Each such observation still
 requires its own actual native admission.
 
@@ -173,3 +242,9 @@ engine/DPR distinction without importing Playwright or launching a browser.
 They also verify optional-preparation failure retention, the frozen R002F
 command/hash, its exact private paths and the R002B sparse-checkout inclusion.
 The source materialization command above is the separate real-build check.
+
+The registered retention controls run the actual source-pinned recipe functions
+with browser doubles. The coordinator controls additionally prove campaign
+option propagation, unchanged default invocations, distinct instrumented outputs,
+selected-population completeness and veto/outer-failure precedence. None of those
+controls launches a native browser or supplies a product acceptance result.
