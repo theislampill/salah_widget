@@ -46,6 +46,7 @@
   "tests/r0024-response-zone.test.cjs",
   "tests/r0024-weather.test.cjs",
   "tests/r0028-closure-index.test.cjs",
+  "tests/r002f-a2-resume-observer.test.cjs",
   "tests/r0030-reset-authority-mutations.test.cjs",
   "tests/r0030-reset-authority.test.cjs",
   "tests/r002b-pages-payload.test.cjs",
@@ -1899,7 +1900,7 @@
      "--playwright",
      "<playwright package>"
     ],
-    "protocol": "one JSON line per healthy scene / motion cell / fault cell on stdout and <out>/report.json (R2C-13/R2C-14; docs/state-contracts/R002C.md §5)"
+    "protocol": "one JSON line per healthy scene / motion cell / fault cell on stdout and <out>/report.json (R2C-13/R2C-14; docs/state-contracts/R002C.md \u00a75)"
    }
   },
   {
@@ -1934,7 +1935,7 @@
      "<tree>",
      "1800"
     ],
-    "protocol": "one JSON summary line of per-stage entry offsets (docs/state-contracts/R002C.md §3a)"
+    "protocol": "one JSON summary line of per-stage entry offsets (docs/state-contracts/R002C.md \u00a73a)"
    }
   },
   {
@@ -1996,7 +1997,7 @@
      "--playwright",
      "<playwright package>"
     ],
-    "protocol": "one JSON line per engine/pair cell and a final summary line {decision: DEFECT ESTABLISHED | NO DEFECT ESTABLISHED | INCOMPLETE}; <out>/report.json and .cn crops; exit 3 when INCOMPLETE (docs/state-contracts/R002E.md §2)"
+    "protocol": "one JSON line per engine/pair cell and a final summary line {decision: DEFECT ESTABLISHED | NO DEFECT ESTABLISHED | INCOMPLETE}; <out>/report.json and .cn crops; exit 3 when INCOMPLETE (docs/state-contracts/R002E.md \u00a72)"
    }
   },
   {
@@ -2187,6 +2188,18 @@
     ],
     "protocol": "one JSON line on stdout and <out>/result.json with the isolation verdict, card and Moon-slot PNGs, <out>/<cell>-<engine>-requests.json; exit 0 complete, 1 error, 2 INCOMPLETE, 3 isolation escape, 4 FAIL (docs/state-contracts/R0033.md section 15.5)"
    }
+  },
+  {
+   "path": "tools/qa/r002f_a2_resume.cjs",
+   "reason": "R002F-A2 bounded source-state observation recipe; not a native-pixel acceptance test. It records stale/current results and a test-only synchronous-render positive control. Observer controls run in tests/r002f-a2-resume-observer.test.cjs. --require-current intentionally exits 1 when the measured source differs at either checkpoint.",
+   "owner": "R002F-A2 (issue 96)",
+   "recipe": [
+    "node",
+    "tools/qa/r002f_a2_resume.cjs",
+    "index.html",
+    "<new-output.json>"
+   ],
+   "protocol": "JSON r002f-a2-resume-source/2; executed config, source and fixture hashes, independently specified fields, callback and fault evidence, and explicit VM-only limits; errors exit 2"
   }
  ]
 }
