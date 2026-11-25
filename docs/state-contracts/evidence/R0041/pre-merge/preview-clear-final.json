@@ -1,0 +1,3737 @@
+{
+ "schema": "r0041-preview-clear-final/1",
+ "date": "2026-11-24",
+ "tree": "x-r0041 e95cff3c",
+ "recipe": "tools/qa/r0041/swp.cjs <tree> <out> <engine> <dpr> reduce 300 <label> p1=2026-11-18T16:30:00Z:preview (ONE cell per launch, headed, reducedMotion reduce, R41_SHOT_MS=30000); per clear: tools/qa/r0041/pv-clear.cjs; per-clear windows: the flagwin replay (same v3 rule as pv-clear.cjs)",
+ "window": "a clear counts as followed by absence if >=1 v3-ABSENT recorded frame lies in [call-40 ms, call+1000 ms)",
+ "ratioCheck": "device-pixel crops of the Moon square: 218 px for the 107.8 CSS px slot at ratio 2, 109 px at ratio 1",
+ "launches": {
+  "pv-chromium-1-reduce": {
+   "engine": "chromium",
+   "dpr": 1,
+   "motion": "reduce",
+   "browserVersion": "148.0.7778.96",
+   "secondsAfterSettle": 300,
+   "isolation": {
+    "allowedExternal": 0,
+    "byLayerHostOutcome": {
+     "proxy clients2.google.com blocked": 1,
+     "proxy accounts.google.com blocked": 6,
+     "proxy www.google.com blocked": 6,
+     "proxy content-autofill.googleapis.com blocked": 10,
+     "proxy android.clients.google.com blocked": 4,
+     "route fonts.googleapis.com aborted": 1,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:net::ERR_BLOCKED_BY_CLIENT.Inspector": 1
+    }
+   },
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 0,
+     "per": [],
+     "recordedJudged": 5986,
+     "recordedAbsentTotal": 0,
+     "absentNotNearClear": [],
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 63,
+      "absent": 63
+     },
+     "swaps": {
+      "adopt": 0,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 1452
+     },
+     "videoUnreadable": 3872,
+     "videoFrames": 8208,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ],
+   "perClearWindows": {
+    "firstFlagged": null,
+    "flaggedTotal": 0,
+    "judgedTotal": 5986,
+    "clears": 37,
+    "meanRange": [
+     99.6,
+     100
+    ],
+    "clearsWithFlaggedFrames": [],
+    "note": "sPlusSettle: seconds after the first shot after settle; callSys: system clock (ms since epoch) of the clear call; frameIdx: recorded-frame indices in [call-40, call+1000)"
+   },
+   "recordingNote": "videoUnreadable in cells[] is the launch-time count (3,872, before the unwrap correction); after swp.cjs --reanalyse with the correction: 1,501 unreadable frames in one run (recorded frames 1,117-2,617, about 60 s), which covers clears 3 to 10: those 8 clears have 0 judged recorded frames; their windows hold 24-34 full-page shots each (marker read in every shot), 0 ABSENT, 0 point-like stars. Clears judged from the recording: 29 of 37, 0 followed by an ABSENT frame."
+  },
+  "pv-firefox-2-reduce": {
+   "engine": "firefox",
+   "dpr": 2,
+   "motion": "reduce",
+   "browserVersion": "150.0.2",
+   "secondsAfterSettle": 300,
+   "isolation": {
+    "allowedExternal": 0,
+    "byLayerHostOutcome": {
+     "proxy fonts.googleapis.com blocked": 1,
+     "proxy aus5.mozilla.org blocked": 2,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:NS_BINDING_ABORTED": 1
+    }
+   },
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 0,
+     "per": [],
+     "recordedJudged": 7489,
+     "recordedAbsentTotal": 0,
+     "absentNotNearClear": [],
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 38,
+      "absent": 38
+     },
+     "swaps": {
+      "adopt": 1,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 1351
+     },
+     "videoUnreadable": 9,
+     "videoFrames": 9949,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ],
+   "perClearWindows": {
+    "firstFlagged": null,
+    "flaggedTotal": 0,
+    "judgedTotal": 7489,
+    "clears": 37,
+    "meanRange": [
+     99,
+     99.7
+    ],
+    "clearsWithFlaggedFrames": [],
+    "note": "sPlusSettle: seconds after the first shot after settle; callSys: system clock (ms since epoch) of the clear call; frameIdx: recorded-frame indices in [call-40, call+1000)"
+   }
+  },
+  "pv-webkit-2-reduce": {
+   "engine": "webkit",
+   "dpr": 2,
+   "motion": "reduce",
+   "browserVersion": "26.4",
+   "secondsAfterSettle": 300,
+   "isolation": {
+    "allowedExternal": 0,
+    "byLayerHostOutcome": {
+     "route fonts.googleapis.com aborted": 1,
+     "browser fonts.googleapis.com issued": 1,
+     "browser fonts.googleapis.com failed:Blocked by Web Inspector": 1
+    }
+   },
+   "cells": [
+    {
+     "name": "p1",
+     "valid": true,
+     "invalidReasons": [],
+     "settled": true,
+     "clears": 37,
+     "invalidates": 37,
+     "clearsWithAbsent": 4,
+     "per": [
+      {
+       "absentFrames": 25,
+       "offsetsMs": [
+        0,
+        80,
+        80,
+        160,
+        160,
+        160,
+        240,
+        240,
+        320,
+        400,
+        400,
+        480,
+        480,
+        480,
+        560,
+        560,
+        640,
+        720,
+        720,
+        720,
+        800,
+        800,
+        880,
+        880,
+        960
+       ],
+       "means": [
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ],
+        [
+         99.2,
+         99.2
+        ]
+       ]
+      },
+      {
+       "absentFrames": 28,
+       "offsetsMs": [
+        -18,
+        -18,
+        -18,
+        62,
+        62,
+        142,
+        142,
+        142,
+        222,
+        342,
+        342,
+        342,
+        422,
+        502,
+        502,
+        502,
+        582,
+        582,
+        662,
+        662,
+        742,
+        822,
+        822,
+        822,
+        902,
+        902,
+        982,
+        982
+       ],
+       "means": [
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.3
+        ],
+        [
+         99.3,
+         99.2
+        ],
+        [
+         99.3,
+         99.2
+        ],
+        [
+         99.3,
+         99.2
+        ],
+        [
+         99.3,
+         99.2
+        ],
+        [
+         99.3,
+         99.2
+        ],
+        [
+         99.3,
+         99.2
+        ]
+       ]
+      },
+      {
+       "absentFrames": 27,
+       "offsetsMs": [
+        -18,
+        -18,
+        -18,
+        62,
+        142,
+        142,
+        142,
+        222,
+        222,
+        302,
+        302,
+        382,
+        382,
+        382,
+        462,
+        542,
+        542,
+        542,
+        662,
+        662,
+        742,
+        822,
+        822,
+        822,
+        902,
+        902,
+        982
+       ],
+       "means": [
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ]
+       ]
+      },
+      {
+       "absentFrames": 27,
+       "offsetsMs": [
+        2,
+        2,
+        82,
+        82,
+        82,
+        162,
+        162,
+        242,
+        242,
+        322,
+        402,
+        402,
+        402,
+        482,
+        482,
+        562,
+        562,
+        642,
+        642,
+        722,
+        722,
+        802,
+        802,
+        882,
+        882,
+        882,
+        962
+       ],
+       "means": [
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ],
+        [
+         99.1,
+         99.2
+        ]
+       ]
+      }
+     ],
+     "recordedJudged": 7483,
+     "recordedAbsentTotal": 793,
+     "absentNotNearClear": [
+      {
+       "t": 1795566804120,
+       "nearestInvalidateMs": 7284
+      },
+      {
+       "t": 1795566804240,
+       "nearestInvalidateMs": 7404
+      },
+      {
+       "t": 1795566804240,
+       "nearestInvalidateMs": 7404
+      },
+      {
+       "t": 1795566804240,
+       "nearestInvalidateMs": 7404
+      },
+      {
+       "t": 1795566804320,
+       "nearestInvalidateMs": 7484
+      },
+      {
+       "t": 1795566804400,
+       "nearestInvalidateMs": 7564
+      },
+      {
+       "t": 1795566804480,
+       "nearestInvalidateMs": 7644
+      },
+      {
+       "t": 1795566804480,
+       "nearestInvalidateMs": 7644
+      },
+      {
+       "t": 1795566804480,
+       "nearestInvalidateMs": 7644
+      },
+      {
+       "t": 1795566804560,
+       "nearestInvalidateMs": 7724
+      },
+      {
+       "t": 1795566804560,
+       "nearestInvalidateMs": 7724
+      },
+      {
+       "t": 1795566805000,
+       "nearestInvalidateMs": 163
+      },
+      {
+       "t": 1795566805120,
+       "nearestInvalidateMs": 283
+      },
+      {
+       "t": 1795566805200,
+       "nearestInvalidateMs": 363
+      },
+      {
+       "t": 1795566805200,
+       "nearestInvalidateMs": 363
+      },
+      {
+       "t": 1795566805280,
+       "nearestInvalidateMs": 443
+      },
+      {
+       "t": 1795566805280,
+       "nearestInvalidateMs": 443
+      },
+      {
+       "t": 1795566805280,
+       "nearestInvalidateMs": 443
+      },
+      {
+       "t": 1795566805360,
+       "nearestInvalidateMs": 523
+      },
+      {
+       "t": 1795566805360,
+       "nearestInvalidateMs": 523
+      },
+      {
+       "t": 1795566805440,
+       "nearestInvalidateMs": 603
+      },
+      {
+       "t": 1795566805440,
+       "nearestInvalidateMs": 603
+      },
+      {
+       "t": 1795566805440,
+       "nearestInvalidateMs": 603
+      },
+      {
+       "t": 1795566805520,
+       "nearestInvalidateMs": 683
+      },
+      {
+       "t": 1795566805520,
+       "nearestInvalidateMs": 683
+      },
+      {
+       "t": 1795566805600,
+       "nearestInvalidateMs": 763
+      },
+      {
+       "t": 1795566805720,
+       "nearestInvalidateMs": 883
+      },
+      {
+       "t": 1795566805720,
+       "nearestInvalidateMs": 883
+      },
+      {
+       "t": 1795566805800,
+       "nearestInvalidateMs": 963
+      },
+      {
+       "t": 1795566805800,
+       "nearestInvalidateMs": 963
+      },
+      {
+       "t": 1795566805800,
+       "nearestInvalidateMs": 963
+      },
+      {
+       "t": 1795566805880,
+       "nearestInvalidateMs": 1043
+      },
+      {
+       "t": 1795566805880,
+       "nearestInvalidateMs": 1043
+      },
+      {
+       "t": 1795566805960,
+       "nearestInvalidateMs": 1123
+      },
+      {
+       "t": 1795566805960,
+       "nearestInvalidateMs": 1123
+      },
+      {
+       "t": 1795566806040,
+       "nearestInvalidateMs": 1203
+      },
+      {
+       "t": 1795566806040,
+       "nearestInvalidateMs": 1203
+      },
+      {
+       "t": 1795566806040,
+       "nearestInvalidateMs": 1203
+      },
+      {
+       "t": 1795566806280,
+       "nearestInvalidateMs": 1443
+      },
+      {
+       "t": 1795566806280,
+       "nearestInvalidateMs": 1443
+      },
+      {
+       "t": 1795566806360,
+       "nearestInvalidateMs": 1523
+      },
+      {
+       "t": 1795566806360,
+       "nearestInvalidateMs": 1523
+      },
+      {
+       "t": 1795566806360,
+       "nearestInvalidateMs": 1523
+      },
+      {
+       "t": 1795566807480,
+       "nearestInvalidateMs": 2643
+      },
+      {
+       "t": 1795566807480,
+       "nearestInvalidateMs": 2643
+      },
+      {
+       "t": 1795566807480,
+       "nearestInvalidateMs": 2643
+      },
+      {
+       "t": 1795566807560,
+       "nearestInvalidateMs": 2723
+      },
+      {
+       "t": 1795566807560,
+       "nearestInvalidateMs": 2723
+      },
+      {
+       "t": 1795566807640,
+       "nearestInvalidateMs": 2803
+      },
+      {
+       "t": 1795566807640,
+       "nearestInvalidateMs": 2803
+      },
+      {
+       "t": 1795566807640,
+       "nearestInvalidateMs": 2803
+      },
+      {
+       "t": 1795566807720,
+       "nearestInvalidateMs": 2883
+      },
+      {
+       "t": 1795566807800,
+       "nearestInvalidateMs": 2963
+      },
+      {
+       "t": 1795566807800,
+       "nearestInvalidateMs": 2963
+      },
+      {
+       "t": 1795566807880,
+       "nearestInvalidateMs": 3043
+      },
+      {
+       "t": 1795566807880,
+       "nearestInvalidateMs": 3043
+      },
+      {
+       "t": 1795566807960,
+       "nearestInvalidateMs": 3123
+      },
+      {
+       "t": 1795566807960,
+       "nearestInvalidateMs": 3123
+      },
+      {
+       "t": 1795566807960,
+       "nearestInvalidateMs": 3123
+      },
+      {
+       "t": 1795566808040,
+       "nearestInvalidateMs": 3203
+      },
+      {
+       "t": 1795566808160,
+       "nearestInvalidateMs": 3323
+      },
+      {
+       "t": 1795566808160,
+       "nearestInvalidateMs": 3323
+      },
+      {
+       "t": 1795566808240,
+       "nearestInvalidateMs": 3403
+      },
+      {
+       "t": 1795566808240,
+       "nearestInvalidateMs": 3403
+      },
+      {
+       "t": 1795566808240,
+       "nearestInvalidateMs": 3403
+      },
+      {
+       "t": 1795566808320,
+       "nearestInvalidateMs": 3483
+      },
+      {
+       "t": 1795566808320,
+       "nearestInvalidateMs": 3483
+      },
+      {
+       "t": 1795566808400,
+       "nearestInvalidateMs": 3563
+      },
+      {
+       "t": 1795566808480,
+       "nearestInvalidateMs": 3643
+      },
+      {
+       "t": 1795566808480,
+       "nearestInvalidateMs": 3643
+      },
+      {
+       "t": 1795566808560,
+       "nearestInvalidateMs": 3723
+      },
+      {
+       "t": 1795566808560,
+       "nearestInvalidateMs": 3723
+      },
+      {
+       "t": 1795566808560,
+       "nearestInvalidateMs": 3723
+      },
+      {
+       "t": 1795566808640,
+       "nearestInvalidateMs": 3803
+      },
+      {
+       "t": 1795566808640,
+       "nearestInvalidateMs": 3803
+      },
+      {
+       "t": 1795566808720,
+       "nearestInvalidateMs": 3883
+      },
+      {
+       "t": 1795566808800,
+       "nearestInvalidateMs": 3963
+      },
+      {
+       "t": 1795566808800,
+       "nearestInvalidateMs": 3963
+      },
+      {
+       "t": 1795566808800,
+       "nearestInvalidateMs": 3963
+      },
+      {
+       "t": 1795566808880,
+       "nearestInvalidateMs": 4043
+      },
+      {
+       "t": 1795566808880,
+       "nearestInvalidateMs": 4043
+      },
+      {
+       "t": 1795566808960,
+       "nearestInvalidateMs": 4123
+      },
+      {
+       "t": 1795566808960,
+       "nearestInvalidateMs": 4123
+      },
+      {
+       "t": 1795566809040,
+       "nearestInvalidateMs": 4203
+      },
+      {
+       "t": 1795566809040,
+       "nearestInvalidateMs": 4203
+      },
+      {
+       "t": 1795566809040,
+       "nearestInvalidateMs": 4203
+      },
+      {
+       "t": 1795566809120,
+       "nearestInvalidateMs": 4283
+      },
+      {
+       "t": 1795566809200,
+       "nearestInvalidateMs": 4363
+      },
+      {
+       "t": 1795566809200,
+       "nearestInvalidateMs": 4363
+      },
+      {
+       "t": 1795566809320,
+       "nearestInvalidateMs": 4483
+      },
+      {
+       "t": 1795566809320,
+       "nearestInvalidateMs": 4483
+      },
+      {
+       "t": 1795566809320,
+       "nearestInvalidateMs": 4483
+      },
+      {
+       "t": 1795566809400,
+       "nearestInvalidateMs": 4563
+      },
+      {
+       "t": 1795566809480,
+       "nearestInvalidateMs": 4643
+      },
+      {
+       "t": 1795566809480,
+       "nearestInvalidateMs": 4643
+      },
+      {
+       "t": 1795566809480,
+       "nearestInvalidateMs": 4643
+      },
+      {
+       "t": 1795566809560,
+       "nearestInvalidateMs": 4723
+      },
+      {
+       "t": 1795566809560,
+       "nearestInvalidateMs": 4723
+      },
+      {
+       "t": 1795566809640,
+       "nearestInvalidateMs": 4803
+      },
+      {
+       "t": 1795566809640,
+       "nearestInvalidateMs": 4803
+      },
+      {
+       "t": 1795566809720,
+       "nearestInvalidateMs": 4883
+      },
+      {
+       "t": 1795566809720,
+       "nearestInvalidateMs": 4883
+      },
+      {
+       "t": 1795566809720,
+       "nearestInvalidateMs": 4883
+      },
+      {
+       "t": 1795566809800,
+       "nearestInvalidateMs": 4963
+      },
+      {
+       "t": 1795566809800,
+       "nearestInvalidateMs": 4963
+      },
+      {
+       "t": 1795566809920,
+       "nearestInvalidateMs": 5083
+      },
+      {
+       "t": 1795566809920,
+       "nearestInvalidateMs": 5083
+      },
+      {
+       "t": 1795566810000,
+       "nearestInvalidateMs": 5163
+      },
+      {
+       "t": 1795566810000,
+       "nearestInvalidateMs": 5163
+      },
+      {
+       "t": 1795566810000,
+       "nearestInvalidateMs": 5163
+      },
+      {
+       "t": 1795566810120,
+       "nearestInvalidateMs": 5283
+      },
+      {
+       "t": 1795566810120,
+       "nearestInvalidateMs": 5283
+      },
+      {
+       "t": 1795566810200,
+       "nearestInvalidateMs": 5363
+      },
+      {
+       "t": 1795566810280,
+       "nearestInvalidateMs": 5443
+      },
+      {
+       "t": 1795566810280,
+       "nearestInvalidateMs": 5443
+      },
+      {
+       "t": 1795566810360,
+       "nearestInvalidateMs": 5523
+      },
+      {
+       "t": 1795566810360,
+       "nearestInvalidateMs": 5523
+      },
+      {
+       "t": 1795566810360,
+       "nearestInvalidateMs": 5523
+      },
+      {
+       "t": 1795566810440,
+       "nearestInvalidateMs": 5603
+      },
+      {
+       "t": 1795566810440,
+       "nearestInvalidateMs": 5603
+      },
+      {
+       "t": 1795566810520,
+       "nearestInvalidateMs": 5683
+      },
+      {
+       "t": 1795566810600,
+       "nearestInvalidateMs": 5763
+      },
+      {
+       "t": 1795566810600,
+       "nearestInvalidateMs": 5763
+      },
+      {
+       "t": 1795566810600,
+       "nearestInvalidateMs": 5763
+      },
+      {
+       "t": 1795566810680,
+       "nearestInvalidateMs": 5843
+      },
+      {
+       "t": 1795566810680,
+       "nearestInvalidateMs": 5843
+      },
+      {
+       "t": 1795566810760,
+       "nearestInvalidateMs": 5923
+      },
+      {
+       "t": 1795566810760,
+       "nearestInvalidateMs": 5923
+      },
+      {
+       "t": 1795566810840,
+       "nearestInvalidateMs": 6003
+      },
+      {
+       "t": 1795566810920,
+       "nearestInvalidateMs": 6083
+      },
+      {
+       "t": 1795566810920,
+       "nearestInvalidateMs": 6083
+      },
+      {
+       "t": 1795566810920,
+       "nearestInvalidateMs": 6083
+      },
+      {
+       "t": 1795566811000,
+       "nearestInvalidateMs": 6163
+      },
+      {
+       "t": 1795566811000,
+       "nearestInvalidateMs": 6163
+      },
+      {
+       "t": 1795566811360,
+       "nearestInvalidateMs": 6523
+      },
+      {
+       "t": 1795566811440,
+       "nearestInvalidateMs": 6603
+      },
+      {
+       "t": 1795566811440,
+       "nearestInvalidateMs": 6603
+      },
+      {
+       "t": 1795566811440,
+       "nearestInvalidateMs": 6603
+      },
+      {
+       "t": 1795566811520,
+       "nearestInvalidateMs": 6683
+      },
+      {
+       "t": 1795566811520,
+       "nearestInvalidateMs": 6683
+      },
+      {
+       "t": 1795566811600,
+       "nearestInvalidateMs": 6763
+      },
+      {
+       "t": 1795566811680,
+       "nearestInvalidateMs": 6843
+      },
+      {
+       "t": 1795566811680,
+       "nearestInvalidateMs": 6843
+      },
+      {
+       "t": 1795566811760,
+       "nearestInvalidateMs": 6923
+      },
+      {
+       "t": 1795566811760,
+       "nearestInvalidateMs": 6923
+      },
+      {
+       "t": 1795566811760,
+       "nearestInvalidateMs": 6923
+      },
+      {
+       "t": 1795566811840,
+       "nearestInvalidateMs": 7003
+      },
+      {
+       "t": 1795566811920,
+       "nearestInvalidateMs": 7083
+      },
+      {
+       "t": 1795566811920,
+       "nearestInvalidateMs": 7083
+      },
+      {
+       "t": 1795566811920,
+       "nearestInvalidateMs": 7083
+      },
+      {
+       "t": 1795566812000,
+       "nearestInvalidateMs": 7163
+      },
+      {
+       "t": 1795566812080,
+       "nearestInvalidateMs": 7243
+      },
+      {
+       "t": 1795566812080,
+       "nearestInvalidateMs": 7243
+      },
+      {
+       "t": 1795566812080,
+       "nearestInvalidateMs": 7243
+      },
+      {
+       "t": 1795566812160,
+       "nearestInvalidateMs": 7323
+      },
+      {
+       "t": 1795566812160,
+       "nearestInvalidateMs": 7323
+      },
+      {
+       "t": 1795566812240,
+       "nearestInvalidateMs": 7403
+      },
+      {
+       "t": 1795566812240,
+       "nearestInvalidateMs": 7403
+      },
+      {
+       "t": 1795566812320,
+       "nearestInvalidateMs": 7483
+      },
+      {
+       "t": 1795566812320,
+       "nearestInvalidateMs": 7483
+      },
+      {
+       "t": 1795566812400,
+       "nearestInvalidateMs": 7563
+      },
+      {
+       "t": 1795566812480,
+       "nearestInvalidateMs": 7643
+      },
+      {
+       "t": 1795566812480,
+       "nearestInvalidateMs": 7643
+      },
+      {
+       "t": 1795566812480,
+       "nearestInvalidateMs": 7643
+      },
+      {
+       "t": 1795566812560,
+       "nearestInvalidateMs": 7723
+      },
+      {
+       "t": 1795566812560,
+       "nearestInvalidateMs": 7723
+      },
+      {
+       "t": 1795566812640,
+       "nearestInvalidateMs": 7803
+      },
+      {
+       "t": 1795566812640,
+       "nearestInvalidateMs": 7803
+      },
+      {
+       "t": 1795566812640,
+       "nearestInvalidateMs": 7803
+      },
+      {
+       "t": 1795566812640,
+       "nearestInvalidateMs": 7803
+      },
+      {
+       "t": 1795566812720,
+       "nearestInvalidateMs": 7883
+      },
+      {
+       "t": 1795566812720,
+       "nearestInvalidateMs": 7883
+      },
+      {
+       "t": 1795566812880,
+       "nearestInvalidateMs": 53
+      },
+      {
+       "t": 1795566812880,
+       "nearestInvalidateMs": 53
+      },
+      {
+       "t": 1795566812960,
+       "nearestInvalidateMs": 133
+      },
+      {
+       "t": 1795566812960,
+       "nearestInvalidateMs": 133
+      },
+      {
+       "t": 1795566812960,
+       "nearestInvalidateMs": 133
+      },
+      {
+       "t": 1795566813040,
+       "nearestInvalidateMs": 213
+      },
+      {
+       "t": 1795566813120,
+       "nearestInvalidateMs": 293
+      },
+      {
+       "t": 1795566813120,
+       "nearestInvalidateMs": 293
+      },
+      {
+       "t": 1795566813240,
+       "nearestInvalidateMs": 413
+      },
+      {
+       "t": 1795566813240,
+       "nearestInvalidateMs": 413
+      },
+      {
+       "t": 1795566813240,
+       "nearestInvalidateMs": 413
+      },
+      {
+       "t": 1795566813320,
+       "nearestInvalidateMs": 493
+      },
+      {
+       "t": 1795566813400,
+       "nearestInvalidateMs": 573
+      },
+      {
+       "t": 1795566813400,
+       "nearestInvalidateMs": 573
+      },
+      {
+       "t": 1795566813400,
+       "nearestInvalidateMs": 573
+      },
+      {
+       "t": 1795566813400,
+       "nearestInvalidateMs": 573
+      },
+      {
+       "t": 1795566813480,
+       "nearestInvalidateMs": 653
+      },
+      {
+       "t": 1795566813560,
+       "nearestInvalidateMs": 733
+      },
+      {
+       "t": 1795566813560,
+       "nearestInvalidateMs": 733
+      },
+      {
+       "t": 1795566813560,
+       "nearestInvalidateMs": 733
+      },
+      {
+       "t": 1795566813640,
+       "nearestInvalidateMs": 813
+      },
+      {
+       "t": 1795566813720,
+       "nearestInvalidateMs": 893
+      },
+      {
+       "t": 1795566813720,
+       "nearestInvalidateMs": 893
+      },
+      {
+       "t": 1795566813720,
+       "nearestInvalidateMs": 893
+      },
+      {
+       "t": 1795566813840,
+       "nearestInvalidateMs": 1013
+      },
+      {
+       "t": 1795566813840,
+       "nearestInvalidateMs": 1013
+      },
+      {
+       "t": 1795566813920,
+       "nearestInvalidateMs": 1093
+      },
+      {
+       "t": 1795566813920,
+       "nearestInvalidateMs": 1093
+      },
+      {
+       "t": 1795566814000,
+       "nearestInvalidateMs": 1173
+      },
+      {
+       "t": 1795566814000,
+       "nearestInvalidateMs": 1173
+      },
+      {
+       "t": 1795566814120,
+       "nearestInvalidateMs": 1293
+      },
+      {
+       "t": 1795566814120,
+       "nearestInvalidateMs": 1293
+      },
+      {
+       "t": 1795566814120,
+       "nearestInvalidateMs": 1293
+      },
+      {
+       "t": 1795566814200,
+       "nearestInvalidateMs": 1373
+      },
+      {
+       "t": 1795566814200,
+       "nearestInvalidateMs": 1373
+      },
+      {
+       "t": 1795566814280,
+       "nearestInvalidateMs": 1453
+      },
+      {
+       "t": 1795566814280,
+       "nearestInvalidateMs": 1453
+      },
+      {
+       "t": 1795566814360,
+       "nearestInvalidateMs": 1533
+      },
+      {
+       "t": 1795566815520,
+       "nearestInvalidateMs": 2693
+      },
+      {
+       "t": 1795566815520,
+       "nearestInvalidateMs": 2693
+      },
+      {
+       "t": 1795566815600,
+       "nearestInvalidateMs": 2773
+      },
+      {
+       "t": 1795566815600,
+       "nearestInvalidateMs": 2773
+      },
+      {
+       "t": 1795566815680,
+       "nearestInvalidateMs": 2853
+      },
+      {
+       "t": 1795566815680,
+       "nearestInvalidateMs": 2853
+      },
+      {
+       "t": 1795566815680,
+       "nearestInvalidateMs": 2853
+      },
+      {
+       "t": 1795566815760,
+       "nearestInvalidateMs": 2933
+      },
+      {
+       "t": 1795566815840,
+       "nearestInvalidateMs": 3013
+      },
+      {
+       "t": 1795566815840,
+       "nearestInvalidateMs": 3013
+      },
+      {
+       "t": 1795566815920,
+       "nearestInvalidateMs": 3093
+      },
+      {
+       "t": 1795566815920,
+       "nearestInvalidateMs": 3093
+      },
+      {
+       "t": 1795566815920,
+       "nearestInvalidateMs": 3093
+      },
+      {
+       "t": 1795566816000,
+       "nearestInvalidateMs": 3173
+      },
+      {
+       "t": 1795566816120,
+       "nearestInvalidateMs": 3293
+      },
+      {
+       "t": 1795566816120,
+       "nearestInvalidateMs": 3293
+      },
+      {
+       "t": 1795566816200,
+       "nearestInvalidateMs": 3373
+      },
+      {
+       "t": 1795566816200,
+       "nearestInvalidateMs": 3373
+      },
+      {
+       "t": 1795566816520,
+       "nearestInvalidateMs": 3693
+      },
+      {
+       "t": 1795566816520,
+       "nearestInvalidateMs": 3693
+      },
+      {
+       "t": 1795566816520,
+       "nearestInvalidateMs": 3693
+      },
+      {
+       "t": 1795566816600,
+       "nearestInvalidateMs": 3773
+      },
+      {
+       "t": 1795566816680,
+       "nearestInvalidateMs": 3853
+      },
+      {
+       "t": 1795566816680,
+       "nearestInvalidateMs": 3853
+      },
+      {
+       "t": 1795566816680,
+       "nearestInvalidateMs": 3853
+      },
+      {
+       "t": 1795566816760,
+       "nearestInvalidateMs": 3933
+      },
+      {
+       "t": 1795566816760,
+       "nearestInvalidateMs": 3933
+      },
+      {
+       "t": 1795566816840,
+       "nearestInvalidateMs": 4013
+      },
+      {
+       "t": 1795566816920,
+       "nearestInvalidateMs": 4093
+      },
+      {
+       "t": 1795566816920,
+       "nearestInvalidateMs": 4093
+      },
+      {
+       "t": 1795566817000,
+       "nearestInvalidateMs": 4173
+      },
+      {
+       "t": 1795566817000,
+       "nearestInvalidateMs": 4173
+      },
+      {
+       "t": 1795566817000,
+       "nearestInvalidateMs": 4173
+      },
+      {
+       "t": 1795566817080,
+       "nearestInvalidateMs": 4253
+      },
+      {
+       "t": 1795566817080,
+       "nearestInvalidateMs": 4253
+      },
+      {
+       "t": 1795566817160,
+       "nearestInvalidateMs": 4333
+      },
+      {
+       "t": 1795566817240,
+       "nearestInvalidateMs": 4413
+      },
+      {
+       "t": 1795566817240,
+       "nearestInvalidateMs": 4413
+      },
+      {
+       "t": 1795566817240,
+       "nearestInvalidateMs": 4413
+      },
+      {
+       "t": 1795566817320,
+       "nearestInvalidateMs": 4493
+      },
+      {
+       "t": 1795566817320,
+       "nearestInvalidateMs": 4493
+      },
+      {
+       "t": 1795566817400,
+       "nearestInvalidateMs": 4573
+      },
+      {
+       "t": 1795566817400,
+       "nearestInvalidateMs": 4573
+      },
+      {
+       "t": 1795566817480,
+       "nearestInvalidateMs": 4653
+      },
+      {
+       "t": 1795566817480,
+       "nearestInvalidateMs": 4653
+      },
+      {
+       "t": 1795566817480,
+       "nearestInvalidateMs": 4653
+      },
+      {
+       "t": 1795566817600,
+       "nearestInvalidateMs": 4773
+      },
+      {
+       "t": 1795566817600,
+       "nearestInvalidateMs": 4773
+      },
+      {
+       "t": 1795566817680,
+       "nearestInvalidateMs": 4853
+      },
+      {
+       "t": 1795566817760,
+       "nearestInvalidateMs": 4933
+      },
+      {
+       "t": 1795566817760,
+       "nearestInvalidateMs": 4933
+      },
+      {
+       "t": 1795566817760,
+       "nearestInvalidateMs": 4933
+      },
+      {
+       "t": 1795566817840,
+       "nearestInvalidateMs": 5013
+      },
+      {
+       "t": 1795566817840,
+       "nearestInvalidateMs": 5013
+      },
+      {
+       "t": 1795566817920,
+       "nearestInvalidateMs": 5093
+      },
+      {
+       "t": 1795566817920,
+       "nearestInvalidateMs": 5093
+      },
+      {
+       "t": 1795566818000,
+       "nearestInvalidateMs": 5173
+      },
+      {
+       "t": 1795566818000,
+       "nearestInvalidateMs": 5173
+      },
+      {
+       "t": 1795566818000,
+       "nearestInvalidateMs": 5173
+      },
+      {
+       "t": 1795566818080,
+       "nearestInvalidateMs": 5253
+      },
+      {
+       "t": 1795566818160,
+       "nearestInvalidateMs": 5333
+      },
+      {
+       "t": 1795566818160,
+       "nearestInvalidateMs": 5333
+      },
+      {
+       "t": 1795566818240,
+       "nearestInvalidateMs": 5413
+      },
+      {
+       "t": 1795566818240,
+       "nearestInvalidateMs": 5413
+      },
+      {
+       "t": 1795566818360,
+       "nearestInvalidateMs": 5533
+      },
+      {
+       "t": 1795566818360,
+       "nearestInvalidateMs": 5533
+      },
+      {
+       "t": 1795566818360,
+       "nearestInvalidateMs": 5533
+      },
+      {
+       "t": 1795566818440,
+       "nearestInvalidateMs": 5613
+      },
+      {
+       "t": 1795566818440,
+       "nearestInvalidateMs": 5613
+      },
+      {
+       "t": 1795566818520,
+       "nearestInvalidateMs": 5693
+      },
+      {
+       "t": 1795566818520,
+       "nearestInvalidateMs": 5693
+      },
+      {
+       "t": 1795566818640,
+       "nearestInvalidateMs": 5813
+      },
+      {
+       "t": 1795566818640,
+       "nearestInvalidateMs": 5813
+      },
+      {
+       "t": 1795566818640,
+       "nearestInvalidateMs": 5813
+      },
+      {
+       "t": 1795566818720,
+       "nearestInvalidateMs": 5893
+      },
+      {
+       "t": 1795566818800,
+       "nearestInvalidateMs": 5973
+      },
+      {
+       "t": 1795566818800,
+       "nearestInvalidateMs": 5973
+      },
+      {
+       "t": 1795566818880,
+       "nearestInvalidateMs": 6053
+      },
+      {
+       "t": 1795566818880,
+       "nearestInvalidateMs": 6053
+      },
+      {
+       "t": 1795566818880,
+       "nearestInvalidateMs": 6053
+      },
+      {
+       "t": 1795566818960,
+       "nearestInvalidateMs": 6133
+      },
+      {
+       "t": 1795566818960,
+       "nearestInvalidateMs": 6133
+      },
+      {
+       "t": 1795566819040,
+       "nearestInvalidateMs": 6213
+      },
+      {
+       "t": 1795566819120,
+       "nearestInvalidateMs": 6293
+      },
+      {
+       "t": 1795566819120,
+       "nearestInvalidateMs": 6293
+      },
+      {
+       "t": 1795566819120,
+       "nearestInvalidateMs": 6293
+      },
+      {
+       "t": 1795566819200,
+       "nearestInvalidateMs": 6373
+      },
+      {
+       "t": 1795566819200,
+       "nearestInvalidateMs": 6373
+      },
+      {
+       "t": 1795566819280,
+       "nearestInvalidateMs": 6453
+      },
+      {
+       "t": 1795566819280,
+       "nearestInvalidateMs": 6453
+      },
+      {
+       "t": 1795566819360,
+       "nearestInvalidateMs": 6533
+      },
+      {
+       "t": 1795566819440,
+       "nearestInvalidateMs": 6613
+      },
+      {
+       "t": 1795566819440,
+       "nearestInvalidateMs": 6613
+      },
+      {
+       "t": 1795566819440,
+       "nearestInvalidateMs": 6613
+      },
+      {
+       "t": 1795566819520,
+       "nearestInvalidateMs": 6693
+      },
+      {
+       "t": 1795566819520,
+       "nearestInvalidateMs": 6693
+      },
+      {
+       "t": 1795566819600,
+       "nearestInvalidateMs": 6773
+      },
+      {
+       "t": 1795566819680,
+       "nearestInvalidateMs": 6853
+      },
+      {
+       "t": 1795566819680,
+       "nearestInvalidateMs": 6853
+      },
+      {
+       "t": 1795566819680,
+       "nearestInvalidateMs": 6853
+      },
+      {
+       "t": 1795566819760,
+       "nearestInvalidateMs": 6933
+      },
+      {
+       "t": 1795566819760,
+       "nearestInvalidateMs": 6933
+      },
+      {
+       "t": 1795566819840,
+       "nearestInvalidateMs": 7013
+      },
+      {
+       "t": 1795566819840,
+       "nearestInvalidateMs": 7013
+      },
+      {
+       "t": 1795566819920,
+       "nearestInvalidateMs": 7093
+      },
+      {
+       "t": 1795566820000,
+       "nearestInvalidateMs": 7173
+      },
+      {
+       "t": 1795566820000,
+       "nearestInvalidateMs": 7173
+      },
+      {
+       "t": 1795566820000,
+       "nearestInvalidateMs": 7173
+      },
+      {
+       "t": 1795566820080,
+       "nearestInvalidateMs": 7253
+      },
+      {
+       "t": 1795566820080,
+       "nearestInvalidateMs": 7253
+      },
+      {
+       "t": 1795566820160,
+       "nearestInvalidateMs": 7333
+      },
+      {
+       "t": 1795566820160,
+       "nearestInvalidateMs": 7333
+      },
+      {
+       "t": 1795566820240,
+       "nearestInvalidateMs": 7413
+      },
+      {
+       "t": 1795566820240,
+       "nearestInvalidateMs": 7413
+      },
+      {
+       "t": 1795566820240,
+       "nearestInvalidateMs": 7413
+      },
+      {
+       "t": 1795566820320,
+       "nearestInvalidateMs": 7493
+      },
+      {
+       "t": 1795566820440,
+       "nearestInvalidateMs": 7613
+      },
+      {
+       "t": 1795566820440,
+       "nearestInvalidateMs": 7613
+      },
+      {
+       "t": 1795566820520,
+       "nearestInvalidateMs": 7693
+      },
+      {
+       "t": 1795566820520,
+       "nearestInvalidateMs": 7693
+      },
+      {
+       "t": 1795566820520,
+       "nearestInvalidateMs": 7693
+      },
+      {
+       "t": 1795566820600,
+       "nearestInvalidateMs": 7773
+      },
+      {
+       "t": 1795566820600,
+       "nearestInvalidateMs": 7773
+      },
+      {
+       "t": 1795566820680,
+       "nearestInvalidateMs": 7853
+      },
+      {
+       "t": 1795566820680,
+       "nearestInvalidateMs": 7853
+      },
+      {
+       "t": 1795566820680,
+       "nearestInvalidateMs": 7853
+      },
+      {
+       "t": 1795566820760,
+       "nearestInvalidateMs": 7933
+      },
+      {
+       "t": 1795566820760,
+       "nearestInvalidateMs": 7933
+      },
+      {
+       "t": 1795566820760,
+       "nearestInvalidateMs": 7933
+      },
+      {
+       "t": 1795566820920,
+       "nearestInvalidateMs": 57
+      },
+      {
+       "t": 1795566820920,
+       "nearestInvalidateMs": 57
+      },
+      {
+       "t": 1795566820920,
+       "nearestInvalidateMs": 57
+      },
+      {
+       "t": 1795566821000,
+       "nearestInvalidateMs": 137
+      },
+      {
+       "t": 1795566821080,
+       "nearestInvalidateMs": 217
+      },
+      {
+       "t": 1795566821080,
+       "nearestInvalidateMs": 217
+      },
+      {
+       "t": 1795566821160,
+       "nearestInvalidateMs": 297
+      },
+      {
+       "t": 1795566821160,
+       "nearestInvalidateMs": 297
+      },
+      {
+       "t": 1795566821160,
+       "nearestInvalidateMs": 297
+      },
+      {
+       "t": 1795566821240,
+       "nearestInvalidateMs": 377
+      },
+      {
+       "t": 1795566821320,
+       "nearestInvalidateMs": 457
+      },
+      {
+       "t": 1795566821440,
+       "nearestInvalidateMs": 577
+      },
+      {
+       "t": 1795566821440,
+       "nearestInvalidateMs": 577
+      },
+      {
+       "t": 1795566821440,
+       "nearestInvalidateMs": 577
+      },
+      {
+       "t": 1795566821520,
+       "nearestInvalidateMs": 657
+      },
+      {
+       "t": 1795566821520,
+       "nearestInvalidateMs": 657
+      },
+      {
+       "t": 1795566821600,
+       "nearestInvalidateMs": 737
+      },
+      {
+       "t": 1795566821600,
+       "nearestInvalidateMs": 737
+      },
+      {
+       "t": 1795566821680,
+       "nearestInvalidateMs": 817
+      },
+      {
+       "t": 1795566821680,
+       "nearestInvalidateMs": 817
+      },
+      {
+       "t": 1795566821680,
+       "nearestInvalidateMs": 817
+      },
+      {
+       "t": 1795566821760,
+       "nearestInvalidateMs": 897
+      },
+      {
+       "t": 1795566821840,
+       "nearestInvalidateMs": 977
+      },
+      {
+       "t": 1795566821840,
+       "nearestInvalidateMs": 977
+      },
+      {
+       "t": 1795566821960,
+       "nearestInvalidateMs": 1097
+      },
+      {
+       "t": 1795566821960,
+       "nearestInvalidateMs": 1097
+      },
+      {
+       "t": 1795566821960,
+       "nearestInvalidateMs": 1097
+      },
+      {
+       "t": 1795566821960,
+       "nearestInvalidateMs": 1097
+      },
+      {
+       "t": 1795566822040,
+       "nearestInvalidateMs": 1177
+      },
+      {
+       "t": 1795566822040,
+       "nearestInvalidateMs": 1177
+      },
+      {
+       "t": 1795566822160,
+       "nearestInvalidateMs": 1297
+      },
+      {
+       "t": 1795566822240,
+       "nearestInvalidateMs": 1377
+      },
+      {
+       "t": 1795566822240,
+       "nearestInvalidateMs": 1377
+      },
+      {
+       "t": 1795566822240,
+       "nearestInvalidateMs": 1377
+      },
+      {
+       "t": 1795566822320,
+       "nearestInvalidateMs": 1457
+      },
+      {
+       "t": 1795566823480,
+       "nearestInvalidateMs": 2617
+      },
+      {
+       "t": 1795566823480,
+       "nearestInvalidateMs": 2617
+      },
+      {
+       "t": 1795566823480,
+       "nearestInvalidateMs": 2617
+      },
+      {
+       "t": 1795566823560,
+       "nearestInvalidateMs": 2697
+      },
+      {
+       "t": 1795566823560,
+       "nearestInvalidateMs": 2697
+      },
+      {
+       "t": 1795566823640,
+       "nearestInvalidateMs": 2777
+      },
+      {
+       "t": 1795566823640,
+       "nearestInvalidateMs": 2777
+      },
+      {
+       "t": 1795566823720,
+       "nearestInvalidateMs": 2857
+      },
+      {
+       "t": 1795566823720,
+       "nearestInvalidateMs": 2857
+      },
+      {
+       "t": 1795566823800,
+       "nearestInvalidateMs": 2937
+      },
+      {
+       "t": 1795566823800,
+       "nearestInvalidateMs": 2937
+      },
+      {
+       "t": 1795566823880,
+       "nearestInvalidateMs": 3017
+      },
+      {
+       "t": 1795566823880,
+       "nearestInvalidateMs": 3017
+      },
+      {
+       "t": 1795566823960,
+       "nearestInvalidateMs": 3097
+      },
+      {
+       "t": 1795566823960,
+       "nearestInvalidateMs": 3097
+      },
+      {
+       "t": 1795566823960,
+       "nearestInvalidateMs": 3097
+      },
+      {
+       "t": 1795566824040,
+       "nearestInvalidateMs": 3177
+      },
+      {
+       "t": 1795566824040,
+       "nearestInvalidateMs": 3177
+      },
+      {
+       "t": 1795566824160,
+       "nearestInvalidateMs": 3297
+      },
+      {
+       "t": 1795566824240,
+       "nearestInvalidateMs": 3377
+      },
+      {
+       "t": 1795566824240,
+       "nearestInvalidateMs": 3377
+      },
+      {
+       "t": 1795566824240,
+       "nearestInvalidateMs": 3377
+      },
+      {
+       "t": 1795566824320,
+       "nearestInvalidateMs": 3457
+      },
+      {
+       "t": 1795566824320,
+       "nearestInvalidateMs": 3457
+      },
+      {
+       "t": 1795566824400,
+       "nearestInvalidateMs": 3537
+      },
+      {
+       "t": 1795566824400,
+       "nearestInvalidateMs": 3537
+      },
+      {
+       "t": 1795566824480,
+       "nearestInvalidateMs": 3617
+      },
+      {
+       "t": 1795566824480,
+       "nearestInvalidateMs": 3617
+      },
+      {
+       "t": 1795566824480,
+       "nearestInvalidateMs": 3617
+      },
+      {
+       "t": 1795566824560,
+       "nearestInvalidateMs": 3697
+      },
+      {
+       "t": 1795566824640,
+       "nearestInvalidateMs": 3777
+      },
+      {
+       "t": 1795566824640,
+       "nearestInvalidateMs": 3777
+      },
+      {
+       "t": 1795566824760,
+       "nearestInvalidateMs": 3897
+      },
+      {
+       "t": 1795566824760,
+       "nearestInvalidateMs": 3897
+      },
+      {
+       "t": 1795566824840,
+       "nearestInvalidateMs": 3977
+      },
+      {
+       "t": 1795566824840,
+       "nearestInvalidateMs": 3977
+      },
+      {
+       "t": 1795566824840,
+       "nearestInvalidateMs": 3977
+      },
+      {
+       "t": 1795566824920,
+       "nearestInvalidateMs": 4057
+      },
+      {
+       "t": 1795566824920,
+       "nearestInvalidateMs": 4057
+      },
+      {
+       "t": 1795566825000,
+       "nearestInvalidateMs": 4137
+      },
+      {
+       "t": 1795566825080,
+       "nearestInvalidateMs": 4217
+      },
+      {
+       "t": 1795566825080,
+       "nearestInvalidateMs": 4217
+      },
+      {
+       "t": 1795566825080,
+       "nearestInvalidateMs": 4217
+      },
+      {
+       "t": 1795566825160,
+       "nearestInvalidateMs": 4297
+      },
+      {
+       "t": 1795566825160,
+       "nearestInvalidateMs": 4297
+      },
+      {
+       "t": 1795566825240,
+       "nearestInvalidateMs": 4377
+      },
+      {
+       "t": 1795566825240,
+       "nearestInvalidateMs": 4377
+      },
+      {
+       "t": 1795566825320,
+       "nearestInvalidateMs": 4457
+      },
+      {
+       "t": 1795566825320,
+       "nearestInvalidateMs": 4457
+      },
+      {
+       "t": 1795566825400,
+       "nearestInvalidateMs": 4537
+      },
+      {
+       "t": 1795566825400,
+       "nearestInvalidateMs": 4537
+      },
+      {
+       "t": 1795566825480,
+       "nearestInvalidateMs": 4617
+      },
+      {
+       "t": 1795566825480,
+       "nearestInvalidateMs": 4617
+      },
+      {
+       "t": 1795566825560,
+       "nearestInvalidateMs": 4697
+      },
+      {
+       "t": 1795566825560,
+       "nearestInvalidateMs": 4697
+      },
+      {
+       "t": 1795566825560,
+       "nearestInvalidateMs": 4697
+      },
+      {
+       "t": 1795566825680,
+       "nearestInvalidateMs": 4817
+      },
+      {
+       "t": 1795566825680,
+       "nearestInvalidateMs": 4817
+      },
+      {
+       "t": 1795566825760,
+       "nearestInvalidateMs": 4897
+      },
+      {
+       "t": 1795566825760,
+       "nearestInvalidateMs": 4897
+      },
+      {
+       "t": 1795566825840,
+       "nearestInvalidateMs": 4977
+      },
+      {
+       "t": 1795566825920,
+       "nearestInvalidateMs": 5057
+      },
+      {
+       "t": 1795566825920,
+       "nearestInvalidateMs": 5057
+      },
+      {
+       "t": 1795566825920,
+       "nearestInvalidateMs": 5057
+      },
+      {
+       "t": 1795566826000,
+       "nearestInvalidateMs": 5137
+      },
+      {
+       "t": 1795566826000,
+       "nearestInvalidateMs": 5137
+      },
+      {
+       "t": 1795566826080,
+       "nearestInvalidateMs": 5217
+      },
+      {
+       "t": 1795566826080,
+       "nearestInvalidateMs": 5217
+      },
+      {
+       "t": 1795566826200,
+       "nearestInvalidateMs": 5337
+      },
+      {
+       "t": 1795566826200,
+       "nearestInvalidateMs": 5337
+      },
+      {
+       "t": 1795566826200,
+       "nearestInvalidateMs": 5337
+      },
+      {
+       "t": 1795566826280,
+       "nearestInvalidateMs": 5417
+      },
+      {
+       "t": 1795566826280,
+       "nearestInvalidateMs": 5417
+      },
+      {
+       "t": 1795566826360,
+       "nearestInvalidateMs": 5497
+      },
+      {
+       "t": 1795566826360,
+       "nearestInvalidateMs": 5497
+      },
+      {
+       "t": 1795566826440,
+       "nearestInvalidateMs": 5577
+      },
+      {
+       "t": 1795566826440,
+       "nearestInvalidateMs": 5577
+      },
+      {
+       "t": 1795566826520,
+       "nearestInvalidateMs": 5657
+      },
+      {
+       "t": 1795566826520,
+       "nearestInvalidateMs": 5657
+      },
+      {
+       "t": 1795566826600,
+       "nearestInvalidateMs": 5737
+      },
+      {
+       "t": 1795566826600,
+       "nearestInvalidateMs": 5737
+      },
+      {
+       "t": 1795566826720,
+       "nearestInvalidateMs": 5857
+      },
+      {
+       "t": 1795566826720,
+       "nearestInvalidateMs": 5857
+      },
+      {
+       "t": 1795566826720,
+       "nearestInvalidateMs": 5857
+      },
+      {
+       "t": 1795566826800,
+       "nearestInvalidateMs": 5937
+      },
+      {
+       "t": 1795566826800,
+       "nearestInvalidateMs": 5937
+      },
+      {
+       "t": 1795566826880,
+       "nearestInvalidateMs": 6017
+      },
+      {
+       "t": 1795566826960,
+       "nearestInvalidateMs": 6097
+      },
+      {
+       "t": 1795566826960,
+       "nearestInvalidateMs": 6097
+      },
+      {
+       "t": 1795566827040,
+       "nearestInvalidateMs": 6177
+      },
+      {
+       "t": 1795566827040,
+       "nearestInvalidateMs": 6177
+      },
+      {
+       "t": 1795566827040,
+       "nearestInvalidateMs": 6177
+      },
+      {
+       "t": 1795566827120,
+       "nearestInvalidateMs": 6257
+      },
+      {
+       "t": 1795566827120,
+       "nearestInvalidateMs": 6257
+      },
+      {
+       "t": 1795566827200,
+       "nearestInvalidateMs": 6337
+      },
+      {
+       "t": 1795566827280,
+       "nearestInvalidateMs": 6417
+      },
+      {
+       "t": 1795566827280,
+       "nearestInvalidateMs": 6417
+      },
+      {
+       "t": 1795566827280,
+       "nearestInvalidateMs": 6417
+      },
+      {
+       "t": 1795566827360,
+       "nearestInvalidateMs": 6497
+      },
+      {
+       "t": 1795566827360,
+       "nearestInvalidateMs": 6497
+      },
+      {
+       "t": 1795566827440,
+       "nearestInvalidateMs": 6577
+      },
+      {
+       "t": 1795566827440,
+       "nearestInvalidateMs": 6577
+      },
+      {
+       "t": 1795566827520,
+       "nearestInvalidateMs": 6657
+      },
+      {
+       "t": 1795566827520,
+       "nearestInvalidateMs": 6657
+      },
+      {
+       "t": 1795566827600,
+       "nearestInvalidateMs": 6737
+      },
+      {
+       "t": 1795566827600,
+       "nearestInvalidateMs": 6737
+      },
+      {
+       "t": 1795566827600,
+       "nearestInvalidateMs": 6737
+      },
+      {
+       "t": 1795566827680,
+       "nearestInvalidateMs": 6817
+      },
+      {
+       "t": 1795566827680,
+       "nearestInvalidateMs": 6817
+      },
+      {
+       "t": 1795566827800,
+       "nearestInvalidateMs": 6937
+      },
+      {
+       "t": 1795566827880,
+       "nearestInvalidateMs": 7017
+      },
+      {
+       "t": 1795566827880,
+       "nearestInvalidateMs": 7017
+      },
+      {
+       "t": 1795566827960,
+       "nearestInvalidateMs": 7097
+      },
+      {
+       "t": 1795566827960,
+       "nearestInvalidateMs": 7097
+      },
+      {
+       "t": 1795566827960,
+       "nearestInvalidateMs": 7097
+      },
+      {
+       "t": 1795566828040,
+       "nearestInvalidateMs": 7177
+      },
+      {
+       "t": 1795566828040,
+       "nearestInvalidateMs": 7177
+      },
+      {
+       "t": 1795566828040,
+       "nearestInvalidateMs": 7177
+      },
+      {
+       "t": 1795566828120,
+       "nearestInvalidateMs": 7257
+      },
+      {
+       "t": 1795566828200,
+       "nearestInvalidateMs": 7337
+      },
+      {
+       "t": 1795566828200,
+       "nearestInvalidateMs": 7337
+      },
+      {
+       "t": 1795566828320,
+       "nearestInvalidateMs": 7457
+      },
+      {
+       "t": 1795566828320,
+       "nearestInvalidateMs": 7457
+      },
+      {
+       "t": 1795566828400,
+       "nearestInvalidateMs": 7537
+      },
+      {
+       "t": 1795566828400,
+       "nearestInvalidateMs": 7537
+      },
+      {
+       "t": 1795566828400,
+       "nearestInvalidateMs": 7537
+      },
+      {
+       "t": 1795566828480,
+       "nearestInvalidateMs": 7617
+      },
+      {
+       "t": 1795566828560,
+       "nearestInvalidateMs": 7697
+      },
+      {
+       "t": 1795566828560,
+       "nearestInvalidateMs": 7697
+      },
+      {
+       "t": 1795566828560,
+       "nearestInvalidateMs": 7697
+      },
+      {
+       "t": 1795566828640,
+       "nearestInvalidateMs": 7777
+      },
+      {
+       "t": 1795566828720,
+       "nearestInvalidateMs": 7857
+      },
+      {
+       "t": 1795566828720,
+       "nearestInvalidateMs": 7857
+      },
+      {
+       "t": 1795566828720,
+       "nearestInvalidateMs": 7857
+      },
+      {
+       "t": 1795566828720,
+       "nearestInvalidateMs": 7857
+      },
+      {
+       "t": 1795566828720,
+       "nearestInvalidateMs": 7857
+      },
+      {
+       "t": 1795566828800,
+       "nearestInvalidateMs": -32
+      },
+      {
+       "t": 1795566828920,
+       "nearestInvalidateMs": 88
+      },
+      {
+       "t": 1795566828920,
+       "nearestInvalidateMs": 88
+      },
+      {
+       "t": 1795566829040,
+       "nearestInvalidateMs": 208
+      },
+      {
+       "t": 1795566829040,
+       "nearestInvalidateMs": 208
+      },
+      {
+       "t": 1795566829040,
+       "nearestInvalidateMs": 208
+      },
+      {
+       "t": 1795566829120,
+       "nearestInvalidateMs": 288
+      },
+      {
+       "t": 1795566829200,
+       "nearestInvalidateMs": 368
+      },
+      {
+       "t": 1795566829200,
+       "nearestInvalidateMs": 368
+      },
+      {
+       "t": 1795566829280,
+       "nearestInvalidateMs": 448
+      },
+      {
+       "t": 1795566829280,
+       "nearestInvalidateMs": 448
+      },
+      {
+       "t": 1795566829280,
+       "nearestInvalidateMs": 448
+      },
+      {
+       "t": 1795566829360,
+       "nearestInvalidateMs": 528
+      },
+      {
+       "t": 1795566829360,
+       "nearestInvalidateMs": 528
+      },
+      {
+       "t": 1795566829360,
+       "nearestInvalidateMs": 528
+      },
+      {
+       "t": 1795566829440,
+       "nearestInvalidateMs": 608
+      },
+      {
+       "t": 1795566829560,
+       "nearestInvalidateMs": 728
+      },
+      {
+       "t": 1795566829560,
+       "nearestInvalidateMs": 728
+      },
+      {
+       "t": 1795566829560,
+       "nearestInvalidateMs": 728
+      },
+      {
+       "t": 1795566829640,
+       "nearestInvalidateMs": 808
+      },
+      {
+       "t": 1795566829640,
+       "nearestInvalidateMs": 808
+      },
+      {
+       "t": 1795566829720,
+       "nearestInvalidateMs": 888
+      },
+      {
+       "t": 1795566829800,
+       "nearestInvalidateMs": 968
+      },
+      {
+       "t": 1795566829800,
+       "nearestInvalidateMs": 968
+      },
+      {
+       "t": 1795566829800,
+       "nearestInvalidateMs": 968
+      },
+      {
+       "t": 1795566829880,
+       "nearestInvalidateMs": 1048
+      },
+      {
+       "t": 1795566829880,
+       "nearestInvalidateMs": 1048
+      },
+      {
+       "t": 1795566829880,
+       "nearestInvalidateMs": 1048
+      },
+      {
+       "t": 1795566830000,
+       "nearestInvalidateMs": 1168
+      },
+      {
+       "t": 1795566830080,
+       "nearestInvalidateMs": 1248
+      },
+      {
+       "t": 1795566830080,
+       "nearestInvalidateMs": 1248
+      },
+      {
+       "t": 1795566830080,
+       "nearestInvalidateMs": 1248
+      },
+      {
+       "t": 1795566830160,
+       "nearestInvalidateMs": 1328
+      },
+      {
+       "t": 1795566830160,
+       "nearestInvalidateMs": 1328
+      },
+      {
+       "t": 1795566830240,
+       "nearestInvalidateMs": 1408
+      },
+      {
+       "t": 1795566830240,
+       "nearestInvalidateMs": 1408
+      },
+      {
+       "t": 1795566830320,
+       "nearestInvalidateMs": 1488
+      },
+      {
+       "t": 1795566830320,
+       "nearestInvalidateMs": 1488
+      },
+      {
+       "t": 1795566830320,
+       "nearestInvalidateMs": 1488
+      },
+      {
+       "t": 1795566830400,
+       "nearestInvalidateMs": 1568
+      },
+      {
+       "t": 1795566831560,
+       "nearestInvalidateMs": 2728
+      },
+      {
+       "t": 1795566831560,
+       "nearestInvalidateMs": 2728
+      },
+      {
+       "t": 1795566831640,
+       "nearestInvalidateMs": 2808
+      },
+      {
+       "t": 1795566831640,
+       "nearestInvalidateMs": 2808
+      },
+      {
+       "t": 1795566831640,
+       "nearestInvalidateMs": 2808
+      },
+      {
+       "t": 1795566831720,
+       "nearestInvalidateMs": 2888
+      },
+      {
+       "t": 1795566831800,
+       "nearestInvalidateMs": 2968
+      },
+      {
+       "t": 1795566831800,
+       "nearestInvalidateMs": 2968
+      },
+      {
+       "t": 1795566831880,
+       "nearestInvalidateMs": 3048
+      },
+      {
+       "t": 1795566831880,
+       "nearestInvalidateMs": 3048
+      },
+      {
+       "t": 1795566832000,
+       "nearestInvalidateMs": 3168
+      },
+      {
+       "t": 1795566832000,
+       "nearestInvalidateMs": 3168
+      },
+      {
+       "t": 1795566832000,
+       "nearestInvalidateMs": 3168
+      },
+      {
+       "t": 1795566832080,
+       "nearestInvalidateMs": 3248
+      },
+      {
+       "t": 1795566832080,
+       "nearestInvalidateMs": 3248
+      },
+      {
+       "t": 1795566832160,
+       "nearestInvalidateMs": 3328
+      },
+      {
+       "t": 1795566832160,
+       "nearestInvalidateMs": 3328
+      },
+      {
+       "t": 1795566832240,
+       "nearestInvalidateMs": 3408
+      },
+      {
+       "t": 1795566832240,
+       "nearestInvalidateMs": 3408
+      },
+      {
+       "t": 1795566832320,
+       "nearestInvalidateMs": 3488
+      },
+      {
+       "t": 1795566832320,
+       "nearestInvalidateMs": 3488
+      },
+      {
+       "t": 1795566832400,
+       "nearestInvalidateMs": 3568
+      },
+      {
+       "t": 1795566832400,
+       "nearestInvalidateMs": 3568
+      },
+      {
+       "t": 1795566832480,
+       "nearestInvalidateMs": 3648
+      },
+      {
+       "t": 1795566832480,
+       "nearestInvalidateMs": 3648
+      },
+      {
+       "t": 1795566832560,
+       "nearestInvalidateMs": 3728
+      },
+      {
+       "t": 1795566832560,
+       "nearestInvalidateMs": 3728
+      },
+      {
+       "t": 1795566832640,
+       "nearestInvalidateMs": 3808
+      },
+      {
+       "t": 1795566832640,
+       "nearestInvalidateMs": 3808
+      },
+      {
+       "t": 1795566832720,
+       "nearestInvalidateMs": 3888
+      },
+      {
+       "t": 1795566832720,
+       "nearestInvalidateMs": 3888
+      },
+      {
+       "t": 1795566832720,
+       "nearestInvalidateMs": 3888
+      },
+      {
+       "t": 1795566832800,
+       "nearestInvalidateMs": 3968
+      },
+      {
+       "t": 1795566832880,
+       "nearestInvalidateMs": 4048
+      },
+      {
+       "t": 1795566832880,
+       "nearestInvalidateMs": 4048
+      },
+      {
+       "t": 1795566833000,
+       "nearestInvalidateMs": 4168
+      },
+      {
+       "t": 1795566833000,
+       "nearestInvalidateMs": 4168
+      },
+      {
+       "t": 1795566833000,
+       "nearestInvalidateMs": 4168
+      },
+      {
+       "t": 1795566833080,
+       "nearestInvalidateMs": 4248
+      },
+      {
+       "t": 1795566833080,
+       "nearestInvalidateMs": 4248
+      },
+      {
+       "t": 1795566833160,
+       "nearestInvalidateMs": 4328
+      },
+      {
+       "t": 1795566833160,
+       "nearestInvalidateMs": 4328
+      },
+      {
+       "t": 1795566833240,
+       "nearestInvalidateMs": 4408
+      },
+      {
+       "t": 1795566833240,
+       "nearestInvalidateMs": 4408
+      },
+      {
+       "t": 1795566833320,
+       "nearestInvalidateMs": 4488
+      },
+      {
+       "t": 1795566833320,
+       "nearestInvalidateMs": 4488
+      },
+      {
+       "t": 1795566833400,
+       "nearestInvalidateMs": 4568
+      },
+      {
+       "t": 1795566833400,
+       "nearestInvalidateMs": 4568
+      },
+      {
+       "t": 1795566833400,
+       "nearestInvalidateMs": 4568
+      },
+      {
+       "t": 1795566833520,
+       "nearestInvalidateMs": 4688
+      },
+      {
+       "t": 1795566833600,
+       "nearestInvalidateMs": 4768
+      },
+      {
+       "t": 1795566833600,
+       "nearestInvalidateMs": 4768
+      },
+      {
+       "t": 1795566833600,
+       "nearestInvalidateMs": 4768
+      },
+      {
+       "t": 1795566833680,
+       "nearestInvalidateMs": 4848
+      },
+      {
+       "t": 1795566833680,
+       "nearestInvalidateMs": 4848
+      },
+      {
+       "t": 1795566833760,
+       "nearestInvalidateMs": 4928
+      },
+      {
+       "t": 1795566833760,
+       "nearestInvalidateMs": 4928
+      },
+      {
+       "t": 1795566833840,
+       "nearestInvalidateMs": 5008
+      },
+      {
+       "t": 1795566833840,
+       "nearestInvalidateMs": 5008
+      },
+      {
+       "t": 1795566833840,
+       "nearestInvalidateMs": 5008
+      },
+      {
+       "t": 1795566833840,
+       "nearestInvalidateMs": 5008
+      },
+      {
+       "t": 1795566833840,
+       "nearestInvalidateMs": 5008
+      },
+      {
+       "t": 1795566834000,
+       "nearestInvalidateMs": 5168
+      },
+      {
+       "t": 1795566834120,
+       "nearestInvalidateMs": 5288
+      },
+      {
+       "t": 1795566834120,
+       "nearestInvalidateMs": 5288
+      },
+      {
+       "t": 1795566834120,
+       "nearestInvalidateMs": 5288
+      },
+      {
+       "t": 1795566834200,
+       "nearestInvalidateMs": 5368
+      },
+      {
+       "t": 1795566834200,
+       "nearestInvalidateMs": 5368
+      },
+      {
+       "t": 1795566834280,
+       "nearestInvalidateMs": 5448
+      },
+      {
+       "t": 1795566834360,
+       "nearestInvalidateMs": 5528
+      },
+      {
+       "t": 1795566834360,
+       "nearestInvalidateMs": 5528
+      },
+      {
+       "t": 1795566834360,
+       "nearestInvalidateMs": 5528
+      },
+      {
+       "t": 1795566834440,
+       "nearestInvalidateMs": 5608
+      },
+      {
+       "t": 1795566834440,
+       "nearestInvalidateMs": 5608
+      },
+      {
+       "t": 1795566834560,
+       "nearestInvalidateMs": 5728
+      },
+      {
+       "t": 1795566834560,
+       "nearestInvalidateMs": 5728
+      },
+      {
+       "t": 1795566834560,
+       "nearestInvalidateMs": 5728
+      },
+      {
+       "t": 1795566834640,
+       "nearestInvalidateMs": 5808
+      },
+      {
+       "t": 1795566834720,
+       "nearestInvalidateMs": 5888
+      },
+      {
+       "t": 1795566834720,
+       "nearestInvalidateMs": 5888
+      },
+      {
+       "t": 1795566834720,
+       "nearestInvalidateMs": 5888
+      },
+      {
+       "t": 1795566834800,
+       "nearestInvalidateMs": 5968
+      },
+      {
+       "t": 1795566834880,
+       "nearestInvalidateMs": 6048
+      },
+      {
+       "t": 1795566834880,
+       "nearestInvalidateMs": 6048
+      },
+      {
+       "t": 1795566834880,
+       "nearestInvalidateMs": 6048
+      },
+      {
+       "t": 1795566834960,
+       "nearestInvalidateMs": 6128
+      },
+      {
+       "t": 1795566834960,
+       "nearestInvalidateMs": 6128
+      },
+      {
+       "t": 1795566835040,
+       "nearestInvalidateMs": 6208
+      },
+      {
+       "t": 1795566835040,
+       "nearestInvalidateMs": 6208
+      },
+      {
+       "t": 1795566835120,
+       "nearestInvalidateMs": 6288
+      },
+      {
+       "t": 1795566835120,
+       "nearestInvalidateMs": 6288
+      },
+      {
+       "t": 1795566835200,
+       "nearestInvalidateMs": 6368
+      },
+      {
+       "t": 1795566835200,
+       "nearestInvalidateMs": 6368
+      },
+      {
+       "t": 1795566835280,
+       "nearestInvalidateMs": 6448
+      },
+      {
+       "t": 1795566835280,
+       "nearestInvalidateMs": 6448
+      },
+      {
+       "t": 1795566835280,
+       "nearestInvalidateMs": 6448
+      },
+      {
+       "t": 1795566835360,
+       "nearestInvalidateMs": 6528
+      },
+      {
+       "t": 1795566835440,
+       "nearestInvalidateMs": 6608
+      },
+      {
+       "t": 1795566835440,
+       "nearestInvalidateMs": 6608
+      },
+      {
+       "t": 1795566835560,
+       "nearestInvalidateMs": 6728
+      },
+      {
+       "t": 1795566835560,
+       "nearestInvalidateMs": 6728
+      },
+      {
+       "t": 1795566835640,
+       "nearestInvalidateMs": 6808
+      },
+      {
+       "t": 1795566835640,
+       "nearestInvalidateMs": 6808
+      },
+      {
+       "t": 1795566835640,
+       "nearestInvalidateMs": 6808
+      },
+      {
+       "t": 1795566835720,
+       "nearestInvalidateMs": 6888
+      },
+      {
+       "t": 1795566835720,
+       "nearestInvalidateMs": 6888
+      },
+      {
+       "t": 1795566835800,
+       "nearestInvalidateMs": 6968
+      },
+      {
+       "t": 1795566835880,
+       "nearestInvalidateMs": 7048
+      },
+      {
+       "t": 1795566835880,
+       "nearestInvalidateMs": 7048
+      },
+      {
+       "t": 1795566835880,
+       "nearestInvalidateMs": 7048
+      },
+      {
+       "t": 1795566835960,
+       "nearestInvalidateMs": 7128
+      },
+      {
+       "t": 1795566835960,
+       "nearestInvalidateMs": 7128
+      },
+      {
+       "t": 1795566836040,
+       "nearestInvalidateMs": 7208
+      },
+      {
+       "t": 1795566836040,
+       "nearestInvalidateMs": 7208
+      },
+      {
+       "t": 1795566836120,
+       "nearestInvalidateMs": 7288
+      },
+      {
+       "t": 1795566836120,
+       "nearestInvalidateMs": 7288
+      },
+      {
+       "t": 1795566836200,
+       "nearestInvalidateMs": 7368
+      },
+      {
+       "t": 1795566836200,
+       "nearestInvalidateMs": 7368
+      },
+      {
+       "t": 1795566836280,
+       "nearestInvalidateMs": 7448
+      },
+      {
+       "t": 1795566836280,
+       "nearestInvalidateMs": 7448
+      },
+      {
+       "t": 1795566836360,
+       "nearestInvalidateMs": 7528
+      },
+      {
+       "t": 1795566836360,
+       "nearestInvalidateMs": 7528
+      },
+      {
+       "t": 1795566836440,
+       "nearestInvalidateMs": 7608
+      },
+      {
+       "t": 1795566836440,
+       "nearestInvalidateMs": 7608
+      },
+      {
+       "t": 1795566836520,
+       "nearestInvalidateMs": 7688
+      },
+      {
+       "t": 1795566836520,
+       "nearestInvalidateMs": 7688
+      },
+      {
+       "t": 1795566836600,
+       "nearestInvalidateMs": 7768
+      },
+      {
+       "t": 1795566836600,
+       "nearestInvalidateMs": 7768
+      },
+      {
+       "t": 1795566836680,
+       "nearestInvalidateMs": 7848
+      },
+      {
+       "t": 1795566836680,
+       "nearestInvalidateMs": 7848
+      },
+      {
+       "t": 1795566836680,
+       "nearestInvalidateMs": 7848
+      },
+      {
+       "t": 1795566836760,
+       "nearestInvalidateMs": 7928
+      },
+      {
+       "t": 1795566836840,
+       "nearestInvalidateMs": 8008
+      },
+      {
+       "t": 1795566836840,
+       "nearestInvalidateMs": 8008
+      },
+      {
+       "t": 1795566836960,
+       "nearestInvalidateMs": 8128
+      },
+      {
+       "t": 1795566836960,
+       "nearestInvalidateMs": 8128
+      }
+     ],
+     "wholeFrameShiftNotJudged": 0,
+     "endControl": {
+      "frames": 60,
+      "absent": 60
+     },
+     "swaps": {
+      "adopt": 1,
+      "adoptRefused": 0,
+      "clear": 37,
+      "compose": 1136
+     },
+     "videoUnreadable": 20,
+     "videoFrames": 8412,
+     "truthAtEnd": {
+      "displayMode": "physical",
+      "degraded": null,
+      "limitation": null,
+      "moonlightOpacity": 0.456,
+      "source": "refined-terrain"
+     }
+    }
+   ],
+   "perClearWindows": {
+    "firstFlagged": {
+     "i": 7508,
+     "sys": 1795566804120,
+     "sPlusSettle": 266.46
+    },
+    "flaggedTotal": 793,
+    "judgedTotal": 7483,
+    "clears": 37,
+    "meanRange": [
+     98.7,
+     99.3
+    ],
+    "clearsWithFlaggedFrames": [
+     {
+      "k": 34,
+      "callSys": 1795566806440,
+      "sPlusSettle": 268.79,
+      "utc": "2026-11-25T00:33:26.440Z",
+      "frames": 25,
+      "frameIdx": [
+       7564,
+       7588
+      ],
+      "flagged": 25,
+      "flaggedIdx": [
+       7564,
+       7588
+      ],
+      "stars": [
+       11,
+       12
+      ],
+      "mean": [
+       99.2,
+       99.2
+      ],
+      "maxDMean": 0
+     },
+     {
+      "k": 35,
+      "callSys": 1795566814458,
+      "sPlusSettle": 276.8,
+      "utc": "2026-11-25T00:33:34.458Z",
+      "frames": 28,
+      "frameIdx": [
+       7763,
+       7790
+      ],
+      "flagged": 28,
+      "flaggedIdx": [
+       7763,
+       7790
+      ],
+      "stars": [
+       11,
+       11
+      ],
+      "mean": [
+       99.2,
+       99.3
+      ],
+      "maxDMean": 0.1
+     },
+     {
+      "k": 36,
+      "callSys": 1795566822418,
+      "sPlusSettle": 284.76,
+      "utc": "2026-11-25T00:33:42.418Z",
+      "frames": 27,
+      "frameIdx": [
+       7962,
+       7988
+      ],
+      "flagged": 27,
+      "flaggedIdx": [
+       7962,
+       7988
+      ],
+      "stars": [
+       11,
+       11
+      ],
+      "mean": [
+       99.2,
+       99.2
+      ],
+      "maxDMean": 0.1
+     },
+     {
+      "k": 37,
+      "callSys": 1795566830518,
+      "sPlusSettle": 292.86,
+      "utc": "2026-11-25T00:33:50.518Z",
+      "frames": 27,
+      "frameIdx": [
+       8165,
+       8191
+      ],
+      "flagged": 27,
+      "flaggedIdx": [
+       8165,
+       8191
+      ],
+      "stars": [
+       11,
+       11
+      ],
+      "mean": [
+       99.2,
+       99.2
+      ],
+      "maxDMean": 0.1
+     }
+    ],
+    "note": "sPlusSettle: seconds after the first shot after settle; callSys: system clock (ms since epoch) of the clear call; frameIdx: recorded-frame indices in [call-40, call+1000)"
+   },
+   "setAsideNote": "33 clears judged by rule v3: 0 followed by an ABSENT frame. Clears 34-37 set aside: from +266.5 s (0.1 CSS px slot move after the refinement adoption at +253.5 s) every recorded frame has 11-12 point-like pixels above the baseline; disc mean 98.7-99.3 throughout. In three flagged shots all 42 point-like pixels lie on lit lunar surface (neighbour means 60-128), none on the dark side; the crop shows a textured Moon with an opaque dark side. Lunar relief re-baselined by the re-render, not stars through the disc; disc mean alone is not offered as opacity proof."
+  }
+ },
+ "earlierWebKit2FullCell": {
+  "source": "section 11.16 item 1 (preview-clear-integrated.json, launch pv-webkit-2-full)",
+  "recordingRetained": true,
+  "firstFlagged": {
+   "i": 7504,
+   "sys": 1795541625680,
+   "sPlusSettle": 268.36
+  },
+  "flaggedTotal": 781,
+  "judgedTotal": 7491,
+  "clears": 37,
+  "meanRange": [
+   100.6,
+   101.2
+  ],
+  "setAsideClears": [
+   {
+    "k": 34,
+    "callSys": 1795541626022,
+    "sPlusSettle": 268.7,
+    "utc": "2026-11-24T17:33:46.022Z",
+    "frames": 28,
+    "frameIdx": [
+     7510,
+     7537
+    ],
+    "flagged": 28,
+    "flaggedIdx": [
+     7510,
+     7537
+    ],
+    "stars": [
+     13,
+     13
+    ],
+    "mean": [
+     101.2,
+     101.2
+    ],
+    "maxDMean": 0.5
+   },
+   {
+    "k": 35,
+    "callSys": 1795541634025,
+    "sPlusSettle": 276.7,
+    "utc": "2026-11-24T17:33:54.025Z",
+    "frames": 28,
+    "frameIdx": [
+     7710,
+     7737
+    ],
+    "flagged": 28,
+    "flaggedIdx": [
+     7710,
+     7737
+    ],
+    "stars": [
+     14,
+     14
+    ],
+    "mean": [
+     101.2,
+     101.2
+    ],
+    "maxDMean": 0.5
+   },
+   {
+    "k": 36,
+    "callSys": 1795541642028,
+    "sPlusSettle": 284.71,
+    "utc": "2026-11-24T17:34:02.028Z",
+    "frames": 27,
+    "frameIdx": [
+     7911,
+     7937
+    ],
+    "flagged": 27,
+    "flaggedIdx": [
+     7911,
+     7937
+    ],
+    "stars": [
+     11,
+     14
+    ],
+    "mean": [
+     101.1,
+     101.2
+    ],
+    "maxDMean": 0.5
+   },
+   {
+    "k": 37,
+    "callSys": 1795541650079,
+    "sPlusSettle": 292.76,
+    "utc": "2026-11-24T17:34:10.079Z",
+    "frames": 26,
+    "frameIdx": [
+     8112,
+     8137
+    ],
+    "flagged": 26,
+    "flaggedIdx": [
+     8112,
+     8137
+    ],
+    "stars": [
+     13,
+     13
+    ],
+    "mean": [
+     101.1,
+     101.2
+    ],
+    "maxDMean": 0.5
+   }
+  ],
+  "note": "replayed from the retained recording with the pv-clear.cjs v3 rule; zero point = first shot after settle (the section 11.16 text gives +250 s / +265 s from a zero about 3.5 s earlier: adoption at +253.5 s and the 0.1 CSS px slot move at +268.45 s on this zero)"
+ }
+}

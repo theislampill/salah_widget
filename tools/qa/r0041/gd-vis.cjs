@@ -145,13 +145,18 @@ async function analyseVideo(cell,r,dir){
   let cal=null;{const sample=[];await decodeVideo(final,(buf,i)=>{if(i>=100&&i<160&&i%3===0)sample.push(Buffer.from(buf));});let best=null;
     for(let dx=-6;dx<=8;dx++)for(let dy=-6;dy<=4;dy++){let ok=0,sum=0;for(const b of sample){const w=readMarker(b,VW,3,dx,dy).worst;sum+=w;if(w<=90)ok++;}if(!best||ok>best.ok||(ok===best.ok&&sum<best.sum))best={dx,dy,ok,sum};}cal=best;}   // ties: the smallest summed palette distance
   const DX=cal?cal.dx:0,DY=cal?cal.dy:0;
-  await decodeVideo(final,(buf,i)=>{const mk=readMarker(buf,VW,3,DX,DY);if(mk.worst>200){frames.push({i,bad:1});return;}
-    // unwrap the 12-bit slot to the system clock near the previous frame (or the expected time)
-    const base=Math.floor(prevSys/40),cand=[-1,0,1].map(w=>(Math.floor(base/4096)+w)*4096+mk.slot).sort((a,b)=>Math.abs(a-base)-Math.abs(b-base))[0],sys=cand*40;
+  let nBad=0;   // unreadable frames since the last readable one
+  await decodeVideo(final,(buf,i)=>{const mk=readMarker(buf,VW,3,DX,DY);if(mk.worst>200){frames.push({i,bad:1});nBad++;return;}
+    // unwrap the 12-bit slot to the system clock near the previous frame (or the expected time). After a run of
+    // unreadable frames longer than 60 s (at the recording's 40 ms frame interval) the expected time is the previous
+    // instant plus that run, because the slot wraps every 163.84 s (seen: a 3,810-frame run in a Firefox recording
+    // re-entered one wrap early, mis-timing every later frame by 163.84 s). Shorter runs: unchanged (previous instant).
+    const gap=prevSys!==r.pageCreatedSys?nBad*40:0,expSys=gap>60000?prevSys+gap:prevSys,tol=gap>60000?3000+gap/4:3000;
+    const base=Math.floor(expSys/40),cand=[-1,0,1].map(w=>(Math.floor(base/4096)+w)*4096+mk.slot).sort((a,b)=>Math.abs(a-base)-Math.abs(b-base))[0],sys=cand*40;
     // A blank (all-white) loading frame reads as a valid all-white marker: reject frames before the page painted, and
     // any decoded instant more than 3 s away from the previous one (a misread).
-    {let wsum=0;for(let k=0;k<VW*3*20;k+=3)wsum+=buf[k];if(wsum/(VW*20)>=200||(i>0&&Math.abs(sys-prevSys)>3000&&prevSys!==r.pageCreatedSys)){frames.push({i,bad:1});return;}}
-    prevSys=sys;
+    {let wsum=0;for(let k=0;k<VW*3*20;k+=3)wsum+=buf[k];if(wsum/(VW*20)>=200||(i>0&&Math.abs(sys-expSys)>tol&&prevSys!==r.pageCreatedSys)){frames.push({i,bad:1});nBad++;return;}}
+    prevSys=sys;nBad=0;
     const rc=rectAt(r.inpage.log,sys);if(!rc){frames.push({i,sys,norect:1});return;}
     const s=disc(buf,VW,VH,3,rc.x+DX,rc.y+DY,rc.w);if(!refFixed&&sys>r.settleSys){refFixed=s.d;vbase=judge(s,null,null,0).starsPt;refRoll={d:s.d,mean:judge(s,null,null,0).mean,key:s.key};lastPresent=sys;}
     const j=judge(s,refFixed,refRoll,vbase);const inCtl=r.ctlFrom&&sys>=r.ctlFrom&&sys<=r.ctlTo,inSeed=(r.seedFrom&&sys>=r.seedFrom-50&&sys<=r.seedTo+250)?1:(r.hideFrom&&sys>=r.hideFrom-50&&sys<=r.hideTo+250)?2:0;
