@@ -162,12 +162,14 @@ if (process.env.R0040_MASK_DIR) {
 }
 
 if(process.env.R0040_INSPECT_PARAMETERS){
-  const {audit}=require('../tools/qa/r0040/parameter-audit.cjs');
+  const {auditNamed,auditSource}=require('../tools/qa/r0040/parameter-audit.cjs');
+  const geometry=fs.readFileSync(path.join(qa,'precip_models_geom.js'),'utf8');
   const stage=renderer(12,profile,tex)();
-  const result=audit(stage.params);
-  assert.throws(()=>audit({...stage.params,rateFactor:8}),/rateFactor/);
-  assert.throws(()=>audit({...stage.params,sunKernel:{...stage.params.sunKernel,amp:.55}}),/sunKernel/);
-  assert.throws(()=>audit({...stage.params,undocumentedLift:2}),/undocumentedLift/);
+  const design=process.env.R0040_PARAMETER_DESIGN||'revised';
+  const result={...auditNamed(stage.params),...auditSource(source,geometry,design)};
+  assert.throws(()=>auditNamed({...stage.params,rateFactor:8}),/rateFactor/);
+  assert.throws(()=>auditNamed({...stage.params,sunKernel:{...stage.params.sunKernel,amp:.55}}),/sunKernel/);
+  assert.throws(()=>auditNamed({...stage.params,undocumentedLift:2}),/undocumentedLift/);
   console.log(JSON.stringify(result));
 }
 

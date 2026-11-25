@@ -12,8 +12,8 @@
     "value": 100,
     "unit": "multiplier",
     "classification": "PC",
-    "basis": "declared contrast enhancement; linear before clipping",
-    "owner": "G1"
+    "basis": "Chosen contrast multiplier before area, velocity, clipping and compositing. Near and tile caps differ.",
+    "owner": "G-1"
   },
   {
     "name": "nearShell",
@@ -112,17 +112,17 @@
       "exp": -0.21
     },
     "unit": "m⁻³ mm⁻¹; mm⁻¹; dimensionless",
-    "classification": "PJ conditional",
-    "basis": "Marshall–Palmer and alternative drizzle/thunderstorm distributions; class mapping for showers unresolved",
-    "owner": "fixed conditional"
+    "classification": "PJ conditional / UE mapping",
+    "basis": "MP stratiform relation; alternative spectra recalled. Mapping every 80–82 shower to the convective spectrum is unverified. The inline low-rate floor changes effective slope.",
+    "owner": "fixed spectra conditional on evidence; class mapping pending"
   },
   {
     "name": "vt",
     "value": "atlas+GK",
     "unit": "m/s",
     "classification": "PJ conditional",
-    "basis": "Atlas fit above 0.5 mm, Gunn–Kinzer table below; still air",
-    "owner": "physical"
+    "basis": "Family label only. Actual branches use hard-coded Atlas coefficient and Gunn–Kinzer values; see terminal-speed in the inline ledger.",
+    "owner": "fixed fit; small-drop applicability conditional"
   },
   {
     "name": "baseMPerC",
@@ -137,16 +137,16 @@
     "value": 100,
     "unit": "m",
     "classification": "PC",
-    "basis": "parcel LCL plus numerical clamps; actual rain-deck base unverified",
-    "owner": "unverified for rain"
+    "basis": "Chosen lower clamp on estimated LCL; actual rain-deck base unverified.",
+    "owner": "fixed study assumption; rain applicability pending"
   },
   {
     "name": "baseMax",
     "value": 2000,
     "unit": "m",
     "classification": "PC",
-    "basis": "parcel LCL plus numerical clamps; actual rain-deck base unverified",
-    "owner": "unverified for rain"
+    "basis": "Chosen upper clamp on estimated LCL; actual rain-deck base unverified.",
+    "owner": "fixed study assumption; rain applicability pending"
   },
   {
     "name": "eyeLevel",
@@ -201,7 +201,7 @@
     "value": 0.1,
     "unit": "mm/h",
     "classification": "UE",
-    "basis": "fabricated rate in historical category-only toggle",
+    "basis": "Historical category-only toggle fabricates a rate; revised study rejects the toggle.",
     "owner": "excluded"
   },
   {
@@ -248,16 +248,16 @@
     },
     "unit": "amplitude/s and mm/h",
     "classification": "UE",
-    "basis": "assumed sheet structure and transition thresholds",
+    "basis": "Chosen amplitudes, time scales and rate breaks. Separate field-noise, smoothing, masking and spawn parameters are in the inline ledger.",
     "owner": "by name"
   },
   {
     "name": "showersVeil",
     "value": "field-only",
     "unit": "mode",
-    "classification": "PJ conditional",
-    "basis": "grid-cell mean does not establish a local shower rate",
-    "owner": "physical"
+    "classification": "PJ constraint / PC localization",
+    "basis": "Cell-mean rate alone does not establish local rain. Using a constructed field for spatial localization is a convention; the revised M3 shower study withdraws the whole output without support.",
+    "owner": "fixed evidence constraint; field assumptions by name"
   },
   {
     "name": "m4StreakFrac",
@@ -313,10 +313,10 @@
       "h": 320,
       "cap": 100000
     },
-    "unit": "px / count",
-    "classification": "PC",
-    "basis": "tile and strict sampling budget, compensation refused",
-    "owner": "G1/G9"
+    "unit": "px / expected samples per slab",
+    "classification": "PC / UE if rescaled",
+    "basis": "352 × 320 canvas. Strict mode rejects expected demand above 100,000 samples per slab, before rounding each diameter bin and drawing wrap copies. Realized samples can exceed 100,000 at scale 1. Original clip profile used 9,000 with compensation.",
+    "owner": "dimensions fixed in study; budget G-9; rescale excluded"
   },
   {
     "name": "render",
@@ -331,16 +331,16 @@
       "sunDimMinDeg": 3
     },
     "unit": "relative alpha, px, degrees",
-    "classification": "PC",
-    "basis": "alpha cap, line limits, band/gradient; additive floor prohibited",
-    "owner": "G1/G7"
+    "classification": "PC / UE if additive floor",
+    "basis": "Near cap, min/max widths and zero additive width are effective near controls. Row extents and Sun floor are declarations duplicated by inline literals. Texture has its own 0.9 cap and 1 px width.",
+    "owner": "G-1/G-7; nonzero additive floor excluded"
   },
   {
     "name": "enforceDeclaredGain",
     "value": true,
     "unit": "boolean",
-    "classification": "integrity",
-    "basis": "strict guard enabled",
-    "owner": "required in study"
+    "classification": "PC integrity control",
+    "basis": "Strict research guard enforces zero additive floor/kernels and rejects shell/tile compensating gains. The guard grants no evidence for perceptual gain or source custody.",
+    "owner": "fixed strict study"
   }
 ]

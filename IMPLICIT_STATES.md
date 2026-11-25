@@ -1726,7 +1726,7 @@ Original audit: **N15** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-re
 Original audit: **N16** · Lane papers: [D](docs/audit/post-rlgwo/lanes/D-sky-rendering.md) · Status D / I / V: **PEX / IMS / PEX** · Historical disposition: *implemented but not fully verified*
 
 - **Scope and decision.** Which particles show and when lightning may flash.
-- **R0040 branch evidence.** Source-publication controls reproduce the interval, wind projection and live/SIM amount discrepancies on main. Their measured cells and the separate prototype gain control are recorded in [R0040](docs/state-contracts/R0040.md). The acceptance codes await the owner gates.
+- **R0040 branch evidence.** Source-publication controls reproduce the interval, wind projection and live/SIM amount discrepancies on main. Their measured cells and the separate prototype gain control are recorded in [R0040](docs/state-contracts/R0040.md). The [research parameter inventory](docs/state-contracts/R0040.md#r40-c1-prototype-parameter-inventory) traces near/texture saturation, cloud-support thresholds and layer conventions to their executable sources. The acceptance codes await the owner gates.
 - **Sources.** `src/native/index.html` `buildWeather` ~L2255-2268, `tieRainToClouds` ~L2882-2894, `genLightning` ~L3460-3475, `paint` ~L3302-3305, `withdrawWeatherEffects` L2722-2729
 - **State dimensions.** particle pool; `_rainTiedFx`; per-particle `display`; `data-precip`, `data-lightning`; `_lastBolt`
 - **Transitions.**
