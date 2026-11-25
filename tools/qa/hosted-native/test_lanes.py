@@ -29,6 +29,35 @@ def sha(path):
 
 
 class PreparationControls(unittest.TestCase):
+    def test_shallow_partial_baseline_stays_real_and_clean_without_available_remote(self):
+        """The hosted clone tried to transfer omitted archive blobs after networking was removed."""
+        prepare = module('prepare')
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); origin = root/'origin'; origin.mkdir()
+            env = {**os.environ, 'GIT_CONFIG_GLOBAL': os.devnull, 'GIT_CONFIG_NOSYSTEM': '1', 'GIT_TERMINAL_PROMPT': '0'}
+            def git(cwd, *args):
+                return subprocess.check_output(['git', *args], cwd=cwd, env=env, stderr=subprocess.PIPE, text=True).strip()
+            git(origin, 'init', '-q'); git(origin, 'config', 'uploadpack.allowFilter', 'true')
+            for name in ('required', 'source-only', 'omitted-archive'):
+                (origin/name).write_text(name+' source bytes\n')
+            git(origin, 'add', '.')
+            git(origin, '-c', 'user.name=Control', '-c', 'user.email=control.invalid', 'commit', '-qm', 'fixture')
+            baseline = root/'partial'
+            git(root, 'clone', '--filter=blob:none', '--depth', '1', '--no-checkout', origin.as_uri(), str(baseline))
+            git(baseline, 'sparse-checkout', 'set', '--no-cone', '/required', '/source-only')
+            git(baseline, 'checkout', '--detach', 'HEAD')
+            self.assertEqual(git(baseline, 'rev-parse', '--is-shallow-repository'), 'true')
+            head, tree = git(baseline, 'rev-parse', 'HEAD'), git(baseline, 'rev-parse', 'HEAD^{tree}')
+            origin.rename(root/'origin-unavailable')
+            main, receipts = root/'main', root/'receipts'; receipts.mkdir()
+            prepare.detached_sparse_baseline(baseline, main, head, ['/required'], prepare.Commands(receipts), root)
+            self.assertEqual(prepare.git_identity(main, head, tree)['commit'], head)
+            self.assertEqual((main/'required').read_text(), 'required source bytes\n')
+            self.assertFalse((main/'omitted-archive').exists())
+            self.assertFalse((main/'source-only').exists())
+            self.assertEqual((baseline/'source-only').read_text(), 'source-only source bytes\n')
+            self.assertEqual(prepare.git_identity(baseline, head, tree)['tree'], tree)
+
     def test_changed_inventory_payload_is_rejected(self):
         """Dropping generated-file verification would admit changed served bytes."""
         prepare = module('prepare')

@@ -231,6 +231,16 @@ def archive_runtime(source, destination, commands):
     return rows
 
 
+def detached_sparse_baseline(baseline, main, commit, patterns, commands, cwd):
+    # A shallow partial clone can transport omitted blobs even with --shared.
+    # A real detached worktree uses the already admitted object database without
+    # a transport, and retains genuine HEAD/tree/status for the unchanged guard.
+    commands.run('baseline-worktree', ['git', '-c', 'core.hooksPath=/dev/null', '-C', str(baseline),
+                                     'worktree', 'add', '--detach', '--no-checkout', str(main), commit], cwd)
+    commands.run('baseline-sparse', ['git', '-C', str(main), 'sparse-checkout', 'set', '--no-cone', *patterns], cwd)
+    commands.run('baseline-checkout', ['git', '-c', 'core.hooksPath=/dev/null', '-C', str(main), 'checkout', '--detach', commit], cwd)
+
+
 def prepare(research, baseline, historical, out):
     roots = [p.resolve(strict=True) for p in (research, baseline, historical)]
     if out.exists() or out.is_symlink():
@@ -259,11 +269,8 @@ def prepare(research, baseline, historical, out):
         write_json(receipts / 'baseline-files.json', baseline_files)
 
         main = trees / 'main'
-        commands.run('baseline-clone', ['git', '-c', 'core.hooksPath=/dev/null', 'clone', '--shared', '--no-checkout',
-                                      '--no-hardlinks', str(baseline), str(main)], out)
         patterns = ['/' + p + '/' for p in SOURCE_DIRS] + ['/' + p for p in ('index.html', 'offline.html', 'config.js', 'builder.html', 'GENERATED.json', '.gitignore')]
-        commands.run('baseline-sparse', ['git', '-C', str(main), 'sparse-checkout', 'set', '--no-cone', *patterns], out)
-        commands.run('baseline-checkout', ['git', '-c', 'core.hooksPath=/dev/null', '-C', str(main), 'checkout', '--detach', BASELINE], out)
+        detached_sparse_baseline(baseline, main, BASELINE, patterns, commands, out)
         build(main, 'baseline-build-1', commands)
         first = verify_generated(main, PINS['main'])
         build(main, 'baseline-build-2', commands, second=True)

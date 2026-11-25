@@ -17,6 +17,10 @@ the immutable source identities, reproduces the materialized hashes and performs
 two canonical builds with V1 controls. Its receipts stay private. Research and
 baseline checkouts retain genuine Git identity; the R0035 main-arm guard is not
 replaced with an archive label.
+The disposable main arm is a detached sparse Git worktree using the admitted
+baseline object database. This avoids a clone transport requesting omitted
+archive objects after network isolation, while preserving actual HEAD, tree and
+clean-status checks. Source bytes are rechecked after preparation.
 
 ## Isolation and private output
 
