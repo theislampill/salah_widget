@@ -1,0 +1,144 @@
+# Native source preparation and initial lane commands
+
+These entries prepare disposable source and emit commands. They never launch a
+browser or establish isolation. The coordinator supplies the verified isolated
+executor, executes one browser driver at a time, and retains all observations
+privately. Software checks and preparation are separate from native evidence,
+human judgment, owner selections and work-order acceptance.
+
+## Source preparation
+
+```sh
+python tools/qa/hosted-native/prepare.py \
+  --research /task/research \
+  --baseline /task/baseline \
+  --historical /task/historical \
+  --out /task/work/prepared
+```
+
+`research` must be a clean genuine Git checkout at
+`55d1b3edb66d2c35679707120b01ee1d3455e4a3`, tree
+`0e626139b28bffe8f308173f806cad21bfeeb7bb`. `baseline` must be a clean
+checkout at `df644ef60156b67b5c487395176369bcec7a0d7b`, tree
+`11117a0ba83c3db632bf4482c2db8feb5d52a769`. Both need the complete tracked
+`src`, `real-sky`, `tools`, `moon`, `vendor`, `v1` and `tests` directories.
+Research also needs the R0040 compressed option patch. Baseline needs its root
+generated entries and inventory. Sparse checkouts may omit unrelated evidence.
+Preparation checks actual source bytes against the pinned Git blobs, including
+materialized files whose changes could be hidden by sparse status.
+
+`historical` supplies `tools/qa/precip_eval_lib.cjs` from
+`4029d2f67f5a880c8ad889443bb7557d96022c45`. A minimal archive is sufficient:
+the helper is checked against SHA-256
+`a02358979e9aa2f968c5ca9dde4ec7a8e63db869b871f1c24ce65a68e71497e7`.
+It does not need Git metadata.
+
+The output must be absent and outside the input trees. It contains:
+
+| Path | Purpose |
+|---|---|
+| `receipts/prepared.json` | Terminal `PREPARED` or `INCOMPLETE` disposition, source identities, generated hashes and tree paths |
+| `receipts/*` | Exclusive command logs, command status/time/cleanup receipts, source manifests and the lab identity |
+| `trees/main` | A real disposable clean baseline checkout, retaining the published star driver's Git guard |
+| `trees/r0040` | Disposable authored option patch and canonical generated outputs |
+| `trees/r0035` | One materialized lab shared by both experimental write arms |
+| `trees/r003f` | `git archive` of baseline `index.html`, `config.js`, `moon`, `real-sky` and `tests/r0002-ordinary.json` |
+
+The baseline clone shares local Git objects with the supplied baseline checkout;
+keep that checkout available through the observation. Preparation builds main
+and R0040 twice. R0035's published materializer runs its first canonical build;
+preparation runs its second. Every second build must report 0 written, 117
+unchanged and 0 removed, and every generated inventory member is hash-checked.
+All three trees run frozen V1 verification with its disposable tamper control.
+R0040's authored preimage, compressed patch, authored postimage, generated index,
+offline entry and inventory match the retained research pins. R0035's generated
+index and inventory match its retained pins.
+
+Preparation exits 0 only after all checks. Exit 2 leaves any admitted output and
+private failure receipts intact. An existing output is never repaired, removed
+or reused. Command timeouts kill the process group and retain their logs. No
+native claim follows from `PREPARED`.
+
+Copy `receipts` into the private capture before sealing. The large disposable
+public source trees can stay outside that capture and can be removed after the
+observations. A failed source tree is retained until its failure has been
+inspected; no failed receipt is rewritten.
+
+## Declarative command plan
+
+```sh
+python tools/qa/hosted-native/lanes.py --plan-json \
+  --prepared /task/work/prepared/receipts/prepared.json \
+  --out /task/capture/lanes \
+  --python-playwright /task/python-playwright/bin/python \
+  --node /task/node/bin/node \
+  --node-modules /task/node-dependencies/node_modules \
+  --pngjs /task/node-dependencies/node_modules/pngjs \
+  > /task/capture/lanes.json
+```
+
+The new output directory receives `r0035-plan.json`. Stdout contains only the
+JSON command plan; it includes private paths and belongs inside the encrypted
+capture. Explicit executable paths are required. The Python venv symlink path
+is preserved so it selects the installed Python Playwright. Node package
+directories must identify Playwright 1.62.1 and pngjs 7.0.0. Acquisition owns
+package integrity, Python Playwright 1.57.0 and browser-binary verification.
+
+The top-level protocol is `salah-hosted-native-lanes/1`. `lanes` is an ordered
+array. Each entry supplies `id`, `workOrder`, `argv`, `cwd`, `env`, `output`,
+`stdout`, `stderr`, `timeoutSeconds`, `result.kind`, `result.path`,
+`exitStatuses`, `dependsOn` and `stopScopeOnAndon`. Execute argv directly,
+without a shell, under the coordinator's isolation boundary. The coordinator
+must create the stream files exclusively, preserve timeout output and clean up
+children. Each recipe creates its own fresh `output` directory.
+
+| Initial invocation | Exact scope | Result interpretation |
+|---|---|---|
+| R0040 Chromium | Nine published option cells: day rain/drizzle/thunder, night, twilight, reduced none/still, motion override and dry; DPR1 | Exit 0 plus all nine `native-options.json` cells establishes that recipe's observations. Exit 1 retains preceding PNGs and failure logs. |
+| R003F Chromium DPR1 | Offset, B0, repeat B0 and unboosted reference; original 150 s refinement gates | Exit 0 is `MEASURED`; 2 is `INCOMPLETE`; 3 is isolation failure and stops every lane; 4 is an Andon and stops R003F progression. Original sandbox, refusing proxy, WebSocket guard and assertions remain unchanged. |
+| R0035 Chromium timing | One 15 s dark/normal/ordinary-clock round, all three arms, DPR1 | Exit 0 alone proves no admission. Inspect every summary row's `admitted` and `qualification` fields. |
+| R0035 Chromium capture | Separate one-round 15 s PNG acquisition after the timing attempt | It has separate output and classification. `dependsOn` requires that timing finished; a capture cannot erase a failed timing result. PNG acquisition bounds are separate from presentation timing. |
+
+The R0035 comparison uses the published `independent-reconstruction` plan.
+`main` is clean baseline. `unmodified` and `mitigated` share one lab identity.
+Their flags differ only in `r35arm=full` versus `changed`; both have
+`r35scope=all&r35amplitude=1&r35glass=0.5&r35margin=4`. Both probe the real
+`stars.status == active` field. The existing driver's source/arm checks run
+before command emission. These experimental settings select no production
+amplitude, glass or magnitude policy.
+
+The existing R0040 and R0035 recipes do not persist a detailed request ledger.
+Their pre-page fixture/abort routes remain unchanged; the coordinator retains
+its independent network-boundary controls. No missing ledger or fixture
+consumption evidence may be inferred from kernel isolation. R003F does persist
+its request ledger. All outputs and logs remain private, including failures.
+
+`--engine firefox` or `--engine webkit` emits the same bounded initial plan for
+that installed engine. `--r003f-dpr 2` changes only R003F; the other two existing
+drivers fix DPR1. These switches acquire separate observations rather than
+expanding the claimed coverage of the first run. Meaningful next work includes
+engine counterparts, B0 DPR2 and initial/refined comparisons, R0035 nine-round
+WebKit timing with native reduced/full-motion and phase/glass coverage, and
+R0040's remaining motion/lossless-capture rows. Admission failures require
+diagnosis before credit; R003F Andon stops its progression. None of these rows
+supplies physical-device or human evaluation.
+
+The original R0040 cover option remains 85/86 against the original fixtures;
+the separate input-keyed reference fixture's 86/86 does not replace it. R0035's
+original producer remains unavailable, and this lab is an independent
+reconstruction. R003F's full matrix, strict native DB3, owner thresholds, tone
+waiver, human viewing and adoption remain open. No registry verification level
+or original requirement changes here.
+
+## Offline controls
+
+```sh
+python tools/qa/hosted-native/test_lanes.py
+```
+
+The controls reject wrong/dirty source identity, changed generated bytes,
+reapplication of the real pinned option patch and reuse of failed output.
+They check actual recipe argv, the unchanged star flag parser, shared lab
+identity, the active producer probe, separate timing/capture outputs and the
+engine/DPR distinction without importing Playwright or launching a browser.
+The source materialization command above is the separate real-build check.

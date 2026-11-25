@@ -1563,6 +1563,77 @@
     "docs/state-contracts/evidence/R003F/surface-gains.json",
     "real-sky/native-cloud-transfer.mjs"
    ]
+  },
+  {
+   "name": "hosted-native-envelope",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "argv": [
+    "{python}",
+    "tools/qa/hosted-native/test_envelope.py",
+    "-v"
+   ],
+   "protocol": "unittest-cases",
+   "expectedCases": 37,
+   "covers": [
+    "tools/qa/hosted-native/test_envelope.py"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/test_envelope.py",
+    "tools/qa/hosted-native/envelope.py"
+   ],
+   "env": {
+    "PYTHONUTF8": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+   }
+  },
+  {
+   "name": "hosted-native-observe",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "argv": [
+    "{python}",
+    "tools/qa/hosted-native/test_observe.py",
+    "-v"
+   ],
+   "protocol": "unittest-cases",
+   "expectedCases": 24,
+   "covers": [
+    "tools/qa/hosted-native/test_observe.py"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/test_observe.py",
+    "tools/qa/hosted-native/observe.py"
+   ],
+   "env": {
+    "PYTHONUTF8": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+   }
+  },
+  {
+   "name": "hosted-native-lanes",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "argv": [
+    "{python}",
+    "tools/qa/hosted-native/test_lanes.py",
+    "-v"
+   ],
+   "protocol": "unittest-cases",
+   "expectedCases": 7,
+   "covers": [
+    "tools/qa/hosted-native/test_lanes.py"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/test_lanes.py",
+    "tools/qa/hosted-native/prepare.py",
+    "tools/qa/hosted-native/lanes.py",
+    "docs/state-contracts/evidence/R0040/phase1-options.patch.gz",
+    "src/native/index.html",
+    "tools/r0035/native_trials.py",
+    "tools/r0035/trial_admission.py"
+   ],
+   "env": {
+    "PYTHONUTF8": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+   }
   }
  ],
  "modules": [
@@ -1732,6 +1803,11 @@
    "path": "tools/qa/r003f_motion.cjs",
    "owner": "R003F",
    "reason": "F-TR-2 accelerated native capture, consumed-minute alignment, lossless clip and DB3 comparison."
+  },
+  {
+   "path": "tools/qa/hosted-native/identities.py",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "reason": "Acquisition source/package/browser identity receipt; invoked only by the isolated native workflow acquisition phase."
   }
  ],
  "exclusions": [
@@ -2499,6 +2575,58 @@
     "tools/qa/r002f-transaction/experiment.cjs"
    ],
    "protocol": "Print source-only JSON; nonzero on an acquisition/fixture error."
+  },
+  {
+   "path": "tools/qa/hosted-native/browser-control.cjs",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "reason": "Requires actual pinned Chromium inside a new loopback-only namespace. No route stubs.",
+   "recipe": {
+    "argv": [
+     "node",
+     "tools/qa/hosted-native/browser-control.cjs",
+     "<playwright-module>",
+     "<private-json>"
+    ],
+    "protocol": "Exit 0 only after sandboxed loopback/TEST-NET/loopback controls and actual executable identity."
+   }
+  },
+  {
+   "path": "tools/qa/hosted-native/acquire.sh",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "reason": "Network-enabled dependency acquisition precedes observation; only exact locked packages and managed engines.",
+   "recipe": {
+    "argv": [
+     "bash",
+     "tools/qa/hosted-native/acquire.sh",
+     "<task>",
+     "<research>",
+     "<baseline>",
+     "<historical>"
+    ],
+    "protocol": "Private acquisition logs and runtime/source/package/browser identities. No native recipe is run."
+   }
+  },
+  {
+   "path": "tools/qa/hosted-native/namespace.sh",
+   "owner": "R002F-A2/R0035/R0040/R003F",
+   "reason": "Privileged namespace initializer; never a general regression command.",
+   "recipe": {
+    "argv": [
+     "sudo",
+     "unshare",
+     "--net",
+     "--pid",
+     "--fork",
+     "--mount-proc",
+     "--kill-child=KILL",
+     "bash",
+     "tools/qa/hosted-native/namespace.sh",
+     "<nonroot uid>",
+     "<nonroot gid>",
+     "<explicit env and reviewed command>"
+    ],
+    "protocol": "Drops privilege/capabilities and clears environment; inner observe.py must validate kernel and real browser controls before source work."
+   }
   }
  ]
 }
