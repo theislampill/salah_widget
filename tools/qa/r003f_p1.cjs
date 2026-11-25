@@ -153,9 +153,12 @@ function compareCards(dpr,disc,first,second) {
 // An observed forbidden light is an Andon even if another diagnostic is missing.
 function calendarLightVerdict({moonAltitude, moonlightOpacity, light}) {
   if (!Number.isFinite(moonAltitude) || moonAltitude > -2) return 'OUTSIDE REGIME';
+  return inhibitedLightVerdict({moonlightOpacity,light});
+}
+function inhibitedLightVerdict({moonlightOpacity,light}) {
   const terms = [moonlightOpacity, ...['eligibility','illumination','beam','cloudLight','localStarWash',
     'localGlow','halo','corona','paraselenae'].map(key => light?.[key])];
   if (light?.eligible === true || terms.some(v => Number.isFinite(v) && v !== 0)) return 'FAIL';
   return light?.eligible === false && terms.every(v => v === 0) ? 'PASS' : 'INCOMPLETE';
 }
-module.exports = {buildMasks, measure, lightness, calendarLightVerdict, compareCards, assertOwnerScene, assertOwnerMeasurement};
+module.exports = {inhibitedLightVerdict,luminance,quantile,buildMasks, measure, lightness, calendarLightVerdict, compareCards, assertOwnerScene, assertOwnerMeasurement};

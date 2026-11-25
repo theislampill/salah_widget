@@ -131,15 +131,16 @@ function measure(api, material, result, waxing) {
 
 async function main() {
   const {parseArgs} = require('node:util');
-  const {values} = parseArgs({options: {size: {type:'string'}, out: {type:'string'}, adaptive: {type:'boolean'}, initial: {type:'boolean'}}});
+  const {values} = parseArgs({options: {size: {type:'string'}, out: {type:'string'}, adaptive: {type:'boolean'}, initial: {type:'boolean'}, parent: {type:'boolean'}}});
   const source = units.map(unit => read('src/' + unit).toString());
   const api = Function(source.join('\n') + '\nreturn {MoonEngine, adaptiveRender, canonicalScene, nativeCalendarMoonScene, calendarProxy};')();
   const shipped = api.nativeCalendarMoonScene({fraction: 0.5, physicalFraction: 0.5, waxing: true, timeScale: 0}, {}).size;
   assert.ok(!(values.initial && (values.adaptive || values.size)), '--initial uses the shipped receiver size');
+  assert.ok(!values.parent || values.initial,'--parent requires --initial');
   const sizes = values.initial ? [shipped] : values.size ? [Number(values.size)] : [160, shipped];
   for (const size of sizes) assert.ok([160, shipped].includes(size), 'expected 160 or the shipped receiver size');
   const manifest = JSON.parse(read('asset-manifest.json'));
-  let engine, initial, material, initialPin, initialSource;
+  let engine, initial, material, initialPin, initialSource, compact;
   if (values.initial) {
     initialPin = JSON.parse(read('initial-manifest.json'));
     initialSource = read('src/moon-initial.mjs').toString();
@@ -151,7 +152,21 @@ async function main() {
       material = m;
       return api.calendarProxy(m, c, surface);
     });
-    initial = create(new Uint8Array(read('assets/initial-receivers.bin')), initialPin);
+    let bytes = new Uint8Array(read('assets/initial-receivers.bin'));
+    if (!values.parent) {
+      const encoding = JSON.parse(read('initial-compact-manifest.json'));
+      const decoderSource = read('src/moon-initial-compact.mjs').toString();
+      const decoder = Function(source[0] + '\n' + decoderSource + '\nreturn decodeCompactReceivers;')();
+      const packed = new Uint8Array(read('assets/initial-compact.bin'));
+      assert.equal(hash(bytes), encoding.parentReceiverSha256);
+      assert.equal(hash(packed), encoding.sha256);
+      bytes = decoder(packed, encoding);
+      assert.equal(hash(bytes), encoding.decodedSha256);
+      initialPin = {...initialPin, sha256: encoding.decodedSha256};
+      compact = {packed: encoding.sha256, decoded: initialPin.sha256, parent: encoding.parentReceiverSha256,
+        decoderSourceSha256: hash(decoderSource)};
+    }
+    initial = create(bytes, initialPin);
   } else {
     engine = await api.MoonEngine.create({manifest, wasm: new Uint8Array(read('moon_kernel.wasm')),
       dem: new Uint8Array(read(manifest.assets.dem.path)), colour: new Uint8Array(read(manifest.assets.colour.path))});
@@ -174,9 +189,9 @@ async function main() {
       }
     }
   }
-  const report = {protocol:'R003F/F-GAIN/1', basis:initial ? 'shipped 540 initial V5 receiver' : values.adaptive ? 'canonical V5, production adaptiveRender' : 'canonical V5, fixed finite-source 4x16 quadrature',
+  const report = {protocol:'R003F/F-GAIN/1', basis:initial ? (compact ? 'shipped compact-decoded 540 initial V5 receiver' : 'parent 540 initial V5 receiver') : values.adaptive ? 'canonical V5, production adaptiveRender' : 'canonical V5, fixed finite-source 4x16 quadrature',
     angularQualification:'headless surface gain; each row declares convergence or fixed sampling; no native P1 claim',
-    node:process.version, sizes, ...(initial ? {initialReceiverSha256:initialPin.sha256, initialSourceSha256:hash(initialSource)} : {}),
+    node:process.version, sizes, ...(compact && {compact}), ...(initial ? {initialReceiverSha256:initialPin.sha256, initialSourceSha256:hash(initialSource)} : {}),
     assets:{wasm:manifest.wasm.sha256, dem:manifest.assets.dem.sha256, colour:manifest.assets.colour.sha256},
     sourceSha256:Object.fromEntries(units.map((unit, i) => [unit, hash(source[i])])),
     percentile:'type 7 over the whole receiver raster, including zero coverage',
