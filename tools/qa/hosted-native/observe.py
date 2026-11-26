@@ -31,6 +31,7 @@ import r0035_stage_materialize as stage_material
 import r0035_cost_materialize as cost_material
 from observe_r0035_stages import inspect as inspect_stage_trace
 from observe_r0035_costs import inspect as inspect_cost_trace, BASE_WRAPPER_SHA256 as COST_BASE_WRAPPER_SHA256
+import r003f_diagnostics as diagnostics
 
 CAP_FIELDS = ('CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb')
 RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
@@ -69,6 +70,7 @@ def read_campaign(path):
     stars = star_controls(value.get('r0035'))
     if type(value.get('evidenceRetention', False)) is not bool:
         raise ValueError('evidence retention must be boolean')
+    diagnostics.controls(value.get('r003fHarness','published'),selected,value['engine'],value['r003fDpr'],value.get('evidenceRetention',False))
     stage_mode(value.get('r0035Stages', False), selected, stars, value.get('evidenceRetention', False))
     matrix.matrix_controls(value.get('r003fMatrix'), value.get('r003fHarness','published'), selected, value['engine'], value['r003fDpr'])
     campaign_budget(value)
@@ -116,6 +118,10 @@ def matrix_campaign(args):
     return matrix.matrix_controls(getattr(args,'r003f_matrix',None),moon_campaign(args),campaign_selection(args),args.engine,getattr(args,'r003f_dpr',1))
 
 
+def diagnostic_campaign(args):
+    return diagnostics.controls(moon_campaign(args),campaign_selection(args),args.engine,
+                                getattr(args,'r003f_dpr',1),getattr(args,'retain_evidence',False))
+
 
 
 
@@ -140,13 +146,18 @@ def campaign_budget(campaign):
     headed = campaign.get('r002fRoute', 'offscreen') == 'tabhide'
     matrix_selected = campaign.get('r003fHarness', 'published') == 'corrected-matrix'
     costs = campaign.get('r0035Costs', False)
-    if type(costs) is not bool or sum((headed, matrix_selected, costs)) > 1:
+    diagnostic_selected=campaign.get('r003fHarness') in diagnostics.ROUTES
+    if type(costs) is not bool or sum((headed, matrix_selected, costs, diagnostic_selected)) > 1:
         raise ValueError('simultaneous supplemental route populations and budgets are not admitted')
     selected = campaign.get('workOrders', ['R0040', 'R003F', 'R0035', 'R002F'])
+    diagnostic=diagnostics.controls(campaign.get('r003fHarness','published'),selected,campaign.get('engine','chromium'),
+                                    campaign.get('r003fDpr',1),campaign.get('evidenceRetention',False))
     control = matrix.matrix_controls(campaign.get('r003fMatrix'), campaign.get('r003fHarness', 'published'),
                                      selected, campaign.get('engine', 'chromium'), campaign.get('r003fDpr', 1))
     if control:
         return {key: control['budget'][key] for key in ('coordinatorSeconds', 'workflowObservationMinutes')}
+    if diagnostic:
+        return {key:diagnostic['budget'][key] for key in ('coordinatorSeconds','workflowObservationMinutes')}
     if headed:
         if selected != ['R002F']:
             raise ValueError('headed aggregate budget supports only the selected R002F population')
@@ -179,6 +190,9 @@ def admit_lane_runtime(lane, runtime):
     """Acquisition is executable authority; copied plan/receipt fields are not."""
     if not isinstance(lane, dict):
         raise ValueError('executable lane must be a dictionary')
+    if diagnostics.mode_for_lane(lane):
+        diagnostics.admit_runtime(lane,runtime)
+        return
     argv = lane.get('argv')
     if isinstance(lane.get('preparation'), dict) and lane['preparation'].get('status') == 'INCOMPLETE':
         if argv != []:
@@ -250,6 +264,31 @@ def admit_plan(plan, args, runtime):
     # Callers pass their acquired runtime, never a value copied from this plan.
     for lane in plan['lanes']:
         admit_lane_runtime(lane, runtime)
+    diagnostic=diagnostic_campaign(args)
+    if diagnostic:
+        if len(plan['lanes'])!=1:raise ValueError('one complete diagnostic lane required')
+        lane=plan['lanes'][0];mode=diagnostic['mode'];prepared=lane.get('preparation',{})
+        if prepared.get('status') not in ('PASS','INCOMPLETE'):
+            raise ValueError('diagnostic preparation status is absent')
+        if prepared['status']=='PASS':
+            common=args.task/'work/prepared/receipts/prepared.json'
+            if not same_json(plan.get('preparedReceipt'),diagnostics.record(common)):
+                raise ValueError('current diagnostic common preparation differs from copied plan')
+            # Bind actual parent/child Python/Node and literal task paths before
+            # any optional source verifier can execute.
+            prefix=diagnostics.custody_prefix(mode,args.task,runtime)
+            expected_sources={k:str(getattr(args,k)) for k in ('research','baseline','historical')}
+            if any(prefix['prepared']['sources'][k]['root']!=v for k,v in expected_sources.items()):
+                raise ValueError('diagnostic current source roots differ from actual coordinator inputs')
+            check=diagnostics.readmit(mode,args.task,runtime)
+            diagnostics.actual_success(check,'actual diagnostic current readmission')
+            current=json.loads(check['stdout'])
+            if current.get('status')!='PASS' or not same_json(current,prepared):
+                raise ValueError('diagnostic current complete preparation differs from copied plan')
+        else:current=prepared;check=None
+        canonical=diagnostics.make_lane(mode,current,args.task,runtime)
+        if not same_json(lane,canonical):raise ValueError('diagnostic canonical command, source, scope or budget differs')
+        return [{**lane,**({'preExecutionCurrentness':check} if check is not None else {})}]
     engine = args.engine
     rain_capture = rain_campaign(args) in R0040_CAPTURE_MODES
     dateonly = rain_campaign(args) == 'capture-dateonly'
@@ -1051,6 +1090,11 @@ def matrix_result(lane, body, returncode, timed_out):
 
 def classify_lane(lane, returncode, timed_out=False):
     kind = lane['result']['kind']
+    if diagnostics.mode_for_lane(lane):
+        try:body=diagnostics.load(lane['result']['path'])
+        except (OSError,ValueError):body=None
+        return {'returncode':returncode,'timedOut':timed_out,
+                **diagnostics.classify(lane,body,returncode,timed_out)}
     if kind == 'r002f-tabhide':
         try: body=json.loads(Path(lane['result']['path']).read_text())
         except (OSError,ValueError): body=None
@@ -1139,10 +1183,12 @@ def namespace_status(lane, process, inner):
     outer_admitted = (isinstance(process, dict) and type(process.get('returncode')) is int
                       and type(process.get('timedOut')) is bool)
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE')
+                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()])
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
+    if admitted:
+        admitted=diagnostics.namespace_admitted(lane,inner)
     if admitted and inner['status'] == VETO_STATUS:
         admitted = retained_lane(lane) and inner.get('returncode') == 86 and inner['stopAll'] is True
     if admitted and inner['status'] == CAPTURE_ADMITTED:
@@ -1273,6 +1319,19 @@ def prepare_matrix(args,runtime,destination):
                'argv':command,'cwd':str(HERE),'timeoutSeconds':180,'process':str(folder/'process.json')})
 
 
+def prepare_diagnostic(args,runtime):
+    mode=diagnostic_campaign(args)['mode'];p=diagnostics.paths(args.task,mode)
+    command=diagnostics.preparation_argv(mode,args.task,runtime)
+    try:
+        result=run_bounded(command,str(HERE),dict(os.environ),
+            args.task/'capture/r003f-diagnostic-preparation.stdout',
+            args.task/'capture/r003f-diagnostic-preparation.stderr',180)
+    except (OSError,ValueError) as error:result={'returncode':None,'timedOut':False,'error':str(error)}
+    diagnostics.save(p['preparationEntry'],{**result,'protocol':diagnostics.PREPARATION_ENTRY,
+        'argv':command,'cwd':str(HERE),'timeoutSeconds':180,'sourceSha256':digest(HERE/'r003f_diagnostics.py'),
+        'process':str(p['preparationProcess'])})
+
+
 def inside(args, runtime):
     selected = campaign_selection(args)
     label = args.lane or 'preparation'
@@ -1289,12 +1348,13 @@ def inside(args, runtime):
         if (destination/'receipts').exists():
             shutil.copytree(destination/'receipts', args.task/'capture'/'preparation')
         write_json(args.task/'capture'/'preparation-process.json', result)
-        if matrix_campaign(args):
+        if matrix_campaign(args) or diagnostic_campaign(args):
             matrix.save(args.task/'capture/preparation-context.json',{'protocol':'hosted-common-preparation-execution/1',
                 'argv':command,'cwd':str(HERE),'timeoutSeconds':900,'sourceSha256':digest(HERE/'prepare.py'),
                 'nativeIsolationClaim':True,'isolation':matrix.record(receipt)})
         if result['returncode'] or result['timedOut']: return 2
         if matrix_campaign(args):prepare_matrix(args,runtime,destination)
+        if diagnostic_campaign(args):prepare_diagnostic(args,runtime)
         if stage_campaign(args):
             prepare_stages(args, runtime, destination)
         r0040_destination = args.task/'work'/'r0040-capture'
@@ -1385,7 +1445,7 @@ def inside(args, runtime):
                         '--r002f-section', args.r002f_section]
             if tabhide_campaign(args) == 'tabhide': command += ['--r002f-route','tabhide']
         plan = run_bounded(command, str(HERE), dict(os.environ), args.task/'capture'/'lanes.json',
-                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) else 30)
+                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) or diagnostic_campaign(args) else 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
     plan = json.loads((args.task/'capture'/'lanes.json').read_text())
     lane = next(x for x in admit_plan(plan, args, runtime) if x['id'] == args.lane)
@@ -1402,7 +1462,9 @@ def inside(args, runtime):
         env.pop(key, None)
     env['PLAYWRIGHT_BROWSERS_PATH'] = str(args.task/('python-browsers' if lane['result']['kind'] == 'r0035-trials' else 'node-browsers'))
     result = run_bounded(lane['argv'], lane['cwd'], env, lane['stdout'], lane['stderr'], lane['timeoutSeconds'])
+    if diagnostics.mode_for_lane(lane):diagnostics.record_entry(lane,result)
     verdict = classify_lane(lane, result['returncode'], result['timedOut'])
+    if diagnostics.mode_for_lane(lane):verdict['preExecutionCurrentness']=lane.get('preExecutionCurrentness')
     write_json(args.task/'capture'/'lane-status'/(args.lane+'.json'), {**result, **verdict, 'id': args.lane})
     # All in-namespace descendants are also killed when the namespace init exits.
     # A retained child veto is carried by its admitted receipt, including its
@@ -1445,6 +1507,7 @@ def outside(args, runtime):
     deadline = time.monotonic() + budget['coordinatorSeconds']  # leaves sealing/upload time within the selected step ceiling
     preparation = run_bounded(isolated_command(args, runtime, 'prepare'), str(HERE), parent_env,
                               capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
+                              diagnostic_campaign(args)['budget']['preparationSeconds'] if diagnostic_campaign(args) else
                               matrix_campaign(args)['budget']['preparationSeconds'] if matrix_campaign(args) else
                               (1920 if getattr(args, 'r002f', False) else 1020) + (330 if rain_campaign(args) in R0040_CAPTURE_MODES else 0)
                               + (240 if stage_campaign(args) else 0))
@@ -1478,7 +1541,8 @@ def outside(args, runtime):
         else:
             result = run_bounded(isolated_command(args, runtime, 'lane', lane['id']), str(HERE), parent_env,
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
-                                 min(lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly','r003f-matrix') else 0)
+                                 min(diagnostics.budget(diagnostics.mode_for_lane(lane))['namespaceSeconds'] if diagnostics.mode_for_lane(lane)
+                                     else lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly','r003f-matrix') else 0)
                                      + (90 if cost_lane(lane) else 0), remaining))
             path = capture/'lane-status'/(lane['id']+'.json')
             try: inner = json.loads(path.read_text())
@@ -1493,7 +1557,7 @@ def outside(args, runtime):
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE') for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()]) for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     write_json(capture/'observation.json', overall)
     return 0 if overall['status'] == 'OBSERVED' else 2
@@ -1506,7 +1570,7 @@ def main():
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--campaign', type=Path)
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
-    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0', 'corrected-matrix'), default='published')
+    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0', 'corrected-matrix', *diagnostics.ROUTES), default='published')
     parser.add_argument('--r003f-matrix',type=json.loads)
     parser.add_argument('--r0040-mode', choices=('options', *R0040_CAPTURE_MODES), default='options')
     parser.add_argument('--work-orders', nargs='+')
@@ -1553,6 +1617,7 @@ def main():
         cost_campaign(args)
         moon_campaign(args)
         matrix_campaign(args)
+        diagnostic_campaign(args)
         observation_budget(args)
         rain_campaign(args)
         tabhide_campaign(args)

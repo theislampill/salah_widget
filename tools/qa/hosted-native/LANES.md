@@ -482,7 +482,17 @@ native rendering or measure instrumentation overhead.
 
 ## Optional matrix route
 
-`--r003f-harness corrected-matrix --r003f-matrix '{"id":"<original-cell-id>","variant":"B0"}'` selects a separately admitted matrix lane. It requires R003F alone, genuine current optional preparation and the exact reviewed source closure. The first separate matrix selection is the original owner cell at Chromium DPR1 with B0 only. The combined checked-in campaign selects headed R002F only. Its result remains a selected diagnostic. Complete-eight intake requires an actual unchanged original replay; individual variants are never unioned. See [R003F_MATRIX_CENTRAL.md](R003F_MATRIX_CENTRAL.md) for supported populations, precise limits, private process custody and the calculated workflow budgets.
+`--r003f-harness corrected-matrix --r003f-matrix '{"id":"<original-cell-id>","variant":"B0"}'` selects a separately admitted matrix lane. It requires R003F alone, genuine current optional preparation and the exact reviewed source closure. The first separate matrix selection is the original owner cell at Chromium DPR1 with B0 only. The checked-in campaign at this source integration retains that Chromium DPR1 B0 selection. Its result remains a selected diagnostic. Complete-eight intake requires an actual unchanged original replay; individual variants are never unioned. See [R003F_MATRIX_CENTRAL.md](R003F_MATRIX_CENTRAL.md) for supported populations, precise limits, private process custody and the calculated workflow budgets.
+
+## Optional Firefox policy and WebKit document-input routes
+
+`--r003f-harness firefox-policy` and `--r003f-harness preconnect-input` select
+separate R003F-only, DPR1 Firefox and WebKit diagnostics. Their unchanged leaves,
+distinct result kinds, current source/runtime custody, Chromium boundary order,
+failure priorities, private final replay and uncalibrated ceilings are specified
+in [R003F hosted diagnostics](../../../docs/state-contracts/R003F-hosted-diagnostics.md).
+Neither selector is activated here. Neither result supplies original B0,
+complete-eight matrix or human acceptance.
 
 ## R0035 cost derivative
 

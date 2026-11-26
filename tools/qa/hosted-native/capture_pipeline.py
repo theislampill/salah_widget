@@ -21,6 +21,7 @@ import subprocess
 import sys
 import time
 import types
+import r003f_diagnostics as diagnostics
 
 HERE = Path(__file__).absolute().parent
 PRODUCER_PROTOCOL = 'salah-capture-producer-return/1'
@@ -32,6 +33,7 @@ OBSERVED_LANE_STATUSES = {'PASS','ADMITTED_FOR_OFFLINE_VERIFICATION',
     'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION','OBSERVED_STAGE_DIAGNOSTIC',
     'OBSERVED_PREPARATION_COSTS','OBSERVED_TABHIDE_DIAGNOSTIC',
     'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE'}
+OBSERVED_LANE_STATUSES |= {row['status'] for row in diagnostics.ROUTES.values()}
 LANE_STATUSES = OBSERVED_LANE_STATUSES | {'FAIL','INCOMPLETE','INCONCLUSIVE','ANDON',
     'ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED'}
 
@@ -102,6 +104,8 @@ def producer_identity(phase, task, roots):
         for key in ('research','baseline','historical'): command += ['--'+key,str(paths[key])]
         command += ['--campaign',str(HERE/'campaign.json')]
         files = ['capture_pipeline.py','observe.py','campaign.json']
+        if load(HERE/'campaign.json').get('r003fHarness') in diagnostics.ROUTES:
+            files += diagnostics.producer_source_files()
     need(all(isinstance(x,str) and x for x in command), 'DEPENDENCY')
     return {'argv':command, 'sources':{name:hashlib.sha256((HERE/name).read_bytes()).hexdigest() for name in files}}
 
@@ -212,6 +216,7 @@ def admit_producers(task, roots):
         for lane,row in zip(plan['lanes'],body['lanes']):
             need(lane.get('workOrder') in selected and row.get('workOrder')==lane['workOrder']
                  and lane.get('engine')==body['engine'], 'PRODUCER_INCOMPLETE')
+            need(diagnostics.pipeline_admitted(campaign,plan,body,lane,row,task),'PRODUCER_INCOMPLETE')
             if row.get('status')=='NOT_RUN':
                 need('namespaceProcess' not in row and type(row.get('reason')) is str and bool(row['reason']),
                      'PRODUCER_INCOMPLETE')

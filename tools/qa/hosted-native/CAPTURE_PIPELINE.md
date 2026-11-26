@@ -109,6 +109,24 @@ bytes/empty directories and tampered ciphertext. The owner recipient roundtrip i
 private and separate. Neither source controls nor synthetic receipts are native
 observations.
 
+## Opt-in R003F diagnostic terminal types
+
+The [R003F hosted diagnostic contract](../../../docs/state-contracts/R003F-hosted-diagnostics.md)
+adds two explicit producer status types. `OBSERVED_FIREFOX_POLICY` belongs only
+to the Firefox managed-policy route; `OBSERVED_PRECONNECT_INPUT_DIAGNOSTIC`
+belongs only to the WebKit altered-document route. Exact campaign, canonical
+task/runtime/command/budget, result kind, inner/outer status and qualification
+must agree. Original routes reject these foreign success labels; diagnostic
+routes reject original `PASS` and each other's labels. Known completed failures
+and documented unlaunched lanes retain their original transport disposition.
+
+For a diagnostic campaign, source identities additionally bind its complete new
+helper, replay, imported leaf, common preparer and original guard closure.
+Previous or incomplete producer identities cannot be relabelled into this
+schema. Original private plaintext, portable mapping and envelope formats are
+unchanged. The source controls for this coupling invoke the actual producer
+gate without accessing a recipient key or claiming native producer evidence.
+
 ## Preserved independent findings
 
 The first integrated source tree was not activated. Independent controls found
