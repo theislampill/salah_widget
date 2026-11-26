@@ -67,3 +67,18 @@ namespace/control 75; total 885. Two lanes 1770. Total enumerated ceiling
 leaves 60 further seconds. Nested Node transforms/checks use 30 seconds inside
 their parent envelopes. Shared job, acquisition, and sealing ceilings stay
 unchanged. These are ceilings, not calibration or performance evidence.
+
+## Standalone output alias successor
+
+Root authorized a narrow successor to frozen `005c1ea` after independent review
+reproduced a hardlinked output changing its protected reference before refusal.
+Before any output write, compare the actual non-truncating mutable descriptor
+against protected input device/inode identities, require a single hard link,
+and verify its actual original bytes. Keep the exclusive new renderer and all
+existing transform/inverse guards. Small RED controls must prove unchanged
+reference and candidate populations on refusal, including an unlisted alias,
+while read-only input hardlinks with a separate output still derive and invert.
+Update source pins and the existing control count together. The canonical
+fresh `copytree/copy2` route was not shown to reach this finding. Preserve its
+old actual preparation as evidence for the old freeze; use focused source
+gates and an actual old-preparation refusal, without a new large preparation.

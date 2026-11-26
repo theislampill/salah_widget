@@ -39,6 +39,22 @@ missing population members, unexplained original changes, modified helper
 bytes and inconsistent inverses are rejected. A failed preparation remains
 retained and cannot be reused.
 
+The standalone file entry also checks output inode custody before its first
+write. It opens the mutable stellar member without truncation, compares that
+actual descriptor's device/inode with every protected input, and requires one
+hard link. It verifies the original bytes and writes through the same admitted
+descriptor. The new renderer still requires an exclusive fresh output. A
+refused hardlink or existing renderer preserves all existing bytes and creates
+no partial renderer. Read-only input hardlinks remain admissible.
+
+This guard corrects a standalone-interface finding in frozen source `005c1ea`:
+distinct roots with a hardlinked mutable stellar file could change protected
+reference bytes before the final check rejected; an unlisted reference alias
+could also change without that final check noticing. Reachability through the
+canonical caller is not established: it already uses fresh `copytree/copy2`.
+The original freeze and preparation stay historical. Updated source pins
+require fresh preparation for the successor; no old receipt is rewritten.
+
 ## Explicit operational adapter
 
 The original `native_trials.main` calls `check_plan` before importing Playwright.

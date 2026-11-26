@@ -135,6 +135,45 @@ class Controls(unittest.TestCase):
             self.assertNotEqual(subprocess.run(command,capture_output=True,timeout=30).returncode,0)
             self.assertEqual((base/p.STELLAR).read_bytes(),(ROOT/p.STELLAR).read_bytes())
 
+    def test_node_entry_refuses_output_hardlinks_before_any_write(self):
+        p=self.module()
+        for output,protected in ((p.STELLAR,p.STELLAR),(p.CANDIDATE,p.RENDERER),
+                                 (p.STELLAR,'tools/r0035/other-stellar.mjs')):
+            with self.subTest(output=output,protected=protected),tempfile.TemporaryDirectory() as temporary:
+                base=Path(temporary)/'base';candidate=Path(temporary)/'candidate'
+                for root in (base,candidate):
+                    (root/'real-sky/core/src').mkdir(parents=True);(root/'tools/r0035').mkdir(parents=True)
+                    for name in (p.RENDERER,p.STELLAR):(root/name).write_bytes((ROOT/name).read_bytes())
+                if not (base/protected).exists():(base/protected).write_bytes((ROOT/p.STELLAR).read_bytes())
+                target=candidate/output
+                if target.exists():target.unlink()
+                target.hardlink_to(base/protected)
+                self.assertEqual((target.stat().st_dev,target.stat().st_ino),
+                                 ((base/protected).stat().st_dev,(base/protected).stat().st_ino))
+                before={root:{name:row for name,row in p.inventory(root).items()} for root in (base,candidate)}
+                command=['node',str(HERE/'r0035_psf_transform.mjs'),'derive',str(base),str(candidate)]
+                child=subprocess.run(command,capture_output=True,text=True,timeout=30)
+                self.assertNotEqual(child.returncode,0,child.stdout)
+                # Refusal must preserve all protected bytes and the complete
+                # existing candidate population, before any new output exists.
+                self.assertEqual(p.inventory(base),before[base],child.stderr)
+                self.assertEqual(p.inventory(candidate),before[candidate],child.stderr)
+
+    def test_node_entry_allows_read_only_input_hardlink_with_separate_output(self):
+        p=self.module()
+        with tempfile.TemporaryDirectory() as temporary:
+            base=Path(temporary)/'base';candidate=Path(temporary)/'candidate'
+            for root in (base,candidate):
+                (root/'real-sky/core/src').mkdir(parents=True);(root/'tools/r0035').mkdir(parents=True)
+                for name in (p.RENDERER,p.STELLAR):(root/name).write_bytes((ROOT/name).read_bytes())
+            (candidate/p.RENDERER).unlink();(candidate/p.RENDERER).hardlink_to(base/p.RENDERER)
+            before=p.inventory(base)
+            command=['node',str(HERE/'r0035_psf_transform.mjs'),'derive',str(base),str(candidate)]
+            child=subprocess.run(command,capture_output=True,text=True,timeout=30)
+            self.assertEqual(child.returncode,0,child.stderr);self.assertEqual(p.inventory(base),before)
+            checked=subprocess.run([*command[:2],'check',*command[3:]],capture_output=True,text=True,timeout=30)
+            self.assertEqual(checked.returncode,0,checked.stderr);self.assertEqual(json.loads(checked.stdout),json.loads(child.stdout))
+
     def synthetic_pair(self):
         p=self.module();identity={'path':'/private/identity','sha256':'a'*64,'bytes':20}
         admission={'status':'PASS','identity':identity};runtime={'python':'/python','node':'/node'}

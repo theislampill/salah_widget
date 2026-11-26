@@ -26,7 +26,7 @@ MATRIX_PINS = "c87056c51cfa51c9221f2928e3c0094f6025ead6ca0202b76181c9ac8aa0c0a0"
 import r0035_cost_materialize as cost_material
 import r0035_psf as psf
 
-R0035_PSF_PINS = 'ecf790e61fde5fccce7c1f7b0d6ea377f9255d6cf2b30c6013777288fc417797'
+R0035_PSF_PINS = '8902d6cd226b7d8e9f415f3e796ab5bd1b9c2ad9d9f2ada09cec1e7babff1c8a'
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
