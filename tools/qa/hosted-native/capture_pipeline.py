@@ -14,11 +14,11 @@ import math
 import os
 from pathlib import Path
 import shutil
+import secrets
 import signal
 import stat
 import subprocess
 import sys
-import tempfile
 import time
 import types
 
@@ -27,6 +27,13 @@ PRODUCER_PROTOCOL = 'salah-capture-producer-return/1'
 TRANSPORT_SHA256 = '6815cfdb68bea413a740d58e2ddf8e9d4c1185d65638274e8108e37637f3dbfe'
 PUBLIC_ERRORS = {'ARGUMENT', 'DEPENDENCY', 'PRODUCER_INCOMPLETE', 'PATH',
                  'STAGING', 'ENVELOPE', 'RESTORATION', 'CLEANUP', 'INTERRUPTED', 'INTERNAL'}
+WORK_ORDERS = ('R0040','R003F','R0035','R002F')
+OBSERVED_LANE_STATUSES = {'PASS','ADMITTED_FOR_OFFLINE_VERIFICATION',
+    'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION','OBSERVED_STAGE_DIAGNOSTIC',
+    'OBSERVED_PREPARATION_COSTS','OBSERVED_TABHIDE_DIAGNOSTIC',
+    'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE'}
+LANE_STATUSES = OBSERVED_LANE_STATUSES | {'FAIL','INCOMPLETE','INCONCLUSIVE','ANDON',
+    'ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED'}
 
 
 class Rejected(Exception):
@@ -54,7 +61,11 @@ def load(path, limit=8 << 20):
 
 
 def safe_path(path, E):
-    try:return E.no_symlink_path(path)
+    try:
+        # Do not erase a component before checking it: x/symlink/../y has
+        # different lexical and kernel meanings. The admitted path is reused.
+        need('..' not in Path(path).parts, 'PATH')
+        return E.no_symlink_path(path)
     except Exception:raise Rejected('PATH') from None
 
 
@@ -62,11 +73,12 @@ def roots_checked(task, roots):
     T = transport(); E = T.envelope()
     need(type(roots) is dict and set(roots) == {'research','baseline','historical'}, 'ARGUMENT')
     task = safe_path(task,E)
+    capture = safe_path(task/'capture',E)
     protected = [safe_path(p,E) for p in roots.values()]
     protected.append(safe_path(HERE.parents[2],E))
-    need(task.is_dir() and (task/'capture').is_dir(), 'PRODUCER_INCOMPLETE')
+    need(task.is_dir() and capture.is_dir(), 'PRODUCER_INCOMPLETE')
     need(stat.S_IMODE(task.stat().st_mode) == 0o700
-         and stat.S_IMODE((task/'capture').stat().st_mode) == 0o700, 'PATH')
+         and stat.S_IMODE(capture.stat().st_mode) == 0o700, 'PATH')
     need(all(p.is_dir() for p in protected), 'PATH')
     need(all(not task.is_relative_to(p) and not p.is_relative_to(task) for p in protected), 'PATH')
     # These are actual acquisition/build locations, not paths supplied by capture metadata.
@@ -77,8 +89,9 @@ def roots_checked(task, roots):
 
 def producer_identity(phase, task, roots):
     need(phase in ('acquisition','observation'), 'ARGUMENT')
-    task = Path(task).absolute()
-    paths = {k:Path(v).absolute() for k,v in roots.items()}
+    E=transport().envelope()
+    task = safe_path(task,E)
+    paths = {k:safe_path(v,E) for k,v in roots.items()}
     need(set(paths) == {'research','baseline','historical'}, 'ARGUMENT')
     if phase == 'acquisition':
         command = [shutil.which('bash'), str(HERE/'acquire.sh'), str(task),
@@ -166,28 +179,52 @@ def admit_producers(task, roots):
         code=completed(task,roots,'observation')
         need(code in (0,2) and not (capture/'coordinator-error-outer.json').exists(), 'PRODUCER_INCOMPLETE')
         body=load(capture/'observation.json')
+        campaign=load(HERE/'campaign.json')
+        enabled=campaign.get('r002f',{}).get('enabled')
+        selected=campaign.get('workOrders',[x for x in WORK_ORDERS if x!='R002F' or enabled])
+        need(type(enabled) is bool and type(selected) is list and selected
+             and all(type(x) is str and x in WORK_ORDERS for x in selected)
+             and len(set(selected))==len(selected) and ('R002F' in selected)==enabled,
+             'PRODUCER_INCOMPLETE')
+        selected=[x for x in WORK_ORDERS if x in selected]
         need(type(body) is dict and body.get('protocol')=='salah-hosted-native-observation/1'
+             and body.get('engine')==campaign.get('engine') in ('chromium','firefox','webkit')
+             and body.get('workOrders')==selected
              and known_process(body.get('preparation')) and type(body.get('lanes')) is list,
              'PRODUCER_INCOMPLETE')
         prep=body['preparation']
         if prep['returncode'] or prep['timedOut']:
-            need(code==2 and body['lanes']==[] and body.get('status') in ('INCOMPLETE','ISOLATION_FAIL'),
+            need(code==2 and body['lanes']==[] and body.get('status')==
+                 ('ISOLATION_FAIL' if prep['returncode']==86 else 'INCOMPLETE'),
                  'PRODUCER_INCOMPLETE')
             return 'COMPLETED_PREPARATION_FAILURE'
         need(body.get('status') in ('OBSERVED','OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES',
                                    'ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED')
              and (code==0)==(body['status']=='OBSERVED'), 'PRODUCER_INCOMPLETE')
         plan=load(capture/'lanes.json')
-        need(type(plan) is dict and type(plan.get('lanes')) is list and plan['lanes'], 'PRODUCER_INCOMPLETE')
+        need(type(plan) is dict and plan.get('protocol')=='salah-hosted-native-lanes/1'
+             and plan.get('sequential') is True and plan.get('workOrders')==selected
+             and type(plan.get('lanes')) is list and plan['lanes'], 'PRODUCER_INCOMPLETE')
         ids=[x.get('id') if type(x) is dict else None for x in plan['lanes']]
         need(all(type(x) is str and x for x in ids) and len(set(ids))==len(ids)
              and [x.get('id') if type(x) is dict else None for x in body['lanes']]==ids,
              'PRODUCER_INCOMPLETE')
-        for row in body['lanes']:
+        for lane,row in zip(plan['lanes'],body['lanes']):
+            need(lane.get('workOrder') in selected and row.get('workOrder')==lane['workOrder']
+                 and lane.get('engine')==body['engine'], 'PRODUCER_INCOMPLETE')
             if row.get('status')=='NOT_RUN':
                 need('namespaceProcess' not in row and type(row.get('reason')) is str and bool(row['reason']),
                      'PRODUCER_INCOMPLETE')
-            else:need(known_process(row.get('namespaceProcess')), 'PRODUCER_INCOMPLETE')
+            else:
+                need(row.get('status') in LANE_STATUSES and type(row.get('stopAll')) is bool
+                     and 'innerStatus' in row and known_process(row.get('namespaceProcess')),
+                     'PRODUCER_INCOMPLETE')
+        statuses=[row['status'] for row in body['lanes']]
+        expected=next((x for x in ('ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED')
+                       if x in statuses),None)
+        if expected is None:
+            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+        need(body['status']==expected, 'PRODUCER_INCOMPLETE')
         return 'COMPLETED_OBSERVATION'
     except Rejected:raise
     except Exception:raise Rejected('PRODUCER_INCOMPLETE') from None
@@ -200,7 +237,12 @@ def owned_directory(path, T):
     identity=None
     try:
         os.mkdir(path.name,0o700,dir_fd=parent)
-        info=os.stat(path.name,dir_fd=parent,follow_symlinks=False)
+        try:info=os.stat(path.name,dir_fd=parent,follow_symlinks=False)
+        except Exception:
+            # No payload operation has run. Without an ownership token, even
+            # an empty path may have been substituted; do not remove by name.
+            raise Rejected('CLEANUP') from None
+        need(stat.S_ISDIR(info.st_mode) and stat.S_IMODE(info.st_mode)==0o700,'CLEANUP')
         identity=(info.st_dev,info.st_ino)
         yield path
     finally:
@@ -238,18 +280,13 @@ def open_capture(source, output, certificate, key, protected_roots):
     need(all(not output.is_relative_to(p) and not p.is_relative_to(output) for p in protected), 'PATH')
     # Fresh trusted private parent, with bounded owned cleanup; no pre-existing
     # destination is replaced and tentative authenticated-decryption output stays inside it.
-    path=Path(tempfile.mkdtemp(prefix='capture-open-',dir=output.parent))
-    descriptor=os.open(path.parent,T.DIR_FLAGS)
-    info=path.stat();identity=(info.st_dev,info.st_ino)
-    try:
+    # Open the parent before allocating anything, and share the same owned
+    # reservation lifetime as staging (including its fail-closed identity gap).
+    with owned_directory(output.parent/('capture-open-'+secrets.token_hex(16)),T) as path:
         try:E.execute('open',source,path/'opened-stage',certificate,key)
         except Exception:raise Rejected('ENVELOPE') from None
         try:T.execute('restore',path/'opened-stage',output,protected_roots=protected)
         except Exception:raise Rejected('RESTORATION') from None
-    finally:
-        try:T.remove_owned(descriptor,path.name,identity)
-        except Exception:raise Rejected('CLEANUP') from None
-        finally:os.close(descriptor)
 
 
 class Parser(argparse.ArgumentParser):

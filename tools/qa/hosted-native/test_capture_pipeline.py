@@ -6,6 +6,7 @@ import io
 import json
 import os
 from pathlib import Path
+import shutil
 import signal
 import subprocess
 import sys
@@ -64,11 +65,13 @@ class PipelineTests(unittest.TestCase):
         self.observation = {
             'protocol':'salah-hosted-native-observation/1', 'engine':'chromium',
             'workOrders':['R003F'], 'preparation':{'returncode':0,'timedOut':False,'elapsedSeconds':1.0},
-            'lanes':[{'id':'fixture-lane','status':'INCOMPLETE',
+            'lanes':[{'id':'fixture-lane','workOrder':'R003F','status':'INCOMPLETE','stopAll':False,'innerStatus':None,
                       'namespaceProcess':{'returncode':0,'timedOut':False,'elapsedSeconds':1.0}}],
             'status':'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'}
         (self.capture/'observation.json').write_text(json.dumps(self.observation))
-        (self.capture/'lanes.json').write_text(json.dumps({'lanes':[{'id':'fixture-lane'}]}))
+        self.plan={'protocol':'salah-hosted-native-lanes/1','sequential':True,'workOrders':['R003F'],
+                   'lanes':[{'id':'fixture-lane','workOrder':'R003F','engine':'chromium'}]}
+        (self.capture/'lanes.json').write_text(json.dumps(self.plan))
 
     def fixture_producer(self, phase, returncode):
         identity = P.producer_identity(phase, self.task, self.roots)
@@ -211,6 +214,80 @@ class PipelineTests(unittest.TestCase):
                          '--certificate',str(self.cert)])
         self.assertEqual(code,1)
         self.assertEqual(stream.getvalue(),'CAPTURE_PIPELINE_REJECTED:PRODUCER_INCOMPLETE\n')
+
+    def test_capture_alias_is_refused_before_control_or_stream_writes(self):
+        shutil.rmtree(self.capture)
+        self.capture.symlink_to(self.roots['research'],target_is_directory=True)
+        argv=['run','--phase','acquisition','--task',str(self.task)]
+        for key,path in self.roots.items():argv += ['--'+key,str(path)]
+        with mock.patch.object(P.subprocess,'Popen',side_effect=AssertionError('must not launch')) as launch:
+            with contextlib.redirect_stderr(io.StringIO()):self.assertEqual(P.main(argv),1)
+        self.assertFalse(launch.called)
+        self.assertEqual(population(self.roots['research']),{})
+
+    def test_collapsed_symlink_component_cannot_change_actual_source_root(self):
+        external=self.root/'external';(external/'inner').mkdir(parents=True)
+        (external/'research').mkdir()
+        (self.root/'jump').symlink_to(external/'inner',target_is_directory=True)
+        raw=self.root/'jump/../research'
+        self.assertNotEqual(raw.resolve(),Path(os.path.abspath(raw)))
+        task=external/'research/task';(task/'capture').mkdir(parents=True,mode=0o700);task.chmod(0o700)
+        roots={**self.roots,'research':raw}
+        with self.assertRaises(P.Rejected):P.roots_checked(task,roots)
+        with self.assertRaises(P.Rejected):P.producer_identity('acquisition',task,roots)
+
+    def test_terminal_identity_population_and_status_fields_are_required(self):
+        mutations=[lambda b:b.pop('engine'),lambda b:b.update(engine='firefox'),
+                   lambda b:b.pop('workOrders'),lambda b:b.update(workOrders=['R0040']),
+                   lambda b:b['lanes'][0].pop('status'),lambda b:b['lanes'][0].update(status='FOREIGN'),
+                   lambda b:b['lanes'][0].pop('workOrder'),lambda b:b['lanes'][0].update(workOrder='R0040'),
+                   lambda b:b['lanes'][0].pop('stopAll'),lambda b:b['lanes'][0].update(stopAll=1),
+                   lambda b:b['lanes'][0].pop('innerStatus')]
+        for index,change in enumerate(mutations):
+            with self.subTest(index=index):
+                body=json.loads(json.dumps(self.observation));change(body)
+                (self.capture/'observation.json').write_text(json.dumps(body))
+                with self.assertRaises(P.Rejected):P.admit_producers(self.task,self.roots)
+
+    def test_terminal_plan_identity_fields_are_required(self):
+        mutations=[lambda b:b.pop('protocol'),lambda b:b.update(sequential=1),
+                   lambda b:b.pop('workOrders'),lambda b:b['lanes'][0].pop('workOrder'),
+                   lambda b:b['lanes'][0].update(engine='webkit')]
+        for index,change in enumerate(mutations):
+            with self.subTest(index=index):
+                body=json.loads(json.dumps(self.plan));change(body)
+                (self.capture/'lanes.json').write_text(json.dumps(body))
+                with self.assertRaises(P.Rejected):P.admit_producers(self.task,self.roots)
+
+    def test_original_not_run_forms_and_failed_controls_remain_retainable(self):
+        for status in ('FAIL','INCOMPLETE','INCONCLUSIVE','ANDON','NOT_RUN'):
+            with self.subTest(status=status):
+                body=json.loads(json.dumps(self.observation));row=body['lanes'][0];row['status']=status
+                if status=='NOT_RUN':
+                    row.pop('namespaceProcess');row.pop('stopAll');row.pop('innerStatus')
+                    row['reason']='workstream stopped by scoped Andon'
+                (self.capture/'observation.json').write_text(json.dumps(body))
+                self.assertEqual(P.admit_producers(self.task,self.roots),'COMPLETED_OBSERVATION')
+
+    def test_offline_parent_open_failure_creates_no_temporary_reservation(self):
+        source=self.root/'sealed';source.mkdir();real_open=P.os.open
+        def failure(path,*args,**kwargs):
+            if Path(path)==self.root:raise OSError('injected parent descriptor failure')
+            return real_open(path,*args,**kwargs)
+        with mock.patch.object(P.os,'open',side_effect=failure):
+            with self.assertRaises(Exception):
+                P.open_capture(source,self.root/'restored',self.cert,self.key,list(self.roots.values()))
+        self.assertFalse(list(self.root.glob('capture-open-*')))
+
+    def test_unknown_post_mkdir_identity_refuses_before_payload_and_never_guesses_cleanup(self):
+        target=self.task/'transport-work';real_stat=P.os.stat;T=P.transport()
+        def failure(path,*args,**kwargs):
+            if path==target.name and kwargs.get('dir_fd') is not None:raise OSError('injected identity failure')
+            return real_stat(path,*args,**kwargs)
+        with mock.patch.object(P.os,'stat',side_effect=failure):
+            with self.assertRaisesRegex(P.Rejected,'^CLEANUP$'):
+                with P.owned_directory(target,T):self.fail('identity failure must not reach payload operations')
+        self.assertTrue(target.is_dir());self.assertEqual(population(target),{})
 
 
 if __name__=='__main__':unittest.main()

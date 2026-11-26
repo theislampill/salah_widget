@@ -18,6 +18,10 @@ Before sealing, the caller requires ordinary completion of acquisition and, when
 acquisition succeeded, observation. It requires the original terminal aggregate,
 complete ordered planned lane population, and actual namespace process records
 for every launched lane. A documented NOT_RUN lane has no namespace process.
+The aggregate engine/work-order population must match the current campaign;
+every lane retains its planned identity, known original status and complete
+namespace row, and the aggregate status retains the original priority. Unknown
+or partial terminal records refuse transport rather than supplying an oracle.
 Completed namespace failures and controlled namespace timeouts remain failures
 and can be retained. A failed ordinary acquisition can retain acquisition-only
 evidence if no observation was started. A completed failed preparation has no
@@ -45,13 +49,23 @@ product PASS, proof that a recipe passed, or authentication of a sender.
 The caller binds protection to the actual orchestration/research/baseline/
 historical roots and fixed acquired build/runtime/browser/cache/config locations.
 Capture data cannot name a replacement protection root. A fresh mode0700
+capture root and its ancestry must pass symlink checks before any producer
+receipt or stream is created. Source paths containing `..` are refused; the
+same admitted canonical paths are used for protection and actual producer argv.
+A fresh mode0700
 `transport-work` reservation holds the private mapping and numeric payloads.
 The entire stage is encrypted by unchanged `envelope.py`; the strict path,
 case-fold, complete-population and CMS rules remain byte-identical.
 
 The public upload population remains exactly `capture.p7m` and `envelope.json`.
 Logical names, mapping and payload bytes remain inside the ciphertext. The
-caller removes only its owned staging reservation on success or error. The
+caller removes only a staging reservation whose inode ownership was acquired.
+An exceptional identity-read failure immediately after directory creation
+refuses with CLEANUP before payload or cryptographic work. Its empty private
+reservation may remain: without an ownership token the caller must not delete
+a possibly substituted directory by name. Once ownership is established,
+success/error cleanup uses that token. Offline parent-descriptor acquisition
+occurs before any temporary reservation, closing the earlier setup leak. The
 workflow's final cleanup removes the entire fresh per-run task, covering staging,
 tentative envelope files, logs, disposable builds, runtimes and downloaded caches.
 It occurs after attempted ciphertext upload.
@@ -94,3 +108,14 @@ retention, actual local CMS roundtrips with a synthetic recipient, exact case-pa
 bytes/empty directories and tampered ciphertext. The owner recipient roundtrip is
 private and separate. Neither source controls nor synthetic receipts are native
 observations.
+
+## Preserved independent findings
+
+The first integrated source tree was not activated. Independent controls found
+a capture-root symlink followed before producer writes, a lexical `..` source
+argument mismatch, and incomplete aggregate/lane terminal identity admission.
+The corrected successor rejects those inputs before writes or sealing and
+retains the failing source tree and review. Its controls also preserve ordinary
+failed lanes and NOT_RUN forms. The empty pre-ownership reservation limitation
+above narrows the original unconditional cleanup description; it is not a claim
+of private payload erasure after unknown ownership.
