@@ -79,6 +79,36 @@ function browserPids(executable){
     try{return fs.readlinkSync('/proc/'+value+'/exe')===executable?[Number(value)]:[];}catch(e){if(['ENOENT','EACCES'].includes(e.code))return [];throw e;}
   });
 }
+function processCensus(executable,io=fs){
+  // Failure-only private diagnostics. Partial reads are retained as partial;
+  // this snapshot never selects a PID or replaces the original owner guard.
+  const limits={processes:256,cmdlineBytes:16384,statusBytes:4096,statBytes:4096,linkCharacters:4096};
+  const errorCode=error=>String(error?.code||'UNKNOWN').slice(0,64);
+  const link=name=>{try{const value=io.readlinkSync(name);return {value:value.slice(0,limits.linkCharacters),truncated:value.length>limits.linkCharacters};}
+    catch(error){return {errorCode:errorCode(error)};}};
+  const read=(name,maximum)=>{
+    const row={};let fd;
+    try{fd=io.openSync(name,'r');const buffer=Buffer.alloc(maximum+1),n=io.readSync(fd,buffer,0,buffer.length,0);
+      row.value=buffer.subarray(0,Math.min(n,maximum)).toString('utf8');row.truncated=n>maximum;}
+    catch(error){row.errorCode=errorCode(error);}
+    finally{if(fd!==undefined)try{io.closeSync(fd);}catch(error){row.closeErrorCode=errorCode(error);}}
+    return row;
+  };
+  const result={protocol:'r002f-headed-process-census/1',authority:'diagnostic-only; does not select or admit a browser owner',
+    expectedExecutable:executable,startedHostNs:process.hrtime.bigint().toString(),limits,
+    observer:{pid:process.pid,uid:process.getuid?.()??null,netns:link('/proc/self/ns/net'),pidns:link('/proc/self/ns/pid')},rows:[]};
+  try{
+    const ids=io.readdirSync('/proc').filter(value=>/^\d+$/.test(value)).map(Number)
+      .filter(value=>Number.isSafeInteger(value)&&value>0).sort((a,b)=>a-b);
+    result.enumeration={numericEntries:ids.length,retainedEntries:Math.min(ids.length,limits.processes),truncated:ids.length>limits.processes};
+    for(const pid of ids.slice(0,limits.processes)){
+      const root='/proc/'+pid;result.rows.push({pid,exe:link(root+'/exe'),
+        cmdline:read(root+'/cmdline',limits.cmdlineBytes),status:read(root+'/status',limits.statusBytes),
+        stat:read(root+'/stat',limits.statBytes),netns:link(root+'/ns/net'),pidns:link(root+'/ns/pid')});
+    }
+  }catch(error){result.enumeration={errorCode:errorCode(error)};}
+  result.endedHostNs=process.hrtime.bigint().toString();return result;
+}
 async function boundary(browser,report,host){
   const marker=crypto.randomBytes(24).toString('hex'),before=new Set(browser.contexts());let hits=0,server;
   Object.assign(report,{protocol:'salah-hosted-browser-boundary/1',passed:false,headless:false,chromiumSandbox:true,
@@ -268,7 +298,7 @@ async function main(argv){
       'CDP PNG packets are retained losslessly in received order. First received after activation is not first displayed or a physical-device cadence.',
       'No bfcache, changed-scene/weather-expiry, memory/GC, owner-tier policy, human visual or full R002F acceptance claim.',
       'Original combined Moon result 244/248 and both RES/G8 policy conflicts remain unchanged.']};
-  let display,browser,browserLifecycle,browserProcess,executable,prior;const sites=[];
+  let display,browser,browserLifecycle,browserProcess,executable,prior,ownerAdmitted=false;const sites=[];
   try{
     report.sources={baseline:S.generated(options.baseline,P.BASE_INDEX),candidate:S.generated(options.candidate,P.COMBINED_INDEX)};
     const pkg=JSON.parse(S.body(path.join(options.playwright,'package.json')));need(pkg.version==='1.62.1','unexpected Playwright version');
@@ -276,18 +306,22 @@ async function main(argv){
     report.playwright={version:pkg.version,executablePath:executable,executableSha256:S.identity(executable).sha256,headless:false,chromiumSandbox:true};
     display=await startDisplay(options.out,host);report.xvfb=display.record;
     prior=new Set(browserPids(executable));
+    report.browserOwnerSelection={protocol:'r002f-headed-owner-selection/1',priorPids:[...prior],observedPids:[],mainPids:[],admitted:false};
     browser=await playwright.chromium.launch({headless:false,chromiumSandbox:true,executablePath:executable,timeout:30000,
       env:{...process.env,DISPLAY:display.record.display}});
     browserLifecycle=watchLifecycle(browser,'browser',()=>browser.isConnected());report.browserLifecycle=browserLifecycle.state;
     const main=[];
-    for(const pid of browserPids(executable))if(!prior.has(pid)){
+    const observed=browserPids(executable);report.browserOwnerSelection.observedPids=observed;
+    for(const pid of observed)if(!prior.has(pid)){
       try{const argv=fs.readFileSync('/proc/'+pid+'/cmdline','utf8').split('\0');
         if(!argv.some(arg=>arg.startsWith('--type=')))main.push(processInfo(pid));
       }catch(error){if(error.code!=='ENOENT')throw error;}
     }
+    report.browserOwnerSelection.mainPids=main.map(row=>row.pid);
     need(main.length===1,'one actual headed browser owner required');browserProcess=main[0];report.browserProcess=browserProcess;
     need(browserProcess.uid===host.uid&&browserProcess.netns===host.netns&&browserProcess.pidns===host.pidns&&
       !browserProcess.argv.some(x=>x==='--no-sandbox'||x.startsWith('--headless')),'headed process identity differs');
+    ownerAdmitted=true;report.browserOwnerSelection.admitted=true;
     host.browserPid=browserProcess.pid;report.browserVersion=browser.version();
     const boundaryHost={...host,executableSha256:report.playwright.executableSha256};
     await boundary(browser,report.boundaries.before={},boundaryHost);
@@ -304,7 +338,10 @@ async function main(argv){
     await boundary(browser,report.boundaries.after={},boundaryHost);
     report.status=report.continuationVetoed?'EXTERNAL_CONTINUATION_VETOED':
       report.rows.length===4&&report.rows.every(row=>row.verdict.status==='OBSERVED')?S.STATUS:'INCOMPLETE';
-  }catch(error){report.errors.push(String(error.stack||error));report.status=error.isolation?'ISOLATION_FAIL':'INCOMPLETE';}
+  }catch(error){report.errors.push(String(error.stack||error));report.status=error.isolation?'ISOLATION_FAIL':'INCOMPLETE';
+    if(browser&&!ownerAdmitted&&executable)try{report.ownerFailureProcessCensus=processCensus(executable);}
+      catch(diagnosticError){report.ownerFailureProcessCensus={protocol:'r002f-headed-process-census/1',error:String(diagnosticError.stack||diagnosticError)};}
+  }
   finally{
     if(browser)try{browserLifecycle.requestCleanup();await bounded(browser.close(),15000,'browser cleanup');report.cleanup.browser=!browser.isConnected();}
       catch(error){report.errors.push('browser cleanup: '+error);}
@@ -317,6 +354,8 @@ async function main(argv){
       catch(error){report.errors.push('server cleanup: '+error);}
     if(display)try{const closed=await closeProcess(display.child,display.record.process);Object.assign(report.xvfb,closed);report.cleanup.xvfb=closed.stopped;}
       catch(error){report.errors.push('display cleanup: '+error);}
+    if(report.ownerFailureProcessCensus&&executable)try{report.afterCleanupProcessCensus=processCensus(executable);}
+      catch(diagnosticError){report.afterCleanupProcessCensus={protocol:'r002f-headed-process-census/1',error:String(diagnosticError.stack||diagnosticError)};}
     if(report.status===S.STATUS)try{S.admitReport(report,options.out,{...options,isolationFile});}
       catch(error){report.errors.push('final admission: '+error);report.status='INCOMPLETE';}
     S.writeJson(path.join(options.out,'result.json'),report);
@@ -325,7 +364,7 @@ async function main(argv){
   process.exitCode=report.status===S.STATUS?0:report.status==='FAIL'?1:
     ['ISOLATION_FAIL','EXTERNAL_CONTINUATION_VETOED'].includes(report.status)?86:2;
 }
-module.exports={parse,processInfo,sameLive,closeProcess,continueLocal,record,ledger,bounded,watchLifecycle,arm,nativeIsolation,main};
+module.exports={parse,processInfo,sameLive,closeProcess,processCensus,continueLocal,record,ledger,bounded,watchLifecycle,arm,nativeIsolation,main};
 if(require.main===module)main(process.argv.slice(2)).catch(error=>{
   console.error('R002F_TABHIDE '+(error.isolation?'ISOLATION_FAIL':'INCOMPLETE')+': '+error.message);process.exitCode=error.isolation?86:2;
 });

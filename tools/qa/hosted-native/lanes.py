@@ -27,7 +27,7 @@ import r0035_cost_materialize as cost_material
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
-R002F_TABHIDE_MANIFEST_SHA256 = 'f6588aafecd70917cace0849408dfd66c12ea4db28240d19fd00c3df2a4351fe'
+R002F_TABHIDE_MANIFEST_SHA256 = 'f5ad6097ba1d9232f0cb00d12d45b838d448eee59e5bc780c127f1b0c886fedc'
 R002F_TABHIDE_TIMEOUT_SECONDS = 4 * (180 + 120) + 600
 WORK_ORDERS = ('R0040', 'R003F', 'R0035', 'R002F')
 STAR_DEFAULTS = {'guard': 'default', 'scope': 'all', 'mode': 'both'}

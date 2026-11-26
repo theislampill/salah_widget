@@ -400,3 +400,64 @@ test('private output refuses reused, source-contained or linked parent custody',
     assert.equal(fs.existsSync(path.join(protectedRoot,'capture')),false);
   }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
+
+// A declared read-only procfs double: these controls never launch a browser.
+function procCensusIO(ids=['11','12']){
+  const open=new Map(),closed=[];let next=1;
+  const failures=new Map(),text=new Map(),links=new Map();
+  links.set('/proc/self/ns/net','net:[controlled]');links.set('/proc/self/ns/pid','pid:[controlled]');
+  for(const id of ids){
+    links.set('/proc/'+id+'/exe','/controlled/chrome');
+    links.set('/proc/'+id+'/ns/net','net:[controlled]');links.set('/proc/'+id+'/ns/pid','pid:[controlled]');
+    text.set('/proc/'+id+'/cmdline',Buffer.from('/controlled/chrome\0--type=renderer\0'));
+    text.set('/proc/'+id+'/status',Buffer.from('Name:\tcontrolled\nUid:\t1001\t1001\t1001\t1001\n'));
+    text.set('/proc/'+id+'/stat',Buffer.from(id+' (controlled) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1234 0\n'));
+  }
+  function fail(name){if(failures.has(name))throw Object.assign(Error('controlled proc read'),{code:failures.get(name)});}
+  return {failures,text,links,closed,open,
+    readdirSync(name){fail(name);assert.equal(name,'/proc');return ['self','not-a-pid',...ids];},
+    readlinkSync(name){fail(name);if(!links.has(name))throw Object.assign(Error('absent'),{code:'ENOENT'});return links.get(name);},
+    openSync(name,flags){assert.equal(flags,'r');fail(name);if(!text.has(name))throw Object.assign(Error('absent'),{code:'ENOENT'});
+      const fd=next++;open.set(fd,name);return fd;},
+    readSync(fd,buffer,offset,length,position){const name=open.get(fd);fail('read:'+name);return text.get(name).copy(buffer,offset,position,position+length);},
+    closeSync(fd){closed.push(fd);open.delete(fd);}
+  };
+}
+test('failure-only proc census retains actual bounded fields without selecting an owner',()=>{
+  const io=procCensusIO(),result=D.processCensus('/controlled/chrome',io);
+  assert.equal(result.protocol,'r002f-headed-process-census/1');
+  assert.equal(result.authority,'diagnostic-only; does not select or admit a browser owner');
+  assert.equal(result.enumeration.truncated,false);assert.equal(result.rows.length,2);
+  assert.equal(result.observer.netns.value,'net:[controlled]');
+  assert.equal(result.rows[0].pid,11);assert.equal(result.rows[0].exe.value,'/controlled/chrome');
+  assert.equal(result.rows[0].cmdline.value,'/controlled/chrome\0--type=renderer\0');
+  assert.equal(result.rows[0].cmdline.truncated,false);assert.equal(io.open.size,0);assert.equal(io.closed.length,6);
+  assert.equal('selectedPid' in result,false);
+});
+test('failure-only proc census retains EACCES and disappearing-process evidence',()=>{
+  const io=procCensusIO();io.failures.set('/proc/11/exe','EACCES');io.failures.set('/proc/12/cmdline','ENOENT');
+  const result=D.processCensus('/controlled/chrome',io);
+  assert.equal(result.rows.length,2);assert.equal(result.rows[0].exe.errorCode,'EACCES');
+  assert.equal(result.rows[0].cmdline.value,'/controlled/chrome\0--type=renderer\0');
+  assert.equal(result.rows[1].cmdline.errorCode,'ENOENT');assert.equal(io.open.size,0);
+});
+test('failure-only proc census bounds process population and retained text prefixes',()=>{
+  const io=procCensusIO(Array.from({length:258},(_,i)=>String(i+10)));
+  io.text.set('/proc/10/cmdline',Buffer.alloc(20000,65));io.links.set('/proc/10/exe','x'.repeat(5000));
+  const result=D.processCensus('/controlled/chrome',io);
+  assert.deepEqual(result.limits,{processes:256,cmdlineBytes:16384,statusBytes:4096,statBytes:4096,linkCharacters:4096});
+  assert.equal(result.enumeration.numericEntries,258);assert.equal(result.enumeration.truncated,true);assert.equal(result.rows.length,256);
+  assert.equal(result.rows[0].pid,10);assert.equal(result.rows[0].cmdline.value.length,16384);assert.equal(result.rows[0].cmdline.truncated,true);
+  assert.equal(result.rows[0].exe.value.length,4096);assert.equal(result.rows[0].exe.truncated,true);assert.equal(io.open.size,0);
+});
+test('failure-only proc census closes descriptors even when a read fails',()=>{
+  const io=procCensusIO(['11']);io.failures.set('read:/proc/11/status','EACCES');
+  const result=D.processCensus('/controlled/chrome',io);
+  assert.equal(result.rows[0].status.errorCode,'EACCES');assert.equal(io.open.size,0);assert.equal(io.closed.length,3);
+});
+test('failure-only proc census preserves enumeration failure as a diagnostic record',()=>{
+  const io=procCensusIO();io.failures.set('/proc','EACCES');
+  const result=D.processCensus('/controlled/chrome',io);
+  assert.equal(result.enumeration.errorCode,'EACCES');assert.deepEqual(result.rows,[]);
+  assert.equal(result.authority,'diagnostic-only; does not select or admit a browser owner');
+});

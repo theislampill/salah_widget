@@ -35,6 +35,32 @@ All source trees remain disposable and outside private capture. The served entry
 all generated bodies, source manifest, executable identities, actual process
 receipts and captured output are rechecked by final admission.
 
+### Failed headed process-owner setup
+
+The driver retains the original prelaunch PID set, postlaunch executable-match
+set and main-process candidates before applying the unchanged exact-one-owner
+rule. A failure before that rule and its namespace/UID checks are admitted may
+also retain a private `r002f-headed-process-census/1` snapshot while the browser
+is still available, followed by another snapshot after cleanup. These records
+are diagnostic-only; they never select a PID, replace a failed owner check or
+turn an incomplete observation into an admitted lifecycle result.
+
+The read-only census visits at most 256 numeric entries in the current PID
+namespace. It retains bounded prefixes of command lines (16,384 bytes), status
+and stat records (4,096 bytes each), and executable/namespace links (4,096
+characters). Permission errors, disappearing processes, truncated populations,
+truncated fields and read/close errors remain explicit. Reads occur at different
+instants and are not an atomic process inventory. Missing or unreadable fields
+do not prove absence, ownership, executable identity or the cause of a failed
+selection. The original cleanup flags retain their original meaning; a failed
+owner check cannot manufacture a successful final browser census.
+
+This extra census runs only on the early owner-failure path, outside any scene
+or capture schedule. All raw fields stay in the encrypted private evidence.
+Successful ownership, strict isolation, original scheduling and pixel admission
+remain unchanged. A later successful run would have its own exact source
+identity and native evidence; the earlier failed observation remains failed.
+
 ## Selected population
 
 ```json
