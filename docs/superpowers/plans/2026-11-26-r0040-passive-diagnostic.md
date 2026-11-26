@@ -58,10 +58,11 @@
 - [x] Commit coherent source with the standard coauthor trailer; retain exact commit/tree and scoped receipts for independent review.
 - [x] Keep campaign activation and native observations unselected pending independent integration review.
 
-## Source freeze checkpoint
+## Initial source freeze checkpoint
 
-The leaf implementation and its 24 source controls are complete for independent
-review. The final registered selection includes the unchanged runner, capture
+The initial leaf implementation and its 24 source controls reached independent
+review. That review led to the bounded population correction below. The
+registered selection includes the unchanged runner, capture
 retention and Date-only control groups. The added Node server observers use
 `errorMonitor`; retained RED/GREEN evidence checks that ordinary errors still
 throw the same primary exception and existing handlers still receive it.
@@ -70,3 +71,25 @@ No positive hosted namespace or native observation is claimed by this packet.
 The next boundary is independent exact-tree source review, followed by separately
 reviewed central opt-in integration with genuine preparation/currentness admission,
 explicit overhead budgets and both final receipts. No campaign has been activated.
+
+## Bounded sampler-population correction
+
+Independent review found that a shortened supplemental prefix could pass when its
+copied original count and derived inspection were changed together. The original
+driver trims its local audit array after the stop response, so that final report
+cannot establish the complete untrimmed population.
+
+- [x] Preserve the original finding and reproduce it with the actual pinned
+  driver and declared browser/CDP doubles before changing production source.
+- [x] Retain the actual original CDP stop response in a separate bounded private
+  artifact after the stream has stopped, before returning the same response
+  object to the driver. Preserve unavailable/partial retention on faults.
+- [x] Bind the artifact's size and digest in the supplemental final receipt.
+  Require actual artifact bytes at offline admission, and compare the complete
+  sample population and every ordinal/timestamp pair in the same clock domain.
+- [x] Keep the sampler expression, sample array, scheduling, PNGs, ACK path,
+  original reports and all original/Date-only/retention source bytes unchanged.
+- [x] Add coupled-count/drop, timestamp, artifact-byte and post-stream retention
+  fault controls, including original cleanup failure and veto precedence.
+- [x] Freeze a separate source successor for independent review with registered controls and privacy
+  evidence. Central integration remains a subsequent review boundary.

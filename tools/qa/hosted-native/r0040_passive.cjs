@@ -21,6 +21,9 @@ const D=require('./r0040_dateonly.cjs'),R=require('./retain_r0040_capture.cjs');
 const S=require('./r0040_passive_sampler.cjs'),U=require('./r0040_passive_runtime.cjs');
 const ADMITTED='ADMITTED_PASSIVE_DATE_ONLY_FOR_OFFLINE_VERIFICATION';
 const STOP='globalThis.active=false; globalThis.samples',READ='globalThis.__R0040_PASSIVE_SAMPLER__??null';
+const STOP_LIMITS=Object.freeze({samples:4096,bytes:8*1024*1024});
+function stopArtifactName(id){need(Number.isSafeInteger(id)&&id>0&&id<=4,'bounded original stop session identity required');
+  return 'passive-original-stop-'+id+'.json';}
 const primitive=value=>value===null||typeof value==='boolean'?value:typeof value==='string'?value.slice(0,512):
   typeof value==='number'&&Number.isFinite(value)?value:undefined;
 const errorData=error=>({name:String(error?.name??'Error').slice(0,512),message:String(error?.message??error).slice(0,512)});
@@ -32,12 +35,13 @@ function passiveIdentity(driver){
   need(matches.length===1,'one original isolated sampler expression required');
   return {protocol:'r0040-passive-diagnostic/1',entrySha256:sha(fs.readFileSync(__filename)),sources:verifyLeafSources(),
     originalDriverSha256:sha(source),sampler:S.instrumentStart(matches[0][1]).identity,
+    originalStopRetention:{protocol:'r0040-passive-original-stop/1',limits:STOP_LIMITS},
     workerInstallerSha256:sha(U.installWorkerObserver.toString()),runtimeSnapshotSha256:sha(U.snapshotPassiveRuntime.toString()),
     originalDriverUnchanged:true,originalDateOnlyUnchanged:true,originalReportsUnchanged:true,productAndWorkerUnchanged:true,
     timingClass:'instrumented-passive-date-only',nativeQualification:'NOT_VERIFIED',humanAcceptance:'OUTSTANDING'};
 }
 
-function inspectPassive(observation,identity){
+function inspectPassive(observation,identity,originalStopBytes){
   need(observation&&observation.protocol==='r0040-passive-observation/1'&&isDeepStrictEqual(observation.identity,identity),
     'passive observation source identity differs');
   const host=observation.host,count=value=>Number.isSafeInteger(value)&&value>=0;
@@ -67,12 +71,28 @@ function inspectPassive(observation,identity){
   need(extraction.phase==='after-original-stop'&&extraction.status==='OBSERVED'&&extraction.error===null&&
     Number.isSafeInteger(sampler.originalSampleCount)&&sampler.originalSampleCount>0&&extraction.raw?.rows?.length===sampler.originalSampleCount&&
     isDeepStrictEqual(extraction.inspection,S.inspectSampler(extraction.raw)),'passive sampler inspection differs from raw prefix');
+  const stop=sampler.originalStopResponse,artifact=stop?.artifact;
+  need(Buffer.isBuffer(originalStopBytes)&&originalStopBytes.length>0&&originalStopBytes.length<=STOP_LIMITS.bytes,
+    'actual bounded original stop response bytes required');
+  need(stop?.protocol==='r0040-passive-original-stop/1'&&stop.status==='RETAINED'&&stop.error===null&&
+    isDeepStrictEqual(stop.limits,STOP_LIMITS)&&artifact?.file===stopArtifactName(sampler.id)&&
+    stop.observedBytes===originalStopBytes.length&&artifact.bytes===originalStopBytes.length&&artifact.sha256===sha(originalStopBytes),
+    'original stop artifact identity or retained bytes differ');
+  const response=JSON.parse(originalStopBytes),samples=response?.result?.value;
+  need(response&&typeof response==='object'&&!Array.isArray(response)&&!response.exceptionDetails&&
+    Array.isArray(samples)&&samples.length>0&&samples.length<=STOP_LIMITS.samples&&
+    samples.length===sampler.originalSampleCount&&samples.length===extraction.raw.rows.length,
+    'complete original stop sample population differs');
+  for(const [ordinal,sample]of samples.entries())need(sample&&typeof sample==='object'&&!Array.isArray(sample)&&
+    typeof sample.at==='number'&&Number.isFinite(sample.at)&&extraction.raw.rows[ordinal][0]===ordinal&&
+    sample.at===extraction.raw.timeOriginMs+extraction.raw.rows[ordinal][1],
+    'original stop sample ordinal or same-clock timestamp differs');
   return {protocol:'r0040-passive-inspection/1',status:'OBSERVED',hostEvents:host.rows.length,runtimeSnapshots:2,
     samplerRows:extraction.raw.rows.length,clockDomains:['node-hrtime','main-performance','isolated-performance'],
     interpretation:'Separate instrumented diagnostic with same-domain intervals only; no cadence, frame association, worker health, visual or product acceptance.'};
 }
 
-function admitPassiveReceipt(receipt,baseBytes,identity,diagnostic,actualExitCode){
+function admitPassiveReceipt(receipt,baseBytes,identity,diagnostic,actualExitCode,originalStopBytes){
   need(Number.isInteger(actualExitCode)&&actualExitCode===0,'actual passive child exit zero required');
   const base=JSON.parse(baseBytes);
   need(receipt?.protocol==='r0040-passive-final-observation/1'&&receipt.status===ADMITTED&&receipt.exitCode===0&&
@@ -85,7 +105,7 @@ function admitPassiveReceipt(receipt,baseBytes,identity,diagnostic,actualExitCod
     'unchanged Date-only final admission required');
   need(base.clockProofs?.length===1&&base.clockProofs[0].status==='OBSERVED'&&isDeepStrictEqual(base.clockProofs[0].admission,
     D.admitClockProof(base.clockProofs[0].raw,base.clockProofs[0].raw.utcMs)),'Date-only clock proof differs');
-  need(isDeepStrictEqual(receipt.inspection,inspectPassive(receipt.observation,identity)),'passive final inspection differs');
+  need(isDeepStrictEqual(receipt.inspection,inspectPassive(receipt.observation,identity,originalStopBytes)),'passive final inspection differs');
   return receipt.inspection;
 }
 
@@ -123,7 +143,7 @@ class PassiveRetention extends D.DateOnlyRetention {
     };
     this.host('observer-created');
     this.record('passive-instrumentation',{identity:passive,
-      overhead:'Bounded in-memory Worker/response/server bookkeeping; two isolated-world clock reads and one numeric row per original sampler callback. Startup/readiness/cleanup evaluations and final serialization add uncalibrated overhead. No new screencast listener, PNG copy, ACK handling or per-frame fsync. Clock domains are separate.'});
+      overhead:'Bounded in-memory Worker/response/server bookkeeping; two isolated-world clock reads and one numeric row per original sampler callback. Startup/readiness/cleanup evaluations, bounded original stop-response serialization/write/fsync/readback with a metadata journal event after stream stop, and final serialization add uncalibrated overhead. No new screencast listener, PNG copy, ACK handling or per-frame fsync. Clock domains are separate.'});
   }
   passiveError(phase,error){if(this.passive.errors.length<32)this.passive.errors.push({phase,error:errorData(error)});
     else this.passive.host.faults++;}
@@ -163,10 +183,34 @@ class PassiveRetention extends D.DateOnlyRetention {
     }catch(error){row.error=errorData(error);this.passiveError(phase,error);}
     finally{this.record('passive-sampler-prefix',{sessionId:session.record.id,observation:row});}
   }
+  retainOriginalStop(session,result){
+    const row={protocol:'r0040-passive-original-stop/1',status:'INCOMPLETE',limits:STOP_LIMITS,artifact:null,error:null};
+    session.record.originalStopResponse=row;
+    try{
+      const samples=result?.result?.value;
+      need(!Array.isArray(samples)||samples.length<=STOP_LIMITS.samples,'original stop response exceeds bounded sample retention');
+      const text=JSON.stringify(result,null,2)+'\n';row.observedBytes=Buffer.byteLength(text);
+      need(row.observedBytes<=STOP_LIMITS.bytes,'original stop response exceeds bounded byte retention');
+      const file=stopArtifactName(session.record.id),expected=sha(text);
+      this.journal.publish(file,result);
+      const bytes=fs.readFileSync(path.join(this.journal.directory,file));
+      need(bytes.length===row.observedBytes&&sha(bytes)===expected,'original stop response retained bytes differ');
+      row.artifact={file,bytes:bytes.length,sha256:expected};row.status='RETAINED';
+    }catch(error){row.error=errorData(error);this.passiveError('original-stop-retention',error);}
+    finally{this.record('passive-original-stop-response',{sessionId:session.record.id,observation:row});}
+  }
+  readOriginalStop(){
+    const samplers=this.passive.samplers.filter(row=>row.start!==null);
+    need(samplers.length===1,'one original stop response artifact required');
+    const file=path.join(this.journal.directory,stopArtifactName(samplers[0].id)),stat=fs.lstatSync(file);
+    need(stat.isFile()&&!stat.isSymbolicLink()&&stat.size>0&&stat.size<=STOP_LIMITS.bytes,
+      'regular bounded original stop response artifact required');
+    return fs.readFileSync(file);
+  }
   wrapCDP(raw){
     need(this.sessions.length<4,'bounded CDP session population exceeded');
     const record={id:this.sessions.length+1,contextId:null,start:null,streamStarted:false,streamStopped:false,originalStopReturned:false,
-      originalSampleCount:null,detached:false,extractions:[]};
+      originalSampleCount:null,originalStopResponse:null,detached:false,extractions:[]};
     const session={raw,record};this.sessions.push(session);this.passive.samplers.push(record);
     return new Proxy(raw,{get:(target,key)=>{
       if(key==='send')return (method,params,...rest)=>{
@@ -185,6 +229,7 @@ class PassiveRetention extends D.DateOnlyRetention {
             return target.send(method,params,...rest).then(async result=>{
               record.originalStopReturned=true;
               record.originalSampleCount=Array.isArray(result.result?.value)?result.result.value.length:null;
+              this.retainOriginalStop(session,result);
               await this.samplerSnapshot(session,'after-original-stop');return result;});
           }
           need(record.start===null,'one original sampler start expression required');
@@ -257,7 +302,7 @@ class PassiveRetention extends D.DateOnlyRetention {
   finalize(originalExitCode,stderr){
     if(this.finalized)return;
     this.passiveIssues=[];this.passiveInspection=null;
-    try{this.passiveInspection=inspectPassive(this.passive,this.passive.identity);}
+    try{this.passiveInspection=inspectPassive(this.passive,this.passive.identity,this.readOriginalStop());}
     catch(error){this.passiveIssues.push(errorData(error));}
     this.record('passive-observation-ended',{observation:this.passive,inspection:this.passiveInspection,issues:this.passiveIssues});
     super.finalize(originalExitCode,stderr);
@@ -291,4 +336,4 @@ if(require.main===module){
     'usage: r0040_passive.cjs --driver ORIGINAL --manifest MANIFEST --prepared ORIGINAL_RECEIPT --preparation-process PROCESS --preparation-entry ENTRY --evidence NEW_PRIVATE_DIR -- PLAYWRIGHT HISTORICAL MAIN NEW_OUT chromium bday moderate M1');
   runDriver({driver:args[1],manifest:args[3],prepared:args[5],preparationProcess:args[7],preparationEntry:args[9],evidence:args[11]},args.slice(separator+1));
 }
-module.exports={ADMITTED,SOURCE_PINS,verifyLeafSources,passiveIdentity,inspectPassive,admitPassiveReceipt,PassiveRetention,runDriver,executeOriginal:D.executeOriginal};
+module.exports={ADMITTED,SOURCE_PINS,STOP_LIMITS,verifyLeafSources,passiveIdentity,inspectPassive,admitPassiveReceipt,PassiveRetention,runDriver,executeOriginal:D.executeOriginal};

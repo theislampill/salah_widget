@@ -49,6 +49,10 @@ packet alone activates no campaign.
   execute in their original order. The raw original response is returned
   unchanged. Supplemental extraction occurs after the original stop expression,
   or as a clearly incomplete prefix before cleanup following an earlier failure.
+  After the stream stops, the adapter also retains a JSON serialization of the
+  actual original CDP stop response before returning that same object to the
+  driver. This preserves the complete sample array before the driver trims its
+  local audit array to the acquired frame interval.
 
 Main-world, isolated-world and host clocks remain separate. Only values from
 the same clock domain may be subtracted. Host event arrival is not worker
@@ -69,19 +73,34 @@ The supplemental final file is `passive-observation.json`, with protocol
 `r0040-passive-final-observation/1`. Its success label is
 `ADMITTED_PASSIVE_DATE_ONLY_FOR_OFFLINE_VERIFICATION`. The existing
 `final-admission.json` retains the reviewed Date-only protocol and contents;
-the supplemental receipt binds its bytes and its clock proof. Either file
-alone is insufficient. `admitPassiveReceipt` requires the actual child exit,
-recomputes every supplemental inspection from the retained raw prefix, checks
-the complete sampler population against the original untrimmed samples, and
-requires both source identities. A supplemental terminal journal event records
+the supplemental receipt binds its bytes and its clock proof. Admission also
+requires the separate `passive-original-stop-N.json` artifact for the original
+sampler's bounded session ID. Its exact byte count and SHA-256 are recorded in
+the supplemental receipt; the artifact contains the actual original stop
+response, including all untrimmed samples. Retention permits at most 4,096
+samples and 8 MiB. An overflow keeps the available supplemental prefix and an
+explicit failure; it never trims the original return value or claims a complete
+raw artifact. Failed writes keep their pending file without claiming successful
+publication.
+
+`admitPassiveReceipt(receipt, baseBytes, identity, diagnostic, actualExitCode,
+originalStopBytes)` requires actual retained artifact bytes as its sixth
+argument. A copied count or an object taken from the receipt is insufficient.
+It recomputes the artifact digest and supplemental inspections, checks the exact
+complete population, and compares each sample's original `at` value with its
+ordinal's isolated-world `timeOriginMs + rAF timestamp`. This is an equality
+check in the original clock domain; it adds no cadence or association criterion.
+Finalization rereads the published artifact before allowing a successful
+supplemental receipt. A supplemental terminal journal event records
 the expected status; the external process result remains authoritative if final
 retention itself fails.
 
 No new per-frame host copy, hash, fsync, CDP listener or acknowledgement is added.
 Additional clock reads and bounded in-memory bookkeeping still have overhead.
-Startup/readiness/cleanup evaluation and final serialization are also declared
-instrumentation. These observations are not original performance measurements
-and do not confer cadence, physics, visual or owner acceptance.
+Startup/readiness/cleanup evaluation, bounded stop-response serialization,
+write, fsync and readback with a metadata journal event after stream stop, and final serialization are also
+declared instrumentation. These observations are not original performance
+measurements and do not confer cadence, physics, visual or owner acceptance.
 
 ## Approach and controls
 
@@ -99,11 +118,16 @@ constructor/method behavior; refusal of byte drift; bounded raw-prefix retention
 and original error, timeout, cleanup, retention and veto precedence. These are
 offline instrument controls, not native capture observations.
 
-The registered command `hosted-native-r0040-passive-controls` declares 24 cases
+The registered command `hosted-native-r0040-passive-controls` declares 28 cases
 and the complete new leaf, original capture/helper, reviewed retention, Date-only
 control support and preparation-manifest input closure. The HTTP control uses
 the exact immutable historical helper and a synthetic loopback asset. It checks
 asset/404 response parity and final server response events without a browser.
+The population correction adds coupled-prefix/count mutations, complete raw
+response versus trimmed original-report coverage, exact timestamp mapping,
+mandatory artifact bytes, bounded retention and post-stream file faults.
+Original cleanup exceptions and prevented-continuation exit 86 retain precedence
+when an added artifact write also fails.
 
 ```sh
 python tools/cp9/run_native_regressions.py --output NEW_PRIVATE_CONTROL_DIR \
@@ -119,8 +143,9 @@ qualify this exact leaf tree before central integration. A later opt-in route
 must pin the final leaf/dependency hashes, re-admit the acquired runtime and full
 current source closure, require genuine original preparation/entry success and
 the current namespace, and bind the unchanged eight capture arguments. It must
-inspect both final receipts with the actual child result while retaining outer
-timeout/isolation precedence and the existing exit-86 stop behavior. It cannot
+inspect both final receipts and the actual original stop artifact with the
+actual child result while retaining outer timeout/isolation precedence and the
+existing exit-86 stop behavior. It cannot
 translate the supplemental acquisition label into a generic product PASS.
 
 The added evaluations are bounded individually at five seconds. A future route

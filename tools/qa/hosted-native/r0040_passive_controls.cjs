@@ -281,16 +281,22 @@ function passiveChildSource(){
     "      }");
   replace("if(name==='Page.startScreencast'){inStream=true;",
     "if(name==='Page.startScreencast'){trace.frameListenerCount=cdp.listenerCount('Page.screencastFrame');\n"+
-    "        for(let i=0;i<2;i++){sampleClock=i*17+1;samplerQueue.shift()(i*17);}inStream=true;");
+    "        for(let i=0;i<(mode==='passive-extra-sample'?3:2);i++){sampleClock=i*17+1;samplerQueue.shift()(i*17);}inStream=true;");
   replace("const report=path.join(out,'capture.json');if(fs.existsSync(report))reportBeforeClose=hash(fs.readFileSync(report));",
     "const report=path.join(out,'capture.json');if(fs.existsSync(report))reportBeforeClose=hash(fs.readFileSync(report));\n"+
+    "      if(mode==='passive-stop-remove')fs.unlinkSync(path.join(root,'evidence','passive-original-stop-1.json'));\n"+
     "      if(controlWorker)controlWorker.emit('close');\n"+
     "      if(mode==='passive-late-network'){const req={url:()=> 'http://127.0.0.1:8765/late',method:()=> 'GET',resourceType:()=> 'image',failure:()=>({errorText:'late network failure'})};ctx.emit('request',req);await ctx.handler({request:()=>req,async continue(){},async abort(){},async fulfill(){}});ctx.emit('requestfailed',req);}");
+  replace("if(mode==='proof-invalid-veto'){", "if(mode==='proof-invalid-veto'||mode==='passive-stop-fsync-veto'){");
+  replace("if(mode==='close-failure')throw Error('original context close fault');",
+    "if(mode==='close-failure'||mode==='passive-stop-fsync-close')throw Error('original context close fault');");
   replace("diagnostic:D.diagnosticIdentity(D.transformHelper(fs.readFileSync(helper)).identity),proofTimeoutMs:mode==='proof-timeout'?100:5000});",
     "diagnostic:D.diagnosticIdentity(D.transformHelper(fs.readFileSync(helper)).identity),proofTimeoutMs:mode==='proof-timeout'?100:5000,\n"+
     "      passive:P.passiveIdentity(driver),collectionTimeoutMs:100});");
   replace("process.env.R0040_DISPERSION='common';delete process.env.R0040_OPTIONS;",
-    "if(mode==='passive-receipt-fsync'){const open=fs.openSync;let passiveFd=null;fs.openSync=(file,...args)=>{const fd=open(file,...args);if(String(file).endsWith('passive-observation.json.pending'))passiveFd=fd;return fd;};\n"+
+    "if(mode.startsWith('passive-stop-fsync')){const open=fs.openSync;let stopFd=null;fs.openSync=(file,...args)=>{const fd=open(file,...args);if(String(file).endsWith('passive-original-stop-1.json.pending'))stopFd=fd;return fd;};\n"+
+    "      const fsync=fs.fsyncSync;fs.fsyncSync=(fd,...args)=>{if(fd===stopFd){stopFd=null;throw Error('original stop response fsync fault');}return fsync(fd,...args);};}\n"+
+    "    if(mode==='passive-receipt-fsync'){const open=fs.openSync;let passiveFd=null;fs.openSync=(file,...args)=>{const fd=open(file,...args);if(String(file).endsWith('passive-observation.json.pending'))passiveFd=fd;return fd;};\n"+
     "      const fsync=fs.fsyncSync;fs.fsyncSync=(fd,...args)=>{if(fd===passiveFd)throw Error('passive final receipt fsync fault');return fsync(fd,...args);};}\n"+
     "    process.env.R0040_DISPERSION='common';delete process.env.R0040_OPTIONS;");
   return code;
@@ -302,7 +308,9 @@ function runPassive(t,mode){
   const evidence=path.join(root,'evidence'),file=path.join(evidence,'events.jsonl');
   const events=fs.existsSync(file)?fs.readFileSync(file,'utf8').trim().split('\n').map(JSON.parse):[];
   const read=name=>fs.existsSync(name)?JSON.parse(fs.readFileSync(name)):null;
-  return {root,result,events,base:read(path.join(evidence,'final-admission.json')),receipt:read(path.join(evidence,'passive-observation.json')),trace:read(path.join(root,'control-trace.json'))};
+  const stopFile=path.join(evidence,'passive-original-stop-1.json');
+  return {root,result,events,base:read(path.join(evidence,'final-admission.json')),receipt:read(path.join(evidence,'passive-observation.json')),trace:read(path.join(root,'control-trace.json')),
+    stopBytes:fs.existsSync(stopFile)?fs.readFileSync(stopFile):null};
 }
 
 test('actual pinned capture and helper preserve report PNGs stream callback and original arguments with separate passive admission',t=>{
@@ -315,7 +323,11 @@ test('actual pinned capture and helper preserve report PNGs stream callback and 
   assert.ok(r.receipt.observation.host.rows.some(row=>row.event==='playwright-worker-closed'));
   const response=r.receipt.observation.host.rows.find(row=>row.event==='browser-response');assert.ok(response.requestId>0);assert.equal(response.status,200);
   assert.equal(P.admitPassiveReceipt(r.receipt,fs.readFileSync(path.join(r.root,'evidence/final-admission.json')),
-    P.passiveIdentity(path.resolve(__dirname,'../r0040/capture.cjs')),r.base.diagnostic,r.result.status).status,'OBSERVED');
+    P.passiveIdentity(path.resolve(__dirname,'../r0040/capture.cjs')),r.base.diagnostic,r.result.status,r.stopBytes).status,'OBSERVED');
+  const stop=r.receipt.observation.samplers[0].originalStopResponse;
+  assert.equal(stop.status,'RETAINED');assert.equal(stop.artifact.bytes,r.stopBytes.length);
+  assert.equal(stop.artifact.sha256,require('node:crypto').createHash('sha256').update(r.stopBytes).digest('hex'));
+  assert.deepEqual(JSON.parse(r.stopBytes).result.value.map(row=>row.at),[1000,1017]);
   const baseline=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'passive-parity-'));t.after(()=>fs.rmSync(baseline,{recursive:true,force:true}));
   const prior=require('node:child_process').spawnSync(process.execPath,['-e',dateOnlyChildSource(),path.join(__dirname,'r0040_dateonly.cjs'),
     path.resolve(__dirname,'../r0040/capture.cjs'),baseline,'complete','',''],{encoding:'utf8',timeout:10000,env:{...process.env,NODE_OPTIONS:''}});
@@ -372,7 +384,7 @@ test('outer timeout retains actual original PNGs and pre-stream passive prefix w
 test('terminal admission recomputes raw startup source clock and cleanup custody rather than accepting copied status',t=>{
   const r=runPassive(t,'complete'),P=passive(),identity=P.passiveIdentity(path.resolve(__dirname,'../r0040/capture.cjs'));
   const bytes=fs.readFileSync(path.join(r.root,'evidence/final-admission.json'));
-  const check=(receipt,base=bytes,exit=0)=>P.admitPassiveReceipt(receipt,base,identity,r.base.diagnostic,exit);
+  const check=(receipt,base=bytes,exit=0)=>P.admitPassiveReceipt(receipt,base,identity,r.base.diagnostic,exit,r.stopBytes);
   for(const mutate of [x=>x.status='PASS',x=>x.observation.identity.entrySha256='0'.repeat(64),x=>x.observation.runtimes.pop(),
     x=>x.observation.runtimes[0].raw.observer.events[0].event='unobserved-startup',
     x=>x.observation.runtimes[0].raw.observer.events[0].atMs=Number.MAX_SAFE_INTEGER,
@@ -389,6 +401,79 @@ test('terminal admission recomputes raw startup source clock and cleanup custody
   const changedBytes=Buffer.from(JSON.stringify(base)),changed=plain(r.receipt);
   changed.baseAdmission.bytes=changedBytes.length;changed.baseAdmission.sha256=require('node:crypto').createHash('sha256').update(changedBytes).digest('hex');
   assert.throws(()=>check(changed,changedBytes),/clock|Date|anchor/);
+});
+
+test('coupled sampler-prefix and copied-count changes cannot replace the complete original stop population',t=>{
+  const r=runPassive(t,'passive-extra-sample'),P=passive(),identity=P.passiveIdentity(path.resolve(__dirname,'../r0040/capture.cjs'));
+  assert.equal(r.result.status,0,r.result.stderr);
+  const baseBytes=fs.readFileSync(path.join(r.root,'evidence/final-admission.json'));
+  const check=receipt=>P.admitPassiveReceipt(receipt,baseBytes,identity,r.base.diagnostic,r.result.status,r.stopBytes);
+  assert.equal(check(r.receipt).status,'OBSERVED');
+  assert.equal(JSON.parse(r.stopBytes).result.value.length,3);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(r.root,'original/capture.json'))).audit.states.length,2);
+  const changed=plain(r.receipt),record=changed.observation.samplers[0],row=record.extractions[0];
+  row.raw.rows.pop();record.originalSampleCount--;
+  row.inspection=sampler().inspectSampler(row.raw);changed.inspection.samplerRows=row.raw.rows.length;
+  assert.throws(()=>check(changed),/population|sample|stop/);
+});
+
+test('offline sampler admission requires actual stop bytes and exact complete ordinal timestamp mapping',t=>{
+  const r=runPassive(t,'complete'),P=passive(),identity=P.passiveIdentity(path.resolve(__dirname,'../r0040/capture.cjs'));
+  const base=fs.readFileSync(path.join(r.root,'evidence/final-admission.json'));
+  const check=(receipt,bytes)=>P.admitPassiveReceipt(receipt,base,identity,r.base.diagnostic,0,bytes);
+  assert.equal(check(r.receipt,r.stopBytes).status,'OBSERVED');
+  for(const bytes of [undefined,null,JSON.parse(r.stopBytes),r.stopBytes.toString(),Buffer.concat([r.stopBytes,Buffer.from(' ')])])
+    assert.throws(()=>check(r.receipt,bytes),/stop|bytes/);
+  const changed=plain(r.receipt),row=changed.observation.samplers[0].extractions[0];
+  row.raw.rows[0][1]+=1;row.inspection=sampler().inspectSampler(row.raw);
+  assert.throws(()=>check(changed,r.stopBytes),/timestamp/);
+  const altered=JSON.parse(r.stopBytes);altered.result.value[0].at+=1;
+  const alteredBytes=Buffer.from(JSON.stringify(altered)),copied=plain(r.receipt),artifact=copied.observation.samplers[0].originalStopResponse.artifact;
+  artifact.bytes=alteredBytes.length;artifact.sha256=require('node:crypto').createHash('sha256').update(alteredBytes).digest('hex');
+  copied.observation.samplers[0].originalStopResponse.observedBytes=alteredBytes.length;
+  assert.throws(()=>check(copied,r.stopBytes),/identity|bytes/);
+  assert.throws(()=>check(copied,alteredBytes),/timestamp/);
+  artifact.file='../original/capture.json';assert.throws(()=>check(copied,alteredBytes),/identity/);
+  assert.deepEqual(fs.readFileSync(path.join(r.root,'evidence/passive-original-stop-1.json')),r.stopBytes);
+});
+
+test('bounded original stop retention failure preserves the exact original response and supplemental prefix',async t=>{
+  const P=passive(),rawTrace=runExpression(sampler().instrumentStart(original).expression).raw;
+  for(const stopResult of [{result:{value:Array.from({length:P.STOP_LIMITS.samples+1},()=>({at:1000}))}},
+    {result:{value:[{at:1000}]},syntheticOversize:'x'.repeat(P.STOP_LIMITS.bytes)}]){
+    const retain=passiveRetention(t),raw={async send(method,params){
+      if(method==='Page.createIsolatedWorld')return {executionContextId:9};
+      if(method==='Runtime.evaluate')return params.expression===stop?stopResult:
+        params.expression==='globalThis.__R0040_PASSIVE_SAMPLER__??null'?{result:{value:rawTrace}}:{result:{value:true}};
+      return {};}};
+    const cdp=retain.wrapCDP(raw);await cdp.send('Page.createIsolatedWorld',{worldName:'r0040-native-clock'});
+    await cdp.send('Runtime.evaluate',{contextId:9,expression:original,returnByValue:true});
+    await cdp.send('Page.startScreencast');await cdp.send('Page.stopScreencast');
+    assert.equal(await cdp.send('Runtime.evaluate',{contextId:9,expression:stop,returnByValue:true}),stopResult);
+    const record=retain.passive.samplers[0];assert.equal(record.originalSampleCount,stopResult.result.value.length);
+    assert.equal(record.originalStopResponse.status,'INCOMPLETE');assert.equal(record.originalStopResponse.artifact,null);
+    assert.match(record.originalStopResponse.error.message,/bounded/);assert.deepEqual(record.extractions[0].raw,rawTrace);
+    assert.equal(fs.existsSync(path.join(retain.journal.directory,'passive-original-stop-1.json')),false);
+    assert.equal(fs.existsSync(path.join(retain.journal.directory,'passive-original-stop-1.json.pending')),false);
+    assert.ok(retain.passive.errors.some(row=>row.phase==='original-stop-retention'));
+  }
+});
+
+test('actual post-stream stop artifact faults preserve original report cleanup failure and veto precedence',t=>{
+  for(const mode of ['passive-stop-fsync','passive-stop-fsync-close','passive-stop-fsync-veto','passive-stop-remove']){
+    const r=runPassive(t,mode),veto=mode.endsWith('veto'),close=mode.endsWith('close');
+    assert.equal(r.result.status,veto?86:1,r.result.stderr);assert.equal(r.trace.reportBeforeClose,r.trace.reportAfterClose);
+    assert.equal(r.trace.contextCloseCalls,1);assert.equal(r.trace.streamFsyncs,0);assert.equal(r.trace.frameListenerCount,1);
+    assert.equal(r.base.originalExitCode,close?1:0);assert.equal(r.receipt.status,veto?'CONTINUATION_VETOED':close?'FAILED':'INCOMPLETE');
+    assert.equal(r.stopBytes,null);assert.ok(fs.existsSync(path.join(r.root,'evidence/passive-original-stop-1.json.pending')));
+    if(mode!=='passive-stop-remove'){
+      const stop=r.receipt.observation.samplers[0].originalStopResponse;
+      assert.equal(stop.status,'INCOMPLETE');assert.equal(stop.artifact,null);assert.match(stop.error.message,/fsync fault/);
+    }
+    if(close)assert.match(r.result.stderr,/original context close fault/);
+    if(veto){assert.equal(r.receipt.exitCode,86);assert.equal(r.trace.continued.includes('https://unknown.invalid/blocked'),false);
+      assert.ok(r.trace.aborted.includes('https://unknown.invalid/blocked'));}
+  }
 });
 
 test('native entry refuses namespace absence before original helper browser or outputs and refuses dependency byte drift',t=>{
