@@ -1686,7 +1686,8 @@
     "tools/qa/hosted-native/r0035_cost_materialize.py",
     "tools/qa/hosted-native/observe_r0035_costs.py",
     "tools/qa/hosted-native/r0035_cost_controls.py",
-    "tools/qa/hosted-native/r0040_passive_central.py"
+    "tools/qa/hosted-native/r0040_passive_central.py",
+    "tools/qa/hosted-native/r002f_focus_owner.cjs"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -1787,7 +1788,8 @@
     "tools/qa/hosted-native/r0035_cost_materialize.py",
     "tools/qa/hosted-native/observe_r0035_costs.py",
     "tools/qa/hosted-native/r0035_cost_controls.py",
-    "tools/qa/hosted-native/r0040_passive_central.py"
+    "tools/qa/hosted-native/r0040_passive_central.py",
+    "tools/qa/hosted-native/r002f_focus_owner.cjs"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -2102,7 +2104,8 @@
     "tools/qa/hosted-native/r002f-tabhide-pins.json",
     "tools/qa/hosted-native/r002f_probe.cjs",
     "tools/qa/hosted-native/browser-control.cjs",
-    "tools/qa/hosted-native/r002f_prepare.py"
+    "tools/qa/hosted-native/r002f_prepare.py",
+    "tools/qa/hosted-native/r002f_focus_owner.cjs"
    ],
    "timeout": 120
   },
@@ -2612,7 +2615,8 @@
     "tools/qa/hosted-native/r0040_passive_sampler.cjs",
     "tools/qa/hosted-native/r0040_passive_runtime.cjs",
     "tools/qa/hosted-native/r0040_dateonly_controls.cjs",
-    "tools/qa/hosted-native/r0040_capture_retention_controls.cjs"
+    "tools/qa/hosted-native/r0040_capture_retention_controls.cjs",
+    "tools/qa/hosted-native/r002f_focus_owner.cjs"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -2688,6 +2692,28 @@
     "PYTHONUTF8": "1",
     "PYTHONDONTWRITEBYTECODE": "1"
    }
+  },
+  {
+   "name": "r002f-focus-owner-source-controls",
+   "owner": "R002F-A2 (issue 96)",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r002f_focus_owner_controls.cjs"
+   ],
+   "protocol": "auto",
+   "covers": [
+    "tools/qa/hosted-native/r002f_focus_owner_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r002f_focus_owner_controls.cjs",
+    "tools/qa/hosted-native/r002f_focus_owner.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_source.cjs",
+    "tools/qa/hosted-native/r002f_tabhide.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_runtime.cjs"
+   ],
+   "timeout": 120
   }
  ],
  "modules": [

@@ -17,9 +17,9 @@ unchanged.
 
 ## Source and preparation custody
 
-`r002f-tabhide-pins.json` binds exactly five source modules: the unchanged
+`r002f-tabhide-pins.json` binds exactly six source modules: the unchanged
 `r002f_probe.cjs` and `browser-control.cjs`, plus the new entry, page observer and
-offline admission helper. The planner pins that manifest separately. The entry
+offline admission helper, and the explicit private focus-owner adapter. The planner pins that manifest separately. The entry
 validates it before importing the original owners or loading Playwright.
 
 The original `r002f_prepare.py` remains the build owner. Both trees require its
@@ -87,6 +87,78 @@ Successful ownership, strict isolation, original scheduling and pixel admission
 remain unchanged. A later successful run would have its own exact source
 identity and native evidence; the earlier failed observation remains failed.
 
+### Explicit removal of Playwright's focus override
+
+The later ordinary-owner observation retained both successful visible controls
+and two incomplete tab-hide rows: the original 10-second `document.hidden &&
+paused` waits expired, with no retained visibility event. This is a bounded
+failure observation, not a native causal identification. The current successor
+therefore records a new diagnostic harness input: **Playwright focus emulation
+disabled on its original owning session; genuine visibility remains required**.
+It does not rewrite that earlier failure or qualify a product lifecycle.
+
+The exact Playwright 1.62.1 [`crPage.ts` initializer](https://github.com/microsoft/playwright/blob/v1.62.1/packages/playwright-core/src/server/chromium/crPage.ts)
+sends `Emulation.setFocusEmulationEnabled({enabled:true})` for ordinary pages.
+In Chromium 151.0.7922.34, the [Emulation handler](https://github.com/chromium/chromium/blob/151.0.7922.34/content/browser/devtools/protocol/emulation_handler.cc)
+owns a per-session capture handle with `stay_hidden=false`; the
+[WebContents contract](https://github.com/chromium/chromium/blob/151.0.7922.34/content/public/browser/web_contents.h)
+describes that handle's always-visible effect. A fresh public CDP session's
+`enabled:false` is not equivalent: its own flag starts false and the handler can
+return without removing Playwright's existing handle.
+
+The inspected [Page.startScreencast path](https://github.com/chromium/chromium/blob/151.0.7922.34/content/browser/devtools/protocol/page_handler.cc)
+starts frame-sink capture through
+[`DevToolsVideoConsumer`](https://github.com/chromium/chromium/blob/151.0.7922.34/content/browser/devtools/devtools_video_consumer.cc).
+That path does not acquire the explicit always-visible WebContents handle seen
+in the focus handler. The nearby `stay_hidden=true` capture handle is in the
+screenshot path. This source distinction does not establish that every capture
+interaction is irrelevant, nor that focus emulation caused the retained failure.
+The same version's [`Target.createTarget` call](https://github.com/microsoft/playwright/blob/v1.62.1/packages/playwright-core/src/server/chromium/crBrowser.ts)
+supplies `about:blank` and the browser-context ID, without `newWindow:true`.
+The earlier capture did not record window IDs, so its actual topology is unknown.
+
+`r002f_focus_owner.cjs` is a deliberately private adapter for that exact source
+and Chromium version. Before browser/display setup it checks SHA-256 and byte
+counts of six package files: both `package.json` and `index.js` entries, plus
+`playwright-core/lib/bootstrap.js` and `playwright-core/lib/coreBundle.js`.
+These pins were checked against the tarballs authenticated by the unchanged
+acquisition lockfile. The acquired packages are neither patched nor copied.
+Loaded module identity and the in-process connection must match those entries.
+The adapter uses that version's private `connection.toImpl` mapping; no private
+API stability is assumed outside these pins.
+
+For each scene and cover page, it validates the actual client-object registry,
+page/context/browser relationship, server implementations, target/context maps,
+main-frame session, CDP connection, original session registry and parent/root
+session. The browser must remain connected, headed and on the exact Chromium
+version. Actual `Target.getTargetInfo` and `Browser.getWindowForTarget` responses
+must confirm the owned target and browser context. Only then does the original
+owning session receive `enabled:false`. The private receipt records the source
+identity, binding, actual request, actual empty acknowledgment and host times.
+The binding is checked again after each awaited operation. Missing, replaced,
+closed, unsupported or timed-out custody is incomplete; there is no alternate
+session, launch route or browser fallback.
+
+The cover receives the same treatment. It must be a distinct target and original
+session in the same browser context and the same actual window as its scene.
+Actual window IDs and bounds, target IDs, `document.hidden`, `visibilityState`,
+`document.hasFocus()` and the existing paused class are retained before capture,
+after screencast starts, after cover activation, after the original hidden wait,
+after return activation and after capture stops. The no-hide control retains its
+corresponding four readings. The existing capture session also retains bounded
+`Page.screencastVisibilityChanged` payloads; those payloads are not DOM events or
+a substitute for the trusted visibility oracle. A failed read preserves its
+partial record, waits for every bounded peer read, and leaves the row incomplete.
+
+All diagnostic records stay in private capture. The adapter reads DOM visibility
+and focus; it does not assign them, dispatch lifecycle events or call a lifecycle
+simulation method. The original `admitRow`, `admitReport`, observer, PNG decoder,
+trusted-event rules and timing fences remain unchanged. A separate final wrapper
+runs original admission first, then checks the additional source/binding/receipt
+population. Actual hidden and visible events, original lifecycle marks, retained
+PNGs and cleanup remain necessary. Passing synthetic source controls cannot
+establish native applicability or causal success.
+
 ## Selected population
 
 ```json
@@ -114,6 +186,17 @@ in aggregate for source admission, headed setup, network controls, navigation,
 capture and cleanup. This is a hard operational ceiling, not a promise that
 arbitrary protocol or disk delays can all complete. Overrun retains obtained
 evidence and remains incomplete; no evidence wait is compressed or removed.
+
+The adapter fits inside that existing aggregate allowance. At most four pages
+(two scenes and two covers) each make three sequential setup calls bounded at
+2.5 seconds: `4 × 3 × 2.5 = 30` seconds. At most seven readbacks per row, including
+a failure reading, run their target/window/DOM calls and paired-page reads in
+parallel, each bounded at 2.5 seconds: `4 × 7 × 2.5 = 70` seconds. Thus the added
+protocol-wait ceiling is 100 seconds within the existing 600-second allowance;
+the original 1800/3900-second lane/coordinator and 66-minute step ceilings remain
+unchanged. File hashing, local processing and the original setup/capture/cleanup
+work share the remaining allowance. This arithmetic is an upper wait allocation,
+not a guaranteed total duration or a measured performance claim.
 
 The original common and R002F preparation children keep their 900-second bounds;
 their existing namespace allowance remains 1920 seconds. The headed observation

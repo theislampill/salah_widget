@@ -28,7 +28,7 @@ import r0040_passive_central as passive
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
-R002F_TABHIDE_MANIFEST_SHA256 = 'fb9d7dd14ee7a00fc4b707338476136b4aa82574bf2b70987a6185c3eb5f10f1'
+R002F_TABHIDE_MANIFEST_SHA256 = 'b9d4556ba1e23bf56e9156f293dd8e3e76c7a678bd38b38e84235019a29c1fad'
 R002F_TABHIDE_TIMEOUT_SECONDS = 4 * (180 + 120) + 600
 WORK_ORDERS = ('R0040', 'R003F', 'R0035', 'R002F')
 STAR_DEFAULTS = {'guard': 'default', 'scope': 'all', 'mode': 'both'}
@@ -52,7 +52,7 @@ def tabhide_manifest():
         raise ValueError('R002F tab-hide manifest differs from reviewed source')
     body = json.loads(path.read_text())
     names = {'r002f_probe.cjs', 'browser-control.cjs', 'r002f_tabhide_source.cjs',
-             'r002f_tabhide_runtime.cjs', 'r002f_tabhide.cjs'}
+             'r002f_tabhide_runtime.cjs', 'r002f_tabhide.cjs', 'r002f_focus_owner.cjs'}
     if (body.get('protocol') != 'r002f-tabhide-source/1'
             or body.get('reconstructedFromPublicCommit') != '890c7b6005228715b58b3d1d90847f39cf4698be'
             or set(body.get('modules', {})) != names):

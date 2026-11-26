@@ -2,7 +2,7 @@
 // Admission and lossless retention for an opt-in diagnostic. No browser import.
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),zlib=require('node:zlib');
 const MODULES=Object.freeze(['r002f_probe.cjs','browser-control.cjs','r002f_tabhide_source.cjs',
-  'r002f_tabhide_runtime.cjs','r002f_tabhide.cjs']);
+  'r002f_tabhide_runtime.cjs','r002f_tabhide.cjs','r002f_focus_owner.cjs']);
 const ASSETS=Object.freeze({
   'moon/assets/dem.bin.gz':{bytes:20137935,sha256:'ecd3a8e941edc7050e1e6c51e87f9084466e1ccfadf1eb57297302191de82960'},
   'moon/assets/colour.bin.gz':{bytes:32272181,sha256:'29948c38c12c4b9733789fa9ea1c13fb12b0b00035169876651f7a2ef3b6af34'},

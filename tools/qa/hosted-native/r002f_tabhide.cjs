@@ -3,6 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),crypto=require('node:crypto');
 const {spawn,execFileSync}=require('node:child_process');
 const S=require('./r002f_tabhide_source.cjs'),R=require('./r002f_tabhide_runtime.cjs');
+const F=require('./r002f_focus_owner.cjs');
 const {need,sha}=S,ORIGIN_UTC=Date.parse('2026-09-07T00:10:05Z');
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function bounded(promise,ms,label){let timer;try{return await Promise.race([promise,new Promise((_,reject)=>{
@@ -168,10 +169,10 @@ async function serve(root,source,log){
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   return {server,origin:'http://127.0.0.1:'+server.address().port};
 }
-async function openScene(browser,origin,P,retain){
+async function openScene(browser,origin,P,focusRuntime,retain){
   const log=ledger(),started=process.hrtime.bigint(),utc=()=>ORIGIN_UTC+Number(process.hrtime.bigint()-started)/1e6;
   const context=await browser.newContext({viewport:{width:400,height:650},deviceScaleFactor:1,timezoneId:'UTC',reducedMotion:'no-preference',serviceWorkers:'block'});
-  const scene={context,ledger:log,pageErrors:[],closed:false};
+  const scene={context,browser,focusRuntime,ledger:log,pageErrors:[],closed:false};
   // Publish the acquired context before any setup await. The arm owns cleanup
   // and retention even when navigation or observer installation never returns.
   retain(scene);context.on('close',()=>{scene.closed=true;});
@@ -200,6 +201,8 @@ async function openScene(browser,origin,P,retain){
     scene.pageLifecycle=watchLifecycle(page,'page',()=>!page.isClosed());
     page.on('pageerror',error=>{scene.pageLifecycle.fault('pageerror',error.stack||error);
       if(scene.pageErrors.length<32)scene.pageErrors.push(String(error.stack||error));});
+    scene.focus=F.preparation('scene');
+    scene.focusOwner=await F.prepare(page,context,browser,focusRuntime,scene.focus);
     const fragment='lat=24.47&lon=39.61&label=R002F%20research&method=4&school=0&tz=UTC&time=24&units=c&datefmt=YYYY-MM-DD';
     const response=await page.goto(origin+'/index.html#'+fragment,{waitUntil:'domcontentloaded',timeout:30000});
     need(response?.ok(),'generated document failed to load');scene.servedIndexSha256=sha(await response.body());scene.fragment=fragment;
@@ -221,27 +224,38 @@ async function schedule(scene,arm,mode,folder){
   const row={protocol:'r002f-tabhide-row/1',arm,mode,route:'headed-chromium-bringToFront',completed:false,
     contextClosed:false,cleanupError:null,error:null,servedIndexSha256:scene.servedIndexSha256,fragment:scene.fragment,
     frameBoundary:'first CDP PNG packet received after activation request began; not first displayed frame',
-    intendedHoldMs:250,clockDomains:{page:'performance.now milliseconds',host:'hrtime bigint nanoseconds',cdp:'raw screencast metadata timestamp; never subtracted from page clock'}};
-  let session,sink,phase='before-action',cover,recording=false;
+    intendedHoldMs:250,clockDomains:{page:'performance.now milliseconds',host:'hrtime bigint nanoseconds',cdp:'raw screencast metadata timestamp; never subtracted from page clock'},
+    visibilityDiagnostics:F.diagnostics(scene.focus)};
+  let session,sink,phase='before-action',cover,coverOwner,removeVisibilityListener,recording=false;
   try{
     await page.bringToFront();await waitMature(page,180000);
     row.clockCheck=await page.evaluate(R.verifyClock);
     await page.evaluate(mode=>__r002fTabObserver.begin(mode),mode);row.before=await page.evaluate(()=>__r002fTabObserver.snapshot());S.mature(row.before);
     row.stills={setup:await still(page,folder,'setup.png','mature setup before this schedule')};
+    await F.snapshot(scene.focusOwner,row.visibilityDiagnostics,'before-capture');
     session=await scene.context.newCDPSession(page);sink=S.frameSink(folder,id=>session.send('Page.screencastFrameAck',{sessionId:id}));
     session.on('Page.screencastFrame',event=>{void sink.accept(event,phase);});
+    removeVisibilityListener=F.listenScreencast(session,row.visibilityDiagnostics,()=>phase);
     await session.send('Page.startScreencast',{format:'png',everyNthFrame:1});recording=true;
+    await F.snapshot(scene.focusOwner,row.visibilityDiagnostics,'after-capture-start');
     await delay(250);await page.evaluate(()=>__r002fTabObserver.trigger());row.actionHostNs=process.hrtime.bigint().toString();
     if(mode==='tabhide'){
       // A real second tab becomes active. It is served by no network request.
-      cover=await scene.context.newPage();await cover.bringToFront();phase='hidden-requested';
+      cover=await scene.context.newPage();row.visibilityDiagnostics.cover=F.preparation('cover');
+      coverOwner=await F.prepare(cover,scene.context,scene.browser,scene.focusRuntime,row.visibilityDiagnostics.cover);
+      F.admitCover(scene.focus,row.visibilityDiagnostics.cover);
+      await cover.bringToFront();phase='hidden-requested';
+      await F.snapshot(scene.focusOwner,row.visibilityDiagnostics,'cover-front',coverOwner);
       await page.waitForFunction(()=>document.hidden&&document.querySelector('.c')?.classList.contains('paused'),null,{timeout:10000,polling:50});
+      await F.snapshot(scene.focusOwner,row.visibilityDiagnostics,'hidden-confirmed',coverOwner);
     }
     await delay(250);phase='activation-requested';row.activationHostNs=process.hrtime.bigint().toString();
     await page.bringToFront();
+    await F.snapshot(scene.focusOwner,row.visibilityDiagnostics,'after-return-front',coverOwner);
     if(mode==='no-hide')await page.evaluate(()=>__r002fTabObserver.completeControl());
     await page.waitForFunction(()=>__r002fTabObserver.read()?.marks.some(x=>x.name==='raf-2'),null,{timeout:30000,polling:50});
     await delay(1200);await session.send('Page.stopScreencast');recording=false;
+    await F.snapshot(scene.focusOwner,row.visibilityDiagnostics,'after-capture-stop',coverOwner);
     // Drain all received packets before detaching so acknowledgements remain
     // valid. Detachment closes this capture route before final retention ends.
     await sink.finish();await session.detach();session=null;
@@ -249,9 +263,12 @@ async function schedule(scene,arm,mode,folder){
     await waitMature(page,120000);row.settled=await page.evaluate(()=>__r002fTabObserver.settled());
     row.lifecycle=await page.evaluate(()=>__r002fTabObserver.read());
     row.stills.settled=await still(page,folder,'settled.png','later settled refined state; not first presented frame');row.completed=true;
-  }catch(error){row.error=String(error.stack||error);}
+  }catch(error){row.error=String(error.stack||error);
+    try{await F.snapshot(scene.focusOwner,row.visibilityDiagnostics,'failure',coverOwner);}
+    catch(diagnosticError){row.visibilityReadError=String(diagnosticError.stack||diagnosticError);}}
   finally{
     if(recording&&session)try{await session.send('Page.stopScreencast');}catch(error){row.captureStopError=String(error);row.completed=false;}
+    removeVisibilityListener?.();
     try{if(!row.lifecycle)row.lifecycle=await page.evaluate(()=>__r002fTabObserver.read());}catch(error){row.lifecycleReadError=String(error);}
     if(cover)try{await bounded(cover.close(),10000,'cover cleanup');}catch(error){row.coverCleanupError=String(error);row.completed=false;}
     if(session)try{await session.detach();}catch(error){row.sessionCleanupError=String(error);row.completed=false;}
@@ -262,22 +279,23 @@ async function schedule(scene,arm,mode,folder){
   }
   return row;
 }
-async function arm(browser,site,name,out,P){
+async function arm(browser,site,name,out,P,focusRuntime){
   const rows=[];let scene,setupError=null,cleanupError=null;
   try{
-    await openScene(browser,site.origin,P,acquired=>{scene=acquired;});
+    await openScene(browser,site.origin,P,focusRuntime,acquired=>{scene=acquired;});
     need(scene.servedIndexSha256===(name==='baseline'?P.BASE_INDEX:P.COMBINED_INDEX),'served source mismatch');
     for(const mode of ['no-hide','tabhide']){
       const row=await schedule(scene,name,mode,path.join(out,name+'-'+mode));rows.push(row);
       if(!row.completed)break;
     }
-  }catch(error){setupError=String(error.stack||error);rows.push({protocol:'r002f-tabhide-row/1',arm:name,mode:'setup',error:setupError,completed:false});}
+  }catch(error){setupError=String(error.stack||error);rows.push({protocol:'r002f-tabhide-row/1',arm:name,mode:'setup',error:setupError,completed:false,
+    visibilityDiagnostics:scene?.focus?F.diagnostics(scene.focus):null});}
   finally{if(scene)try{scene.pageLifecycle?.requestCleanup();scene.contextLifecycle?.requestCleanup();
     await bounded(scene.context.close(),15000,'arm context cleanup');}catch(error){cleanupError=String(error);}}
   const entries=[];for(const row of rows){
     row.contextClosed=scene?.closed===true;row.cleanupError=cleanupError;row.ledger=scene?.ledger??ledger();row.pageErrors=scene?.pageErrors??[];
     row.lifecycleCustody={page:scene?.pageLifecycle?.state??null,context:scene?.contextLifecycle?.state??null};
-    let verdict;try{verdict=S.admitRow(row);}catch(error){verdict={status:'INCOMPLETE',reason:String(error.message)};}
+    let verdict;try{verdict=S.admitRow(row);F.admitRowDiagnostics(row);}catch(error){verdict={status:'INCOMPLETE',reason:String(error.message)};}
     const name=row.arm+'-'+row.mode,file=name+'/row.json';
     if(!fs.existsSync(path.join(out,name)))fs.mkdirSync(path.join(out,name),{mode:0o700});
     S.writeJson(path.join(out,file),row);entries.push({arm:row.arm,mode:row.mode,file,sha256:S.identity(path.join(out,file)).sha256,verdict});
@@ -292,10 +310,19 @@ function nativeIsolation(isolationFile,P){
     P.validateIsolation(isolation,host);return {isolationFile,host};
   }catch(error){error.isolation=true;throw error;}
 }
+function admitFinal(report,root,options){
+  // The original lifecycle, isolation, source and lossless PNG oracle runs first.
+  // Additional explicit harness-input receipts can only refuse, never substitute.
+  const verdict=S.admitReport(report,root,options);F.validateRuntimeRecord(report.focusRuntime);
+  for(const entry of report.rows){const row=JSON.parse(S.body(S.relative(root,entry.file)));
+    F.admitRowDiagnostics(row);need(JSON.stringify(row.visibilityDiagnostics.scene.runtime)===JSON.stringify(report.focusRuntime),
+      'row focus source differs from admitted runtime');}
+  return verdict;
+}
 async function main(argv){
   if(argv[0]==='--verify-json'){
     need(argv.length===5,'offline verification needs report, baseline, candidate and current isolation receipt');
-    const report=JSON.parse(S.body(argv[1]));console.log(JSON.stringify(S.admitReport(report,path.dirname(path.resolve(argv[1])),
+    const report=JSON.parse(S.body(argv[1]));console.log(JSON.stringify(admitFinal(report,path.dirname(path.resolve(argv[1])),
       {baseline:argv[2],candidate:argv[3],isolationFile:argv[4]})));return;
   }
   if(argv[0]==='--admit-generated'){
@@ -316,13 +343,15 @@ async function main(argv){
       'The visible no-hide schedule precedes real hide in each same context; no randomized causal performance estimate.',
       'Translated Date runs at 1x. Native callbacks and performance remain unchanged; product 0.0416 px and 1000 ms fences remain unchanged.',
       'CDP PNG packets are retained losslessly in received order. First received after activation is not first displayed or a physical-device cadence.',
+      F.INPUT+'. This private version/source-bound harness input is recorded separately; native hidden/visible transitions remain required.',
       'No bfcache, changed-scene/weather-expiry, memory/GC, owner-tier policy, human visual or full R002F acceptance claim.',
       'Original combined Moon result 244/248 and both RES/G8 policy conflicts remain unchanged.']};
   let display,browser,browserLifecycle,browserProcess,executable,prior,ownerAdmitted=false;const sites=[];
   try{
     report.sources={baseline:S.generated(options.baseline,P.BASE_INDEX),candidate:S.generated(options.candidate,P.COMBINED_INDEX)};
     const pkg=JSON.parse(S.body(path.join(options.playwright,'package.json')));need(pkg.version==='1.62.1','unexpected Playwright version');
-    const playwright=require(options.playwright);executable=fs.realpathSync(playwright.chromium.executablePath());
+    const playwright=require(options.playwright),focusRuntime=F.runtime(options.playwright,playwright);report.focusRuntime=focusRuntime.record;
+    executable=fs.realpathSync(playwright.chromium.executablePath());
     report.playwright={version:pkg.version,executablePath:executable,executableSha256:S.identity(executable).sha256,headless:false,chromiumSandbox:true};
     display=await startDisplay(options.out,host);report.xvfb=display.record;
     prior=new Set(browserPids(executable));
@@ -362,7 +391,7 @@ async function main(argv){
     let contexts=true;
     for(const name of ['baseline','candidate']){
       const staticLog=ledger(),site=await serve(options[name],report.sources[name],staticLog);sites.push(site);
-      const result=await arm(browser,site,name,options.out,P);report.rows.push(...result.entries);
+      const result=await arm(browser,site,name,options.out,P,focusRuntime);report.rows.push(...result.entries);
       report.armLifecycles.push(result.lifecycleCustody);
       contexts=contexts&&result.closed;report.continuationVetoed=report.continuationVetoed||result.veto;
       S.writeJson(path.join(options.out,name+'-served.json'),staticLog);
@@ -390,7 +419,7 @@ async function main(argv){
       catch(error){report.errors.push('display cleanup: '+error);}
     if(report.ownerFailureProcessCensus&&executable)try{report.afterCleanupProcessCensus=processCensus(executable);}
       catch(diagnosticError){report.afterCleanupProcessCensus={protocol:'r002f-headed-process-census/1',error:String(diagnosticError.stack||diagnosticError)};}
-    if(report.status===S.STATUS)try{S.admitReport(report,options.out,{...options,isolationFile});}
+    if(report.status===S.STATUS)try{admitFinal(report,options.out,{...options,isolationFile});}
       catch(error){report.errors.push('final admission: '+error);report.status='INCOMPLETE';}
     S.writeJson(path.join(options.out,'result.json'),report);
   }
@@ -398,7 +427,7 @@ async function main(argv){
   process.exitCode=report.status===S.STATUS?0:report.status==='FAIL'?1:
     ['ISOLATION_FAIL','EXTERNAL_CONTINUATION_VETOED'].includes(report.status)?86:2;
 }
-module.exports={parse,processInfo,sameLive,closeProcess,mainBrowserArgv,processCensus,continueLocal,record,ledger,bounded,watchLifecycle,arm,nativeIsolation,main};
+module.exports={parse,processInfo,sameLive,closeProcess,mainBrowserArgv,processCensus,continueLocal,record,ledger,bounded,watchLifecycle,arm,nativeIsolation,admitFinal,main};
 if(require.main===module)main(process.argv.slice(2)).catch(error=>{
   console.error('R002F_TABHIDE '+(error.isolation?'ISOLATION_FAIL':'INCOMPLETE')+': '+error.message);process.exitCode=error.isolation?86:2;
 });

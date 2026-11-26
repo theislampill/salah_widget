@@ -51,11 +51,11 @@ function png(){
 }
 const event=(data=png(),id=1)=>({data:data.toString('base64'),sessionId:id,metadata:{timestamp:id}});
 
-test('all five exact source modules are checked before loading original owners',()=>{
+test('all six exact source modules are checked before loading original owners',()=>{
   const record=S.admitSources();
   assert.equal(record.protocol,'r002f-tabhide-source/1');
   assert.deepEqual(Object.keys(record.modules).sort(),S.MODULES.slice().sort());
-  assert.equal(Object.keys(record.modules).length,5);
+  assert.equal(Object.keys(record.modules).length,6);
 });
 test('source closure rejects an altered original helper without rebinding',()=>{
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'r2f-source-'));
@@ -142,6 +142,11 @@ test('argument and source failures retain exit 2 rather than being relabelled is
   }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
 test('failed navigation or observer setup retains acquired evidence and both primary and cleanup errors',async()=>{
+  const F=require('./r002f_focus_owner.cjs'),originalPrepare=F.prepare;
+  // This existing navigation/observer fault fixture has no native page graph.
+  // The dedicated adapter controls exercise its real ownership guard separately.
+  F.prepare=async()=>({evidenceClass:'synthetic-navigation-control'});
+  try{
   for(const stage of ['navigation','observer'])for(const cleanupFails of [false,true]){
     const dir=fs.mkdtempSync(path.join(os.tmpdir(),'r2f-failed-scene-'));
     try{
@@ -173,6 +178,7 @@ test('failed navigation or observer setup retains acquired evidence and both pri
       assert.equal(result.lifecycleCustody.cleanupError,retained.cleanupError);
     }finally{fs.rmSync(dir,{recursive:true,force:true});}
   }
+  }finally{F.prepare=originalPrepare;}
 });
 test('maturity requires physical refined owners and preserves the original phase budget',()=>{
   S.mature(sample());
@@ -498,6 +504,7 @@ async function ownerSelectionControl(kind){
     process:{env:{},exitCode:undefined},
     S:{admitSources:()=>({}),owners:()=>({}),privateRoot(){},identity:()=>({sha256:'controlled'}),generated:()=>({}),
       body:()=>JSON.stringify({version:'1.62.1'}),writeJson(p,value){report=clone(value);},BUDGET:{},STATUS:'OBSERVED_TABHIDE_DIAGNOSTIC'},
+    F:{INPUT:'synthetic-owner-selection-control',runtime:()=>({record:{evidenceClass:'synthetic-owner-selection-control'}})},
     parse:()=>options,nativeIsolation:()=>({isolationFile:'/controlled/isolation.json',host}),mainBrowserArgv:D.mainBrowserArgv,
     fs:{realpathSync:()=>'/controlled/chrome',readFileSync:p=>{
       if(kind==='second-read-fails'&&p==='/proc/12/cmdline')throw Object.assign(Error('controlled denied cmdline'),{code:'EACCES'});

@@ -208,9 +208,9 @@ class LaneControls(unittest.TestCase):
         self.assertEqual(lane['argv'], []); self.assertEqual(lane['preparation']['status'], 'INCOMPLETE')
         self.assertEqual(lane['result']['kind'], 'r002f-tabhide')
 
-    def test_tabhide_source_manifest_rechecks_all_five_current_bodies(self):
+    def test_tabhide_source_manifest_rechecks_all_six_current_bodies(self):
         manifest = self.lanes.tabhide_manifest()
-        self.assertEqual(len(manifest['modules']), 5)
+        self.assertEqual(len(manifest['modules']), 6)
         with patch.object(self.lanes, 'R002F_TABHIDE_MANIFEST_SHA256', '0'*64):
             with self.assertRaises(ValueError): self.lanes.tabhide_manifest()
 
