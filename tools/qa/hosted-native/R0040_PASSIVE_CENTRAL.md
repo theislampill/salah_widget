@@ -185,7 +185,9 @@ driver's individual waits remain unchanged.
 ## Offline verification and remaining work
 
 The new registered `hosted-native-r0040-passive-central-controls` population has
-17 cases and 94 declared input files. It uses the actual leaf and retained raw
+17 cases and 94 declared input files. It uses the runner's existing 180-second
+source-test default; no source-test timeout override is declared. This bound is
+separate from the native capture and coordinator ceilings above. It uses the actual leaf and retained raw
 Buffer bytes, actual bounded subprocess failure/timeout and descendant cleanup,
 and an actual guarded preparation failure. Namespace admission and valid native
 observations use explicit bounded doubles. It covers original Date-only
