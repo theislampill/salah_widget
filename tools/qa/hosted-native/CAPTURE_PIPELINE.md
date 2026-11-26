@@ -47,11 +47,17 @@ product PASS, proof that a recipe passed, or authentication of a sender.
 ### Complete source integration
 
 The current source assembly retains the separately reviewed R002F ordinary-argv
-owner correction, passive R0040 central route and R0035 within-call PSF source
-parity experiment. Its selected campaign is the original R003F owner B0 cell
-from the reviewed transport tree. The pure PSF experiment adds no native route
-or materializer. Each later campaign still requires its own current source,
-preparation, namespace and evidence admission.
+and original-session focus-owner corrections, passive R0040 central route and
+R0035 within-call PSF source parity experiment, and adds the separate opt-in
+Firefox/WebKit R003F diagnostics and paired native PSF diagnostic caller.
+Its selected campaign remains byte-identical
+to the R002F-only Chromium DPR1 tab-hide campaign at
+`0c7c59810036b874d6e423d358d836162b76e4ec`. The pure PSF experiment remains
+unchanged; its separate operational adapter has a fixed reference/derived
+population and explicit source/preparation admission. Each later campaign
+still requires its own current source, preparation, namespace and evidence
+admission. This composition is source integration, with no new preparation or
+native observation claim.
 
 The passive route's distinct terminal status,
 `ADMITTED_PASSIVE_DATE_ONLY_FOR_OFFLINE_VERIFICATION`, participates in the
@@ -63,13 +69,17 @@ required. Ordinary failed, stopped and `NOT_RUN` passive records retain their
 original dispositions; a success label cannot replace missing or interrupted
 producer custody.
 
-The registry retains all 78 original commands. Three existing command input
-lists append only the reviewed passive central dependency. Distinct transport,
-passive and pure PSF command records are added, with no case removal or expected
-failure changes. All passive runtime modules and their unchanged fixture are
+The registry retains all 88 preceding commands in their original order, with
+all non-input fields unchanged. Seven shared-caller input lists append the
+explicit composed source dependencies; the separate 34-case PSF caller command
+is added, for 89 total. Both imported Firefox/WebKit leaf command objects and
+the pure PSF command remain exact, with no case removal or expected-failure
+changes. All passive runtime
+modules and their unchanged fixture are
 inside the workflow's existing `tools/qa/hosted-native` orchestration selection;
 its original manifest/preflight selections and acquired research/historical
-inputs remain available. Source integration does not activate a new engine or
+inputs remain available. The pure PSF helper is explicitly selected alongside
+the two original Firefox guard files. Source integration does not activate a new engine or
 alter the strict envelope, portable mapping, original capture adapter, native
 waits, pixel thresholds or owner decisions.
 
@@ -137,6 +147,44 @@ retention, actual local CMS roundtrips with a synthetic recipient, exact case-pa
 bytes/empty directories and tampered ciphertext. The owner recipient roundtrip is
 private and separate. Neither source controls nor synthetic receipts are native
 observations.
+
+## Opt-in R003F diagnostic terminal types
+
+The [R003F hosted diagnostic contract](../../../docs/state-contracts/R003F-hosted-diagnostics.md)
+adds two explicit producer status types. `OBSERVED_FIREFOX_POLICY` belongs only
+to the Firefox managed-policy route; `OBSERVED_PRECONNECT_INPUT_DIAGNOSTIC`
+belongs only to the WebKit altered-document route. Exact campaign, canonical
+task/runtime/command/budget, result kind, inner/outer status and qualification
+must agree. Original routes reject these foreign success labels; diagnostic
+routes reject original `PASS` and each other's labels. Known completed failures
+and documented unlaunched lanes retain their original transport disposition.
+
+For a diagnostic campaign, source identities additionally bind its complete new
+helper, replay, imported leaf, common preparer and original guard closure.
+Previous or incomplete producer identities cannot be relabelled into this
+schema. Original private plaintext, portable mapping and envelope formats are
+unchanged. The source controls for this coupling invoke the actual producer
+gate without accessing a recipient key or claiming native producer evidence.
+
+## Opt-in paired PSF terminal type
+
+The [paired PSF caller contract](../../../docs/state-contracts/R0035-psf-native.md)
+defines the separate `r0035Psf: true` Chromium/R0035-only selection and its
+`OBSERVED_PSF_DIAGNOSTIC` member status. The ordered reference and derived
+members must retain matching actual source admission, runtime and browser,
+both original report admissions, normal namespace completion and their exact
+inner/outer records. An incomplete or originally failed pair remains incomplete
+or failed; known completed failures can still be retained. The terminal gate
+does not supply a new scientific, performance or human verdict.
+
+PSF preparation binds the actual merged planner, observer, pipeline and workflow
+bytes, and current admission checks those bindings before dispatch and at final
+intake. Preparations from either source parent do not authorize this composed
+caller. The corrected standalone materializer and its runtime manifest remain
+byte-identical to reviewed source `3792d5dbaf0fac34a38b5166959d8a8ed3f6379f`.
+Only a composite control is adapted: its generic original R003F fixture now
+explicitly expects the unchanged diagnostic guard to refuse the two foreign
+Firefox/WebKit success labels. Its first failing composed run remains retained.
 
 ## Preserved independent findings
 

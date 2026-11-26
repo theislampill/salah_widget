@@ -506,7 +506,17 @@ native rendering or measure instrumentation overhead.
 
 ## Optional matrix route
 
-`--r003f-harness corrected-matrix --r003f-matrix '{"id":"<original-cell-id>","variant":"B0"}'` selects a separately admitted matrix lane. It requires R003F alone, genuine current optional preparation and the exact reviewed source closure. The first separate matrix selection is the original owner cell at Chromium DPR1 with B0 only. The combined checked-in campaign selects headed R002F only. Its result remains a selected diagnostic. Complete-eight intake requires an actual unchanged original replay; individual variants are never unioned. See [R003F_MATRIX_CENTRAL.md](R003F_MATRIX_CENTRAL.md) for supported populations, precise limits, private process custody and the calculated workflow budgets.
+`--r003f-harness corrected-matrix --r003f-matrix '{"id":"<original-cell-id>","variant":"B0"}'` selects a separately admitted matrix lane. It requires R003F alone, genuine current optional preparation and the exact reviewed source closure. The first separate matrix selection was the original owner cell at Chromium DPR1 with B0 only. The checked-in campaign at this source composition preserves the reviewed R002F-only tab-hide selection. A selected matrix result remains a diagnostic. Complete-eight intake requires an actual unchanged original replay; individual variants are never unioned. See [R003F_MATRIX_CENTRAL.md](R003F_MATRIX_CENTRAL.md) for supported populations, precise limits, private process custody and the calculated workflow budgets.
+
+## Optional Firefox policy and WebKit document-input routes
+
+`--r003f-harness firefox-policy` and `--r003f-harness preconnect-input` select
+separate R003F-only, DPR1 Firefox and WebKit diagnostics. Their unchanged leaves,
+distinct result kinds, current source/runtime custody, Chromium boundary order,
+failure priorities, private final replay and uncalibrated ceilings are specified
+in [R003F hosted diagnostics](../../../docs/state-contracts/R003F-hosted-diagnostics.md).
+Neither selector is activated here. Neither result supplies original B0,
+complete-eight matrix or human acceptance.
 
 ## R0035 cost derivative
 
@@ -538,3 +548,21 @@ isolation failure, retained-route veto, cleanup failure and timeout retain their
 original priority. The new label supplies no product, physical or human
 acceptance. Absent selection leaves complete original/default plans unchanged.
 See [R0035_COSTS.md](R0035_COSTS.md) for exact cost semantics and source controls.
+
+## Optional paired R0035 PSF diagnostic
+
+`--r0035-psf`, or campaign `r0035Psf: true`, selects only R0035 on Chromium with
+`--r0035-guard off --r0035-scope all --r0035-mode timing`. The reference and
+derived lanes run in that fixed order with the original three-arm arguments,
+ordinary clock, dark scene, normal motion and one 15-second round. The explicit
+private driver adapter, reversible source pair, original report replay and
+exact preparation/current-source custody are specified in
+[R0035 paired PSF caller](../../../docs/state-contracts/R0035-psf-native.md).
+
+The two lane namespaces each have an uncalibrated 885-second ceiling, within
+a 3,540-second coordinator and 60-minute observation step. Other supplemental
+routes and retention/stage/cost combinations are refused. A successful member
+is only `OBSERVED_PSF_DIAGNOSTIC`; original failure, actual namespace failure,
+partial pairs and missing current evidence retain their own outcomes. The
+selected checked-in R002F campaign is unchanged. This source composition adds
+no preparation, native speed, product or human acceptance evidence.

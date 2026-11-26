@@ -21,10 +21,14 @@ from r002f_prepare import BASE_INDEX, COMBINED_INDEX, BASE_INVENTORY, COMBINED_I
 from r0040_capture_prepare import load_contract as load_r0040_contract
 import r0035_stage_materialize as stage_material
 import r003f_matrix_campaign as matrix
+import r003f_diagnostics as diagnostics
 
 MATRIX_PINS = "c87056c51cfa51c9221f2928e3c0094f6025ead6ca0202b76181c9ac8aa0c0a0"
 import r0035_cost_materialize as cost_material
 import r0040_passive_central as passive
+import r0035_psf as psf
+
+R0035_PSF_PINS = '8902d6cd226b7d8e9f415f3e796ab5bd1b9c2ad9d9f2ada09cec1e7babff1c8a'
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
@@ -360,9 +364,9 @@ def admit_matrix(entry, prepared, node, python):
 
 
 def moon_harness(value, selected):
-    if value not in ('published', 'corrected-b0', 'corrected-matrix') or not isinstance(value, str):
+    if value not in ('published', 'corrected-b0', 'corrected-matrix', *diagnostics.ROUTES) or not isinstance(value, str):
         raise ValueError('unsupported R003F harness')
-    if value in ('corrected-b0', 'corrected-matrix') and 'R003F' not in selected:
+    if value in ('corrected-b0', 'corrected-matrix', *diagnostics.ROUTES) and 'R003F' not in selected:
         raise ValueError('corrected R003F harness requires selected R003F observations')
     return value
 
@@ -482,9 +486,9 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
               engine='chromium', r003f_dpr=1, include_r002f=False, r002f_preparation=None,
               r002f_dpr=1, r002f_rounds=1, r002f_section='all', work_orders=None, retain_evidence=False,
               r0035_guard='default', r0035_scope='all', r0035_mode='both',
-              r0035_stages=False, r0035_stage_preparation=None, r0035_costs=False,
+              r0035_stages=False, r0035_stage_preparation=None, r0035_costs=False, r0035_psf=False, r0035_psf_preparation=None,
               r003f_harness='published', r003f_preparation=None, r003f_matrix=None, r003f_matrix_preparation=None,
-              r0040_mode='options', r0040_preparation=None, r002f_route='offscreen'):
+              r0040_mode='options', r0040_preparation=None, r002f_route='offscreen', r003f_diagnostic_preparation=None):
     if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
         raise ValueError('unsupported engine or R003F DPR')
     if (type(include_r002f) is not bool or type(r002f_dpr) is not int or r002f_dpr not in (1, 2, 3)
@@ -495,6 +499,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
     r002f_route_mode(r002f_route, selected, engine, r002f_dpr, r002f_rounds, r002f_section)
     rain_mode(r0040_mode, selected, engine)
     moon_harness(r003f_harness, selected)
+    diagnostic=diagnostics.controls(r003f_harness,selected,engine,r003f_dpr,retain_evidence)
     matrix_control = matrix.matrix_controls(r003f_matrix, r003f_harness, selected, engine, r003f_dpr)
     stars = star_controls({'guard': r0035_guard, 'scope': r0035_scope, 'mode': r0035_mode})
     if stars != STAR_DEFAULTS and 'R0035' not in selected:
@@ -503,6 +508,12 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         raise ValueError('evidence retention must be boolean')
     stage_mode(r0035_stages, selected, stars, retain_evidence)
     cost_mode(r0035_costs, r0035_stages, selected, stars, engine, retain_evidence, include_r002f)
+    psf.mode(r0035_psf,selected,stars,engine,stages=r0035_stages,costs=r0035_costs,
+             retained=retain_evidence,r002f=include_r002f,moon=r003f_harness,rain=r0040_mode,matrix=r003f_matrix)
+    if r0035_psf:
+        authority={'python':str(python_playwright),'node':str(node),'modules':str(node_modules),
+                   'playwright':str(node_modules/'playwright'),'pngjs':str(pngjs)}
+        return psf.make_plan(prepared,out,authority,r0035_psf_preparation or {'status':'INCOMPLETE','reason':'PSF preparation missing'})
     research = Path(prepared['sources']['research']['root'])
     historical = Path(prepared['sources']['historical']['root'])
     roots = {key: Path(value['root']) for key, value in prepared['trees'].items()}
@@ -577,7 +588,13 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         rain['result']['expectedCells'] = ['day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
                                           'reduced-none', 'reduced-still', 'motion-full', 'dry']
 
-    if matrix_control:
+    if diagnostic:
+        task=Path(out).parent.parent
+        if Path(out)!=task/'capture/lanes':raise ValueError('diagnostic task-owned plan output required')
+        runtime={'node':str(node),'python':str(python_playwright),'modules':str(node_modules),
+                 'playwright':str(module),'pngjs':str(pngjs),'engine':engine}
+        entries.append(diagnostics.make_lane(r003f_harness,r003f_diagnostic_preparation,task,runtime))
+    elif matrix_control:
         entries.append(matrix.make_lane(matrix_control, r003f_matrix_preparation, out, engine, r003f_dpr,
                                         node, node_modules, pngjs, MATRIX_PINS))
     else:
@@ -738,7 +755,7 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
-    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0', 'corrected-matrix'), default='published')
+    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0', 'corrected-matrix', *diagnostics.ROUTES), default='published')
     parser.add_argument('--r003f-prepared', type=Path)
     parser.add_argument('--r003f-process', type=Path)
     parser.add_argument('--r003f-matrix', type=json.loads)
@@ -754,6 +771,7 @@ def main():
     parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
     parser.add_argument('--r0035-stages', action='store_true')
     parser.add_argument('--r0035-costs', action='store_true')
+    parser.add_argument('--r0035-psf', action='store_true')
     parser.add_argument('--r0035-stage-process', type=Path)
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-prepared', type=Path)
@@ -772,12 +790,31 @@ def main():
         out = args.out.resolve()
         prepared = validate_prepared(args.prepared.resolve())
         roots = [Path(row['root']).resolve() for group in ('sources', 'trees') for row in prepared[group].values()]
+        psf_admission=None
+        if args.r0035_psf:
+            task=args.prepared.absolute().parents[3];authority=psf.load(task/'runtime.json')
+            if (authority.get('python')!=sys.executable or any(authority.get(k)!=str(v) for k,v in
+                    (('python',args.python_playwright),('node',args.node),('modules',args.node_modules),('pngjs',args.pngjs)))):
+                raise ValueError('PSF planner runtime differs from actual acquired authority')
+            try:psf_admission=psf.current_admission(task,authority)
+            except (OSError,ValueError,KeyError,TypeError,AttributeError) as error:
+                psf_admission={'status':'INCOMPLETE','reason':str(error)}
+            if psf_admission.get('status')=='PASS':roots.append(Path(psf_admission['root']))
         r002f = ((admit_r002f_tabhide(args.r002f_prepared, args.r002f_process, prepared, args.prepared, args.node)
                   if args.r002f_route == 'tabhide' else admit_r002f(args.r002f_prepared, args.r002f_process))
                  if args.r002f_prepared and args.r002f_process else None)
         r003f = (admit_r003f(args.r003f_prepared, args.r003f_process)
                  if args.r003f_harness == 'corrected-b0' else None)
         matrix_admission = (admit_matrix(args.r003f_matrix_entry,args.prepared,args.node,args.python_playwright) if args.r003f_harness == 'corrected-matrix' else None)
+        diagnostic_admission=None
+        if args.r003f_harness in diagnostics.ROUTES:
+            diagnostics.controls(args.r003f_harness,selected_work_orders(args.work_orders,args.r002f),args.engine,args.r003f_dpr,args.retain_evidence)
+            try:
+                runtime={'node':str(args.node),'python':str(args.python_playwright),'modules':str(args.node_modules),
+                         'playwright':str(args.node_modules/'playwright'),'pngjs':str(args.pngjs),'engine':args.engine}
+                diagnostic_admission=diagnostics.admit(args.r003f_harness,out.parent.parent,runtime,native=True)
+            except (OSError,ValueError,KeyError,TypeError,subprocess.SubprocessError) as error:
+                diagnostic_admission={'status':'INCOMPLETE','reason':str(error)}
         r0040 = (admit_r0040(prepared, args.r0040_work, args.r0040_process, args.r0040_entry_process,
                              out, args.node, args.node_modules/'playwright', mode=args.r0040_mode,
                              python=str(args.python_playwright), common_prepared=args.prepared,
@@ -809,7 +846,9 @@ def main():
                          work_orders=args.work_orders, retain_evidence=args.retain_evidence,
                          r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode,
                          r0035_stages=args.r0035_stages, r0035_stage_preparation=r0035_stage, r0035_costs=args.r0035_costs,
+                         r0035_psf=args.r0035_psf, r0035_psf_preparation=psf_admission,
                          r003f_harness=args.r003f_harness, r003f_preparation=r003f,
+                         r003f_diagnostic_preparation=diagnostic_admission,
                          r003f_matrix=args.r003f_matrix,r003f_matrix_preparation=matrix_admission,
                          r0040_mode=args.r0040_mode, r0040_preparation=r0040, r002f_route=args.r002f_route)
         check_star_plan(prepared, plan['r0035Plan'])
