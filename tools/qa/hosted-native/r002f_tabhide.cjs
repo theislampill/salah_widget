@@ -82,16 +82,30 @@ function browserPids(executable){
 function processCensus(executable,io=fs){
   // Failure-only private diagnostics. Partial reads are retained as partial;
   // this snapshot never selects a PID or replaces the original owner guard.
-  const limits={processes:256,cmdlineBytes:16384,statusBytes:4096,statBytes:4096,linkCharacters:4096};
+  const limits={processes:256,cmdlineBytes:16384,statusBytes:4096,statBytes:4096,linkCharacters:4096,readOperations:64};
   const errorCode=error=>String(error?.code||'UNKNOWN').slice(0,64);
   const link=name=>{try{const value=io.readlinkSync(name);return {value:value.slice(0,limits.linkCharacters),truncated:value.length>limits.linkCharacters};}
     catch(error){return {errorCode:errorCode(error)};}};
   const read=(name,maximum)=>{
-    const row={};let fd;
-    try{fd=io.openSync(name,'r');const buffer=Buffer.alloc(maximum+1),n=io.readSync(fd,buffer,0,buffer.length,0);
-      row.value=buffer.subarray(0,Math.min(n,maximum)).toString('utf8');row.truncated=n>maximum;}
+    const row={complete:false,eof:false,truncated:null,readCalls:0,bytesRead:0};let fd;
+    const buffer=Buffer.alloc(maximum+1);
+    try{fd=io.openSync(name,'r');
+      while(row.bytesRead<buffer.length&&row.readCalls<limits.readOperations){
+        row.readCalls++;
+        const n=io.readSync(fd,buffer,row.bytesRead,buffer.length-row.bytesRead,row.bytesRead);
+        if(!Number.isInteger(n)||n<0||n>buffer.length-row.bytesRead)
+          throw Object.assign(Error('invalid proc read count'),{code:'INVALID_READ_COUNT'});
+        if(n===0){row.eof=true;row.complete=true;row.truncated=false;break;}
+        row.bytesRead+=n;
+      }
+      if(row.bytesRead>maximum)row.truncated=true;
+      if(!row.eof&&row.truncated!==true&&row.readCalls===limits.readOperations)row.readLimitReached=true;
+    }
     catch(error){row.errorCode=errorCode(error);}
-    finally{if(fd!==undefined)try{io.closeSync(fd);}catch(error){row.closeErrorCode=errorCode(error);}}
+    finally{if(fd!==undefined){
+      row.value=buffer.subarray(0,Math.min(row.bytesRead,maximum)).toString('utf8');
+      try{io.closeSync(fd);}catch(error){row.closeErrorCode=errorCode(error);}
+    }}
     return row;
   };
   const result={protocol:'r002f-headed-process-census/1',authority:'diagnostic-only; does not select or admit a browser owner',
@@ -306,22 +320,34 @@ async function main(argv){
     report.playwright={version:pkg.version,executablePath:executable,executableSha256:S.identity(executable).sha256,headless:false,chromiumSandbox:true};
     display=await startDisplay(options.out,host);report.xvfb=display.record;
     prior=new Set(browserPids(executable));
-    report.browserOwnerSelection={protocol:'r002f-headed-owner-selection/1',priorPids:[...prior],observedPids:[],mainPids:[],admitted:false};
+    report.browserOwnerSelection={protocol:'r002f-headed-owner-selection/1',priorPids:[...prior],phase:'before-launch',admitted:false};
     browser=await playwright.chromium.launch({headless:false,chromiumSandbox:true,executablePath:executable,timeout:30000,
       env:{...process.env,DISPLAY:display.record.display}});
     browserLifecycle=watchLifecycle(browser,'browser',()=>browser.isConnected());report.browserLifecycle=browserLifecycle.state;
     const main=[];
+    report.browserOwnerSelection.phase='postlaunch-enumeration';
     const observed=browserPids(executable);report.browserOwnerSelection.observedPids=observed;
+    Object.assign(report.browserOwnerSelection,{mainPids:[],attemptedPids:[],candidateErrors:[],candidateScanComplete:false});
     for(const pid of observed)if(!prior.has(pid)){
+      report.browserOwnerSelection.currentPid=pid;report.browserOwnerSelection.phase='candidate-cmdline';
+      report.browserOwnerSelection.attemptedPids.push(pid);
       try{const argv=fs.readFileSync('/proc/'+pid+'/cmdline','utf8').split('\0');
-        if(!argv.some(arg=>arg.startsWith('--type=')))main.push(processInfo(pid));
-      }catch(error){if(error.code!=='ENOENT')throw error;}
+        if(!argv.some(arg=>arg.startsWith('--type='))){
+          report.browserOwnerSelection.phase='candidate-identity';main.push(processInfo(pid));
+          report.browserOwnerSelection.mainPids.push(pid);
+        }
+      }catch(error){
+        report.browserOwnerSelection.candidateErrors.push({pid,phase:report.browserOwnerSelection.phase,errorCode:String(error?.code||'UNKNOWN').slice(0,64)});
+        if(error.code!=='ENOENT')throw error;
+      }
     }
-    report.browserOwnerSelection.mainPids=main.map(row=>row.pid);
+    report.browserOwnerSelection.candidateScanComplete=true;delete report.browserOwnerSelection.currentPid;
+    report.browserOwnerSelection.phase='exact-one-owner';
     need(main.length===1,'one actual headed browser owner required');browserProcess=main[0];report.browserProcess=browserProcess;
+    report.browserOwnerSelection.phase='owner-identity';
     need(browserProcess.uid===host.uid&&browserProcess.netns===host.netns&&browserProcess.pidns===host.pidns&&
       !browserProcess.argv.some(x=>x==='--no-sandbox'||x.startsWith('--headless')),'headed process identity differs');
-    ownerAdmitted=true;report.browserOwnerSelection.admitted=true;
+    ownerAdmitted=true;report.browserOwnerSelection.admitted=true;report.browserOwnerSelection.phase='admitted';
     host.browserPid=browserProcess.pid;report.browserVersion=browser.version();
     const boundaryHost={...host,executableSha256:report.playwright.executableSha256};
     await boundary(browser,report.boundaries.before={},boundaryHost);

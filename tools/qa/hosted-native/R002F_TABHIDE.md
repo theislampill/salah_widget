@@ -39,7 +39,11 @@ receipts and captured output are rechecked by final admission.
 
 The driver retains the original prelaunch PID set, postlaunch executable-match
 set and main-process candidates before applying the unchanged exact-one-owner
-rule. A failure before that rule and its namespace/UID checks are admitted may
+rule. Postlaunch observations remain absent until obtained. Each completed
+candidate identity is retained immediately, with a scan-completion marker and
+the current selection phase, so a later read failure cannot erase an earlier
+candidate or represent unobserved candidates as an empty population.
+A failure before that rule and its namespace/UID checks are admitted may
 also retain a private `r002f-headed-process-census/1` snapshot while the browser
 is still available, followed by another snapshot after cleanup. These records
 are diagnostic-only; they never select a PID, replace a failed owner check or
@@ -50,7 +54,10 @@ namespace. It retains bounded prefixes of command lines (16,384 bytes), status
 and stat records (4,096 bytes each), and executable/namespace links (4,096
 characters). Permission errors, disappearing processes, truncated populations,
 truncated fields and read/close errors remain explicit. Reads occur at different
-instants and are not an atomic process inventory. Missing or unreadable fields
+instants and are not an atomic process inventory. Each field uses at most 64
+incremental reads through EOF or its byte bound. A short read alone does not
+establish EOF: a read-operation limit or error retains the prefix with unknown
+truncation and incomplete state. Missing or unreadable fields
 do not prove absence, ownership, executable identity or the cause of a failed
 selection. The original cleanup flags retain their original meaning; a failed
 owner check cannot manufacture a successful final browser census.

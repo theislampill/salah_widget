@@ -445,7 +445,7 @@ test('failure-only proc census bounds process population and retained text prefi
   const io=procCensusIO(Array.from({length:258},(_,i)=>String(i+10)));
   io.text.set('/proc/10/cmdline',Buffer.alloc(20000,65));io.links.set('/proc/10/exe','x'.repeat(5000));
   const result=D.processCensus('/controlled/chrome',io);
-  assert.deepEqual(result.limits,{processes:256,cmdlineBytes:16384,statusBytes:4096,statBytes:4096,linkCharacters:4096});
+  assert.deepEqual(result.limits,{processes:256,cmdlineBytes:16384,statusBytes:4096,statBytes:4096,linkCharacters:4096,readOperations:64});
   assert.equal(result.enumeration.numericEntries,258);assert.equal(result.enumeration.truncated,true);assert.equal(result.rows.length,256);
   assert.equal(result.rows[0].pid,10);assert.equal(result.rows[0].cmdline.value.length,16384);assert.equal(result.rows[0].cmdline.truncated,true);
   assert.equal(result.rows[0].exe.value.length,4096);assert.equal(result.rows[0].exe.truncated,true);assert.equal(io.open.size,0);
@@ -460,4 +460,65 @@ test('failure-only proc census preserves enumeration failure as a diagnostic rec
   const result=D.processCensus('/controlled/chrome',io);
   assert.equal(result.enumeration.errorCode,'EACCES');assert.deepEqual(result.rows,[]);
   assert.equal(result.authority,'diagnostic-only; does not select or admit a browser owner');
+});
+test('short proc reads continue to EOF before claiming a complete field',()=>{
+  const io=procCensusIO(['11']),read=io.readSync.bind(io);
+  io.readSync=(fd,buffer,offset,length,position)=>read(fd,buffer,offset,Math.min(3,length),position);
+  const result=D.processCensus('/controlled/chrome',io),row=result.rows[0].cmdline;
+  assert.equal(row.value,io.text.get('/proc/11/cmdline').toString('utf8'));
+  assert.equal(row.complete,true);assert.equal(row.eof,true);assert.equal(row.truncated,false);
+  assert.ok(row.readCalls>1);assert.equal(io.open.size,0);
+});
+test('bounded repeated short reads retain an explicitly incomplete prefix',()=>{
+  const io=procCensusIO(['11']),read=io.readSync.bind(io);
+  io.text.set('/proc/11/cmdline',Buffer.alloc(20000,65));
+  io.readSync=(fd,buffer,offset,length,position)=>read(fd,buffer,offset,Math.min(3,length),position);
+  const result=D.processCensus('/controlled/chrome',io),row=result.rows[0].cmdline;
+  assert.equal(row.value,'A'.repeat(192));assert.equal(row.complete,false);assert.equal(row.eof,false);
+  assert.equal(row.truncated,null);assert.equal(row.readLimitReached,true);assert.equal(row.readCalls,64);
+  assert.equal(io.open.size,0);
+});
+test('proc read errors retain previously read bytes and unknown completeness',()=>{
+  const io=procCensusIO(['11']),read=io.readSync.bind(io);
+  io.readSync=(fd,buffer,offset,length,position)=>{
+    if(position>0)throw Object.assign(Error('controlled second read'),{code:'EACCES'});
+    return read(fd,buffer,offset,3,position);
+  };
+  const result=D.processCensus('/controlled/chrome',io),row=result.rows[0].cmdline;
+  assert.equal(row.value,'/co');assert.equal(row.bytesRead,3);assert.equal(row.errorCode,'EACCES');
+  assert.equal(row.complete,false);assert.equal(row.truncated,null);assert.equal(io.open.size,0);
+});
+async function ownerSelectionControl(kind){
+  // Exact main body; every browser/process operation below is an explicit double.
+  let report,connected=true,enumerations=0;
+  const options={out:'/controlled/output',playwright:'/controlled/playwright',baseline:'/controlled/baseline',candidate:'/controlled/candidate'};
+  const host={uid:1001,netns:'net:[controlled]',pidns:'pid:[controlled]'};
+  const browser={isConnected:()=>connected,close:async()=>{connected=false;},version:()=> 'controlled'};
+  const scope={need:(value,message)=>{if(!value)throw Error(message);},path,Buffer,Set,console:{log(){}},__dirname,
+    process:{env:{},exitCode:undefined},
+    S:{admitSources:()=>({}),owners:()=>({}),privateRoot(){},identity:()=>({sha256:'controlled'}),generated:()=>({}),
+      body:()=>JSON.stringify({version:'1.62.1'}),writeJson(p,value){report=clone(value);},BUDGET:{},STATUS:'OBSERVED_TABHIDE_DIAGNOSTIC'},
+    parse:()=>options,nativeIsolation:()=>({isolationFile:'/controlled/isolation.json',host}),
+    fs:{realpathSync:()=>'/controlled/chrome',readFileSync:p=>{
+      if(kind==='second-read-fails'&&p==='/proc/12/cmdline')throw Object.assign(Error('controlled denied cmdline'),{code:'EACCES'});
+      return '/controlled/chrome\0';}},
+    require:()=>({chromium:{executablePath:()=>'/controlled/chrome',launch:async()=>{
+      if(kind==='launch-fails')throw Error('controlled launch failure');return browser;}}}),
+    startDisplay:async()=>({child:{},record:{display:':controlled',process:{}}}),
+    browserPids:()=>++enumerations===1?[]:[11,12],watchLifecycle:()=>({state:{},requestCleanup(){}}),
+    processInfo:pid=>({pid,...host,argv:['/controlled/chrome']}),processCensus:()=>({evidenceClass:'synthetic-source-control'}),
+    bounded:async p=>await p,closeProcess:async()=>({stopped:true}),delay:async()=>{}};
+  vm.createContext(scope);vm.runInContext('globalThis.mainUnderTest='+D.main.toString(),scope);
+  await scope.mainUnderTest([]);return {report,exitCode:scope.process.exitCode};
+}
+test('owner selection retains completed candidate identities before a later read error',async()=>{
+  const {report,exitCode}=await ownerSelectionControl('second-read-fails'),s=report.browserOwnerSelection;
+  assert.deepEqual(s.mainPids,[11]);assert.deepEqual(s.observedPids,[11,12]);assert.equal(s.candidateScanComplete,false);
+  assert.equal(s.phase,'candidate-cmdline');assert.equal(s.currentPid,12);assert.equal(s.candidateErrors[0].errorCode,'EACCES');
+  assert.equal(s.admitted,false);assert.equal(report.status,'INCOMPLETE');assert.equal(exitCode,2);
+});
+test('failed browser launch leaves postlaunch observations absent',async()=>{
+  const {report,exitCode}=await ownerSelectionControl('launch-fails'),s=report.browserOwnerSelection;
+  assert.deepEqual(s.priorPids,[]);assert.equal('observedPids' in s,false);assert.equal('mainPids' in s,false);
+  assert.equal(s.phase,'before-launch');assert.equal(s.admitted,false);assert.equal(report.status,'INCOMPLETE');assert.equal(exitCode,2);
 });
