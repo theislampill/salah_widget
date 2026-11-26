@@ -39,8 +39,21 @@ function documentUrl(value){
   need(u.protocol==='http:'&&u.hostname==='127.0.0.1'&&u.pathname==='/index.html'&&!u.search&&!u.username&&!u.password,'unexpected document URL');
   return u.href;
 }
+function evidenceDirectory(out,allowMissing=false){
+  out=path.resolve(out);
+  for(let current=out;;current=path.dirname(current)){
+    let stat;
+    try{stat=fs.lstatSync(current);}
+    catch(error){if(!(allowMissing&&current===out&&error.code==='ENOENT'))throw error;}
+    if(stat)need(stat.isDirectory()&&!stat.isSymbolicLink(),'symlink or non-directory evidence ancestor is not admitted');
+    if(path.dirname(current)===current)break;
+  }
+  // The original driver creates only the final output directory. Its parent
+  // must already exist, and its canonical location cannot be an input alias.
+  return path.join(fs.realpathSync(path.dirname(out)),path.basename(out));
+}
 function createInput({root,out}){
-  root=fs.realpathSync(root);out=path.resolve(out);
+  root=fs.realpathSync(root);out=evidenceDirectory(out,true);
   need(out!==root&&!out.startsWith(root+path.sep),'evidence must remain outside the runtime');
   const derived=deriveIndex(fs.readFileSync(regular(root,'index.html')));
   const evidence={protocol:PROTOCOL,status:'PENDING',identity:derived.identity,producedBodies:[],responses:[],rejectedDocumentRequests:0,
@@ -90,7 +103,7 @@ function createInput({root,out}){
       if(body.length>ORIGINAL_BYTES){row.retentionError='body retention limit exceeded';throw Error(row.retentionError);}
       const relative='document-input/document-'+String(row.ordinal).padStart(2,'0')+'.html';
       try{
-        need(fs.lstatSync(out).isDirectory()&&!fs.lstatSync(out).isSymbolicLink(),'regular evidence directory required');
+        evidenceDirectory(out);
         const folder=path.join(out,'document-input');
         if(row.ordinal===1)fs.mkdirSync(folder,{mode:0o700});
         need(fs.lstatSync(folder).isDirectory()&&!fs.lstatSync(folder).isSymbolicLink(),'regular document retention directory required');
@@ -116,6 +129,7 @@ function createInput({root,out}){
   return {evidence,indexFor,guardServer,recordResponse,recordNavigationFailure,assertComplete};
 }
 function admitEvidence(evidence,out){
+  out=evidenceDirectory(out);
   need(evidence&&evidence.protocol===PROTOCOL&&evidence.status==='COMPLETE'&&!evidence.failure,'document evidence is incomplete');
   need(evidence.rejectedDocumentRequests===0,'noncanonical document requests were observed');
   need(equal(evidence.identity,identity())&&equal(evidence.bounds,{documents:2,maxRetainedBodyBytes:ORIGINAL_BYTES}),'document source identity or limits differ');

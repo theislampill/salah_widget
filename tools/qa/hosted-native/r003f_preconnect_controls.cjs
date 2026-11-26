@@ -146,3 +146,31 @@ test('encoded index aliases and every query form are refused before serving any 
     }finally{await new Promise(resolve=>server.close(resolve));}
   }
 });
+test('symlinked output parents cannot place retained evidence inside the runtime',t=>{
+  const dir=temporary(t),runtime=path.join(dir,'runtime'),alias=path.join(dir,'alias');fs.mkdirSync(runtime);fs.writeFileSync(path.join(runtime,'index.html'),raw);fs.symlinkSync(runtime,alias,'dir');
+  assert.throws(()=>S.createInput({root:runtime,out:path.join(alias,'evidence')}),/symlink|outside/);
+  assert.equal(fs.existsSync(path.join(runtime,'evidence')),false);assert.deepEqual(fs.readFileSync(path.join(runtime,'index.html')),raw);
+});
+test('evidence path ancestors and direct evidence symlinks are refused even outside the runtime',t=>{
+  const dir=temporary(t),target=path.join(dir,'target'),alias=path.join(dir,'alias');fs.mkdirSync(target);fs.symlinkSync(target,alias,'dir');
+  assert.throws(()=>S.createInput({root:ROOT,out:path.join(alias,'evidence')}),/symlink/);
+  assert.throws(()=>S.createInput({root:ROOT,out:alias}),/symlink/);assert.deepEqual(fs.readdirSync(target),[]);
+});
+test('parent substitution after input creation refuses a body write while preserving its observed hash',async t=>{
+  const dir=temporary(t),runtime=path.join(dir,'runtime'),holder=path.join(dir,'holder'),saved=path.join(dir,'saved'),out=path.join(holder,'evidence');
+  fs.mkdirSync(runtime);fs.writeFileSync(path.join(runtime,'index.html'),raw);fs.mkdirSync(holder);fs.mkdirSync(out);
+  const input=S.createInput({root:runtime,out});fs.renameSync(holder,saved);fs.symlinkSync(runtime,holder,'dir');fs.mkdirSync(path.join(runtime,'evidence'));
+  const body=input.indexFor('B0');await assert.rejects(input.recordResponse(response(body),URL),/symlink/);
+  const row=input.evidence.responses[0];assert.equal(row.observedBodySha256,S.DERIVED_SHA);assert.equal(row.body,undefined);assert.match(row.retentionError,/symlink/);
+  assert.equal(fs.existsSync(path.join(runtime,'evidence/document-input')),false);
+});
+test('late same-byte evidence-parent aliases cannot re-admit completed document evidence',async t=>{
+  const dir=temporary(t),holder=path.join(dir,'holder'),saved=path.join(dir,'saved'),out=path.join(holder,'evidence');fs.mkdirSync(holder);fs.mkdirSync(out);
+  const input=S.createInput({root:ROOT,out});for(let i=0;i<2;i++)await input.recordResponse(response(input.indexFor('B0')),URL);input.assertComplete();
+  fs.renameSync(holder,saved);fs.symlinkSync(saved,holder,'dir');assert.throws(()=>S.admitEvidence(input.evidence,out),/symlink/);
+});
+test('fresh canonical evidence output is still admitted before original driver directory creation',async t=>{
+  const out=path.join(temporary(t),'fresh-evidence'),input=S.createInput({root:ROOT,out});assert.equal(fs.existsSync(out),false);fs.mkdirSync(out);
+  for(let i=0;i<2;i++)await input.recordResponse(response(input.indexFor('B0')),URL);
+  assert.equal(input.assertComplete().status,'COMPLETE');assert.equal(S.admitEvidence(input.evidence,out).status,'COMPLETE');
+});

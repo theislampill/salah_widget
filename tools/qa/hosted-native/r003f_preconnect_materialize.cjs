@@ -6,7 +6,7 @@ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const PINS=Object.freeze({
   'r003f_materialize.cjs':'2fc95820151e08ff416ce10890a801045a960cd49c65eff499a1cf0ee4473fbc',
   'r003f_ui.cjs':'ccce93bcbe1bcd4834789e03ead8a2a104710e4955e05d57cc846ab4a341c82a',
-  'r003f_preconnect_input.cjs':'6497cc23dd21cd9a622870dc51fceb8885a125d30b4b8776401ebc475e1ab3b7'
+  'r003f_preconnect_input.cjs':'25ad6457e98f1090bb7f234d6f4cdeed451a6b72b5c9a5a9c2d820e57ada50ca'
 });
 function need(value,message){if(!value)throw Error('R003F preconnect materialization: '+message);}
 function pinned(name){

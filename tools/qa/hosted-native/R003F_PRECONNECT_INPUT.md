@@ -86,6 +86,14 @@ The two bounded files are `document-input/document-01.html` and
 `text/html`, at the expected loopback document URL, and have the exact derived
 bytes. Both documents must use the same origin.
 
+The output parent must already exist. Before original driver setup, the helper
+checks the output's canonical location against the actual runtime and refuses
+symbolic links or non-directory components anywhere in its ancestry. Only the
+final output directory may be absent at that boundary. It repeats the ancestry
+check before retaining each response body and during final evidence admission,
+so a later parent substitution cannot redirect a write or rebind a readback to
+the same bytes through an alias. These checks do not create or move directories.
+
 Wrong but bounded bodies remain available for diagnosis. An oversized body
 records its observed digest and size plus a retention-limit failure; it does
 not claim that a body file exists. Navigation, response-read and file-write
@@ -169,10 +177,12 @@ cannot relabel an original failure or establish causal attribution by itself.
 ## Source verification
 
 The registered command `hosted-native-r003f-preconnect-source-controls` contains
-23 source controls. They cover exact byte transformation, complete output
+28 source controls. They cover exact byte transformation, complete output
 closure, original code preservation, actual local HTTP delivery and alias
 refusal, retained-response replay, malformed/missing/late evidence, file faults,
-and rejection of unsupported engine/DPR before browser import. HTTP tests use
+and rejection of unsupported engine/DPR before browser import. Output-alias
+controls cover initial parent/root links, substitution before a body write,
+late same-byte readback aliases and a valid fresh canonical output. HTTP tests use
 Node loopback only; response doubles are explicitly synthetic. No browser is
 launched and no native, sandbox, visual, human or product verdict is inferred.
 
