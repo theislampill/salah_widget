@@ -498,15 +498,25 @@ async function ownerSelectionControl(kind){
     process:{env:{},exitCode:undefined},
     S:{admitSources:()=>({}),owners:()=>({}),privateRoot(){},identity:()=>({sha256:'controlled'}),generated:()=>({}),
       body:()=>JSON.stringify({version:'1.62.1'}),writeJson(p,value){report=clone(value);},BUDGET:{},STATUS:'OBSERVED_TABHIDE_DIAGNOSTIC'},
-    parse:()=>options,nativeIsolation:()=>({isolationFile:'/controlled/isolation.json',host}),
+    parse:()=>options,nativeIsolation:()=>({isolationFile:'/controlled/isolation.json',host}),mainBrowserArgv:D.mainBrowserArgv,
     fs:{realpathSync:()=>'/controlled/chrome',readFileSync:p=>{
       if(kind==='second-read-fails'&&p==='/proc/12/cmdline')throw Object.assign(Error('controlled denied cmdline'),{code:'EACCES'});
+      if((kind!=='second-read-fails'&&p==='/proc/12/cmdline'&&kind!=='two-main')||kind==='only-flattened')
+        return '/controlled/chrome --type=zygote --user-data-dir=/controlled/profile\0';
       return '/controlled/chrome\0';}},
     require:()=>({chromium:{executablePath:()=>'/controlled/chrome',launch:async()=>{
       if(kind==='launch-fails')throw Error('controlled launch failure');return browser;}}}),
     startDisplay:async()=>({child:{},record:{display:':controlled',process:{}}}),
     browserPids:()=>++enumerations===1?[]:[11,12],watchLifecycle:()=>({state:{},requestCleanup(){}}),
-    processInfo:pid=>({pid,...host,argv:['/controlled/chrome']}),processCensus:()=>({evidenceClass:'synthetic-source-control'}),
+    processInfo:pid=>({pid,...host,exe:kind==='identity-exe-changed'?'/other/chrome':'/controlled/chrome',
+      sha256:kind==='identity-sha-changed'?'changed':'controlled',
+      ...(kind==='identity-uid-changed'?{uid:1002}:{}),
+      ...(kind==='identity-netns-changed'?{netns:'net:[other]'}:{}),
+      ...(kind==='identity-pidns-changed'?{pidns:'pid:[other]'}:{}),
+      argv:kind==='identity-becomes-flattened'?['/controlled/chrome --type=utility']:
+        ['/controlled/chrome',...(kind==='identity-no-sandbox'?['--no-sandbox']:kind==='identity-headless'?['--headless=new']:[])]}),
+    processCensus:()=>({evidenceClass:'synthetic-source-control'}),
+    boundary:async()=>{throw Error('controlled stop before any native boundary');},
     bounded:async p=>await p,closeProcess:async()=>({stopped:true}),delay:async()=>{}};
   vm.createContext(scope);vm.runInContext('globalThis.mainUnderTest='+D.main.toString(),scope);
   await scope.mainUnderTest([]);return {report,exitCode:scope.process.exitCode};
@@ -521,4 +531,52 @@ test('failed browser launch leaves postlaunch observations absent',async()=>{
   const {report,exitCode}=await ownerSelectionControl('launch-fails'),s=report.browserOwnerSelection;
   assert.deepEqual(s.priorPids,[]);assert.equal('observedPids' in s,false);assert.equal('mainPids' in s,false);
   assert.equal(s.phase,'before-launch');assert.equal(s.admitted,false);assert.equal(report.status,'INCOMPLETE');assert.equal(exitCode,2);
+});
+test('main argv keeps exact executable and NUL argument boundaries without reparsing values',()=>{
+  const executable='/controlled/browser path/chrome';
+  for(const argv of [[executable], [executable,'--user-data-dir=/controlled/profile with spaces'],
+    [executable,'--value=contains --type=renderer','--typeface=ordinary',' --type=literal-value']])
+    assert.equal(D.mainBrowserArgv(argv,executable),true);
+  for(const argv of [[], [''], [executable+' '], [' '+executable], ['/different/chrome'], [executable,null]])
+    assert.equal(D.mainBrowserArgv(argv,executable),false);
+  for(const value of ['--type','--type=','--type=renderer','--type= utility','--type=utility --other=value','--type=\nrenderer'])
+    assert.equal(D.mainBrowserArgv([executable,value],executable),false);
+});
+test('flattened Chromium child titles are excluded for every whitespace and type value',()=>{
+  const executable='/controlled/browser path/chrome';
+  for(const separator of [' ','\t','\n','\r','\v','\f','\u00a0'])
+    for(const value of ['zygote','utility','gpu-process','renderer','','unknown'])
+      assert.equal(D.mainBrowserArgv([executable+separator+'--type='+value+' --user-data-dir=/controlled/profile'],executable),false);
+  assert.equal(D.mainBrowserArgv([executable+' --no-startup-window'],executable),false);
+});
+test('exact main body excludes a flattened child and keeps the ordinary candidate',async()=>{
+  const {report,exitCode}=await ownerSelectionControl('flattened-child');
+  assert.deepEqual(report.browserOwnerSelection.mainPids,[11]);
+  assert.equal(report.browserOwnerSelection.candidateScanComplete,true);
+  assert.equal(report.browserOwnerSelection.admitted,true);
+  assert.equal(report.browserProcess.pid,11);
+  assert.match(report.errors[0],/controlled stop before any native boundary/);
+  assert.equal(report.status,'INCOMPLETE');assert.equal(exitCode,2);
+});
+test('zero and multiple ordinary candidates retain exact-one failure and diagnostic-only census',async()=>{
+  for(const [kind,pids] of [['only-flattened',[]],['two-main',[11,12]]]){
+    const {report,exitCode}=await ownerSelectionControl(kind);
+    assert.deepEqual(report.browserOwnerSelection.mainPids,pids);
+    assert.equal(report.browserOwnerSelection.admitted,false);
+    assert.equal(report.browserOwnerSelection.phase,'exact-one-owner');
+    assert.equal(report.ownerFailureProcessCensus.evidenceClass,'synthetic-source-control');
+    assert.match(report.errors[0],/one actual headed browser owner required/);
+    assert.equal(report.status,'INCOMPLETE');assert.equal(exitCode,2);
+  }
+});
+test('fresh owner identity rechecks argv and executable while preserving UID namespace and sandbox guards',async()=>{
+  for(const kind of ['identity-becomes-flattened','identity-exe-changed','identity-sha-changed',
+    'identity-uid-changed','identity-netns-changed','identity-pidns-changed','identity-no-sandbox','identity-headless']){
+    const {report,exitCode}=await ownerSelectionControl(kind);
+    assert.deepEqual(report.browserOwnerSelection.mainPids,[11]);
+    assert.equal(report.browserOwnerSelection.phase,'owner-identity');
+    assert.equal(report.browserOwnerSelection.admitted,false);
+    assert.match(report.errors[0],/headed process identity differs/);
+    assert.equal(report.status,'INCOMPLETE');assert.equal(exitCode,2);
+  }
 });

@@ -79,6 +79,12 @@ function browserPids(executable){
     try{return fs.readlinkSync('/proc/'+value+'/exe')===executable?[Number(value)]:[];}catch(e){if(['ENOENT','EACCES'].includes(e.code))return [];throw e;}
   });
 }
+function mainBrowserArgv(argv,executable){
+  // Chromium children may flatten their title into argv[0]. Never reconstruct
+  // that title as a main argv or split whitespace inside ordinary values.
+  return Array.isArray(argv)&&typeof executable==='string'&&executable.length>0&&argv[0]===executable&&
+    !argv.some(arg=>typeof arg!=='string'||arg==='--type'||arg.startsWith('--type='));
+}
 function processCensus(executable,io=fs){
   // Failure-only private diagnostics. Partial reads are retained as partial;
   // this snapshot never selects a PID or replaces the original owner guard.
@@ -332,7 +338,7 @@ async function main(argv){
       report.browserOwnerSelection.currentPid=pid;report.browserOwnerSelection.phase='candidate-cmdline';
       report.browserOwnerSelection.attemptedPids.push(pid);
       try{const argv=fs.readFileSync('/proc/'+pid+'/cmdline','utf8').split('\0');
-        if(!argv.some(arg=>arg.startsWith('--type='))){
+        if(mainBrowserArgv(argv,executable)){
           report.browserOwnerSelection.phase='candidate-identity';main.push(processInfo(pid));
           report.browserOwnerSelection.mainPids.push(pid);
         }
@@ -345,7 +351,9 @@ async function main(argv){
     report.browserOwnerSelection.phase='exact-one-owner';
     need(main.length===1,'one actual headed browser owner required');browserProcess=main[0];report.browserProcess=browserProcess;
     report.browserOwnerSelection.phase='owner-identity';
-    need(browserProcess.uid===host.uid&&browserProcess.netns===host.netns&&browserProcess.pidns===host.pidns&&
+    need(browserProcess.exe===executable&&browserProcess.sha256===report.playwright.executableSha256&&
+      mainBrowserArgv(browserProcess.argv,executable)&&
+      browserProcess.uid===host.uid&&browserProcess.netns===host.netns&&browserProcess.pidns===host.pidns&&
       !browserProcess.argv.some(x=>x==='--no-sandbox'||x.startsWith('--headless')),'headed process identity differs');
     ownerAdmitted=true;report.browserOwnerSelection.admitted=true;report.browserOwnerSelection.phase='admitted';
     host.browserPid=browserProcess.pid;report.browserVersion=browser.version();
@@ -390,7 +398,7 @@ async function main(argv){
   process.exitCode=report.status===S.STATUS?0:report.status==='FAIL'?1:
     ['ISOLATION_FAIL','EXTERNAL_CONTINUATION_VETOED'].includes(report.status)?86:2;
 }
-module.exports={parse,processInfo,sameLive,closeProcess,processCensus,continueLocal,record,ledger,bounded,watchLifecycle,arm,nativeIsolation,main};
+module.exports={parse,processInfo,sameLive,closeProcess,mainBrowserArgv,processCensus,continueLocal,record,ledger,bounded,watchLifecycle,arm,nativeIsolation,main};
 if(require.main===module)main(process.argv.slice(2)).catch(error=>{
   console.error('R002F_TABHIDE '+(error.isolation?'ISOLATION_FAIL':'INCOMPLETE')+': '+error.message);process.exitCode=error.isolation?86:2;
 });

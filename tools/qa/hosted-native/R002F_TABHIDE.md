@@ -43,6 +43,25 @@ rule. Postlaunch observations remain absent until obtained. Each completed
 candidate identity is retained immediately, with a scan-completion marker and
 the current selection phase, so a later read failure cannot erase an earlier
 candidate or represent unobserved candidates as an empty population.
+
+A main candidate must retain ordinary NUL argument boundaries: its `argv[0]`
+must equal the acquired executable path exactly, with no `--type` or `--type=`
+argument. Chromium child titles flattened into `argv[0]` are excluded. The
+driver never splits or trims whitespace to reconstruct a title; spaces inside
+ordinary argument values keep their original meaning. Unknown command-line
+representations and zero or multiple ordinary candidates fail closed. The
+fresh `processInfo` record is checked again for the same argv predicate, exact
+executable path and executable digest before owner admission, together with
+the original UID, network/PID namespace, sandbox and headed-mode checks.
+Browser launch, temporary profile creation and strict isolation are unchanged.
+
+The retained failed census demonstrated flattened child titles after its owner
+selection had refused six candidates. That later snapshot does not retain the
+earlier selection reads byte for byte. Source controls exercise that concrete
+representation and adversarial argument boundaries without selecting a native
+owner. A main process with an unfamiliar flattened title also remains refused;
+the observed ordinary main argv is not a universal Chromium guarantee.
+
 A failure before that rule and its namespace/UID checks are admitted may
 also retain a private `r002f-headed-process-census/1` snapshot while the browser
 is still available, followed by another snapshot after cleanup. These records
