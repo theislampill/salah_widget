@@ -26,6 +26,7 @@ import r003f_diagnostics as diagnostics
 MATRIX_PINS = "c87056c51cfa51c9221f2928e3c0094f6025ead6ca0202b76181c9ac8aa0c0a0"
 import r0035_cost_materialize as cost_material
 import r0040_passive_central as passive
+import r0040_mechanism_central as mechanism
 import r0035_psf as psf
 
 R0035_PSF_PINS = '8902d6cd226b7d8e9f415f3e796ab5bd1b9c2ad9d9f2ada09cec1e7babff1c8a'
@@ -41,7 +42,7 @@ R0040_MANIFEST = HERE.parents[2]/'docs/state-contracts/evidence/R0040/native-cap
 R0040_MANIFEST_SHA256 = '267f2fd8ac130c049430ffdaa0fd50b72457c60084b49360346748cc940f6b73'
 R0040_CAPTURE_WRAPPER_SHA256 = 'd252e345225c0d3565c0c2a321324ca206083ba371eb43654193d422f9b2235f'
 R0040_PREPARER_SHA256 = '4ba6328ee9fe96aec4a96109c58d0d67e0d3e434756829fbe247816bcd001f68'
-R0040_CAPTURE_MODES = ('capture', 'capture-dateonly', passive.MODE)
+R0040_CAPTURE_MODES = ('capture', 'capture-dateonly', passive.MODE, mechanism.MODE)
 R0040_DATEONLY_WRAPPER_SHA256 = '214d4a3c6cb13dbfa69cf0330444aeb9f71d9816b43129091c93bb3121489c44'
 R0040_DATEONLY_ADMITTED = 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
 R0035_STAGE_WRAPPER_SHA256 = '8c3838b2ba01d6a4114b5de0aa2401134bb0cea3918dcba4fe1237997e53c99b'
@@ -221,7 +222,7 @@ def rain_mode(value, selected, engine):
         raise ValueError('unsupported R0040 mode')
     if value in R0040_CAPTURE_MODES and ('R0040' not in selected or engine != 'chromium'):
         raise ValueError('R0040 capture requires selected R0040 and the reviewed Chromium cell')
-    if value == passive.MODE and list(selected) != ['R0040']:
+    if value in (passive.MODE, mechanism.MODE) and list(selected) != ['R0040']:
         raise ValueError('passive capture requires only the selected R0040 population')
     return value
 
@@ -233,14 +234,18 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
     try:
         if mode not in R0040_CAPTURE_MODES:
             raise ValueError('unsupported R0040 capture admission mode')
-        observed = mode == passive.MODE
-        dateonly = mode in ('capture-dateonly', passive.MODE)
+        observed = mode in (passive.MODE, mechanism.MODE)
+        mechanisms = mode == mechanism.MODE
+        dateonly = mode in ('capture-dateonly', passive.MODE, mechanism.MODE)
         work, process_path, entry_path = (Path(p).absolute() for p in (work, process_path, entry_path))
         if observed:
             runtime = {'node': str(node), 'python': python, 'modules': modules, 'playwright': str(module)}
             admission['passiveRuntime'] = passive.preparation_runtime(
                 entry_path, process_path, common_prepared, prepared, runtime, task)
             admission['passiveSources'] = passive.verify_sources()
+            if mechanisms:
+                admission['mechanismSources'] = mechanism.verify_sources()
+                admission['mechanismCallerSources'] = mechanism.caller_sources()
         for path in (process_path, entry_path):
             if any(p.is_symlink() for p in (path, *path.parents)) or not path.is_file():
                 raise ValueError('regular R0040 preparation receipts required')
@@ -292,12 +297,17 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
             check = check.replace('process.stdout.write(JSON.stringify(checked));',
                                   'checked.passiveDiagnostic=require(process.argv[5]).passiveIdentity(o.driver); '
                                   'process.stdout.write(JSON.stringify(checked));')
+        if mechanisms:
+            check = check.replace('process.stdout.write(JSON.stringify(checked));',
+                                  'checked.mechanismDiagnostic=require(process.argv[6]).mechanismIdentity(o.driver); '
+                                  'process.stdout.write(JSON.stringify(checked));')
         env = dict(os.environ, R0040_DISPERSION='common')
         for key in ('R0040_OPTIONS', 'NODE_OPTIONS'): env.pop(key, None)
         try:
             command = [str(node), '-e', check, str(HERE/'retain_r0040_capture.cjs'), json.dumps(options), json.dumps(argv)]
             if dateonly: command.append(str(HERE/'r0040_dateonly.cjs'))
             if observed: command.append(str(HERE/'r0040_passive.cjs'))
+            if mechanisms: command.append(str(HERE/'r0040_mechanism.cjs'))
             result = subprocess.run(command, cwd=research, env=env,
                                     capture_output=True, text=True, timeout=90)
         except subprocess.TimeoutExpired as error:
@@ -328,6 +338,13 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
                     or identity.get('entrySha256') != passive.ENTRY_SHA256):
                 raise ValueError('current passive leaf identity differs')
             admission['passiveDiagnostic'] = identity
+        if mechanisms:
+            identity = checked.get('mechanismDiagnostic')
+            if (not isinstance(identity, dict) or identity.get('protocol') != 'r0040-mechanism-diagnostic/1'
+                    or identity.get('entrySha256') != mechanism.ENTRY_SHA256
+                    or not same_json(identity.get('passive'), admission['passiveDiagnostic'])):
+                raise ValueError('current mechanism leaf identity differs')
+            admission['mechanismDiagnostic'] = identity
         admission.update(status='PASS', work=str(work), manifest=str(R0040_MANIFEST), prepared=str(original),
                          process=str(process_path), wrapperSha256=R0040_CAPTURE_WRAPPER_SHA256,
                          sourceCustody=checked['custody'], verifiedPopulation={k: len(v) for k, v in wanted.items()},
@@ -540,10 +557,11 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         return row
 
     if r0040_mode in R0040_CAPTURE_MODES:
-        observed = r0040_mode == passive.MODE
-        dateonly = r0040_mode in ('capture-dateonly', passive.MODE)
+        observed = r0040_mode in (passive.MODE, mechanism.MODE)
+        mechanisms = r0040_mode == mechanism.MODE
+        dateonly = r0040_mode in ('capture-dateonly', passive.MODE, mechanism.MODE)
         rain = lane('r0040-chromium-'+r0040_mode, 'R0040', 1, passive.CHILD_SECONDS if observed else 180, 'r0040-'+r0040_mode, 'capture.json',
-                    {'0': passive.ADMITTED if observed else R0040_DATEONLY_ADMITTED if dateonly else 'ADMITTED_FOR_OFFLINE_VERIFICATION',
+                    {'0': mechanism.ADMITTED if mechanisms else passive.ADMITTED if observed else R0040_DATEONLY_ADMITTED if dateonly else 'ADMITTED_FOR_OFFLINE_VERIFICATION',
                      '1': 'FAIL', '86': 'EXTERNAL_CONTINUATION_VETOED'})
         admission = r0040_preparation or {'status': 'INCOMPLETE', 'reason': 'R0040 capture preparation is missing'}
         rain['preparation'] = admission
@@ -565,6 +583,12 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                 'Four five-second evaluations plus 40 seconds for post-stream serialization/retention supplement the original 180-second child ceiling. '
                 'Current source re-admission and separate raw-stop replay have independent bounds; no original wait is shortened.')
             rain['result']['passiveAdmissionPath'] = str(Path(evidence)/'passive-observation.json')
+        if mechanisms:
+            rain['evidenceRetention']['overhead'] += (' Mechanism mode additionally brackets the original main callback and joins the same event ordinal; '
+                'bounded non-pausing Target/Network metadata does not instrument worker consumers. Setup, parallel extraction and shutdown '
+                'use at most 15 seconds from the existing 40-second retention reserve, leaving 25 seconds. '
+                'Both diagnostics replay together with the original passive gate in the same 30-second ceiling; all ceilings remain uncalibrated.')
+            rain['result']['mechanismAdmissionPath'] = str(Path(evidence)/'mechanism-observation.json')
         rain['argv'] = []
         if admission.get('status') == 'PASS':
             original = list(map(str, [node, research/'tools/qa/r0040/capture.cjs', module,
@@ -586,6 +610,10 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                 rain['argv'][1] = str(HERE/'r0040_passive.cjs')
                 rain['result'].update(wrapperSha256=passive.ENTRY_SHA256,
                                       passiveDiagnostic=admission['passiveDiagnostic'])
+            if mechanisms:
+                rain['argv'][1] = str(HERE/'r0040_mechanism.cjs')
+                rain['result'].update(wrapperSha256=mechanism.ENTRY_SHA256,
+                                      mechanismDiagnostic=admission['mechanismDiagnostic'])
     else:
         rain = lane(f'r0040-{engine}', 'R0040', 1, 720, 'r0040-options', 'native-options.json',
                     {'0': 'MEASURED', '1': 'FAIL'})
@@ -688,7 +716,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         for row in entries:
             if row['workOrder'] not in ('R0040', 'R0035'):
                 continue
-            if row['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND):
+            if row['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND):
                 continue
             original = row['argv']
             evidence = str(out/(row['id']+'-retention'))

@@ -2,6 +2,7 @@
 // Separate diagnostic entry. No campaign selects it until independent review.
 const fs=require('node:fs'),path=require('node:path'),{spawn}=require('node:child_process');
 const S=require('./firefox_policy_source.cjs');
+const F=require('./firefox_failure_diagnostic.cjs');
 const {need}=S;
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 const errorRecord=error=>({name:String(error?.name||'Error'),message:String(error?.message??error).slice(0,8192)});
@@ -70,6 +71,10 @@ async function observe(options,admission,dependencies={}){
   // the unchanged original launcher and the acquired Playwright package.
   const census=dependencies.census||(()=>S.liveInstallation(acquired)),sleep=dependencies.sleep||delay;
   const now=dependencies.now||(()=>process.hrtime.bigint());
+  let currentPhase='SOURCE_AND_POLICY',failedPhase=null,cleanupDeadlineNs,navigationEvidence;
+  let failureReadback={status:'NOT_ATTEMPTED',reason:'original navigation did not reject before initial readback'};
+  const diagnosticFaults=[];
+  const diagnosticFault=(phase,error)=>{if(diagnosticFaults.length<F.LIMITS.faults)diagnosticFaults.push({phase,...F.errorRecord(error)});};
   try{
     report.processCensuses.before=census();retain(report,options.out,'process-census-before.json',report.processCensuses.before);
     report.policy=S.preparePolicy(acquired,S.censusRows(report.processCensuses.before));retain(report,options.out,'policy-preparation.json',report.policy);
@@ -83,23 +88,40 @@ async function observe(options,admission,dependencies={}){
       retain(report,options.out,'launch-request.json',report.launch);
       const browser=await PW.firefox.launch({...settings,timeout:45000});bindBrowser(browser,report,handles);return browser;
     }}};
-    handles.launchAttempted=true;session=await bounded(iso.launch(launch,'firefox'),45000,'Firefox launch');handles.session=session;
+    currentPhase='LAUNCH';handles.launchAttempted=true;session=await bounded(iso.launch(launch,'firefox'),45000,'Firefox launch');handles.session=session;
     report.ledger=session.ledger;report.nodeGuard=guard.state;
-    report.processCensuses.started=census();retain(report,options.out,'process-census-started.json',report.processCensuses.started);
+    currentPhase='STARTED_CENSUS';report.processCensuses.started=census();retain(report,options.out,'process-census-started.json',report.processCensuses.started);
     report.processes=S.ownedProcesses(report.processCensuses.started,admission.isolation.host,process.pid);report.browserVersion=session.browser.version();
     retain(report,options.out,'browser-start.json',{launch:report.launch,processes:report.processes,browserVersion:report.browserVersion});
-    const context=await bounded(session.context({viewport:{width:800,height:600},timezoneId:'UTC'},{}),10000,'guarded policy context');
-    const page=await bounded(context.newPage(),10000,'policy page');need(handles.page===page,'policy page lifecycle was not bound before use');
+    currentPhase='CONTEXT';const context=await bounded(session.context({viewport:{width:800,height:600},timezoneId:'UTC'},{}),10000,'guarded policy context');
+    currentPhase='PAGE';const page=await bounded(context.newPage(),10000,'policy page');need(handles.page===page,'policy page lifecycle was not bound before use');
+    try{handles.navigationDiagnostic=F.navigation(page,session.browser,{now});handles.navigationDiagnostic.snapshot('before-attempt');}
+    catch(error){diagnosticFault('navigation-listeners',error);}
+    currentPhase='NAVIGATION';
     await page.goto('about:policies',{waitUntil:'load',timeout:20000});
+    currentPhase='INITIAL_READBACK';
     await bounded(readback(page,report,options.out,'initial',now),10000,'initial policy readback');
+    currentPhase='DWELL';
     report.dwell={intendedMs:S.BUDGET.dwellMs,startedNs:now().toString()};
     await sleep(S.BUDGET.dwellMs);report.dwell.endedNs=now().toString();
-    await bounded(readback(page,report,options.out,'final',now),10000,'final policy readback');
+    currentPhase='FINAL_READBACK';await bounded(readback(page,report,options.out,'final',now),10000,'final policy readback');
+    currentPhase='FINAL_CENSUS';
     report.processCensuses.final=census();retain(report,options.out,'process-census-final.json',report.processCensuses.final);
     report.finalProcesses=S.ownedProcesses(report.processCensuses.final,admission.isolation.host,process.pid);
     need(report.finalProcesses.root.pid===report.processes.root.pid&&report.finalProcesses.root.startTicks===report.processes.root.startTicks,'Firefox process changed between readbacks');
-  }catch(error){report.error=errorRecord(error);if(error.isolation)report.isolationError=errorRecord(error);}
+  }catch(error){report.error=errorRecord(error);if(error.isolation)report.isolationError=errorRecord(error);
+    failedPhase=currentPhase;
+    if(currentPhase==='NAVIGATION'){
+      try{handles.navigationDiagnostic?.snapshot('on-rejection');}catch(fault){diagnosticFault('rejection-snapshot',fault);}
+      try{failureReadback=await F.failureDom(handles.page,S.readPoliciesDom,
+        {now,deadlineNs:now()+BigInt(S.BUDGET.phases.initialReadback)*1000000000n});}
+      catch(fault){failureReadback={status:'ERROR',attempted:false,error:F.errorRecord(fault)};}
+    }
+  }
   finally{
+    cleanupDeadlineNs=now()+BigInt(S.BUDGET.phases.cleanup)*1000000000n;
+    try{handles.navigationDiagnostic?.snapshot('before-cleanup');navigationEvidence=handles.navigationDiagnostic?.finish();}
+    catch(error){diagnosticFault('navigation-finalization',error);}
     requestCleanup(handles);
     if(session){
       try{await bounded(session.close(),30000,'Firefox session/proxy cleanup');report.cleanup.complete=true;}
@@ -126,6 +148,18 @@ async function observe(options,admission,dependencies={}){
     await new Promise(resolve=>setImmediate(resolve));
     retain(report,options.out,'network.json',{ledger:report.ledger??null,verdict:report.network??null,nodeGuard:report.nodeGuard??null});
     report.phase='FINALIZED';const code=S.resultCode(report);report.status=code===0?'OBSERVED_FIREFOX_POLICY':code===86?'ISOLATION_FAIL':'INCOMPLETE';
+    if(code!==0){
+      // The original result has already failed. These separate, immutable fields
+      // cannot supply a success readback, dwell, final census or new verdict.
+      report.failureDiagnostic=F.frozen({protocol:'firefox-failure-diagnostic/1',originalOutcome:'UNCHANGED',
+        failedPhase:failedPhase||'FINALIZATION',navigation:navigationEvidence||{status:'NOT_STARTED'},
+        readback:failureReadback,faults:diagnosticFaults});
+      try{report.cleanupProcesses=F.cleanupProcesses([...(report.processes?.observed||[]),...(report.finalProcesses?.observed||[])],
+        {now,deadlineNs:cleanupDeadlineNs,io:dependencies.failureProcessIo||{}});}
+      catch(error){report.cleanupProcesses=F.frozen({protocol:'firefox-cleanup-process-diagnostic/1',status:'ERROR',error:F.errorRecord(error)});}
+      retain(report,options.out,'failure-diagnostic.json',report.failureDiagnostic);
+      retain(report,options.out,'cleanup-processes.json',report.cleanupProcesses);
+    }
     retain(report,options.out,'result.json',report);
   }
   return {report,exitCode:S.resultCode(report)};
@@ -167,7 +201,7 @@ async function supervise(options,admission){
     const network=S.read(path.join(options.out,'network.json'));
     const original=require('../r0033_isolation.cjs').verdict(network.ledger,network.nodeGuard.refused);
     need(S.equal(original,network.verdict)&&S.equal(original,report.network)&&S.equal(network.ledger,report.ledger),'original strict network verdict differs');
-    need(report.processes?.observed?.every(row=>!S.sameLive(row))&&report.finalProcesses?.observed?.every(row=>!S.sameLive(row)),'a tracked Firefox process remains live');
+    need(report.processes?.observed?.every(row=>!S.sameLive(row))&&report.finalProcesses?.observed?.every(row=>!S.sameLive(row)),F.cleanupPredicateMessage(report));
   }catch(error){intakeError=errorRecord(error);if(error.isolation)report={...report,status:'ISOLATION_FAIL'};}
   const disposition=outerDisposition(actual,report);if(intakeError&&disposition.exitCode!==86)Object.assign(disposition,{status:'INCOMPLETE',exitCode:2,stopAll:false});
   const result={protocol:'firefox-policy-entry/1',...disposition,process:S.record(path.join(options.out,'process.json')),report:fs.existsSync(path.join(options.out,'result.json'))?S.record(path.join(options.out,'result.json')):null,

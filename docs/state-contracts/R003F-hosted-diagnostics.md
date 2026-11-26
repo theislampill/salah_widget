@@ -12,9 +12,15 @@ any later campaign-only activation requires its own exact-source review.
 The original Firefox failure, WebKit preconnect failure, human judgments and all
 R003F owner gates remain unchanged.
 
-The Firefox leaf is imported byte-for-byte from
+The original Firefox leaf was imported byte-for-byte from
 `276e63b57f9e40b137fa528273c980e1351548dc`; its complete source-manifest digest is
 `4221060e1613f913b157f0c326cfeefc0f0661ff156d2ce5eac51f9c44b992ef`.
+The current source successor adds only the separately documented failure
+navigation/DOM/process diagnostics. Its complete ten-file manifest is pinned by
+`r003f_diagnostics.py`; the original eight-member prefix remains required.
+The original policy/readiness/dwell/result and isolation predicates are unchanged,
+and no native outcome is claimed for the successor. See the failure-only section
+of the Firefox contract for exact seams, caps and retained native21 limitations.
 The WebKit leaf is imported byte-for-byte from
 `06f1ad3fc7e418e0e2f1ad33afb4f692dabc82f0`; its complete deterministic derived
 source receipt is
@@ -23,7 +29,7 @@ The original proxy, Node guard, UI predicates, calendar-light Andon, physical
 reference and original capture driver remain unchanged. The derived WebKit
 driver comes only from its guarded source materializer.
 
-See the unchanged leaf contracts
+See the leaf contracts
 [Firefox policy](../../tools/qa/hosted-native/FIREFOX_POLICY.md) and
 [WebKit document input](../../tools/qa/hosted-native/R003F_PRECONNECT_INPUT.md).
 Neither leaf provides original B0, complete-eight matrix, physical, experiential,
@@ -72,7 +78,7 @@ explicitly Chromium; it is never described as a Firefox startup observation.
    command and a blocked row; no other harness is substituted.
 5. The fresh lane namespace repeats the original kernel and Chromium boundary
    controls. Current-source admission runs again before the diagnostic entry.
-6. The unchanged Firefox leaf then rechecks its current namespace and acquired
+6. The source-pinned Firefox leaf then rechecks its current namespace and acquired
    installation, performs its no-live-installation census, exclusively creates
    the exact policy, and only then launches this diagnostic Firefox. An existing
    arbitrary or earlier policy is refused. There is no policy installation or

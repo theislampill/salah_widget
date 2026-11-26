@@ -7,7 +7,7 @@ const {spawnSync}=require('node:child_process');
 const S=require('./firefox_policy_source.cjs'),I=require('./r003f_preconnect_input.cjs');
 const M=require('./r003f_preconnect_materialize.cjs'),iso=require('../r0033_isolation.cjs');
 const ROOT=path.resolve(__dirname,'../../..'),ENTRY=path.join(__dirname,'r003f_diagnostic_replay.cjs');
-const PIN='4221060e1613f913b157f0c326cfeefc0f0661ff156d2ce5eac51f9c44b992ef';
+const PIN='82c2d9874a4ac5a7f14d8d66b2c132be1ac3ec2fc0d5d41b476c72ea648c6dde';
 const MATERIAL='c8c26bfdff9f20b38a5ece423db2759fc96339ca9d68cf2c68f7893d36930290';
 if(process.argv[2]==='--replay-child'){
  // An actual child with no Node flags retains the leaf's injection guard.

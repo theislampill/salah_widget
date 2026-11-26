@@ -171,9 +171,9 @@ test('actual bounded source-only child timeout cannot be promoted by a success-s
   const out=fs.mkdtempSync(path.join(os.tmpdir(),'firefox-policy-timeout-'));t.after(()=>fs.rmSync(out,{recursive:true,force:true}));
   const r=await P.runChild([process.execPath,'-e','setInterval(()=>{},1000)'],out,.05);assert.equal(r.timedOut,true);assert.equal(P.outerDisposition(r,{status:'OBSERVED_FIREFOX_POLICY'}).status,'INCOMPLETE');
 });
-test('current source packet has the exact independently supplied eight-file closure',()=>{
+test('current source packet has the exact independently supplied ten-file closure',()=>{
   const file=path.join(__dirname,'firefox-policy-pins.json'),digest=S.record(file).sha256,admitted=S.packet(digest);
-  assert.equal(Object.keys(admitted.files).length,8);assert.throws(()=>S.packet('0'.repeat(64)),/manifest digest/);
+  assert.equal(Object.keys(admitted.files).length,10);assert.throws(()=>S.packet('0'.repeat(64)),/manifest digest/);
 });
 function copiedPacket(t){
   const root=fs.mkdtempSync(path.join(os.tmpdir(),'firefox-policy-closure-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));

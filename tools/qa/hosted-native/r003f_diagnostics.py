@@ -1,6 +1,6 @@
 """Two explicitly foreign R003F diagnostics, with current source/process custody.
 
-This helper never starts a browser. The unchanged leaf entries own their native
+This helper never starts a browser. The source-pinned leaf entries own their native
 work. A source-only preparation cannot authorize either hosted diagnostic.
 """
 import argparse
@@ -23,7 +23,7 @@ PREPARATION = 'R003F/diagnostic-preparation/1'
 PREPARATION_ENTRY = 'R003F/diagnostic-preparation-entry/1'
 ENTRY_PROCESS = 'R003F/diagnostic-entry-process/1'
 FINAL = 'R003F/diagnostic-final-intake/1'
-FIREFOX_PINS = '4221060e1613f913b157f0c326cfeefc0f0661ff156d2ce5eac51f9c44b992ef'
+FIREFOX_PINS = '82c2d9874a4ac5a7f14d8d66b2c132be1ac3ec2fc0d5d41b476c72ea648c6dde'
 WEBKIT_MATERIALIZATION = 'c8c26bfdff9f20b38a5ece423db2759fc96339ca9d68cf2c68f7893d36930290'
 SOURCE_SECONDS = 45
 ROUTES = {
@@ -35,8 +35,9 @@ ROUTES = {
         'timing':'instrumented-altered-document-input'},
 }
 PINS = {
-    'firefox_policy_source.cjs':'02d7dbc5d409d79cae9d855a77c7a2958d26fb386471f8575bc94a976a5e9845',
-    'firefox_policy_probe.cjs':'c9f453ed69f2b1b8c2c84ed18ff3bde1268556c2218fd4d6d6fb17373480bfc6',
+    'firefox_policy_source.cjs':'9b027c446e27b9b5866e4469a74201bf0f2cdb7b66953d1adb8ac7e5e2d37617',
+    'firefox_policy_probe.cjs':'b9b68d24d4c2e241f4cde675fa5d92565cbe077313d4215c377fab9cd149550f',
+    'firefox_failure_diagnostic.cjs':'24100fb6f557fe02c6a6ad15d7abcf86a58461df4991766fd436bf88e54d110b',
     'r003f_preconnect_materialize.cjs':'dc3ddd8b3e1ee7aa9d27b58c42659b57e1dcc18c709e8102935a2cb2e48dde21',
     'r003f_preconnect_input.cjs':'25ad6457e98f1090bb7f234d6f4cdeed451a6b72b5c9a5a9c2d820e57ada50ca',
     'r003f_materialize.cjs':'2fc95820151e08ff416ce10890a801045a960cd49c65eff499a1cf0ee4473fbc',
@@ -135,7 +136,8 @@ def verify_sources():
     need(sha(HERE/'firefox-policy-pins.json')==FIREFOX_PINS,'reviewed Firefox manifest differs')
     manifest=load(HERE/'firefox-policy-pins.json')
     names={'tools/qa/hosted-native/'+x for x in ('firefox_policy_source.cjs','firefox_policy_probe.cjs',
-        'firefox_policy_controls.cjs','FIREFOX_POLICY.md','node/package.json','node/package-lock.json')}
+        'firefox_policy_controls.cjs','FIREFOX_POLICY.md','node/package.json','node/package-lock.json',
+        'firefox_failure_diagnostic.cjs','firefox_failure_controls.cjs')}
     names.update(('tools/qa/r0033_isolation.cjs','tools/qa/v1_net_guard.cjs'))
     need(manifest.get('protocol')=='firefox-policy-source/1' and manifest.get('nativeExecution')=='NOT_RUN'
          and set(manifest.get('files',{}))==names,'Firefox complete source population differs')

@@ -7,7 +7,8 @@ const BUDGET=Object.freeze({protocol:'firefox-policy-budget/1',dwellMs:60000,chi
   phases:{sourceAndPolicy:30,launch:45,contextAndPage:20,navigation:20,initialReadback:10,dwell:60,finalReadback:10,cleanup:30,finalCurrentness:15}});
 const FILES=Object.freeze(['tools/qa/hosted-native/firefox_policy_source.cjs','tools/qa/hosted-native/firefox_policy_probe.cjs',
   'tools/qa/hosted-native/firefox_policy_controls.cjs','tools/qa/hosted-native/FIREFOX_POLICY.md',
-  'tools/qa/r0033_isolation.cjs','tools/qa/v1_net_guard.cjs','tools/qa/hosted-native/node/package.json','tools/qa/hosted-native/node/package-lock.json']);
+  'tools/qa/r0033_isolation.cjs','tools/qa/v1_net_guard.cjs','tools/qa/hosted-native/node/package.json','tools/qa/hosted-native/node/package-lock.json',
+  'tools/qa/hosted-native/firefox_failure_diagnostic.cjs','tools/qa/hosted-native/firefox_failure_controls.cjs']);
 const CAPS=Object.freeze(['CapInh','CapPrm','CapEff','CapBnd','CapAmb']);
 const ROOT=path.resolve(__dirname,'../../..');
 const need=(value,message)=>{if(!value)throw Error(message);};
