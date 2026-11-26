@@ -31,6 +31,7 @@ from prepare import validate_prepared
 import r0035_stage_materialize as stage_material
 import r0035_cost_materialize as cost_material
 import r0040_passive_central as passive
+import r0040_mechanism_central as mechanism
 import r0035_psf as psf
 from observe_r0035_stages import inspect as inspect_stage_trace
 from observe_r0035_costs import inspect as inspect_cost_trace, BASE_WRAPPER_SHA256 as COST_BASE_WRAPPER_SHA256
@@ -161,7 +162,7 @@ def campaign_budget(campaign):
     headed = campaign.get('r002fRoute', 'offscreen') == 'tabhide'
     matrix_selected = campaign.get('r003fHarness', 'published') == 'corrected-matrix'
     costs = campaign.get('r0035Costs', False)
-    passive_selected = campaign.get('r0040Mode', 'options') == passive.MODE
+    passive_selected = campaign.get('r0040Mode', 'options') in (passive.MODE, mechanism.MODE)
     diagnostic_selected=campaign.get('r003fHarness') in diagnostics.ROUTES
     psf_selected=psf.mode(campaign.get('r0035Psf',False),campaign.get('workOrders',['R0040','R003F','R0035','R002F']),
                            star_controls(campaign.get('r0035')),campaign.get('engine','chromium'),
@@ -176,7 +177,7 @@ def campaign_budget(campaign):
         raise ValueError('simultaneous supplemental route populations and budgets are not admitted')
     selected = campaign.get('workOrders', ['R0040', 'R003F', 'R0035', 'R002F'])
     if passive_selected:
-        rain_mode(passive.MODE, selected, campaign.get('engine', 'chromium'))
+        rain_mode(campaign['r0040Mode'], selected, campaign.get('engine', 'chromium'))
         if campaign.get('r0035Stages', False) or campaign.get('r003fHarness', 'published') != 'published' or campaign.get('r002f', {}).get('enabled', False):
             raise ValueError('passive aggregate budget supports only its single capture route')
         # 1350 preparation + 120 outer readmission + (120 current admission +
@@ -394,8 +395,9 @@ def admit_plan(plan, args, runtime):
         return [{**lane,**({'preExecutionCurrentness':check} if check is not None else {})}]
     engine = args.engine
     rain_capture = rain_campaign(args) in R0040_CAPTURE_MODES
-    observed = rain_campaign(args) == passive.MODE
-    dateonly = rain_campaign(args) in ('capture-dateonly', passive.MODE)
+    observed = rain_campaign(args) in (passive.MODE, mechanism.MODE)
+    mechanisms = rain_campaign(args) == mechanism.MODE
+    dateonly = rain_campaign(args) in ('capture-dateonly', passive.MODE, mechanism.MODE)
     population = [(f'r0040-{engine}-{rain_campaign(args)}' if rain_capture else f'r0040-{engine}', 'R0040', passive.CHILD_SECONDS if observed else 180 if rain_capture else 720),
                   (f'r003f-b0-{engine}-dpr{getattr(args, "r003f_dpr", 1)}', 'R003F', 900),
                   (f'r0035-{engine}-timing', 'R0035', 480), (f'r0035-{engine}-capture', 'R0035', 480),
@@ -555,7 +557,8 @@ def admit_plan(plan, args, runtime):
                                      or lane['postCaptureCheckSeconds'] != (passive.POST_CAPTURE_SECONDS if observed else 100))
                     or observed and (type(lane.get('preCaptureCheckSeconds')) is not int
                                      or lane['preCaptureCheckSeconds'] != passive.READMISSION_SECONDS
-                                     or report.get('passiveAdmissionPath') != str(evidence_path/'passive-observation.json'))):
+                                     or report.get('passiveAdmissionPath') != str(evidence_path/'passive-observation.json'))
+                    or mechanisms and report.get('mechanismAdmissionPath') != str(evidence_path/'mechanism-observation.json')):
                 raise ValueError('R0040 capture mode, private paths or preparation admission differs')
             if preparation['status'] == 'INCOMPLETE':
                 if lane.get('argv') != []:
@@ -563,7 +566,7 @@ def admit_plan(plan, args, runtime):
             else:
                 original = evidence.get('originalArgv', [])
                 expected_argv = [original[0] if original else None,
-                    str(HERE/('r0040_passive.cjs' if observed else 'r0040_dateonly.cjs' if dateonly else 'retain_r0040_capture.cjs')),
+                    str(HERE/('r0040_mechanism.cjs' if mechanisms else 'r0040_passive.cjs' if observed else 'r0040_dateonly.cjs' if dateonly else 'retain_r0040_capture.cjs')),
                     '--driver', original[1] if len(original)>1 else None, '--manifest', preparation['manifest'],
                     '--prepared', preparation['prepared'], '--preparation-process', preparation['process']]
                 if dateonly:
@@ -587,7 +590,7 @@ def admit_plan(plan, args, runtime):
                         or original[3] != str(Path(preparation['work'])/'historical')
                         or original[5:] != [str(target), 'chromium', 'bday', 'moderate', 'M1']
                         or preparation.get('wrapperSha256') != R0040_CAPTURE_WRAPPER_SHA256
-                        or report.get('wrapperSha256') != (passive.ENTRY_SHA256 if observed else R0040_DATEONLY_WRAPPER_SHA256 if dateonly else R0040_CAPTURE_WRAPPER_SHA256)
+                        or report.get('wrapperSha256') != (mechanism.ENTRY_SHA256 if mechanisms else passive.ENTRY_SHA256 if observed else R0040_DATEONLY_WRAPPER_SHA256 if dateonly else R0040_CAPTURE_WRAPPER_SHA256)
                         or report.get('expectedCapture') != preparation.get('expectedCapture')
                         or report.get('pins') != preparation.get('pins')
                         or lane.get('argv') != expected_argv):
@@ -602,25 +605,30 @@ def admit_plan(plan, args, runtime):
                     if (not same_json(custody, preparation.get('passiveRuntime'))
                             or not same_json(passive.verify_sources(), preparation.get('passiveSources'))):
                         raise ValueError('passive current runtime, process or source custody differs')
+                    if mechanisms and (not same_json(mechanism.verify_sources(), preparation.get('mechanismSources'))
+                                       or not same_json(mechanism.caller_sources(), preparation.get('mechanismCallerSources'))):
+                        raise ValueError('mechanism current leaf or caller source custody differs')
                     canonical = make_plan(prepared, args.task/'capture/lanes', python_playwright=Path(runtime['python']),
                         node=Path(runtime['node']), node_modules=Path(runtime['modules']), pngjs=Path(runtime['pngjs']),
-                        work_orders=['R0040'], r0040_mode=passive.MODE, r0040_preparation=preparation,
+                        work_orders=['R0040'], r0040_mode=rain_campaign(args), r0040_preparation=preparation,
                         retain_evidence=retention)['lanes']
                     if not same_json(plan['lanes'], canonical):
                         raise ValueError('passive canonical command, source, budget or evidence path differs')
-                    check = passive.readmit(common, runtime, args.task)
+                    check = (mechanism if mechanisms else passive).readmit(common, runtime, args.task)
                     check,retained,refused=retain_currentness(args,lane,check,
-                        [runtime['python'],'-B',str(HERE/'r0040_passive_central.py'),'--readmit'],passive.READMISSION_SECONDS)
+                        [runtime['python'],'-B',str(HERE/('r0040_mechanism_central.py' if mechanisms else 'r0040_passive_central.py')),'--readmit'],passive.READMISSION_SECONDS)
                     if refused:
                         raise ReturnedCurrentnessRefusal(lane,check,retained,'passive current source readmission failed')
                     if type(check.get('returncode')) is not int or check['returncode'] != 0 or check.get('timedOut') is not False:
                         raise ValueError('passive current source readmission failed: '+json.dumps(check, allow_nan=False))
                     current = json.loads(check['stdout'])
+                    if mechanisms and type(current) is not dict:
+                        raise ValueError('mechanism current complete preparation must be an object')
                     if current.get('status') != 'PASS' or not same_json(current, preparation):
                         raise ValueError('passive current complete preparation differs from copied plan')
                     canonical = make_plan(prepared, args.task/'capture/lanes', python_playwright=Path(runtime['python']),
                         node=Path(runtime['node']), node_modules=Path(runtime['modules']), pngjs=Path(runtime['pngjs']),
-                        work_orders=['R0040'], r0040_mode=passive.MODE, r0040_preparation=current,
+                        work_orders=['R0040'], r0040_mode=rain_campaign(args), r0040_preparation=current,
                         retain_evidence=retention)['lanes'][0]
                     if not same_json(lane, canonical):
                         raise ValueError('passive canonical command, source, budget or evidence path differs')
@@ -1018,7 +1026,7 @@ def r0040_dateonly_status(body, lane, returncode, timed_out, *, passive_tail=Fal
         source_index,source=selected['sources'][0];proof_index,proof_event=selected['date-only-clock-proof'][0]
         terminal_index,terminal=selected['driver-process-ended'][0]
         if passive_tail:
-            need(lane['result']['kind'] == passive.KIND, 'passive journal extension requires its own route')
+            need(lane['result']['kind'] in (passive.KIND, mechanism.KIND), 'passive journal extension requires its own route')
             passive.check_tail(rows, final)
         need(source_index<proof_index<terminal_index==len(rows)-(2 if passive_tail else 1), 'Date-only source/proof/final order differs')
         need(same_json({k:v for k,v in terminal.items() if k not in ('sequence','atUtc','monotonicNs','event')},final), 'terminal journal and final receipt differ')
@@ -1104,6 +1112,37 @@ def r0040_passive_status(body, lane, returncode, timed_out):
                      and same_json(replay.get('artifacts'), artifacts), 'current passive replay identity differs')
         result.update(status=passive.ADMITTED, passiveDiagnostic=replay['identity'],
                       passiveInspection=replay['inspection'], passiveArtifacts=artifacts)
+    except (OSError, ValueError, KeyError, IndexError, TypeError, AttributeError, StopIteration) as error:
+        result['reason'] = str(error)
+    return result
+
+
+def r0040_mechanism_status(body, lane, returncode, timed_out):
+    result = r0040_dateonly_status(body, lane, returncode, timed_out, passive_tail=True)
+    result['dateOnlyStatus'] = result['status']
+    result['timingClass'] = mechanism.TIMING
+    if result['status'] != R0040_DATEONLY_ADMITTED:
+        return result
+    result['status'] = 'INCOMPLETE'
+    try:
+        rows = [json.loads(row) for row in passive.regular(lane['result']['journalPath']).splitlines()]
+        source = next(row for row in rows if row.get('event') == 'sources')
+        check, artifacts = mechanism.final_check(lane, returncode, source, rows)
+        result['mechanismVerification'] = check
+        passive.need(type(check.get('returncode')) is int and check['returncode'] == 0 and check.get('timedOut') is False,
+                     'actual combined mechanism/passive/raw-stop replay failed')
+        replay = json.loads(check['stdout'])
+        passive.need(type(replay) is dict and replay.get('protocol') == 'r0040-mechanism-central-inspection/1'
+                     and replay.get('status') == 'OBSERVED' and type(replay.get('actualExitCode')) is int
+                     and replay['actualExitCode'] == returncode
+                     and same_json(replay.get('identity'), lane['result']['mechanismDiagnostic'])
+                     and same_json(replay.get('artifacts'), artifacts)
+                     and replay.get('inspection', {}).get('protocol') == 'r0040-mechanism-admission/1'
+                     and replay['inspection'].get('status') == 'OBSERVED', 'current mechanism replay identity differs')
+        result.update(status=mechanism.ADMITTED, mechanismDiagnostic=replay['identity'],
+                      passiveDiagnostic=replay['identity']['passive'],
+                      passiveInspection=replay['inspection']['passive'],
+                      mechanismInspection=replay['inspection']['mechanism'], mechanismArtifacts=artifacts)
     except (OSError, ValueError, KeyError, IndexError, TypeError, AttributeError, StopIteration) as error:
         result['reason'] = str(error)
     return result
@@ -1325,6 +1364,8 @@ def classify_lane(lane, returncode, timed_out=False):
         return {**result, **r0040_dateonly_status(body, lane, returncode, timed_out)}
     if kind == passive.KIND:
         return {**result, **r0040_passive_status(body, lane, returncode, timed_out)}
+    if kind == mechanism.KIND:
+        return {**result, **r0040_mechanism_status(body, lane, returncode, timed_out)}
     # Preserve observed recipe failures even if later acquisition is interrupted.
     # Return codes alone do not distinguish failed admission from missing evidence.
     if kind == 'r003f-b0':
@@ -1385,7 +1426,7 @@ def namespace_status(lane, process, inner):
     outer_admitted = (isinstance(process, dict) and type(process.get('returncode')) is int
                       and type(process.get('timedOut')) is bool)
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in (psf.OBSERVED, 'PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()])
+                and inner.get('status') in (psf.OBSERVED, 'PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()])
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
@@ -1413,7 +1454,9 @@ def namespace_status(lane, process, inner):
                     and type(inner.get('passiveVerification', {}).get('returncode')) is int
                     and inner['passiveVerification']['returncode'] == 0 and inner['passiveVerification'].get('timedOut') is False
                     and inner.get('passiveInspection', {}).get('status') == 'OBSERVED')
-    if admitted and lane.get('result', {}).get('kind') in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND) and inner['status'] == 'PASS':
+    if admitted:
+        admitted = mechanism.namespace_admitted(lane, inner, r0040_dateonly_identity())
+    if admitted and lane.get('result', {}).get('kind') in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND) and inner['status'] == 'PASS':
         admitted = False  # This lane can admit acquisition, never report a cadence PASS.
     if admitted and inner['status'] in (STAGES_OBSERVED,COSTS_OBSERVED):
         admitted = ('stageObservation' in lane and inner.get('returncode') == 0 and inner.get('timedOut') is False
@@ -1692,11 +1735,11 @@ def inside(args, runtime):
     # Recipe env is declarative data from the reviewed planner; arbitrary variables
     # cannot restore a credential/proxy/loader setting that the wrapper removed.
     for key, value in lane.get('env', {}).items():
-        if key != 'NODE_PATH' and not (lane['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND) and key == 'R0040_DISPERSION' and value == 'common'):
+        if key != 'NODE_PATH' and not (lane['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND) and key == 'R0040_DISPERSION' and value == 'common'):
             raise ValueError('unapproved lane environment variable')
         env[key] = value
     for key in lane.get('clearEnv', []):
-        if lane['result']['kind'] not in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND) or key != 'R0040_OPTIONS':
+        if lane['result']['kind'] not in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND) or key != 'R0040_OPTIONS':
             raise ValueError('unapproved cleared lane environment variable')
         env.pop(key, None)
     env['PLAYWRIGHT_BROWSERS_PATH'] = str(args.task/('python-browsers' if lane['result']['kind'] == 'r0035-trials' else 'node-browsers'))
@@ -1762,7 +1805,7 @@ def outside(args, runtime):
                **({'r003fMatrix':args.r003f_matrix} if matrix_campaign(args) else {}),
                'r0040Mode': rain_campaign(args),
                'preparation': preparation, 'lanes': [], 'status': 'INCOMPLETE'}
-    if rain_campaign(args) == passive.MODE:
+    if rain_campaign(args) in (passive.MODE, mechanism.MODE):
         overall['budget'] = budget
     if tabhide_campaign(args) == 'tabhide':
         overall.update(r002fRoute='tabhide', budget=budget)
@@ -1802,8 +1845,8 @@ def outside(args, runtime):
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
                                  min(psf.LANE_SECONDS if psf_lane(lane) else
                                      diagnostics.budget(diagnostics.mode_for_lane(lane))['namespaceSeconds'] if diagnostics.mode_for_lane(lane)
-                                     else lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly', passive.KIND, 'r003f-matrix') else 0)
-                                     + (passive.READMISSION_SECONDS if lane.get('result', {}).get('kind') == passive.KIND else 0)
+                                     else lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly', passive.KIND, mechanism.KIND, 'r003f-matrix') else 0)
+                                     + (passive.READMISSION_SECONDS if lane.get('result', {}).get('kind') in (passive.KIND, mechanism.KIND) else 0)
                                      + (90 if cost_lane(lane) else 0), remaining))
             path = capture/'lane-status'/(lane['id']+'.json')
             try: inner = json.loads(path.read_text())
@@ -1820,7 +1863,7 @@ def outside(args, runtime):
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in (psf.OBSERVED, 'PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()]) for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in (psf.OBSERVED, 'PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()]) for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     if psf_campaign(args):
         overall['psfPair']=psf.pair_status(plan,overall['lanes'])

@@ -22,6 +22,7 @@ import sys
 import time
 import types
 import r003f_diagnostics as diagnostics
+import r0040_mechanism_central as mechanism
 
 HERE = Path(__file__).absolute().parent
 PRODUCER_PROTOCOL = 'salah-capture-producer-return/1'
@@ -30,7 +31,7 @@ PUBLIC_ERRORS = {'ARGUMENT', 'DEPENDENCY', 'PRODUCER_INCOMPLETE', 'PATH',
                  'STAGING', 'ENVELOPE', 'RESTORATION', 'CLEANUP', 'INTERRUPTED', 'INTERNAL'}
 WORK_ORDERS = ('R0040','R003F','R0035','R002F')
 OBSERVED_LANE_STATUSES = {'PASS','ADMITTED_FOR_OFFLINE_VERIFICATION',
-    'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION','ADMITTED_PASSIVE_DATE_ONLY_FOR_OFFLINE_VERIFICATION',
+    'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION','ADMITTED_PASSIVE_DATE_ONLY_FOR_OFFLINE_VERIFICATION',mechanism.ADMITTED,
     'OBSERVED_STAGE_DIAGNOSTIC',
     'OBSERVED_PREPARATION_COSTS','OBSERVED_TABHIDE_DIAGNOSTIC',
     'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE','OBSERVED_PSF_DIAGNOSTIC'}
@@ -230,6 +231,72 @@ def psf_complete_record(campaign,plan,body):
     return True
 
 
+def mechanism_complete_record(campaign, plan, body):
+    same = mechanism.same
+    selected = campaign.get('r0040Mode') == mechanism.MODE
+    routes = [lane.get('result', {}).get('kind') == mechanism.KIND for lane in plan['lanes']]
+    claims = [row.get('status') == mechanism.ADMITTED for row in body['lanes']]
+    if not selected and not any(routes) and not any(claims):
+        return None
+    need(selected and campaign.get('workOrders') == ['R0040'] and plan.get('workOrders') == ['R0040']
+         and len(routes) == len(claims) == 1 and routes == [True], 'PRODUCER_INCOMPLETE')
+    lane, row = plan['lanes'][0], body['lanes'][0]
+    if not claims[0]:
+        need(row.get('status') not in OBSERVED_LANE_STATUSES, 'PRODUCER_INCOMPLETE')
+        return False
+    from lanes import r0040_dateonly_identity
+    need(mechanism.namespace_admitted(lane, row, r0040_dateonly_identity())
+         and known_process(row.get('namespaceProcess')) and row['namespaceProcess']['returncode'] == 0
+         and row['namespaceProcess']['timedOut'] is False and row.get('stopAll') is False
+         and type(row.get('innerStatus')) is dict
+         and mechanism.namespace_admitted(lane, row['innerStatus'], r0040_dateonly_identity())
+         and row['innerStatus'].get('status') == mechanism.ADMITTED
+         and all(same(row.get(k), row['innerStatus'].get(k)) for k in
+                 ('returncode', 'timedOut', 'dateOnlyStatus', 'passiveDiagnostic', 'mechanismDiagnostic',
+                  'passiveInspection', 'mechanismInspection', 'mechanismVerification', 'mechanismArtifacts')),
+         'PRODUCER_INCOMPLETE')
+    preparation, report = lane.get('preparation', {}), lane['result']
+    need(preparation.get('status') == 'PASS'
+         and same(preparation.get('mechanismSources'), mechanism.verify_sources())
+         and same(preparation.get('mechanismCallerSources'), mechanism.caller_sources())
+         and same(preparation.get('mechanismDiagnostic'), report.get('mechanismDiagnostic'))
+         and same(preparation.get('passiveDiagnostic'), report.get('passiveDiagnostic')),
+         'PRODUCER_INCOMPLETE')
+    artifacts = row.get('mechanismArtifacts', {})
+    wanted = {'base': report.get('finalAdmissionPath'), 'passive': report.get('passiveAdmissionPath'),
+              'mechanism': report.get('mechanismAdmissionPath')}
+    need(type(artifacts) is dict and set(artifacts) == {'base', 'passive', 'mechanism', 'stop'}
+         and all(same(artifacts[name], mechanism.record(file)) for name, file in wanted.items()),
+         'PRODUCER_INCOMPLETE')
+    receipt = load(report['mechanismAdmissionPath'])
+    old = load(report['passiveAdmissionPath'])
+    samplers = old.get('observation', {}).get('samplers', [])
+    need(len(samplers) == 1 and type(samplers[0].get('id')) is int and 1 <= samplers[0]['id'] <= 4,
+         'PRODUCER_INCOMPLETE')
+    stop = Path(lane['evidenceRetention']['output'])/('passive-original-stop-'+str(samplers[0]['id'])+'.json')
+    mechanism.regular(stop, mechanism.passive.STOP_BYTES)
+    mechanism.regular(report['mechanismAdmissionPath'], mechanism.ARTIFACT_BYTES)
+    base = load(report['finalAdmissionPath'])
+    reference = lambda name: {'file': Path(artifacts[name]['path']).name,
+                              'bytes': artifacts[name]['bytes'], 'sha256': artifacts[name]['sha256']}
+    need(same(artifacts['stop'], mechanism.record(stop)) and receipt.get('status') == mechanism.ADMITTED
+         and type(receipt.get('exitCode')) is int and receipt['exitCode'] == 0
+         and type(receipt.get('originalExitCode')) is int and receipt['originalExitCode'] == 0
+         and old.get('status') == mechanism.passive.ADMITTED
+         and type(old.get('exitCode')) is int and old['exitCode'] == 0
+         and type(old.get('originalExitCode')) is int and old['originalExitCode'] == 0
+         and base.get('status') == 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
+         and type(base.get('exitCode')) is int and base['exitCode'] == 0
+         and type(base.get('originalExitCode')) is int and base['originalExitCode'] == 0
+         and same(old.get('baseAdmission'), reference('base'))
+         and same(receipt.get('baseAdmission'), reference('base'))
+         and same(receipt.get('passiveAdmission'), reference('passive'))
+         and same(samplers[0].get('originalStopResponse', {}).get('artifact'), reference('stop'))
+         and same(receipt.get('inspection'), row.get('mechanismInspection'))
+         and same(old.get('inspection'), row.get('passiveInspection')), 'PRODUCER_INCOMPLETE')
+    return True
+
+
 def admit_producers(task, roots):
     """Only return of the complete known synchronous source path permits seal."""
     try:
@@ -286,10 +353,11 @@ def admit_producers(task, roots):
                      'PRODUCER_INCOMPLETE')
         statuses=[row['status'] for row in body['lanes']]
         psf_complete=psf_complete_record(campaign,plan,body)
+        mechanism_complete=mechanism_complete_record(campaign,plan,body)
         expected=next((x for x in ('ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED')
                        if x in statuses),None)
         if expected is None:
-            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) and psf_complete is not False else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) and psf_complete is not False and mechanism_complete is not False else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
         need(body['status']==expected, 'PRODUCER_INCOMPLETE')
         return 'COMPLETED_OBSERVATION'
     except Rejected:raise
