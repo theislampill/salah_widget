@@ -62,15 +62,20 @@ class PipelineTests(unittest.TestCase):
         self.control.mkdir(mode=0o700)
         self.fixture_producer('acquisition', 0)
         self.fixture_producer('observation', 2)
+        campaign=json.loads((P.HERE/'campaign.json').read_text())
+        self.engine=campaign['engine']
+        requested=campaign.get('workOrders',[x for x in ('R0040','R003F','R0035','R002F')
+                                             if x!='R002F' or campaign['r002f']['enabled']])
+        self.orders=[x for x in ('R0040','R003F','R0035','R002F') if x in requested]
         self.observation = {
-            'protocol':'salah-hosted-native-observation/1', 'engine':'chromium',
-            'workOrders':['R003F'], 'preparation':{'returncode':0,'timedOut':False,'elapsedSeconds':1.0},
-            'lanes':[{'id':'fixture-lane','workOrder':'R003F','status':'INCOMPLETE','stopAll':False,'innerStatus':None,
+            'protocol':'salah-hosted-native-observation/1', 'engine':self.engine,
+            'workOrders':self.orders, 'preparation':{'returncode':0,'timedOut':False,'elapsedSeconds':1.0},
+            'lanes':[{'id':'fixture-lane','workOrder':self.orders[0],'status':'INCOMPLETE','stopAll':False,'innerStatus':None,
                       'namespaceProcess':{'returncode':0,'timedOut':False,'elapsedSeconds':1.0}}],
             'status':'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'}
         (self.capture/'observation.json').write_text(json.dumps(self.observation))
-        self.plan={'protocol':'salah-hosted-native-lanes/1','sequential':True,'workOrders':['R003F'],
-                   'lanes':[{'id':'fixture-lane','workOrder':'R003F','engine':'chromium'}]}
+        self.plan={'protocol':'salah-hosted-native-lanes/1','sequential':True,'workOrders':self.orders,
+                   'lanes':[{'id':'fixture-lane','workOrder':self.orders[0],'engine':self.engine}]}
         (self.capture/'lanes.json').write_text(json.dumps(self.plan))
 
     def fixture_producer(self, phase, returncode):
@@ -237,10 +242,10 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(P.Rejected):P.producer_identity('acquisition',task,roots)
 
     def test_terminal_identity_population_and_status_fields_are_required(self):
-        mutations=[lambda b:b.pop('engine'),lambda b:b.update(engine='firefox'),
-                   lambda b:b.pop('workOrders'),lambda b:b.update(workOrders=['R0040']),
+        mutations=[lambda b:b.pop('engine'),lambda b:b.update(engine='FOREIGN'),
+                   lambda b:b.pop('workOrders'),lambda b:b.update(workOrders=['FOREIGN']),
                    lambda b:b['lanes'][0].pop('status'),lambda b:b['lanes'][0].update(status='FOREIGN'),
-                   lambda b:b['lanes'][0].pop('workOrder'),lambda b:b['lanes'][0].update(workOrder='R0040'),
+                   lambda b:b['lanes'][0].pop('workOrder'),lambda b:b['lanes'][0].update(workOrder='FOREIGN'),
                    lambda b:b['lanes'][0].pop('stopAll'),lambda b:b['lanes'][0].update(stopAll=1),
                    lambda b:b['lanes'][0].pop('innerStatus')]
         for index,change in enumerate(mutations):
@@ -252,7 +257,7 @@ class PipelineTests(unittest.TestCase):
     def test_terminal_plan_identity_fields_are_required(self):
         mutations=[lambda b:b.pop('protocol'),lambda b:b.update(sequential=1),
                    lambda b:b.pop('workOrders'),lambda b:b['lanes'][0].pop('workOrder'),
-                   lambda b:b['lanes'][0].update(engine='webkit')]
+                   lambda b:b['lanes'][0].update(engine='FOREIGN')]
         for index,change in enumerate(mutations):
             with self.subTest(index=index):
                 body=json.loads(json.dumps(self.plan));change(body)
