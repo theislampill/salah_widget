@@ -28,11 +28,12 @@ privately with the observations.
 
 ### Conditional campaign selection and evidence retention
 
-The checked-in follow-up selects only the R0040 Chromium Date-only capture
-diagnostic on genuine main, with the original bday/moderate/M1/common cell.
-Generic evidence retention remains disabled; this mode has its own required
-final-state wrapper. Previous rain, lunar, star and return observations remain
-separate, unchanged evidence. The reconstructed source and central wiring need
+The checked-in follow-up selects only headed R002F tab hiding on Chromium DPR1,
+with one ordinary-clock night restoration and a preceding visible no-hide control
+in each unchanged baseline and candidate arm. Generic evidence retention remains
+disabled; this route has its own required lossless capture and final intake.
+Previous rain, lunar, star and return observations remain separate, unchanged
+evidence. The combined source and central wiring need
 their own independent exact-tree review before a hosted pilot.
 Campaigns can set these optional fields after the preceding evidence has been
 inspected:
@@ -43,7 +44,10 @@ inspected:
 | `evidenceRetention` | A boolean, default `false`. When `true`, selected R0040/R0035 lanes execute their exact original source through the reviewed supplemental wrappers. R003F/R002F commands are unchanged. |
 | `r0035` | Optional dictionary with `guard: default` or `off`, `scope: all` or `preview-members`, and `mode: both`, `timing` or `capture`. Defaults preserve the original commands. Explicit controls require selected R0035 observations. Unknown fields and values are rejected. |
 | `r0035Stages` | Boolean, default `false`. Requires selected R0035 timing only and `evidenceRetention: false`. Admits a separate disposable source derivative and keeps private preparation-stage evidence. It never silently falls back to the uninstrumented driver. |
-| `r003fHarness` | `published` (the original recipe, default) or `corrected-b0` (source-pinned MIME correction and full-UI admission). The latter requires selected R003F observations and separately admitted helper preparation. |
+| `r0035Costs` | Boolean, default `false`. Requires `r0035Stages: true`, R0035 alone, Chromium, guard off, full population and timing mode, without R002F or the separate retention pilot. Adds bounded same-worker preparation buckets under a distinct source identity; original qualifications and failures remain authoritative. |
+| `r003fHarness` | `published` (the original recipe, default), `corrected-b0` (source-pinned MIME correction and full-UI admission), or `corrected-matrix` (separately prepared original matrix population). Corrected modes require selected R003F and genuine optional preparation; the matrix mode requires R003F alone. |
+| `r003fMatrix` | Exactly `id` and `variant` strings with `corrected-matrix`. The ID must belong to the original engine/DPR catalogue, and the variant must be one original variant or `all`. Unsupported media/trace custody and populations beyond the operational ceiling are refused. |
+| `r002fRoute` | `offscreen` by default, preserving the original recipe, or `tabhide` for the distinct headed diagnostic. Tab hiding requires R002F alone, Chromium DPR1, one pair, `section: all`, exact five-module source closure and genuine preparation. |
 | `r0040Mode` | `options` (unchanged nine-option default), `capture` (original full-clock capture), or `capture-dateonly` (separately identified Date-only diagnostic). Both capture modes require selected R0040, Chromium/bday/moderate/M1/common on genuine main, guarded preparation and their required final-state wrapper. |
 
 Unknown, duplicate, empty or malformed selections are rejected. R002F selection
@@ -55,6 +59,15 @@ The selection, retention mode, diagnostic controls and every argument remain in 
 receipts. Selection limits observations; the existing common source preparation
 and original star-plan guards still run. R002F preparation remains conditional
 on its enabled/selected state.
+
+The three new supplemental routes (R002F tab hiding, R003F matrix and R0035
+costs) require separate selections. Their unreviewed simultaneous populations
+are rejected. Legacy and cost selections retain the 2640-second coordinator and
+45-minute observation step; headed R002F uses 3900 seconds and 66 minutes. The
+matrix selector calculates its own bounded envelope (owner B0: 3540 seconds and
+60 minutes). The shared 300-minute job limit reserves acquisition, sealing and
+upload time for supported longer matrix populations; it does not enlarge an
+individual campaign's selected observation step.
 
 R0040 capture preparation is also conditional. The workflow acquires all six
 historical helper/model/profile inputs and three reviewed preflight documents;
@@ -260,3 +273,26 @@ test commands. Native recipes require the reviewed Linux namespace launcher and
 installed managed engines. A host without those facilities may run offline
 controls, but cannot report a native result. The ordinary qualification workflow,
 product source, generated deliveries, vendor and frozen V1 are unchanged.
+
+### Selected R003F matrix observations
+
+The optional `corrected-matrix` route adds strict catalogue selection, actual preparation and native-entry custody, and distinct diagnostic versus complete-eight intake. The first separate matrix selection is the original owner B0 cell at Chromium DPR1; the combined checked-in campaign selects headed R002F only. It preserves the original product, waits and oracles. The workflow derives its observation timeout from the validated campaign; unselected legacy plans retain their prior arguments and 45-minute observation bound. Motion and unbound software-trace populations remain blocked. [R003F_MATRIX_CENTRAL.md](R003F_MATRIX_CENTRAL.md) records the full source, result and budget contract.
+
+## Bounded R0035 preparation costs
+
+The explicit `r0035Costs` selection uses `r0035-chromium-timing-costs` and the
+unchanged original three-arm timing recipe. Its thirteen buckets separate
+spectral transport, local PSF raster work and replay preparation. Eighteen
+bounded counters use existing execution points and declared derivations; there
+are no per-star histories or new scans. [R0035_COSTS.md](R0035_COSTS.md) defines
+every bucket/counter, full source closure, failed-prefix semantics and timing
+limits.
+
+Raw traces are retained before validation. A failed original qualification stays
+`FAIL` even when the supplemental cost status is `OBSERVED`. Only complete costs
+with an originally passing population use `OBSERVED_PREPARATION_COSTS`, with no
+product or human acceptance. The current namespace and full derivative source
+are checked again after the trial in a bounded child. The original 480-second
+trial limit is unchanged; final checks and namespace closure make its outer
+lane limit 645 seconds. The selected campaign fits the existing coordinator and
+workflow observation limits.

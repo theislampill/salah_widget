@@ -27,9 +27,93 @@ def admitted_snapshot():
             'externalSocketErrno': 101}
 
 
+# Deliberate source-only runtime doubles, independent of each plan under test.
+CONTROL_RUNTIME = {'node':'/control/node', 'python':'/control/python', 'modules':'/control/modules',
+                   'playwright':'/control/modules/playwright', 'pngjs':'/control/modules/pngjs'}
+
+
 def campaign_plan(lanes, orders, retained=False):
+    for lane in lanes:
+        command=[CONTROL_RUNTIME['python' if lane['workOrder'] == 'R0035' else 'node'], '/control/recipe']
+        if lane['workOrder']=='R0040':command.append(CONTROL_RUNTIME['playwright'])
+        if lane['workOrder'] in ('R003F','R002F'):command+=['--playwright',CONTROL_RUNTIME['playwright']]
+        if lane['workOrder']=='R003F':command+=['--pngjs',CONTROL_RUNTIME['pngjs']]
+        lane.setdefault('argv', [] if lane.get('preparation', {}).get('status') == 'INCOMPLETE' else command)
+        lane.setdefault('env', {'NODE_PATH':CONTROL_RUNTIME['modules']})
     return {'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
             'workOrders': orders, 'evidenceRetention': retained, 'lanes': lanes}
+
+
+class DispatchRuntimeAdmission(unittest.TestCase):
+    """Explicit source-only runtime authority; no copied plan field is trusted."""
+    def setUp(self):
+        import test_lanes
+        self.fixture=test_lanes.LaneControls();self.fixture.setUp()
+        self.runtime={'node':'/dependencies/node','python':'/dependencies/venv/bin/python',
+                      'modules':'/dependencies/node_modules','playwright':'/dependencies/node_modules/playwright',
+                      'pngjs':'/dependencies/node_modules/pngjs'}
+        self.args=SimpleNamespace(engine='chromium',r002f=True,r002f_dpr=1,
+                                  work_orders=['R0040','R003F','R0035','R002F'])
+    def plan(self,retained=False):
+        self.args.retain_evidence=retained
+        return self.fixture.plan(include_r002f=True,retain_evidence=retained,
+            r002f_preparation={'status':'PASS','trees':{'baseline':{'root':'/synthetic/baseline'},
+                                                      'candidate':{'root':'/synthetic/candidate'}}})
+    def test_every_executable_and_copied_original_is_bound_before_dispatch(self):
+        for retained in (False,True):
+            plan=self.plan(retained)
+            self.assertEqual(M.admit_plan(plan,self.args,self.runtime),plan['lanes'])
+            for index in range(len(plan['lanes'])):
+                for together in (False,True):
+                    changed=copy.deepcopy(plan);lane=changed['lanes'][index]
+                    lane['argv'][0]='/synthetic/unadmitted-executable'
+                    if together and 'evidenceRetention' in lane:
+                        lane['evidenceRetention']['originalArgv'][0]=lane['argv'][0]
+                    with self.subTest(retained=retained,lane=lane['id'],together=together),\
+                         self.assertRaisesRegex(ValueError,'acquired runtime'):
+                        M.admit_plan(changed,self.args,self.runtime)
+    def test_runtime_is_required_explicit_absolute_and_role_specific(self):
+        plan=self.plan()
+        for runtime in (None,{}, {'node':'node','python':self.runtime['python']},
+                        {'node':self.runtime['python'],'python':self.runtime['node']},
+                        {'node':False,'python':self.runtime['python']}):
+            with self.subTest(runtime=runtime),self.assertRaises(ValueError):M.admit_plan(plan,self.args,runtime)
+        with self.assertRaises(TypeError):M.admit_plan(plan,self.args)
+    def test_all_lane_runtime_preflight_precedes_any_optional_source_verifier(self):
+        plan=self.plan();plan['lanes'][-1]['argv'][0]='/synthetic/unadmitted-executable'
+        with patch.object(M,'validate_prepared',side_effect=AssertionError('no source verifier yet')) as check,\
+             patch.object(M.matrix,'admit',side_effect=AssertionError('no matrix verifier yet')) as matrix_check,\
+             self.assertRaisesRegex(ValueError,'acquired runtime'):
+            M.admit_plan(plan,self.args,self.runtime)
+        check.assert_not_called();matrix_check.assert_not_called()
+    def test_acquired_packages_reject_joint_environment_and_argument_rebinding(self):
+        for retained in (False,True):
+            plan=self.plan(retained)
+            for index in range(len(plan['lanes'])):
+                for coupled in (False,True):
+                    changed=copy.deepcopy(plan);lane=changed['lanes'][index]
+                    lane['env']['NODE_PATH']='/synthetic/unadmitted-modules'
+                    if coupled:
+                        commands=[lane['argv']]
+                        if 'evidenceRetention' in lane:commands.append(lane['evidenceRetention']['originalArgv'])
+                        for command in commands:
+                            for i,part in enumerate(command):
+                                if part.startswith(self.runtime['modules']+'/'):
+                                    command[i]=part.replace(self.runtime['modules'],'/synthetic/unadmitted-modules',1)
+                    with self.subTest(lane=lane['id'],retained=retained,coupled=coupled),\
+                         self.assertRaisesRegex(ValueError,'acquired runtime'):M.admit_plan(changed,self.args,self.runtime)
+    def test_explicit_playwright_pngjs_paths_are_bound_even_with_unchanged_environment(self):
+        for retained in (False,True):
+            plan=self.plan(retained)
+            for index,lane in enumerate(plan['lanes']):
+                for dependency in ('playwright','pngjs'):
+                    if self.runtime[dependency] not in lane['argv']:continue
+                    changed=copy.deepcopy(plan);row=changed['lanes'][index]
+                    for command in [row['argv'],row.get('evidenceRetention',{}).get('originalArgv',[])]:
+                        for i,part in enumerate(command):
+                            if part==self.runtime[dependency]:command[i]='/synthetic/unadmitted-package'
+                    with self.subTest(lane=lane['id'],dependency=dependency),\
+                         self.assertRaisesRegex(ValueError,'acquired runtime'):M.admit_plan(changed,self.args,self.runtime)
 
 
 class Admission(unittest.TestCase):
@@ -318,7 +402,7 @@ class OuterBoundary(unittest.TestCase):
             args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0035'])
             with patch.object(M, 'isolated_command', side_effect=lambda *a: ['isolated']), \
                  patch.object(M, 'run_bounded', side_effect=run):
-                code = M.outside(args, {})
+                code = M.outside(args, CONTROL_RUNTIME)
             report = json.loads((capture/'observation.json').read_text())
             self.assertEqual(len(calls), 2, 'unconfirmed wrapper must prevent the next lane')
             self.assertNotEqual(code, 0)
@@ -362,7 +446,7 @@ class OuterBoundary(unittest.TestCase):
                                        r002f_rounds=1, r002f_section='all', r003f_dpr=1)
                 with patch.object(M, 'isolated_command', side_effect=lambda _a, _r, phase, lane=None: [phase, lane]), \
                      patch.object(M, 'run_bounded', side_effect=run):
-                    code = M.outside(args, {})
+                    code = M.outside(args, CONTROL_RUNTIME)
                 report = json.loads((capture/'observation.json').read_text())
                 by_id = {row['id']: row for row in report['lanes']}
                 self.assertEqual(code, 2)
@@ -381,12 +465,12 @@ class OuterBoundary(unittest.TestCase):
         args = SimpleNamespace(engine='chromium', r003f_dpr=1, r002f=True, r002f_dpr=1, work_orders=orders)
         for missing in ([identifier] for identifier, _ in expected):
             lanes = [{'id': identifier, 'workOrder': order} for identifier, order in expected if identifier not in missing]
-            admitted = M.admit_plan(campaign_plan(lanes, orders), args)
+            admitted = M.admit_plan(campaign_plan(lanes, orders), args, CONTROL_RUNTIME)
             self.assertEqual([row['id'] for row in admitted], [identifier for identifier, _ in expected])
             row = next(row for row in admitted if row['id'] in missing)
             self.assertEqual(row['preparation']['status'], 'INCOMPLETE')
             self.assertIn('missing from the plan', row['preparation']['reason'])
-        self.assertEqual(len(M.admit_plan(campaign_plan([], orders), args)), 5)
+        self.assertEqual(len(M.admit_plan(campaign_plan([], orders), args, CONTROL_RUNTIME)), 5)
 
     def test_duplicate_wrong_identity_or_unselected_lanes_are_rejected_before_execution(self):
         args = SimpleNamespace(engine='chromium', r002f=False, work_orders=['R0035'])
@@ -397,16 +481,16 @@ class OuterBoundary(unittest.TestCase):
                      [timing, {**capture, 'workOrder': 'R0040'}],
                      [timing, capture, {'id': 'r0040-chromium', 'workOrder': 'R0040'}]):
             with self.subTest(rows=rows), self.assertRaises(ValueError):
-                M.admit_plan(campaign_plan(rows, ['R0035']), args)
+                M.admit_plan(campaign_plan(rows, ['R0035']), args, CONTROL_RUNTIME)
         for metadata in ({'workOrders': ['R0040']}, {'evidenceRetention': True}):
             with self.subTest(metadata=metadata), self.assertRaises(ValueError):
-                M.admit_plan({**campaign_plan([timing, capture], ['R0035']), **metadata}, args)
+                M.admit_plan({**campaign_plan([timing, capture], ['R0035']), **metadata}, args, CONTROL_RUNTIME)
         for evidence in ({'evidenceRetention': {'instrumented': True}}, {'evidenceRetention': 'yes'}):
             with self.subTest(evidence=evidence), self.assertRaises(ValueError):
-                M.admit_plan(campaign_plan([{**timing, **evidence}, capture], ['R0035']), args)
+                M.admit_plan(campaign_plan([{**timing, **evidence}, capture], ['R0035']), args, CONTROL_RUNTIME)
         args.retain_evidence = True
         with self.assertRaises(ValueError):
-            M.admit_plan(campaign_plan([timing, capture], ['R0035'], True), args)
+            M.admit_plan(campaign_plan([timing, capture], ['R0035'], True), args, CONTROL_RUNTIME)
 
     def test_missing_selected_capture_or_empty_plan_cannot_yield_observed_campaign(self):
         for present in (['r0035-chromium-timing'], []):
@@ -424,7 +508,7 @@ class OuterBoundary(unittest.TestCase):
                 args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0035'])
                 with patch.object(M, 'isolated_command', side_effect=lambda _a, _r, phase, lane=None: [phase, lane]), \
                      patch.object(M, 'run_bounded', side_effect=run):
-                    self.assertEqual(M.outside(args, {}), 2)
+                    self.assertEqual(M.outside(args, CONTROL_RUNTIME), 2)
                 report = json.loads((capture/'observation.json').read_text())
                 self.assertEqual(report['status'], 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
                 self.assertEqual(len(calls), 1+len(present))
@@ -452,7 +536,7 @@ class OuterBoundary(unittest.TestCase):
             args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0040', 'R0035'], retain_evidence=True)
             with patch.object(M, 'isolated_command', side_effect=lambda _a, _r, phase, lane=None: [phase, lane]), \
                  patch.object(M, 'run_bounded', side_effect=run):
-                self.assertEqual(M.outside(args, {}), 2)
+                self.assertEqual(M.outside(args, CONTROL_RUNTIME), 2)
             report = json.loads((capture/'observation.json').read_text())
             self.assertEqual(report['status'], 'EXTERNAL_CONTINUATION_VETOED')
             self.assertEqual(len(calls), 2)
@@ -477,7 +561,7 @@ class OuterBoundary(unittest.TestCase):
             args = SimpleNamespace(task=task, engine='chromium', work_orders=['R0035'])
             with patch.object(M, 'isolated_command', side_effect=lambda _a, _r, phase, lane=None: [phase, lane]), \
                  patch.object(M, 'run_bounded', side_effect=run):
-                self.assertEqual(M.outside(args, {}), 0)
+                self.assertEqual(M.outside(args, CONTROL_RUNTIME), 0)
             self.assertEqual(calls, [['prepare', None], ['lane', 'r0035-chromium-timing'], ['lane', 'r0035-chromium-capture']])
             self.assertEqual(earlier.read_bytes(), original)
 
@@ -494,9 +578,9 @@ class Campaign(unittest.TestCase):
                 with self.assertRaises(ValueError): M.read_campaign(path)
         args=SimpleNamespace(engine='chromium',work_orders=['R003F'],r002f=False,r003f_harness='corrected-b0')
         plan=campaign_plan([{'id':'r003f-b0-chromium-dpr1','workOrder':'R003F'}], ['R003F'])
-        with self.assertRaises(ValueError): M.admit_plan(plan,args)
-        with self.assertRaises(ValueError): M.admit_plan({**plan,'r003fHarness':'corrected-b0'},args)
-        missing=M.admit_plan({**plan,'r003fHarness':'corrected-b0','lanes':[]},args)
+        with self.assertRaises(ValueError): M.admit_plan(plan,args, CONTROL_RUNTIME)
+        with self.assertRaises(ValueError): M.admit_plan({**plan,'r003fHarness':'corrected-b0'},args, CONTROL_RUNTIME)
+        missing=M.admit_plan({**plan,'r003fHarness':'corrected-b0','lanes':[]},args, CONTROL_RUNTIME)
         self.assertEqual(len(missing),1)
         self.assertEqual(missing[0]['preparation']['status'],'INCOMPLETE')
 
@@ -548,13 +632,13 @@ class Campaign(unittest.TestCase):
         timing = {'id': 'r0035-chromium-timing', 'workOrder': 'R0035'}
         controls = {'guard': 'off', 'scope': 'all', 'mode': 'timing'}
         plan = {**campaign_plan([timing], ['R0035']), 'r0035Controls': controls}
-        self.assertEqual([row['id'] for row in M.admit_plan(plan, args)], [timing['id']])
-        missing = M.admit_plan({**plan, 'lanes': []}, args)
+        self.assertEqual([row['id'] for row in M.admit_plan(plan, args, CONTROL_RUNTIME)], [timing['id']])
+        missing = M.admit_plan({**plan, 'lanes': []}, args, CONTROL_RUNTIME)
         self.assertEqual(len(missing), 1)
         self.assertEqual(missing[0]['preparation']['status'], 'INCOMPLETE')
         for change in ({'r0035Controls': {'guard': 'default', 'scope': 'all', 'mode': 'timing'}},
                        {'lanes': [timing, {'id': 'r0035-chromium-capture', 'workOrder': 'R0035'}]}):
-            with self.subTest(change=change), self.assertRaises(ValueError): M.admit_plan({**plan, **change}, args)
+            with self.subTest(change=change), self.assertRaises(ValueError): M.admit_plan({**plan, **change}, args, CONTROL_RUNTIME)
 
     def test_campaign_controls_are_bounded_and_not_silently_coerced(self):
         data = {'schemaVersion': 1, 'engine': 'webkit', 'r003fDpr': 2,
@@ -692,7 +776,7 @@ class Campaign(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             task = Path(tmp); capture = task/'capture'; capture.mkdir()
             identifier = 'r0040-chromium'
-            lane = {'id': identifier, 'workOrder': 'R0040', 'argv': ['offline-driver-control'], 'cwd': str(task),
+            lane = {'id': identifier, 'workOrder': 'R0040', 'argv': [CONTROL_RUNTIME['node'], '/control/offline-driver', CONTROL_RUNTIME['playwright']], 'cwd': str(task),
                     'stdout': str(capture/'driver.stdout'), 'stderr': str(capture/'driver.stderr'), 'timeoutSeconds': 5,
                     'stopAllOnExit': [86], 'evidenceRetention': {'instrumented': True},
                     'result': {'kind': 'r0040-options', 'path': str(capture/'absent-original-report.json')}}
@@ -701,7 +785,7 @@ class Campaign(unittest.TestCase):
                                    work_orders=['R0040'], retain_evidence=True)
             with patch.object(M, 'controls', return_value='/private/isolation.json'), patch.dict(os.environ), \
                  patch.object(M, 'run_bounded', return_value={'returncode': 86, 'timedOut': False}):
-                self.assertEqual(M.inside(args, {}), 0)
+                self.assertEqual(M.inside(args, CONTROL_RUNTIME), 0)
             receipt = json.loads((capture/'lane-status'/(identifier+'.json')).read_text())
             self.assertEqual(receipt['returncode'], 86)
             self.assertEqual(receipt['status'], 'EXTERNAL_CONTINUATION_VETOED')
@@ -712,6 +796,8 @@ class RainCapture(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.task = Path(self.tmp.name)
         self.capture = self.task/'capture'; self.capture.mkdir()
+        self.runtime={'node':'/runtime/node','python':sys.executable,'modules':'/runtime/modules',
+                      'playwright':'/runtime/modules/playwright','pngjs':'/runtime/pngjs'}
         import lanes
         self.planner = lanes
         manifest = json.loads(lanes.R0040_MANIFEST.read_text())
@@ -803,13 +889,13 @@ class RainCapture(unittest.TestCase):
         for change in ({'r0040Mode':True},{'r0040Mode':'pass'},{'engine':'firefox'},{'workOrders':['R003F']}):
             path.write_text(json.dumps({**value,**change}))
             with self.assertRaises(ValueError):M.read_campaign(path)
-        self.assertEqual(M.admit_plan(self.plan,self.args),[self.lane])
+        self.assertEqual(M.admit_plan(self.plan,self.args, self.runtime),[self.lane])
         for mutate in (lambda p:p.update(r0040Mode='options'),lambda p:p['lanes'][0]['argv'].__setitem__(-1,'M2'),
                        lambda p:p['lanes'][0].update(clearEnv=[]),lambda p:p['lanes'][0]['env'].update(R0040_OPTIONS='x'),
                        lambda p:p['lanes'][0].update(timeoutSeconds=720),
                        lambda p:p['lanes'][0]['result'].update(kind='r0040-options')):
             changed=copy.deepcopy(self.plan);mutate(changed)
-            with self.assertRaises(ValueError):M.admit_plan(changed,self.args)
+            with self.assertRaises(ValueError):M.admit_plan(changed,self.args, self.runtime)
         runtime={'node':'/runtime/node','python':sys.executable,'modules':'/runtime/modules'}
         argv=M.isolated_command(self.args,runtime,'lane',self.lane['id'])
         self.assertEqual(argv[argv.index('--r0040-mode')+1],'capture')
@@ -819,7 +905,7 @@ class RainCapture(unittest.TestCase):
         with patch.object(M,'controls',return_value='/private/isolation.json'),\
              patch.dict(os.environ,{'R0040_OPTIONS':'forbidden','R0040_DISPERSION':'differential'}),\
              patch.object(M,'run_bounded',return_value={'returncode':0,'timedOut':False}) as run:
-            self.assertEqual(M.inside(self.args,{}),0)
+            self.assertEqual(M.inside(self.args,self.runtime),0)
         self.assertNotIn('R0040_OPTIONS',run.call_args.args[2])
         self.assertEqual(run.call_args.args[2]['R0040_DISPERSION'],'common')
         self.assertEqual(run.call_args.args[0],self.lane['argv'])
@@ -888,7 +974,7 @@ class RainCapture(unittest.TestCase):
                 M.write_json(self.capture/'lane-status'/(self.lane['id']+'.json'),{**result,'id':self.lane['id']})
             return {'returncode':0,'timedOut':False}
         with patch.object(M,'isolated_command',return_value=['isolated']),patch.object(M,'run_bounded',side_effect=run):
-            self.assertEqual(M.outside(self.args,{}),0)
+            self.assertEqual(M.outside(self.args,self.runtime),0)
         report=json.loads((self.capture/'observation.json').read_text())
         self.assertEqual(report['status'],'OBSERVED')
         self.assertEqual(report['lanes'][0]['status'],'ADMITTED_FOR_OFFLINE_VERIFICATION')
@@ -913,7 +999,7 @@ class RainCapture(unittest.TestCase):
             return {'returncode':0,'timedOut':False}
         with patch.object(M,'isolated_command',side_effect=lambda _a,_r,phase,lane=None:[phase,lane]),\
              patch.object(M,'run_bounded',side_effect=run):
-            self.assertEqual(M.outside(self.args,{}),2)
+            self.assertEqual(M.outside(self.args,self.runtime),2)
         self.assertEqual(calls,[['prepare',None],['lane','r002f-chromium-dpr1']])
         report=json.loads((self.capture/'observation.json').read_text())
         self.assertEqual([row['status'] for row in report['lanes']],['NOT_RUN','PASS'])
@@ -929,6 +1015,7 @@ class DateOnlyCapture(unittest.TestCase):
         RainCapture.setUp(self)
         import shutil
         self.node = shutil.which('node')
+        self.runtime['node']=self.node
         entry=self.capture/'r0040-preparation-entry.json'
         M.write_json(entry, {'protocol':'synthetic-current-source-double/1'})
         for key in ('prepared','process'):
@@ -1076,9 +1163,9 @@ class DateOnlyCapture(unittest.TestCase):
             self.assertEqual(M.namespace_status(self.lane,process,{**veto,'id':self.lane['id']})['status'],status)
 
     def test_dateonly_selected_population_argv_and_preparation_paths_cannot_be_substituted(self):
-        self.assertEqual(M.admit_plan(self.plan,self.args),[self.lane])
+        self.assertEqual(M.admit_plan(self.plan,self.args, self.runtime),[self.lane])
         missing=copy.deepcopy(self.plan);missing['lanes']=[]
-        self.assertEqual(M.admit_plan(missing,self.args)[0]['preparation']['status'],'INCOMPLETE')
+        self.assertEqual(M.admit_plan(missing,self.args, self.runtime)[0]['preparation']['status'],'INCOMPLETE')
         for mutate in (lambda p:p['lanes'].append(copy.deepcopy(p['lanes'][0])),
                        lambda p:p['lanes'][0]['argv'].__setitem__(-1,'M2'),
                        lambda p:p['lanes'][0]['argv'].__setitem__(1,str(M.HERE/'retain_r0040_capture.cjs')),
@@ -1086,7 +1173,7 @@ class DateOnlyCapture(unittest.TestCase):
                        lambda p:p['lanes'][0]['result'].update(kind='r0040-capture'),
                        lambda p:p['lanes'][0]['result'].update(isolationReceiptPath='/other/receipt.json')):
             plan=copy.deepcopy(self.plan);mutate(plan)
-            with self.assertRaises(ValueError): M.admit_plan(plan,self.args)
+            with self.assertRaises(ValueError): M.admit_plan(plan,self.args, self.runtime)
         runtime={'node':self.node,'python':sys.executable,'modules':'/runtime/modules'}
         argv=M.isolated_command(self.args,runtime,'lane',self.lane['id'])
         self.assertEqual(argv[argv.index('--r0040-mode')+1],'capture-dateonly')
@@ -1096,12 +1183,12 @@ class DateOnlyCapture(unittest.TestCase):
         receipt=self.lane['result']['isolationReceiptPath']
         with patch.object(M,'controls',return_value=receipt),patch.dict(os.environ,{'R0040_OPTIONS':'forbidden'}),\
              patch.object(M,'run_bounded',return_value={'returncode':0,'timedOut':False}) as run:
-            self.assertEqual(M.inside(self.args,{}),0)
+            self.assertEqual(M.inside(self.args,self.runtime),0)
         self.assertNotIn('R0040_OPTIONS',run.call_args.args[2])
         self.assertEqual(run.call_args.args[2]['R0040_DISPERSION'],'common')
         with patch.object(M,'isolated_command',return_value=['synthetic-isolated']),\
              patch.object(M,'run_bounded',return_value={'returncode':0,'timedOut':False}) as outer_run:
-            self.assertEqual(M.outside(self.args,{}),0)
+            self.assertEqual(M.outside(self.args,self.runtime),0)
         self.assertEqual(outer_run.call_args.args[-1], 355)
         report=json.loads((self.capture/'observation.json').read_text())
         self.assertEqual(report['status'],'OBSERVED')
@@ -1164,11 +1251,17 @@ class StageIntegration(unittest.TestCase):
                      'r0040':{'root':'/bounded/rain'},'r003f':{'root':'/bounded/moon'}}}
         self.prepared_path=self.task/'work/prepared/receipts/prepared.json'
         M.write_json(self.prepared_path,self.prepared)
+        # This bounded model fixture has no complete Git checkout; only that
+        # existing common-source boundary is doubled. Optional source/custody
+        # materialization and current re-admission below are real.
+        self.common_check=patch.object(M,'validate_prepared',return_value=self.prepared)
+        self.common_check.start();self.addCleanup(self.common_check.stop)
         M.write_json(self.task/'capture/preparation-process.json',{'returncode':0,'timedOut':False})
         self.args=SimpleNamespace(task=self.task,research=self.fixture.driver_path.parents[2],baseline=self.root/'main',
             historical=Path('/bounded/history'),engine='chromium',work_orders=['R0035'],r002f=False,
             retain_evidence=False,r0035_guard='off',r0035_scope='all',r0035_mode='timing',r0035_stages=True)
-        self.runtime={'python':sys.executable,'node':'/bounded/node','modules':'/bounded/modules','pngjs':'/bounded/pngjs'}
+        self.runtime={'python':sys.executable,'node':'/bounded/node','modules':'/bounded/modules',
+                      'playwright':'/bounded/modules/playwright','pngjs':'/bounded/pngjs'}
         self.folder=self.task/'capture/r0035-stage-preparation'
     def tearDown(self):
         self.baseline.stop();self.fixture.tearDown()
@@ -1182,9 +1275,10 @@ class StageIntegration(unittest.TestCase):
             node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),
             work_orders=self.args.work_orders,r0035_guard='off',r0035_mode='timing',r0035_stages=True,
             r0035_stage_preparation=admission)
+        plan['preparedReceipt']={'path':str(self.prepared_path),'sha256':M.digest(self.prepared_path)}
         return plan,plan['lanes'][-1]
     def test_actual_preparation_and_planner_admit_only_current_source_flags_and_zero_exit(self):
-        plan,lane=self.prepared_plan();self.assertEqual(M.admit_plan(plan,self.args),[lane])
+        plan,lane=self.prepared_plan();self.assertEqual(M.admit_plan(plan,self.args, self.runtime),[lane])
         self.assertEqual((self.folder/'original-prepared.json').read_bytes(),self.prepared_path.read_bytes())
         self.assertEqual((self.folder/'original-lab-identity.json').read_bytes(),(self.base/'r0035-lab-identity.json').read_bytes())
         rejected=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','default','all')
@@ -1209,15 +1303,54 @@ class StageIntegration(unittest.TestCase):
             load.assert_not_called()
         self.assertFalse(Path(lane['output']).exists());self.assertFalse(Path(lane['evidenceRetention']['output']).exists())
 
+    def test_stage_executable_and_copied_runtime_rebinding_precede_source_readmission(self):
+        plan,lane=self.prepared_plan()
+        self.assertEqual(M.admit_plan(plan,self.args,self.runtime),[lane])
+        for fields in (('argv',),('original',),('argv','original'),('argv','original','copied')):
+            changed=copy.deepcopy(plan);row=changed['lanes'][0]
+            for field in fields:
+                if field=='argv':row['argv'][0]='/synthetic/unadmitted-python'
+                elif field=='original':row['evidenceRetention']['originalArgv'][0]='/synthetic/unadmitted-python'
+                else:row['preparation']['python']='/synthetic/unadmitted-python'
+            with self.subTest(fields=fields),patch.object(M,'admit_r0035_stages') as check,\
+                 self.assertRaisesRegex(ValueError,'acquired runtime'):M.admit_plan(changed,self.args,self.runtime)
+            check.assert_not_called()
+        process=self.folder/'process.json';body=json.loads(process.read_bytes())
+        body['argv'][0]='/synthetic/unadmitted-python';M.write_json(process,body)
+        with patch.object(M,'admit_r0035_stages') as check,self.assertRaisesRegex(ValueError,'acquired runtime'):
+            M.admit_plan(plan,self.args,self.runtime)
+        check.assert_not_called()
+
+    def test_stage_full_current_admission_rejects_changed_source_and_receipt_authority(self):
+        plan,lane=self.prepared_plan()
+        for mutate in (lambda p:p['lanes'][0]['preparation'].update(process='/synthetic/other-process'),
+                       lambda p:p['lanes'][0]['preparation']['custody']['process'].update(sha256='0'*64),
+                       lambda p:p['lanes'][0]['preparation'].update(root='/synthetic/other-source'),
+                       lambda p:p['preparedReceipt'].update(sha256='0'*64),
+                       lambda p:p['lanes'][0]['preparation'].update(python='/synthetic/ignored-python')):
+            changed=copy.deepcopy(plan);mutate(changed)
+            with self.subTest(mutate=mutate),self.assertRaises(ValueError):M.admit_plan(changed,self.args,self.runtime)
+        process=self.folder/'process.json';original=process.read_bytes()
+        for change in ({'returncode':7},{'timedOut':True},{'materializerSha256':'0'*64}):
+            M.write_json(process,{**json.loads(original),**change})
+            with self.subTest(change=change),self.assertRaisesRegex(ValueError,'current preparation'):
+                M.admit_plan(plan,self.args,self.runtime)
+            process.write_bytes(original)
+        source=Path(lane['preparation']['root'])/M.stage_material.LIVE;original=source.read_bytes()
+        source.write_bytes(original+b'\n<!-- controlled source drift -->\n')
+        with self.assertRaisesRegex(ValueError,'current preparation'):M.admit_plan(plan,self.args,self.runtime)
+        source.write_bytes(original)
+        self.assertEqual(M.admit_plan(plan,self.args,self.runtime),[lane])
+
     def test_stage_selection_and_namespace_forwarding_cannot_be_omitted_or_substituted(self):
         plan,lane=self.prepared_plan()
-        self.assertEqual(M.admit_plan({**plan,'lanes':[]},self.args)[0]['preparation']['status'],'INCOMPLETE')
+        self.assertEqual(M.admit_plan({**plan,'lanes':[]},self.args, self.runtime)[0]['preparation']['status'],'INCOMPLETE')
         for changed in ({**plan,'lanes':[lane,lane]},{**plan,'r0035Stages':False}):
-            with self.assertRaises(ValueError):M.admit_plan(changed,self.args)
+            with self.assertRaises(ValueError):M.admit_plan(changed,self.args, self.runtime)
         changed=copy.deepcopy(plan);changed['lanes'][0]['argv'][1]='unwrapped.py'
-        with self.assertRaises(ValueError):M.admit_plan(changed,self.args)
+        with self.assertRaises(ValueError):M.admit_plan(changed,self.args, self.runtime)
         changed=copy.deepcopy(plan);changed['r0035Controls']['guard']='default'
-        with self.assertRaises(ValueError):M.admit_plan(changed,self.args)
+        with self.assertRaises(ValueError):M.admit_plan(changed,self.args, self.runtime)
         command=M.isolated_command(self.args,self.runtime,'prepare')
         self.assertEqual(command.count('--r0035-stages'),1)
         self.args.r0035_stages=False
@@ -1347,5 +1480,520 @@ class StageIntegration(unittest.TestCase):
         bogus={'id':lane['id'],'status':'PASS','stopAll':False,'returncode':0,'timedOut':False}
         self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},bogus)['status'],'ISOLATION_UNCONFIRMED')
 
+
+class TabhideControls(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup);self.task=Path(self.temp.name)
+        self.output=self.task/'capture/lanes/r002f-tabhide-chromium-dpr1';self.output.mkdir(parents=True)
+        self.lane={'id':'r002f-tabhide-chromium-dpr1','workOrder':'R002F','engine':'chromium','dpr':1,
+            'timeoutSeconds':1800,'output':str(self.output),'argv':['node',str(M.HERE/'r002f_tabhide.cjs')],
+            'result':{'kind':'r002f-tabhide','path':str(self.output/'result.json'),
+                'expectedSourceManifestSha256':M.R002F_TABHIDE_MANIFEST_SHA256,'expectedSources':{'baseline':{},'candidate':{}}},
+            'preparation':{'trees':{'baseline':{'root':'/private/main'},'candidate':{'root':'/private/candidate'}}},
+            'evidenceRetention':{'instrumented':True},'stopAllOnExit':[86]}
+        self.report={'protocol':'r002f-tabhide-native/1','status':M.TABHIDE_OBSERVED,
+                     'sourceManifestSha256':M.R002F_TABHIDE_MANIFEST_SHA256,'sources':{'baseline':{},'candidate':{}},'rows':[]}
+
+    def save(self,value=None):M.write_json(self.output/'result.json',self.report if value is None else value)
+
+    def test_tabhide_campaign_selects_only_reviewed_population_and_old_default_remains(self):
+        value={'schemaVersion':1,'engine':'chromium','r003fDpr':1,'workOrders':['R002F'],
+               'r002f':{'enabled':True,'dpr':1,'rounds':1,'section':'all'},'r002fRoute':'tabhide'}
+        file=self.task/'campaign.json';M.write_json(file,value);self.assertEqual(M.read_campaign(file),value)
+        for change in ({'engine':'firefox'},{'r002fRoute':True},{'r002fRoute':'synthetic'}):
+            M.write_json(file,{**value,**change})
+            with self.assertRaises(ValueError):M.read_campaign(file)
+        value.pop('r002fRoute');M.write_json(file,value);self.assertNotIn('r002fRoute',M.read_campaign(file))
+
+    def test_tabhide_report_admission_requires_offline_verifier_and_records_actual_invocation(self):
+        self.save()
+        def verify(argv,cwd,env,stdout,stderr,timeout):
+            # Explicit nonnative boundary double; no native report is fabricated.
+            self.assertEqual(argv[2],'--verify-json');self.assertEqual(timeout,45)
+            self.assertEqual(argv[-1],str(self.task/'capture/isolation'/self.lane['id']/'receipt.json'))
+            M.write_json(stdout,{'status':M.TABHIDE_OBSERVED,'nativeQualification':'LIFECYCLE_OBSERVATION_ONLY','humanAcceptance':'OUTSTANDING'})
+            Path(stderr).write_text('');return {'returncode':0,'timedOut':False,'elapsedSeconds':.01}
+        with patch.object(M,'run_bounded',side_effect=verify):got=M.classify_lane(self.lane,0)
+        self.assertEqual(got['status'],M.TABHIDE_OBSERVED);self.assertEqual(got['verification']['returncode'],0)
+        self.assertEqual(got['nativeQualification'],'LIFECYCLE_OBSERVATION_ONLY')
+        for result in ({'returncode':2,'timedOut':False},{'returncode':-15,'timedOut':True}):
+            with patch.object(M,'run_bounded',return_value=result):
+                self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE')
+
+    def test_tabhide_failures_survive_timeout_missing_report_and_failed_later_cleanup(self):
+        self.assertEqual(M.classify_lane(self.lane,1,True)['status'],'FAIL')
+        for body in ({'protocol':'r002f-tabhide-native/1','status':'FAIL','rows':None},
+                     {'rows':[{'verdict':{'status':'FAIL'}}]}):
+            self.save(body);self.assertEqual(M.classify_lane(self.lane,-15,True)['status'],'FAIL')
+        for body in ({'rows':None},{'rows':[{'verdict':None}]},{}):
+            self.save(body);self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE')
+
+    def test_tabhide_veto_and_actual_boundary_failure_are_distinct_and_stop_all(self):
+        self.save({'status':M.VETO_STATUS,'continuationVetoed':True});veto=M.classify_lane(self.lane,86)
+        self.assertEqual(veto['status'],M.VETO_STATUS);self.assertTrue(veto['stopAll']);self.assertIn('not evidence',veto['reason'])
+        self.save({'status':'ISOLATION_FAIL','continuationVetoed':False})
+        self.assertEqual(M.classify_lane(self.lane,86)['status'],'ISOLATION_FAIL')
+        self.save({});self.assertEqual(M.classify_lane(self.lane,86)['status'],'ISOLATION_FAIL')
+
+    def test_tabhide_outer_namespace_failure_cannot_be_promoted_by_observed_inner(self):
+        inner={'id':self.lane['id'],'status':M.TABHIDE_OBSERVED,'returncode':0,'timedOut':False,'stopAll':False,
+               'nativeQualification':'LIFECYCLE_OBSERVATION_ONLY'}
+        self.assertEqual(M.namespace_status(self.lane,{'returncode':0,'timedOut':False},inner)['status'],M.TABHIDE_OBSERVED)
+        for outer,status in (({'returncode':86,'timedOut':False},'ISOLATION_FAIL'),
+                             ({'returncode':1,'timedOut':False},'ISOLATION_UNCONFIRMED'),
+                             ({'returncode':0,'timedOut':True},'ISOLATION_UNCONFIRMED')):
+            self.assertEqual(M.namespace_status(self.lane,outer,inner)['status'],status)
+        inner['status']='PASS';self.assertEqual(M.namespace_status(self.lane,{'returncode':0,'timedOut':False},inner)['status'],'ISOLATION_UNCONFIRMED')
+
+    def test_tabhide_wrong_source_and_observation_status_never_invoke_verifier(self):
+        for changes in ({'sourceManifestSha256':'0'*64},{'sources':{}},{'status':'PASS'},{'status':'INCOMPLETE'}):
+            self.save({**self.report,**changes})
+            with patch.object(M,'run_bounded') as run:self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE')
+            run.assert_not_called()
+
+    def test_tabhide_plan_requires_exact_identity_population_and_aggregate_deadline(self):
+        import lanes
+        prepared={'sources':{'research':{'root':'/research'},'historical':{'root':'/history'}},
+                  'trees':{k:{'root':'/private/'+k} for k in ('main','r0035','r003f','r0040')}}
+        plan=lanes.make_plan(prepared,self.task/'capture/lanes',python_playwright=Path('/python'),node=Path('/node'),
+                            node_modules=Path('/modules'),pngjs=Path('/pngjs'),include_r002f=True,work_orders=['R002F'],r002f_route='tabhide')
+        args=SimpleNamespace(task=self.task,engine='chromium',r002f=True,r002f_route='tabhide',work_orders=['R002F'])
+        self.assertEqual(M.admit_plan(plan,args, CONTROL_RUNTIME)[0]['argv'],[])
+        for mutate in (lambda x:x['lanes'][0].update(timeoutSeconds=900),lambda x:x['lanes'][0]['result'].update(kind='r002f-probe'),
+                       lambda x:x['lanes'][0]['result'].update(expectedRows=[]),lambda x:x['lanes'][0].update(argv=['substitute'])):
+            changed=copy.deepcopy(plan);mutate(changed)
+            with self.assertRaises(ValueError):M.admit_plan(changed,args, CONTROL_RUNTIME)
+
+    def test_tabhide_budgets_are_selected_without_extending_default_recipe_deadlines(self):
+        self.assertEqual(M.campaign_budget({}), {'coordinatorSeconds':2640,'workflowObservationMinutes':45})
+        headed=M.campaign_budget({'r002fRoute':'tabhide','workOrders':['R002F']})
+        self.assertEqual(headed,{'coordinatorSeconds':3900,'workflowObservationMinutes':66})
+        self.assertGreaterEqual(headed['coordinatorSeconds'],1920+1800+75)
+        self.assertGreater(headed['workflowObservationMinutes']*60,headed['coordinatorSeconds'])
+        for campaign in ({'r002fRoute':'invalid'},{'r002fRoute':'tabhide','workOrders':['R002F','R003F']},
+                         {'r002fRoute':'tabhide','workOrders':['R002F'],'r003fHarness':'corrected-matrix'}):
+            with self.assertRaises(ValueError):M.campaign_budget(campaign)
+        workflow=(M.HERE.parents[2]/'.github/workflows/research-native-pilot.yml').read_text()
+        self.assertIn('timeout-minutes: 300',workflow)
+        self.assertIn('timeout-minutes: ${{ fromJSON(steps.budget.outputs.observation_minutes) }}',workflow)
+        self.assertIn("campaign_budget(read_campaign",workflow)
+
+    def test_tabhide_outer_uses_selected_namespace_budget_and_retains_timeout_precedence(self):
+        # Explicit process/isolation boundaries: no namespace or browser is launched.
+        (self.task/'capture/lanes.json').write_text('{}')
+        args=SimpleNamespace(task=self.task,engine='chromium',work_orders=['R002F'],r002f=True,r002f_route='tabhide')
+        calls=[]
+        def run(argv,_cwd,_env,_out,_err,timeout):
+            calls.append((argv,timeout))
+            if len(calls)==1:return {'returncode':0,'timedOut':False}
+            M.write_json(self.task/'capture/lane-status'/(self.lane['id']+'.json'),
+                         {'id':self.lane['id'],'status':M.TABHIDE_OBSERVED,'returncode':0,
+                          'timedOut':False,'stopAll':False,'nativeQualification':'LIFECYCLE_OBSERVATION_ONLY'})
+            return {'returncode':-15,'timedOut':True}
+        with patch.object(M,'isolated_command',side_effect=lambda _a,_r,phase,lane=None:[phase,lane]), \
+             patch.object(M,'admit_plan',return_value=[self.lane]),patch.object(M,'run_bounded',side_effect=run), \
+             patch.object(M.time,'monotonic',return_value=100):
+            self.assertEqual(M.outside(args,CONTROL_RUNTIME),2)
+        self.assertEqual([timeout for _,timeout in calls],[1920,1875])
+        report=json.loads((self.task/'capture/observation.json').read_text())
+        self.assertEqual(report['budget']['coordinatorSeconds'],3900)
+        self.assertEqual(report['lanes'][0]['status'],'ISOLATION_UNCONFIRMED')
+        self.assertTrue(report['lanes'][0]['stopAll'])
+
+
+class MatrixCoordinatorControls(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.task=Path(self.tmp.name)
+        self.runtime={'node':'/synthetic/admitted-node','python':'/synthetic/python','modules':'/synthetic/modules',
+                      'playwright':'/synthetic/modules/playwright','pngjs':'/synthetic/modules/pngjs'}
+        self.selector={'id':'owner_11150942_owner_wax_-81.9_150_clear_shipped_reduce_default','variant':'B0'}
+        self.args=SimpleNamespace(task=self.task,engine='chromium',r003f_dpr=1,r003f_harness='corrected-matrix',r003f_matrix=self.selector,work_orders=['R003F'])
+    def blocked_plan(self):
+        import test_lanes
+        fixture=test_lanes.LaneControls();fixture.setUp();fixture.base=self.task/'capture/lanes'
+        return fixture.plan(work_orders=['R003F'],r003f_harness='corrected-matrix',r003f_matrix=self.selector)
+    def test_matrix_budget_preserves_legacy_and_rejects_unsummed_combination(self):
+        self.assertEqual(M.campaign_budget({}),{'coordinatorSeconds':2640,'workflowObservationMinutes':45})
+        budget=M.observation_budget(self.args);self.assertGreater(budget['coordinatorSeconds'],3000)
+        with self.assertRaises(ValueError):M.campaign_budget({'r003fHarness':'corrected-matrix','r003fMatrix':self.selector,'workOrders':['R003F'],'engine':'chromium','r003fDpr':1,'r002fRoute':'tabhide'})
+    def test_matrix_selected_missing_duplicate_or_substituted_plan_cannot_succeed(self):
+        p=self.blocked_plan();self.assertEqual(len(M.admit_plan(p,self.args, self.runtime)),1)
+        p['lanes']=[];self.assertEqual(M.admit_plan(p,self.args, self.runtime)[0]['preparation']['status'],'INCOMPLETE')
+        p=self.blocked_plan();p['lanes']*=2
+        with self.assertRaises(ValueError):M.admit_plan(p,self.args, self.runtime)
+        p=self.blocked_plan();p['r003fMatrix']['variant']='all'
+        with self.assertRaises(ValueError):M.admit_plan(p,self.args, self.runtime)
+    def admitted_plan(self):
+        plan=self.blocked_plan();control=M.matrix_campaign(self.args)
+        entry=self.task/'capture/r003f-matrix-preparation-entry.json'
+        child=self.task/'capture/r003f-matrix-preparation/process.json'
+        inputs={'prepared':'/synthetic/common','common-process':'/synthetic/process','common-context':'/synthetic/context',
+                'out':str(self.task/'work/r003f-matrix'),'receipts':str(child.parent),
+                'node':self.runtime['node'],'pins-sha256':M.MATRIX_PINS}
+        M.write_json(child,{'inputs':inputs,'argv':[self.runtime['node'],'/synthetic/materializer']})
+        M.write_json(entry,{'argv':M.matrix.prepare_argv(self.runtime['python'],inputs),'process':str(child)})
+        preparation={'status':'PASS','root':str(self.task/'work/r003f-matrix'),
+            'entry':M.matrix.record(entry),'child':M.matrix.record(child),
+            'common':{'prepared':{'path':'/synthetic/common','sha256':'c'*64}},
+            'central':{'sha256':M.MATRIX_PINS},'harness':{'materializationSha256':M.matrix.MATERIALIZATION,'outputFiles':[{}]*16},
+            'node':self.runtime['node'],'python':self.runtime['python'],'runtime':'/synthetic/runtime','research':'/synthetic/research'}
+        lane=M.matrix.make_lane(control,preparation,self.task/'capture/lanes','chromium',1,preparation['node'],
+                                Path('/synthetic/modules'),Path('/synthetic/modules/pngjs'),M.MATRIX_PINS)
+        plan['lanes']=[lane];plan['preparedReceipt']=copy.deepcopy(preparation['common']['prepared'])
+        return plan,copy.deepcopy(preparation)
+    def test_matrix_canonical_executable_is_bound_to_actual_runtime_before_readmission(self):
+        plan,current=self.admitted_plan()
+        with patch.object(M.matrix,'admit',return_value=current) as check:
+            self.assertEqual(len(M.admit_plan(plan,self.args,self.runtime)),1)
+            check.assert_called_once_with(self.task/'capture/r003f-matrix-preparation-entry.json',M.MATRIX_PINS)
+        for fields in (('argv',),('original',),('argv','original'),('argv','original','preparation')):
+            changed=copy.deepcopy(plan);lane=changed['lanes'][0]
+            for field in fields:
+                if field=='argv':lane['argv'][0]='/synthetic/unadmitted-executable'
+                elif field=='original':lane['matrixObservation']['originalArgv'][0]='/synthetic/unadmitted-executable'
+                else:lane['preparation']['node']='/synthetic/unadmitted-executable'
+            with self.subTest(fields=fields),patch.object(M.matrix,'admit') as check,\
+                 self.assertRaisesRegex(ValueError,'acquired runtime'):M.admit_plan(changed,self.args,self.runtime)
+            check.assert_not_called()
+    def test_matrix_complete_current_admission_rejects_copied_receipt_path_and_source_substitution(self):
+        plan,current=self.admitted_plan()
+        mutations=(lambda p:p['lanes'][0]['preparation']['entry'].update(sha256='0'*64),
+                   lambda p:p['lanes'][0]['preparation']['child'].update(path='/synthetic/other-child'),
+                   lambda p:p['lanes'][0]['preparation']['central'].update(path='/synthetic/other-central'),
+                   lambda p:p['lanes'][0]['preparation']['common']['prepared'].update(sha256='0'*64),
+                   lambda p:p['lanes'][0]['preparation'].update(runtime='/synthetic/other-runtime'),
+                   lambda p:p['lanes'][0]['preparation'].update(research='/synthetic/other-research'),
+                   lambda p:p['lanes'][0]['preparation']['harness']['outputFiles'][0].update(sha256='0'*64),
+                   lambda p:p['preparedReceipt'].update(path='/synthetic/other-common'))
+        for mutate in mutations:
+            changed=copy.deepcopy(plan);mutate(changed)
+            with self.subTest(mutate=mutate),patch.object(M.matrix,'admit',return_value=current),\
+                 self.assertRaisesRegex(ValueError,'current preparation'):M.admit_plan(changed,self.args,self.runtime)
+    def test_matrix_canonical_dependency_rebinding_is_rejected_before_any_source_verifier(self):
+        plan,current=self.admitted_plan()
+        for dependency in ('all','playwright','pngjs'):
+            changed=copy.deepcopy(plan);lane=changed['lanes'][0]
+            if dependency=='all':
+                lane=M.matrix.make_lane(M.matrix_campaign(self.args),copy.deepcopy(current),self.task/'capture/lanes',
+                    'chromium',1,self.runtime['node'],Path('/synthetic/unadmitted-modules'),
+                    Path('/synthetic/unadmitted-modules/pngjs'),M.MATRIX_PINS)
+                changed['lanes']=[lane]
+            else:
+                for command in (lane['argv'],lane['matrixObservation']['originalArgv']):
+                    command[command.index('--'+dependency)+1]='/synthetic/unadmitted-package'
+            with self.subTest(dependency=dependency),patch.object(M.matrix,'admit') as check,\
+                 self.assertRaisesRegex(ValueError,'acquired runtime'):M.admit_plan(changed,self.args,self.runtime)
+            check.assert_not_called()
+
+    def test_matrix_report_zero_never_passes_without_actual_intake(self):
+        lane=self.blocked_plan()['lanes'][0];file=Path(lane['result']['path']);file.parent.mkdir(parents=True);file.write_text(json.dumps({'status':'DIAGNOSTIC'}))
+        r=M.classify_lane(lane,0);self.assertEqual(r['status'],'INCOMPLETE');self.assertFalse(r['stopAll'])
+    def test_matrix_actual_intake_result_requires_full_source_and_namespace_binding(self):
+        import r003f_matrix_campaign as matrix
+        import shutil
+        control=M.matrix_campaign(self.args);target=self.task/'capture/lanes'
+        admission={'status':'PASS','root':str(self.task/'work/r003f-matrix'),'runtime':'/synthetic/runtime',
+                   'entry':{'path':str(self.task/'capture/r003f-matrix-preparation-entry.json')},'node':'/synthetic/node',
+                   'python':'/synthetic/python','research':'/synthetic/research'}
+        lane=matrix.make_lane(control,admission,target,'chromium',1,'/synthetic/node',Path('/synthetic/modules'),Path('/synthetic/modules/pngjs'),M.MATRIX_PINS)
+        file=Path(lane['result']['path']);file.parent.mkdir(parents=True);file.write_text(json.dumps({'status':'DIAGNOSTIC'}))
+        driver=Path(lane['result']['driverPath']);driver.parent.mkdir();driver.write_text('{}')
+        iso=self.task/'isolation.json';iso.write_text('{}')
+        def run(argv,cwd,env,stdout,stderr,timeout):
+            self.assertEqual(Path(argv[1]).name,'r003f_matrix_intake.cjs');self.assertEqual(timeout,180)
+            self.assertEqual(json.loads(Path(argv[-1]).read_text())['selection'],lane['result']['selection'])
+            body={'protocol':'R003F/matrix-intake/1','status':'ADMITTED_MATRIX_DIAGNOSTIC','nativeAcceptance':'NOT_EVALUATED',
+                  'humanAcceptance':'OUTSTANDING','summary':matrix.record(file),'driver':matrix.record(driver),
+                  'noVariantUnion':True,'originalStatus':'DIAGNOSTIC','sourceAdmission':{**admission,'matrix':control},'isolation':matrix.record(iso)}
+            if broken:body.pop('sourceAdmission')
+            Path(stdout).write_text(json.dumps(body));Path(stderr).write_text('')
+            return {'returncode':0,'timedOut':False}
+        with patch.dict(os.environ,{'SALAH_HOSTED_NATIVE_ISOLATION_RECEIPT':str(iso)}),patch.object(M,'run_bounded',side_effect=run):
+            broken=False;r=M.classify_lane(lane,0);self.assertEqual(r['status'],'ADMITTED_MATRIX_DIAGNOSTIC')
+            self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},{**r,'id':lane['id']})['status'],'ADMITTED_MATRIX_DIAGNOSTIC')
+            shutil.rmtree(file.parent.with_name(file.parent.name+'-intake'))
+            broken=True;r=M.classify_lane(lane,0);self.assertEqual(r['status'],'INCOMPLETE')
+
+    def test_matrix_original_failure_and_timeout_precedence(self):
+        lane=self.blocked_plan()['lanes'][0]
+        for code,status,stop in [(3,'ISOLATION_FAIL',True),(4,'ANDON',False),(86,'ISOLATION_FAIL',True),(2,'INCOMPLETE',False)]:
+            r=M.classify_lane(lane,code,True);self.assertEqual((r['status'],r['stopAll']),(status,stop))
+    def test_matrix_outer_namespace_failure_dominates_admitted_diagnostic(self):
+        lane=self.blocked_plan()['lanes'][0]
+        inner={'id':lane['id'],'status':'ADMITTED_MATRIX_DIAGNOSTIC','stopAll':False,'returncode':0,'timedOut':False,'nativeQualification':'NOT_EVALUATED','humanAcceptance':'OUTSTANDING'}
+        r=M.namespace_status(lane,{'returncode':86,'timedOut':False},inner);self.assertEqual(r['status'],'ISOLATION_FAIL')
+        r=M.namespace_status(lane,{'returncode':1,'timedOut':False},inner);self.assertEqual(r['status'],'ISOLATION_UNCONFIRMED')
+    def test_matrix_status_cannot_be_generic_pass(self):
+        lane=self.blocked_plan()['lanes'][0]
+        inner={'id':lane['id'],'status':'PASS','stopAll':False,'returncode':0,'timedOut':False}
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)['status'],'ISOLATION_UNCONFIRMED')
+    def test_matrix_namespace_forwarding_retains_selector(self):
+        runtime={'node':'/node','python':'/python','modules':'/modules'};self.args.baseline=Path('/baseline');self.args.research=Path('/research');self.args.historical=Path('/history')
+        argv=M.isolated_command(self.args,runtime,'prepare');self.assertEqual(json.loads(argv[argv.index('--r003f-matrix')+1]),self.selector)
+    def test_matrix_inside_preserves_actual_optional_failure_and_forwards_it_to_planner(self):
+        import r003f_matrix_campaign as matrix
+        capture=self.task/'capture';capture.mkdir();self.args.phase='prepare';self.args.lane=None
+        self.args.research=Path('/synthetic/research');self.args.baseline=Path('/synthetic/baseline');self.args.historical=Path('/synthetic/history')
+        runtime={'node':'/synthetic/node','python':'/synthetic/python','modules':'/synthetic/modules','pngjs':'/synthetic/modules/pngjs'}
+        receipt=capture/'isolation.json';receipt.write_text('{}');calls=[]
+        def run(argv,cwd,env,stdout,stderr,timeout):
+            calls.append(argv);Path(stdout).parent.mkdir(parents=True,exist_ok=True);Path(stdout).write_text('');Path(stderr).write_text('')
+            if Path(argv[1]).name=='prepare.py':
+                destination=self.task/'work/prepared/receipts';destination.mkdir(parents=True);(destination/'prepared.json').write_text('{}')
+            elif Path(argv[1]).name=='r003f_matrix_campaign.py':
+                Path(stderr).write_text('controlled original materialization failure');return {'returncode':2,'timedOut':False}
+            elif Path(argv[1]).name=='lanes.py':
+                self.assertEqual(json.loads(argv[argv.index('--r003f-matrix')+1]),self.selector)
+                outer=json.loads(Path(argv[argv.index('--r003f-matrix-entry')+1]).read_text());self.assertEqual(outer['returncode'],2)
+            else:self.fail('unexpected command '+str(argv))
+            return {'returncode':0,'timedOut':False}
+        with patch.object(M,'controls',return_value=str(receipt)),patch.object(M,'run_bounded',side_effect=run),patch.dict(os.environ,{},clear=False):
+            self.assertEqual(M.inside(self.args,runtime),0)
+        self.assertEqual([Path(x[1]).name for x in calls],['prepare.py','r003f_matrix_campaign.py','lanes.py'])
+        context=json.loads((capture/'preparation-context.json').read_text());self.assertEqual(context['argv'],calls[0]);self.assertEqual(context['isolation'],matrix.record(receipt))
+        outer=json.loads((capture/'r003f-matrix-preparation-entry.json').read_text());self.assertEqual(outer['argv'],calls[1]);self.assertEqual(outer['timeoutSeconds'],180)
+        self.assertIn('controlled original', (capture/'r003f-matrix-preparation.stderr').read_text())
+
+    def test_matrix_campaign_rejects_ignored_selector_and_empty_population(self):
+        p=self.task/'campaign.json';base={'schemaVersion':1,'engine':'chromium','r003fDpr':1,'r002f':{'enabled':False,'dpr':1,'rounds':1,'section':'all'},'workOrders':['R003F'],'r003fHarness':'corrected-matrix','r003fMatrix':self.selector}
+        p.write_text(json.dumps(base));self.assertEqual(M.read_campaign(p),base)
+        for change in ({'r003fHarness':'published'},{'workOrders':[]},{'r003fMatrix':{}},{'r003fMatrix':{'id':self.selector['id'],'variant':['B0','B0']}}):
+            p.write_text(json.dumps({**base,**change}))
+            with self.assertRaises(ValueError):M.read_campaign(p)
+
+class CostIntegration(unittest.TestCase):
+    def setUp(self):
+        StageIntegration.setUp(self)
+        self.args.r0035_costs=True;self.folder=self.task/'capture/r0035-cost-preparation'
+    tearDown=StageIntegration.tearDown
+    test_cost_executable_and_copied_runtime_rebinding_precede_source_readmission=StageIntegration.test_stage_executable_and_copied_runtime_rebinding_precede_source_readmission
+    test_cost_full_current_admission_rejects_changed_source_and_receipt_authority=StageIntegration.test_stage_full_current_admission_rejects_changed_source_and_receipt_authority
+    def prepared_plan(self):
+        self.assertTrue(hasattr(M,'cost_campaign'),'explicit central cost selection has not been implemented')
+        result=M.prepare_stages(self.args,self.runtime,self.task/'work/prepared')
+        self.assertEqual(result['returncode'],0)
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all',costs=True)
+        self.assertEqual(admission['status'],'PASS',admission)
+        (self.task/'capture/lanes').mkdir()
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),
+            work_orders=['R0035'],r0035_guard='off',r0035_mode='timing',r0035_stages=True,r0035_costs=True,
+            r0035_stage_preparation=admission)
+        plan['preparedReceipt']={'path':str(self.prepared_path),'sha256':M.digest(self.prepared_path)}
+        return plan,plan['lanes'][0]
+
+    def test_cost_actual_optional_preparation_and_full_current_plan_bindings(self):
+        plan,lane=self.prepared_plan();self.assertEqual(M.admit_plan(plan,self.args, self.runtime),[lane])
+        self.assertEqual(lane['preparation']['collectorSha256'],M.cost_material.HELPER_SHA256)
+        self.assertEqual(lane['id'],'r0035-chromium-timing-costs')
+        self.assertIn('--r0035-costs',M.isolated_command(self.args,self.runtime,'prepare'))
+        for mutate in (lambda p:p['lanes'][0]['argv'].__setitem__(-1,'full'),
+                       lambda p:p['lanes'][0]['stageObservation'].update(protocol='r0035-stage-diagnostic/1'),
+                       lambda p:p['lanes'][0].update(postObservationCheckSeconds=0),
+                       lambda p:p['lanes'][0]['preparation'].update(collectorSha256='0'*64)):
+            altered=copy.deepcopy(plan);mutate(altered)
+            with self.assertRaises(ValueError):M.admit_plan(altered,self.args, self.runtime)
+        path=self.folder/'process.json';raw=path.read_bytes()
+        for change in ({'returncode':False},{'timedOut':None},{'retentionError':False},
+                       {'retentionError':''},{'timeoutSeconds':239},{'cwd':'/changed/cwd'},
+                       {'argv':['unbound']},{'collectorSha256':'0'*64}):
+            body=json.loads(raw);body.update(change);M.write_json(path,body)
+            with self.subTest(change=change):
+                self.assertEqual(self.planner.admit_r0035_stages(self.prepared,self.prepared_path,path,'off','all',costs=True)['status'],'INCOMPLETE')
+        path.write_bytes(raw)
+
+    def test_cost_campaign_rejects_other_engines_scopes_and_unreviewed_combinations(self):
+        value={'schemaVersion':1,'engine':'chromium','r003fDpr':1,'workOrders':['R0035'],
+               'r002f':{'enabled':False,'dpr':1,'rounds':1,'section':'all'},
+               'r0035':{'guard':'off','scope':'all','mode':'timing'},'r0035Stages':True,'r0035Costs':True}
+        path=self.root/'campaign.json';M.write_json(path,value);self.assertEqual(M.read_campaign(path),value)
+        for change in ({'r0035Costs':'yes'},{'r0035Stages':False},{'engine':'firefox'},
+                       {'r0035':{'guard':'default','scope':'all','mode':'timing'}},
+                       {'workOrders':['R0035','R003F']},{'r0035':{'guard':'off','scope':'preview-members','mode':'timing'}}):
+            M.write_json(path,{**value,**change})
+            with self.subTest(change=change),self.assertRaises(ValueError):M.read_campaign(path)
+
+    def test_cost_actual_preparation_failure_blocks_without_fallback_and_keeps_streams(self):
+        self.assertTrue(hasattr(M,'cost_campaign'),'explicit central cost selection has not been implemented')
+        def fail(argv,cwd,env,stdout,stderr,timeout):
+            M.write_json(Path(stdout),{'synthetic':'partial source prefix'});Path(stderr).write_text('controlled source refusal')
+            return {'returncode':7,'timedOut':False}
+        with patch.object(M,'run_bounded',side_effect=fail):result=M.prepare_stages(self.args,self.runtime,self.task/'work/prepared')
+        self.assertEqual(result['returncode'],7);self.assertIn('refusal',(self.folder/'stderr').read_text())
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all',costs=True)
+        self.assertEqual(admission['status'],'INCOMPLETE')
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),
+            work_orders=['R0035'],r0035_guard='off',r0035_mode='timing',r0035_stages=True,r0035_costs=True,
+            r0035_stage_preparation=admission)
+        self.assertEqual(plan['lanes'][0]['argv'],[])
+
+    def run_cost_original(self,failed=False):
+        import observe_r0035_costs as cost_observer
+        import r0035_cost_controls as cost_controls
+        entry=cost_observer.entry_support()
+        self.fixtures=SimpleNamespace(fixtures=self.fixtures.fixtures,stage_trace=lambda:cost_controls.cost_trace(cost_observer))
+        with patch.dict(sys.modules,{'observe_r0035_stages':entry}):
+            return StageIntegration.run_original_with_stages(self,failed)
+
+    def test_cost_admitted_totals_cannot_erase_original_failed_qualification(self):
+        plan,lane=self.run_cost_original(failed=True)
+        with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current) as current:
+            verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],'FAIL');self.assertEqual(verdict['originalStatus'],'FAIL')
+        self.assertEqual(verdict['stageObservation']['status'],'OBSERVED',verdict);current.assert_called_once()
+        self.assertEqual(verdict['timingClass'],'instrumented-preparation-costs')
+        self.assertEqual(json.loads(Path(lane['result']['path']).read_text())[1]['qualification']['verdict'],'failed')
+
+    @staticmethod
+    def synthetic_current(lane,final):
+        identity=json.loads(Path(lane['preparation']['identity']).read_bytes())
+        return {'returncode':0,'timedOut':False,'stderr':'','stdout':json.dumps({
+            'status':'CURRENT','isolation':final['isolation'],'preparation':lane['preparation']['custody'],
+            'originalFiles':len(identity['baseFiles']),'derivedFiles':len(identity['files'])})}
+
+    def test_cost_complete_intake_stays_distinct_and_requires_final_source_receipt(self):
+        plan,lane=self.run_cost_original()
+        with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current):verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],M.COSTS_OBSERVED,verdict)
+        inner={**verdict,'id':lane['id']}
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)['status'],M.COSTS_OBSERVED)
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},{**inner,'status':M.STAGES_OBSERVED})['status'],'ISOLATION_UNCONFIRMED')
+        for foreign in ('ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE'):
+            result=M.namespace_status(lane,{'returncode':0,'timedOut':False},{**inner,'status':foreign})
+            self.assertEqual(result['status'],'ISOLATION_UNCONFIRMED');self.assertTrue(result['stopAll'])
+        with patch.object(M,'_r0035_cost_current_check',return_value={'returncode':0,'timedOut':False,'stdout':'{}','stderr':''}):
+            self.assertEqual(M.classify_lane(lane,0)['status'],'INCOMPLETE')
+        path=Path(lane['result']['stageDriverPath']);raw=path.read_bytes()
+        for change in ({'collectorSha256':'0'*64},{'baseWrapperSha256':'0'*64},{'observations':[]},{'trials':2}):
+            body=json.loads(raw);body.update(change);M.write_json(path,body)
+            with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current) as current:
+                self.assertEqual(M.classify_lane(lane,0)['status'],'INCOMPLETE');current.assert_not_called()
+        path.write_bytes(raw)
+
+    def test_cost_final_currentness_child_rejects_actual_missing_namespace(self):
+        plan,lane=self.prepared_plan()
+        path=self.task/'capture/isolation'/lane['id']/'receipt.json'
+        result=M._r0035_cost_current_check(lane,{'isolation':{'file':str(path),'sha256':'not-observed'}})
+        self.assertNotEqual(result['returncode'],0);self.assertFalse(result['timedOut'])
+        self.assertIn('No such file',result['stderr']);self.assertFalse(path.exists())
+
+    def test_cost_currentness_failure_and_outer_failure_keep_their_original_precedence(self):
+        plan,lane=self.run_cost_original()
+        with patch.object(M,'_r0035_cost_current_check',return_value={'returncode':1,'timedOut':False,'stdout':'','stderr':'source changed'}):
+            verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],'INCOMPLETE');self.assertEqual(verdict['originalStatus'],'PASS')
+        veto=M.classify_lane(lane,86);self.assertEqual(veto['status'],M.VETO_STATUS);veto['id']=lane['id']
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},veto)['status'],M.VETO_STATUS)
+        self.assertEqual(M.namespace_status(lane,{'returncode':86,'timedOut':False},veto)['status'],'ISOLATION_FAIL')
+        self.assertEqual(M.namespace_status(lane,{'returncode':1,'timedOut':False},veto)['status'],'ISOLATION_UNCONFIRMED')
+
+    def test_cost_success_requires_literal_normal_inner_and_outer_process_completion(self):
+        plan,lane=self.run_cost_original()
+        with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current):
+            good=M.classify_lane(lane,0);good['id']=lane['id']
+            for code,timeout in ((False,False),(0,None)):
+                with self.subTest(code=code,timeout=timeout):
+                    self.assertEqual(M.r0035_stage_status(lane,code,timeout)['status'],'INCOMPLETE')
+        for process in ({'returncode':False,'timedOut':False},{'returncode':0,'timedOut':None}):
+            self.assertEqual(M.namespace_status(lane,process,good)['status'],'ISOLATION_UNCONFIRMED')
+        inner={**good,'returncode':False}
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)['status'],'ISOLATION_UNCONFIRMED')
+
+    def test_cost_inside_planner_and_outer_namespace_budget_use_the_distinct_source(self):
+        self.args.phase='prepare';self.args.lane=None;calls=[];real_run=M.run_bounded
+        def run(argv,cwd,env,stdout,stderr,timeout):
+            calls.append(argv)
+            if Path(argv[1]).name=='r0035_cost_materialize.py':return real_run(argv,cwd,env,stdout,stderr,timeout)
+            return {'returncode':0,'timedOut':False}
+        with patch.object(M,'controls',return_value='synthetic-isolation-receipt'),patch.object(M,'run_bounded',side_effect=run),\
+             patch.dict(os.environ,{},clear=False):self.assertEqual(M.inside(self.args,self.runtime),0)
+        self.assertEqual([Path(c[1]).name for c in calls],['prepare.py','r0035_cost_materialize.py','lanes.py'])
+        self.assertIn('--r0035-costs',calls[-1]);self.assertIn('--r0035-stages',calls[-1])
+        self.assertEqual(calls[-1][calls[-1].index('--r0035-stage-process')+1],str(self.folder/'process.json'))
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all',costs=True)
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),work_orders=['R0035'],
+            r0035_guard='off',r0035_mode='timing',r0035_stages=True,r0035_costs=True,r0035_stage_preparation=admission)
+        plan['preparedReceipt']={'path':str(self.prepared_path),'sha256':M.digest(self.prepared_path)}
+        M.write_json(self.task/'capture/lanes.json',plan);lane=plan['lanes'][0]
+        M.write_json(self.task/'capture/lane-status'/(lane['id']+'.json'),
+                     {'id':lane['id'],'status':'FAIL','stopAll':False,'returncode':0,'timedOut':False})
+        with patch.object(M,'isolated_command',return_value=['synthetic-isolated']),\
+             patch.object(M,'run_bounded',return_value={'returncode':0,'timedOut':False}) as outer:
+            self.assertEqual(M.outside(self.args,self.runtime),2)
+        self.assertEqual([call.args[-1] for call in outer.call_args_list],[1260,645])
+
+
+class CombinedRouteControls(unittest.TestCase):
+    def test_outer_process_types_are_strict_for_every_lane_and_preserve_failure_priority(self):
+        cases=[]
+        for kind in ('r0040-options','r003f-b0','r002f-probe','r0035-trials'):
+            cases.append(({'result':{'kind':kind}},{'status':'PASS'}))
+        cases.append(({'result':{'kind':'r0040-capture'}},{'status':M.CAPTURE_ADMITTED,'nativeQualification':'NOT_VERIFIED'}))
+        cases.append(({'result':{'kind':'r0040-capture-dateonly'}},{'status':M.R0040_DATEONLY_ADMITTED,
+            'nativeQualification':'NOT_VERIFIED','humanAcceptance':'OUTSTANDING','timingClass':'instrumented-date-only-clock','diagnostic':M.r0040_dateonly_identity()}))
+        cases.append(({'result':{'kind':'r002f-tabhide'}},{'status':M.TABHIDE_OBSERVED,'nativeQualification':'LIFECYCLE_OBSERVATION_ONLY'}))
+        for variant,status,qualification in [('B0','ADMITTED_MATRIX_DIAGNOSTIC','NOT_EVALUATED'),('all','VERIFIED_MATRIX_CAPTURE','ORIGINAL_COMPLETE_EIGHT_REPLAY_ONLY')]:
+            cases.append(({'result':{'kind':'r003f-matrix','selection':{'variant':variant}}},
+                {'status':status,'humanAcceptance':'OUTSTANDING','nativeQualification':qualification}))
+        for cost in (False,True):
+            cases.append(({'result':{'kind':'r0035-trials'},'stageObservation':{'protocol':'r0035-cost-diagnostic/1' if cost else 'r0035-stage-diagnostic/1'}},
+                {'status':M.COSTS_OBSERVED if cost else M.STAGES_OBSERVED,'originalStatus':'PASS','stageObservation':{'status':'OBSERVED'},
+                 'timingClass':M.cost_material.TIMING if cost else 'instrumented-stage-observation','nativeQualification':'UNCHANGED_ORIGINAL_REPORT_ONLY'}))
+        malformed=[None,[],{}, {'returncode':0}, {'timedOut':False}]
+        malformed += [{'returncode':value,'timedOut':False} for value in (False,True,0.0,1.0,None,'0')]
+        malformed += [{'returncode':0,'timedOut':value} for value in (0,1,None,'false')]
+        for lane,fields in cases:
+            lane['id']='controlled-lane';inner={'id':lane['id'],'stopAll':False,'returncode':0,'timedOut':False,**fields}
+            self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)['status'],fields['status'])
+            for process in malformed:
+                with self.subTest(kind=lane['result'],process=process):
+                    result=M.namespace_status(lane,process,inner)
+                    self.assertEqual(result['status'],'ISOLATION_UNCONFIRMED');self.assertTrue(result['stopAll'])
+            for process in ({'returncode':1,'timedOut':False},{'returncode':0,'timedOut':True}):
+                self.assertEqual(M.namespace_status(lane,process,inner)['status'],'ISOLATION_UNCONFIRMED')
+            self.assertEqual(M.namespace_status(lane,{'returncode':86,'timedOut':True},inner)['status'],'ISOLATION_FAIL')
+            failure={**inner,'status':'ISOLATION_FAIL','stopAll':True}
+            self.assertEqual(M.namespace_status(lane,{},failure)['status'],'ISOLATION_FAIL')
+            original={**inner,'status':'FAIL'}
+            retained=M.namespace_status(lane,{'returncode':1,'timedOut':False},original)
+            self.assertEqual(retained['status'],'ISOLATION_UNCONFIRMED');self.assertEqual(retained['innerStatus']['status'],'FAIL')
+
+    def test_matrix_success_labels_cannot_cross_into_any_other_lane_kind(self):
+        for kind in ('r0035-trials','r002f-tabhide','r002f-probe','r0040-options','r0040-capture','r0040-capture-dateonly','r003f-b0'):
+            lane={'id':'controlled-lane','result':{'kind':kind}}
+            for status in ('ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE'):
+                inner={'id':lane['id'],'status':status,'stopAll':False,'returncode':0,'timedOut':False,
+                       'humanAcceptance':'OUTSTANDING','nativeQualification':'NOT_EVALUATED'}
+                result=M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)
+                with self.subTest(kind=kind,status=status):
+                    self.assertEqual(result['status'],'ISOLATION_UNCONFIRMED');self.assertTrue(result['stopAll'])
+
+    def test_selected_routes_retain_each_frozen_operational_envelope(self):
+        selector={'id':'owner_11150942_owner_wax_-81.9_150_clear_shipped_reduce_default','variant':'B0'}
+        routes=[({},(2640,45)),({'r002fRoute':'tabhide','workOrders':['R002F']},(3900,66)),
+                ({'r003fHarness':'corrected-matrix','r003fMatrix':selector,'workOrders':['R003F']},(3540,60)),
+                ({'r0035Costs':True,'r0035Stages':True,'workOrders':['R0035'],
+                  'r0035':{'guard':'off','scope':'all','mode':'timing'}},(2640,45))]
+        for campaign,(seconds,minutes) in routes:
+            with self.subTest(campaign=campaign):self.assertEqual(M.campaign_budget(campaign),
+                {'coordinatorSeconds':seconds,'workflowObservationMinutes':minutes})
+    def test_workflow_budget_has_one_unique_step_id_before_observation(self):
+        import re
+        workflow=(M.HERE.parents[2]/'.github/workflows/research-native-pilot.yml').read_text()
+        identifiers=re.findall(r'^        id: (\S+)$',workflow,re.M)
+        self.assertEqual(len(identifiers),len(set(identifiers)))
+        self.assertEqual(identifiers.count('budget'),1)
+        self.assertLess(workflow.index('        id: budget'),workflow.index('      - name: Observe sequentially'))
+        self.assertEqual(workflow.count('budget = campaign_budget(read_campaign('),1)
+
+    def test_each_unsummed_new_route_pair_is_rejected_before_execution(self):
+        flags=[{'r002fRoute':'tabhide'},{'r003fHarness':'corrected-matrix'},{'r0035Costs':True}]
+        for i,a in enumerate(flags):
+            for b in flags[i+1:]:
+                for selected in (['R002F'],['R003F'],['R0035']):
+                    with self.subTest(a=a,b=b,selected=selected),self.assertRaisesRegex(ValueError,'simultaneous'):
+                        M.campaign_budget({**a,**b,'workOrders':selected})
 
 if __name__ == '__main__': unittest.main()

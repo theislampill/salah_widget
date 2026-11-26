@@ -175,6 +175,56 @@ class LaneControls(unittest.TestCase):
                                     node=Path('/dependencies/node'), node_modules=Path('/dependencies/node_modules'),
                                     pngjs=Path('/dependencies/node_modules/pngjs'), **kwargs)
 
+    def test_tabhide_defaults_preserve_every_existing_plan(self):
+        for engine in ('chromium', 'firefox', 'webkit'):
+            for enabled in (False, True):
+                self.assertEqual(self.plan(engine=engine, include_r002f=enabled),
+                                 self.plan(engine=engine, include_r002f=enabled, r002f_route='offscreen'))
+
+    def test_tabhide_selection_has_distinct_population_source_and_explicit_aggregate_deadline(self):
+        admission = {'status': 'PASS', 'sourceManifestSha256': self.lanes.R002F_TABHIDE_MANIFEST_SHA256,
+                     'generated': {'baseline': {'root': '/private/build/baseline'}, 'candidate': {'root': '/private/build/candidate'}},
+                     'trees': {'baseline': {'root': '/private/build/baseline'}, 'candidate': {'root': '/private/build/candidate'}}}
+        plan = self.plan(include_r002f=True, work_orders=['R002F'], r002f_route='tabhide', r002f_preparation=admission)
+        self.assertEqual(plan['r002fRoute'], 'tabhide'); self.assertEqual(len(plan['lanes']), 1)
+        lane = plan['lanes'][0]
+        self.assertEqual((lane['id'], lane['result']['kind'], lane['timeoutSeconds']),
+                         ('r002f-tabhide-chromium-dpr1', 'r002f-tabhide', 1800))
+        self.assertEqual(lane['result']['expectedRows'], ['baseline/no-hide', 'baseline/tabhide', 'candidate/no-hide', 'candidate/tabhide'])
+        self.assertEqual(lane['argv'][1], str(self.lanes.HERE/'r002f_tabhide.cjs'))
+        self.assertEqual(lane['argv'][-2:], ['--timeout-ms', '180000'])
+        self.assertEqual(lane['stopAllOnExit'], [86])
+        self.assertFalse(lane['evidenceRetention']['timingComparableToOriginal'])
+
+    def test_tabhide_refuses_wrong_engine_dpr_population_or_unselected_route(self):
+        for kwargs in ({'engine': 'firefox'}, {'r002f_dpr': 2}, {'r002f_rounds': 2}, {'r002f_section': 'prayer'}):
+            with self.assertRaises(ValueError):
+                self.plan(include_r002f=True, r002f_route='tabhide', **kwargs)
+        with self.assertRaises(ValueError): self.plan(r002f_route='tabhide')
+        with self.assertRaises(ValueError): self.plan(r002f_route=True)
+
+    def test_tabhide_missing_preparation_cannot_fall_back_to_offscreen(self):
+        lane = self.plan(include_r002f=True, work_orders=['R002F'], r002f_route='tabhide')['lanes'][0]
+        self.assertEqual(lane['argv'], []); self.assertEqual(lane['preparation']['status'], 'INCOMPLETE')
+        self.assertEqual(lane['result']['kind'], 'r002f-tabhide')
+
+    def test_tabhide_source_manifest_rechecks_all_five_current_bodies(self):
+        manifest = self.lanes.tabhide_manifest()
+        self.assertEqual(len(manifest['modules']), 5)
+        with patch.object(self.lanes, 'R002F_TABHIDE_MANIFEST_SHA256', '0'*64):
+            with self.assertRaises(ValueError): self.lanes.tabhide_manifest()
+
+    def test_tabhide_preparation_requires_a_genuine_process_before_generated_admission(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp); build=root/'work/r002f-prepared'; build.mkdir(parents=True)
+            capture=root/'capture'; capture.mkdir()
+            receipt=build/'build-result.json'; receipt.write_text('{}')
+            process=capture/'r002f-preparation-process.json'; process.write_text(json.dumps({'returncode':0,'timedOut':False}))
+            with patch.object(self.lanes, 'admit_r002f', return_value={'status':'PASS','trees':{}}), \
+                 patch.object(self.lanes.subprocess, 'run') as child:
+                got=self.lanes.admit_r002f_tabhide(receipt,process,self.prepared,root/'common.json',Path('/dependencies/node'))
+            self.assertEqual(got['status'],'INCOMPLETE'); child.assert_not_called()
+
     def test_declared_commands_use_real_cli_and_private_outputs(self):
         """Wrong positional order or --dpr=1 would invoke the wrong existing recipe."""
         plan = self.plan()
@@ -677,6 +727,97 @@ class LaneControls(unittest.TestCase):
         self.assertEqual(star['preparation']['status'],'INCOMPLETE');self.assertEqual(star['dependsOn'],[])
         self.assertEqual(star['id'],'r0035-chromium-timing')
 
+    def test_cost_selector_is_explicit_and_keeps_complete_existing_plans_identical(self):
+        self.assertEqual(self.plan(),self.plan(r0035_costs=False))
+        valid={'work_orders':['R0035'],'r0035_stages':True,'r0035_mode':'timing','r0035_guard':'off','r0035_costs':True}
+        for change in ({'r0035_costs':'yes'},{'r0035_stages':False},{'r0035_guard':'default'},
+                       {'r0035_scope':'preview-members'},{'engine':'firefox'},{'engine':'webkit'},
+                       {'work_orders':['R0040','R0035']},{'include_r002f':True},{'retain_evidence':True}):
+            with self.subTest(change=change),self.assertRaises(ValueError):self.plan(**{**valid,**change})
+        plan=self.plan(**valid);self.assertTrue(plan['r0035Costs'])
+        self.assertEqual(plan['lanes'][0]['argv'],[]);self.assertEqual(plan['lanes'][0]['preparation']['status'],'INCOMPLETE')
+
+    def test_cost_plan_uses_distinct_identity_and_original_full_population_three_arm_recipe(self):
+        admission={'status':'PASS','root':'/private/costs','process':'/private/costs/process.json',
+                   'identity':'/private/costs/identity.json','plan':'/private/costs/plan.json','custody':{'process':{'sha256':'c'*64}}}
+        plan=self.plan(work_orders=['R0035'],r0035_stages=True,r0035_mode='timing',r0035_guard='off',
+                       r0035_costs=True,r0035_stage_preparation=admission)
+        lane=plan['lanes'][0];self.assertEqual(lane['id'],'r0035-chromium-timing-costs')
+        self.assertEqual(lane['stageObservation'],{'protocol':'r0035-cost-diagnostic/1','instrumented':True})
+        self.assertEqual(lane['argv'][1],str(HERE/'observe_r0035_costs.py'));self.assertEqual(lane['timeoutSeconds'],480)
+        self.assertEqual(lane['postObservationCheckSeconds'],90);self.assertEqual(lane['stopAllOnExit'],[86])
+        self.assertEqual(lane['evidenceRetention']['originalArgv'][4:],['--engine','chromium','--rounds','1',
+            '--seconds','15','--clock','ordinary','--scene','dark','--motion','normal'])
+        self.assertEqual(lane['result']['stageWrapperSha256'],sha(HERE/'observe_r0035_costs.py'))
+        for arm in ('unmodified','mitigated'):
+            self.assertIn('&r35scope=all&',plan['r0035Plan']['arms'][arm]['flags'])
+            self.assertEqual(plan['r0035Plan']['arms'][arm]['producerProbe'],{'path':'stars.status','equals':'active'})
+
+
+class MatrixLaneControls(unittest.TestCase):
+    setUp = LaneControls.setUp
+    plan = LaneControls.plan
+    def test_matrix_actual_receipt_runtime_is_checked_before_any_source_verifier(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder=Path(tmp);entry=folder/'r003f-matrix-preparation-entry.json'
+            child=folder/'r003f-matrix-preparation/process.json';child.parent.mkdir()
+            node,python='/synthetic/trusted-node','/synthetic/trusted-python'
+            inputs={'prepared':'/synthetic/common','common-process':'/synthetic/process','common-context':'/synthetic/context',
+                    'out':str(folder/'derived'),'receipts':str(child.parent),'node':node,'pins-sha256':self.lanes.MATRIX_PINS}
+            actual_child={'inputs':inputs,'argv':[node,'/synthetic/materializer']}
+            actual_entry={'process':str(child),'argv':self.lanes.matrix.prepare_argv(python,inputs)}
+            def save(a,b):entry.write_text(json.dumps(a));child.write_text(json.dumps(b))
+            save(actual_entry,actual_child)
+            record=self.lanes.matrix_preparation_runtime(entry,node,python)
+            self.assertEqual(record,{'entry':self.lanes.matrix.record(entry),'child':self.lanes.matrix.record(child)})
+            for mutate in (lambda a,b:a['argv'].__setitem__(0,'/synthetic/other-python'),
+                           lambda a,b:b['argv'].__setitem__(0,'/synthetic/other-node'),
+                           lambda a,b:b['inputs'].update(node='/synthetic/other-node'),
+                           lambda a,b:a.update(process='/synthetic/other-child')):
+                a,b=copy.deepcopy(actual_entry),copy.deepcopy(actual_child);mutate(a,b);save(a,b)
+                with self.subTest(mutate=mutate),patch.object(self.lanes.matrix,'admit') as verify:
+                    admission=self.lanes.admit_matrix(entry,folder/'unused-common',node,python)
+                    self.assertEqual(admission['status'],'INCOMPLETE');verify.assert_not_called()
+    def test_matrix_selected_mode_emits_one_distinct_lane_and_unchanged_original_arguments(self):
+        selector={'id':'owner_11150942_owner_wax_-81.9_150_clear_shipped_reduce_default','variant':'B0'}
+        admission={'status':'PASS','root':'/private/matrix','runtime':'/private/prepared/trees/r003f',
+                   'entry':{'path':'/private/matrix-entry.json','sha256':'1'*64},'central':{'sha256':self.lanes.MATRIX_PINS},
+                   'node':'/dependencies/node','python':'/dependencies/venv/bin/python','research':'/sources/research'}
+        p=self.plan(work_orders=['R003F'],r003f_harness='corrected-matrix',r003f_matrix=selector,r003f_matrix_preparation=admission)
+        self.assertEqual(len(p['lanes']),1);r=p['lanes'][0]
+        self.assertEqual(r['id'],'r003f-matrix-chromium-dpr1');self.assertEqual(r['result']['kind'],'r003f-matrix')
+        original=r['matrixObservation']['originalArgv'];self.assertEqual(original[:2],['/dependencies/node','/private/matrix/tools/qa/r003f_matrix.cjs'])
+        self.assertEqual(original[-4:],['--materialization-sha256',self.lanes.matrix.MATERIALIZATION,'--variant','B0'])
+        self.assertEqual(r['matrixObservation']['nativeSeconds'],1800);self.assertEqual(r['stopAllOnExit'],[3,86])
+        self.assertNotIn('evidenceRetention',r)
+    def test_matrix_missing_preparation_keeps_selected_row_without_fallback(self):
+        p=self.plan(work_orders=['R003F'],r003f_harness='corrected-matrix',r003f_matrix={'id':'owner_11150942_owner_wax_-81.9_150_clear_shipped_reduce_default','variant':'B0'})
+        self.assertEqual(p['lanes'][0]['argv'],[]);self.assertEqual(p['lanes'][0]['preparation']['status'],'INCOMPLETE')
+    def test_matrix_selector_cannot_be_silently_ignored(self):
+        for k in ({'r003f_harness':'published'},{'r003f_harness':'corrected-matrix','work_orders':['R003F','R0035']}):
+            with self.assertRaises(ValueError):self.plan(r003f_matrix={'id':'unknown','variant':'B0'},**k)
+    def test_matrix_workflow_retains_publication_input_and_full_budget_allowance(self):
+        workflow=(ROOT/'.github/workflows/research-native-pilot.yml').read_text()
+        self.assertIn('/docs/state-contracts/evidence/R003F/publication-paths.json',workflow)
+        self.assertIn('timeout-minutes: ${{ fromJSON(steps.budget.outputs.observation_minutes) }}',workflow)
+        self.assertIn('    timeout-minutes: 300',workflow)
+        self.assertIn('campaign_budget(read_campaign(',workflow)
+        catalogue=self.lanes.matrix.catalogue();supported=0
+        for population in catalogue['populations']:
+            for cell in population['cells']:
+                for variant in ('B0','all'):
+                    try:selection=self.lanes.matrix.matrix_controls({'id':cell['id'],'variant':variant},'corrected-matrix',['R003F'],population['engine'],population['dpr'])
+                    except ValueError:continue
+                    budget=selection['budget'];supported+=1
+                    self.assertGreaterEqual(budget['coordinatorSeconds'],budget['preparationSeconds']+budget['laneSeconds']+budget['intakeSeconds']+budget['namespaceOverheadSeconds']+60)
+                    self.assertGreaterEqual(60*budget['workflowObservationMinutes'],budget['coordinatorSeconds'])
+                    self.assertLessEqual(budget['workflowObservationMinutes']+12+8+9,300)
+        self.assertGreater(supported,761)
+
+    def test_matrix_original_complete_eight_omits_variant_flag(self):
+        a={'status':'PASS','root':'/private/matrix','runtime':'/private/prepared/trees/r003f','entry':{'path':'/private/entry'},'central':{'sha256':'control'},'node':'/dependencies/node','python':'/dependencies/venv/bin/python','research':'/sources/research'}
+        r=self.plan(work_orders=['R003F'],r003f_harness='corrected-matrix',r003f_matrix={'id':'owner_11150942_owner_wax_-81.9_150_clear_shipped_reduce_default','variant':'all'},r003f_matrix_preparation=a)['lanes'][0]
+        self.assertNotIn('--variant',r['matrixObservation']['originalArgv']);self.assertGreater(r['postCaptureCheckSeconds'],180)
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

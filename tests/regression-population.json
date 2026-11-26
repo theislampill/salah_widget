@@ -1595,7 +1595,7 @@
     "-v"
    ],
    "protocol": "unittest-cases",
-   "expectedCases": 73,
+   "expectedCases": 118,
    "covers": [
     "tools/qa/hosted-native/test_observe.py"
    ],
@@ -1660,7 +1660,32 @@
     "tools/qa/hosted-native/r0040_dateonly.cjs",
     "tools/qa/hosted-native/fixtures/r0040-precip-eval-original.txt",
     "tools/qa/hosted-native/fixtures/.gitattributes",
-    "tools/qa/r0040/capture.cjs"
+    "tools/qa/r0040/capture.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_controls.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_source.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_runtime.cjs",
+    "tools/qa/hosted-native/r002f_tabhide.cjs",
+    "tools/qa/hosted-native/r002f-tabhide-pins.json",
+    "tools/qa/hosted-native/browser-control.cjs",
+    "tools/qa/hosted-native/r003f_matrix_campaign.py",
+    "tools/qa/hosted-native/r003f_matrix_entry.cjs",
+    "tools/qa/hosted-native/r003f_matrix_intake.cjs",
+    "tools/qa/hosted-native/r003f-matrix-central-pins.json",
+    "tools/qa/hosted-native/r003f-matrix-catalogue.json",
+    "tools/qa/hosted-native/r003f_matrix_materialize.cjs",
+    "tools/qa/hosted-native/r003f_matrix_support.cjs",
+    "tools/qa/r003f_matrix.cjs",
+    "tools/qa/r003f_motion.cjs",
+    "tools/qa/r003f_receipt.cjs",
+    "tools/qa/r003f_variants.cjs",
+    "tools/qa/r003f_diagnostics.cjs",
+    "moon/src/moon-calendar.mjs",
+    "tests/r0002-ordinary.json",
+    "docs/state-contracts/evidence/R003F/publication-paths.json",
+    "tools/qa/hosted-native/r0035_costs.mjs",
+    "tools/qa/hosted-native/r0035_cost_materialize.py",
+    "tools/qa/hosted-native/observe_r0035_costs.py",
+    "tools/qa/hosted-native/r0035_cost_controls.py"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -1676,7 +1701,7 @@
     "-v"
    ],
    "protocol": "unittest-cases",
-   "expectedCases": 31,
+   "expectedCases": 45,
    "covers": [
     "tools/qa/hosted-native/test_lanes.py"
    ],
@@ -1735,7 +1760,32 @@
     "tools/qa/hosted-native/r0040_dateonly.cjs",
     "tools/qa/hosted-native/fixtures/r0040-precip-eval-original.txt",
     "tools/qa/hosted-native/fixtures/.gitattributes",
-    "tools/qa/r0040/capture.cjs"
+    "tools/qa/r0040/capture.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_controls.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_source.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_runtime.cjs",
+    "tools/qa/hosted-native/r002f_tabhide.cjs",
+    "tools/qa/hosted-native/r002f-tabhide-pins.json",
+    "tools/qa/hosted-native/browser-control.cjs",
+    "tools/qa/hosted-native/r003f_matrix_campaign.py",
+    "tools/qa/hosted-native/r003f_matrix_entry.cjs",
+    "tools/qa/hosted-native/r003f_matrix_intake.cjs",
+    "tools/qa/hosted-native/r003f-matrix-central-pins.json",
+    "tools/qa/hosted-native/r003f-matrix-catalogue.json",
+    "tools/qa/hosted-native/r003f_matrix_materialize.cjs",
+    "tools/qa/hosted-native/r003f_matrix_support.cjs",
+    "tools/qa/r003f_matrix.cjs",
+    "tools/qa/r003f_motion.cjs",
+    "tools/qa/r003f_receipt.cjs",
+    "tools/qa/r003f_variants.cjs",
+    "tools/qa/r003f_diagnostics.cjs",
+    "moon/src/moon-calendar.mjs",
+    "tests/r0002-ordinary.json",
+    "docs/state-contracts/evidence/R003F/publication-paths.json",
+    "tools/qa/hosted-native/r0035_costs.mjs",
+    "tools/qa/hosted-native/r0035_cost_materialize.py",
+    "tools/qa/hosted-native/observe_r0035_costs.py",
+    "tools/qa/hosted-native/r0035_cost_controls.py"
    ],
    "env": {
     "PYTHONUTF8": "1",
@@ -2028,6 +2078,343 @@
     "PYTHONUTF8": "1",
     "PYTHONDONTWRITEBYTECODE": "1"
    }
+  },
+  {
+   "name": "r002f-tabhide-native-controls",
+   "owner": "R002F-A2 (issue 96)",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r002f_tabhide_controls.cjs"
+   ],
+   "protocol": "auto",
+   "covers": [
+    "tools/qa/hosted-native/r002f_tabhide_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r002f_tabhide_controls.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_source.cjs",
+    "tools/qa/hosted-native/r002f_tabhide_runtime.cjs",
+    "tools/qa/hosted-native/r002f_tabhide.cjs",
+    "tools/qa/hosted-native/r002f-tabhide-pins.json",
+    "tools/qa/hosted-native/r002f_probe.cjs",
+    "tools/qa/hosted-native/browser-control.cjs",
+    "tools/qa/hosted-native/r002f_prepare.py"
+   ],
+   "timeout": 120
+  },
+  {
+   "name": "hosted-native-r003f-matrix-source-controls",
+   "owner": "R003F",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r003f_matrix_controls.cjs"
+   ],
+   "protocol": "auto",
+   "expectedCases": 26,
+   "covers": [
+    "tools/qa/hosted-native/r003f_matrix_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r003f_matrix_controls.cjs",
+    "tools/qa/hosted-native/r003f_matrix_materialize.cjs",
+    "tools/qa/hosted-native/r003f_matrix_support.cjs",
+    "tools/qa/hosted-native/r003f_ui.cjs",
+    "tools/qa/r003f_matrix.cjs",
+    "tools/qa/r003f_motion.cjs",
+    "tools/qa/r003f_receipt.cjs",
+    "tools/qa/r003f_capture.cjs",
+    "tools/qa/r003f_p1.cjs",
+    "tools/qa/r003f_grid.cjs",
+    "tools/qa/r003f_variants.cjs",
+    "tools/qa/r003f_diagnostics.cjs",
+    "tools/qa/r0033_isolation.cjs",
+    "tools/qa/v1_net_guard.cjs",
+    "moon/src/moon-calendar.mjs",
+    "tests/r0002-ordinary.json",
+    "real-sky/native-sky.css",
+    "docs/state-contracts/evidence/R003F/publication-paths.json",
+    "tests/r003f-matrix-fixture.cjs",
+    "tests/r0033-fake-playwright.cjs",
+    "index.html"
+   ],
+   "timeout": 240,
+   "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+   }
+  },
+  {
+   "name": "hosted-native-r003f-matrix-custody-controls",
+   "owner": "R003F",
+   "argv": [
+    "{python}",
+    "-B",
+    "tools/qa/hosted-native/r003f_matrix_central_controls.py",
+    "-v"
+   ],
+   "protocol": "unittest-cases",
+   "expectedCases": 17,
+   "covers": [
+    "tools/qa/hosted-native/r003f_matrix_central_controls.py"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r003f_matrix_central_controls.py",
+    "tools/qa/hosted-native/r003f_matrix_campaign.py",
+    "tools/qa/hosted-native/r003f_matrix_entry.cjs",
+    "tools/qa/hosted-native/r003f_matrix_intake.cjs",
+    "tools/qa/hosted-native/r003f-matrix-central-pins.json",
+    "tools/qa/hosted-native/r003f-matrix-catalogue.json",
+    "tools/qa/hosted-native/prepare.py",
+    "tools/qa/hosted-native/r003f_matrix_materialize.cjs",
+    "tools/qa/hosted-native/r003f_matrix_support.cjs",
+    "tools/qa/hosted-native/r003f_ui.cjs",
+    "tools/qa/r003f_matrix.cjs",
+    "tools/qa/r003f_motion.cjs",
+    "tools/qa/r003f_receipt.cjs",
+    "tools/qa/r003f_capture.cjs",
+    "tools/qa/r003f_p1.cjs",
+    "tools/qa/r003f_grid.cjs",
+    "tools/qa/r003f_variants.cjs",
+    "tools/qa/r003f_diagnostics.cjs",
+    "tools/qa/r0033_isolation.cjs",
+    "tools/qa/v1_net_guard.cjs",
+    "moon/src/moon-calendar.mjs",
+    "tests/r0002-ordinary.json",
+    "real-sky/native-sky.css",
+    "docs/state-contracts/evidence/R003F/publication-paths.json",
+    "tools/qa/hosted-native/observe.py"
+   ],
+   "timeout": 240,
+   "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+   }
+  },
+  {
+   "name": "hosted-native-r003f-matrix-entry-controls",
+   "owner": "R003F",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r003f_matrix_entry_controls.cjs"
+   ],
+   "protocol": "auto",
+   "expectedCases": 8,
+   "covers": [
+    "tools/qa/hosted-native/r003f_matrix_entry_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r003f_matrix_entry_controls.cjs",
+    "tools/qa/hosted-native/r003f_matrix_campaign.py",
+    "tools/qa/hosted-native/r003f_matrix_entry.cjs",
+    "tools/qa/hosted-native/r003f_matrix_intake.cjs",
+    "tools/qa/hosted-native/r003f-matrix-central-pins.json",
+    "tools/qa/hosted-native/r003f-matrix-catalogue.json",
+    "tools/qa/hosted-native/prepare.py",
+    "tools/qa/hosted-native/r003f_matrix_materialize.cjs",
+    "tools/qa/hosted-native/r003f_matrix_support.cjs",
+    "tools/qa/hosted-native/r003f_ui.cjs",
+    "tools/qa/r003f_matrix.cjs",
+    "tools/qa/r003f_motion.cjs",
+    "tools/qa/r003f_receipt.cjs",
+    "tools/qa/r003f_capture.cjs",
+    "tools/qa/r003f_p1.cjs",
+    "tools/qa/r003f_grid.cjs",
+    "tools/qa/r003f_variants.cjs",
+    "tools/qa/r003f_diagnostics.cjs",
+    "tools/qa/r0033_isolation.cjs",
+    "tools/qa/v1_net_guard.cjs",
+    "moon/src/moon-calendar.mjs",
+    "tests/r0002-ordinary.json",
+    "real-sky/native-sky.css",
+    "docs/state-contracts/evidence/R003F/publication-paths.json"
+   ],
+   "timeout": 240,
+   "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+   }
+  },
+  {
+   "name": "hosted-native-r003f-matrix-intake-controls",
+   "owner": "R003F",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r003f_matrix_intake_controls.cjs"
+   ],
+   "protocol": "auto",
+   "expectedCases": 5,
+   "covers": [
+    "tools/qa/hosted-native/r003f_matrix_intake_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r003f_matrix_intake_controls.cjs",
+    "tools/qa/hosted-native/r003f_matrix_campaign.py",
+    "tools/qa/hosted-native/r003f_matrix_entry.cjs",
+    "tools/qa/hosted-native/r003f_matrix_intake.cjs",
+    "tools/qa/hosted-native/r003f-matrix-central-pins.json",
+    "tools/qa/hosted-native/r003f-matrix-catalogue.json",
+    "tools/qa/hosted-native/prepare.py",
+    "tools/qa/hosted-native/r003f_matrix_materialize.cjs",
+    "tools/qa/hosted-native/r003f_matrix_support.cjs",
+    "tools/qa/hosted-native/r003f_ui.cjs",
+    "tools/qa/r003f_matrix.cjs",
+    "tools/qa/r003f_motion.cjs",
+    "tools/qa/r003f_receipt.cjs",
+    "tools/qa/r003f_capture.cjs",
+    "tools/qa/r003f_p1.cjs",
+    "tools/qa/r003f_grid.cjs",
+    "tools/qa/r003f_variants.cjs",
+    "tools/qa/r003f_diagnostics.cjs",
+    "tools/qa/r0033_isolation.cjs",
+    "tools/qa/v1_net_guard.cjs",
+    "moon/src/moon-calendar.mjs",
+    "tests/r0002-ordinary.json",
+    "real-sky/native-sky.css",
+    "docs/state-contracts/evidence/R003F/publication-paths.json",
+    "tests/r003f-matrix-fixture.cjs",
+    "tests/r0033-fake-playwright.cjs",
+    "index.html",
+    "tools/qa/hosted-native/r003f_matrix_controls.cjs"
+   ],
+   "timeout": 240,
+   "env": {
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONUTF8": "1"
+   }
+  },
+  {
+   "name": "hosted-native-r0035-cost-controls",
+   "owner": "R0035",
+   "argv": [
+    "{python}",
+    "-B",
+    "tools/qa/hosted-native/r0035_cost_controls.py",
+    "-v"
+   ],
+   "protocol": "unittest-cases",
+   "expectedCases": 9,
+   "covers": [
+    "tools/qa/hosted-native/r0035_cost_controls.py"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r0035_stage_controls.py",
+    "tools/qa/hosted-native/observe_r0035_stages.py",
+    "tools/qa/hosted-native/r0035_stage_materialize.py",
+    "tools/qa/hosted-native/r0035-stage-pins.json",
+    "tools/qa/hosted-native/retention_controls.py",
+    "tools/qa/hosted-native/retain_r0035.py",
+    "tools/qa/hosted-native/retention-pins.json",
+    "tools/r0035/assess_catalogue_scope.mjs",
+    "tools/r0035/center_signal.mjs",
+    "tools/r0035/changed_rectangles.mjs",
+    "tools/r0035/frame_guard.mjs",
+    "tools/r0035/lab_boot.mjs",
+    "tools/r0035/lab_worker.mjs",
+    "tools/r0035/live_lab.mjs",
+    "tools/r0035/materialize_lab.py",
+    "tools/r0035/moon_material_controls.mjs",
+    "tools/r0035/mutation_controls.py",
+    "tools/r0035/native_trials.py",
+    "tools/r0035/physical_occultation.mjs",
+    "tools/r0035/prepared_replay.mjs",
+    "tools/r0035/qualification_scene.mjs",
+    "tools/r0035/render_sequence.mjs",
+    "tools/r0035/run_replay.mjs",
+    "tools/r0035/sample_history.mjs",
+    "tools/r0035/sequence_crops.py",
+    "tools/r0035/signal_checks.mjs",
+    "tools/r0035/stellar_replay.mjs",
+    "tools/r0035/trial_admission.py",
+    "tools/r0035/trial_admission_controls.py",
+    "tools/r0035/trial_clock.js",
+    "tools/r0035/write_tradeoff.mjs",
+    "tools/qa/hosted-native/r0035_costs.mjs",
+    "tools/qa/hosted-native/r0035_cost_materialize.py",
+    "tools/qa/hosted-native/observe_r0035_costs.py",
+    "tools/qa/hosted-native/r0035_cost_controls.py"
+   ],
+   "env": {
+    "PYTHONUTF8": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+   }
+  },
+  {
+   "name": "hosted-native-r0035-cost-source-controls",
+   "owner": "R0035",
+   "argv": [
+    "node",
+    "--experimental-vm-modules",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/r0035_cost_source_controls.cjs"
+   ],
+   "protocol": "auto",
+   "expectedCases": 10,
+   "covers": [
+    "tools/qa/hosted-native/r0035_cost_source_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/r0035_cost_source_controls.cjs",
+    "tools/qa/hosted-native/r0035_costs.mjs",
+    "tools/qa/hosted-native/r0035_cost_materialize.py",
+    "tools/qa/hosted-native/observe_r0035_costs.py",
+    "tools/qa/hosted-native/r0035_cost_controls.py",
+    "tools/qa/hosted-native/r0035_stage_source_controls.cjs",
+    "tools/qa/hosted-native/r0035_stage_materialize.py",
+    "tools/qa/hosted-native/r0035-stage-pins.json",
+    "tools/r0035/live_lab.mjs",
+    "tools/r0035/lab_worker.mjs",
+    "real-sky/core/integration/physical-sky-bridge.mjs",
+    "real-sky/core/integration/resilient-sky-bridge.mjs",
+    "real-sky/core/src/astronomy.mjs",
+    "real-sky/core/src/atmosphere.mjs",
+    "real-sky/core/src/catalogue.mjs",
+    "real-sky/core/src/diffuse-assets.mjs",
+    "real-sky/core/src/diffuse-binding.mjs",
+    "real-sky/core/src/diffuse-manifest-pin.mjs",
+    "real-sky/core/src/diffuse-map.mjs",
+    "real-sky/core/src/diffuse-transport.mjs",
+    "real-sky/core/src/latest-render-queue.mjs",
+    "real-sky/core/src/optics.mjs",
+    "real-sky/core/src/photometry.mjs",
+    "real-sky/core/src/physical-sky-renderer.mjs",
+    "real-sky/core/src/projection.mjs",
+    "real-sky/core/src/reference-engine.mjs",
+    "real-sky/core/src/reference-worker-client.mjs",
+    "real-sky/core/src/registered-starlight.mjs",
+    "real-sky/core/src/renderer.mjs",
+    "real-sky/core/src/scene.mjs",
+    "real-sky/core/src/sha256.mjs",
+    "real-sky/core/src/sky-background.mjs",
+    "real-sky/core/src/sky-state.mjs",
+    "real-sky/core/src/spectral-tables.mjs",
+    "real-sky/core/src/spectral.mjs",
+    "real-sky/core/src/time-scales.mjs",
+    "real-sky/core/src/visibility.mjs",
+    "real-sky/native-cloud-transfer.mjs",
+    "real-sky/native-composition.mjs",
+    "real-sky/native-contract.mjs",
+    "real-sky/native-encoding.mjs",
+    "real-sky/native-host.mjs",
+    "real-sky/native-lifecycle.mjs",
+    "real-sky/native-preview.mjs",
+    "real-sky/native-worker-policy.mjs",
+    "tools/r0035/prepared_replay.mjs",
+    "tools/r0035/stellar_replay.mjs",
+    "tools/r0035/materialize_lab.py"
+   ],
+   "env": {
+    "PYTHONUTF8": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+   }
   }
  ],
  "modules": [
@@ -2144,32 +2531,8 @@
    "reason": "imported harness/fixture module, not an instrument"
   },
   {
-   "path": "tests/r0033-fake-playwright.cjs",
-   "reason": "imported fake of the Playwright surface used by the R0033 isolation module and recipes (records call order, replays synthetic requests through the installed routes); harness of tests/r0033-isolation-wiring.test.cjs, not an instrument"
-  },
-  {
    "path": "tests/r0040-rain-controls.cjs",
    "reason": "R0040 synthetic source fixture, comparator and optional baseline measurement CLI imported by r0040-rain-controls.test.cjs"
-  },
-  {
-   "path": "tests/r003f-matrix-fixture.cjs",
-   "owner": "R003F",
-   "reason": "Synthetic transport and RGBA controls for the private native matrix entry test."
-  },
-  {
-   "path": "tools/qa/r003f_diagnostics.cjs",
-   "owner": "R003F",
-   "reason": "P1 CIELAB, terrain, occlusion, terminator, motion and buckle statistics exercised in tests/r003f-candidates.test.cjs."
-  },
-  {
-   "path": "tools/qa/r003f_receipt.cjs",
-   "owner": "R003F",
-   "reason": "Native archive replay and artifact binding invoked by the private sheet collector and adversarial fixture tests."
-  },
-  {
-   "path": "tools/qa/r003f_motion.cjs",
-   "owner": "R003F",
-   "reason": "F-TR-2 accelerated native capture, consumed-minute alignment, lossless clip and DB3 comparison."
   },
   {
    "path": "tools/qa/hosted-native/identities.py",
@@ -2763,28 +3126,6 @@
      "<patched research checkout>"
     ],
     "protocol": "assertion exit status; R40-C1 cap, additive width and light-kernel negative controls"
-   }
-  },
-  {
-   "path": "tools/qa/r003f_matrix.cjs",
-   "owner": "R003F",
-   "reason": "Native P1 scenes require a Playwright engine, pngjs, a git archive and private output. F-TR-2 also requires ffmpeg.",
-   "recipe": {
-    "argv": [
-     "node",
-     "tools/qa/r003f_matrix.cjs",
-     "--root",
-     "<runtime git archive>",
-     "--id",
-     "<ID from --list>",
-     "--engine",
-     "<engine>",
-     "--dpr",
-     "<DPR>",
-     "--out",
-     "<fresh private directory>"
-    ],
-    "protocol": "summary.json and frame hashes, network ledger, pixel census and (for motion) 1 fps clip. Exit 0 acquired, 2 incomplete, 3 isolation, 4 Andon."
    }
   },
   {
