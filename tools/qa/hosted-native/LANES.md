@@ -293,9 +293,9 @@ supplies physical-device or human evaluation.
 
 ## Optional revised R0040 capture
 
-`--r0040-mode options|capture|capture-dateonly` is available in both planner and observer;
+`--r0040-mode options|capture|capture-dateonly|capture-passive` is available in both planner and observer;
 `campaign.json` uses `r0040Mode`. The absent-field/CLI default is `options`, with
-the unchanged nine-cell invocation above. Both capture modes require selected
+the unchanged nine-cell invocation above. All capture modes require selected
 R0040 and Chromium. They name only `chromium / bday / moderate / M1 / common`, DPR1, genuine
 main. It does not select a different model, engine, dispersion or product arm.
 
@@ -399,6 +399,30 @@ incomplete journal, changed source/current namespace, late request or lifecycle
 failure, or a failed actual process cannot become a generic `PASS`. Original
 failure, timeout, prevented-continuation exit 86 and abnormal outer namespace
 precedence remain intact. The original full-clock records are not replaced.
+
+### Separate passive Date-only diagnostic
+
+`capture-passive` selects `r0040-chromium-capture-passive` with exactly R0040 and
+Chromium. The unchanged reviewed leaf adds bounded Worker/HTTP/runtime records
+and isolated sampler timestamps while preserving the original eight arguments,
+Date-only semantics, capture/PNG/acknowledgement path and lossless verifier.
+The central route binds the actual preparation Python to acquired runtime,
+re-admits the current full source/preparation population and canonical plan,
+then requires both final receipts, the single legitimate passive journal tail
+and the actual separately retained raw-stop Buffer. Its admission label is
+`ADMITTED_PASSIVE_DATE_ONLY_FOR_OFFLINE_VERIFICATION`; native qualification is
+`NOT_VERIFIED` and human acceptance is `OUTSTANDING`.
+
+The distinct child ceiling is 240 seconds. Current source admission, final
+checks and namespace/control allowance add 120, 130 and 75 seconds for a
+565-second lane namespace. Preparation is 1,350 seconds and outer current
+admission is 120 seconds, fitting the existing 2,640-second coordinator and
+45-minute observation step with explicit reserve. These uncalibrated ceilings
+do not shorten original waits or admit combined supplemental campaigns. The
+exact source closure, raw-artifact intake, terminal/namespace precedence and
+offline controls are specified in
+[R0040_PASSIVE_CENTRAL.md](R0040_PASSIVE_CENTRAL.md). This integration changes no
+campaign selection and does not reinterpret any prior native failure.
 
 ## Optional R002F preparation and command
 
