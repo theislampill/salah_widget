@@ -240,6 +240,86 @@ class LaneControls(unittest.TestCase):
         self.assertEqual(self.plan(r0040_mode='capture', r0040_preparation=admission,
                                    retain_evidence=True)['lanes'][0]['argv'], expected)
 
+    def test_dateonly_plan_binds_distinct_identity_and_unchanged_eight_capture_arguments(self):
+        admission = self.rain_admission()
+        admission.update(entryReceipt={'path': '/private/control/rain-entry.json', 'sha256': 'e'*64},
+                         dateOnlyDiagnostic=self.lanes.r0040_dateonly_identity(),
+                         dateOnlyPreparation={'path': '/private/control/rain-entry.json', 'sha256': 'e'*64, 'actualExitCode': 0})
+        plan = self.plan(r0040_mode='capture-dateonly', r0040_preparation=admission, work_orders=['R0040'])
+        rain = plan['lanes'][0]
+        self.assertEqual([row['workOrder'] for row in plan['lanes']], ['R0040'])
+        self.assertEqual(rain['id'], 'r0040-chromium-capture-dateonly')
+        self.assertEqual(rain['result']['kind'], 'r0040-capture-dateonly')
+        self.assertEqual(rain['argv'][1], str(HERE/'r0040_dateonly.cjs'))
+        self.assertEqual(rain['argv'][rain['argv'].index('--preparation-entry')+1], admission['entryReceipt']['path'])
+        self.assertEqual(rain['argv'][rain['argv'].index('--')+1:], rain['evidenceRetention']['originalArgv'][2:])
+        self.assertEqual(len(rain['argv'][rain['argv'].index('--')+1:]), 8)
+        self.assertEqual(rain['result']['diagnostic'], self.lanes.r0040_dateonly_identity())
+        self.assertEqual(rain['result']['wrapperSha256'], sha(HERE/'r0040_dateonly.cjs'))
+        self.assertEqual(rain['clearEnv'], ['R0040_OPTIONS'])
+        self.assertEqual(rain['env']['R0040_DISPERSION'], 'common')
+        self.assertEqual(rain['stopAllOnExit'], [86])
+        self.assertEqual(rain['exitStatuses']['0'], 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION')
+        self.assertEqual(rain['postCaptureCheckSeconds'], 100)
+        self.assertEqual(self.plan(r0040_mode='capture-dateonly', r0040_preparation=admission,
+                                   work_orders=['R0040'], retain_evidence=True)['lanes'][0]['argv'], rain['argv'])
+        control = subprocess.run(['node', '-e',
+            'const d=require(process.argv[1]),fs=require("fs"); process.stdout.write(JSON.stringify(d.diagnosticIdentity(d.transformHelper(fs.readFileSync(process.argv[2])).identity)));',
+            str(HERE/'r0040_dateonly.cjs'), str(HERE/'fixtures/r0040-precip-eval-original.txt')], capture_output=True, text=True)
+        self.assertEqual(control.returncode, 0, control.stderr)
+        self.assertEqual(json.loads(control.stdout), rain['result']['diagnostic'])
+
+    def test_dateonly_selection_and_failed_preparation_never_fall_back(self):
+        for admission in (None, {'status': 'INCOMPLETE', 'reason': 'controlled original preparation failure'}):
+            plan = self.plan(r0040_mode='capture-dateonly', r0040_preparation=admission,
+                             work_orders=['R0040', 'R0035'])
+            self.assertEqual(plan['lanes'][0]['argv'], [])
+            self.assertEqual(plan['lanes'][0]['preparation']['status'], 'INCOMPLETE')
+            self.assertEqual([p['id'] for p in plan['lanes'][1:]], ['r0035-chromium-timing', 'r0035-chromium-capture'])
+            self.assertTrue(all(p['argv'] for p in plan['lanes'][1:]))
+        for change in ({'engine': 'firefox'}, {'engine': 'webkit'}, {'work_orders': ['R0035']}):
+            with self.assertRaises(ValueError): self.plan(r0040_mode='capture-dateonly', **change)
+        default = self.plan()
+        explicit = self.plan(r0040_mode='options')
+        self.assertEqual(default, explicit)
+
+    def test_dateonly_source_admission_requires_current_entry_helper_and_complete_original_closure(self):
+        manifest = json.loads(self.lanes.R0040_MANIFEST.read_text())
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp); work=root/'work'; process=root/'process.json'; entry=root/'entry.json'
+            outer={'protocol':'r0040-capture-preparation-entry/1','returncode':0,'timedOut':False,
+                   'wrapperSha256':self.lanes.R0040_PREPARER_SHA256}
+            child={'protocol':'r0040-capture-preparation-process/1','status':'PREPARED','returncode':0,
+                   'timedOut':False,'nativeStatus':'NOT_RUN','inputs':{
+                     'manifest':str(self.lanes.R0040_MANIFEST),'research':'/sources/research',
+                     'historical':'/sources/history','main':'/private/prepared/trees/main','out':str(work)}}
+            process.write_text(json.dumps(child));entry.write_text(json.dumps(outer))
+            checked={'sources':{'historical':manifest['stages'][-1]['files'],'research':manifest['researchInputs'],
+                                'main':manifest['main']['runtimeFiles']},
+                     'custody':{'manifestSha256':self.lanes.R0040_MANIFEST_SHA256},
+                     'dateOnlyPreparation':{'path':str(entry),'sha256':sha(entry),'actualExitCode':0},
+                     'dateOnlyDiagnostic':self.lanes.r0040_dateonly_identity()}
+            def admit():
+                return self.lanes.admit_r0040(self.prepared,work,process,entry,self.base,
+                       Path('/dependencies/node'),Path('/dependencies/node_modules/playwright'),mode='capture-dateonly')
+            with patch.object(self.lanes.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout=json.dumps(checked),stderr='')) as run:
+                result=admit();self.assertEqual(result['status'],'PASS',result)
+                self.assertEqual(result['dateOnlyDiagnostic'],checked['dateOnlyDiagnostic'])
+                self.assertIn('admitPreparationEntry',run.call_args.args[0][2])
+                self.assertIn('transformHelper',run.call_args.args[0][2])
+            for mutate in (lambda r:r['dateOnlyDiagnostic']['helper'].update(changedSeams=2),
+                           lambda r:r['dateOnlyDiagnostic'].update(entrySha256='0'*64),
+                           lambda r:r.pop('dateOnlyPreparation'),
+                           lambda r:r['dateOnlyPreparation'].update(actualExitCode=False),
+                           lambda r:r['sources']['main'].pop(next(iter(r['sources']['main'])))):
+                bad=copy.deepcopy(checked);mutate(bad)
+                with patch.object(self.lanes.subprocess,'run',return_value=SimpleNamespace(returncode=0,stdout=json.dumps(bad),stderr='')):
+                    self.assertEqual(admit()['status'],'INCOMPLETE')
+            for value in ('', 'controlled retention failure', False):
+                entry.write_text(json.dumps({**outer,'retentionError':value}))
+                with patch.object(self.lanes.subprocess,'run') as run:
+                    self.assertEqual(admit()['status'],'INCOMPLETE');run.assert_not_called()
+
     def test_capture_missing_or_failed_preparation_blocks_only_rain(self):
         original = self.plan(include_r002f=True)
         for admission in (None, {'status': 'INCOMPLETE', 'reason': 'missing historical model'}):

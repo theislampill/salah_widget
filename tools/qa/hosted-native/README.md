@@ -28,11 +28,12 @@ privately with the observations.
 
 ### Conditional campaign selection and evidence retention
 
-The checked-in follow-up selects only R0035 Chromium timing, with guard off,
-all-source replay scope and explicit preparation-stage observations. It keeps
-the existing one-round, 15-second dark/normal/ordinary-clock cell and all three
-arms. Generic per-event evidence retention remains disabled. Previous rain,
-lunar, star and return observations remain separate, unchanged evidence.
+The checked-in follow-up selects only the R0040 Chromium Date-only capture
+diagnostic on genuine main, with the original bday/moderate/M1/common cell.
+Generic evidence retention remains disabled; this mode has its own required
+final-state wrapper. Previous rain, lunar, star and return observations remain
+separate, unchanged evidence. The reconstructed source and central wiring need
+their own independent exact-tree review before a hosted pilot.
 Campaigns can set these optional fields after the preceding evidence has been
 inspected:
 
@@ -43,13 +44,13 @@ inspected:
 | `r0035` | Optional dictionary with `guard: default` or `off`, `scope: all` or `preview-members`, and `mode: both`, `timing` or `capture`. Defaults preserve the original commands. Explicit controls require selected R0035 observations. Unknown fields and values are rejected. |
 | `r0035Stages` | Boolean, default `false`. Requires selected R0035 timing only and `evidenceRetention: false`. Admits a separate disposable source derivative and keeps private preparation-stage evidence. It never silently falls back to the uninstrumented driver. |
 | `r003fHarness` | `published` (the original recipe, default) or `corrected-b0` (source-pinned MIME correction and full-UI admission). The latter requires selected R003F observations and separately admitted helper preparation. |
-| `r0040Mode` | `options` (unchanged nine-option default) or `capture` (only reviewed Chromium/bday/moderate/M1/common on genuine main). Capture requires selected R0040, separate guarded preparation and its final-state wrapper. |
+| `r0040Mode` | `options` (unchanged nine-option default), `capture` (original full-clock capture), or `capture-dateonly` (separately identified Date-only diagnostic). Both capture modes require selected R0040, Chromium/bday/moderate/M1/common on genuine main, guarded preparation and their required final-state wrapper. |
 
 Unknown, duplicate, empty or malformed selections are rejected. R002F selection
 must agree with `r002f.enabled` in both directions. When `workOrders` is absent,
 the previous population is retained: R0040, R003F, R0035, plus R002F when enabled.
 The initial campaign had four work orders and five command rows; the current
-follow-up has one work order and one timing command row.
+follow-up has one work order and one diagnostic acquisition command row.
 The selection, retention mode, diagnostic controls and every argument remain in private
 receipts. Selection limits observations; the existing common source preparation
 and original star-plan guards still run. R002F preparation remains conditional
@@ -209,6 +210,19 @@ and original or late acquisition failures remain failed. After private retrieval
 run the unchanged `lossless_pack.py cell` with `pins-revised.json` in the existing
 Pillow/cryptography environment. No package is added to hosted acquisition and
 no original frame-count, gap, average-rate or pixel gate changes.
+
+Date-only capture has the distinct lane ID `r0040-chromium-capture-dateonly`,
+result kind `r0040-capture-dateonly` and status
+`ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION`. A single reversible in-memory
+helper transformation replaces full clock mocking with Date advancing at 1x
+from the unchanged native performance clock. Timers and rAF remain native.
+The original eight arguments, capture source, report and verifier are unchanged.
+The coordinator recomputes the startup clock proof, requires a matching complete
+terminal journal, and rechecks the actual outer preparation entry, full source
+closure and current namespace before admitting that supplemental status.
+It rejects generic `PASS`, original full-clock admission and status-only claims
+for this diagnostic. See [R0040_DATE_ONLY.md](R0040_DATE_ONLY.md) for the exact
+helper provenance, overhead and failure behavior.
 
 For an instrumented R0040/R0035 child, exit `86` instead records
 `EXTERNAL_CONTINUATION_VETOED`: the wrapper prevented an attempted external

@@ -18,8 +18,10 @@ import sys
 import time
 
 from lanes import (selected_work_orders, star_controls, STAR_DEFAULTS, moon_harness, BASE_INDEX, R003F_MATERIALIZATION,
-                   rain_mode, R0040_MANIFEST, R0040_CAPTURE_WRAPPER_SHA256, digest, stage_mode, original_star_plan,
-                   R0035_STAGE_WRAPPER_SHA256, R0035_STAGE_MATERIALIZER_SHA256)
+                   rain_mode, R0040_MANIFEST, R0040_MANIFEST_SHA256, R0040_CAPTURE_WRAPPER_SHA256, digest, stage_mode, original_star_plan,
+                   R0035_STAGE_WRAPPER_SHA256, R0035_STAGE_MATERIALIZER_SHA256,
+                   R0040_CAPTURE_MODES, R0040_DATEONLY_WRAPPER_SHA256, R0040_DATEONLY_ADMITTED,
+                   r0040_dateonly_identity, same_json)
 import r0035_stage_materialize as stage_material
 from observe_r0035_stages import inspect as inspect_stage_trace
 
@@ -111,8 +113,9 @@ def admit_plan(plan, args):
             or not isinstance(plan.get('lanes'), list)):
         raise ValueError('unadmitted lane plan or campaign controls')
     engine = args.engine
-    rain_capture = rain_campaign(args) == 'capture'
-    population = [(f'r0040-{engine}-capture' if rain_capture else f'r0040-{engine}', 'R0040', 180 if rain_capture else 720),
+    rain_capture = rain_campaign(args) in R0040_CAPTURE_MODES
+    dateonly = rain_campaign(args) == 'capture-dateonly'
+    population = [(f'r0040-{engine}-{rain_campaign(args)}' if rain_capture else f'r0040-{engine}', 'R0040', 180 if rain_capture else 720),
                   (f'r003f-b0-{engine}-dpr{getattr(args, "r003f_dpr", 1)}', 'R003F', 900),
                   (f'r0035-{engine}-timing', 'R0035', 480), (f'r0035-{engine}-capture', 'R0035', 480),
                   (f'r002f-{engine}-dpr{getattr(args, "r002f_dpr", 1)}', 'R002F', 900)]
@@ -182,32 +185,49 @@ def admit_plan(plan, args):
             target = args.task/'capture/lanes'/lane['id']; evidence_path = target.with_name(target.name+'-retention')
             if (not isinstance(preparation, dict) or preparation.get('status') not in ('PASS', 'INCOMPLETE')
                     or lane.get('engine') != 'chromium' or type(lane.get('dpr')) is not int or lane['dpr'] != 1
-                    or lane.get('timeoutSeconds') != 180 or report.get('kind') != 'r0040-capture'
+                    or lane.get('timeoutSeconds') != 180 or report.get('kind') != 'r0040-'+rain_campaign(args)
                     or lane.get('clearEnv') != ['R0040_OPTIONS']
                     or set(lane.get('env', {})) != {'NODE_PATH', 'R0040_DISPERSION'}
                     or lane['env']['R0040_DISPERSION'] != 'common'
                     or lane.get('output') != str(target) or report.get('path') != str(target/'capture.json')
                     or evidence.get('output') != str(evidence_path)
-                    or report.get('finalAdmissionPath') != str(evidence_path/'final-admission.json')):
+                    or report.get('finalAdmissionPath') != str(evidence_path/'final-admission.json')
+                    or dateonly and (type(lane.get('postCaptureCheckSeconds')) is not int or lane['postCaptureCheckSeconds'] != 100)):
                 raise ValueError('R0040 capture mode, private paths or preparation admission differs')
             if preparation['status'] == 'INCOMPLETE':
                 if lane.get('argv') != []:
                     raise ValueError('unprepared R0040 capture cannot execute a substitute recipe')
             else:
                 original = evidence.get('originalArgv', [])
+                expected_argv = [original[0] if original else None,
+                    str(HERE/('r0040_dateonly.cjs' if dateonly else 'retain_r0040_capture.cjs')),
+                    '--driver', original[1] if len(original)>1 else None, '--manifest', preparation['manifest'],
+                    '--prepared', preparation['prepared'], '--preparation-process', preparation['process']]
+                if dateonly:
+                    work = args.task/'work/r0040-capture'
+                    entry = args.task/'capture/r0040-preparation-entry.json'
+                    if (preparation.get('work') != str(work) or preparation.get('manifest') != str(R0040_MANIFEST)
+                            or preparation.get('prepared') != str(work/'receipts/prepared.json')
+                            or preparation.get('process') != str(args.task/'capture/r0040-preparation/process.json')
+                            or preparation.get('entryReceipt', {}).get('path') != str(entry)
+                            or not same_json(preparation.get('dateOnlyPreparation'), {**preparation.get('entryReceipt', {}), 'actualExitCode': 0})
+                            or not same_json(preparation.get('dateOnlyDiagnostic'), r0040_dateonly_identity())
+                            or not same_json(report.get('diagnostic'), r0040_dateonly_identity())
+                            or report.get('journalPath') != str(evidence_path/'events.jsonl')
+                            or report.get('isolationReceiptPath') != str(args.task/'capture/isolation'/lane['id']/'receipt.json')):
+                        raise ValueError('Date-only capture preparation, helper identity or current namespace path differs')
+                    expected_argv += ['--preparation-entry', str(entry)]
+                expected_argv += ['--evidence', str(evidence_path), '--', *original[2:]]
                 if (not isinstance(original, list) or len(original) != 10
                         or original[1] != str(Path(lane['cwd'])/'tools/qa/r0040/capture.cjs')
                         or original[2] != str(Path(lane['env']['NODE_PATH'])/'playwright')
                         or original[3] != str(Path(preparation['work'])/'historical')
                         or original[5:] != [str(target), 'chromium', 'bday', 'moderate', 'M1']
                         or preparation.get('wrapperSha256') != R0040_CAPTURE_WRAPPER_SHA256
-                        or report.get('wrapperSha256') != R0040_CAPTURE_WRAPPER_SHA256
+                        or report.get('wrapperSha256') != (R0040_DATEONLY_WRAPPER_SHA256 if dateonly else R0040_CAPTURE_WRAPPER_SHA256)
                         or report.get('expectedCapture') != preparation.get('expectedCapture')
                         or report.get('pins') != preparation.get('pins')
-                        or lane.get('argv') != [original[0], str(HERE/'retain_r0040_capture.cjs'),
-                            '--driver', original[1], '--manifest', preparation['manifest'],
-                            '--prepared', preparation['prepared'], '--preparation-process', preparation['process'],
-                            '--evidence', str(evidence_path), '--', *original[2:]]):
+                        or lane.get('argv') != expected_argv):
                     raise ValueError('R0040 capture does not bind its unchanged driver arguments and source receipt')
         if lane['workOrder'] == 'R003F' and moon_campaign(args) == 'corrected-b0':
             preparation = lane.get('preparation'); report = lane.get('result', {})
@@ -391,7 +411,8 @@ def r002f_report_status(body, lane, returncode, timed_out):
     return 'PASS' if body.get('status') == 'PASS' and statuses and returncode == 0 else 'INCOMPLETE'
 
 
-def r0040_capture_status(body, lane, returncode, timed_out):
+def r0040_capture_status(body, lane, returncode, timed_out, *, admitted_status=CAPTURE_ADMITTED,
+                        timing_class='instrumented-host-retention'):
     """Acquisition admission cannot confer cadence, image or owner acceptance."""
     result = {'status': 'INCOMPLETE', 'nativeQualification': 'NOT_VERIFIED', 'humanAcceptance': 'OUTSTANDING'}
     path = Path(lane['result']['finalAdmissionPath'])
@@ -407,13 +428,13 @@ def r0040_capture_status(body, lane, returncode, timed_out):
         return {**result, 'status': 'FAIL'}
     if timed_out or returncode != 0 or not isinstance(body, dict) or not isinstance(final, dict):
         return result
-    if (final.get('protocol') != 'r0040-capture-final-admission/1' or final.get('status') != CAPTURE_ADMITTED
+    if (final.get('protocol') != 'r0040-capture-final-admission/1' or final.get('status') != admitted_status
             or any(type(final.get(k)) is not int or final[k] != 0 for k in ('originalExitCode', 'exitCode'))
             or final.get('continuationVetoed') is not False
             or any(final.get(k) != [] for k in ('issues', 'reportIssues', 'errors', 'driverErrors'))
             or final.get('retentionError') is not None or 'retentionError' not in final
             or final.get('nativeQualification') != 'NOT_VERIFIED' or final.get('humanAcceptance') != 'OUTSTANDING'
-            or final.get('timingClass') != 'instrumented-host-retention'
+            or final.get('timingClass') != timing_class
             or not isinstance(final.get('requests'), list) or not isinstance(final.get('pages'), list)):
         return result
     closes = final.get('closes')
@@ -435,7 +456,165 @@ def r0040_capture_status(body, lane, returncode, timed_out):
         if final.get('originalReport') != {'file': str(report), 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}:
             return result
     except OSError: return result
-    return {**result, 'status': CAPTURE_ADMITTED}
+    return {**result, 'status': admitted_status}
+
+
+def _dateonly_node(lane, script, payload, timeout):
+    """Read-only checks retain both streams and actual process completion."""
+    env = dict(os.environ)
+    env.pop('NODE_OPTIONS', None)
+    try:
+        result = subprocess.run([lane['evidenceRetention']['originalArgv'][0], '-e', script,
+                                 str(HERE/'r0040_dateonly.cjs')], cwd=HERE, env=env,
+                                input=json.dumps(payload, allow_nan=False), capture_output=True, text=True, timeout=timeout)
+        return {'returncode': result.returncode, 'timedOut': False, 'stdout': result.stdout, 'stderr': result.stderr}
+    except subprocess.TimeoutExpired as error:
+        def stream(value):
+            return value.decode('utf-8', errors='replace') if isinstance(value, bytes) else value
+        return {'returncode': None, 'timedOut': True, 'stdout': stream(error.stdout), 'stderr': stream(error.stderr)}
+    except OSError as error:
+        return {'returncode': None, 'timedOut': False, 'stdout': '', 'stderr': str(error)}
+
+
+def _dateonly_current_check(lane, source, manifest):
+    """Re-admit actual namespace, original byte closure and actual preparation."""
+    script = r'''
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),{execFileSync}=require('child_process'),{isDeepStrictEqual}=require('util');
+const d=require(process.argv[1]),r=require(path.join(path.dirname(process.argv[1]),'retain_r0040_capture.cjs'));
+const p=JSON.parse(fs.readFileSync(0,'utf8')),a=p.args,o=p.options,m=p.manifest,s=p.source;
+const need=(ok,msg)=>{if(!ok)throw Error(msg)},sha=x=>crypto.createHash('sha256').update(x).digest('hex');
+const isolation=r.verifyIsolation(s.isolation.file);
+need(isDeepStrictEqual(isolation,s.isolation),'current namespace receipt differs');
+need(sha(fs.readFileSync(o.manifest))===s.manifestSha256,'current manifest differs');
+for(const [name,key] of [['prepared','prepared'],['preparationProcess','preparationProcess']])
+  need(path.resolve(o[name])===s[key].path&&sha(fs.readFileSync(o[name]))===s[key].sha256,'current preparation receipt differs');
+r.verifyDriver(o.driver);
+const research=path.resolve(path.dirname(o.driver),'../../..');
+const git=(root,...args)=>execFileSync('git',['-C',root,...args],{encoding:'utf8',timeout:30000,
+  env:{...process.env,GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0'}}).trim();
+need(git(research,'rev-parse','HEAD')===m.researchCommit,'current research head differs');
+need(git(a[2],'rev-parse','HEAD')===m.main.head&&!git(a[2],'status','--porcelain=v1','--untracked-files=all'),'current main is not genuine and clean');
+const checked={research:r.verifySourceRows(research,m.researchInputs),historical:r.verifySourceRows(a[1],m.stages.at(-1).files),main:r.verifySourceRows(a[2],m.main.runtimeFiles)};
+need(isDeepStrictEqual(checked,s.sources),'current executed source closure differs');
+const files=[];function walk(root,rel=''){for(const e of fs.readdirSync(path.join(root,rel),{withFileTypes:true})){
+ const n=path.posix.join(rel,e.name);if(e.isDirectory())walk(root,n);else files.push(n);}}
+walk(a[1]);need(isDeepStrictEqual(files.sort(),Object.keys(m.stages.at(-1).files).sort()),'current historical population differs');
+const inv=fs.readFileSync(path.join(a[2],'GENERATED.json'));
+need(sha(inv)===m.main.generatedInventorySha256,'current generated inventory differs');
+const inventory=JSON.parse(inv);need(inventory.fileCount===m.main.generatedMembers&&Object.keys(inventory.files).length===inventory.fileCount,'current generated population differs');
+r.verifySourceRows(a[2],inventory.files);
+const preparationEntry=d.admitPreparationEntry(o.preparationEntry,o,a);
+need(isDeepStrictEqual(preparationEntry,s.preparationEntry),'actual outer entry differs');
+const diagnostic=d.diagnosticIdentity(d.transformHelper(fs.readFileSync(path.join(a[1],'tools/qa/precip_eval_lib.cjs'))).identity);
+need(isDeepStrictEqual(diagnostic,s.diagnostic),'actual helper transformation differs');
+process.stdout.write(JSON.stringify({isolation,preparationEntry,diagnostic,sourcePopulation:Object.fromEntries(Object.entries(checked).map(([k,v])=>[k,Object.keys(v).length]))}));
+'''
+    preparation = lane['preparation']
+    return _dateonly_node(lane, script, {'args': lane['evidenceRetention']['originalArgv'][2:],
+        'options': {'driver': lane['evidenceRetention']['originalArgv'][1], 'manifest': preparation['manifest'],
+                    'prepared': preparation['prepared'], 'preparationProcess': preparation['process'],
+                    'preparationEntry': preparation['entryReceipt']['path']}, 'source': source, 'manifest': manifest}, 90)
+
+
+def r0040_dateonly_status(body, lane, returncode, timed_out):
+    """A durable supplemental admission is never a replacement capture report."""
+    result = {**r0040_capture_status(body, lane, returncode, timed_out,
+                                  admitted_status=R0040_DATEONLY_ADMITTED, timing_class='instrumented-date-only-clock'),
+              'timingClass': 'instrumented-date-only-clock'}
+    if result['status'] != R0040_DATEONLY_ADMITTED:
+        return result
+    result['status'] = 'INCOMPLETE'
+    def need(value, message):
+        if not value: raise ValueError(message)
+    def regular(path):
+        path=Path(path).absolute()
+        need(path.is_file() and not any(p.is_symlink() for p in (path,*path.parents)), 'regular Date-only evidence path required')
+        return path.read_bytes()
+    def reference(row, expected_path, file_key='path'):
+        need(isinstance(row,dict) and row.get(file_key)==str(expected_path), 'Date-only custody path differs')
+        raw=regular(row[file_key]);need(hashlib.sha256(raw).hexdigest()==row.get('sha256'), 'Date-only custody bytes differ')
+        return json.loads(raw)
+    try:
+        report=lane['result'];preparation=lane['preparation'];identity=r0040_dateonly_identity()
+        need(digest(HERE/'r0040_dateonly.cjs')==R0040_DATEONLY_WRAPPER_SHA256, 'Date-only entry source differs')
+        need(same_json(report.get('diagnostic'),identity) and same_json(preparation.get('dateOnlyDiagnostic'),identity), 'Date-only planned identity differs')
+        final=json.loads(regular(report['finalAdmissionPath']))
+        need(same_json(final.get('diagnostic'),identity), 'Date-only final identity differs')
+        manifest=json.loads(regular(R0040_MANIFEST))
+        need(digest(R0040_MANIFEST)==R0040_MANIFEST_SHA256==preparation['sourceCustody']['manifestSha256'], 'Date-only original manifest differs')
+        need(set(preparation['sourceCustody'])=={'manifestSha256','recipeSourceSha256','preparationProcess','prepared','preparationOuterExit'}
+             and preparation['sourceCustody']['recipeSourceSha256']=='9fc26a75cb62c145f9de7bd7aa386ac6714c238f3e08089558d34f02882f9730',
+             'complete original preparation source custody required')
+        raw=regular(report['journalPath']);need(raw.endswith(b'\n'), 'complete terminal journal line required')
+        rows=[json.loads(line) for line in raw.splitlines()]
+        need(rows and all(isinstance(row,dict) and type(row.get('sequence')) is int and row['sequence']==i+1
+                          for i,row in enumerate(rows)), 'contiguous Date-only journal required')
+        selected={name:[(i,row) for i,row in enumerate(rows) if row.get('event')==name]
+                  for name in ('sources','date-only-clock-proof','driver-process-ended')}
+        need(all(len(value)==1 for value in selected.values()), 'one source, clock and terminal event required')
+        source_index,source=selected['sources'][0];proof_index,proof_event=selected['date-only-clock-proof'][0]
+        terminal_index,terminal=selected['driver-process-ended'][0]
+        need(source_index<proof_index<terminal_index==len(rows)-1, 'Date-only source/proof/final order differs')
+        need(same_json({k:v for k,v in terminal.items() if k not in ('sequence','atUtc','monotonicNs','event')},final), 'terminal journal and final receipt differ')
+        proofs=final.get('clockProofs')
+        need(isinstance(proofs,list) and len(proofs)==1 and proofs[0].get('status')=='OBSERVED'
+             and proofs[0].get('error') is None and same_json(proof_event.get('proof'),proofs[0]), 'complete retained native clock proof required')
+        need(same_json(source.get('diagnostic'),identity) and same_json(source.get('originalArgv'),lane['evidenceRetention']['originalArgv'][2:]), 'original capture argv or source identity differs')
+        wanted={'research':manifest['researchInputs'],'historical':manifest['stages'][-1]['files'],'main':manifest['main']['runtimeFiles']}
+        need(same_json(source.get('sources'),wanted), 'complete original executed source population required')
+        need(all(same_json(source.get(k),v) for k,v in preparation['sourceCustody'].items()), 'source preparation custody differs')
+        for key,path in (('prepared',preparation['prepared']),('preparationProcess',preparation['process'])):
+            reference(source[key],path)
+        entry=source.get('preparationEntry')
+        need(same_json(entry,preparation['dateOnlyPreparation']) and same_json(entry,{**preparation['entryReceipt'],'actualExitCode':0}), 'actual outer preparation identity differs')
+        reference(entry,preparation['entryReceipt']['path'])
+        isolation=reference(source.get('isolation'),report['isolationReceiptPath'],'file')
+        need(isolation.get('protocol')=='salah-hosted-native-isolation/1' and isolation.get('passed') is True
+             and type(isolation.get('uid')) is int and isolation['uid']>0 and isolation.get('browserControl',{}).get('passed') is True,
+             'successful nonroot namespace evidence required')
+        expected=report['expectedCapture']
+        need(all(same_json(body.get(k),v) for k,v in expected.items() if k not in ('source','effectiveRateMmPerHour')),
+             'strict original capture metadata differs')
+        scene=final.get('scene');need(isinstance(scene,dict) and isinstance(scene.get('base'),str), 'complete capture scene required')
+        need(scene.get('options',{}).get('clock')=='running' and same_json(scene['options'].get('utcMs'),expected['utcMs']), 'original running scene differs')
+        need(scene.get('log',{}).get('continuedExternal')==[] and not scene.get('log',{}).get('errors'), 'original final scene errors remain')
+        need(len(final['pages'])==1 and final['pages'][0].get('id')==1 and final['pages'][0].get('closed') is True
+             and final['pages'][0].get('errors')==[] and not final['pages'][0].get('crashed'), 'complete uncrashed closed page required')
+        need(all(row.get('called') is True and not row.get('error') for row in final['closes'].values())
+             and same_json(final['closes']['browser'].get('disconnections'),[{'duringClose':True}]), 'original cleanup or disconnection differs')
+        requests=final['requests'];need(bool(requests), 'complete observed request population required')
+        for i,row in enumerate(requests):
+            actions=row.get('actions')
+            need(type(row.get('id')) is int and row['id']==i+1 and row.get('callbackState')=='returned'
+                 and sorted(row.get('observedBy',[]))==['context','route'] and isinstance(actions,list) and actions, 'request identity or route completion differs')
+            need(all(a.get('action') in ('continue','fulfill','abort') and a.get('state')=='completed' and a.get('refused') is False
+                     for a in actions), 'request action was incomplete or refused')
+            need(row.get('browserState')=='finished' or row.get('browserState')=='failed' and actions[-1]['action']=='abort', 'late request failure remains')
+        clock_script=r'''
+const fs=require('fs'),path=require('path'),{isDeepStrictEqual}=require('util'),d=require(process.argv[1]);
+const g=require(path.join(path.dirname(process.argv[1]),'retain_r0040.cjs')),p=JSON.parse(fs.readFileSync(0,'utf8'));
+const admission=d.admitClockProof(p.proof.raw,p.utcMs);
+if(!isDeepStrictEqual(admission,p.proof.admission))throw Error('retained native clock admission differs');
+for(const row of p.requests)for(const action of row.actions)
+ if(action.action==='continue'&&!g.allowedContinuation(action.destination,p.base))throw Error('unadmitted external continuation');
+process.stdout.write(JSON.stringify(admission));
+'''
+        result['clockCheck']=_dateonly_node(lane,clock_script,{'proof':proofs[0],'utcMs':expected['utcMs'],
+                                                            'requests':requests,'base':scene['base']},10)
+        check=result['clockCheck'];need(type(check['returncode']) is int and check['returncode']==0 and check['timedOut'] is False,
+                                       'native clock proof or request-route recomputation failed')
+        need(same_json(json.loads(check['stdout']),proofs[0]['admission']), 'recomputed native clock receipt differs')
+        result['currentSourceCheck']=_dateonly_current_check(lane,source,manifest)
+        check=result['currentSourceCheck'];need(type(check['returncode']) is int and check['returncode']==0 and check['timedOut'] is False,
+                                                'current namespace, preparation or source closure did not re-admit')
+        wanted_check={'isolation':source['isolation'],'preparationEntry':entry,'diagnostic':identity,
+                      'sourcePopulation':{k:len(v) for k,v in wanted.items()}}
+        need(same_json(json.loads(check['stdout']),wanted_check), 'current Date-only source receipt differs')
+        result.update(status=R0040_DATEONLY_ADMITTED,diagnostic=identity,
+                      journal={'path':report['journalPath'],'sha256':hashlib.sha256(raw).hexdigest()})
+    except (OSError, ValueError, KeyError, IndexError, TypeError, AttributeError) as error:
+        result['reason']=str(error)
+    return result
 
 
 def r0035_stage_status(lane, returncode, timed_out):
@@ -546,6 +725,8 @@ def classify_lane(lane, returncode, timed_out=False):
         return {**result, 'status': r002f_report_status(body, lane, returncode, timed_out)}
     if kind == 'r0040-capture':
         return {**result, **r0040_capture_status(body, lane, returncode, timed_out)}
+    if kind == 'r0040-capture-dateonly':
+        return {**result, **r0040_dateonly_status(body, lane, returncode, timed_out)}
     # Preserve observed recipe failures even if later acquisition is interrupted.
     # Return codes alone do not distinguish failed admission from missing evidence.
     if kind == 'r003f-b0':
@@ -604,7 +785,7 @@ def classify_lane(lane, returncode, timed_out=False):
 def namespace_status(lane, process, inner):
     """An inner observation cannot overrule abnormal wrapper completion."""
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, STAGES_OBSERVED)
+                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED)
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
@@ -613,7 +794,13 @@ def namespace_status(lane, process, inner):
     if admitted and inner['status'] == CAPTURE_ADMITTED:
         admitted = (lane.get('result', {}).get('kind') == 'r0040-capture' and type(inner.get('returncode')) is int and inner['returncode'] == 0
                     and inner.get('timedOut') is False and inner.get('nativeQualification') == 'NOT_VERIFIED')
-    if admitted and lane.get('result', {}).get('kind') == 'r0040-capture' and inner['status'] == 'PASS':
+    if admitted and inner['status'] == R0040_DATEONLY_ADMITTED:
+        admitted = (lane.get('result', {}).get('kind') == 'r0040-capture-dateonly'
+                    and type(inner.get('returncode')) is int and inner['returncode'] == 0 and inner.get('timedOut') is False
+                    and inner.get('nativeQualification') == 'NOT_VERIFIED' and inner.get('humanAcceptance') == 'OUTSTANDING'
+                    and inner.get('timingClass') == 'instrumented-date-only-clock'
+                    and same_json(inner.get('diagnostic'), r0040_dateonly_identity()))
+    if admitted and lane.get('result', {}).get('kind') in ('r0040-capture', 'r0040-capture-dateonly') and inner['status'] == 'PASS':
         admitted = False  # This lane can admit acquisition, never report a cadence PASS.
     if admitted and inner['status'] == STAGES_OBSERVED:
         admitted = ('stageObservation' in lane and inner.get('returncode') == 0 and inner.get('timedOut') is False
@@ -714,7 +901,7 @@ def inside(args, runtime):
         if stage_campaign(args):
             prepare_stages(args, runtime, destination)
         r0040_destination = args.task/'work'/'r0040-capture'
-        if rain_campaign(args) == 'capture':
+        if rain_campaign(args) in R0040_CAPTURE_MODES:
             command = [runtime['python'], str(HERE/'r0040_capture_prepare.py'), '--manifest', str(R0040_MANIFEST),
                        '--research', str(args.research), '--historical', str(args.historical),
                        '--main', str(destination/'trees/main'), '--out', str(r0040_destination),
@@ -782,7 +969,7 @@ def inside(args, runtime):
             command += ['--r0035-stages', '--r0035-stage-process', str(args.task/'capture/r0035-stage-preparation/process.json')]
         command += ['--r003f-harness', moon_campaign(args)]
         command += ['--r0040-mode', rain_campaign(args)]
-        if rain_campaign(args) == 'capture':
+        if rain_campaign(args) in R0040_CAPTURE_MODES:
             command += ['--r0040-work', str(r0040_destination),
                         '--r0040-process', str(args.task/'capture/r0040-preparation/process.json'),
                         '--r0040-entry-process', str(args.task/'capture/r0040-preparation-entry.json')]
@@ -797,7 +984,7 @@ def inside(args, runtime):
                         '--r002f-dpr', str(args.r002f_dpr), '--r002f-rounds', str(args.r002f_rounds),
                         '--r002f-section', args.r002f_section]
         plan = run_bounded(command, str(HERE), dict(os.environ), args.task/'capture'/'lanes.json',
-                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) == 'capture' or stage_campaign(args) else 30)
+                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) else 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
     plan = json.loads((args.task/'capture'/'lanes.json').read_text())
     lane = next(x for x in admit_plan(plan, args) if x['id'] == args.lane)
@@ -805,11 +992,11 @@ def inside(args, runtime):
     # Recipe env is declarative data from the reviewed planner; arbitrary variables
     # cannot restore a credential/proxy/loader setting that the wrapper removed.
     for key, value in lane.get('env', {}).items():
-        if key != 'NODE_PATH' and not (lane['result']['kind'] == 'r0040-capture' and key == 'R0040_DISPERSION' and value == 'common'):
+        if key != 'NODE_PATH' and not (lane['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly') and key == 'R0040_DISPERSION' and value == 'common'):
             raise ValueError('unapproved lane environment variable')
         env[key] = value
     for key in lane.get('clearEnv', []):
-        if lane['result']['kind'] != 'r0040-capture' or key != 'R0040_OPTIONS':
+        if lane['result']['kind'] not in ('r0040-capture', 'r0040-capture-dateonly') or key != 'R0040_OPTIONS':
             raise ValueError('unapproved cleared lane environment variable')
         env.pop(key, None)
     env['PLAYWRIGHT_BROWSERS_PATH'] = str(args.task/('python-browsers' if lane['result']['kind'] == 'r0035-trials' else 'node-browsers'))
@@ -853,7 +1040,7 @@ def outside(args, runtime):
     deadline = time.monotonic() + 2640  # leaves sealing/upload time within the job ceiling
     preparation = run_bounded(isolated_command(args, runtime, 'prepare'), str(HERE), parent_env,
                               capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
-                              (1920 if getattr(args, 'r002f', False) else 1020) + (330 if rain_campaign(args) == 'capture' else 0)
+                              (1920 if getattr(args, 'r002f', False) else 1020) + (330 if rain_campaign(args) in R0040_CAPTURE_MODES else 0)
                               + (240 if stage_campaign(args) else 0))
     overall = {'protocol': 'salah-hosted-native-observation/1', 'engine': args.engine,
                'workOrders': selected, 'evidenceRetention': getattr(args, 'retain_evidence', False),
@@ -882,7 +1069,7 @@ def outside(args, runtime):
         else:
             result = run_bounded(isolated_command(args, runtime, 'lane', lane['id']), str(HERE), parent_env,
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
-                                 min(lane['timeoutSeconds'] + 75, remaining))
+                                 min(lane['timeoutSeconds'] + 75 + (100 if lane.get('result',{}).get('kind') == 'r0040-capture-dateonly' else 0), remaining))
             path = capture/'lane-status'/(lane['id']+'.json')
             try: inner = json.loads(path.read_text())
             except (OSError, ValueError): inner = None
@@ -896,7 +1083,7 @@ def outside(args, runtime):
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, STAGES_OBSERVED) for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED) for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     write_json(capture/'observation.json', overall)
     return 0 if overall['status'] == 'OBSERVED' else 2
@@ -910,7 +1097,7 @@ def main():
     parser.add_argument('--campaign', type=Path)
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
     parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0'), default='published')
-    parser.add_argument('--r0040-mode', choices=('options', 'capture'), default='options')
+    parser.add_argument('--r0040-mode', choices=('options', *R0040_CAPTURE_MODES), default='options')
     parser.add_argument('--work-orders', nargs='+')
     parser.add_argument('--retain-evidence', action='store_true')
     parser.add_argument('--r0035-guard', choices=('default', 'off'), default='default')

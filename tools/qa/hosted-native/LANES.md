@@ -102,9 +102,10 @@ canonical order above. Without the selection switch, the existing three work
 orders are emitted, plus R002F when enabled. The initial hosted campaign enabled
 R002F and contained all four work orders and five command rows. R0035 defaults
 to both timing and capture with their original dependency. The checked-in
-follow-up selects only R0035 Chromium timing with guard off, all-source replay
-scope and explicit preparation-stage observations. Previously obtained native
-results remain separate; no other workstream is repeated by this campaign.
+follow-up selects only the R0040 Chromium Date-only diagnostic capture on
+genuine main. Previously obtained native results remain separate; no other
+workstream is repeated by this campaign. Its reconstructed source and central
+wiring require a fresh independent exact-tree review before hosted execution.
 
 Selection limits observation commands. Common source preparation and the
 original star-plan validation remain unchanged. The coordinator checks the
@@ -260,10 +261,10 @@ supplies physical-device or human evaluation.
 
 ## Optional revised R0040 capture
 
-`--r0040-mode options|capture` is available in both planner and observer;
+`--r0040-mode options|capture|capture-dateonly` is available in both planner and observer;
 `campaign.json` uses `r0040Mode`. The absent-field/CLI default is `options`, with
-the unchanged nine-cell invocation above. `capture` requires selected R0040 and
-Chromium. It names only `chromium / bday / moderate / M1 / common`, DPR1, genuine
+the unchanged nine-cell invocation above. Both capture modes require selected
+R0040 and Chromium. They name only `chromium / bday / moderate / M1 / common`, DPR1, genuine
 main. It does not select a different model, engine, dispersion or product arm.
 
 After successful common preparation, the coordinator executes the exact entry
@@ -329,6 +330,44 @@ Pillow/cryptography environment. No new hosted package is acquired. The exact
 frame count, gap, average-rate, audit-match, pixel, geometry and visibility gates
 remain the original verifier's responsibility. No cadence tolerance is widened.
 
+### Separate Date-only capture diagnostic
+
+`capture-dateonly` selects `r0040-chromium-capture-dateonly` and the result kind
+`r0040-capture-dateonly`. It uses the same actual guarded preparation and original
+eight positional capture arguments. The wrapper is `r0040_dateonly.cjs`, with
+an additional `--preparation-entry` argument bound to the actual outer entry.
+The planner requires the pinned wrapper and exact helper/install identity.
+It does not modify the prepared historical helper on disk. The single in-memory
+seam and its byte-for-byte reversal are described in
+[R0040_DATE_ONLY.md](R0040_DATE_ONLY.md).
+
+Only Date is changed: it advances at 1x from the document's unchanged native
+performance clock. Timer, rAF and performance identities remain native. A
+bounded startup proof precedes the original CDP stream; it is retained raw even
+when admission fails. The wrapper adds no per-frame copies or fsync. The timing
+class is `instrumented-date-only-clock`, with uncalibrated Date-read, startup
+proof and existing host-retention overhead.
+
+Original `capture.json` and PNGs stay in the distinct lane output. Its sibling
+`r0040-chromium-capture-dateonly-retention` retains the final receipt and journal.
+The coordinator requires their terminal correspondence, exact original source
+population and actual preparation-entry identity, recomputes the proof using the
+wrapper's actual function, rechecks request continuation rules, and re-admits the
+current nonroot namespace and all original source bytes. These read-only final
+checks have separate 10-second and 90-second child bounds. The original capture
+process-group bound remains 180 seconds; this mode reserves another 100 seconds
+inside its namespace budget for final checks, giving a 355-second outer bound
+including the existing 75-second boundary allowance. The overall ceiling still
+applies. Existing modes retain their original bounds and argv.
+
+The only successful acquisition status is
+`ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION`. Native qualification remains
+`NOT_VERIFIED` and human acceptance remains `OUTSTANDING`. Missing raw proof,
+incomplete journal, changed source/current namespace, late request or lifecycle
+failure, or a failed actual process cannot become a generic `PASS`. Original
+failure, timeout, prevented-continuation exit 86 and abnormal outer namespace
+precedence remain intact. The original full-clock records are not replaced.
+
 ## Optional R002F preparation and command
 
 The coordinator first runs the unchanged common preparation, then separately
@@ -385,6 +424,15 @@ first stage and both original/final logs, and keep independent lanes runnable.
 They also reject absent/status-only capture receipts, altered metadata, changed
 CLI/environment, missing source population and late outer failures. These are
 offline instrument controls, not native capture evidence.
+
+The reconstructed Date-only source contributes 13 registered Node controls using
+the actual unchanged capture driver and transformed historical helper with
+bounded doubles. Central controls now total 31 planner/preparation cases and
+73 coordinator cases. New cases cover distinct selection, all eight original
+arguments, full source population, actual outer preparation failure, native-clock
+recomputation, terminal custody, late requests/crashes/disconnections, currentness
+failure, missing/duplicate selected rows, and child-veto versus outer failure.
+Their synthetic observations do not constitute native clock or cadence evidence.
 
 The registered retention controls run the actual source-pinned recipe functions
 with browser doubles. The coordinator controls additionally prove campaign

@@ -29,6 +29,9 @@ R0040_MANIFEST = HERE.parents[2]/'docs/state-contracts/evidence/R0040/native-cap
 R0040_MANIFEST_SHA256 = '267f2fd8ac130c049430ffdaa0fd50b72457c60084b49360346748cc940f6b73'
 R0040_CAPTURE_WRAPPER_SHA256 = 'd252e345225c0d3565c0c2a321324ca206083ba371eb43654193d422f9b2235f'
 R0040_PREPARER_SHA256 = '4ba6328ee9fe96aec4a96109c58d0d67e0d3e434756829fbe247816bcd001f68'
+R0040_CAPTURE_MODES = ('capture', 'capture-dateonly')
+R0040_DATEONLY_WRAPPER_SHA256 = '214d4a3c6cb13dbfa69cf0330444aeb9f71d9816b43129091c93bb3121489c44'
+R0040_DATEONLY_ADMITTED = 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
 R0035_STAGE_WRAPPER_SHA256 = '8c3838b2ba01d6a4114b5de0aa2401134bb0cea3918dcba4fe1237997e53c99b'
 R0035_STAGE_MATERIALIZER_SHA256 = '1890dbdeacf3bcd3fc7f9624a8a970770ae4dbb43f6987e43919c7161e17bf4a'
 
@@ -79,18 +82,38 @@ def admit_r0035_stages(prepared, prepared_path, process_path, guard, scope):
     return admission
 
 
+def same_json(left, right):
+    """Receipt identity must distinguish booleans from integer measurements."""
+    return json.dumps(left, sort_keys=True, allow_nan=False) == json.dumps(right, sort_keys=True, allow_nan=False)
+
+
+def r0040_dateonly_identity():
+    return {'protocol': 'r0040-date-only-diagnostic/1', 'kind': 'instrumented native-timer Date-only helper',
+            'entrySha256': R0040_DATEONLY_WRAPPER_SHA256, 'retentionSha256': R0040_CAPTURE_WRAPPER_SHA256,
+            'helper': {'protocol': 'r0040-date-only-helper/1',
+                       'originalSha256': 'a02358979e9aa2f968c5ca9dde4ec7a8e63db869b871f1c24ce65a68e71497e7',
+                       'transformedSha256': '95865791b0de11b15c35a4e6ec05d6d7122df6bd31850e49673d32855ef309ec',
+                       'installDateOnlySha256': '83146eeba65f7c37ce99d68cd8ec4bdb69d43fc9a86668be0988c327a30f4137',
+                       'originalRecoveredExactly': True, 'changedSeams': 1, 'originalBytes': 17990, 'transformedBytes': 19642},
+            'originalDriverUnchanged': True, 'originalVerifierUnchanged': True, 'productAndRendererUnchanged': True,
+            'admissionScope': 'Separate research diagnostic; original acquisition failure remains unchanged. The unchanged lossless verifier and all owner gates remain required.'}
+
+
 def rain_mode(value, selected, engine):
-    if not isinstance(value, str) or value not in ('options', 'capture'):
+    if not isinstance(value, str) or value not in ('options', *R0040_CAPTURE_MODES):
         raise ValueError('unsupported R0040 mode')
-    if value == 'capture' and ('R0040' not in selected or engine != 'chromium'):
+    if value in R0040_CAPTURE_MODES and ('R0040' not in selected or engine != 'chromium'):
         raise ValueError('R0040 capture requires selected R0040 and the reviewed Chromium cell')
     return value
 
 
-def admit_r0040(prepared, work, process_path, entry_path, out, node, module):
+def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, mode='capture'):
     """The actual outer exit and unchanged read-only source guard both gate capture."""
     admission = {'status': 'INCOMPLETE'}
     try:
+        if mode not in R0040_CAPTURE_MODES:
+            raise ValueError('unsupported R0040 capture admission mode')
+        dateonly = mode == 'capture-dateonly'
         work, process_path, entry_path = (Path(p).absolute() for p in (work, process_path, entry_path))
         for path in (process_path, entry_path):
             if any(p.is_symlink() for p in (path, *path.parents)) or not path.is_file():
@@ -100,7 +123,7 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module):
         if (entry.get('protocol') != 'r0040-capture-preparation-entry/1'
                 or type(entry.get('returncode')) is not int or entry['returncode'] != 0
                 or entry.get('timedOut') is not False or entry.get('wrapperSha256') != R0040_PREPARER_SHA256
-                or entry.get('retentionError')):
+                or entry.get('retentionError') or dateonly and entry.get('retentionError') is not None):
             raise ValueError('R0040 preparation entry did not complete successfully')
         child = json.loads(process_path.read_text())
         admission['processReceipt'] = {'path': str(process_path), 'sha256': digest(process_path)}
@@ -116,24 +139,35 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module):
         if child.get('inputs') != expected_inputs:
             raise ValueError('R0040 preparation input paths differ from this campaign')
         if (digest(HERE/'r0040_capture_prepare.py') != R0040_PREPARER_SHA256
-                or digest(HERE/'retain_r0040_capture.cjs') != R0040_CAPTURE_WRAPPER_SHA256):
+                or digest(HERE/'retain_r0040_capture.cjs') != R0040_CAPTURE_WRAPPER_SHA256
+                or dateonly and digest(HERE/'r0040_dateonly.cjs') != R0040_DATEONLY_WRAPPER_SHA256):
             raise ValueError('R0040 preparation or capture source differs from review')
         manifest, _ = load_r0040_contract(R0040_MANIFEST)
         original = work/'receipts/prepared.json'
+        identifier = 'r0040-chromium-'+mode
         options = {'driver': str(research/'tools/qa/r0040/capture.cjs'), 'manifest': str(R0040_MANIFEST),
                    'prepared': str(original), 'preparationProcess': str(process_path),
-                   'evidence': str(out/'r0040-chromium-capture-retention')}
-        argv = list(map(str, (module, work/'historical', main, out/'r0040-chromium-capture',
+                   'evidence': str(out/(identifier+'-retention'))}
+        argv = list(map(str, (module, work/'historical', main, out/identifier,
                               'chromium', 'bday', 'moderate', 'M1')))
         # This exported guard imports no browser. It rechecks the actual twelve
         # research, six patched historical, 116 generated and 177 runtime files.
         check = ('const m=require(process.argv[1]); '
                  'process.stdout.write(JSON.stringify(m.verifySources(JSON.parse(process.argv[2]),JSON.parse(process.argv[3]))));')
+        if dateonly:
+            options['preparationEntry'] = str(entry_path)
+            check = ('const m=require(process.argv[1]),o=JSON.parse(process.argv[2]),a=JSON.parse(process.argv[3]),'
+                     'd=require(process.argv[4]),fs=require("fs"),path=require("path"); '
+                     'const checked=m.verifySources(o,a); '
+                     'checked.dateOnlyPreparation=d.admitPreparationEntry(o.preparationEntry,o,a); '
+                     'checked.dateOnlyDiagnostic=d.diagnosticIdentity(d.transformHelper(fs.readFileSync(path.join(a[1],"tools/qa/precip_eval_lib.cjs"))).identity); '
+                     'process.stdout.write(JSON.stringify(checked));')
         env = dict(os.environ, R0040_DISPERSION='common')
         for key in ('R0040_OPTIONS', 'NODE_OPTIONS'): env.pop(key, None)
         try:
-            result = subprocess.run([str(node), '-e', check, str(HERE/'retain_r0040_capture.cjs'),
-                                     json.dumps(options), json.dumps(argv)], cwd=research, env=env,
+            command = [str(node), '-e', check, str(HERE/'retain_r0040_capture.cjs'), json.dumps(options), json.dumps(argv)]
+            if dateonly: command.append(str(HERE/'r0040_dateonly.cjs'))
+            result = subprocess.run(command, cwd=research, env=env,
                                     capture_output=True, text=True, timeout=90)
         except subprocess.TimeoutExpired as error:
             def retained(value):
@@ -152,6 +186,11 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module):
                 != {'historical': 6, 'research': 12, 'main': 177}
                 or checked.get('custody', {}).get('manifestSha256') != R0040_MANIFEST_SHA256):
             raise ValueError('R0040 actual source admission population or custody is incomplete')
+        if dateonly:
+            if (not same_json(checked.get('dateOnlyDiagnostic'), r0040_dateonly_identity())
+                    or not same_json(checked.get('dateOnlyPreparation'), {**admission['entryReceipt'], 'actualExitCode': 0})):
+                raise ValueError('Date-only diagnostic helper or outer-entry identity differs')
+            admission.update(dateOnlyDiagnostic=checked['dateOnlyDiagnostic'], dateOnlyPreparation=checked['dateOnlyPreparation'])
         admission.update(status='PASS', work=str(work), manifest=str(R0040_MANIFEST), prepared=str(original),
                          process=str(process_path), wrapperSha256=R0040_CAPTURE_WRAPPER_SHA256,
                          sourceCustody=checked['custody'], verifiedPopulation={k: len(v) for k, v in wanted.items()},
@@ -321,9 +360,11 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         entries.append(row)
         return row
 
-    if r0040_mode == 'capture':
-        rain = lane('r0040-chromium-capture', 'R0040', 1, 180, 'r0040-capture', 'capture.json',
-                    {'0': 'ADMITTED_FOR_OFFLINE_VERIFICATION', '1': 'FAIL', '86': 'EXTERNAL_CONTINUATION_VETOED'})
+    if r0040_mode in R0040_CAPTURE_MODES:
+        dateonly = r0040_mode == 'capture-dateonly'
+        rain = lane('r0040-chromium-'+r0040_mode, 'R0040', 1, 180, 'r0040-'+r0040_mode, 'capture.json',
+                    {'0': R0040_DATEONLY_ADMITTED if dateonly else 'ADMITTED_FOR_OFFLINE_VERIFICATION',
+                     '1': 'FAIL', '86': 'EXTERNAL_CONTINUATION_VETOED'})
         admission = r0040_preparation or {'status': 'INCOMPLETE', 'reason': 'R0040 capture preparation is missing'}
         rain['preparation'] = admission
         rain['env']['R0040_DISPERSION'] = 'common'; rain['clearEnv'] = ['R0040_OPTIONS']
@@ -332,6 +373,11 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         rain['evidenceRetention'] = {'instrumented': True, 'output': evidence, 'timingComparableToOriginal': False,
                                     'overhead': 'Host request/error/cleanup serialization and fsync; PNGs are hashed after capture. No added CDP frame listener or per-frame copies.'}
         rain['result']['finalAdmissionPath'] = str(Path(evidence)/'final-admission.json')
+        if dateonly:
+            rain['postCaptureCheckSeconds'] = 100
+            rain['evidenceRetention']['overhead'] += ' Date reads use native performance time; a bounded startup timer and two rAF callbacks add work before capture. Instrumented timing is not original performance.'
+            rain['result'].update(journalPath=str(Path(evidence)/'events.jsonl'),
+                                  isolationReceiptPath=str(out.parent/'isolation'/rain['id']/'receipt.json'))
         rain['argv'] = []
         if admission.get('status') == 'PASS':
             original = list(map(str, [node, research/'tools/qa/r0040/capture.cjs', module,
@@ -343,6 +389,12 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                             '--preparation-process', admission['process'], '--evidence', evidence, '--', *original[2:]]
             rain['result'].update(expectedCapture=admission['expectedCapture'], pins=admission['pins'],
                                   wrapperSha256=R0040_CAPTURE_WRAPPER_SHA256)
+            if dateonly:
+                rain['argv'][1] = str(HERE/'r0040_dateonly.cjs')
+                insert = rain['argv'].index('--evidence')
+                rain['argv'][insert:insert] = ['--preparation-entry', admission['entryReceipt']['path']]
+                rain['result'].update(wrapperSha256=R0040_DATEONLY_WRAPPER_SHA256,
+                                      diagnostic=admission['dateOnlyDiagnostic'])
     else:
         rain = lane(f'r0040-{engine}', 'R0040', 1, 720, 'r0040-options', 'native-options.json',
                     {'0': 'MEASURED', '1': 'FAIL'})
@@ -420,7 +472,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         for row in entries:
             if row['workOrder'] not in ('R0040', 'R0035'):
                 continue
-            if row['result']['kind'] == 'r0040-capture':
+            if row['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly'):
                 continue
             original = row['argv']
             evidence = str(out/(row['id']+'-retention'))
@@ -494,7 +546,7 @@ def main():
     parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0'), default='published')
     parser.add_argument('--r003f-prepared', type=Path)
     parser.add_argument('--r003f-process', type=Path)
-    parser.add_argument('--r0040-mode', choices=('options', 'capture'), default='options')
+    parser.add_argument('--r0040-mode', choices=('options', *R0040_CAPTURE_MODES), default='options')
     parser.add_argument('--r0040-work', type=Path)
     parser.add_argument('--r0040-process', type=Path)
     parser.add_argument('--r0040-entry-process', type=Path)
@@ -526,8 +578,8 @@ def main():
         r003f = (admit_r003f(args.r003f_prepared, args.r003f_process)
                  if args.r003f_harness == 'corrected-b0' else None)
         r0040 = (admit_r0040(prepared, args.r0040_work, args.r0040_process, args.r0040_entry_process,
-                             out, args.node, args.node_modules/'playwright')
-                 if args.r0040_mode == 'capture' else None)
+                             out, args.node, args.node_modules/'playwright', mode=args.r0040_mode)
+                 if args.r0040_mode in R0040_CAPTURE_MODES else None)
         r0035_stage = (admit_r0035_stages(prepared, args.prepared, args.r0035_stage_process,
                                          args.r0035_guard, args.r0035_scope) if args.r0035_stages else None)
         if r0035_stage and r0035_stage['status'] == 'PASS':

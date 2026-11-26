@@ -921,6 +921,234 @@ class RainCapture(unittest.TestCase):
         self.assertEqual(report['status'],'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
 
 
+class DateOnlyCapture(unittest.TestCase):
+    """Synthetic custody with the real clock-admission function; no browser."""
+    write_final = RainCapture.write_final
+
+    def setUp(self):
+        RainCapture.setUp(self)
+        import shutil
+        self.node = shutil.which('node')
+        entry=self.capture/'r0040-preparation-entry.json'
+        M.write_json(entry, {'protocol':'synthetic-current-source-double/1'})
+        for key in ('prepared','process'):
+            M.write_json(self.admission[key], {'protocol':'synthetic-current-source-double/1','role':key})
+        self.admission['entryReceipt']={'path':str(entry),'sha256':M.digest(entry)}
+        self.admission['dateOnlyPreparation']={**self.admission['entryReceipt'],'actualExitCode':0}
+        self.admission['dateOnlyDiagnostic']=self.planner.r0040_dateonly_identity()
+        self.admission['sourceCustody']={
+            'manifestSha256':self.planner.R0040_MANIFEST_SHA256,
+            'recipeSourceSha256':'9fc26a75cb62c145f9de7bd7aa386ac6714c238f3e08089558d34f02882f9730',
+            'preparationProcess':{'path':self.admission['process'],'sha256':M.digest(Path(self.admission['process']))},
+            'prepared':{'path':self.admission['prepared'],'sha256':M.digest(Path(self.admission['prepared']))},
+            'preparationOuterExit':'Coordinator must independently require the preparation entry actual exit zero.'}
+        self.plan=self.planner.make_plan(self.prepared,self.capture/'lanes',python_playwright=Path(sys.executable),
+            node=Path(self.node),node_modules=Path('/runtime/modules'),pngjs=Path('/runtime/pngjs'),
+            work_orders=['R0040'],r0040_mode='capture-dateonly',r0040_preparation=self.admission)
+        self.lane=self.plan['lanes'][0];self.args.r0040_mode='capture-dateonly';self.args.lane=self.lane['id']
+        original=Path(self.lane['result']['path']);M.write_json(original,self.raw)
+        self.final.update(status='ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION',timingClass='instrumented-date-only-clock',
+            diagnostic=self.planner.r0040_dateonly_identity(),
+            originalReport={'file':str(original),'bytes':original.stat().st_size,'sha256':M.digest(original)},
+            pages=[{'id':1,'errors':[],'closed':True}],
+            requests=[{'id':1,'url':'http://127.0.0.1:3187/index.html','method':'GET','resourceType':'document',
+                'observedBy':['context','route'],'callbackState':'returned','browserState':'finished',
+                'actions':[{'action':'continue','state':'completed','destination':'http://127.0.0.1:3187/index.html','refused':False}]}],
+            scene={'base':'http://127.0.0.1:3187','options':{'clock':'running','utcMs':self.raw['utcMs']},
+                   'log':{'errors':[],'continuedExternal':[]}},
+            closes={name:{'called':True,'returned':True,'event':True} for name in ('context','browser','server')})
+        self.final['closes']['browser']['disconnections']=[{'duringClose':True}]
+        keys=('Date','performance','performanceNow','timeOrigin','setTimeout','clearTimeout','setInterval',
+              'clearInterval','requestAnimationFrame','cancelAnimationFrame','queueMicrotask')
+        def sample(t):
+            return {'performanceBeforeMs':t,'performanceAfterMs':t+0.25,'dateNowMs':self.raw['utcMs']+int(t)-100,
+                    'newDateMs':self.raw['utcMs']+int(t)-100,'timeOriginMs':100000,'preserved':dict.fromkeys(keys,True)}
+        proof={'protocol':'r0040-date-only-clock-proof/1','status':'COMPLETE','utcMs':self.raw['utcMs'],
+               'anchorPerformanceMs':100,'timeOriginMs':100000,'before':sample(101),'after':sample(155),
+               'timer':{'requestedDelayMs':40,'sample':sample(145)},
+               'frames':[{'timestampMs':110,'sample':sample(111)},{'timestampMs':125,'sample':sample(126)}],'error':None}
+        run=subprocess.run([self.node,'-e','const d=require(process.argv[1]); process.stdout.write(JSON.stringify(d.admitClockProof(JSON.parse(process.argv[2]),Number(process.argv[3]))));',
+                            str(M.HERE/'r0040_dateonly.cjs'),json.dumps(proof),str(self.raw['utcMs'])],capture_output=True,text=True)
+        self.assertEqual(run.returncode,0,run.stderr)
+        self.final['clockProofs']=[{'status':'OBSERVED','raw':proof,'admission':json.loads(run.stdout),'error':None}]
+        isolation=Path(self.lane['result']['isolationReceiptPath'])
+        M.write_json(isolation,{'protocol':'salah-hosted-native-isolation/1','passed':True,'uid':1001,
+                               'netns':'net:[synthetic-inner]','outerNetns':'net:[synthetic-outer]',
+                               'browserControl':{'passed':True}})
+        self.sources={'isolation':{'file':str(isolation),'sha256':M.digest(isolation)},
+            **self.admission['sourceCustody'],'preparationEntry':self.admission['dateOnlyPreparation'],
+            'sources':{'research':self.manifest['researchInputs'],'historical':self.manifest['stages'][-1]['files'],
+                       'main':self.manifest['main']['runtimeFiles']},
+            'originalArgv':self.lane['evidenceRetention']['originalArgv'][2:],
+            'diagnostic':self.planner.r0040_dateonly_identity()}
+        verified={'isolation':self.sources['isolation'],'preparationEntry':self.sources['preparationEntry'],
+                  'diagnostic':self.sources['diagnostic'],'sourcePopulation':{'research':12,'historical':6,'main':177}}
+        self.current={'returncode':0,'timedOut':False,'stdout':json.dumps(verified),'stderr':''}
+        self.current_patch=patch.object(M,'_dateonly_current_check',return_value=self.current)
+        self.check=self.current_patch.start();self.addCleanup(self.current_patch.stop)
+        self.write_evidence()
+
+    def tearDown(self): self.tmp.cleanup()
+
+    def write_evidence(self):
+        M.write_json(self.lane['result']['finalAdmissionPath'],self.final)
+        payloads=[{'event':'sources',**self.sources},
+                  {'event':'date-only-clock-proof','proof':self.final['clockProofs'][0]},
+                  {'event':'driver-process-ended',**self.final}]
+        self.rows=[{'sequence':i+1,'atUtc':'2000-01-01T00:00:00.000Z','monotonicNs':str(i+1),**row}
+                   for i,row in enumerate(payloads)]
+        Path(self.lane['result']['journalPath']).write_text(''.join(json.dumps(row)+'\n' for row in self.rows))
+
+    def test_dateonly_complete_evidence_has_distinct_acquisition_not_product_pass(self):
+        verdict=M.classify_lane(self.lane,0)
+        self.assertEqual(verdict['status'],'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION',verdict)
+        self.assertEqual(verdict['timingClass'],'instrumented-date-only-clock')
+        self.assertEqual(verdict['nativeQualification'],'NOT_VERIFIED')
+        self.assertEqual(verdict['humanAcceptance'],'OUTSTANDING')
+        inner={**verdict,'id':self.lane['id']}
+        self.assertEqual(M.namespace_status(self.lane,{'returncode':0,'timedOut':False},inner)['status'],verdict['status'])
+        for status in ('PASS',M.CAPTURE_ADMITTED):
+            self.assertEqual(M.namespace_status(self.lane,{'returncode':0,'timedOut':False},{**inner,'status':status})['status'],'ISOLATION_UNCONFIRMED')
+
+    def test_dateonly_clock_claim_is_recomputed_from_actual_function_even_with_consistent_journal(self):
+        original=copy.deepcopy(self.final)
+        for mutate in (lambda f:f['clockProofs'][0]['raw']['after'].update(dateNowMs=self.raw['utcMs']),
+                       lambda f:f['clockProofs'][0]['raw']['before']['preserved'].update(setTimeout=False),
+                       lambda f:f['clockProofs'][0]['raw'].update(timeOriginMs=999),
+                       lambda f:f['clockProofs'][0]['raw'].update(frames=[]),
+                       lambda f:f['clockProofs'][0]['admission'].update(rafCallbacks=True),
+                       lambda f:f['diagnostic']['helper'].update(transformedSha256='0'*64)):
+            self.final=copy.deepcopy(original);mutate(self.final);self.write_evidence()
+            self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE')
+
+    def test_dateonly_terminal_journal_and_full_source_population_are_required(self):
+        for mutation in ('missing-final','duplicate-final','reordered','different-final','truncated','missing-source','partial-main'):
+            self.write_evidence();rows=copy.deepcopy(self.rows); journal=Path(self.lane['result']['journalPath'])
+            if mutation=='missing-final': rows.pop()
+            elif mutation=='duplicate-final': rows.append(copy.deepcopy(rows[-1]))
+            elif mutation=='reordered': rows[0],rows[1]=rows[1],rows[0]
+            elif mutation=='different-final': rows[-1]['exitCode']=False
+            elif mutation=='missing-source': rows.pop(0)
+            elif mutation=='partial-main': rows[0]['sources']['main'].pop(next(iter(rows[0]['sources']['main'])))
+            text=''.join(json.dumps(row)+'\n' for row in rows)
+            journal.write_text(text[:-1] if mutation=='truncated' else text)
+            self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE',mutation)
+
+    def test_dateonly_late_request_crash_and_disconnect_cannot_be_relabeled_as_admitted(self):
+        original=copy.deepcopy(self.final)
+        for mutate in (lambda f:f['requests'][0].update(browserState='failed'),
+                       lambda f:f['requests'][0]['actions'][0].update(destination='https://unapproved.invalid/'),
+                       lambda f:f['requests'].append(copy.deepcopy(f['requests'][0])),
+                       lambda f:f['pages'][0].update(crashed=True),
+                       lambda f:f['closes']['browser']['disconnections'][0].update(duringClose=False),
+                       lambda f:f['closes']['context'].update(called=False)):
+            self.final=copy.deepcopy(original);mutate(self.final);self.write_evidence()
+            self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE')
+
+    def test_dateonly_current_namespace_preparation_or_source_failure_retains_diagnostics(self):
+        for failure in ({'returncode':1,'timedOut':False,'stdout':'partial source check','stderr':'controlled current namespace mismatch'},
+                        {'returncode':None,'timedOut':True,'stdout':'partial source check','stderr':'controlled source timeout'}):
+            self.check.return_value=failure
+            result=M.classify_lane(self.lane,0)
+            self.assertEqual(result['status'],'INCOMPLETE');self.assertEqual(result['currentSourceCheck'],failure)
+        self.check.return_value=self.current
+        altered=self.task/'altered-manifest.json';altered.write_bytes(M.R0040_MANIFEST.read_bytes()+b'\n')
+        original_sha=self.admission['sourceCustody']['manifestSha256']
+        self.admission['sourceCustody']['manifestSha256']=self.sources['manifestSha256']=M.digest(altered)
+        self.write_evidence()
+        with patch.object(M,'R0040_MANIFEST',altered):
+            self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE')
+        self.admission['sourceCustody']['manifestSha256']=self.sources['manifestSha256']=original_sha
+        self.write_evidence()
+        Path(self.admission['process']).write_text('{"changed":true}')
+        self.assertEqual(M.classify_lane(self.lane,0)['status'],'INCOMPLETE')
+
+    def test_dateonly_failure_veto_timeout_and_outer_namespace_precedence(self):
+        self.assertEqual(M.classify_lane(self.lane,9)['status'],'FAIL')
+        self.assertEqual(M.classify_lane(self.lane,-9,True)['status'],'INCOMPLETE')
+        self.final.update(status='FAILED',exitCode=1,issues=['controlled late cleanup failure']);self.write_evidence()
+        self.assertEqual(M.classify_lane(self.lane,-9,True)['status'],'FAIL')
+        veto=M.classify_lane(self.lane,86);self.assertEqual(veto['status'],M.VETO_STATUS)
+        self.assertIn('not evidence of an actual network escape',veto['reason'])
+        for process,status in (({'returncode':0,'timedOut':False},M.VETO_STATUS),
+                               ({'returncode':86,'timedOut':False},'ISOLATION_FAIL'),
+                               ({'returncode':1,'timedOut':False},'ISOLATION_UNCONFIRMED')):
+            self.assertEqual(M.namespace_status(self.lane,process,{**veto,'id':self.lane['id']})['status'],status)
+
+    def test_dateonly_selected_population_argv_and_preparation_paths_cannot_be_substituted(self):
+        self.assertEqual(M.admit_plan(self.plan,self.args),[self.lane])
+        missing=copy.deepcopy(self.plan);missing['lanes']=[]
+        self.assertEqual(M.admit_plan(missing,self.args)[0]['preparation']['status'],'INCOMPLETE')
+        for mutate in (lambda p:p['lanes'].append(copy.deepcopy(p['lanes'][0])),
+                       lambda p:p['lanes'][0]['argv'].__setitem__(-1,'M2'),
+                       lambda p:p['lanes'][0]['argv'].__setitem__(1,str(M.HERE/'retain_r0040_capture.cjs')),
+                       lambda p:p['lanes'][0]['preparation']['entryReceipt'].update(path='/other/entry.json'),
+                       lambda p:p['lanes'][0]['result'].update(kind='r0040-capture'),
+                       lambda p:p['lanes'][0]['result'].update(isolationReceiptPath='/other/receipt.json')):
+            plan=copy.deepcopy(self.plan);mutate(plan)
+            with self.assertRaises(ValueError): M.admit_plan(plan,self.args)
+        runtime={'node':self.node,'python':sys.executable,'modules':'/runtime/modules'}
+        argv=M.isolated_command(self.args,runtime,'lane',self.lane['id'])
+        self.assertEqual(argv[argv.index('--r0040-mode')+1],'capture-dateonly')
+
+    def test_dateonly_environment_and_outer_campaign_preserve_distinct_status(self):
+        M.write_json(self.capture/'lanes.json',self.plan)
+        receipt=self.lane['result']['isolationReceiptPath']
+        with patch.object(M,'controls',return_value=receipt),patch.dict(os.environ,{'R0040_OPTIONS':'forbidden'}),\
+             patch.object(M,'run_bounded',return_value={'returncode':0,'timedOut':False}) as run:
+            self.assertEqual(M.inside(self.args,{}),0)
+        self.assertNotIn('R0040_OPTIONS',run.call_args.args[2])
+        self.assertEqual(run.call_args.args[2]['R0040_DISPERSION'],'common')
+        with patch.object(M,'isolated_command',return_value=['synthetic-isolated']),\
+             patch.object(M,'run_bounded',return_value={'returncode':0,'timedOut':False}) as outer_run:
+            self.assertEqual(M.outside(self.args,{}),0)
+        self.assertEqual(outer_run.call_args.args[-1], 355)
+        report=json.loads((self.capture/'observation.json').read_text())
+        self.assertEqual(report['status'],'OBSERVED')
+        self.assertEqual(report['lanes'][0]['status'],'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION')
+        self.assertEqual(report['lanes'][0]['nativeQualification'],'NOT_VERIFIED')
+
+    def test_dateonly_optional_preparation_threads_actual_outer_failure_without_fallback(self):
+        self.args.phase='prepare';self.args.lane=None;self.args.work_orders=['R0040','R0035']
+        # A different private attempt prevents overwriting setup custody.
+        self.args.task=self.task/'attempt';capture=self.args.task/'capture';capture.mkdir(parents=True)
+        runtime={'python':sys.executable,'node':self.node,'modules':'/runtime/modules','pngjs':'/runtime/pngjs'}
+        calls=[]
+        def bounded(argv,cwd,env,stdout,stderr,timeout):
+            calls.append({'argv':argv,'timeout':timeout})
+            Path(stdout).parent.mkdir(parents=True,exist_ok=True)
+            name=Path(argv[1]).name
+            Path(stdout).write_text('controlled preparation stream');Path(stderr).write_text('')
+            if name=='prepare.py':
+                M.write_json(self.args.task/'work/prepared/receipts/prepared.json',self.prepared)
+            elif name=='r0040_capture_prepare.py':
+                Path(stderr).write_text('controlled original source refusal')
+                return {'returncode':7,'timedOut':False}
+            elif name=='lanes.py':
+                entry=capture/'r0040-preparation-entry.json'
+                admission=self.planner.admit_r0040(self.prepared,self.args.task/'work/r0040-capture',
+                    capture/'r0040-preparation/process.json',entry,capture/'lanes',Path(self.node),
+                    Path('/runtime/modules/playwright'),mode='capture-dateonly')
+                self.assertEqual(admission['status'],'INCOMPLETE')
+                plan=self.planner.make_plan(self.prepared,capture/'lanes',python_playwright=Path(sys.executable),
+                    node=Path(self.node),node_modules=Path('/runtime/modules'),pngjs=Path('/runtime/pngjs'),
+                    work_orders=self.args.work_orders,r0040_mode='capture-dateonly',r0040_preparation=admission)
+                M.write_json(stdout,plan)
+            return {'returncode':0,'timedOut':False}
+        with patch.object(M,'controls',return_value='/synthetic/isolation.json'),patch.object(M,'run_bounded',side_effect=bounded):
+            self.assertEqual(M.inside(self.args,runtime),0)
+        entry=json.loads((capture/'r0040-preparation-entry.json').read_text())
+        self.assertEqual(entry['returncode'],7);self.assertEqual(entry['cwd'],str(M.HERE))
+        self.assertEqual(entry['argv'],calls[1]['argv']);self.assertEqual(calls[1]['timeout'],240)
+        self.assertEqual(calls[-1]['timeout'],120)
+        argv=calls[-1]['argv'];self.assertEqual(argv[argv.index('--r0040-mode')+1],'capture-dateonly')
+        self.assertEqual(argv[argv.index('--r0040-entry-process')+1],str(capture/'r0040-preparation-entry.json'))
+        plan=json.loads((capture/'lanes.json').read_text())
+        self.assertEqual(plan['lanes'][0]['argv'],[])
+        self.assertEqual([p['id'] for p in plan['lanes'][1:]],['r0035-chromium-timing','r0035-chromium-capture'])
+        self.assertTrue(all(p['argv'] for p in plan['lanes'][1:]))
+
+
 class StageIntegration(unittest.TestCase):
     def setUp(self):
         import lanes
