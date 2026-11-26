@@ -29,6 +29,7 @@ from lanes import (selected_work_orders, star_controls, STAR_DEFAULTS, moon_harn
 from prepare import validate_prepared
 import r0035_stage_materialize as stage_material
 import r0035_cost_materialize as cost_material
+import r0035_psf as psf
 from observe_r0035_stages import inspect as inspect_stage_trace
 from observe_r0035_costs import inspect as inspect_cost_trace, BASE_WRAPPER_SHA256 as COST_BASE_WRAPPER_SHA256
 
@@ -104,6 +105,18 @@ def cost_campaign(args):
                      star_campaign(args),args.engine,getattr(args,'retain_evidence',False),getattr(args,'r002f',False))
 
 
+def psf_campaign(args):
+    return psf.mode(getattr(args,'r0035_psf',False),campaign_selection(args),star_campaign(args),args.engine,
+                    stages=getattr(args,'r0035_stages',False),costs=getattr(args,'r0035_costs',False),
+                    retained=getattr(args,'retain_evidence',False),r002f=getattr(args,'r002f',False),
+                    moon=getattr(args,'r003f_harness','published'),rain=getattr(args,'r0040_mode','options'),
+                    matrix=getattr(args,'r003f_matrix',None))
+
+
+def psf_lane(lane):
+    return isinstance(lane.get('psfObservation'),dict) and lane['psfObservation'].get('protocol')=='r0035-psf-paired-diagnostic/1'
+
+
 def cost_lane(lane):
     return lane.get('stageObservation',{}).get('protocol')=='r0035-cost-diagnostic/1'
 
@@ -140,6 +153,15 @@ def campaign_budget(campaign):
     headed = campaign.get('r002fRoute', 'offscreen') == 'tabhide'
     matrix_selected = campaign.get('r003fHarness', 'published') == 'corrected-matrix'
     costs = campaign.get('r0035Costs', False)
+    psf_selected=psf.mode(campaign.get('r0035Psf',False),campaign.get('workOrders',['R0040','R003F','R0035','R002F']),
+                           star_controls(campaign.get('r0035')),campaign.get('engine','chromium'),
+                           stages=campaign.get('r0035Stages',False),costs=costs,
+                           retained=campaign.get('evidenceRetention',False),r002f=campaign.get('r002f',{}).get('enabled',False),
+                           moon=campaign.get('r003fHarness','published'),rain=campaign.get('r0040Mode','options'),
+                           matrix=campaign.get('r003fMatrix'))
+    if psf_selected:
+        if headed:raise ValueError('PSF cannot combine supplemental route budgets')
+        return {'coordinatorSeconds':3540,'workflowObservationMinutes':60}
     if type(costs) is not bool or sum((headed, matrix_selected, costs)) > 1:
         raise ValueError('simultaneous supplemental route populations and budgets are not admitted')
     selected = campaign.get('workOrders', ['R0040', 'R003F', 'R0035', 'R002F'])
@@ -164,6 +186,7 @@ def observation_budget(args):
     return campaign_budget({'r002fRoute': tabhide_campaign(args), 'r003fHarness': moon_campaign(args),
                             'r003fMatrix': getattr(args, 'r003f_matrix', None),
                             'r0035Costs': getattr(args, 'r0035_costs', False), 'r0035Stages': stage_campaign(args),
+                            'r0035Psf':getattr(args,'r0035_psf',False),'r0040Mode':rain_campaign(args),
                             'r0035': star_campaign(args), 'r002f': {'enabled': getattr(args, 'r002f', False)},
                             'evidenceRetention': getattr(args, 'retain_evidence', False),
                             'engine': args.engine, 'r003fDpr': getattr(args, 'r003f_dpr', 1),
@@ -227,6 +250,17 @@ def admit_lane_runtime(lane, runtime):
 
 
 def admit_plan(plan, args, runtime):
+    if psf_campaign(args):
+        phase=getattr(args,'phase',None);identifier=getattr(args,'lane',None)
+        native=True
+        if getattr(args,'inside',False) and phase=='lane':
+            role=next((role for role in psf.ROLES if identifier=='r0035-chromium-psf-'+role),None)
+            if role is None:raise ValueError('unknown paired PSF lane')
+            retained=args.task/'capture'/('r0035-psf-preadmission-'+role+'.json')
+        else:retained=args.task/'capture/r0035-psf-outer-admission.json'
+        return psf.admit_plan(plan,args.task,runtime,native=native,retain=retained)
+    if plan.get('r0035Psf',False) is not False:
+        raise ValueError('PSF plan requires explicit paired campaign')
     """Require the selected identities; preserve missing observations as blocked rows."""
     selected = campaign_selection(args)
     stars = star_campaign(args)
@@ -1062,6 +1096,16 @@ def classify_lane(lane, returncode, timed_out=False):
         return {**result, 'status': VETO_STATUS, 'stopAll': True, 'reason': VETO_REASON}
     if returncode == ISOLATION_EXIT or kind in ('r003f-b0','r003f-matrix') and returncode == 3:
         return {**result, 'status': 'ISOLATION_FAIL', 'stopAll': True}
+    if kind == 'r0035-trials' and psf_lane(lane):
+        original=classify_lane({k:v for k,v in lane.items() if k!='psfObservation'},returncode,timed_out)
+        supplemental=psf.post_observation(lane,returncode,timed_out)
+        status=original['status']
+        if status=='PASS':
+            status=psf.OBSERVED if (type(returncode) is int and returncode==0 and timed_out is False
+                and supplemental.get('status')=='COMPLETE'
+                and supplemental.get('intake',{}).get('originalStatus')=='PASS') else 'INCOMPLETE'
+        return {**original,'status':status,'originalStatus':original['status'],'psfObservation':supplemental,
+                'timingClass':psf.TIMING,'nativeQualification':'UNCHANGED_ORIGINAL_REPORT_ONLY','humanAcceptance':'OUTSTANDING'}
     if kind == 'r0035-trials' and 'stageObservation' in lane:
         original = classify_lane({k:v for k,v in lane.items() if k != 'stageObservation'}, returncode, timed_out)
         supplemental = r0035_stage_status(lane,returncode,timed_out)
@@ -1139,7 +1183,7 @@ def namespace_status(lane, process, inner):
     outer_admitted = (isinstance(process, dict) and type(process.get('returncode')) is int
                       and type(process.get('timedOut')) is bool)
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE')
+                and inner.get('status') in (psf.OBSERVED, 'PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE')
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
@@ -1164,6 +1208,17 @@ def namespace_status(lane, process, inner):
                     and inner.get('timingClass') == (cost_material.TIMING if cost_lane(lane) else 'instrumented-stage-observation')
                     and inner.get('nativeQualification') == 'UNCHANGED_ORIGINAL_REPORT_ONLY')
     if admitted and 'stageObservation' in lane and inner['status'] == 'PASS': admitted = False
+    if admitted and inner['status']==psf.OBSERVED:
+        intake=inner.get('psfObservation',{}).get('intake',{})
+        admitted=(psf_lane(lane) and type(inner.get('returncode')) is int and inner['returncode']==0
+                  and inner.get('timedOut') is False and inner.get('originalStatus')=='PASS'
+                  and inner.get('psfObservation',{}).get('status')=='COMPLETE' and intake.get('status')=='COMPLETE'
+                  and intake.get('role')==lane['psfObservation']['role'] and intake.get('originalStatus')=='PASS'
+                  and same_json(intake.get('sourceAdmission'),lane.get('preparation'))
+                  and inner.get('timingClass')==psf.TIMING
+                  and inner.get('nativeQualification')=='UNCHANGED_ORIGINAL_REPORT_ONLY'
+                  and inner.get('humanAcceptance')=='OUTSTANDING')
+    if admitted and psf_lane(lane) and inner['status']=='PASS':admitted=False
     if admitted and inner['status'] == TABHIDE_OBSERVED:
         admitted = (lane.get('result',{}).get('kind') == 'r002f-tabhide' and type(inner.get('returncode')) is int
                     and inner['returncode'] == 0 and inner.get('timedOut') is False
@@ -1256,6 +1311,13 @@ def prepare_stages(args, runtime, destination):
     return record
 
 
+def prepare_psf(args,runtime):
+    command=psf.prepare_argv(args.task,runtime)
+    child=run_bounded(command,str(HERE),dict(os.environ),args.task/'capture/r0035-psf-preparation.stdout',
+                      args.task/'capture/r0035-psf-preparation.stderr',240)
+    return psf.preparation_entry(args.task,runtime,child)
+
+
 def prepare_matrix(args,runtime,destination):
     folder=args.task/'capture/r003f-matrix-preparation'
     inputs={'prepared':str(destination/'receipts/prepared.json'),'common-process':str(args.task/'capture/preparation-process.json'),
@@ -1289,12 +1351,13 @@ def inside(args, runtime):
         if (destination/'receipts').exists():
             shutil.copytree(destination/'receipts', args.task/'capture'/'preparation')
         write_json(args.task/'capture'/'preparation-process.json', result)
-        if matrix_campaign(args):
+        if matrix_campaign(args) or psf_campaign(args):
             matrix.save(args.task/'capture/preparation-context.json',{'protocol':'hosted-common-preparation-execution/1',
                 'argv':command,'cwd':str(HERE),'timeoutSeconds':900,'sourceSha256':digest(HERE/'prepare.py'),
                 'nativeIsolationClaim':True,'isolation':matrix.record(receipt)})
         if result['returncode'] or result['timedOut']: return 2
         if matrix_campaign(args):prepare_matrix(args,runtime,destination)
+        if psf_campaign(args):prepare_psf(args,runtime)
         if stage_campaign(args):
             prepare_stages(args, runtime, destination)
         r0040_destination = args.task/'work'/'r0040-capture'
@@ -1366,6 +1429,7 @@ def inside(args, runtime):
             folder=args.task/'capture'/('r0035-cost-preparation' if cost_campaign(args) else 'r0035-stage-preparation')
             command += ['--r0035-stages', '--r0035-stage-process', str(folder/'process.json')]
         if cost_campaign(args): command.append('--r0035-costs')
+        if psf_campaign(args): command.append('--r0035-psf')
         command += ['--r003f-harness', moon_campaign(args)]
         if matrix_campaign(args):command += ['--r003f-matrix',json.dumps(args.r003f_matrix),'--r003f-matrix-entry',str(args.task/'capture/r003f-matrix-preparation-entry.json')]
         command += ['--r0040-mode', rain_campaign(args)]
@@ -1385,10 +1449,16 @@ def inside(args, runtime):
                         '--r002f-section', args.r002f_section]
             if tabhide_campaign(args) == 'tabhide': command += ['--r002f-route','tabhide']
         plan = run_bounded(command, str(HERE), dict(os.environ), args.task/'capture'/'lanes.json',
-                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) else 30)
+                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) or psf_campaign(args) else 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
     plan = json.loads((args.task/'capture'/'lanes.json').read_text())
-    lane = next(x for x in admit_plan(plan, args, runtime) if x['id'] == args.lane)
+    try:lane = next(x for x in admit_plan(plan, args, runtime) if x['id'] == args.lane)
+    except (OSError,ValueError,KeyError,TypeError,StopIteration) as error:
+        if not psf_campaign(args):raise
+        write_json(args.task/'capture/lane-status'/(args.lane+'.json'),
+                   {'id':args.lane,'status':'INCOMPLETE','stopAll':False,'returncode':None,'timedOut':False,
+                    'reason':'PSF actual current source admission failed: '+str(error),'nativeStatus':'NOT_RUN'})
+        return 0
     env = dict(os.environ)
     # Recipe env is declarative data from the reviewed planner; arbitrary variables
     # cannot restore a credential/proxy/loader setting that the wrapper removed.
@@ -1422,6 +1492,7 @@ def isolated_command(args, runtime, phase, lane=None):
     inner += star_arguments(args)
     if stage_campaign(args): inner.append('--r0035-stages')
     if cost_campaign(args): inner.append('--r0035-costs')
+    if psf_campaign(args): inner.append('--r0035-psf')
     inner += ['--r003f-harness', moon_campaign(args)]
     if matrix_campaign(args):inner += ['--r003f-matrix',json.dumps(args.r003f_matrix)]
     inner += ['--r0040-mode', rain_campaign(args)]
@@ -1445,6 +1516,7 @@ def outside(args, runtime):
     deadline = time.monotonic() + budget['coordinatorSeconds']  # leaves sealing/upload time within the selected step ceiling
     preparation = run_bounded(isolated_command(args, runtime, 'prepare'), str(HERE), parent_env,
                               capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
+                              psf.PREPARATION_SECONDS if psf_campaign(args) else
                               matrix_campaign(args)['budget']['preparationSeconds'] if matrix_campaign(args) else
                               (1920 if getattr(args, 'r002f', False) else 1020) + (330 if rain_campaign(args) in R0040_CAPTURE_MODES else 0)
                               + (240 if stage_campaign(args) else 0))
@@ -1452,6 +1524,7 @@ def outside(args, runtime):
                'workOrders': selected, 'evidenceRetention': getattr(args, 'retain_evidence', False),
                'r0035Controls': star_campaign(args),
                'r0035Stages': stage_campaign(args),
+               **({'r0035Psf':True,'budget':budget} if psf_campaign(args) else {}),
                'r003fHarness': moon_campaign(args),
                **({'r003fMatrix':args.r003f_matrix} if matrix_campaign(args) else {}),
                'r0040Mode': rain_campaign(args),
@@ -1463,7 +1536,14 @@ def outside(args, runtime):
         overall['status'] = 'ISOLATION_FAIL' if preparation['returncode'] == ISOLATION_EXIT else 'INCOMPLETE'
         write_json(capture/'observation.json', overall); return 2
     plan = json.loads((capture/'lanes.json').read_text())
-    lanes = admit_plan(plan, args, runtime)
+    try:lanes = admit_plan(plan, args, runtime)
+    except (OSError,ValueError,KeyError,TypeError) as error:
+        if not psf_campaign(args):raise
+        overall['lanes']=[{'id':'r0035-chromium-psf-'+role,'workOrder':'R0035','status':'NOT_RUN',
+                           'reason':'PSF outer current source admission failed: '+str(error)} for role in psf.ROLES]
+        overall['psfPair']=psf.pair_status(plan,overall['lanes'])
+        overall['status']='OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+        write_json(capture/'observation.json',overall);return 2
     stopped = set(); stop_all = False; stop_reason = None
     for lane in lanes:
         remaining = deadline - time.monotonic()
@@ -1478,7 +1558,7 @@ def outside(args, runtime):
         else:
             result = run_bounded(isolated_command(args, runtime, 'lane', lane['id']), str(HERE), parent_env,
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
-                                 min(lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly','r003f-matrix') else 0)
+                                 min(psf.LANE_SECONDS if psf_lane(lane) else lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly','r003f-matrix') else 0)
                                      + (90 if cost_lane(lane) else 0), remaining))
             path = capture/'lane-status'/(lane['id']+'.json')
             try: inner = json.loads(path.read_text())
@@ -1493,8 +1573,12 @@ def outside(args, runtime):
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE') for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in (psf.OBSERVED, 'PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE') for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
+    if psf_campaign(args):
+        overall['psfPair']=psf.pair_status(plan,overall['lanes'])
+        if overall['status']=='OBSERVED' and overall['psfPair']['status']!='OBSERVED':
+            overall['status']='OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
     write_json(capture/'observation.json', overall)
     return 0 if overall['status'] == 'OBSERVED' else 2
 
@@ -1516,6 +1600,7 @@ def main():
     parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
     parser.add_argument('--r0035-stages', action='store_true')
     parser.add_argument('--r0035-costs', action='store_true')
+    parser.add_argument('--r0035-psf', action='store_true')
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
@@ -1544,6 +1629,7 @@ def main():
             args.r0040_mode = campaign.get('r0040Mode', 'options')
             args.r0035_stages = campaign.get('r0035Stages', False)
             args.r0035_costs = campaign.get('r0035Costs', False)
+            args.r0035_psf = campaign.get('r0035Psf', False)
             for key, value in star_controls(campaign.get('r0035')).items():
                 setattr(args, 'r0035_'+key, value)
             write_json(args.task/'capture'/'campaign.json', campaign)
@@ -1551,6 +1637,7 @@ def main():
         star_campaign(args)
         stage_campaign(args)
         cost_campaign(args)
+        psf_campaign(args)
         moon_campaign(args)
         matrix_campaign(args)
         observation_budget(args)

@@ -31,7 +31,7 @@ WORK_ORDERS = ('R0040','R003F','R0035','R002F')
 OBSERVED_LANE_STATUSES = {'PASS','ADMITTED_FOR_OFFLINE_VERIFICATION',
     'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION','OBSERVED_STAGE_DIAGNOSTIC',
     'OBSERVED_PREPARATION_COSTS','OBSERVED_TABHIDE_DIAGNOSTIC',
-    'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE'}
+    'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE','OBSERVED_PSF_DIAGNOSTIC'}
 LANE_STATUSES = OBSERVED_LANE_STATUSES | {'FAIL','INCOMPLETE','INCONCLUSIVE','ANDON',
     'ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED'}
 
@@ -166,6 +166,65 @@ def completed(task, roots, phase):
     return end['process']['returncode']
 
 
+def psf_complete_record(campaign,plan,body):
+    """Recognize the separate paired record without promoting original failure.
+
+    This is producer-record completeness, not native/source requalification.
+    Scientific/source intake belongs to the separately pinned paired caller.
+    """
+    def same(a,b):return json.dumps(a,sort_keys=True,allow_nan=False)==json.dumps(b,sort_keys=True,allow_nan=False)
+    selected=campaign.get('r0035Psf',False)
+    need(type(selected) is bool,'PRODUCER_INCOMPLETE')
+    rows=body['lanes'];has_status=any(x.get('status')=='OBSERVED_PSF_DIAGNOSTIC' for x in rows)
+    if not selected:
+        need(not has_status and plan.get('r0035Psf',False) is False and body.get('r0035Psf',False) is False,
+             'PRODUCER_INCOMPLETE')
+        return None
+    roles=['reference','derived'];ids=['r0035-chromium-psf-'+role for role in roles]
+    need(campaign.get('workOrders')==['R0035'] and campaign.get('engine')=='chromium'
+         and campaign.get('r0035')=={'guard':'off','scope':'all','mode':'timing'}
+         and plan.get('r0035Psf') is True and body.get('r0035Psf') is True
+         and [x.get('id') for x in plan['lanes']]==ids and [x.get('id') for x in rows]==ids,
+         'PRODUCER_INCOMPLETE')
+    for role,lane in zip(roles,plan['lanes']):
+        need(lane.get('psfObservation',{}).get('protocol')=='r0035-psf-paired-diagnostic/1'
+             and lane['psfObservation'].get('role')==role,'PRODUCER_INCOMPLETE')
+    pair=body.get('psfPair')
+    need(type(pair) is dict and pair.get('protocol')=='r0035-psf-pair-intake/1'
+         and pair.get('roles')==roles and pair.get('fixedOrder') is True
+         and pair.get('speedClaim')=='NOT_ESTABLISHED' and pair.get('humanAcceptance')=='OUTSTANDING'
+         and pair.get('status') in ('OBSERVED','INCOMPLETE'),'PRODUCER_INCOMPLETE')
+    if pair['status']=='INCOMPLETE':
+        need(type(pair.get('reason')) is str and bool(pair['reason']),'PRODUCER_INCOMPLETE')
+        return False
+    intakes=[]
+    for role,lane,row in zip(roles,plan['lanes'],rows):
+        intake=row.get('psfObservation',{}).get('intake',{})
+        outer=row.get('namespaceProcess',{})
+        need(row.get('status')=='OBSERVED_PSF_DIAGNOSTIC' and row.get('originalStatus')=='PASS'
+             and type(row.get('returncode')) is int and row['returncode']==0 and row.get('timedOut') is False
+             and row.get('stopAll') is False and known_process(outer) and outer['returncode']==0 and outer['timedOut'] is False
+             and row.get('psfObservation',{}).get('status')=='COMPLETE'
+             and intake.get('protocol')=='r0035-psf-original-intake/1' and intake.get('status')=='COMPLETE'
+             and intake.get('role')==role and intake.get('originalStatus')=='PASS'
+             and same(intake.get('sourceAdmission'),lane.get('preparation'))
+             and row.get('timingClass')=='paired-native-psf-adapter-diagnostic'
+             and row.get('nativeQualification')=='UNCHANGED_ORIGINAL_REPORT_ONLY'
+             and row.get('humanAcceptance')=='OUTSTANDING','PRODUCER_INCOMPLETE')
+        inner=row.get('innerStatus',{})
+        need(type(inner) is dict and all(same(inner.get(k),row.get(k)) for k in
+             ('id','status','returncode','timedOut','originalStatus','psfObservation','timingClass','nativeQualification','humanAcceptance')),
+             'PRODUCER_INCOMPLETE')
+        intakes.append(intake)
+    reference,derived=intakes
+    need(all(same(reference.get(k),derived.get(k)) for k in ('sourceAdmission','runtime','browserVersion','timingClass'))
+         and same(pair.get('identity'),reference['sourceAdmission']['identity'])
+         and same(pair.get('runtime'),reference['runtime']) and pair.get('browserVersion')==reference['browserVersion']
+         and same(pair.get('members'),[{'role':x['role'],'summary':x['summary'],'driver':x['driver']} for x in intakes]),
+         'PRODUCER_INCOMPLETE')
+    return True
+
+
 def admit_producers(task, roots):
     """Only return of the complete known synchronous source path permits seal."""
     try:
@@ -220,10 +279,11 @@ def admit_producers(task, roots):
                      and 'innerStatus' in row and known_process(row.get('namespaceProcess')),
                      'PRODUCER_INCOMPLETE')
         statuses=[row['status'] for row in body['lanes']]
+        psf_complete=psf_complete_record(campaign,plan,body)
         expected=next((x for x in ('ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED')
                        if x in statuses),None)
         if expected is None:
-            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) and psf_complete is not False else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
         need(body['status']==expected, 'PRODUCER_INCOMPLETE')
         return 'COMPLETED_OBSERVATION'
     except Rejected:raise
