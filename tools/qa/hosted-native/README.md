@@ -43,6 +43,7 @@ inspected:
 | `evidenceRetention` | A boolean, default `false`. When `true`, selected R0040/R0035 lanes execute their exact original source through the reviewed supplemental wrappers. R003F/R002F commands are unchanged. |
 | `r0035` | Optional dictionary with `guard: default` or `off`, `scope: all` or `preview-members`, and `mode: both`, `timing` or `capture`. Defaults preserve the original commands. Explicit controls require selected R0035 observations. Unknown fields and values are rejected. |
 | `r0035Stages` | Boolean, default `false`. Requires selected R0035 timing only and `evidenceRetention: false`. Admits a separate disposable source derivative and keeps private preparation-stage evidence. It never silently falls back to the uninstrumented driver. |
+| `r0035Costs` | Boolean, default `false`. Requires `r0035Stages: true`, R0035 alone, Chromium, guard off, full population and timing mode, without R002F or the separate retention pilot. Adds bounded same-worker preparation buckets under a distinct source identity; original qualifications and failures remain authoritative. |
 | `r003fHarness` | `published` (the original recipe, default) or `corrected-b0` (source-pinned MIME correction and full-UI admission). The latter requires selected R003F observations and separately admitted helper preparation. |
 | `r0040Mode` | `options` (unchanged nine-option default), `capture` (original full-clock capture), or `capture-dateonly` (separately identified Date-only diagnostic). Both capture modes require selected R0040, Chromium/bday/moderate/M1/common on genuine main, guarded preparation and their required final-state wrapper. |
 
@@ -260,3 +261,22 @@ test commands. Native recipes require the reviewed Linux namespace launcher and
 installed managed engines. A host without those facilities may run offline
 controls, but cannot report a native result. The ordinary qualification workflow,
 product source, generated deliveries, vendor and frozen V1 are unchanged.
+
+## Bounded R0035 preparation costs
+
+The explicit `r0035Costs` selection uses `r0035-chromium-timing-costs` and the
+unchanged original three-arm timing recipe. Its thirteen buckets separate
+spectral transport, local PSF raster work and replay preparation. Eighteen
+bounded counters use existing execution points and declared derivations; there
+are no per-star histories or new scans. [R0035_COSTS.md](R0035_COSTS.md) defines
+every bucket/counter, full source closure, failed-prefix semantics and timing
+limits.
+
+Raw traces are retained before validation. A failed original qualification stays
+`FAIL` even when the supplemental cost status is `OBSERVED`. Only complete costs
+with an originally passing population use `OBSERVED_PREPARATION_COSTS`, with no
+product or human acceptance. The current namespace and full derivative source
+are checked again after the trial in a bounded child. The original 480-second
+trial limit is unchanged; final checks and namespace closure make its outer
+lane limit 645 seconds. The selected campaign fits the existing coordinator and
+workflow observation limits.

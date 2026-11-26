@@ -447,3 +447,34 @@ explicit browser doubles. They bind preparation status, source flags, native
 receipt population and original reports through final classification; exit zero
 with a failed original admission remains failed. These controls do not observe
 native rendering or measure instrumentation overhead.
+
+## R0035 cost derivative
+
+`--r0035-costs` is admitted only with `--r0035-stages`, R0035 alone, Chromium,
+`--r0035-guard off --r0035-scope all --r0035-mode timing`, no R002F and no separate
+retention pilot. The distinct lane `r0035-chromium-timing-costs` retains all
+sixteen elements of the original three-arm command, apart from its explicitly
+mapped derivative plan. Its result kind remains `r0035-trials`.
+
+The 240-second optional preparation copies the admitted original lab, transforms
+four existing modules reversibly and adds one inventoried collector. Its actual
+process, original receipt copies and complete derivative identity live under
+`capture/r0035-cost-preparation`; the runtime derivative stays under
+`work/r0035-costs`. Failed preparation blocks the lane. It cannot fall back to
+the stage or original recipe.
+
+The diagnostic adapter retains private evidence under
+`r0035-chromium-timing-costs-observations`. Raw trace validation, source population
+bindings and aggregate derivation are repeated at final intake. A real final
+child must re-admit the current namespace, actual successful preparation and
+full original/derived source inventory. Its 90-second allowance is additional
+to the unchanged 480-second original trial and 75-second namespace allowance;
+the selected lane therefore has a 645-second outer maximum. The total selected
+preparation and observation budget is 1,905 seconds within the existing 2,640
+and 45-minute limits.
+
+The supplemental success label is `OBSERVED_PREPARATION_COSTS`. Original failure,
+isolation failure, retained-route veto, cleanup failure and timeout retain their
+original priority. The new label supplies no product, physical or human
+acceptance. Absent selection leaves complete original/default plans unchanged.
+See [R0035_COSTS.md](R0035_COSTS.md) for exact cost semantics and source controls.

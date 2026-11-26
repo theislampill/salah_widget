@@ -19,6 +19,7 @@ from prepare import BASELINE, RESEARCH, digest, validate_prepared, verify_genera
 from r002f_prepare import BASE_INDEX, COMBINED_INDEX, BASE_INVENTORY, COMBINED_INVENTORY, PATCH
 from r0040_capture_prepare import load_contract as load_r0040_contract
 import r0035_stage_materialize as stage_material
+import r0035_cost_materialize as cost_material
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
@@ -34,6 +35,8 @@ R0040_DATEONLY_WRAPPER_SHA256 = '214d4a3c6cb13dbfa69cf0330444aeb9f71d9816b431290
 R0040_DATEONLY_ADMITTED = 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
 R0035_STAGE_WRAPPER_SHA256 = '8c3838b2ba01d6a4114b5de0aa2401134bb0cea3918dcba4fe1237997e53c99b'
 R0035_STAGE_MATERIALIZER_SHA256 = '1890dbdeacf3bcd3fc7f9624a8a970770ae4dbb43f6987e43919c7161e17bf4a'
+R0035_COST_WRAPPER_SHA256 = '73358152b2c01de6d071bf4ea6476c99d727964c72abc68fbd6ed43761a74254'
+R0035_COST_MATERIALIZER_SHA256 = 'bc757982849516ad49c87ec933b97c446768c3f03cfdc809f5910c41e5c2dd52'
 
 
 def stage_mode(enabled, selected, stars, retained=False):
@@ -41,6 +44,15 @@ def stage_mode(enabled, selected, stars, retained=False):
         raise ValueError('R0035 stage observation must be boolean')
     if enabled and ('R0035' not in selected or stars['mode'] != 'timing' or retained):
         raise ValueError('R0035 stage observation requires selected timing only and no per-event retention wrapper')
+    return enabled
+
+
+def cost_mode(enabled, stages, selected, stars, engine, retained=False, include_r002f=False):
+    if type(enabled) is not bool:
+        raise ValueError('R0035 cost observation must be boolean')
+    if enabled and (not stages or selected != ['R0035'] or engine != 'chromium' or retained or include_r002f
+                    or stars != {'guard':'off','scope':'all','mode':'timing'}):
+        raise ValueError('R0035 costs require only Chromium full-population guard-off stage timing')
     return enabled
 
 
@@ -55,28 +67,35 @@ def original_star_plan(prepared, guard='default', scope='all'):
     return {'kind': 'independent-reconstruction', 'arms': arms}
 
 
-def admit_r0035_stages(prepared, prepared_path, process_path, guard, scope):
+def admit_r0035_stages(prepared, prepared_path, process_path, guard, scope, *, costs=False):
     """Failed optional preparation blocks the diagnostic lane without fallback."""
     admission = {'status': 'INCOMPLETE'}
+    material = cost_material if costs else stage_material
+    wrapper = 'observe_r0035_costs.py' if costs else 'observe_r0035_stages.py'
+    materializer = 'r0035_cost_materialize.py' if costs else 'r0035_stage_materialize.py'
+    wrapper_sha = R0035_COST_WRAPPER_SHA256 if costs else R0035_STAGE_WRAPPER_SHA256
+    materializer_sha = R0035_COST_MATERIALIZER_SHA256 if costs else R0035_STAGE_MATERIALIZER_SHA256
     try:
         process_path = Path(process_path).absolute(); folder = process_path.parent
         plan_path, identity = folder/'plan.json', folder/'identity.json'
         driver_path = Path(prepared['sources']['research']['root'])/'tools/r0035/native_trials.py'
-        if (digest(HERE/'observe_r0035_stages.py') != R0035_STAGE_WRAPPER_SHA256
-                or digest(HERE/'r0035_stage_materialize.py') != R0035_STAGE_MATERIALIZER_SHA256):
+        if (digest(HERE/wrapper) != wrapper_sha or digest(HERE/materializer) != materializer_sha):
             raise ValueError('stage preparation or observer source differs from review')
-        custody = stage_material.preparation_process(process_path, driver_path, plan_path, identity)
+        custody = material.preparation_process(process_path, driver_path, plan_path, identity)
         admission['custody'] = custody
         if custody['originalPreparation']['sha256'] != digest(Path(prepared_path)):
             raise ValueError('stage original preparation differs from this campaign')
         plan = json.loads(plan_path.read_bytes())
-        driver = stage_material.support().load_driver(driver_path)
-        record = stage_material.admit(plan, driver, identity)
+        driver = material.support().load_driver(driver_path)
+        record = material.admit(plan, driver, identity)
         if record['sourcePlan'] != original_star_plan(prepared, guard, scope):
             raise ValueError('stage source plan or current flags differ from this campaign')
         admission.update(status='PASS', root=record['root'], process=str(process_path), identity=str(identity),
-                         plan=str(plan_path), custody=custody, wrapperSha256=R0035_STAGE_WRAPPER_SHA256,
-                         materializerSha256=R0035_STAGE_MATERIALIZER_SHA256)
+                         plan=str(plan_path), custody=custody, wrapperSha256=wrapper_sha,
+                         materializerSha256=materializer_sha)
+        if costs:
+            admission.update(collectorSha256=cost_material.HELPER_SHA256,
+                             stageMaterializerSha256=cost_material.STAGE_MATERIALIZER_SHA256)
     except (OSError, ValueError, KeyError, TypeError, AttributeError, subprocess.SubprocessError) as error:
         admission['reason'] = str(error)
     return admission
@@ -323,7 +342,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
               engine='chromium', r003f_dpr=1, include_r002f=False, r002f_preparation=None,
               r002f_dpr=1, r002f_rounds=1, r002f_section='all', work_orders=None, retain_evidence=False,
               r0035_guard='default', r0035_scope='all', r0035_mode='both',
-              r0035_stages=False, r0035_stage_preparation=None,
+              r0035_stages=False, r0035_stage_preparation=None, r0035_costs=False,
               r003f_harness='published', r003f_preparation=None,
               r0040_mode='options', r0040_preparation=None):
     if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
@@ -341,6 +360,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
     if type(retain_evidence) is not bool:
         raise ValueError('evidence retention must be boolean')
     stage_mode(r0035_stages, selected, stars, retain_evidence)
+    cost_mode(r0035_costs, r0035_stages, selected, stars, engine, retain_evidence, include_r002f)
     research = Path(prepared['sources']['research']['root'])
     historical = Path(prepared['sources']['historical']['root'])
     roots = {key: Path(value['root']) for key, value in prepared['trees'].items()}
@@ -423,7 +443,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         label = 'capture' if capture else 'timing'
         if r0035_mode not in ('both', label):
             continue
-        star = lane(f'r0035-{engine}-{label}', 'R0035', 1, 480, 'r0035-trials', 'summary.json',
+        star = lane(f'r0035-{engine}-{label}'+('-costs' if r0035_costs else ''), 'R0035', 1, 480, 'r0035-trials', 'summary.json',
                     {'0': 'INSPECT ADMISSION', '1': 'INCOMPLETE'})
         star['argv'] = list(map(str, [python_playwright, research / 'tools/r0035/native_trials.py',
                                      star_plan_path, star['output'], '--engine', engine, '--rounds', 1,
@@ -436,18 +456,23 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                 star['dependsOn'] = [entries[-2]['id']]
                 star['dependencyPolicy'] = 'finished; retain failed timing, classify captures independently'
         if r0035_stages:
+            wrapper_sha = R0035_COST_WRAPPER_SHA256 if r0035_costs else R0035_STAGE_WRAPPER_SHA256
+            wrapper = 'observe_r0035_costs.py' if r0035_costs else 'observe_r0035_stages.py'
             admission = r0035_stage_preparation or {'status': 'INCOMPLETE', 'reason': 'R0035 stage preparation is missing'}
             star['preparation'] = admission
-            evidence = str(out/(star['id']+'-stages'))
-            star['stageObservation'] = {'protocol': 'r0035-stage-diagnostic/1', 'instrumented': True}
+            evidence = str(out/(star['id']+('-observations' if r0035_costs else '-stages')))
+            star['stageObservation'] = {'protocol': 'r0035-cost-diagnostic/1' if r0035_costs else 'r0035-stage-diagnostic/1', 'instrumented': True}
             star['evidenceRetention'] = {'instrumented': True, 'output': evidence, 'timingComparableToOriginal': False,
                 'overhead': 'In-memory stage marks and small worker replies; one trace extraction after measurement. No added pixel copies or per-frame host writes.'}
             star['stopAllOnExit'] = [86]; star['exitStatuses']['86'] = 'EXTERNAL_CONTINUATION_VETOED'
-            star['result'].update(stageDriverPath=str(Path(evidence)/'driver.json'), stageWrapperSha256=R0035_STAGE_WRAPPER_SHA256)
+            star['result'].update(stageDriverPath=str(Path(evidence)/'driver.json'), stageWrapperSha256=wrapper_sha)
+            if r0035_costs:
+                star['postObservationCheckSeconds'] = 90
+                star['evidenceRetention']['overhead'] += ' Fixed aggregate operation counters and worker performance-clock marks add uncalibrated cost. No per-star history or added population scan.'
             if admission.get('status') == 'PASS':
                 original = star['argv']; original[2] = admission['plan']
                 star['evidenceRetention']['originalArgv'] = original
-                star['argv'] = [original[0], str(HERE/'observe_r0035_stages.py'), '--driver', original[1],
+                star['argv'] = [original[0], str(HERE/wrapper), '--driver', original[1],
                                 '--identity', admission['identity'], '--preparation-process', admission['process'],
                                 '--preparation-sha256', admission['custody']['process']['sha256'],
                                 '--evidence', evidence, '--', *original[2:]]
@@ -486,7 +511,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                             'these are instrumented observations, not original performance measurements.'}
             row['exitStatuses']['86'] = 'EXTERNAL_CONTINUATION_VETOED'
             row['stopAllOnExit'] = [86]
-    return {'schemaVersion': 1, 'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
+    return {**({'r0035Costs': True} if r0035_costs else {}), 'schemaVersion': 1, 'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
             'scope': 'Selected native observations only; no work-order acceptance or owner selection.',
             'workOrders': selected, 'evidenceRetention': retain_evidence,
             'r0035Controls': stars,
@@ -556,6 +581,7 @@ def main():
     parser.add_argument('--r0035-scope', choices=('all', 'preview-members'), default='all')
     parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
     parser.add_argument('--r0035-stages', action='store_true')
+    parser.add_argument('--r0035-costs', action='store_true')
     parser.add_argument('--r0035-stage-process', type=Path)
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-prepared', type=Path)
@@ -581,7 +607,7 @@ def main():
                              out, args.node, args.node_modules/'playwright', mode=args.r0040_mode)
                  if args.r0040_mode in R0040_CAPTURE_MODES else None)
         r0035_stage = (admit_r0035_stages(prepared, args.prepared, args.r0035_stage_process,
-                                         args.r0035_guard, args.r0035_scope) if args.r0035_stages else None)
+                                         args.r0035_guard, args.r0035_scope, costs=args.r0035_costs) if args.r0035_stages else None)
         if r0035_stage and r0035_stage['status'] == 'PASS':
             roots.append(Path(r0035_stage['root']))
         if r0040 and r0040['status'] == 'PASS':
@@ -604,7 +630,7 @@ def main():
                          r002f_rounds=args.r002f_rounds, r002f_section=args.r002f_section,
                          work_orders=args.work_orders, retain_evidence=args.retain_evidence,
                          r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode,
-                         r0035_stages=args.r0035_stages, r0035_stage_preparation=r0035_stage,
+                         r0035_stages=args.r0035_stages, r0035_stage_preparation=r0035_stage, r0035_costs=args.r0035_costs,
                          r003f_harness=args.r003f_harness, r003f_preparation=r003f,
                          r0040_mode=args.r0040_mode, r0040_preparation=r0040)
         check_star_plan(prepared, plan['r0035Plan'])

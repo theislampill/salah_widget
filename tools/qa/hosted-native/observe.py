@@ -21,9 +21,12 @@ from lanes import (selected_work_orders, star_controls, STAR_DEFAULTS, moon_harn
                    rain_mode, R0040_MANIFEST, R0040_MANIFEST_SHA256, R0040_CAPTURE_WRAPPER_SHA256, digest, stage_mode, original_star_plan,
                    R0035_STAGE_WRAPPER_SHA256, R0035_STAGE_MATERIALIZER_SHA256,
                    R0040_CAPTURE_MODES, R0040_DATEONLY_WRAPPER_SHA256, R0040_DATEONLY_ADMITTED,
-                   r0040_dateonly_identity, same_json)
+                   r0040_dateonly_identity, same_json, cost_mode,
+                   R0035_COST_WRAPPER_SHA256, R0035_COST_MATERIALIZER_SHA256)
 import r0035_stage_materialize as stage_material
+import r0035_cost_materialize as cost_material
 from observe_r0035_stages import inspect as inspect_stage_trace
+from observe_r0035_costs import inspect as inspect_cost_trace, BASE_WRAPPER_SHA256 as COST_BASE_WRAPPER_SHA256
 
 CAP_FIELDS = ('CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb')
 RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
@@ -33,6 +36,7 @@ ISOLATION_EXIT = 86
 VETO_STATUS = 'EXTERNAL_CONTINUATION_VETOED'
 CAPTURE_ADMITTED = 'ADMITTED_FOR_OFFLINE_VERIFICATION'
 STAGES_OBSERVED = 'OBSERVED_STAGE_DIAGNOSTIC'
+COSTS_OBSERVED = 'OBSERVED_PREPARATION_COSTS'
 VETO_REASON = ('retention wrapper prevented external continuation before the real continue action; '
                'not evidence of an actual network escape')
 
@@ -60,6 +64,8 @@ def read_campaign(path):
     if type(value.get('evidenceRetention', False)) is not bool:
         raise ValueError('evidence retention must be boolean')
     stage_mode(value.get('r0035Stages', False), selected, stars, value.get('evidenceRetention', False))
+    cost_mode(value.get('r0035Costs', False), value.get('r0035Stages', False), selected, stars,
+              value['engine'], value.get('evidenceRetention', False), r002f['enabled'])
     return value
 
 
@@ -85,6 +91,15 @@ def stage_campaign(args):
                       star_campaign(args), getattr(args, 'retain_evidence', False))
 
 
+def cost_campaign(args):
+    return cost_mode(getattr(args,'r0035_costs',False),stage_campaign(args),campaign_selection(args),
+                     star_campaign(args),args.engine,getattr(args,'retain_evidence',False),getattr(args,'r002f',False))
+
+
+def cost_lane(lane):
+    return lane.get('stageObservation',{}).get('protocol')=='r0035-cost-diagnostic/1'
+
+
 def moon_campaign(args):
     return moon_harness(getattr(args, 'r003f_harness', 'published'), campaign_selection(args))
 
@@ -104,10 +119,12 @@ def admit_plan(plan, args):
     stars = star_campaign(args)
     retention = getattr(args, 'retain_evidence', False)
     stages = stage_campaign(args)
+    costs = cost_campaign(args)
     if (plan.get('protocol') != 'salah-hosted-native-lanes/1' or plan.get('sequential') is not True
             or plan.get('workOrders') != selected or plan.get('evidenceRetention') is not retention
             or plan.get('r0035Controls', STAR_DEFAULTS) != stars
             or plan.get('r0035Stages', False) is not stages
+            or plan.get('r0035Costs', False) is not costs
             or plan.get('r003fHarness', 'published') != moon_campaign(args)
             or plan.get('r0040Mode', 'options') != rain_campaign(args)
             or not isinstance(plan.get('lanes'), list)):
@@ -121,6 +138,7 @@ def admit_plan(plan, args):
                   (f'r002f-{engine}-dpr{getattr(args, "r002f_dpr", 1)}', 'R002F', 900)]
     population = [row for row in population if row[1] != 'R0035'
                   or stars['mode'] == 'both' or row[0].endswith('-'+stars['mode'])]
+    if costs: population=[(identifier+'-costs' if order=='R0035' else identifier,order,timeout) for identifier,order,timeout in population]
     expected = {identifier: (order, timeout) for identifier, order, timeout in population if order in selected}
     actual = {}
     for lane in plan['lanes']:
@@ -139,17 +157,20 @@ def admit_plan(plan, args):
             raise ValueError('stage observation differs from selected campaign')
         if lane['workOrder'] == 'R0035' and stages:
             preparation = lane.get('preparation'); report = lane.get('result', {})
-            target = args.task/'capture/lanes'/lane['id']; evidence_path = target.with_name(target.name+'-stages')
+            wrapper_sha=R0035_COST_WRAPPER_SHA256 if costs else R0035_STAGE_WRAPPER_SHA256
+            materializer_sha=R0035_COST_MATERIALIZER_SHA256 if costs else R0035_STAGE_MATERIALIZER_SHA256
+            target = args.task/'capture/lanes'/lane['id']; evidence_path = target.with_name(target.name+('-observations' if costs else '-stages'))
             if (not isinstance(preparation, dict) or preparation.get('status') not in ('PASS','INCOMPLETE')
-                    or lane.get('stageObservation') != {'protocol': 'r0035-stage-diagnostic/1', 'instrumented': True}
+                    or lane.get('stageObservation') != {'protocol': 'r0035-cost-diagnostic/1' if costs else 'r0035-stage-diagnostic/1', 'instrumented': True}
                     or lane.get('engine') != engine or lane.get('dpr') != 1 or lane.get('timeoutSeconds') != 480
                     or lane.get('output') != str(target) or report.get('kind') != 'r0035-trials'
                     or report.get('path') != str(target/'summary.json') or report.get('expectedRows') != 3
                     or report.get('expectedArms') != ['main','unmodified','mitigated'] or report.get('capture') is not False
                     or report.get('requiresEveryRowAdmitted') is not True
-                    or report.get('stageWrapperSha256') != R0035_STAGE_WRAPPER_SHA256
+                    or report.get('stageWrapperSha256') != wrapper_sha
                     or report.get('stageDriverPath') != str(evidence_path/'driver.json')
-                    or evidence.get('output') != str(evidence_path) or evidence.get('timingComparableToOriginal') is not False):
+                    or evidence.get('output') != str(evidence_path) or evidence.get('timingComparableToOriginal') is not False
+                    or costs and (type(lane.get('postObservationCheckSeconds')) is not int or lane['postObservationCheckSeconds']!=90)):
                 raise ValueError('stage lane source, private paths or population differs')
             if preparation['status'] == 'INCOMPLETE':
                 if lane.get('argv') != []:
@@ -160,15 +181,17 @@ def admit_plan(plan, args):
                         or original[1] != str(Path(lane['cwd'])/'tools/r0035/native_trials.py')
                         or original[2:] != [preparation['plan'], str(target), '--engine', engine, '--rounds', '1',
                                             '--seconds', '15', '--clock', 'ordinary', '--scene', 'dark', '--motion', 'normal']
-                        or preparation.get('wrapperSha256') != R0035_STAGE_WRAPPER_SHA256
-                        or preparation.get('materializerSha256') != R0035_STAGE_MATERIALIZER_SHA256
+                        or preparation.get('wrapperSha256') != wrapper_sha
+                        or preparation.get('materializerSha256') != materializer_sha
+                        or costs and (preparation.get('collectorSha256')!=cost_material.HELPER_SHA256
+                                      or preparation.get('stageMaterializerSha256')!=cost_material.STAGE_MATERIALIZER_SHA256)
                         or not isinstance(preparation.get('custody'), dict)
-                        or lane.get('argv') != [original[0], str(HERE/'observe_r0035_stages.py'), '--driver', original[1],
+                        or lane.get('argv') != [original[0], str(HERE/('observe_r0035_costs.py' if costs else 'observe_r0035_stages.py')), '--driver', original[1],
                             '--identity', preparation['identity'], '--preparation-process', preparation['process'],
                             '--preparation-sha256', preparation['custody']['process']['sha256'],
                             '--evidence', str(evidence_path), '--', *original[2:]]):
                     raise ValueError('stage lane does not bind original argv and preparation custody')
-                folder = args.task/'capture/r0035-stage-preparation'
+                folder = args.task/'capture'/('r0035-cost-preparation' if costs else 'r0035-stage-preparation')
                 if any(preparation[key] != str(folder/name) for key, name in
                        (('process','process.json'),('identity','identity.json'),('plan','plan.json'))):
                     raise ValueError('stage lane preparation path differs from this campaign')
@@ -617,9 +640,41 @@ process.stdout.write(JSON.stringify(admission));
     return result
 
 
+def _r0035_cost_current_check(lane, final):
+    """Bounded actual namespace/preparation/full-source re-admission after trial."""
+    script=r'''
+import json,sys
+from pathlib import Path
+sys.path.insert(0,sys.argv[1])
+import r0035_cost_materialize as m
+p=json.load(sys.stdin);lane=p['lane'];prep=lane['preparation'];final=p['final'];loader=m.support()
+isolation=loader.verify_isolation(final['isolation']['file'])
+m.need(isolation==final['isolation'],'current cost namespace differs')
+custody=m.preparation_process(prep['process'],lane['evidenceRetention']['originalArgv'][1],prep['plan'],prep['identity'],prep['custody']['process']['sha256'])
+m.need(custody==prep['custody']==final['preparation'],'current cost preparation differs')
+driver=loader.load_driver(lane['evidenceRetention']['originalArgv'][1])
+record=m.admit(json.loads(Path(prep['plan']).read_bytes()),driver,prep['identity'])
+print(json.dumps({'status':'CURRENT','isolation':isolation,'preparation':custody,
+                  'originalFiles':len(record['baseFiles']),'derivedFiles':len(record['files'])}))
+'''
+    env=dict(os.environ);env.pop('PYTHONPATH',None);env.pop('PYTHONSTARTUP',None)
+    try:
+        process=subprocess.run([sys.executable,'-B','-c',script,str(HERE)],cwd=HERE,env=env,
+            input=json.dumps({'lane':lane,'final':final},allow_nan=False),capture_output=True,text=True,timeout=90)
+        return {'returncode':process.returncode,'timedOut':False,'stdout':process.stdout,'stderr':process.stderr}
+    except subprocess.TimeoutExpired as error:
+        def stream(value):return value.decode('utf-8',errors='replace') if isinstance(value,bytes) else value
+        return {'returncode':None,'timedOut':True,'stdout':stream(error.stdout),'stderr':stream(error.stderr)}
+    except OSError as error:
+        return {'returncode':None,'timedOut':False,'stdout':'','stderr':str(error)}
+
+
 def r0035_stage_status(lane, returncode, timed_out):
     """Supplemental custody cannot replace an original qualification or exit."""
-    result = {'status': 'INCOMPLETE', 'timingClass': 'instrumented-stage-observation',
+    costs=cost_lane(lane);material=cost_material if costs else stage_material
+    inspector=inspect_cost_trace if costs else inspect_stage_trace
+    wrapper_sha=R0035_COST_WRAPPER_SHA256 if costs else R0035_STAGE_WRAPPER_SHA256
+    result = {'status': 'INCOMPLETE', 'timingClass': cost_material.TIMING if costs else 'instrumented-stage-observation',
               'nativeQualification': 'UNCHANGED_ORIGINAL_REPORT_ONLY', 'humanAcceptance': 'OUTSTANDING'}
     need = stage_material.need
     def read(path, expected=None):
@@ -633,18 +688,22 @@ def r0035_stage_status(lane, returncode, timed_out):
         preparation = lane['preparation']; evidence = Path(lane['evidenceRetention']['output'])
         original = lane['evidenceRetention']['originalArgv']; custody = preparation['custody']
         need(returncode == 0 and not timed_out, 'stage child did not complete normally')
-        need(final.get('protocol') == 'r0035-stage-driver/1' and final.get('status') == 'OBSERVED'
+        if costs: need(type(returncode) is int and timed_out is False, 'cost child completion must be explicit')
+        need(final.get('protocol') == ('r0035-cost-driver/1' if costs else 'r0035-stage-driver/1') and final.get('status') == 'OBSERVED'
              and type(final.get('trials')) is int and final['trials'] == lane['result']['expectedRows']
              and final.get('observationErrors') == [] and final.get('originalException') is None
              and final.get('continuationVetoed') is False and final.get('originalArgv') == original[2:]
              and final.get('timingClass') == result['timingClass']
              and final.get('nativeQualification') == result['nativeQualification']
-             and final.get('wrapperSha256') == R0035_STAGE_WRAPPER_SHA256
+             and final.get('wrapperSha256') == wrapper_sha
              and final.get('identitySha256') == custody['identitySha256'] and final.get('preparation') == custody,
              'stage driver receipt is incomplete or has different custody')
         read(preparation['process'], custody['process']['sha256'])
         plan, _ = read(preparation['plan'], custody['planSha256'])
-        read(preparation['identity'], custody['identitySha256'])
+        identity,_=read(preparation['identity'], custody['identitySha256'])
+        if costs:
+            need(final.get('baseWrapperSha256')==COST_BASE_WRAPPER_SHA256 and final.get('collectorSha256')==cost_material.HELPER_SHA256,
+                 'cost host or collector identity differs')
         isolation_path = Path(lane['output']).parents[1]/'isolation'/lane['id']/'receipt.json'
         isolation, isolation_receipt = read(isolation_path)
         need(final.get('isolation') == {'file': str(isolation_path), 'sha256': isolation_receipt['sha256']}
@@ -672,12 +731,12 @@ def r0035_stage_status(lane, returncode, timed_out):
                  'stage selected trial identity differs')
             trial, _ = read(path,row['sha256'])
             target = Path(lane['output'])/('01-'+label); report, report_receipt = read(target/'trial.json')
-            need(trial.get('protocol') == 'r0035-stage-trial/1' and trial.get('ordinal') == ordinal and trial.get('arm') == label
+            need(trial.get('protocol') == ('r0035-cost-trial/1' if costs else 'r0035-stage-trial/1') and trial.get('ordinal') == ordinal and trial.get('arm') == label
                  and trial.get('timingClass') == result['timingClass'] and trial.get('contextClosed') is True
                  and trial.get('originalOutput') == str(target) and trial.get('originalReport') == report_receipt
                  and not trial.get('originalException') and not trial.get('continuationVeto'), 'stage original trial custody differs')
             need(summary[ordinal-1] == {key: report[key] for key in summary_keys}, 'original summary differs from original trial')
-            need(report.get('arm') == label and report.get('scope') == stage_material.KIND
+            need(report.get('arm') == label and report.get('scope') == material.KIND
                  and all(report.get(key) == plan['arms'][label][key] for key in ('root','commit'))
                  and report.get('flags') == plan['arms'][label]['flags'].lstrip('&')
                  and report.get('driverSha256') == wanted and report.get('engine') == lane['engine']
@@ -694,9 +753,16 @@ def r0035_stage_status(lane, returncode, timed_out):
             if label == 'main':
                 need(observed == {'status':'NOT_APPLICABLE','trace':None}, 'main has unexpected stage instrumentation')
             else:
-                need(observed.get('status') == 'OBSERVED' and observed.get('intervals') == inspect_stage_trace(observed.get('trace')),
+                need(observed.get('status') == 'OBSERVED' and same_json(observed.get('intervals'),inspector(observed.get('trace'))),
                      'stage raw trace validation is incomplete')
         need(set(evidence.glob('trial-*.json')) == set(wanted_paths), 'stage evidence population has extra or missing members')
+        if costs:
+            result['currentSourceCheck']=_r0035_cost_current_check(lane,final)
+            check=result['currentSourceCheck']
+            need(type(check['returncode']) is int and check['returncode']==0 and check['timedOut'] is False,
+                 'current cost source, preparation or namespace did not re-admit')
+            need(same_json(json.loads(check['stdout']),{'status':'CURRENT','isolation':final['isolation'],'preparation':custody,
+                'originalFiles':len(identity['baseFiles']),'derivedFiles':len(identity['files'])}), 'current cost receipt differs')
         result['status'] = 'OBSERVED'
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         result['reason'] = str(error)
@@ -716,9 +782,9 @@ def classify_lane(lane, returncode, timed_out=False):
         original = classify_lane({k:v for k,v in lane.items() if k != 'stageObservation'}, returncode, timed_out)
         supplemental = r0035_stage_status(lane,returncode,timed_out)
         status = original['status']
-        if status == 'PASS': status = STAGES_OBSERVED if supplemental['status'] == 'OBSERVED' else 'INCOMPLETE'
+        if status == 'PASS': status = (COSTS_OBSERVED if cost_lane(lane) else STAGES_OBSERVED) if supplemental['status'] == 'OBSERVED' else 'INCOMPLETE'
         return {**original, 'status': status, 'originalStatus': original['status'], 'stageObservation': supplemental,
-                'timingClass': 'instrumented-stage-observation', 'nativeQualification': 'UNCHANGED_ORIGINAL_REPORT_ONLY'}
+                'timingClass': cost_material.TIMING if cost_lane(lane) else 'instrumented-stage-observation', 'nativeQualification': 'UNCHANGED_ORIGINAL_REPORT_ONLY'}
     try: body = json.loads(Path(lane['result']['path']).read_text())
     except (OSError, ValueError): body = None
     if kind == 'r002f-probe':
@@ -785,7 +851,7 @@ def classify_lane(lane, returncode, timed_out=False):
 def namespace_status(lane, process, inner):
     """An inner observation cannot overrule abnormal wrapper completion."""
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED)
+                and inner.get('status') in ('PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED)
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
@@ -802,17 +868,20 @@ def namespace_status(lane, process, inner):
                     and same_json(inner.get('diagnostic'), r0040_dateonly_identity()))
     if admitted and lane.get('result', {}).get('kind') in ('r0040-capture', 'r0040-capture-dateonly') and inner['status'] == 'PASS':
         admitted = False  # This lane can admit acquisition, never report a cadence PASS.
-    if admitted and inner['status'] == STAGES_OBSERVED:
+    if admitted and inner['status'] in (STAGES_OBSERVED,COSTS_OBSERVED):
         admitted = ('stageObservation' in lane and inner.get('returncode') == 0 and inner.get('timedOut') is False
+                    and (inner['status']==COSTS_OBSERVED)==cost_lane(lane)
+                    and (not cost_lane(lane) or type(inner.get('returncode')) is int)
                     and inner.get('originalStatus') == 'PASS' and inner.get('stageObservation',{}).get('status') == 'OBSERVED'
-                    and inner.get('timingClass') == 'instrumented-stage-observation'
+                    and inner.get('timingClass') == (cost_material.TIMING if cost_lane(lane) else 'instrumented-stage-observation')
                     and inner.get('nativeQualification') == 'UNCHANGED_ORIGINAL_REPORT_ONLY')
     if admitted and 'stageObservation' in lane and inner['status'] == 'PASS': admitted = False
     result = {**(inner if admitted else {}), 'id': lane['id'],
               'innerStatus': inner, 'namespaceProcess': process}
     if process['returncode'] == ISOLATION_EXIT or admitted and inner['status'] == 'ISOLATION_FAIL':
         result.update(status='ISOLATION_FAIL', stopAll=True, reason='namespace boundary reported isolation failure')
-    elif process['returncode'] != 0 or process['timedOut'] or not admitted:
+    elif process['returncode'] != 0 or process['timedOut'] or not admitted or (cost_lane(lane)
+            and (type(process['returncode']) is not int or process['timedOut'] is not False)):
         result.update(status='ISOLATION_UNCONFIRMED', stopAll=True,
                       reason='namespace completion or inner admission receipt is unconfirmed')
     return result
@@ -847,10 +916,12 @@ def controls(args, runtime, label):
 
 def prepare_stages(args, runtime, destination):
     """Optional child failure remains private evidence and blocks only its lane."""
-    folder = args.task/'capture/r0035-stage-preparation'; folder.mkdir(mode=0o700)
-    derived = args.task/'work/r0035-stages'
+    costs=cost_campaign(args)
+    folder = args.task/'capture'/('r0035-cost-preparation' if costs else 'r0035-stage-preparation'); folder.mkdir(mode=0o700)
+    derived = args.task/'work'/('r0035-costs' if costs else 'r0035-stages')
+    materializer='r0035_cost_materialize.py' if costs else 'r0035_stage_materialize.py'
     driver = args.research/'tools/r0035/native_trials.py'
-    command = [runtime['python'], str(HERE/'r0035_stage_materialize.py'), '--driver', str(driver),
+    command = [runtime['python'], str(HERE/materializer), '--driver', str(driver),
                '--plan', str(folder/'source-plan.json'), '--out', str(derived),
                '--receipt', str(folder/'identity.json'), '--plan-out', str(folder/'plan.json')]
     try:
@@ -864,9 +935,11 @@ def prepare_stages(args, runtime, destination):
         optional = run_bounded(command, str(HERE), dict(os.environ), folder/'stdout', folder/'stderr', 240)
     except (OSError, ValueError, KeyError, TypeError) as error:
         optional = {'returncode': None, 'timedOut': False, 'error': str(error)}
-    record = {**optional, 'protocol': 'r0035-stage-preparation-process/1', 'argv': command,
+    record = {**optional, 'protocol': 'r0035-cost-preparation-process/1' if costs else 'r0035-stage-preparation-process/1', 'argv': command,
               'cwd': str(HERE), 'timeoutSeconds': 240, 'root': str(derived),
-              'materializerSha256': digest(HERE/'r0035_stage_materialize.py')}
+              'materializerSha256': digest(HERE/materializer)}
+    if costs:
+        record.update(collectorSha256=cost_material.HELPER_SHA256,stageMaterializerSha256=cost_material.STAGE_MATERIALIZER_SHA256)
     for key, path in {'driver': driver, 'sourcePlan': folder/'source-plan.json',
                       'originalPreparation': folder/'original-prepared.json',
                       'originalPreparationProcess': folder/'original-preparation-process.json',
@@ -966,7 +1039,9 @@ def inside(args, runtime):
                    '--r003f-dpr', str(getattr(args, 'r003f_dpr', 1)), '--work-orders', *selected]
         command += star_arguments(args)
         if stage_campaign(args):
-            command += ['--r0035-stages', '--r0035-stage-process', str(args.task/'capture/r0035-stage-preparation/process.json')]
+            folder=args.task/'capture'/('r0035-cost-preparation' if cost_campaign(args) else 'r0035-stage-preparation')
+            command += ['--r0035-stages', '--r0035-stage-process', str(folder/'process.json')]
+        if cost_campaign(args): command.append('--r0035-costs')
         command += ['--r003f-harness', moon_campaign(args)]
         command += ['--r0040-mode', rain_campaign(args)]
         if rain_campaign(args) in R0040_CAPTURE_MODES:
@@ -1020,6 +1095,7 @@ def isolated_command(args, runtime, phase, lane=None):
              '--inside', '--phase', phase, '--outer-netns', os.readlink('/proc/self/ns/net')]
     inner += star_arguments(args)
     if stage_campaign(args): inner.append('--r0035-stages')
+    if cost_campaign(args): inner.append('--r0035-costs')
     inner += ['--r003f-harness', moon_campaign(args)]
     inner += ['--r0040-mode', rain_campaign(args)]
     if getattr(args, 'retain_evidence', False):
@@ -1069,7 +1145,8 @@ def outside(args, runtime):
         else:
             result = run_bounded(isolated_command(args, runtime, 'lane', lane['id']), str(HERE), parent_env,
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
-                                 min(lane['timeoutSeconds'] + 75 + (100 if lane.get('result',{}).get('kind') == 'r0040-capture-dateonly' else 0), remaining))
+                                 min(lane['timeoutSeconds'] + 75 + (100 if lane.get('result',{}).get('kind') == 'r0040-capture-dateonly' else 0)
+                                     + (90 if cost_lane(lane) else 0), remaining))
             path = capture/'lane-status'/(lane['id']+'.json')
             try: inner = json.loads(path.read_text())
             except (OSError, ValueError): inner = None
@@ -1083,7 +1160,7 @@ def outside(args, runtime):
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED) for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in ('PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED) for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     write_json(capture/'observation.json', overall)
     return 0 if overall['status'] == 'OBSERVED' else 2
@@ -1104,6 +1181,7 @@ def main():
     parser.add_argument('--r0035-scope', choices=('all', 'preview-members'), default='all')
     parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
     parser.add_argument('--r0035-stages', action='store_true')
+    parser.add_argument('--r0035-costs', action='store_true')
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
@@ -1128,12 +1206,14 @@ def main():
             args.r003f_harness = campaign.get('r003fHarness', 'published')
             args.r0040_mode = campaign.get('r0040Mode', 'options')
             args.r0035_stages = campaign.get('r0035Stages', False)
+            args.r0035_costs = campaign.get('r0035Costs', False)
             for key, value in star_controls(campaign.get('r0035')).items():
                 setattr(args, 'r0035_'+key, value)
             write_json(args.task/'capture'/'campaign.json', campaign)
         args.work_orders = campaign_selection(args)
         star_campaign(args)
         stage_campaign(args)
+        cost_campaign(args)
         moon_campaign(args)
         rain_campaign(args)
         return inside(args, runtime) if args.inside else outside(args, runtime)

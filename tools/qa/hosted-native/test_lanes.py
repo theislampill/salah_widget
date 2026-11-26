@@ -677,6 +677,32 @@ class LaneControls(unittest.TestCase):
         self.assertEqual(star['preparation']['status'],'INCOMPLETE');self.assertEqual(star['dependsOn'],[])
         self.assertEqual(star['id'],'r0035-chromium-timing')
 
+    def test_cost_selector_is_explicit_and_keeps_complete_existing_plans_identical(self):
+        self.assertEqual(self.plan(),self.plan(r0035_costs=False))
+        valid={'work_orders':['R0035'],'r0035_stages':True,'r0035_mode':'timing','r0035_guard':'off','r0035_costs':True}
+        for change in ({'r0035_costs':'yes'},{'r0035_stages':False},{'r0035_guard':'default'},
+                       {'r0035_scope':'preview-members'},{'engine':'firefox'},{'engine':'webkit'},
+                       {'work_orders':['R0040','R0035']},{'include_r002f':True},{'retain_evidence':True}):
+            with self.subTest(change=change),self.assertRaises(ValueError):self.plan(**{**valid,**change})
+        plan=self.plan(**valid);self.assertTrue(plan['r0035Costs'])
+        self.assertEqual(plan['lanes'][0]['argv'],[]);self.assertEqual(plan['lanes'][0]['preparation']['status'],'INCOMPLETE')
+
+    def test_cost_plan_uses_distinct_identity_and_original_full_population_three_arm_recipe(self):
+        admission={'status':'PASS','root':'/private/costs','process':'/private/costs/process.json',
+                   'identity':'/private/costs/identity.json','plan':'/private/costs/plan.json','custody':{'process':{'sha256':'c'*64}}}
+        plan=self.plan(work_orders=['R0035'],r0035_stages=True,r0035_mode='timing',r0035_guard='off',
+                       r0035_costs=True,r0035_stage_preparation=admission)
+        lane=plan['lanes'][0];self.assertEqual(lane['id'],'r0035-chromium-timing-costs')
+        self.assertEqual(lane['stageObservation'],{'protocol':'r0035-cost-diagnostic/1','instrumented':True})
+        self.assertEqual(lane['argv'][1],str(HERE/'observe_r0035_costs.py'));self.assertEqual(lane['timeoutSeconds'],480)
+        self.assertEqual(lane['postObservationCheckSeconds'],90);self.assertEqual(lane['stopAllOnExit'],[86])
+        self.assertEqual(lane['evidenceRetention']['originalArgv'][4:],['--engine','chromium','--rounds','1',
+            '--seconds','15','--clock','ordinary','--scene','dark','--motion','normal'])
+        self.assertEqual(lane['result']['stageWrapperSha256'],sha(HERE/'observe_r0035_costs.py'))
+        for arm in ('unmodified','mitigated'):
+            self.assertIn('&r35scope=all&',plan['r0035Plan']['arms'][arm]['flags'])
+            self.assertEqual(plan['r0035Plan']['arms'][arm]['producerProbe'],{'path':'stars.status','equals':'active'})
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

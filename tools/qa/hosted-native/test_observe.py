@@ -1348,4 +1348,161 @@ class StageIntegration(unittest.TestCase):
         self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},bogus)['status'],'ISOLATION_UNCONFIRMED')
 
 
+class CostIntegration(unittest.TestCase):
+    def setUp(self):
+        StageIntegration.setUp(self)
+        self.args.r0035_costs=True;self.folder=self.task/'capture/r0035-cost-preparation'
+    tearDown=StageIntegration.tearDown
+    def prepared_plan(self):
+        self.assertTrue(hasattr(M,'cost_campaign'),'explicit central cost selection has not been implemented')
+        result=M.prepare_stages(self.args,self.runtime,self.task/'work/prepared')
+        self.assertEqual(result['returncode'],0)
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all',costs=True)
+        self.assertEqual(admission['status'],'PASS',admission)
+        (self.task/'capture/lanes').mkdir()
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),
+            work_orders=['R0035'],r0035_guard='off',r0035_mode='timing',r0035_stages=True,r0035_costs=True,
+            r0035_stage_preparation=admission)
+        return plan,plan['lanes'][0]
+
+    def test_cost_actual_optional_preparation_and_full_current_plan_bindings(self):
+        plan,lane=self.prepared_plan();self.assertEqual(M.admit_plan(plan,self.args),[lane])
+        self.assertEqual(lane['preparation']['collectorSha256'],M.cost_material.HELPER_SHA256)
+        self.assertEqual(lane['id'],'r0035-chromium-timing-costs')
+        self.assertIn('--r0035-costs',M.isolated_command(self.args,self.runtime,'prepare'))
+        for mutate in (lambda p:p['lanes'][0]['argv'].__setitem__(-1,'full'),
+                       lambda p:p['lanes'][0]['stageObservation'].update(protocol='r0035-stage-diagnostic/1'),
+                       lambda p:p['lanes'][0].update(postObservationCheckSeconds=0),
+                       lambda p:p['lanes'][0]['preparation'].update(collectorSha256='0'*64)):
+            altered=copy.deepcopy(plan);mutate(altered)
+            with self.assertRaises(ValueError):M.admit_plan(altered,self.args)
+        path=self.folder/'process.json';raw=path.read_bytes()
+        for change in ({'returncode':False},{'timedOut':None},{'retentionError':False},
+                       {'retentionError':''},{'timeoutSeconds':239},{'cwd':'/changed/cwd'},
+                       {'argv':['unbound']},{'collectorSha256':'0'*64}):
+            body=json.loads(raw);body.update(change);M.write_json(path,body)
+            with self.subTest(change=change):
+                self.assertEqual(self.planner.admit_r0035_stages(self.prepared,self.prepared_path,path,'off','all',costs=True)['status'],'INCOMPLETE')
+        path.write_bytes(raw)
+
+    def test_cost_campaign_rejects_other_engines_scopes_and_unreviewed_combinations(self):
+        value={'schemaVersion':1,'engine':'chromium','r003fDpr':1,'workOrders':['R0035'],
+               'r002f':{'enabled':False,'dpr':1,'rounds':1,'section':'all'},
+               'r0035':{'guard':'off','scope':'all','mode':'timing'},'r0035Stages':True,'r0035Costs':True}
+        path=self.root/'campaign.json';M.write_json(path,value);self.assertEqual(M.read_campaign(path),value)
+        for change in ({'r0035Costs':'yes'},{'r0035Stages':False},{'engine':'firefox'},
+                       {'r0035':{'guard':'default','scope':'all','mode':'timing'}},
+                       {'workOrders':['R0035','R003F']},{'r0035':{'guard':'off','scope':'preview-members','mode':'timing'}}):
+            M.write_json(path,{**value,**change})
+            with self.subTest(change=change),self.assertRaises(ValueError):M.read_campaign(path)
+
+    def test_cost_actual_preparation_failure_blocks_without_fallback_and_keeps_streams(self):
+        self.assertTrue(hasattr(M,'cost_campaign'),'explicit central cost selection has not been implemented')
+        def fail(argv,cwd,env,stdout,stderr,timeout):
+            M.write_json(Path(stdout),{'synthetic':'partial source prefix'});Path(stderr).write_text('controlled source refusal')
+            return {'returncode':7,'timedOut':False}
+        with patch.object(M,'run_bounded',side_effect=fail):result=M.prepare_stages(self.args,self.runtime,self.task/'work/prepared')
+        self.assertEqual(result['returncode'],7);self.assertIn('refusal',(self.folder/'stderr').read_text())
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all',costs=True)
+        self.assertEqual(admission['status'],'INCOMPLETE')
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),
+            work_orders=['R0035'],r0035_guard='off',r0035_mode='timing',r0035_stages=True,r0035_costs=True,
+            r0035_stage_preparation=admission)
+        self.assertEqual(plan['lanes'][0]['argv'],[])
+
+    def run_cost_original(self,failed=False):
+        import observe_r0035_costs as cost_observer
+        import r0035_cost_controls as cost_controls
+        entry=cost_observer.entry_support()
+        self.fixtures=SimpleNamespace(fixtures=self.fixtures.fixtures,stage_trace=lambda:cost_controls.cost_trace(cost_observer))
+        with patch.dict(sys.modules,{'observe_r0035_stages':entry}):
+            return StageIntegration.run_original_with_stages(self,failed)
+
+    def test_cost_admitted_totals_cannot_erase_original_failed_qualification(self):
+        plan,lane=self.run_cost_original(failed=True)
+        with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current) as current:
+            verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],'FAIL');self.assertEqual(verdict['originalStatus'],'FAIL')
+        self.assertEqual(verdict['stageObservation']['status'],'OBSERVED',verdict);current.assert_called_once()
+        self.assertEqual(verdict['timingClass'],'instrumented-preparation-costs')
+        self.assertEqual(json.loads(Path(lane['result']['path']).read_text())[1]['qualification']['verdict'],'failed')
+
+    @staticmethod
+    def synthetic_current(lane,final):
+        identity=json.loads(Path(lane['preparation']['identity']).read_bytes())
+        return {'returncode':0,'timedOut':False,'stderr':'','stdout':json.dumps({
+            'status':'CURRENT','isolation':final['isolation'],'preparation':lane['preparation']['custody'],
+            'originalFiles':len(identity['baseFiles']),'derivedFiles':len(identity['files'])})}
+
+    def test_cost_complete_intake_stays_distinct_and_requires_final_source_receipt(self):
+        plan,lane=self.run_cost_original()
+        with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current):verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],M.COSTS_OBSERVED,verdict)
+        inner={**verdict,'id':lane['id']}
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)['status'],M.COSTS_OBSERVED)
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},{**inner,'status':M.STAGES_OBSERVED})['status'],'ISOLATION_UNCONFIRMED')
+        with patch.object(M,'_r0035_cost_current_check',return_value={'returncode':0,'timedOut':False,'stdout':'{}','stderr':''}):
+            self.assertEqual(M.classify_lane(lane,0)['status'],'INCOMPLETE')
+        path=Path(lane['result']['stageDriverPath']);raw=path.read_bytes()
+        for change in ({'collectorSha256':'0'*64},{'baseWrapperSha256':'0'*64},{'observations':[]},{'trials':2}):
+            body=json.loads(raw);body.update(change);M.write_json(path,body)
+            with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current) as current:
+                self.assertEqual(M.classify_lane(lane,0)['status'],'INCOMPLETE');current.assert_not_called()
+        path.write_bytes(raw)
+
+    def test_cost_final_currentness_child_rejects_actual_missing_namespace(self):
+        plan,lane=self.prepared_plan()
+        path=self.task/'capture/isolation'/lane['id']/'receipt.json'
+        result=M._r0035_cost_current_check(lane,{'isolation':{'file':str(path),'sha256':'not-observed'}})
+        self.assertNotEqual(result['returncode'],0);self.assertFalse(result['timedOut'])
+        self.assertIn('No such file',result['stderr']);self.assertFalse(path.exists())
+
+    def test_cost_currentness_failure_and_outer_failure_keep_their_original_precedence(self):
+        plan,lane=self.run_cost_original()
+        with patch.object(M,'_r0035_cost_current_check',return_value={'returncode':1,'timedOut':False,'stdout':'','stderr':'source changed'}):
+            verdict=M.classify_lane(lane,0)
+        self.assertEqual(verdict['status'],'INCOMPLETE');self.assertEqual(verdict['originalStatus'],'PASS')
+        veto=M.classify_lane(lane,86);self.assertEqual(veto['status'],M.VETO_STATUS);veto['id']=lane['id']
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},veto)['status'],M.VETO_STATUS)
+        self.assertEqual(M.namespace_status(lane,{'returncode':86,'timedOut':False},veto)['status'],'ISOLATION_FAIL')
+        self.assertEqual(M.namespace_status(lane,{'returncode':1,'timedOut':False},veto)['status'],'ISOLATION_UNCONFIRMED')
+
+    def test_cost_success_requires_literal_normal_inner_and_outer_process_completion(self):
+        plan,lane=self.run_cost_original()
+        with patch.object(M,'_r0035_cost_current_check',side_effect=self.synthetic_current):
+            good=M.classify_lane(lane,0);good['id']=lane['id']
+            for code,timeout in ((False,False),(0,None)):
+                with self.subTest(code=code,timeout=timeout):
+                    self.assertEqual(M.r0035_stage_status(lane,code,timeout)['status'],'INCOMPLETE')
+        for process in ({'returncode':False,'timedOut':False},{'returncode':0,'timedOut':None}):
+            self.assertEqual(M.namespace_status(lane,process,good)['status'],'ISOLATION_UNCONFIRMED')
+        inner={**good,'returncode':False}
+        self.assertEqual(M.namespace_status(lane,{'returncode':0,'timedOut':False},inner)['status'],'ISOLATION_UNCONFIRMED')
+
+    def test_cost_inside_planner_and_outer_namespace_budget_use_the_distinct_source(self):
+        self.args.phase='prepare';self.args.lane=None;calls=[];real_run=M.run_bounded
+        def run(argv,cwd,env,stdout,stderr,timeout):
+            calls.append(argv)
+            if Path(argv[1]).name=='r0035_cost_materialize.py':return real_run(argv,cwd,env,stdout,stderr,timeout)
+            return {'returncode':0,'timedOut':False}
+        with patch.object(M,'controls',return_value='synthetic-isolation-receipt'),patch.object(M,'run_bounded',side_effect=run),\
+             patch.dict(os.environ,{},clear=False):self.assertEqual(M.inside(self.args,self.runtime),0)
+        self.assertEqual([Path(c[1]).name for c in calls],['prepare.py','r0035_cost_materialize.py','lanes.py'])
+        self.assertIn('--r0035-costs',calls[-1]);self.assertIn('--r0035-stages',calls[-1])
+        self.assertEqual(calls[-1][calls[-1].index('--r0035-stage-process')+1],str(self.folder/'process.json'))
+        admission=self.planner.admit_r0035_stages(self.prepared,self.prepared_path,self.folder/'process.json','off','all',costs=True)
+        plan=self.planner.make_plan(self.prepared,self.task/'capture/lanes',python_playwright=Path(sys.executable),
+            node=Path('/bounded/node'),node_modules=Path('/bounded/modules'),pngjs=Path('/bounded/pngjs'),work_orders=['R0035'],
+            r0035_guard='off',r0035_mode='timing',r0035_stages=True,r0035_costs=True,r0035_stage_preparation=admission)
+        M.write_json(self.task/'capture/lanes.json',plan);lane=plan['lanes'][0]
+        M.write_json(self.task/'capture/lane-status'/(lane['id']+'.json'),
+                     {'id':lane['id'],'status':'FAIL','stopAll':False,'returncode':0,'timedOut':False})
+        with patch.object(M,'isolated_command',return_value=['synthetic-isolated']),\
+             patch.object(M,'run_bounded',return_value={'returncode':0,'timedOut':False}) as outer:
+            self.assertEqual(M.outside(self.args,self.runtime),2)
+        self.assertEqual([call.args[-1] for call in outer.call_args_list],[1260,645])
+
+
 if __name__ == '__main__': unittest.main()
