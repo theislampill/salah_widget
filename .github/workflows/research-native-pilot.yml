@@ -119,7 +119,7 @@ jobs:
         run: |
           set -euo pipefail
           native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          if bash orchestration/tools/qa/hosted-native/acquire.sh "$native_task" "$GITHUB_WORKSPACE/research" "$GITHUB_WORKSPACE/baseline" "$GITHUB_WORKSPACE/historical" > "$native_task/capture/acquisition.stdout" 2> "$native_task/capture/acquisition.stderr"; then
+          if python3 orchestration/tools/qa/hosted-native/capture_pipeline.py run --phase acquisition --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical"; then
             echo 'ACQUISITION_COMPLETE'
           else
             echo 'ACQUISITION_INCOMPLETE; detail is private'
@@ -131,7 +131,7 @@ jobs:
         run: |
           set -euo pipefail
           native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          if python3 orchestration/tools/qa/hosted-native/observe.py --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical" --campaign orchestration/tools/qa/hosted-native/campaign.json > "$native_task/capture/observation.stdout" 2> "$native_task/capture/observation.stderr"; then
+          if python3 orchestration/tools/qa/hosted-native/capture_pipeline.py run --phase observation --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical"; then
             echo 'OBSERVATION_COMPLETE; recipe results are private'
           else
             echo 'OBSERVATION_INCOMPLETE; all obtained evidence will be sealed'
@@ -140,12 +140,12 @@ jobs:
       - name: Seal all obtained private evidence
         id: seal
         if: always() && steps.private.outputs.created == 'true'
-        timeout-minutes: 8
+        timeout-minutes: 20
         shell: bash
         run: |
           set -euo pipefail
           native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          if python3 orchestration/tools/qa/hosted-native/envelope.py seal --source "$native_task/capture" --out "$native_task/sealed" --certificate orchestration/tools/qa/hosted-native/recipient.crt > "$native_task/sealing.log" 2>&1; then
+          if python3 orchestration/tools/qa/hosted-native/capture_pipeline.py seal --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical" --certificate orchestration/tools/qa/hosted-native/recipient.crt; then
             echo 'sealed=true' >> "$GITHUB_OUTPUT"
             echo 'PRIVATE_EVIDENCE_SEALED'
           else
@@ -168,5 +168,5 @@ jobs:
         run: |
           set -euo pipefail
           native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
-          rm -rf -- "$native_task/capture" "$native_task/work" "$native_task/temporary" "$native_task/cache" "$native_task/config" "$native_task/runtime"
+          rm -rf -- "$native_task"
           echo 'PRIVATE_PLAINTEXT_REMOVED'
