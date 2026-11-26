@@ -2415,6 +2415,33 @@
     "PYTHONUTF8": "1",
     "PYTHONDONTWRITEBYTECODE": "1"
    }
+  },
+  {
+   "name": "firefox-policy-source-controls",
+   "owner": "R003F/R0035 hosted Firefox diagnostic",
+   "argv": [
+    "node",
+    "--test",
+    "--test-reporter=tap",
+    "tools/qa/hosted-native/firefox_policy_controls.cjs"
+   ],
+   "protocol": "auto",
+   "expectedCases": 57,
+   "covers": [
+    "tools/qa/hosted-native/firefox_policy_controls.cjs"
+   ],
+   "inputs": [
+    "tools/qa/hosted-native/firefox_policy_source.cjs",
+    "tools/qa/hosted-native/firefox_policy_probe.cjs",
+    "tools/qa/hosted-native/firefox_policy_controls.cjs",
+    "tools/qa/hosted-native/FIREFOX_POLICY.md",
+    "tools/qa/r0033_isolation.cjs",
+    "tools/qa/v1_net_guard.cjs",
+    "tools/qa/hosted-native/node/package.json",
+    "tools/qa/hosted-native/node/package-lock.json",
+    "tools/qa/hosted-native/firefox-policy-pins.json"
+   ],
+   "timeout": 60
   }
  ],
  "modules": [
