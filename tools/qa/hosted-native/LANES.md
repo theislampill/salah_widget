@@ -1,5 +1,13 @@
 # Native source preparation and initial lane commands
 
+The optional `r002fRoute: "tabhide"` campaign selector is described in
+[R002F_TABHIDE.md](R002F_TABHIDE.md). It requires genuine current preparation and
+five-module source closure, emits only the distinct headed Chromium DPR1 lane,
+and has an 1800-second native child ceiling, a 3900-second coordinator envelope
+and a 66-minute observation step. Its admitted disposition is a lifecycle
+observation. The original offscreen route remains the default with its unchanged
+900-second native child bound.
+
 These entries prepare disposable source and emit commands. They never launch a
 browser or establish isolation. The coordinator supplies the verified isolated
 executor, executes one browser driver at a time, and retains all observations
@@ -102,10 +110,12 @@ canonical order above. Without the selection switch, the existing three work
 orders are emitted, plus R002F when enabled. The initial hosted campaign enabled
 R002F and contained all four work orders and five command rows. R0035 defaults
 to both timing and capture with their original dependency. The checked-in
-follow-up selects only the R0040 Chromium Date-only diagnostic capture on
-genuine main. Previously obtained native results remain separate; no other
-workstream is repeated by this campaign. Its reconstructed source and central
-wiring require a fresh independent exact-tree review before hosted execution.
+follow-up selects only headed R002F tab hiding on Chromium DPR1, with the
+baseline/candidate pair and a preceding visible no-hide control in each arm.
+Previously obtained native results remain separate; no other workstream is
+repeated by this campaign. The combined source and central wiring require a
+fresh independent exact-tree review before hosted execution. R0040 Date-only,
+R003F matrix and R0035 cost observations remain separately selected routes.
 
 Selection limits observation commands. Common source preparation and the
 original star-plan validation remain unchanged. The coordinator checks the
@@ -427,8 +437,8 @@ offline instrument controls, not native capture evidence.
 
 The reconstructed Date-only source contributes 13 registered Node controls using
 the actual unchanged capture driver and transformed historical helper with
-bounded doubles. Central controls now total 31 planner/preparation cases and
-73 coordinator cases. New cases cover distinct selection, all eight original
+bounded doubles. Central planner/preparation and coordinator controls cover
+distinct selection, all eight original
 arguments, full source population, actual outer preparation failure, native-clock
 recomputation, terminal custody, late requests/crashes/disconnections, currentness
 failure, missing/duplicate selected rows, and child-veto versus outer failure.
@@ -447,3 +457,38 @@ explicit browser doubles. They bind preparation status, source flags, native
 receipt population and original reports through final classification; exit zero
 with a failed original admission remains failed. These controls do not observe
 native rendering or measure instrumentation overhead.
+
+## Optional matrix route
+
+`--r003f-harness corrected-matrix --r003f-matrix '{"id":"<original-cell-id>","variant":"B0"}'` selects a separately admitted matrix lane. It requires R003F alone, genuine current optional preparation and the exact reviewed source closure. The first separate matrix selection is the original owner cell at Chromium DPR1 with B0 only. The combined checked-in campaign selects headed R002F only. Its result remains a selected diagnostic. Complete-eight intake requires an actual unchanged original replay; individual variants are never unioned. See [R003F_MATRIX_CENTRAL.md](R003F_MATRIX_CENTRAL.md) for supported populations, precise limits, private process custody and the calculated workflow budgets.
+
+## R0035 cost derivative
+
+`--r0035-costs` is admitted only with `--r0035-stages`, R0035 alone, Chromium,
+`--r0035-guard off --r0035-scope all --r0035-mode timing`, no R002F and no separate
+retention pilot. The distinct lane `r0035-chromium-timing-costs` retains all
+sixteen elements of the original three-arm command, apart from its explicitly
+mapped derivative plan. Its result kind remains `r0035-trials`.
+
+The 240-second optional preparation copies the admitted original lab, transforms
+four existing modules reversibly and adds one inventoried collector. Its actual
+process, original receipt copies and complete derivative identity live under
+`capture/r0035-cost-preparation`; the runtime derivative stays under
+`work/r0035-costs`. Failed preparation blocks the lane. It cannot fall back to
+the stage or original recipe.
+
+The diagnostic adapter retains private evidence under
+`r0035-chromium-timing-costs-observations`. Raw trace validation, source population
+bindings and aggregate derivation are repeated at final intake. A real final
+child must re-admit the current namespace, actual successful preparation and
+full original/derived source inventory. Its 90-second allowance is additional
+to the unchanged 480-second original trial and 75-second namespace allowance;
+the selected lane therefore has a 645-second outer maximum. The total selected
+preparation and observation budget is 1,905 seconds within the existing 2,640
+and 45-minute limits.
+
+The supplemental success label is `OBSERVED_PREPARATION_COSTS`. Original failure,
+isolation failure, retained-route veto, cleanup failure and timeout retain their
+original priority. The new label supplies no product, physical or human
+acceptance. Absent selection leaves complete original/default plans unchanged.
+See [R0035_COSTS.md](R0035_COSTS.md) for exact cost semantics and source controls.

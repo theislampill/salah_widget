@@ -16,7 +16,8 @@ jobs:
   observe:
     if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/chatgpt/hosted-native-research-20261125'
     runs-on: ubuntu-22.04
-    timeout-minutes: 75
+    # Shared safety ceiling; each campaign retains its smaller selected step budget.
+    timeout-minutes: 300
     steps:
       - name: Receive exact orchestration
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -32,6 +33,19 @@ jobs:
             /docs/state-contracts/evidence/R0040/native-capture-preflight.json
             /docs/state-contracts/evidence/R0040/native-capture-preparation-controls.json
             /.github/workflows/research-native-pilot.yml
+      - name: Bound the selected observation campaign
+        id: budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, sys
+          sys.path.insert(0, 'orchestration/tools/qa/hosted-native')
+          from observe import read_campaign, campaign_budget
+          budget = campaign_budget(read_campaign('orchestration/tools/qa/hosted-native/campaign.json'))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              print('observation_minutes='+str(budget['workflowObservationMinutes']), file=output)
+          PY
       - name: Set up pinned Node runtime
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
@@ -55,6 +69,7 @@ jobs:
             !/docs/moon/evidence/**
             !/docs/state-contracts/evidence/**
             /docs/state-contracts/evidence/R0040/**
+            /docs/state-contracts/evidence/R003F/publication-paths.json
             /docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json
       - name: Receive immutable clean baseline
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -111,7 +126,7 @@ jobs:
             exit 1
           fi
       - name: Observe sequentially inside verified network namespaces
-        timeout-minutes: 45
+        timeout-minutes: ${{ fromJSON(steps.budget.outputs.observation_minutes) }}
         shell: bash
         run: |
           set -euo pipefail

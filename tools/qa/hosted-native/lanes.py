@@ -10,6 +10,7 @@ from subprocess exit codes. No shell interpolation is needed.
 import argparse
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import subprocess
@@ -19,9 +20,15 @@ from prepare import BASELINE, RESEARCH, digest, validate_prepared, verify_genera
 from r002f_prepare import BASE_INDEX, COMBINED_INDEX, BASE_INVENTORY, COMBINED_INVENTORY, PATCH
 from r0040_capture_prepare import load_contract as load_r0040_contract
 import r0035_stage_materialize as stage_material
+import r003f_matrix_campaign as matrix
+
+MATRIX_PINS = "c87056c51cfa51c9221f2928e3c0094f6025ead6ca0202b76181c9ac8aa0c0a0"
+import r0035_cost_materialize as cost_material
 
 HERE = Path(__file__).resolve().parent
 R002F_PROBE_SHA256 = '673c0656d8e2d8e1c343d1258be5070fa9447f3f43878460791ea8570468558f'
+R002F_TABHIDE_MANIFEST_SHA256 = 'f6588aafecd70917cace0849408dfd66c12ea4db28240d19fd00c3df2a4351fe'
+R002F_TABHIDE_TIMEOUT_SECONDS = 4 * (180 + 120) + 600
 WORK_ORDERS = ('R0040', 'R003F', 'R0035', 'R002F')
 STAR_DEFAULTS = {'guard': 'default', 'scope': 'all', 'mode': 'both'}
 R003F_MATERIALIZATION = 'fab2e2ad49a14eee2ba715fb75365fa4b0abfa48a1d8b60247343ad29b1021e5'
@@ -34,6 +41,89 @@ R0040_DATEONLY_WRAPPER_SHA256 = '214d4a3c6cb13dbfa69cf0330444aeb9f71d9816b431290
 R0040_DATEONLY_ADMITTED = 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
 R0035_STAGE_WRAPPER_SHA256 = '8c3838b2ba01d6a4114b5de0aa2401134bb0cea3918dcba4fe1237997e53c99b'
 R0035_STAGE_MATERIALIZER_SHA256 = '1890dbdeacf3bcd3fc7f9624a8a970770ae4dbb43f6987e43919c7161e17bf4a'
+R0035_COST_WRAPPER_SHA256 = '73358152b2c01de6d071bf4ea6476c99d727964c72abc68fbd6ed43761a74254'
+R0035_COST_MATERIALIZER_SHA256 = 'bc757982849516ad49c87ec933b97c446768c3f03cfdc809f5910c41e5c2dd52'
+
+
+def tabhide_manifest():
+    path = HERE/'r002f-tabhide-pins.json'
+    if digest(path) != R002F_TABHIDE_MANIFEST_SHA256:
+        raise ValueError('R002F tab-hide manifest differs from reviewed source')
+    body = json.loads(path.read_text())
+    names = {'r002f_probe.cjs', 'browser-control.cjs', 'r002f_tabhide_source.cjs',
+             'r002f_tabhide_runtime.cjs', 'r002f_tabhide.cjs'}
+    if (body.get('protocol') != 'r002f-tabhide-source/1'
+            or body.get('reconstructedFromPublicCommit') != '890c7b6005228715b58b3d1d90847f39cf4698be'
+            or set(body.get('modules', {})) != names):
+        raise ValueError('R002F tab-hide source module population differs')
+    for name, row in body['modules'].items():
+        source = HERE/name
+        if source.is_symlink() or source.stat().st_size != row['bytes'] or digest(source) != row['sha256']:
+            raise ValueError('R002F tab-hide source module differs: '+name)
+    return body
+
+
+def r002f_route_mode(value, selected, engine, dpr, rounds, section):
+    if not isinstance(value, str) or value not in ('offscreen', 'tabhide'):
+        raise ValueError('unsupported R002F route')
+    if value == 'tabhide' and (list(selected) != ['R002F'] or engine != 'chromium'
+                               or type(dpr) is not int or dpr != 1 or type(rounds) is not int or rounds != 1 or section != 'all'):
+        raise ValueError('R002F tab-hide requires only R002F with Chromium DPR1 one-pair all-section observation')
+    return value
+
+
+def admit_r002f_tabhide(path, process_path, prepared, prepared_path, node):
+    """Extend original build admission with real outer process and full population custody."""
+    admission = admit_r002f(path, process_path)
+    if admission['status'] != 'PASS':
+        return admission
+    try:
+        def regular(value):
+            p = Path(value).absolute()
+            if not p.is_file() or any(x.is_symlink() for x in (p, *p.parents)):
+                raise ValueError('regular R002F custody path required')
+            return p
+        manifest = tabhide_manifest()
+        process_path, path, prepared_path = map(regular, (process_path, path, prepared_path))
+        process = json.loads(process_path.read_text())
+        wanted_root = process_path.parent.parent/'work/r002f-prepared'
+        argv = process.get('argv')
+        if (not isinstance(argv, list) or len(argv) != 10 or Path(argv[0]).resolve() != Path(sys.executable).resolve()
+                or argv[1:] != [str(HERE/'r002f_prepare.py'), '--research', prepared['sources']['research']['root'],
+                    '--baseline', prepared['sources']['baseline']['root'], '--out', str(wanted_root), '--node', str(node)]
+                or path != wanted_root/'build-result.json' or process.get('cwd') != str(HERE)
+                or process.get('timeoutSeconds') != 900 or type(process.get('returncode')) is not int
+                or process['returncode'] != 0 or process.get('timedOut') is not False
+                or type(process.get('elapsedSeconds')) not in (int, float)
+                or not math.isfinite(process['elapsedSeconds']) or not 0 <= process['elapsedSeconds'] <= 900
+                or process.get('error') is not None or process.get('retentionError') is not None):
+            raise ValueError('R002F actual preparation argv, cwd, bound or process completion differs')
+        streams = {}
+        for label in ('stdout', 'stderr'):
+            stream = regular(process_path.with_name('r002f-preparation.'+label))
+            streams[label] = {'path': str(stream), 'bytes': stream.stat().st_size, 'sha256': digest(stream)}
+        if Path(streams['stdout']['path']).read_text().strip() != 'R002F_BUILD PASS':
+            raise ValueError('R002F actual preparation terminal output differs')
+        command = [str(node), str(HERE/'r002f_tabhide.cjs'), '--admit-generated',
+                   admission['trees']['baseline']['root'], admission['trees']['candidate']['root']]
+        child = subprocess.run(command, cwd=HERE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=False)
+        if child.returncode:
+            raise ValueError('R002F full generated/source admission failed')
+        generated = json.loads(child.stdout)
+        if (generated.get('sourceManifest') != manifest
+                or generated.get('sourceManifestSha256') != R002F_TABHIDE_MANIFEST_SHA256):
+            raise ValueError('R002F generated admission has a different observer identity')
+        admission.update(sourceManifestSha256=R002F_TABHIDE_MANIFEST_SHA256, sourceManifest=manifest,
+                         generated={arm: generated[arm] for arm in ('baseline','candidate')},
+                         custody={'process': {'path': str(process_path), 'sha256': digest(process_path)},
+                                  'actualProcess': process, 'streams': streams,
+                                  'commonPreparation': {'path': str(prepared_path), 'sha256': digest(prepared_path)},
+                                  'build': {'path': str(path), 'sha256': digest(path)},
+                                  'generatedAdmissionProcess': {'argv': command, 'cwd': str(HERE), 'returncode': child.returncode,
+                                      'timedOut': False, 'timeoutSeconds': 30}})
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, subprocess.SubprocessError) as error:
+        admission.update(status='INCOMPLETE', reason=str(error))
+    return admission
 
 
 def stage_mode(enabled, selected, stars, retained=False):
@@ -41,6 +131,15 @@ def stage_mode(enabled, selected, stars, retained=False):
         raise ValueError('R0035 stage observation must be boolean')
     if enabled and ('R0035' not in selected or stars['mode'] != 'timing' or retained):
         raise ValueError('R0035 stage observation requires selected timing only and no per-event retention wrapper')
+    return enabled
+
+
+def cost_mode(enabled, stages, selected, stars, engine, retained=False, include_r002f=False):
+    if type(enabled) is not bool:
+        raise ValueError('R0035 cost observation must be boolean')
+    if enabled and (not stages or selected != ['R0035'] or engine != 'chromium' or retained or include_r002f
+                    or stars != {'guard':'off','scope':'all','mode':'timing'}):
+        raise ValueError('R0035 costs require only Chromium full-population guard-off stage timing')
     return enabled
 
 
@@ -55,28 +154,35 @@ def original_star_plan(prepared, guard='default', scope='all'):
     return {'kind': 'independent-reconstruction', 'arms': arms}
 
 
-def admit_r0035_stages(prepared, prepared_path, process_path, guard, scope):
+def admit_r0035_stages(prepared, prepared_path, process_path, guard, scope, *, costs=False):
     """Failed optional preparation blocks the diagnostic lane without fallback."""
     admission = {'status': 'INCOMPLETE'}
+    material = cost_material if costs else stage_material
+    wrapper = 'observe_r0035_costs.py' if costs else 'observe_r0035_stages.py'
+    materializer = 'r0035_cost_materialize.py' if costs else 'r0035_stage_materialize.py'
+    wrapper_sha = R0035_COST_WRAPPER_SHA256 if costs else R0035_STAGE_WRAPPER_SHA256
+    materializer_sha = R0035_COST_MATERIALIZER_SHA256 if costs else R0035_STAGE_MATERIALIZER_SHA256
     try:
         process_path = Path(process_path).absolute(); folder = process_path.parent
         plan_path, identity = folder/'plan.json', folder/'identity.json'
         driver_path = Path(prepared['sources']['research']['root'])/'tools/r0035/native_trials.py'
-        if (digest(HERE/'observe_r0035_stages.py') != R0035_STAGE_WRAPPER_SHA256
-                or digest(HERE/'r0035_stage_materialize.py') != R0035_STAGE_MATERIALIZER_SHA256):
+        if (digest(HERE/wrapper) != wrapper_sha or digest(HERE/materializer) != materializer_sha):
             raise ValueError('stage preparation or observer source differs from review')
-        custody = stage_material.preparation_process(process_path, driver_path, plan_path, identity)
+        custody = material.preparation_process(process_path, driver_path, plan_path, identity)
         admission['custody'] = custody
         if custody['originalPreparation']['sha256'] != digest(Path(prepared_path)):
             raise ValueError('stage original preparation differs from this campaign')
         plan = json.loads(plan_path.read_bytes())
-        driver = stage_material.support().load_driver(driver_path)
-        record = stage_material.admit(plan, driver, identity)
+        driver = material.support().load_driver(driver_path)
+        record = material.admit(plan, driver, identity)
         if record['sourcePlan'] != original_star_plan(prepared, guard, scope):
             raise ValueError('stage source plan or current flags differ from this campaign')
         admission.update(status='PASS', root=record['root'], process=str(process_path), identity=str(identity),
-                         plan=str(plan_path), custody=custody, wrapperSha256=R0035_STAGE_WRAPPER_SHA256,
-                         materializerSha256=R0035_STAGE_MATERIALIZER_SHA256)
+                         plan=str(plan_path), custody=custody, wrapperSha256=wrapper_sha,
+                         materializerSha256=materializer_sha)
+        if costs:
+            admission.update(collectorSha256=cost_material.HELPER_SHA256,
+                             stageMaterializerSha256=cost_material.STAGE_MATERIALIZER_SHA256)
     except (OSError, ValueError, KeyError, TypeError, AttributeError, subprocess.SubprocessError) as error:
         admission['reason'] = str(error)
     return admission
@@ -200,10 +306,21 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
     return admission
 
 
+def admit_matrix(entry, prepared, node, python):
+    try:
+        value=matrix.admit(entry,MATRIX_PINS)
+        if (value['common']['prepared'] != matrix.record(prepared) or value['node'] != str(node)
+                or value['python'] != str(python)):
+            raise ValueError('matrix preparation runtime or original common receipt differs')
+        return value
+    except (OSError,ValueError,KeyError,TypeError,subprocess.SubprocessError) as error:
+        return {'status':'INCOMPLETE','reason':str(error)}
+
+
 def moon_harness(value, selected):
-    if value not in ('published', 'corrected-b0') or not isinstance(value, str):
+    if value not in ('published', 'corrected-b0', 'corrected-matrix') or not isinstance(value, str):
         raise ValueError('unsupported R003F harness')
-    if value == 'corrected-b0' and 'R003F' not in selected:
+    if value in ('corrected-b0', 'corrected-matrix') and 'R003F' not in selected:
         raise ValueError('corrected R003F harness requires selected R003F observations')
     return value
 
@@ -323,9 +440,9 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
               engine='chromium', r003f_dpr=1, include_r002f=False, r002f_preparation=None,
               r002f_dpr=1, r002f_rounds=1, r002f_section='all', work_orders=None, retain_evidence=False,
               r0035_guard='default', r0035_scope='all', r0035_mode='both',
-              r0035_stages=False, r0035_stage_preparation=None,
-              r003f_harness='published', r003f_preparation=None,
-              r0040_mode='options', r0040_preparation=None):
+              r0035_stages=False, r0035_stage_preparation=None, r0035_costs=False,
+              r003f_harness='published', r003f_preparation=None, r003f_matrix=None, r003f_matrix_preparation=None,
+              r0040_mode='options', r0040_preparation=None, r002f_route='offscreen'):
     if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
         raise ValueError('unsupported engine or R003F DPR')
     if (type(include_r002f) is not bool or type(r002f_dpr) is not int or r002f_dpr not in (1, 2, 3)
@@ -333,14 +450,17 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
             or r002f_section not in ('all', 'prayer', 'preview')):
         raise ValueError('unsupported R002F campaign controls')
     selected = selected_work_orders(work_orders, include_r002f)
+    r002f_route_mode(r002f_route, selected, engine, r002f_dpr, r002f_rounds, r002f_section)
     rain_mode(r0040_mode, selected, engine)
     moon_harness(r003f_harness, selected)
+    matrix_control = matrix.matrix_controls(r003f_matrix, r003f_harness, selected, engine, r003f_dpr)
     stars = star_controls({'guard': r0035_guard, 'scope': r0035_scope, 'mode': r0035_mode})
     if stars != STAR_DEFAULTS and 'R0035' not in selected:
         raise ValueError('R0035 diagnostic controls require selected R0035 observations')
     if type(retain_evidence) is not bool:
         raise ValueError('evidence retention must be boolean')
     stage_mode(r0035_stages, selected, stars, retain_evidence)
+    cost_mode(r0035_costs, r0035_stages, selected, stars, engine, retain_evidence, include_r002f)
     research = Path(prepared['sources']['research']['root'])
     historical = Path(prepared['sources']['historical']['root'])
     roots = {key: Path(value['root']) for key, value in prepared['trees'].items()}
@@ -403,27 +523,31 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         rain['result']['expectedCells'] = ['day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
                                           'reduced-none', 'reduced-still', 'motion-full', 'dry']
 
-    moon = lane(f'r003f-b0-{engine}-dpr{r003f_dpr}', 'R003F', r003f_dpr, 900, 'r003f-b0', 'summary.json',
-                {'0': 'MEASURED', '1': 'FAIL', '2': 'INCOMPLETE', '3': 'ISOLATION FAIL', '4': 'ANDON'})
-    moon['argv'] = list(map(str, [node, research / 'tools/qa/r003f_owner_baseline.cjs', '--root', roots['r003f'],
-                                 '--out', moon['output'], '--engine', engine, '--dpr', r003f_dpr,
-                                 '--playwright', module, '--pngjs', pngjs]))
-    moon['result']['expectedCaptures'] = ['offset', 'b0', 'b0-repeat', 'reference']
-    moon['stopAllOnExit'] = [3]
-    if r003f_harness == 'corrected-b0':
-        admission = r003f_preparation or {'status': 'INCOMPLETE', 'reason': 'corrected R003F preparation is missing'}
-        moon['preparation'] = admission
-        if admission.get('status') == 'PASS':
-            moon['argv'][1] = str(Path(admission['root'])/'tools/qa/r003f_owner_baseline.cjs')
-            moon['result'].update(expectedHarness=admission['harness'], expectedIndexSha256=BASE_INDEX)
-        else:
-            moon['argv'] = []
+    if matrix_control:
+        entries.append(matrix.make_lane(matrix_control, r003f_matrix_preparation, out, engine, r003f_dpr,
+                                        node, node_modules, pngjs, MATRIX_PINS))
+    else:
+        moon = lane(f'r003f-b0-{engine}-dpr{r003f_dpr}', 'R003F', r003f_dpr, 900, 'r003f-b0', 'summary.json',
+                    {'0': 'MEASURED', '1': 'FAIL', '2': 'INCOMPLETE', '3': 'ISOLATION FAIL', '4': 'ANDON'})
+        moon['argv'] = list(map(str, [node, research / 'tools/qa/r003f_owner_baseline.cjs', '--root', roots['r003f'],
+                                     '--out', moon['output'], '--engine', engine, '--dpr', r003f_dpr,
+                                     '--playwright', module, '--pngjs', pngjs]))
+        moon['result']['expectedCaptures'] = ['offset', 'b0', 'b0-repeat', 'reference']
+        moon['stopAllOnExit'] = [3]
+        if r003f_harness == 'corrected-b0':
+            admission = r003f_preparation or {'status': 'INCOMPLETE', 'reason': 'corrected R003F preparation is missing'}
+            moon['preparation'] = admission
+            if admission.get('status') == 'PASS':
+                moon['argv'][1] = str(Path(admission['root'])/'tools/qa/r003f_owner_baseline.cjs')
+                moon['result'].update(expectedHarness=admission['harness'], expectedIndexSha256=BASE_INDEX)
+            else:
+                moon['argv'] = []
 
     for capture in (False, True):
         label = 'capture' if capture else 'timing'
         if r0035_mode not in ('both', label):
             continue
-        star = lane(f'r0035-{engine}-{label}', 'R0035', 1, 480, 'r0035-trials', 'summary.json',
+        star = lane(f'r0035-{engine}-{label}'+('-costs' if r0035_costs else ''), 'R0035', 1, 480, 'r0035-trials', 'summary.json',
                     {'0': 'INSPECT ADMISSION', '1': 'INCOMPLETE'})
         star['argv'] = list(map(str, [python_playwright, research / 'tools/r0035/native_trials.py',
                                      star_plan_path, star['output'], '--engine', engine, '--rounds', 1,
@@ -436,18 +560,23 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                 star['dependsOn'] = [entries[-2]['id']]
                 star['dependencyPolicy'] = 'finished; retain failed timing, classify captures independently'
         if r0035_stages:
+            wrapper_sha = R0035_COST_WRAPPER_SHA256 if r0035_costs else R0035_STAGE_WRAPPER_SHA256
+            wrapper = 'observe_r0035_costs.py' if r0035_costs else 'observe_r0035_stages.py'
             admission = r0035_stage_preparation or {'status': 'INCOMPLETE', 'reason': 'R0035 stage preparation is missing'}
             star['preparation'] = admission
-            evidence = str(out/(star['id']+'-stages'))
-            star['stageObservation'] = {'protocol': 'r0035-stage-diagnostic/1', 'instrumented': True}
+            evidence = str(out/(star['id']+('-observations' if r0035_costs else '-stages')))
+            star['stageObservation'] = {'protocol': 'r0035-cost-diagnostic/1' if r0035_costs else 'r0035-stage-diagnostic/1', 'instrumented': True}
             star['evidenceRetention'] = {'instrumented': True, 'output': evidence, 'timingComparableToOriginal': False,
                 'overhead': 'In-memory stage marks and small worker replies; one trace extraction after measurement. No added pixel copies or per-frame host writes.'}
             star['stopAllOnExit'] = [86]; star['exitStatuses']['86'] = 'EXTERNAL_CONTINUATION_VETOED'
-            star['result'].update(stageDriverPath=str(Path(evidence)/'driver.json'), stageWrapperSha256=R0035_STAGE_WRAPPER_SHA256)
+            star['result'].update(stageDriverPath=str(Path(evidence)/'driver.json'), stageWrapperSha256=wrapper_sha)
+            if r0035_costs:
+                star['postObservationCheckSeconds'] = 90
+                star['evidenceRetention']['overhead'] += ' Fixed aggregate operation counters and worker performance-clock marks add uncalibrated cost. No per-star history or added population scan.'
             if admission.get('status') == 'PASS':
                 original = star['argv']; original[2] = admission['plan']
                 star['evidenceRetention']['originalArgv'] = original
-                star['argv'] = [original[0], str(HERE/'observe_r0035_stages.py'), '--driver', original[1],
+                star['argv'] = [original[0], str(HERE/wrapper), '--driver', original[1],
                                 '--identity', admission['identity'], '--preparation-process', admission['process'],
                                 '--preparation-sha256', admission['custody']['process']['sha256'],
                                 '--evidence', evidence, '--', *original[2:]]
@@ -455,18 +584,28 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                 star['argv'] = []
     if include_r002f:
         admission = r002f_preparation or {'status': 'INCOMPLETE', 'reason': 'requested R002F preparation is missing'}
-        probe = lane(f'r002f-{engine}-dpr{r002f_dpr}', 'R002F', r002f_dpr, 900,
-                     'r002f-probe', 'result.json', {'0': 'PASS', '1': 'FAIL', '2': 'INCOMPLETE or INCONCLUSIVE'})
+        tabhide = r002f_route == 'tabhide'
+        probe = lane(f'r002f-tabhide-{engine}-dpr{r002f_dpr}' if tabhide else f'r002f-{engine}-dpr{r002f_dpr}',
+                     'R002F', r002f_dpr, R002F_TABHIDE_TIMEOUT_SECONDS if tabhide else 900, 'r002f-tabhide' if tabhide else 'r002f-probe', 'result.json',
+                     {'0': 'OBSERVED_TABHIDE_DIAGNOSTIC', '1': 'FAIL', '2': 'INCOMPLETE', '86': 'ISOLATION_FAIL or EXTERNAL_CONTINUATION_VETOED'}
+                     if tabhide else {'0': 'PASS', '1': 'FAIL', '2': 'INCOMPLETE or INCONCLUSIVE'})
         probe['preparation'] = admission
         probe['result'].update(expectedRounds=r002f_rounds, expectedSection=r002f_section,
                                expectedObserverSha256=R002F_PROBE_SHA256)
+        if tabhide:
+            probe['result'].update(expectedSourceManifestSha256=R002F_TABHIDE_MANIFEST_SHA256,
+                expectedSources=admission.get('generated'),
+                expectedRows=['baseline/no-hide','baseline/tabhide','candidate/no-hide','candidate/tabhide'])
+            probe['evidenceRetention'] = {'instrumented': True, 'output': probe['output'], 'timingComparableToOriginal': False,
+                'overhead': 'Read-only lifecycle snapshots, CDP capture, hashing and synchronous lossless retention affect timing.'}
+            probe['stopAllOnExit'] = [86]
         probe['argv'] = []
         if admission.get('status') == 'PASS':
             trees = admission['trees']
-            probe['argv'] = list(map(str, [node, HERE/'r002f_probe.cjs', '--playwright', module,
+            probe['argv'] = list(map(str, [node, HERE/('r002f_tabhide.cjs' if tabhide else 'r002f_probe.cjs'), '--playwright', module,
                                           '--baseline', trees['baseline']['root'], '--candidate', trees['candidate']['root'],
                                           '--out', probe['output'], '--engine', engine, '--dpr', r002f_dpr,
-                                          '--rounds', r002f_rounds, '--section', r002f_section, '--timeout-ms', 60000]))
+                                          '--rounds', r002f_rounds, '--section', r002f_section, '--timeout-ms', 180000 if tabhide else 60000]))
     entries = [row for row in entries if row['workOrder'] in selected]
     if retain_evidence:
         for row in entries:
@@ -486,12 +625,14 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                             'these are instrumented observations, not original performance measurements.'}
             row['exitStatuses']['86'] = 'EXTERNAL_CONTINUATION_VETOED'
             row['stopAllOnExit'] = [86]
-    return {'schemaVersion': 1, 'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
+    return {**({'r0035Costs': True} if r0035_costs else {}), **({'r002fRoute': 'tabhide'} if r002f_route == 'tabhide' else {}),
+            'schemaVersion': 1, 'protocol': 'salah-hosted-native-lanes/1', 'sequential': True,
             'scope': 'Selected native observations only; no work-order acceptance or owner selection.',
             'workOrders': selected, 'evidenceRetention': retain_evidence,
             'r0035Controls': stars,
             'r0035Stages': r0035_stages,
             'r003fHarness': r003f_harness,
+            **({'r003fMatrix':r003f_matrix} if matrix_control else {}),
             'r0040Mode': r0040_mode,
             'r0035PlanPath': str(star_plan_path), 'r0035Plan': star_plan, 'lanes': entries,
             'failurePolicy': {'isolation': 'stop all observations', 'R003FAndon': 'stop R003F progression',
@@ -543,9 +684,11 @@ def main():
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--engine', choices=('chromium', 'firefox', 'webkit'), default='chromium')
     parser.add_argument('--r003f-dpr', type=int, choices=(1, 2), default=1)
-    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0'), default='published')
+    parser.add_argument('--r003f-harness', choices=('published', 'corrected-b0', 'corrected-matrix'), default='published')
     parser.add_argument('--r003f-prepared', type=Path)
     parser.add_argument('--r003f-process', type=Path)
+    parser.add_argument('--r003f-matrix', type=json.loads)
+    parser.add_argument('--r003f-matrix-entry', type=Path)
     parser.add_argument('--r0040-mode', choices=('options', *R0040_CAPTURE_MODES), default='options')
     parser.add_argument('--r0040-work', type=Path)
     parser.add_argument('--r0040-process', type=Path)
@@ -556,6 +699,7 @@ def main():
     parser.add_argument('--r0035-scope', choices=('all', 'preview-members'), default='all')
     parser.add_argument('--r0035-mode', choices=('both', 'timing', 'capture'), default='both')
     parser.add_argument('--r0035-stages', action='store_true')
+    parser.add_argument('--r0035-costs', action='store_true')
     parser.add_argument('--r0035-stage-process', type=Path)
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-prepared', type=Path)
@@ -563,6 +707,7 @@ def main():
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
     parser.add_argument('--r002f-section', choices=('all', 'prayer', 'preview'), default='all')
+    parser.add_argument('--r002f-route', choices=('offscreen','tabhide'), default='offscreen')
     args = parser.parse_args()
     os.umask(0o077)
     admitted_out = None
@@ -573,15 +718,18 @@ def main():
         out = args.out.resolve()
         prepared = validate_prepared(args.prepared.resolve())
         roots = [Path(row['root']).resolve() for group in ('sources', 'trees') for row in prepared[group].values()]
-        r002f = (admit_r002f(args.r002f_prepared, args.r002f_process)
+        r002f = ((admit_r002f_tabhide(args.r002f_prepared, args.r002f_process, prepared, args.prepared, args.node)
+                  if args.r002f_route == 'tabhide' else admit_r002f(args.r002f_prepared, args.r002f_process))
                  if args.r002f_prepared and args.r002f_process else None)
         r003f = (admit_r003f(args.r003f_prepared, args.r003f_process)
                  if args.r003f_harness == 'corrected-b0' else None)
+        matrix_admission = (admit_matrix(args.r003f_matrix_entry,args.prepared,args.node,args.python_playwright) if args.r003f_harness == 'corrected-matrix' else None)
         r0040 = (admit_r0040(prepared, args.r0040_work, args.r0040_process, args.r0040_entry_process,
                              out, args.node, args.node_modules/'playwright', mode=args.r0040_mode)
                  if args.r0040_mode in R0040_CAPTURE_MODES else None)
         r0035_stage = (admit_r0035_stages(prepared, args.prepared, args.r0035_stage_process,
-                                         args.r0035_guard, args.r0035_scope) if args.r0035_stages else None)
+                                         args.r0035_guard, args.r0035_scope, costs=args.r0035_costs) if args.r0035_stages else None)
+        if matrix_admission and matrix_admission['status'] == 'PASS':roots.append(Path(matrix_admission['root']))
         if r0035_stage and r0035_stage['status'] == 'PASS':
             roots.append(Path(r0035_stage['root']))
         if r0040 and r0040['status'] == 'PASS':
@@ -604,9 +752,10 @@ def main():
                          r002f_rounds=args.r002f_rounds, r002f_section=args.r002f_section,
                          work_orders=args.work_orders, retain_evidence=args.retain_evidence,
                          r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode,
-                         r0035_stages=args.r0035_stages, r0035_stage_preparation=r0035_stage,
+                         r0035_stages=args.r0035_stages, r0035_stage_preparation=r0035_stage, r0035_costs=args.r0035_costs,
                          r003f_harness=args.r003f_harness, r003f_preparation=r003f,
-                         r0040_mode=args.r0040_mode, r0040_preparation=r0040)
+                         r003f_matrix=args.r003f_matrix,r003f_matrix_preparation=matrix_admission,
+                         r0040_mode=args.r0040_mode, r0040_preparation=r0040, r002f_route=args.r002f_route)
         check_star_plan(prepared, plan['r0035Plan'])
         write_json(Path(plan['r0035PlanPath']), plan['r0035Plan'])
         plan['preparedReceipt'] = {'path': str(args.prepared.resolve()), 'sha256': digest(args.prepared)}
