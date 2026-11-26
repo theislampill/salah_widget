@@ -15,6 +15,7 @@ import shutil
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 
 from lanes import (selected_work_orders, star_controls, STAR_DEFAULTS, moon_harness, BASE_INDEX, R003F_MATERIALIZATION,
@@ -273,6 +274,58 @@ def admit_lane_runtime(lane, runtime):
                 raise ValueError('explicit dependency path differs from acquired runtime')
 
 
+class ReturnedCurrentnessRefusal(ValueError):
+    """A retained, waited refusal after one complete canonical lane was admitted.
+
+    This is not authority for an interrupted/unknown outer producer, a malformed
+    plan, or a failed source check that never returned an observed process.
+    """
+    def __init__(self, lane, process, receipt, reason):
+        super().__init__(reason)
+        self.lane = lane
+        self.process = process
+        self.receipt = receipt
+
+
+def retain_currentness(args, lane, process, argv, seconds):
+    """Save actual byte streams before any success predicate can discard them.
+
+    Old text-only records remain text-only; re-encoding their decoded text would
+    not recover original bytes and cannot authorize the new refusal path.
+    """
+    if type(process) is not dict:
+        raise ValueError('currentness process record required')
+    clean = {k: v for k, v in process.items() if k not in ('stdoutBytes', 'stderrBytes')}
+    parent = args.task/'capture/currentness'
+    parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if any(p.is_symlink() for p in (parent, *parent.parents)):
+        raise ValueError('regular private currentness ancestry required')
+    phase = 'inner' if getattr(args, 'inside', False) else 'outer'
+    folder = Path(tempfile.mkdtemp(prefix=phase+'-'+lane['id']+'-', dir=parent))
+    streams = {}
+    for label in ('stdout', 'stderr'):
+        raw = process.get(label+'Bytes')
+        if type(raw) is bytes:
+            path = folder/label
+            with path.open('xb') as file:
+                file.write(raw); file.flush(); os.fsync(file.fileno())
+            path.chmod(0o600)
+            streams[label] = {'path': str(path), 'bytes': len(raw), 'sha256': hashlib.sha256(raw).hexdigest()}
+    complete = (set(streams) == {'stdout', 'stderr'}
+                and type(clean.get('returncode')) is int and type(clean.get('timedOut')) is bool
+                and same_json(clean.get('argv'), argv) and clean.get('cwd') == str(HERE)
+                and type(clean.get('timeoutSeconds')) is int and clean['timeoutSeconds'] == seconds
+                and clean.get('error') is None and clean.get('retentionError') is None
+                and clean.get('interrupted', False) is False and clean.get('forced', False) is False)
+    refused = complete and (clean['timedOut'] or 0 < clean['returncode'] < 126)
+    path = folder/'process.json'
+    write_json(path, {'protocol': 'salah-returned-currentness/1', 'phase': phase,
+                     'lane': lane['id'], 'workOrder': lane['workOrder'], 'process': clean,
+                     'streams': streams, 'knownReturnedRefusal': refused,
+                     'scope': 'Returned read-only child evidence; no native dispatch or product acceptance.'})
+    return clean, {'path': str(path), 'sha256': digest(path)}, refused
+
+
 def admit_plan(plan, args, runtime):
     if psf_campaign(args):
         phase=getattr(args,'phase',None);identifier=getattr(args,'lane',None)
@@ -314,6 +367,8 @@ def admit_plan(plan, args, runtime):
         lane=plan['lanes'][0];mode=diagnostic['mode'];prepared=lane.get('preparation',{})
         if prepared.get('status') not in ('PASS','INCOMPLETE'):
             raise ValueError('diagnostic preparation status is absent')
+        canonical=diagnostics.make_lane(mode,prepared,args.task,runtime)
+        if not same_json(lane,canonical):raise ValueError('diagnostic canonical command, source, scope or budget differs')
         if prepared['status']=='PASS':
             common=args.task/'work/prepared/receipts/prepared.json'
             if not same_json(plan.get('preparedReceipt'),diagnostics.record(common)):
@@ -325,6 +380,10 @@ def admit_plan(plan, args, runtime):
             if any(prefix['prepared']['sources'][k]['root']!=v for k,v in expected_sources.items()):
                 raise ValueError('diagnostic current source roots differ from actual coordinator inputs')
             check=diagnostics.readmit(mode,args.task,runtime)
+            check,retained,refused=retain_currentness(args,lane,check,
+                [runtime['python'],'-B',str(HERE/'r003f_diagnostics.py'),'readmit'],120)
+            if refused:
+                raise ReturnedCurrentnessRefusal(lane,check,retained,'actual diagnostic current readmission failed')
             diagnostics.actual_success(check,'actual diagnostic current readmission')
             current=json.loads(check['stdout'])
             if current.get('status')!='PASS' or not same_json(current,prepared):
@@ -347,6 +406,8 @@ def admit_plan(plan, args, runtime):
                   or stars['mode'] == 'both' or row[0].endswith('-'+stars['mode'])]
     if costs: population=[(identifier+'-costs' if order=='R0035' else identifier,order,timeout) for identifier,order,timeout in population]
     expected = {identifier: (order, timeout) for identifier, order, timeout in population if order in selected}
+    if (tabhide or observed) and [row.get('id') for row in plan['lanes']] != list(expected):
+        raise ValueError('complete ordered currentness lane population required')
     actual = {}
     for lane in plan['lanes']:
         if (not isinstance(lane, dict) or not isinstance(lane.get('id'), str) or lane['id'] not in expected
@@ -388,10 +449,28 @@ def admit_plan(plan, args, runtime):
                         or preparation.get('sourceManifestSha256') != R002F_TABHIDE_MANIFEST_SHA256):
                     raise ValueError('R002F tab-hide argv or source admission differs')
                 common = Path(plan['preparedReceipt']['path'])
-                if digest(common) != plan['preparedReceipt']['sha256']:
+                if (common != args.task/'work/prepared/receipts/prepared.json'
+                        or preparation['receipt']['path'] != str(args.task/'work/r002f-prepared/build-result.json')
+                        or preparation['processReceipt']['path'] != str(args.task/'capture/r002f-preparation-process.json')
+                        or any(trees[arm]['root'] != str(args.task/'work/r002f-prepared'/arm) for arm in ('baseline','candidate'))
+                        or digest(common) != plan['preparedReceipt']['sha256']):
                     raise ValueError('R002F common preparation receipt changed')
+                common_prepared = validate_prepared(common)
+                canonical = make_plan(common_prepared,args.task/'capture/lanes',python_playwright=Path(runtime['python']),
+                    node=Path(runtime['node']),node_modules=Path(runtime['modules']),pngjs=Path(runtime['pngjs']),
+                    include_r002f=True,work_orders=['R002F'],r002f_route='tabhide',r002f_preparation=preparation,
+                    retain_evidence=retention)['lanes']
+                if not same_json(plan['lanes'],canonical):
+                    raise ValueError('R002F canonical command, source, budget or evidence path differs')
+                returned = []
+                def retain_generated(check):
+                    result = retain_currentness(args,lane,check,[runtime['node'],str(HERE/'r002f_tabhide.cjs'),
+                        '--admit-generated',trees['baseline']['root'],trees['candidate']['root']],30)
+                    returned.append(result)  # only after every retention write succeeds
                 current = admit_r002f_tabhide(Path(preparation['receipt']['path']),Path(preparation['processReceipt']['path']),
-                                             validate_prepared(common),common,Path(runtime['node']))
+                                             common_prepared,common,Path(runtime['node']),retain_generated)
+                if returned and returned[0][2]:
+                    raise ReturnedCurrentnessRefusal(lane,returned[0][0],returned[0][1],'R002F current generated source readmission failed')
                 if current != preparation:
                     raise ValueError('R002F preparation process or current source population changed')
         if ('stageObservation' in lane) != (stages and lane['workOrder'] == 'R0035'):
@@ -523,7 +602,17 @@ def admit_plan(plan, args, runtime):
                     if (not same_json(custody, preparation.get('passiveRuntime'))
                             or not same_json(passive.verify_sources(), preparation.get('passiveSources'))):
                         raise ValueError('passive current runtime, process or source custody differs')
+                    canonical = make_plan(prepared, args.task/'capture/lanes', python_playwright=Path(runtime['python']),
+                        node=Path(runtime['node']), node_modules=Path(runtime['modules']), pngjs=Path(runtime['pngjs']),
+                        work_orders=['R0040'], r0040_mode=passive.MODE, r0040_preparation=preparation,
+                        retain_evidence=retention)['lanes']
+                    if not same_json(plan['lanes'], canonical):
+                        raise ValueError('passive canonical command, source, budget or evidence path differs')
                     check = passive.readmit(common, runtime, args.task)
+                    check,retained,refused=retain_currentness(args,lane,check,
+                        [runtime['python'],'-B',str(HERE/'r0040_passive_central.py'),'--readmit'],passive.READMISSION_SECONDS)
+                    if refused:
+                        raise ReturnedCurrentnessRefusal(lane,check,retained,'passive current source readmission failed')
                     if type(check.get('returncode')) is not int or check['returncode'] != 0 or check.get('timedOut') is not False:
                         raise ValueError('passive current source readmission failed: '+json.dumps(check, allow_nan=False))
                     current = json.loads(check['stdout'])
@@ -1683,6 +1772,13 @@ def outside(args, runtime):
         write_json(capture/'observation.json', overall); return 2
     plan = json.loads((capture/'lanes.json').read_text())
     try:lanes = admit_plan(plan, args, runtime)
+    except ReturnedCurrentnessRefusal as error:
+        # The dedicated type is emitted only after exact single-lane canonical
+        # admission and retained actual child completion. No lane was launched.
+        overall['lanes']=[{'id':error.lane['id'],'workOrder':error.lane['workOrder'],'status':'NOT_RUN',
+                           'reason':str(error),'outerCurrentness':error.process,'currentnessReceipt':error.receipt}]
+        overall['status']='OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+        write_json(capture/'observation.json',overall);return 2
     except (OSError,ValueError,KeyError,TypeError) as error:
         if not psf_campaign(args):raise
         overall['lanes']=[{'id':'r0035-chromium-psf-'+role,'workOrder':'R0035','status':'NOT_RUN',

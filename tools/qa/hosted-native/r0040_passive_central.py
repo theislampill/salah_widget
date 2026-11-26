@@ -128,7 +128,7 @@ def preparation_runtime(entry_path, process_path, common_path, prepared, runtime
             'commonPreparation': record(common_path), 'streams': streams}
 
 
-def bounded_check(argv, payload, timeout, env=None):
+def bounded_check(argv, payload, timeout, env=None, *, raw=False):
     """A failed/timeout read-only child retains streams and cannot leave its group."""
     environment = dict(os.environ if env is None else env)
     environment.pop('NODE_OPTIONS', None)
@@ -148,7 +148,8 @@ def bounded_check(argv, payload, timeout, env=None):
             stdout, stderr = process.communicate()
         return {'argv': argv, 'cwd': str(HERE), 'timeoutSeconds': timeout,
                 'returncode': process.returncode, 'timedOut': timed_out,
-                'stdout': stdout.decode('utf-8', errors='replace'), 'stderr': stderr.decode('utf-8', errors='replace')}
+                'stdout': stdout.decode('utf-8', errors='replace'), 'stderr': stderr.decode('utf-8', errors='replace'),
+                **({'stdoutBytes': stdout, 'stderrBytes': stderr} if raw else {})}
     except OSError as error:
         return {'argv': argv, 'cwd': str(HERE), 'timeoutSeconds': timeout,
                 'returncode': None, 'timedOut': False, 'stdout': '', 'stderr': str(error)}
@@ -164,7 +165,7 @@ def bounded_check(argv, payload, timeout, env=None):
 
 def readmit(common_path, runtime, task):
     return bounded_check([runtime['python'], '-B', str(Path(__file__).absolute()), '--readmit'],
-                         {'common': str(common_path), 'runtime': runtime, 'task': str(task)}, READMISSION_SECONDS)
+                         {'common': str(common_path), 'runtime': runtime, 'task': str(task)}, READMISSION_SECONDS, raw=True)
 
 
 def check_tail(rows, final):

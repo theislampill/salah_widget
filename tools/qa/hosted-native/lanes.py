@@ -77,7 +77,7 @@ def r002f_route_mode(value, selected, engine, dpr, rounds, section):
     return value
 
 
-def admit_r002f_tabhide(path, process_path, prepared, prepared_path, node):
+def admit_r002f_tabhide(path, process_path, prepared, prepared_path, node, retain_currentness=None):
     """Extend original build admission with real outer process and full population custody."""
     admission = admit_r002f(path, process_path)
     if admission['status'] != 'PASS':
@@ -112,6 +112,12 @@ def admit_r002f_tabhide(path, process_path, prepared, prepared_path, node):
         command = [str(node), str(HERE/'r002f_tabhide.cjs'), '--admit-generated',
                    admission['trees']['baseline']['root'], admission['trees']['candidate']['root']]
         child = subprocess.run(command, cwd=HERE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=False)
+        if retain_currentness is not None:
+            retain_currentness({'argv': command, 'cwd': str(HERE), 'timeoutSeconds': 30,
+                                'returncode': child.returncode, 'timedOut': False,
+                                'stdout': child.stdout.decode('utf-8', errors='replace'),
+                                'stderr': child.stderr.decode('utf-8', errors='replace'),
+                                'stdoutBytes': child.stdout, 'stderrBytes': child.stderr})
         if child.returncode:
             raise ValueError('R002F full generated/source admission failed')
         generated = json.loads(child.stdout)

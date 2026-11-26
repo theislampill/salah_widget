@@ -39,6 +39,15 @@ descendants stopped. Safely retaining evidence from an abruptly lost outer
 coordinator would require separately reviewed broader descendant supervision.
 This integration does not establish that stronger behavior.
 
+The [returned currentness correction](../../../docs/state-contracts/R002F-hosted-currentness-retention.md)
+retains the exact raw streams of a known returned FF/WK, passive or R002F
+generated-source refusal before it can be discarded. After a complete canonical
+single-lane plan has been checked, only that dedicated completed-refusal path
+may produce a terminal `NOT_RUN` record and a failed/incomplete aggregate.
+Unknown completion, malformed source/plan input and interrupted or exceptional
+outer returns still refuse sealing. The producer and strict envelope guards are
+unchanged; this adds recoverable failure evidence, not a successful observation.
+
 The private task parent and immutable checkout are trusted custody, as in the
 unchanged envelope. No claim of an atomic snapshot against another writer with
 the same account privileges is made. The source-bounded completion gate is not a

@@ -421,7 +421,7 @@ def admit_runtime(lane, runtime):
 
 def readmit(mode, task, runtime):
     return bounded([runtime['python'],'-B',str(HERE/'r003f_diagnostics.py'),'readmit'],
-                   {'mode':mode,'task':str(task),'runtime':runtime},120)
+                   {'mode':mode,'task':str(task),'runtime':runtime},120,raw=True)
 
 
 def namespace_admitted(lane, inner):
