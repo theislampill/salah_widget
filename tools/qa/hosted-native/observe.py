@@ -32,10 +32,12 @@ import r0035_stage_materialize as stage_material
 import r0035_cost_materialize as cost_material
 import r0040_passive_central as passive
 import r0040_mechanism_central as mechanism
+import r0040_autoattach_central as autoattach
 import r0035_psf as psf
 from observe_r0035_stages import inspect as inspect_stage_trace
 from observe_r0035_costs import inspect as inspect_cost_trace, BASE_WRAPPER_SHA256 as COST_BASE_WRAPPER_SHA256
 import r003f_diagnostics as diagnostics
+import r002f_bfcache_central as bfcache
 
 CAP_FIELDS = ('CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb')
 RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
@@ -157,12 +159,14 @@ def tabhide_campaign(args):
 
 def campaign_budget(campaign):
     """Keep independent route envelopes; unreviewed combinations never use max()."""
+    if isinstance(campaign,dict) and bfcache.campaign_selected(campaign):
+        return {key:bfcache.budget()[key] for key in ('coordinatorSeconds','workflowObservationMinutes','workflowAcquisitionMinutes')}
     if not isinstance(campaign, dict) or campaign.get('r002fRoute', 'offscreen') not in ('offscreen', 'tabhide'):
         raise ValueError('unsupported campaign budget selector')
     headed = campaign.get('r002fRoute', 'offscreen') == 'tabhide'
     matrix_selected = campaign.get('r003fHarness', 'published') == 'corrected-matrix'
     costs = campaign.get('r0035Costs', False)
-    passive_selected = campaign.get('r0040Mode', 'options') in (passive.MODE, mechanism.MODE)
+    passive_selected = campaign.get('r0040Mode', 'options') in (passive.MODE, mechanism.MODE, autoattach.MODE)
     diagnostic_selected=campaign.get('r003fHarness') in diagnostics.ROUTES
     psf_selected=psf.mode(campaign.get('r0035Psf',False),campaign.get('workOrders',['R0040','R003F','R0035','R002F']),
                            star_controls(campaign.get('r0035')),campaign.get('engine','chromium'),
@@ -210,7 +214,8 @@ def observation_budget(args):
                             'r003fMatrix': getattr(args, 'r003f_matrix', None),
                             'r0035Costs': getattr(args, 'r0035_costs', False), 'r0035Stages': stage_campaign(args),
                             'r0035Psf':getattr(args,'r0035_psf',False),'r0040Mode':rain_campaign(args),
-                            'r0035': star_campaign(args), 'r002f': {'enabled': getattr(args, 'r002f', False)},
+                            'r0035': star_campaign(args), 'r002f': {'enabled': getattr(args, 'r002f', False),
+                            'dpr':getattr(args,'r002f_dpr',1),'rounds':getattr(args,'r002f_rounds',1),'section':getattr(args,'r002f_section','all')},
                             'evidenceRetention': getattr(args, 'retain_evidence', False),
                             'engine': args.engine, 'r003fDpr': getattr(args, 'r003f_dpr', 1),
                             'workOrders': campaign_selection(args)})
@@ -225,6 +230,9 @@ def admit_lane_runtime(lane, runtime):
     """Acquisition is executable authority; copied plan/receipt fields are not."""
     if not isinstance(lane, dict):
         raise ValueError('executable lane must be a dictionary')
+    if bfcache.lane_selected(lane):
+        bfcache.admit_runtime(lane,runtime)
+        return
     if diagnostics.mode_for_lane(lane):
         diagnostics.admit_runtime(lane,runtime)
         return
@@ -362,6 +370,26 @@ def admit_plan(plan, args, runtime):
     # Callers pass their acquired runtime, never a value copied from this plan.
     for lane in plan['lanes']:
         admit_lane_runtime(lane, runtime)
+    if tabhide_campaign(args)==bfcache.MODE:
+        if len(plan['lanes'])!=1:raise ValueError('one complete paired bfcache lane required')
+        lane=plan['lanes'][0];preparation=lane.get('preparation',{})
+        canonical=bfcache.make_lane(args.task,runtime,preparation)
+        if not same_json(lane,canonical):raise ValueError('bfcache canonical source/command/budget differs')
+        if preparation.get('status')=='PASS':
+            if not same_json(plan.get('preparedReceipt'),matrix.record(args.task/'work/prepared/receipts/prepared.json')):
+                raise ValueError('bfcache current common preparation differs')
+            check=bfcache.readmit(args.task,runtime,native=True)
+            check,retained,refused=retain_currentness(args,lane,check,[runtime['python'],'-B',str(HERE/'r002f_bfcache_central.py'),'readmit'],120)
+            if refused:raise ReturnedCurrentnessRefusal(lane,check,retained,'actual bfcache source readmission refused')
+            bfcache.process_success(check,[runtime['python'],'-B',str(HERE/'r002f_bfcache_central.py'),'readmit'],120)
+            current=json.loads(check['stdout'])
+            if not same_json(current,preparation):raise ValueError('bfcache complete current preparation differs from plan')
+            expected_sources={k:str(getattr(args,k)) for k in ('research','baseline','historical')}
+            common=bfcache.load(args.task/'work/prepared/receipts/prepared.json')
+            if any(common['sources'][k]['root']!=v for k,v in expected_sources.items()):raise ValueError('bfcache literal original source roots differ')
+            return [{**lane,'preExecutionCurrentness':check,'preExecutionCurrentnessReceipt':retained}]
+        if preparation.get('status')!='INCOMPLETE':raise ValueError('bfcache preparation status missing')
+        return [lane]
     diagnostic=diagnostic_campaign(args)
     if diagnostic:
         if len(plan['lanes'])!=1:raise ValueError('one complete diagnostic lane required')
@@ -395,9 +423,10 @@ def admit_plan(plan, args, runtime):
         return [{**lane,**({'preExecutionCurrentness':check} if check is not None else {})}]
     engine = args.engine
     rain_capture = rain_campaign(args) in R0040_CAPTURE_MODES
-    observed = rain_campaign(args) in (passive.MODE, mechanism.MODE)
-    mechanisms = rain_campaign(args) == mechanism.MODE
-    dateonly = rain_campaign(args) in ('capture-dateonly', passive.MODE, mechanism.MODE)
+    observed = rain_campaign(args) in (passive.MODE, mechanism.MODE, autoattach.MODE)
+    mechanisms = rain_campaign(args) in (mechanism.MODE, autoattach.MODE)
+    mechanism_module = autoattach if rain_campaign(args) == autoattach.MODE else mechanism
+    dateonly = rain_campaign(args) in ('capture-dateonly', passive.MODE, mechanism.MODE, autoattach.MODE)
     population = [(f'r0040-{engine}-{rain_campaign(args)}' if rain_capture else f'r0040-{engine}', 'R0040', passive.CHILD_SECONDS if observed else 180 if rain_capture else 720),
                   (f'r003f-b0-{engine}-dpr{getattr(args, "r003f_dpr", 1)}', 'R003F', 900),
                   (f'r0035-{engine}-timing', 'R0035', 480), (f'r0035-{engine}-capture', 'R0035', 480),
@@ -558,7 +587,7 @@ def admit_plan(plan, args, runtime):
                     or observed and (type(lane.get('preCaptureCheckSeconds')) is not int
                                      or lane['preCaptureCheckSeconds'] != passive.READMISSION_SECONDS
                                      or report.get('passiveAdmissionPath') != str(evidence_path/'passive-observation.json'))
-                    or mechanisms and report.get('mechanismAdmissionPath') != str(evidence_path/'mechanism-observation.json')):
+                    or mechanisms and report.get('mechanismAdmissionPath') != str(evidence_path/('autoattach-observation.json' if rain_campaign(args) == autoattach.MODE else 'mechanism-observation.json'))):
                 raise ValueError('R0040 capture mode, private paths or preparation admission differs')
             if preparation['status'] == 'INCOMPLETE':
                 if lane.get('argv') != []:
@@ -566,7 +595,7 @@ def admit_plan(plan, args, runtime):
             else:
                 original = evidence.get('originalArgv', [])
                 expected_argv = [original[0] if original else None,
-                    str(HERE/('r0040_mechanism.cjs' if mechanisms else 'r0040_passive.cjs' if observed else 'r0040_dateonly.cjs' if dateonly else 'retain_r0040_capture.cjs')),
+                    str(HERE/('r0040_autoattach.cjs' if rain_campaign(args) == autoattach.MODE else 'r0040_mechanism.cjs' if mechanisms else 'r0040_passive.cjs' if observed else 'r0040_dateonly.cjs' if dateonly else 'retain_r0040_capture.cjs')),
                     '--driver', original[1] if len(original)>1 else None, '--manifest', preparation['manifest'],
                     '--prepared', preparation['prepared'], '--preparation-process', preparation['process']]
                 if dateonly:
@@ -590,7 +619,7 @@ def admit_plan(plan, args, runtime):
                         or original[3] != str(Path(preparation['work'])/'historical')
                         or original[5:] != [str(target), 'chromium', 'bday', 'moderate', 'M1']
                         or preparation.get('wrapperSha256') != R0040_CAPTURE_WRAPPER_SHA256
-                        or report.get('wrapperSha256') != (mechanism.ENTRY_SHA256 if mechanisms else passive.ENTRY_SHA256 if observed else R0040_DATEONLY_WRAPPER_SHA256 if dateonly else R0040_CAPTURE_WRAPPER_SHA256)
+                        or report.get('wrapperSha256') != (mechanism_module.ENTRY_SHA256 if mechanisms else passive.ENTRY_SHA256 if observed else R0040_DATEONLY_WRAPPER_SHA256 if dateonly else R0040_CAPTURE_WRAPPER_SHA256)
                         or report.get('expectedCapture') != preparation.get('expectedCapture')
                         or report.get('pins') != preparation.get('pins')
                         or lane.get('argv') != expected_argv):
@@ -605,8 +634,8 @@ def admit_plan(plan, args, runtime):
                     if (not same_json(custody, preparation.get('passiveRuntime'))
                             or not same_json(passive.verify_sources(), preparation.get('passiveSources'))):
                         raise ValueError('passive current runtime, process or source custody differs')
-                    if mechanisms and (not same_json(mechanism.verify_sources(), preparation.get('mechanismSources'))
-                                       or not same_json(mechanism.caller_sources(), preparation.get('mechanismCallerSources'))):
+                    if mechanisms and (not same_json(mechanism_module.verify_sources(), preparation.get('mechanismSources'))
+                                       or not same_json(mechanism_module.caller_sources(), preparation.get('mechanismCallerSources'))):
                         raise ValueError('mechanism current leaf or caller source custody differs')
                     canonical = make_plan(prepared, args.task/'capture/lanes', python_playwright=Path(runtime['python']),
                         node=Path(runtime['node']), node_modules=Path(runtime['modules']), pngjs=Path(runtime['pngjs']),
@@ -614,9 +643,9 @@ def admit_plan(plan, args, runtime):
                         retain_evidence=retention)['lanes']
                     if not same_json(plan['lanes'], canonical):
                         raise ValueError('passive canonical command, source, budget or evidence path differs')
-                    check = (mechanism if mechanisms else passive).readmit(common, runtime, args.task)
+                    check = (mechanism_module if mechanisms else passive).readmit(common, runtime, args.task)
                     check,retained,refused=retain_currentness(args,lane,check,
-                        [runtime['python'],'-B',str(HERE/('r0040_mechanism_central.py' if mechanisms else 'r0040_passive_central.py')),'--readmit'],passive.READMISSION_SECONDS)
+                        [runtime['python'],'-B',str(HERE/('r0040_autoattach_central.py' if rain_campaign(args) == autoattach.MODE else 'r0040_mechanism_central.py' if mechanisms else 'r0040_passive_central.py')),'--readmit'],passive.READMISSION_SECONDS)
                     if refused:
                         raise ReturnedCurrentnessRefusal(lane,check,retained,'passive current source readmission failed')
                     if type(check.get('returncode')) is not int or check['returncode'] != 0 or check.get('timedOut') is not False:
@@ -1026,7 +1055,7 @@ def r0040_dateonly_status(body, lane, returncode, timed_out, *, passive_tail=Fal
         source_index,source=selected['sources'][0];proof_index,proof_event=selected['date-only-clock-proof'][0]
         terminal_index,terminal=selected['driver-process-ended'][0]
         if passive_tail:
-            need(lane['result']['kind'] in (passive.KIND, mechanism.KIND), 'passive journal extension requires its own route')
+            need(lane['result']['kind'] in (passive.KIND, mechanism.KIND, autoattach.KIND), 'passive journal extension requires its own route')
             passive.check_tail(rows, final)
         need(source_index<proof_index<terminal_index==len(rows)-(2 if passive_tail else 1), 'Date-only source/proof/final order differs')
         need(same_json({k:v for k,v in terminal.items() if k not in ('sequence','atUtc','monotonicNs','event')},final), 'terminal journal and final receipt differ')
@@ -1140,6 +1169,38 @@ def r0040_mechanism_status(body, lane, returncode, timed_out):
                      and replay.get('inspection', {}).get('protocol') == 'r0040-mechanism-admission/1'
                      and replay['inspection'].get('status') == 'OBSERVED', 'current mechanism replay identity differs')
         result.update(status=mechanism.ADMITTED, mechanismDiagnostic=replay['identity'],
+                      passiveDiagnostic=replay['identity']['passive'],
+                      passiveInspection=replay['inspection']['passive'],
+                      mechanismInspection=replay['inspection']['mechanism'], mechanismArtifacts=artifacts)
+    except (OSError, ValueError, KeyError, IndexError, TypeError, AttributeError, StopIteration) as error:
+        result['reason'] = str(error)
+    return result
+
+
+
+def r0040_autoattach_status(body, lane, returncode, timed_out):
+    result = r0040_dateonly_status(body, lane, returncode, timed_out, passive_tail=True)
+    result['dateOnlyStatus'] = result['status']
+    result['timingClass'] = autoattach.TIMING
+    if result['status'] != R0040_DATEONLY_ADMITTED:
+        return result
+    result['status'] = 'INCOMPLETE'
+    try:
+        rows = [json.loads(row) for row in passive.regular(lane['result']['journalPath']).splitlines()]
+        source = next(row for row in rows if row.get('event') == 'sources')
+        check, artifacts = autoattach.final_check(lane, returncode, source, rows)
+        result['mechanismVerification'] = check
+        passive.need(type(check.get('returncode')) is int and check['returncode'] == 0 and check.get('timedOut') is False,
+                     'actual combined mechanism/passive/raw-stop replay failed')
+        replay = json.loads(check['stdout'])
+        passive.need(type(replay) is dict and replay.get('protocol') == 'r0040-autoattach-central-inspection/1'
+                     and replay.get('status') == 'OBSERVED' and type(replay.get('actualExitCode')) is int
+                     and replay['actualExitCode'] == returncode
+                     and same_json(replay.get('identity'), lane['result']['mechanismDiagnostic'])
+                     and same_json(replay.get('artifacts'), artifacts)
+                     and replay.get('inspection', {}).get('protocol') == 'r0040-autoattach-admission/1'
+                     and replay['inspection'].get('status') == 'OBSERVED', 'current mechanism replay identity differs')
+        result.update(status=autoattach.ADMITTED, mechanismDiagnostic=replay['identity'],
                       passiveDiagnostic=replay['identity']['passive'],
                       passiveInspection=replay['inspection']['passive'],
                       mechanismInspection=replay['inspection']['mechanism'], mechanismArtifacts=artifacts)
@@ -1319,6 +1380,10 @@ def matrix_result(lane, body, returncode, timed_out):
 
 def classify_lane(lane, returncode, timed_out=False):
     kind = lane['result']['kind']
+    if bfcache.lane_selected(lane):
+        try:body=bfcache.load(lane['result']['path'])
+        except (OSError,ValueError):body=None
+        return bfcache.classify(lane,body,returncode,timed_out)
     if diagnostics.mode_for_lane(lane):
         try:body=diagnostics.load(lane['result']['path'])
         except (OSError,ValueError):body=None
@@ -1366,6 +1431,8 @@ def classify_lane(lane, returncode, timed_out=False):
         return {**result, **r0040_passive_status(body, lane, returncode, timed_out)}
     if kind == mechanism.KIND:
         return {**result, **r0040_mechanism_status(body, lane, returncode, timed_out)}
+    if kind == autoattach.KIND:
+        return {**result, **r0040_autoattach_status(body, lane, returncode, timed_out)}
     # Preserve observed recipe failures even if later acquisition is interrupted.
     # Return codes alone do not distinguish failed admission from missing evidence.
     if kind == 'r003f-b0':
@@ -1426,12 +1493,14 @@ def namespace_status(lane, process, inner):
     outer_admitted = (isinstance(process, dict) and type(process.get('returncode')) is int
                       and type(process.get('timedOut')) is bool)
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in (psf.OBSERVED, 'PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()])
+                and inner.get('status') in (bfcache.STATUS, psf.OBSERVED, 'PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, autoattach.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()])
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
     if admitted:
         admitted=diagnostics.namespace_admitted(lane,inner)
+    if admitted:
+        admitted=bfcache.namespace_admitted(lane,inner)
     if admitted and inner['status'] == VETO_STATUS:
         admitted = retained_lane(lane) and inner.get('returncode') == 86 and inner['stopAll'] is True
     if admitted and inner['status'] == CAPTURE_ADMITTED:
@@ -1456,7 +1525,9 @@ def namespace_status(lane, process, inner):
                     and inner.get('passiveInspection', {}).get('status') == 'OBSERVED')
     if admitted:
         admitted = mechanism.namespace_admitted(lane, inner, r0040_dateonly_identity())
-    if admitted and lane.get('result', {}).get('kind') in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND) and inner['status'] == 'PASS':
+    if admitted:
+        admitted = autoattach.namespace_admitted(lane, inner, r0040_dateonly_identity())
+    if admitted and lane.get('result', {}).get('kind') in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND, autoattach.KIND) and inner['status'] == 'PASS':
         admitted = False  # This lane can admit acquisition, never report a cadence PASS.
     if admitted and inner['status'] in (STAGES_OBSERVED,COSTS_OBSERVED):
         admitted = ('stageObservation' in lane and inner.get('returncode') == 0 and inner.get('timedOut') is False
@@ -1609,6 +1680,8 @@ def prepare_diagnostic(args,runtime):
 def inside(args, runtime):
     selected = campaign_selection(args)
     label = args.lane or 'preparation'
+    # A selected tool capability/currentness failure precedes even shared Chromium controls.
+    if tabhide_campaign(args)==bfcache.MODE:bfcache.tools_current(args.task,runtime)
     receipt = controls(args, runtime, label)
     if not receipt: return ISOLATION_EXIT
     os.environ['SALAH_HOSTED_NATIVE_ISOLATION_RECEIPT'] = receipt
@@ -1622,7 +1695,7 @@ def inside(args, runtime):
         if (destination/'receipts').exists():
             shutil.copytree(destination/'receipts', args.task/'capture'/'preparation')
         write_json(args.task/'capture'/'preparation-process.json', result)
-        if matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args):
+        if matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args) or tabhide_campaign(args)==bfcache.MODE:
             matrix.save(args.task/'capture/preparation-context.json',{'protocol':'hosted-common-preparation-execution/1',
                 'argv':command,'cwd':str(HERE),'timeoutSeconds':900,'sourceSha256':digest(HERE/'prepare.py'),
                 'nativeIsolationClaim':True,'isolation':matrix.record(receipt)})
@@ -1719,13 +1792,18 @@ def inside(args, runtime):
                         '--r002f-process', str(args.task/'capture'/'r002f-preparation-process.json'),
                         '--r002f-dpr', str(args.r002f_dpr), '--r002f-rounds', str(args.r002f_rounds),
                         '--r002f-section', args.r002f_section]
-            if tabhide_campaign(args) == 'tabhide': command += ['--r002f-route','tabhide']
+            if tabhide_campaign(args) in ('tabhide',bfcache.MODE): command += ['--r002f-route',tabhide_campaign(args)]
         plan = run_bounded(command, str(HERE), dict(os.environ), args.task/'capture'/'lanes.json',
-                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args) else 30)
+                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args) or tabhide_campaign(args)==bfcache.MODE else 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
     plan = json.loads((args.task/'capture'/'lanes.json').read_text())
     try:lane = next(x for x in admit_plan(plan, args, runtime) if x['id'] == args.lane)
     except (OSError,ValueError,KeyError,TypeError,StopIteration) as error:
+        if tabhide_campaign(args)==bfcache.MODE and isinstance(error,ReturnedCurrentnessRefusal):
+            write_json(args.task/'capture/lane-status'/(args.lane+'.json'),{'id':args.lane,'status':'INCOMPLETE','stopAll':False,
+                'returncode':None,'timedOut':False,'reason':str(error),'nativeStatus':'NOT_RUN',
+                'preExecutionCurrentness':error.process,'currentnessReceipt':error.receipt})
+            return 0
         if not psf_campaign(args):raise
         write_json(args.task/'capture/lane-status'/(args.lane+'.json'),
                    {'id':args.lane,'status':'INCOMPLETE','stopAll':False,'returncode':None,'timedOut':False,
@@ -1735,20 +1813,22 @@ def inside(args, runtime):
     # Recipe env is declarative data from the reviewed planner; arbitrary variables
     # cannot restore a credential/proxy/loader setting that the wrapper removed.
     for key, value in lane.get('env', {}).items():
-        if key != 'NODE_PATH' and not (lane['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND) and key == 'R0040_DISPERSION' and value == 'common'):
+        if key != 'NODE_PATH' and not (lane['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND, autoattach.KIND) and key == 'R0040_DISPERSION' and value == 'common'):
             raise ValueError('unapproved lane environment variable')
         env[key] = value
     for key in lane.get('clearEnv', []):
-        if lane['result']['kind'] not in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND) or key != 'R0040_OPTIONS':
+        if lane['result']['kind'] not in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND, autoattach.KIND) or key != 'R0040_OPTIONS':
             raise ValueError('unapproved cleared lane environment variable')
         env.pop(key, None)
     env['PLAYWRIGHT_BROWSERS_PATH'] = str(args.task/('python-browsers' if lane['result']['kind'] == 'r0035-trials' else 'node-browsers'))
     result = run_bounded(lane['argv'], lane['cwd'], env, lane['stdout'], lane['stderr'], lane['timeoutSeconds'])
     if diagnostics.mode_for_lane(lane):diagnostics.record_entry(lane,result)
+    if bfcache.lane_selected(lane):bfcache.record_entry(lane,result)
     verdict = classify_lane(lane, result['returncode'], result['timedOut'])
     if diagnostics.mode_for_lane(lane):verdict['preExecutionCurrentness']=lane.get('preExecutionCurrentness')
     write_json(args.task/'capture'/'lane-status'/(args.lane+'.json'), {**result, **verdict, 'id': args.lane,
-               **({'preExecutionCurrentness': lane['preExecutionCurrentness']} if 'preExecutionCurrentness' in lane else {})})
+               **({'preExecutionCurrentness': lane['preExecutionCurrentness']} if 'preExecutionCurrentness' in lane else {}),
+               **({'preExecutionCurrentnessReceipt':lane['preExecutionCurrentnessReceipt']} if 'preExecutionCurrentnessReceipt' in lane else {})})
     # All in-namespace descendants are also killed when the namespace init exits.
     # A retained child veto is carried by its admitted receipt, including its
     # actual exit 86. Normal coordinator completion does not claim child success;
@@ -1776,7 +1856,7 @@ def isolated_command(args, runtime, phase, lane=None):
     if getattr(args, 'r002f', False):
         inner += ['--r002f', '--r002f-dpr', str(args.r002f_dpr), '--r002f-rounds', str(args.r002f_rounds),
                   '--r002f-section', args.r002f_section]
-        if tabhide_campaign(args) == 'tabhide': inner += ['--r002f-route','tabhide']
+        if tabhide_campaign(args) in ('tabhide',bfcache.MODE): inner += ['--r002f-route',tabhide_campaign(args)]
     if lane: inner += ['--lane', lane]
     return ['/usr/bin/sudo', '-n', '/usr/bin/unshare', '--net', '--pid', '--fork', '--mount-proc',
             '--kill-child=KILL', '/bin/bash', str(HERE/'namespace.sh'), str(os.getuid()), str(os.getgid()),
@@ -1791,6 +1871,7 @@ def outside(args, runtime):
     deadline = time.monotonic() + budget['coordinatorSeconds']  # leaves sealing/upload time within the selected step ceiling
     preparation = run_bounded(isolated_command(args, runtime, 'prepare'), str(HERE), parent_env,
                               capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
+                              bfcache.budget()['preparationSeconds'] if tabhide_campaign(args)==bfcache.MODE else
                               diagnostic_campaign(args)['budget']['preparationSeconds'] if diagnostic_campaign(args) else
                               psf.PREPARATION_SECONDS if psf_campaign(args) else
                               matrix_campaign(args)['budget']['preparationSeconds'] if matrix_campaign(args) else
@@ -1805,10 +1886,12 @@ def outside(args, runtime):
                **({'r003fMatrix':args.r003f_matrix} if matrix_campaign(args) else {}),
                'r0040Mode': rain_campaign(args),
                'preparation': preparation, 'lanes': [], 'status': 'INCOMPLETE'}
-    if rain_campaign(args) in (passive.MODE, mechanism.MODE):
+    if rain_campaign(args) in (passive.MODE, mechanism.MODE, autoattach.MODE):
         overall['budget'] = budget
     if tabhide_campaign(args) == 'tabhide':
         overall.update(r002fRoute='tabhide', budget=budget)
+    if tabhide_campaign(args)==bfcache.MODE:
+        overall.update(r002fRoute=bfcache.MODE,budget=budget)
     write_json(capture/'observation.json', overall)
     if preparation['returncode'] or preparation['timedOut']:
         overall['status'] = 'ISOLATION_FAIL' if preparation['returncode'] == ISOLATION_EXIT else 'INCOMPLETE'
@@ -1843,10 +1926,11 @@ def outside(args, runtime):
         else:
             result = run_bounded(isolated_command(args, runtime, 'lane', lane['id']), str(HERE), parent_env,
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
-                                 min(psf.LANE_SECONDS if psf_lane(lane) else
+                                 min(bfcache.budget()['namespaceSeconds'] if bfcache.lane_selected(lane) else
+                                     psf.LANE_SECONDS if psf_lane(lane) else
                                      diagnostics.budget(diagnostics.mode_for_lane(lane))['namespaceSeconds'] if diagnostics.mode_for_lane(lane)
-                                     else lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly', passive.KIND, mechanism.KIND, 'r003f-matrix') else 0)
-                                     + (passive.READMISSION_SECONDS if lane.get('result', {}).get('kind') in (passive.KIND, mechanism.KIND) else 0)
+                                     else lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly', passive.KIND, mechanism.KIND, autoattach.KIND, 'r003f-matrix') else 0)
+                                     + (passive.READMISSION_SECONDS if lane.get('result', {}).get('kind') in (passive.KIND, mechanism.KIND, autoattach.KIND) else 0)
                                      + (90 if cost_lane(lane) else 0), remaining))
             path = capture/'lane-status'/(lane['id']+'.json')
             try: inner = json.loads(path.read_text())
@@ -1858,12 +1942,14 @@ def outside(args, runtime):
             if status['status'] == 'ANDON': stopped.add(lane['workOrder'])
         if 'preExecutionCurrentness' in lane:
             status['outerCurrentness'] = lane['preExecutionCurrentness']
+        if 'preExecutionCurrentnessReceipt' in lane:
+            status['outerCurrentnessReceipt']=lane['preExecutionCurrentnessReceipt']
         status['workOrder'] = lane['workOrder']
         overall['lanes'].append(status); write_json(capture/'observation.json', overall)
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in (psf.OBSERVED, 'PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()]) for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in (bfcache.STATUS, psf.OBSERVED, 'PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, autoattach.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()]) for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     if psf_campaign(args):
         overall['psfPair']=psf.pair_status(plan,overall['lanes'])
@@ -1895,7 +1981,7 @@ def main():
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
     parser.add_argument('--r002f-section', choices=('all', 'prayer', 'preview'), default='all')
-    parser.add_argument('--r002f-route', choices=('offscreen','tabhide'), default='offscreen')
+    parser.add_argument('--r002f-route', choices=('offscreen','tabhide',bfcache.MODE), default='offscreen')
     parser.add_argument('--inside', action='store_true')
     parser.add_argument('--phase', choices=('prepare', 'lane'))
     parser.add_argument('--outer-netns'); parser.add_argument('--lane')

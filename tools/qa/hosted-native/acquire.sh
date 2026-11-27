@@ -28,3 +28,7 @@ if [ "$native_engine" != chromium ]; then native_engines+=("$native_engine"); fi
 PLAYWRIGHT_BROWSERS_PATH="$native_task/node-browsers" node "$native_task/node/node_modules/playwright/cli.js" install --with-deps "${native_engines[@]}"
 PLAYWRIGHT_BROWSERS_PATH="$native_task/python-browsers" "$native_task/python/bin/python" -m playwright install "$native_engine"
 python3 "$native_tools/identities.py" --task "$native_task" --research "$native_research" --baseline "$native_baseline" --historical "$native_historical" --node "$(command -v node)" --python "$native_task/python/bin/python" --engine "$native_engine"
+native_bfcache="$(python3 -B -c 'import json,sys; sys.path.insert(0,sys.argv[1]); from r002f_bfcache_central import campaign_selected; print("yes" if campaign_selected(json.load(open(sys.argv[1]+"/campaign.json"))) else "no")' "$native_tools")"
+if [ "$native_bfcache" = yes ]; then
+  python3 -B "$native_tools/r002f_bfcache_tools.py" --task "$native_task"
+fi

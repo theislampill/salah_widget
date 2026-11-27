@@ -27,7 +27,9 @@ MATRIX_PINS = "c87056c51cfa51c9221f2928e3c0094f6025ead6ca0202b76181c9ac8aa0c0a0"
 import r0035_cost_materialize as cost_material
 import r0040_passive_central as passive
 import r0040_mechanism_central as mechanism
+import r0040_autoattach_central as autoattach
 import r0035_psf as psf
+import r002f_bfcache_central as bfcache
 
 R0035_PSF_PINS = '8902d6cd226b7d8e9f415f3e796ab5bd1b9c2ad9d9f2ada09cec1e7babff1c8a'
 
@@ -42,7 +44,7 @@ R0040_MANIFEST = HERE.parents[2]/'docs/state-contracts/evidence/R0040/native-cap
 R0040_MANIFEST_SHA256 = '267f2fd8ac130c049430ffdaa0fd50b72457c60084b49360346748cc940f6b73'
 R0040_CAPTURE_WRAPPER_SHA256 = 'd252e345225c0d3565c0c2a321324ca206083ba371eb43654193d422f9b2235f'
 R0040_PREPARER_SHA256 = '4ba6328ee9fe96aec4a96109c58d0d67e0d3e434756829fbe247816bcd001f68'
-R0040_CAPTURE_MODES = ('capture', 'capture-dateonly', passive.MODE, mechanism.MODE)
+R0040_CAPTURE_MODES = ('capture', 'capture-dateonly', passive.MODE, mechanism.MODE, autoattach.MODE)
 R0040_DATEONLY_WRAPPER_SHA256 = '214d4a3c6cb13dbfa69cf0330444aeb9f71d9816b43129091c93bb3121489c44'
 R0040_DATEONLY_ADMITTED = 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
 R0035_STAGE_WRAPPER_SHA256 = '8c3838b2ba01d6a4114b5de0aa2401134bb0cea3918dcba4fe1237997e53c99b'
@@ -70,15 +72,18 @@ def tabhide_manifest():
 
 
 def r002f_route_mode(value, selected, engine, dpr, rounds, section):
-    if not isinstance(value, str) or value not in ('offscreen', 'tabhide'):
+    if not isinstance(value, str) or value not in ('offscreen', 'tabhide', bfcache.MODE):
         raise ValueError('unsupported R002F route')
     if value == 'tabhide' and (list(selected) != ['R002F'] or engine != 'chromium'
                                or type(dpr) is not int or dpr != 1 or type(rounds) is not int or rounds != 1 or section != 'all'):
         raise ValueError('R002F tab-hide requires only R002F with Chromium DPR1 one-pair all-section observation')
+    if value == bfcache.MODE and (list(selected) != ['R002F'] or engine != 'chromium' or type(dpr) is not int or dpr != 1
+                                  or type(rounds) is not int or rounds != 1 or section != 'all'):
+        raise ValueError('R002F bfcache requires only Chromium DPR1 one-pair all-section observation')
     return value
 
 
-def admit_r002f_tabhide(path, process_path, prepared, prepared_path, node, retain_currentness=None):
+def admit_r002f_tabhide(path, process_path, prepared, prepared_path, node, retain_currentness=None, run_currentness=None):
     """Extend original build admission with real outer process and full population custody."""
     admission = admit_r002f(path, process_path)
     if admission['status'] != 'PASS':
@@ -112,7 +117,7 @@ def admit_r002f_tabhide(path, process_path, prepared, prepared_path, node, retai
             raise ValueError('R002F actual preparation terminal output differs')
         command = [str(node), str(HERE/'r002f_tabhide.cjs'), '--admit-generated',
                    admission['trees']['baseline']['root'], admission['trees']['candidate']['root']]
-        child = subprocess.run(command, cwd=HERE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=False)
+        child = (run_currentness or subprocess.run)(command, cwd=HERE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30, check=False)
         if retain_currentness is not None:
             retain_currentness({'argv': command, 'cwd': str(HERE), 'timeoutSeconds': 30,
                                 'returncode': child.returncode, 'timedOut': False,
@@ -222,7 +227,7 @@ def rain_mode(value, selected, engine):
         raise ValueError('unsupported R0040 mode')
     if value in R0040_CAPTURE_MODES and ('R0040' not in selected or engine != 'chromium'):
         raise ValueError('R0040 capture requires selected R0040 and the reviewed Chromium cell')
-    if value in (passive.MODE, mechanism.MODE) and list(selected) != ['R0040']:
+    if value in (passive.MODE, mechanism.MODE, autoattach.MODE) and list(selected) != ['R0040']:
         raise ValueError('passive capture requires only the selected R0040 population')
     return value
 
@@ -234,9 +239,10 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
     try:
         if mode not in R0040_CAPTURE_MODES:
             raise ValueError('unsupported R0040 capture admission mode')
-        observed = mode in (passive.MODE, mechanism.MODE)
-        mechanisms = mode == mechanism.MODE
-        dateonly = mode in ('capture-dateonly', passive.MODE, mechanism.MODE)
+        observed = mode in (passive.MODE, mechanism.MODE, autoattach.MODE)
+        mechanisms = mode in (mechanism.MODE, autoattach.MODE)
+        mechanism_module = autoattach if mode == autoattach.MODE else mechanism
+        dateonly = mode in ('capture-dateonly', passive.MODE, mechanism.MODE, autoattach.MODE)
         work, process_path, entry_path = (Path(p).absolute() for p in (work, process_path, entry_path))
         if observed:
             runtime = {'node': str(node), 'python': python, 'modules': modules, 'playwright': str(module)}
@@ -244,8 +250,8 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
                 entry_path, process_path, common_prepared, prepared, runtime, task)
             admission['passiveSources'] = passive.verify_sources()
             if mechanisms:
-                admission['mechanismSources'] = mechanism.verify_sources()
-                admission['mechanismCallerSources'] = mechanism.caller_sources()
+                admission['mechanismSources'] = mechanism_module.verify_sources()
+                admission['mechanismCallerSources'] = mechanism_module.caller_sources()
         for path in (process_path, entry_path):
             if any(p.is_symlink() for p in (path, *path.parents)) or not path.is_file():
                 raise ValueError('regular R0040 preparation receipts required')
@@ -307,7 +313,7 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
             command = [str(node), '-e', check, str(HERE/'retain_r0040_capture.cjs'), json.dumps(options), json.dumps(argv)]
             if dateonly: command.append(str(HERE/'r0040_dateonly.cjs'))
             if observed: command.append(str(HERE/'r0040_passive.cjs'))
-            if mechanisms: command.append(str(HERE/'r0040_mechanism.cjs'))
+            if mechanisms: command.append(str(HERE/('r0040_autoattach.cjs' if mode == autoattach.MODE else 'r0040_mechanism.cjs')))
             result = subprocess.run(command, cwd=research, env=env,
                                     capture_output=True, text=True, timeout=90)
         except subprocess.TimeoutExpired as error:
@@ -340,8 +346,8 @@ def admit_r0040(prepared, work, process_path, entry_path, out, node, module, *, 
             admission['passiveDiagnostic'] = identity
         if mechanisms:
             identity = checked.get('mechanismDiagnostic')
-            if (not isinstance(identity, dict) or identity.get('protocol') != 'r0040-mechanism-diagnostic/1'
-                    or identity.get('entrySha256') != mechanism.ENTRY_SHA256
+            if (not isinstance(identity, dict) or identity.get('protocol') != ('r0040-autoattach-diagnostic/1' if mode == autoattach.MODE else 'r0040-mechanism-diagnostic/1')
+                    or identity.get('entrySha256') != mechanism_module.ENTRY_SHA256
                     or not same_json(identity.get('passive'), admission['passiveDiagnostic'])):
                 raise ValueError('current mechanism leaf identity differs')
             admission['mechanismDiagnostic'] = identity
@@ -537,6 +543,14 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         authority={'python':str(python_playwright),'node':str(node),'modules':str(node_modules),
                    'playwright':str(node_modules/'playwright'),'pngjs':str(pngjs)}
         return psf.make_plan(prepared,out,authority,r0035_psf_preparation or {'status':'INCOMPLETE','reason':'PSF preparation missing'})
+    if r002f_route == bfcache.MODE:
+        bfcache.campaign_selected({'r002fRoute':r002f_route,'workOrders':selected,'engine':engine,'r003fDpr':r003f_dpr,
+            'r002f':{'enabled':include_r002f,'dpr':r002f_dpr,'rounds':r002f_rounds,'section':r002f_section},
+            'r0035':stars,'r0035Stages':r0035_stages,'r0035Costs':r0035_costs,'r0035Psf':r0035_psf,
+            'r003fHarness':r003f_harness,'r003fMatrix':r003f_matrix,'r0040Mode':r0040_mode,'evidenceRetention':retain_evidence})
+        authority={'python':str(python_playwright),'node':str(node),'modules':str(node_modules),
+                   'playwright':str(node_modules/'playwright'),'pngjs':str(pngjs),'engine':engine}
+        return bfcache.make_plan(prepared,out,authority,r002f_preparation)
     research = Path(prepared['sources']['research']['root'])
     historical = Path(prepared['sources']['historical']['root'])
     roots = {key: Path(value['root']) for key, value in prepared['trees'].items()}
@@ -557,11 +571,12 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         return row
 
     if r0040_mode in R0040_CAPTURE_MODES:
-        observed = r0040_mode in (passive.MODE, mechanism.MODE)
-        mechanisms = r0040_mode == mechanism.MODE
-        dateonly = r0040_mode in ('capture-dateonly', passive.MODE, mechanism.MODE)
+        observed = r0040_mode in (passive.MODE, mechanism.MODE, autoattach.MODE)
+        mechanisms = r0040_mode in (mechanism.MODE, autoattach.MODE)
+        mechanism_module = autoattach if r0040_mode == autoattach.MODE else mechanism
+        dateonly = r0040_mode in ('capture-dateonly', passive.MODE, mechanism.MODE, autoattach.MODE)
         rain = lane('r0040-chromium-'+r0040_mode, 'R0040', 1, passive.CHILD_SECONDS if observed else 180, 'r0040-'+r0040_mode, 'capture.json',
-                    {'0': mechanism.ADMITTED if mechanisms else passive.ADMITTED if observed else R0040_DATEONLY_ADMITTED if dateonly else 'ADMITTED_FOR_OFFLINE_VERIFICATION',
+                    {'0': mechanism_module.ADMITTED if mechanisms else passive.ADMITTED if observed else R0040_DATEONLY_ADMITTED if dateonly else 'ADMITTED_FOR_OFFLINE_VERIFICATION',
                      '1': 'FAIL', '86': 'EXTERNAL_CONTINUATION_VETOED'})
         admission = r0040_preparation or {'status': 'INCOMPLETE', 'reason': 'R0040 capture preparation is missing'}
         rain['preparation'] = admission
@@ -588,7 +603,10 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                 'bounded non-pausing Target/Network metadata does not instrument worker consumers. Setup, parallel extraction and shutdown '
                 'use at most 15 seconds from the existing 40-second retention reserve, leaving 25 seconds. '
                 'Both diagnostics replay together with the original passive gate in the same 30-second ceiling; all ceilings remain uncalibrated.')
-            rain['result']['mechanismAdmissionPath'] = str(Path(evidence)/'mechanism-observation.json')
+            if r0040_mode == autoattach.MODE:
+                rain['evidenceRetention']['overhead'] += (' Observer-owned worker auto-attachment uses bounded nonflat routes with waitForDebuggerOnStart false; '
+                    'all actual starts, nested acknowledgements and closures remain required. No original-path await or runtime noninterference claim is added.')
+            rain['result']['mechanismAdmissionPath'] = str(Path(evidence)/('autoattach-observation.json' if r0040_mode == autoattach.MODE else 'mechanism-observation.json'))
         rain['argv'] = []
         if admission.get('status') == 'PASS':
             original = list(map(str, [node, research/'tools/qa/r0040/capture.cjs', module,
@@ -611,8 +629,8 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
                 rain['result'].update(wrapperSha256=passive.ENTRY_SHA256,
                                       passiveDiagnostic=admission['passiveDiagnostic'])
             if mechanisms:
-                rain['argv'][1] = str(HERE/'r0040_mechanism.cjs')
-                rain['result'].update(wrapperSha256=mechanism.ENTRY_SHA256,
+                rain['argv'][1] = str(HERE/('r0040_autoattach.cjs' if r0040_mode == autoattach.MODE else 'r0040_mechanism.cjs'))
+                rain['result'].update(wrapperSha256=mechanism_module.ENTRY_SHA256,
                                       mechanismDiagnostic=admission['mechanismDiagnostic'])
     else:
         rain = lane(f'r0040-{engine}', 'R0040', 1, 720, 'r0040-options', 'native-options.json',
@@ -716,7 +734,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         for row in entries:
             if row['workOrder'] not in ('R0040', 'R0035'):
                 continue
-            if row['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND):
+            if row['result']['kind'] in ('r0040-capture', 'r0040-capture-dateonly', passive.KIND, mechanism.KIND, autoattach.KIND):
                 continue
             original = row['argv']
             evidence = str(out/(row['id']+'-retention'))
@@ -813,7 +831,7 @@ def main():
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
     parser.add_argument('--r002f-section', choices=('all', 'prayer', 'preview'), default='all')
-    parser.add_argument('--r002f-route', choices=('offscreen','tabhide'), default='offscreen')
+    parser.add_argument('--r002f-route', choices=('offscreen','tabhide',bfcache.MODE), default='offscreen')
     args = parser.parse_args()
     os.umask(0o077)
     admitted_out = None
@@ -837,6 +855,11 @@ def main():
         r002f = ((admit_r002f_tabhide(args.r002f_prepared, args.r002f_process, prepared, args.prepared, args.node)
                   if args.r002f_route == 'tabhide' else admit_r002f(args.r002f_prepared, args.r002f_process))
                  if args.r002f_prepared and args.r002f_process else None)
+        if args.r002f_route == bfcache.MODE:
+            task=out.parent.parent
+            try:r002f=bfcache.current_admission(task,bfcache.load(task/'runtime.json'),native=True)
+            except (OSError,ValueError,KeyError,TypeError,subprocess.SubprocessError) as error:
+                r002f={'status':'INCOMPLETE','reason':str(error)}
         r003f = (admit_r003f(args.r003f_prepared, args.r003f_process)
                  if args.r003f_harness == 'corrected-b0' else None)
         matrix_admission = (admit_matrix(args.r003f_matrix_entry,args.prepared,args.node,args.python_playwright) if args.r003f_harness == 'corrected-matrix' else None)
@@ -864,7 +887,7 @@ def main():
         if r003f and r003f['status'] == 'PASS':
             roots.append(Path(r003f['root']))
         if r002f and r002f['status'] == 'PASS':
-            roots.extend(Path(row['root']).resolve() for row in r002f['trees'].values())
+            roots.extend(Path(row['root']).resolve() for row in (r002f['r002f'] if args.r002f_route==bfcache.MODE else r002f)['trees'].values())
         if any(root == out or root in out.parents for root in roots):
             raise ValueError('plan output must be outside source trees')
         out.mkdir(parents=True, mode=0o700)

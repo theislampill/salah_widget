@@ -271,8 +271,9 @@ class Controls(unittest.TestCase):
                     body['lanes']=[{'id':'original','workOrder':'R003F','status':status,'stopAll':False,'innerStatus':None,
                                     'namespaceProcess':{'returncode':0,'timedOut':False,'elapsedSeconds':1.0}}]
                     with self.subTest(status=status):
-                        if status in ('OBSERVED_FIREFOX_POLICY','OBSERVED_PRECONNECT_INPUT_DIAGNOSTIC'):
-                            # This original Chromium fixture has no foreign diagnostic selection or custody.
+                        if status in ('OBSERVED_FIREFOX_POLICY','OBSERVED_PRECONNECT_INPUT_DIAGNOSTIC',
+                                      pipeline.mechanism.ADMITTED,pipeline.autoattach.ADMITTED,pipeline.bfcache.STATUS):
+                            # This original Chromium fixture has no separately selected diagnostic route or custody.
                             with self.assertRaisesRegex(pipeline.Rejected,'^PRODUCER_INCOMPLETE$'):
                                 pipeline.admit_producers(task,{})
                         else:self.assertEqual(pipeline.admit_producers(task,{}),'COMPLETED_OBSERVATION')
