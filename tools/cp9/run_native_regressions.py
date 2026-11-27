@@ -456,11 +456,15 @@ def population_specs(manifest, out):
 def census(root, plan, manifest):
     """Every instrument-shaped file is selected, a declared module, or a registered exclusion."""
     covered = set()
+    selected = set()
     for command in plan:
-        covered.update(arg.replace('\\', '/') for arg in command[1] if not str(arg).startswith('-'))
+        argv = {arg.replace('\\', '/') for arg in command[1] if not str(arg).startswith('-')}
+        selected.update(argv)
+        covered.update(argv)
         covered.update(command[2])
     for entry in manifest.get('commands', []):
         covered.update(entry.get('covers', []))
+        selected.update(entry.get('covers', []))
     declared = {entry['path'] for key in ('modules', 'exclusions') for entry in manifest.get(key, [])}
     found = sorted({path.relative_to(root).as_posix() for pattern in CENSUS_PATTERNS
                     for path in root.glob(pattern) if path.is_file()})
@@ -469,7 +473,7 @@ def census(root, plan, manifest):
     errors += ['registered module/exclusion path does not exist: ' + path
                for path in sorted(declared) if not (root / path).is_file()]
     errors += ['path is both selected and declared module/exclusion: ' + path
-               for path in sorted(declared & covered)]
+               for path in sorted(declared & selected)]
     # The glob command is derived from disk; the manifest pins its expected members so a
     # deleted (or silently added) glob file is a setup error, not a smaller green population.
     expected = manifest.get('nativeTestGlob')

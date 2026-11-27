@@ -1,0 +1,50 @@
+{
+  "protocol": "r0040-preparation-recipe-control/1",
+  "evidenceClass": "offline-source-controls",
+  "returncode": 0,
+  "recipeSourceSha256": "9fc26a75cb62c145f9de7bd7aa386ac6714c238f3e08089558d34f02882f9730",
+  "manifestSha256": "267f2fd8ac130c049430ffdaa0fd50b72457c60084b49360346748cc940f6b73",
+  "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "status": "PASS",
+  "preparationStatus": "PREPARED",
+  "preparationReceiptSha256": "ff6f7114c570d0074e397f643d196f4f2c6ec5164cffbc601d5e1daddbe7ec6c",
+  "controls": [
+    {
+      "control": "modified-preimage",
+      "expected": "reject without modifying inputs or previous outputs",
+      "returncode": 1,
+      "status": "PASS",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 35, in <module>\nAssertionError: tools/qa/precip_models_geom.js\n",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "df4fcf8a50db589ede4eadef9faaef1362632b15ed6e206d05bd41ce01fcde37"
+    },
+    {
+      "control": "symlink-preimage",
+      "expected": "reject without modifying inputs or previous outputs",
+      "returncode": 1,
+      "status": "PASS",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 34, in <module>\n  File \"<stdin>\", line 17, in read\nAssertionError: symlink input\n",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "0dd0a3de6aba5c7e3ab64861e308581a77a5696bf4f0eb92a522c9c2513faaa6"
+    },
+    {
+      "control": "existing-output",
+      "expected": "reject without modifying inputs or previous outputs",
+      "returncode": 1,
+      "status": "PASS",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 9, in <module>\nAssertionError: fresh output required\n",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "ea3e9148d85d40d0891a31676ef42a692d0ca1992835a69d4f04b3b1e232c0c8"
+    },
+    {
+      "control": "optimized-python",
+      "expected": "reject without modifying inputs or previous outputs",
+      "returncode": 1,
+      "status": "PASS",
+      "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 3, in <module>\nRuntimeError: preparation requires enabled assertions\n",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSha256": "38a899e1488e7f3b5564f5945c97cdc1c3c525faa2e8f32e75d2678b1322a02f"
+    }
+  ]
+}

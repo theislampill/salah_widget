@@ -1,0 +1,558 @@
+#!/usr/bin/env python3
+"""Private transport caller; producer custody is not native/product acceptance.
+
+Ordinary returned observation is admitted only after its complete terminal
+namespace records. Forced/unknown outer termination refuses sealing. This is
+not generic descendant containment or an atomic freeze against another writer.
+Sender/run/artifact authentication remains mandatory before offline opening.
+"""
+import argparse
+import contextlib
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import shutil
+import secrets
+import signal
+import stat
+import subprocess
+import sys
+import time
+import types
+import r003f_diagnostics as diagnostics
+import r002f_bfcache_central as bfcache
+import r0035_publish as publish
+import r0040_mechanism_central as mechanism
+import r0040_autoattach_central as autoattach
+import runner_environment
+
+HERE = Path(__file__).absolute().parent
+PRODUCER_PROTOCOL = 'salah-capture-producer-return/1'
+TRANSPORT_SHA256 = '6815cfdb68bea413a740d58e2ddf8e9d4c1185d65638274e8108e37637f3dbfe'
+PUBLIC_ERRORS = {'ARGUMENT', 'DEPENDENCY', 'PRODUCER_INCOMPLETE', 'PATH',
+                 'STAGING', 'ENVELOPE', 'RESTORATION', 'CLEANUP', 'INTERRUPTED', 'INTERNAL'}
+WORK_ORDERS = ('R0040','R003F','R0035','R002F')
+OBSERVED_LANE_STATUSES = {'PASS','ADMITTED_FOR_OFFLINE_VERIFICATION',
+    'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION','ADMITTED_PASSIVE_DATE_ONLY_FOR_OFFLINE_VERIFICATION',mechanism.ADMITTED,autoattach.ADMITTED,
+    'OBSERVED_STAGE_DIAGNOSTIC',
+    'OBSERVED_PREPARATION_COSTS','OBSERVED_TABHIDE_DIAGNOSTIC',
+    'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE','OBSERVED_PSF_DIAGNOSTIC'}
+OBSERVED_LANE_STATUSES |= {row['status'] for row in diagnostics.ROUTES.values()}
+OBSERVED_LANE_STATUSES.add(bfcache.STATUS)
+OBSERVED_LANE_STATUSES.add(publish.OBSERVED)
+LANE_STATUSES = OBSERVED_LANE_STATUSES | {'FAIL','INCOMPLETE','INCONCLUSIVE','ANDON',
+    'ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED'}
+
+
+class Rejected(Exception):
+    pass
+
+
+def need(value, category):
+    if not value: raise Rejected(category)
+
+
+def transport():
+    path = HERE/'capture_transport.py'
+    need(all(not p.is_symlink() for p in [path, *path.parents]), 'DEPENDENCY')
+    raw = path.read_bytes()
+    need(hashlib.sha256(raw).hexdigest() == TRANSPORT_SHA256, 'DEPENDENCY')
+    module = types.ModuleType('private_capture_transport')
+    module.__file__ = str(path)
+    exec(compile(raw, str(path), 'exec'), module.__dict__)
+    return module
+
+
+def load(path, limit=8 << 20):
+    T = transport(); E = T.envelope()
+    return E.load_json(E.read_bounded(E.no_symlink_path(path), limit))
+
+
+def safe_path(path, E):
+    try:
+        # Do not erase a component before checking it: x/symlink/../y has
+        # different lexical and kernel meanings. The admitted path is reused.
+        need('..' not in Path(path).parts, 'PATH')
+        return E.no_symlink_path(path)
+    except Exception:raise Rejected('PATH') from None
+
+
+def roots_checked(task, roots):
+    T = transport(); E = T.envelope()
+    need(type(roots) is dict and set(roots) == {'research','baseline','historical'}, 'ARGUMENT')
+    task = safe_path(task,E)
+    capture = safe_path(task/'capture',E)
+    protected = [safe_path(p,E) for p in roots.values()]
+    protected.append(safe_path(HERE.parents[2],E))
+    need(task.is_dir() and capture.is_dir(), 'PRODUCER_INCOMPLETE')
+    need(stat.S_IMODE(task.stat().st_mode) == 0o700
+         and stat.S_IMODE(capture.stat().st_mode) == 0o700, 'PATH')
+    need(all(p.is_dir() for p in protected), 'PATH')
+    need(all(not task.is_relative_to(p) and not p.is_relative_to(task) for p in protected), 'PATH')
+    # These are actual acquisition/build locations, not paths supplied by capture metadata.
+    protected += [safe_path(task/name,E) for name in
+                  ('work','runtime','node','python','node-browsers','python-browsers','cache','config','temporary')]
+    return task, protected
+
+
+def producer_identity(phase, task, roots):
+    need(phase in ('acquisition','observation'), 'ARGUMENT')
+    E=transport().envelope()
+    task = safe_path(task,E)
+    paths = {k:safe_path(v,E) for k,v in roots.items()}
+    need(set(paths) == {'research','baseline','historical'}, 'ARGUMENT')
+    if phase == 'acquisition':
+        command = [shutil.which('bash'), str(HERE/'acquire.sh'), str(task),
+                   *[str(paths[k]) for k in ('research','baseline','historical')]]
+        files = ['capture_pipeline.py','acquire.sh','campaign.json']
+    else:
+        command = [sys.executable, str(HERE/'observe.py'), '--task', str(task)]
+        for key in ('research','baseline','historical'): command += ['--'+key,str(paths[key])]
+        command += ['--campaign',str(HERE/'campaign.json')]
+        files = ['capture_pipeline.py','observe.py','campaign.json']
+        if load(HERE/'campaign.json').get('r003fHarness') in diagnostics.ROUTES:
+            files += diagnostics.producer_source_files()
+    campaign=load(HERE/'campaign.json')
+    if bfcache.campaign_selected(campaign) or campaign.get('r0040Mode') == autoattach.MODE:
+        files += bfcache.producer_source_files()
+    if campaign.get('r0035Publish',False) is True:
+        files += publish.producer_source_files()
+    # Runner admission now executes for every acquisition and observation.
+    # Preserve the phase/route prefix, then bind its actual common/selected inputs.
+    files += runner_environment.producer_source_files(campaign)
+    need(all(isinstance(x,str) and x for x in command), 'DEPENDENCY')
+    return {'argv':command, 'sources':{name:hashlib.sha256((HERE/name).read_bytes()).hexdigest() for name in files}}
+
+
+def write_exclusive(path, body):
+    data=(json.dumps(body,sort_keys=True,indent=2)+'\n').encode()
+    fd=os.open(path, os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW,0o600)
+    try:
+        with os.fdopen(fd,'wb',closefd=False) as stream:
+            stream.write(data);stream.flush();os.fsync(fd)
+    finally:os.close(fd)
+
+
+def run_command(identity, task, phase):
+    """Record the actual waited child. Never infer that an interrupted tree drained."""
+    capture=Path(task)/'capture'; control=capture/'producer-control'
+    if phase=='acquisition': control.mkdir(mode=0o700)
+    need(control.is_dir() and not control.is_symlink(), 'PATH')
+    started={'protocol':PRODUCER_PROTOCOL,'phase':phase,'identity':identity}
+    write_exclusive(control/(phase+'-started.json'),started)
+    began=time.monotonic();proc=None;interrupted=False;returned=False
+    try:
+        with (capture/(phase+'.stdout')).open('xb') as out, (capture/(phase+'.stderr')).open('xb') as err:
+            proc=subprocess.Popen(identity['argv'],stdout=out,stderr=err)
+            try:
+                proc.wait();returned=True
+            except BaseException:
+                interrupted=True
+                # The original observer receives TERM and performs its existing cleanup.
+                # Even if it returns, this wrapper marks the entire outer interruption
+                # inadmissible for seal. No PGID scan invents escaped-child custody.
+                if proc.poll() is None:
+                    proc.terminate()
+                    try:proc.wait(timeout=10)
+                    except subprocess.TimeoutExpired:
+                        proc.kill();proc.wait()
+                returned=True
+    finally:
+        write_exclusive(control/(phase+'-completed.json'),
+                        {**started,'returned':returned,'interrupted':interrupted,
+                         'process':{'returncode':None if proc is None else proc.returncode,
+                                    'elapsedSeconds':time.monotonic()-began}})
+    need(returned and not interrupted, 'PRODUCER_INCOMPLETE')
+    return proc.returncode
+
+
+def known_process(value, timeout_field=True):
+    return (type(value) is dict and type(value.get('returncode')) is int
+            and (not timeout_field or type(value.get('timedOut')) is bool)
+            and type(value.get('elapsedSeconds')) in (int,float)
+            and math.isfinite(value['elapsedSeconds']) and value['elapsedSeconds'] >= 0)
+
+
+def completed(task, roots, phase):
+    control=task/'capture/producer-control'
+    start=load(control/(phase+'-started.json'))
+    end=load(control/(phase+'-completed.json'))
+    wanted={'protocol':PRODUCER_PROTOCOL,'phase':phase,'identity':producer_identity(phase,task,roots)}
+    need(start==wanted and type(end) is dict and set(end)==set(wanted)|{'returned','interrupted','process'}
+         and all(end[k]==v for k,v in wanted.items()) and end['returned'] is True
+         and end['interrupted'] is False and known_process(end['process'],False), 'PRODUCER_INCOMPLETE')
+    if end['process']['returncode'] == 0:
+        try: runner_environment.current(task)
+        except Exception: raise Rejected('DEPENDENCY') from None
+    return end['process']['returncode']
+
+
+def publish_complete_record(campaign,plan,body,task):
+    try:return publish.producer_gate(campaign,plan,body,task)
+    except (OSError,ValueError,KeyError,TypeError,AttributeError,subprocess.SubprocessError):
+        raise Rejected('PRODUCER_INCOMPLETE') from None
+
+
+def psf_complete_record(campaign,plan,body):
+    """Recognize the separate paired record without promoting original failure.
+
+    This is producer-record completeness, not native/source requalification.
+    Scientific/source intake belongs to the separately pinned paired caller.
+    """
+    def same(a,b):return json.dumps(a,sort_keys=True,allow_nan=False)==json.dumps(b,sort_keys=True,allow_nan=False)
+    selected=campaign.get('r0035Psf',False)
+    need(type(selected) is bool,'PRODUCER_INCOMPLETE')
+    rows=body['lanes'];has_status=any(x.get('status')=='OBSERVED_PSF_DIAGNOSTIC' for x in rows)
+    if not selected:
+        need(not has_status and plan.get('r0035Psf',False) is False and body.get('r0035Psf',False) is False,
+             'PRODUCER_INCOMPLETE')
+        return None
+    roles=['reference','derived'];ids=['r0035-chromium-psf-'+role for role in roles]
+    need(campaign.get('workOrders')==['R0035'] and campaign.get('engine')=='chromium'
+         and campaign.get('r0035')=={'guard':'off','scope':'all','mode':'timing'}
+         and plan.get('r0035Psf') is True and body.get('r0035Psf') is True
+         and [x.get('id') for x in plan['lanes']]==ids and [x.get('id') for x in rows]==ids,
+         'PRODUCER_INCOMPLETE')
+    for role,lane in zip(roles,plan['lanes']):
+        need(lane.get('psfObservation',{}).get('protocol')=='r0035-psf-paired-diagnostic/1'
+             and lane['psfObservation'].get('role')==role,'PRODUCER_INCOMPLETE')
+    pair=body.get('psfPair')
+    need(type(pair) is dict and pair.get('protocol')=='r0035-psf-pair-intake/1'
+         and pair.get('roles')==roles and pair.get('fixedOrder') is True
+         and pair.get('speedClaim')=='NOT_ESTABLISHED' and pair.get('humanAcceptance')=='OUTSTANDING'
+         and pair.get('status') in ('OBSERVED','INCOMPLETE'),'PRODUCER_INCOMPLETE')
+    if pair['status']=='INCOMPLETE':
+        need(type(pair.get('reason')) is str and bool(pair['reason']),'PRODUCER_INCOMPLETE')
+        return False
+    intakes=[]
+    for role,lane,row in zip(roles,plan['lanes'],rows):
+        intake=row.get('psfObservation',{}).get('intake',{})
+        outer=row.get('namespaceProcess',{})
+        need(row.get('status')=='OBSERVED_PSF_DIAGNOSTIC' and row.get('originalStatus')=='PASS'
+             and type(row.get('returncode')) is int and row['returncode']==0 and row.get('timedOut') is False
+             and row.get('stopAll') is False and known_process(outer) and outer['returncode']==0 and outer['timedOut'] is False
+             and row.get('psfObservation',{}).get('status')=='COMPLETE'
+             and intake.get('protocol')=='r0035-psf-original-intake/1' and intake.get('status')=='COMPLETE'
+             and intake.get('role')==role and intake.get('originalStatus')=='PASS'
+             and same(intake.get('sourceAdmission'),lane.get('preparation'))
+             and row.get('timingClass')=='paired-native-psf-adapter-diagnostic'
+             and row.get('nativeQualification')=='UNCHANGED_ORIGINAL_REPORT_ONLY'
+             and row.get('humanAcceptance')=='OUTSTANDING','PRODUCER_INCOMPLETE')
+        inner=row.get('innerStatus',{})
+        need(type(inner) is dict and all(same(inner.get(k),row.get(k)) for k in
+             ('id','status','returncode','timedOut','originalStatus','psfObservation','timingClass','nativeQualification','humanAcceptance')),
+             'PRODUCER_INCOMPLETE')
+        intakes.append(intake)
+    reference,derived=intakes
+    need(all(same(reference.get(k),derived.get(k)) for k in ('sourceAdmission','runtime','browserVersion','timingClass'))
+         and same(pair.get('identity'),reference['sourceAdmission']['identity'])
+         and same(pair.get('runtime'),reference['runtime']) and pair.get('browserVersion')==reference['browserVersion']
+         and same(pair.get('members'),[{'role':x['role'],'summary':x['summary'],'driver':x['driver']} for x in intakes]),
+         'PRODUCER_INCOMPLETE')
+    return True
+
+
+def mechanism_complete_record(campaign, plan, body):
+    same = mechanism.same
+    selected = campaign.get('r0040Mode') == mechanism.MODE
+    routes = [lane.get('result', {}).get('kind') == mechanism.KIND for lane in plan['lanes']]
+    claims = [row.get('status') == mechanism.ADMITTED for row in body['lanes']]
+    if not selected and not any(routes) and not any(claims):
+        return None
+    need(selected and campaign.get('workOrders') == ['R0040'] and plan.get('workOrders') == ['R0040']
+         and len(routes) == len(claims) == 1 and routes == [True], 'PRODUCER_INCOMPLETE')
+    lane, row = plan['lanes'][0], body['lanes'][0]
+    if not claims[0]:
+        need(row.get('status') not in OBSERVED_LANE_STATUSES, 'PRODUCER_INCOMPLETE')
+        return False
+    from lanes import r0040_dateonly_identity
+    need(mechanism.namespace_admitted(lane, row, r0040_dateonly_identity())
+         and known_process(row.get('namespaceProcess')) and row['namespaceProcess']['returncode'] == 0
+         and row['namespaceProcess']['timedOut'] is False and row.get('stopAll') is False
+         and type(row.get('innerStatus')) is dict
+         and mechanism.namespace_admitted(lane, row['innerStatus'], r0040_dateonly_identity())
+         and row['innerStatus'].get('status') == mechanism.ADMITTED
+         and all(same(row.get(k), row['innerStatus'].get(k)) for k in
+                 ('returncode', 'timedOut', 'dateOnlyStatus', 'passiveDiagnostic', 'mechanismDiagnostic',
+                  'passiveInspection', 'mechanismInspection', 'mechanismVerification', 'mechanismArtifacts')),
+         'PRODUCER_INCOMPLETE')
+    preparation, report = lane.get('preparation', {}), lane['result']
+    need(preparation.get('status') == 'PASS'
+         and same(preparation.get('mechanismSources'), mechanism.verify_sources())
+         and same(preparation.get('mechanismCallerSources'), mechanism.caller_sources())
+         and same(preparation.get('mechanismDiagnostic'), report.get('mechanismDiagnostic'))
+         and same(preparation.get('passiveDiagnostic'), report.get('passiveDiagnostic')),
+         'PRODUCER_INCOMPLETE')
+    artifacts = row.get('mechanismArtifacts', {})
+    wanted = {'base': report.get('finalAdmissionPath'), 'passive': report.get('passiveAdmissionPath'),
+              'mechanism': report.get('mechanismAdmissionPath')}
+    need(type(artifacts) is dict and set(artifacts) == {'base', 'passive', 'mechanism', 'stop'}
+         and all(same(artifacts[name], mechanism.record(file)) for name, file in wanted.items()),
+         'PRODUCER_INCOMPLETE')
+    receipt = load(report['mechanismAdmissionPath'])
+    old = load(report['passiveAdmissionPath'])
+    samplers = old.get('observation', {}).get('samplers', [])
+    need(len(samplers) == 1 and type(samplers[0].get('id')) is int and 1 <= samplers[0]['id'] <= 4,
+         'PRODUCER_INCOMPLETE')
+    stop = Path(lane['evidenceRetention']['output'])/('passive-original-stop-'+str(samplers[0]['id'])+'.json')
+    mechanism.regular(stop, mechanism.passive.STOP_BYTES)
+    mechanism.regular(report['mechanismAdmissionPath'], mechanism.ARTIFACT_BYTES)
+    base = load(report['finalAdmissionPath'])
+    reference = lambda name: {'file': Path(artifacts[name]['path']).name,
+                              'bytes': artifacts[name]['bytes'], 'sha256': artifacts[name]['sha256']}
+    need(same(artifacts['stop'], mechanism.record(stop)) and receipt.get('status') == mechanism.ADMITTED
+         and type(receipt.get('exitCode')) is int and receipt['exitCode'] == 0
+         and type(receipt.get('originalExitCode')) is int and receipt['originalExitCode'] == 0
+         and old.get('status') == mechanism.passive.ADMITTED
+         and type(old.get('exitCode')) is int and old['exitCode'] == 0
+         and type(old.get('originalExitCode')) is int and old['originalExitCode'] == 0
+         and base.get('status') == 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
+         and type(base.get('exitCode')) is int and base['exitCode'] == 0
+         and type(base.get('originalExitCode')) is int and base['originalExitCode'] == 0
+         and same(old.get('baseAdmission'), reference('base'))
+         and same(receipt.get('baseAdmission'), reference('base'))
+         and same(receipt.get('passiveAdmission'), reference('passive'))
+         and same(samplers[0].get('originalStopResponse', {}).get('artifact'), reference('stop'))
+         and same(receipt.get('inspection'), row.get('mechanismInspection'))
+         and same(old.get('inspection'), row.get('passiveInspection')), 'PRODUCER_INCOMPLETE')
+    return True
+
+
+
+def autoattach_complete_record(campaign, plan, body):
+    same = autoattach.same
+    selected = campaign.get('r0040Mode') == autoattach.MODE
+    routes = [lane.get('result', {}).get('kind') == autoattach.KIND for lane in plan['lanes']]
+    claims = [row.get('status') == autoattach.ADMITTED for row in body['lanes']]
+    if not selected and not any(routes) and not any(claims):
+        return None
+    need(selected and campaign.get('workOrders') == ['R0040'] and plan.get('workOrders') == ['R0040']
+         and len(routes) == len(claims) == 1 and routes == [True], 'PRODUCER_INCOMPLETE')
+    lane, row = plan['lanes'][0], body['lanes'][0]
+    if not claims[0]:
+        need(row.get('status') not in OBSERVED_LANE_STATUSES, 'PRODUCER_INCOMPLETE')
+        return False
+    from lanes import r0040_dateonly_identity
+    need(autoattach.namespace_admitted(lane, row, r0040_dateonly_identity())
+         and known_process(row.get('namespaceProcess')) and row['namespaceProcess']['returncode'] == 0
+         and row['namespaceProcess']['timedOut'] is False and row.get('stopAll') is False
+         and type(row.get('innerStatus')) is dict
+         and autoattach.namespace_admitted(lane, row['innerStatus'], r0040_dateonly_identity())
+         and row['innerStatus'].get('status') == autoattach.ADMITTED
+         and all(same(row.get(k), row['innerStatus'].get(k)) for k in
+                 ('returncode', 'timedOut', 'dateOnlyStatus', 'passiveDiagnostic', 'mechanismDiagnostic',
+                  'passiveInspection', 'mechanismInspection', 'mechanismVerification', 'mechanismArtifacts')),
+         'PRODUCER_INCOMPLETE')
+    preparation, report = lane.get('preparation', {}), lane['result']
+    need(preparation.get('status') == 'PASS'
+         and same(preparation.get('mechanismSources'), autoattach.verify_sources())
+         and same(preparation.get('mechanismCallerSources'), autoattach.caller_sources())
+         and same(preparation.get('mechanismDiagnostic'), report.get('mechanismDiagnostic'))
+         and same(preparation.get('passiveDiagnostic'), report.get('passiveDiagnostic')),
+         'PRODUCER_INCOMPLETE')
+    artifacts = row.get('mechanismArtifacts', {})
+    wanted = {'base': report.get('finalAdmissionPath'), 'passive': report.get('passiveAdmissionPath'),
+              'mechanism': report.get('mechanismAdmissionPath')}
+    need(type(artifacts) is dict and set(artifacts) == {'base', 'passive', 'mechanism', 'stop'}
+         and all(same(artifacts[name], autoattach.record(file)) for name, file in wanted.items()),
+         'PRODUCER_INCOMPLETE')
+    receipt = load(report['mechanismAdmissionPath'])
+    old = load(report['passiveAdmissionPath'])
+    samplers = old.get('observation', {}).get('samplers', [])
+    need(len(samplers) == 1 and type(samplers[0].get('id')) is int and 1 <= samplers[0]['id'] <= 4,
+         'PRODUCER_INCOMPLETE')
+    stop = Path(lane['evidenceRetention']['output'])/('passive-original-stop-'+str(samplers[0]['id'])+'.json')
+    autoattach.regular(stop, autoattach.passive.STOP_BYTES)
+    autoattach.regular(report['mechanismAdmissionPath'], autoattach.ARTIFACT_BYTES)
+    base = load(report['finalAdmissionPath'])
+    reference = lambda name: {'file': Path(artifacts[name]['path']).name,
+                              'bytes': artifacts[name]['bytes'], 'sha256': artifacts[name]['sha256']}
+    need(same(artifacts['stop'], autoattach.record(stop)) and receipt.get('status') == autoattach.ADMITTED
+         and type(receipt.get('exitCode')) is int and receipt['exitCode'] == 0
+         and type(receipt.get('originalExitCode')) is int and receipt['originalExitCode'] == 0
+         and old.get('status') == autoattach.passive.ADMITTED
+         and type(old.get('exitCode')) is int and old['exitCode'] == 0
+         and type(old.get('originalExitCode')) is int and old['originalExitCode'] == 0
+         and base.get('status') == 'ADMITTED_DATE_ONLY_FOR_OFFLINE_VERIFICATION'
+         and type(base.get('exitCode')) is int and base['exitCode'] == 0
+         and type(base.get('originalExitCode')) is int and base['originalExitCode'] == 0
+         and same(old.get('baseAdmission'), reference('base'))
+         and same(receipt.get('baseAdmission'), reference('base'))
+         and same(receipt.get('passiveAdmission'), reference('passive'))
+         and same(samplers[0].get('originalStopResponse', {}).get('artifact'), reference('stop'))
+         and same(receipt.get('inspection'), row.get('mechanismInspection'))
+         and same(old.get('inspection'), row.get('passiveInspection')), 'PRODUCER_INCOMPLETE')
+    return True
+
+
+def admit_producers(task, roots):
+    """Only return of the complete known synchronous source path permits seal."""
+    try:
+        code=completed(task,roots,'acquisition')
+        need(0 <= code < 126,'PRODUCER_INCOMPLETE')
+        capture=task/'capture'
+        if code:
+            need(not any((capture/'producer-control').glob('observation-*'))
+                 and not (capture/'observation.json').exists(), 'PRODUCER_INCOMPLETE')
+            return 'ACQUISITION_ONLY'
+        code=completed(task,roots,'observation')
+        need(code in (0,2) and not (capture/'coordinator-error-outer.json').exists(), 'PRODUCER_INCOMPLETE')
+        body=load(capture/'observation.json')
+        campaign=load(HERE/'campaign.json')
+        enabled=campaign.get('r002f',{}).get('enabled')
+        selected=campaign.get('workOrders',[x for x in WORK_ORDERS if x!='R002F' or enabled])
+        need(type(enabled) is bool and type(selected) is list and selected
+             and all(type(x) is str and x in WORK_ORDERS for x in selected)
+             and len(set(selected))==len(selected) and ('R002F' in selected)==enabled,
+             'PRODUCER_INCOMPLETE')
+        selected=[x for x in WORK_ORDERS if x in selected]
+        need(type(body) is dict and body.get('protocol')=='salah-hosted-native-observation/1'
+             and body.get('engine')==campaign.get('engine') in ('chromium','firefox','webkit')
+             and body.get('workOrders')==selected
+             and known_process(body.get('preparation')) and type(body.get('lanes')) is list,
+             'PRODUCER_INCOMPLETE')
+        prep=body['preparation']
+        if prep['returncode'] or prep['timedOut']:
+            need(code==2 and body['lanes']==[] and body.get('status')==
+                 ('ISOLATION_FAIL' if prep['returncode']==86 else 'INCOMPLETE'),
+                 'PRODUCER_INCOMPLETE')
+            return 'COMPLETED_PREPARATION_FAILURE'
+        need(body.get('status') in ('OBSERVED','OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES',
+                                   'ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED')
+             and (code==0)==(body['status']=='OBSERVED'), 'PRODUCER_INCOMPLETE')
+        plan=load(capture/'lanes.json')
+        need(type(plan) is dict and plan.get('protocol')=='salah-hosted-native-lanes/1'
+             and plan.get('sequential') is True and plan.get('workOrders')==selected
+             and type(plan.get('lanes')) is list and plan['lanes'], 'PRODUCER_INCOMPLETE')
+        ids=[x.get('id') if type(x) is dict else None for x in plan['lanes']]
+        need(all(type(x) is str and x for x in ids) and len(set(ids))==len(ids)
+             and [x.get('id') if type(x) is dict else None for x in body['lanes']]==ids,
+             'PRODUCER_INCOMPLETE')
+        for lane,row in zip(plan['lanes'],body['lanes']):
+            need(lane.get('workOrder') in selected and row.get('workOrder')==lane['workOrder']
+                 and lane.get('engine')==body['engine'], 'PRODUCER_INCOMPLETE')
+            need(diagnostics.pipeline_admitted(campaign,plan,body,lane,row,task),'PRODUCER_INCOMPLETE')
+            need(bfcache.pipeline_admitted(campaign,plan,body,lane,row,task),'PRODUCER_INCOMPLETE')
+            if row.get('status')=='NOT_RUN':
+                need('namespaceProcess' not in row and type(row.get('reason')) is str and bool(row['reason']),
+                     'PRODUCER_INCOMPLETE')
+            else:
+                need(row.get('status') in LANE_STATUSES and type(row.get('stopAll')) is bool
+                     and 'innerStatus' in row and known_process(row.get('namespaceProcess')),
+                     'PRODUCER_INCOMPLETE')
+        statuses=[row['status'] for row in body['lanes']]
+        publish_complete=publish_complete_record(campaign,plan,body,task)
+        psf_complete=psf_complete_record(campaign,plan,body)
+        mechanism_complete=mechanism_complete_record(campaign,plan,body)
+        autoattach_complete=autoattach_complete_record(campaign,plan,body)
+        expected=next((x for x in ('ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED')
+                       if x in statuses),None)
+        if expected is None:
+            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) and publish_complete is not False and psf_complete is not False and mechanism_complete is not False and autoattach_complete is not False else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+        need(body['status']==expected, 'PRODUCER_INCOMPLETE')
+        return 'COMPLETED_OBSERVATION'
+    except Rejected:raise
+    except Exception:raise Rejected('PRODUCER_INCOMPLETE') from None
+
+
+@contextlib.contextmanager
+def owned_directory(path, T):
+    E=T.envelope();path=safe_path(path,E)
+    parent=os.open(path.parent,T.DIR_FLAGS)
+    identity=None
+    try:
+        os.mkdir(path.name,0o700,dir_fd=parent)
+        try:info=os.stat(path.name,dir_fd=parent,follow_symlinks=False)
+        except Exception:
+            # No payload operation has run. Without an ownership token, even
+            # an empty path may have been substituted; do not remove by name.
+            raise Rejected('CLEANUP') from None
+        need(stat.S_ISDIR(info.st_mode) and stat.S_IMODE(info.st_mode)==0o700,'CLEANUP')
+        identity=(info.st_dev,info.st_ino)
+        yield path
+    finally:
+        try:
+            if identity is not None:T.remove_owned(parent,path.name,identity)
+        except Exception:raise Rejected('CLEANUP') from None
+        finally:os.close(parent)
+
+
+def seal_capture(task, roots, certificate):
+    os.umask(0o077)
+    T=transport();E=T.envelope()
+    task,protected=roots_checked(task,roots)
+    admit_producers(task,roots)
+    need(not (task/'sealed').exists() and not (task/'sealed').is_symlink(), 'PATH')
+    try:
+        with owned_directory(task/'transport-work',T) as work:
+            try:T.execute('stage',task/'capture',work/'staged',protected_roots=protected)
+            except Exception:raise Rejected('STAGING') from None
+            try:E.execute('seal',work/'staged',task/'sealed',certificate)
+            except Exception:raise Rejected('ENVELOPE') from None
+    except Rejected:raise
+    except Exception:raise Rejected('PATH') from None
+
+
+def open_capture(source, output, certificate, key, protected_roots):
+    """Caller must authenticate sender/run/attempt/artifact before calling."""
+    os.umask(0o077)
+    T=transport();E=T.envelope()
+    source=safe_path(source,E);output=safe_path(output,E)
+    protected=[safe_path(p,E) for p in protected_roots]
+    protected += [source,safe_path(HERE.parents[2],E)]
+    need(protected_roots and output.parent.is_dir() and not output.exists()
+         and not output.is_symlink(), 'PATH')
+    need(all(not output.is_relative_to(p) and not p.is_relative_to(output) for p in protected), 'PATH')
+    # Fresh trusted private parent, with bounded owned cleanup; no pre-existing
+    # destination is replaced and tentative authenticated-decryption output stays inside it.
+    # Open the parent before allocating anything, and share the same owned
+    # reservation lifetime as staging (including its fail-closed identity gap).
+    with owned_directory(output.parent/('capture-open-'+secrets.token_hex(16)),T) as path:
+        try:E.execute('open',source,path/'opened-stage',certificate,key)
+        except Exception:raise Rejected('ENVELOPE') from None
+        try:T.execute('restore',path/'opened-stage',output,protected_roots=protected)
+        except Exception:raise Rejected('RESTORATION') from None
+
+
+class Parser(argparse.ArgumentParser):
+    def error(self,message):raise Rejected('ARGUMENT')
+
+
+def main(argv=None):
+    try:
+        parser=Parser(description=__doc__)
+        sub=parser.add_subparsers(dest='operation',required=True,parser_class=Parser)
+        for op in ('run','seal'):
+            p=sub.add_parser(op)
+            for key in ('task','research','baseline','historical'):p.add_argument('--'+key,type=Path,required=True)
+            if op=='run':p.add_argument('--phase',choices=('acquisition','observation'),required=True)
+            else:p.add_argument('--certificate',type=Path,required=True)
+        p=sub.add_parser('open')
+        for key in ('source','out','certificate','key'):p.add_argument('--'+key,type=Path,required=True)
+        p.add_argument('--protect',type=Path,action='append',required=True)
+        args=parser.parse_args(argv);os.umask(0o077)
+        if args.operation=='run':
+            roots={k:getattr(args,k) for k in ('research','baseline','historical')}
+            task,_=roots_checked(args.task,roots)
+            code=run_command(producer_identity(args.phase,task,roots),task,args.phase)
+            print('PRODUCER_RETURNED')
+            return code if 0 <= code < 126 else 1
+        if args.operation=='seal':
+            seal_capture(args.task,{k:getattr(args,k) for k in ('research','baseline','historical')},args.certificate)
+        else:open_capture(args.source,args.out,args.certificate,args.key,args.protect)
+    except Rejected as error:
+        category=str(error) if str(error) in PUBLIC_ERRORS else 'INTERNAL'
+        print('CAPTURE_PIPELINE_REJECTED:'+category,file=sys.stderr);return 1
+    except KeyboardInterrupt:
+        print('CAPTURE_PIPELINE_REJECTED:INTERRUPTED',file=sys.stderr);return 1
+    except Exception:
+        print('CAPTURE_PIPELINE_REJECTED:INTERNAL',file=sys.stderr);return 1
+    print('CAPTURE_PIPELINE_SEALED' if args.operation=='seal' else 'CAPTURE_PIPELINE_OPENED')
+    return 0
+
+
+if __name__=='__main__':
+    signal.signal(signal.SIGTERM,lambda *unused:(_ for _ in ()).throw(KeyboardInterrupt()))
+    sys.exit(main())

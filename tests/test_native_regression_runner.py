@@ -410,6 +410,73 @@ class RunnerLifecycleTests(unittest.TestCase):
         self.assertNotEqual(row["status"], "PASS")
 
 
+class RunnerCensusTests(unittest.TestCase):
+    """Input custody is distinct from the existing argv/covers selection rules."""
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        (self.root/'tests').mkdir()
+        self.driver = 'tests/driver.cjs'
+        self.helper = 'tests/imported-helper.cjs'
+        for name in (self.driver,self.helper):
+            (self.root/name).write_text('// source-only census fixture\n')
+        self.command = {'name':'census-fixture','argv':['node',self.driver],
+                        'inputs':[self.driver,self.helper],'covers':[self.driver],'protocol':'auto'}
+        self.manifest = {'commands':[self.command],'modules':[],'exclusions':[],'nativeTestGlob':[]}
+
+    def census(self):
+        return runner.census(self.root,runner.population_specs(self.manifest,None),self.manifest)
+
+    def test_input_only_module_remains_hashed_without_execution_overlap(self):
+        self.manifest['modules']=[{'path':self.helper,'reason':'imported helper'}]
+        self.assertEqual(self.census(),[])
+        spec=runner.population_specs(self.manifest,None)[0]
+        setup=runner.check_setup(self.root,spec)
+        self.assertEqual(setup['status'],'READY')
+        row=next(x for x in setup['files'] if x['path']==self.helper)
+        self.assertEqual(row['sha256'],runner.digest(self.root/self.helper))
+        (self.root/self.helper).write_text('// changed source input\n')
+        changed=runner.check_setup(self.root,spec)
+        self.assertNotEqual(row['sha256'],next(x for x in changed['files'] if x['path']==self.helper)['sha256'])
+
+    def test_input_only_exclusion_does_not_become_an_executed_recipe(self):
+        self.manifest['exclusions']=[{'path':self.helper,'reason':'native recipe imported as source','owner':'fixture'}]
+        self.assertEqual(self.census(),[])
+        spec=runner.population_specs(self.manifest,None)[0]
+        self.assertNotIn(self.helper,spec[1]);self.assertIn(self.helper,spec[2])
+        self.assertEqual(runner.check_setup(self.root,spec)['status'],'READY')
+
+    def test_actual_argv_overlap_with_declared_module_still_refuses(self):
+        self.manifest['modules']=[{'path':self.helper,'reason':'imported helper'}]
+        self.command['argv'].append(self.helper)
+        self.assertIn('path is both selected and declared module/exclusion: '+self.helper,self.census())
+
+    def test_explicit_covers_overlap_with_declared_exclusion_still_refuses(self):
+        self.manifest['exclusions']=[{'path':self.helper,'reason':'native recipe','owner':'fixture'}]
+        self.command['covers'].append(self.helper)
+        self.assertIn('path is both selected and declared module/exclusion: '+self.helper,self.census())
+
+    def test_missing_declared_member_and_unregistered_instrument_still_refuse(self):
+        self.manifest['modules']=[{'path':'tests/missing-helper.cjs','reason':'missing fixture'}]
+        extra='tests/unregistered.cjs';(self.root/extra).write_text('// unregistered fixture\n')
+        errors=self.census()
+        self.assertIn('registered module/exclusion path does not exist: tests/missing-helper.cjs',errors)
+        self.assertIn('unregistered instrument (neither selected, module nor exclusion): '+extra,errors)
+
+    def test_input_coverage_remains_part_of_existing_total_census_coverage(self):
+        self.assertEqual(self.census(),[])
+        self.command['inputs'].remove(self.helper)
+        self.assertIn('unregistered instrument (neither selected, module nor exclusion): '+self.helper,self.census())
+
+    def test_glob_population_checks_remain_independent_of_input_coverage(self):
+        member='tests/added.test.cjs';(self.root/member).write_text('// glob fixture\n')
+        self.command['inputs'].append(member)
+        self.assertIn('glob member not registered in nativeTestGlob: '+member,self.census())
+        self.manifest['nativeTestGlob']=[member,'tests/missing.test.cjs']
+        self.assertIn('registered glob member missing: tests/missing.test.cjs',self.census())
+
+
 class RunnerCliTests(unittest.TestCase):
     def test_actual_qualification_caller_preserves_runner_exit_and_receipt(self):
         cp9 = RUNNER_PATH.parent

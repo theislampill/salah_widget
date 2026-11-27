@@ -1,0 +1,237 @@
+name: Private native research observations
+
+on:
+  push:
+    branches: [chatgpt/hosted-native-research-20261125]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: salah-private-native-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  select_runner:
+    if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/chatgpt/hosted-native-research-20261125'
+    runs-on: ubuntu-22.04
+    # Source inspection only. This separate job does not extend any native budget.
+    timeout-minutes: 5
+    outputs:
+      runner: ${{ steps.select.outputs.runner }}
+      payload: ${{ steps.select.outputs.payload }}
+      sha256: ${{ steps.select.outputs.sha256 }}
+    steps:
+      - name: Receive exact dispatcher source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: orchestration
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qa/hosted-native/
+            /tools/qa/r0033_isolation.cjs
+            /tools/qa/v1_net_guard.cjs
+            /tools/qa/r0041/real-witness.cjs
+            /tools/qa/r0041/iso.cjs
+            /tools/qa/r0041/png.cjs
+            /tools/r0035/psf_within_call.mjs
+            /tools/r0035/publish_diagnostic.mjs
+            /tools/r0035/publish_diagnostic_controls.cjs
+            /tools/r0035/live_lab.mjs
+            /tools/r0035/frame_guard.mjs
+            /tools/r0035/sample_history.mjs
+            /tools/r0035/changed_rectangles.mjs
+            /tools/r0035/native_trials.py
+            /tools/r0035/trial_admission.py
+            /tools/r0035/trial_clock.js
+            /real-sky/native-contract.mjs
+            /docs/state-contracts/R0040-native-capture-preflight.md
+            /docs/state-contracts/evidence/R0040/native-capture-preflight.json
+            /docs/state-contracts/evidence/R0040/native-capture-preparation-controls.json
+            /.github/workflows/research-native-pilot.yml
+      - name: Select the exact campaign runner and bind both jobs
+        id: select
+        shell: bash
+        run: python3 -B orchestration/tools/qa/hosted-native/runner_environment.py dispatch
+  observe:
+    needs: select_runner
+    if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/chatgpt/hosted-native-research-20261125'
+    runs-on: ${{ needs.select_runner.outputs.runner }}
+    # Shared safety ceiling; each campaign retains its smaller selected step budget.
+    timeout-minutes: 300
+    steps:
+      - name: Receive exact orchestration
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: orchestration
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qa/hosted-native/
+            /tools/qa/r0033_isolation.cjs
+            /tools/qa/v1_net_guard.cjs
+            /tools/qa/r0041/real-witness.cjs
+            /tools/qa/r0041/iso.cjs
+            /tools/qa/r0041/png.cjs
+            /tools/r0035/psf_within_call.mjs
+            /tools/r0035/publish_diagnostic.mjs
+            /tools/r0035/publish_diagnostic_controls.cjs
+            /tools/r0035/live_lab.mjs
+            /tools/r0035/frame_guard.mjs
+            /tools/r0035/sample_history.mjs
+            /tools/r0035/changed_rectangles.mjs
+            /tools/r0035/native_trials.py
+            /tools/r0035/trial_admission.py
+            /tools/r0035/trial_clock.js
+            /real-sky/native-contract.mjs
+            /docs/state-contracts/R0040-native-capture-preflight.md
+            /docs/state-contracts/evidence/R0040/native-capture-preflight.json
+            /docs/state-contracts/evidence/R0040/native-capture-preparation-controls.json
+            /.github/workflows/research-native-pilot.yml
+      - name: Bound the selected observation campaign
+        id: budget
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, sys
+          sys.path.insert(0, 'orchestration/tools/qa/hosted-native')
+          from observe import read_campaign, campaign_budget
+          budget = campaign_budget(read_campaign('orchestration/tools/qa/hosted-native/campaign.json'))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              print('observation_minutes='+str(budget['workflowObservationMinutes']), file=output)
+              print('acquisition_minutes='+str(budget.get('workflowAcquisitionMinutes', 12)), file=output)
+          PY
+      - name: Set up pinned Node runtime
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
+        with:
+          node-version: '24.14.0'
+      - name: Set up Python runtime
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+        with:
+          python-version: '3.11'
+      - name: Receive immutable reviewed research
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 55d1b3edb66d2c35679707120b01ee1d3455e4a3
+          path: research
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/docs/real-sky/evidence/**
+            !/docs/rlgwo-execution/**
+            !/docs/moon/evidence/**
+            !/docs/state-contracts/evidence/**
+            /docs/state-contracts/evidence/R0040/**
+            /docs/state-contracts/evidence/R003F/publication-paths.json
+            /docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json
+      - name: Receive immutable clean baseline
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: df644ef60156b67b5c487395176369bcec7a0d7b
+          path: baseline
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/docs/real-sky/evidence/**
+            !/docs/rlgwo-execution/**
+            !/docs/moon/evidence/**
+            !/docs/state-contracts/evidence/**
+            /docs/state-contracts/evidence/R002B/config-e11bdd3d/ci-build-pages-payload.json
+      - name: Receive immutable historical rain helper
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 4029d2f67f5a880c8ad889443bb7557d96022c45
+          path: historical
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qa/precip_eval_lib.cjs
+            /tools/qa/precip_models_geom.js
+            /tools/qa/precip_declared_gain.json
+            /tools/qa/precip_models.js
+            /tools/qa/precip_models_capture.cjs
+            /tools/qa/precip_models_post.py
+      - name: Create fresh private capture root
+        id: private
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          mkdir "$native_task"
+          mkdir "$native_task/capture"
+          printf '%s\n' "$GITHUB_SHA" > "$native_task/capture/workflow-commit.txt"
+          printf '%s\n' "$GITHUB_RUN_ID/$GITHUB_RUN_ATTEMPT" > "$native_task/capture/workflow-run.txt"
+          echo 'created=true' >> "$GITHUB_OUTPUT"
+      - name: Acquire integrity-locked drivers and managed browsers
+        timeout-minutes: ${{ fromJSON(steps.budget.outputs.acquisition_minutes) }}
+        env:
+          SALAH_RUNNER_DISPATCH: ${{ needs.select_runner.outputs.payload }}
+          SALAH_RUNNER_DISPATCH_SHA256: ${{ needs.select_runner.outputs.sha256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          if python3 orchestration/tools/qa/hosted-native/capture_pipeline.py run --phase acquisition --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical"; then
+            echo 'ACQUISITION_COMPLETE'
+          else
+            echo 'ACQUISITION_INCOMPLETE; detail is private'
+            exit 1
+          fi
+      - name: Observe sequentially inside verified network namespaces
+        timeout-minutes: ${{ fromJSON(steps.budget.outputs.observation_minutes) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          if python3 orchestration/tools/qa/hosted-native/capture_pipeline.py run --phase observation --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical"; then
+            echo 'OBSERVATION_COMPLETE; recipe results are private'
+          else
+            echo 'OBSERVATION_INCOMPLETE; all obtained evidence will be sealed'
+            exit 1
+          fi
+      - name: Seal all obtained private evidence
+        id: seal
+        if: always() && steps.private.outputs.created == 'true'
+        timeout-minutes: 20
+        shell: bash
+        run: |
+          set -euo pipefail
+          native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          if python3 orchestration/tools/qa/hosted-native/capture_pipeline.py seal --task "$native_task" --research "$GITHUB_WORKSPACE/research" --baseline "$GITHUB_WORKSPACE/baseline" --historical "$GITHUB_WORKSPACE/historical" --certificate orchestration/tools/qa/hosted-native/recipient.crt; then
+            echo 'sealed=true' >> "$GITHUB_OUTPUT"
+            echo 'PRIVATE_EVIDENCE_SEALED'
+          else
+            echo 'SEALING_FAILED; no capture artifact may be uploaded'
+            exit 1
+          fi
+      - name: Retain only the ciphertext and non-content envelope
+        if: always() && steps.seal.outputs.sealed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: salah-native-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/salah-native-${{ github.run_id }}-${{ github.run_attempt }}/sealed/capture.p7m
+            ${{ runner.temp }}/salah-native-${{ github.run_id }}-${{ github.run_attempt }}/sealed/envelope.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Remove private plaintext and disposable builds
+        if: always() && steps.private.outputs.created == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          native_task="$RUNNER_TEMP/salah-native-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          rm -rf -- "$native_task"
+          echo 'PRIVATE_PLAINTEXT_REMOVED'
