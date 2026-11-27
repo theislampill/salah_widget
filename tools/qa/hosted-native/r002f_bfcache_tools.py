@@ -211,12 +211,15 @@ def mapped_files(pid):
     return sorted(paths)
 
 
-def run_bounded(argv, directory, label, timeout, *, max_stdout=1 << 20, max_stderr=1 << 20, env=None, mapping_rows=None, cwd=None):
+def run_bounded(argv, directory, label, timeout, *, max_stdout=1 << 20, max_stderr=1 << 20, env=None, mapping_rows=None, cwd=None, output_owner=None):
     """Actual child, capped retained streams and group teardown; no inferred success."""
     directory = Path(directory)
     need(directory.is_dir() and not directory.is_symlink(), 'existing private command directory required')
     need(type(label) is str and label and label.replace('-', '').replace('_', '').isalnum(), 'command label')
     need(timeout > 0 and max_stdout > 0 and max_stderr > 0, 'positive process bounds required')
+    need(output_owner is None or (type(output_owner) is tuple and len(output_owner) == 2
+         and all(type(value) is int and value > 0 for value in output_owner) and os.geteuid() == 0),
+         'only a root controller may retain streams as its nonroot caller')
     paths = {key: directory / (label + '.' + key) for key in ('stdout', 'stderr')}
     streams = {}; proc = None; started = time.monotonic(); selector = selectors.DefaultSelector()
     command_cwd=directory if cwd is None else Path(cwd)
@@ -252,7 +255,17 @@ def run_bounded(argv, directory, label, timeout, *, max_stdout=1 << 20, max_stde
             pass
     try:
         for key, path in paths.items():
-            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            if output_owner is None:
+                fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            else:
+                # The owned PID-namespace controller must leave even abruptly
+                # interrupted prefixes readable by the original private owner.
+                old_uid, old_gid = os.geteuid(), os.getegid()
+                try:
+                    os.setegid(output_owner[1]); os.seteuid(output_owner[0])
+                    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+                finally:
+                    os.seteuid(old_uid); os.setegid(old_gid)
             streams[key] = os.fdopen(fd, 'wb')
         proc = subprocess.Popen(record['argv'], cwd=command_cwd, env=ENV if env is None else env,
                                 stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
@@ -470,6 +483,8 @@ def acquired_runtime(task, directory):
 def acquire(task):
     # Selected-only shell call. No browser import beyond a source executablePath query; no browser launch.
     from r002f_bfcache_central import source_identity
+    import r002f_bfcache_system as system
+    import runner_environment
     task = Path(task).absolute(); campaign_path = HERE/'campaign.json'
     need(selected(load(campaign_path)), 'unselected route must not acquire bfcache tools')
     folder = task/'capture/r002f-bfcache-tools'; need(not folder.exists(), 'tool receipt/output already exists')
@@ -480,6 +495,10 @@ def acquire(task):
     previous = signal.signal(signal.SIGALRM, deadline); signal.setitimer(signal.ITIMER_REAL, 180)
     try:
         result['campaign'] = file_record(campaign_path); result['sources'] = source_identity()
+        result['runnerEnvironment'] = runner_environment.current(task)
+        result['provision'] = system.provision(task, folder, started+180)
+        need(result['provision']['status'] == 'COMPLETE', 'actual selected system provision incomplete')
+        result['provisionAdmission'] = system.current(result['provision'], task, folder)
         result['acquired'] = acquired_runtime(task, folder)
         literals = {'decoder': '/usr/bin/ffmpeg', 'probe': '/usr/bin/ffprobe', 'xvfb': '/usr/bin/Xvfb',
                     'dpkgQuery': '/usr/bin/dpkg-query', 'ldd': '/usr/bin/ldd', 'readelf': '/usr/bin/readelf'}
@@ -505,6 +524,8 @@ def acquire(task):
         for name, files in result['acquired']['packages'].items():
             need(file_tree(Path(result['acquired']['runtime']['modules'])/name) == files, 'installed package population changed')
         need(source_identity() == result['sources'], 'tool acquisition source changed')
+        need(runner_environment.current(task) == result['runnerEnvironment'], 'selected runner environment changed')
+        need(system.current(result['provision'], task, folder) == result['provisionAdmission'], 'selected system provision changed')
         result['status'] = 'COMPLETE'
     except Exception as error:
         result['error'] = type(error).__name__+': '+str(error)

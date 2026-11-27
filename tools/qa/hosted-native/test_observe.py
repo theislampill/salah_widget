@@ -693,6 +693,7 @@ class Campaign(unittest.TestCase):
                 prior_umask = os.umask(0o077)
                 try:
                     with patch.object(sys, 'argv', argv), patch.object(M.signal, 'signal'), \
+                         patch.object(M.runner_environment, 'current', return_value={'scope':'SOURCE_CONTROL_ONLY'}), \
                          patch.object(M, 'outside', return_value=0) as dispatch:
                         self.assertEqual(M.main(), 0)
                     args = dispatch.call_args.args[0]

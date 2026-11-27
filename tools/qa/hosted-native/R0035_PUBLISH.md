@@ -67,7 +67,7 @@ transformation. Output ancestry, canonical literal paths, protected inode
 aliases, hardlinks, input immutability, complete population and actual written
 bytes are checked. The helper does not retain live pixel or canvas references.
 
-`r0035-publish-pins.json` enumerates all 107 members of the composed source closure. It includes the
+`r0035-publish-pins.json` enumerates all 111 members of the composed source closure. It includes the
 shared BF/autoattach callers and their dependencies, original preparation,
 runtime identity/acquisition, namespace and transport code, original driver
 loader/pins, reused PSF support, new entry/materializer/history intake, pure
@@ -76,6 +76,17 @@ its Git blob, including sparse/skip-worktree files, and binds the clean complete
 commit/tree. Missing/unknown declared members refuse. The reviewed source
 manifest is ordinary committed input; it does not hash itself recursively or
 substitute a copied declaration for actual Git/source checks.
+
+The acquisition successor composes the reviewed 107-member route with four
+runner/system acquisition modules. The actual envelope-test shell input is
+already included once. A source-only dispatcher binds the same complete source
+and exact campaign to the observation worker. This explicit publish route stays
+on the original official Ubuntu 22.04 environment; only the exact BFCache
+selection uses the separately declared Ubuntu 24.04 diagnostic environment.
+All routes bind the common map in both producer phases and require the retained
+runner admission before successful producer acceptance or browser dispatch.
+Dispatcher file descriptors remain historical across VMs; current source
+bytes, modes, Git blobs, commit and tree are compared on the actual worker.
 
 The same enumerated closure is included in both acquisition and observation
 producer identities. Preparation, canonical plan, preadmission, actual entry,

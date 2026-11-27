@@ -81,6 +81,8 @@ def source_files():
            'r0035_publish_controls.py','r0035_publish_io_controls.cjs','observe_r0035_psf.py',
            'r0035-stage-pins.json','r0035-psf-native-pins.json','r0035_psf_transform.mjs',
            'test_capture_pipeline.py','test_envelope.py','r0035_psf_controls.py']
+    names += ['runner_environment.py','r002f_bfcache_system.py','r002f_bfcache_privileged.py',
+              'r002f_bfcache_acquisition_controls.py']
     return sorted(['tools/qa/hosted-native/'+name for name in names]+['tools/qa/r0041/'+name for name in
         ('real-witness.cjs','iso.cjs','png.cjs')]+['.github/workflows/research-native-pilot.yml',
         'docs/state-contracts/R0040-native-capture-preflight.md','docs/state-contracts/evidence/R0040/native-capture-preflight.json',
@@ -132,12 +134,17 @@ def process_success(value,argv,seconds):
 
 
 def tools_current(task,runtime):
+    import r002f_bfcache_system as system
+    import runner_environment
     p=paths(task);tools.runtime_schema(runtime)
     need(same(load(p['task']/'runtime.json'),runtime),'current acquired runtime differs')
     need(p['tools'].is_file(),'selected route tool receipt is missing')
     value=load(p['tools']);need(value.get('protocol')==tools.PROTOCOL and value.get('status')=='COMPLETE'
         and value.get('task')==str(p['task']) and value.get('scope')=='SELECTED_ROUTE_HOSTED_TOOL_ACQUISITION'
         and value.get('nativeObservation') is False and same(value['acquired']['runtime'],runtime),'actual selected tool receipt differs')
+    need(same(value.get('runnerEnvironment'),runner_environment.current(task)), 'actual selected runner environment differs')
+    need(same(value.get('provisionAdmission'),system.current(value.get('provision',{}),p['task'],p['tools'].parent)),
+         'actual selected system provision differs')
     need(value['capability'].get('protocol')=='r002f-bfcache-source-capability/1' and value['capability'].get('status')=='COMPLETE'
          and value['capability'].get('scope')=='SOURCE_CONTROL_ONLY' and value['capability'].get('nativeObservation') is False,
          'original decoder synthetic capability is absent')

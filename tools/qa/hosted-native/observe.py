@@ -39,6 +39,7 @@ from observe_r0035_stages import inspect as inspect_stage_trace
 from observe_r0035_costs import inspect as inspect_cost_trace, BASE_WRAPPER_SHA256 as COST_BASE_WRAPPER_SHA256
 import r003f_diagnostics as diagnostics
 import r002f_bfcache_central as bfcache
+import runner_environment
 
 CAP_FIELDS = ('CapInh', 'CapPrm', 'CapEff', 'CapBnd', 'CapAmb')
 RAIN_CELLS = ('day-rain', 'day-drizzle', 'day-thunder', 'night', 'twilight',
@@ -2048,6 +2049,8 @@ def main():
     signal.signal(signal.SIGINT, interrupted)
     runtime = json.loads((args.task/'runtime.json').read_text())
     try:
+        # The exact dispatcher/host admission precedes all shared browser controls.
+        runner_environment.current(args.task)
         if args.campaign:
             campaign = read_campaign(args.campaign)
             args.engine = campaign['engine']; args.r003f_dpr = campaign['r003fDpr']

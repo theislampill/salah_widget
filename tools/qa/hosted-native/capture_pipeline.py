@@ -26,6 +26,7 @@ import r002f_bfcache_central as bfcache
 import r0035_publish as publish
 import r0040_mechanism_central as mechanism
 import r0040_autoattach_central as autoattach
+import runner_environment
 
 HERE = Path(__file__).absolute().parent
 PRODUCER_PROTOCOL = 'salah-capture-producer-return/1'
@@ -118,6 +119,9 @@ def producer_identity(phase, task, roots):
         files += bfcache.producer_source_files()
     if campaign.get('r0035Publish',False) is True:
         files += publish.producer_source_files()
+    # Runner admission now executes for every acquisition and observation.
+    # Preserve the phase/route prefix, then bind its actual common/selected inputs.
+    files += runner_environment.producer_source_files(campaign)
     need(all(isinstance(x,str) and x for x in command), 'DEPENDENCY')
     return {'argv':command, 'sources':{name:hashlib.sha256((HERE/name).read_bytes()).hexdigest() for name in files}}
 
@@ -179,6 +183,9 @@ def completed(task, roots, phase):
     need(start==wanted and type(end) is dict and set(end)==set(wanted)|{'returned','interrupted','process'}
          and all(end[k]==v for k,v in wanted.items()) and end['returned'] is True
          and end['interrupted'] is False and known_process(end['process'],False), 'PRODUCER_INCOMPLETE')
+    if end['process']['returncode'] == 0:
+        try: runner_environment.current(task)
+        except Exception: raise Rejected('DEPENDENCY') from None
     return end['process']['returncode']
 
 

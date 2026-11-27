@@ -47,6 +47,10 @@ class PipelineTests(unittest.TestCase):
 
     def setUp(self):
         self.assertIsNotNone(P, 'integrated private capture caller is absent')
+        # These existing transport/terminal fixtures remain synthetic. Separate
+        # acquisition controls exercise the mandatory actual runner readmission.
+        runner_fixture = mock.patch.object(P.runner_environment, 'current', return_value={'scope':'SOURCE_CONTROL_ONLY'})
+        runner_fixture.start(); self.addCleanup(runner_fixture.stop)
         self.tmp = tempfile.TemporaryDirectory(prefix='pipeline-control-')
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
@@ -300,11 +304,14 @@ class PipelineTests(unittest.TestCase):
         # A disclosed synthetic campaign in its own source tree. Neither the
         # checked-out B0 campaign nor an actual native receipt is rewritten.
         source=self.root/'orchestration/tools/qa/hosted-native';source.mkdir(parents=True)
-        for name in ('capture_pipeline.py','capture_transport.py','envelope.py','acquire.sh','observe.py'):
-            shutil.copyfile(P.HERE/name,source/name)
         campaign={'schemaVersion':1,'engine':'chromium','workOrders':['R0040'],'r003fDpr':1,
                   'evidenceRetention':False,'r0040Mode':passive.MODE,
                   'r002f':{'enabled':False,'dpr':1,'rounds':1,'section':'all'}}
+        # The real producer now hashes the complete shared dispatcher closure.
+        # Copy its actual bytes into this explicitly synthetic source fixture.
+        for name in P.runner_environment.source_files(campaign):
+            target=self.root/'orchestration'/name;target.parent.mkdir(parents=True,exist_ok=True)
+            shutil.copyfile(P.HERE.parents[2]/name,target)
         (source/'campaign.json').write_text(json.dumps(campaign))
         with mock.patch.object(P,'HERE',source):
             self.fixture_producer('acquisition',0);self.fixture_producer('observation',0)

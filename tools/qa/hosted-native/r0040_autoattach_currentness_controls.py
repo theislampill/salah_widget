@@ -54,6 +54,7 @@ class MechanismCurrentness(unittest.TestCase):
             if write_failure and 'currentness' in Path(path).parts: raise OSError('synthetic retention failure')
             return write(path, body)
         with patch.object(sys, 'argv', args), patch.object(O, 'isolated_command', return_value=['synthetic-preparation']), \
+             patch.object(O.runner_environment, 'current', return_value={'scope':'SOURCE_CONTROL_ONLY'}), \
              patch.object(O, 'run_bounded', side_effect=only_preparation), \
              patch.object(C, 'readmit', return_value=process, side_effect=exception) as child, \
              patch.object(O, 'write_json', side_effect=retained_write):

@@ -142,7 +142,8 @@ class CentralControls(unittest.TestCase):
                         self.assertIn('r0040_autoattach.cjs',actual)
                         self.assertIn('r002f_bfcache_preload.cjs',actual)
             with patch.object(P,'load',return_value={'workOrders':['R0040'],'r0040Mode':'capture-mechanism'}):
-                self.assertEqual(set(P.producer_identity('acquisition',task,roots)['sources']),{'capture_pipeline.py','acquire.sh','campaign.json'})
+                # General runner admission now executes for every acquisition.
+                self.assertEqual(set(P.producer_identity('acquisition',task,roots)['sources']),set(m.producer_source_files()))
 
     def test_actual_retained_currentness_refusal_requires_original_bytes_exact_invocation_and_phase(self):
         m=feature(self)
@@ -293,7 +294,7 @@ class CentralControls(unittest.TestCase):
             with patch.object(m,'tools_current',return_value={'scope':'SOURCE_CONTROL_ONLY'}):
                 self.assertTrue(m.pipeline_admitted(campaign(),plan,body,lane,row,task))
                 # Enter the real shared producer gate, without keys, sealing, or a browser.
-                # Only the campaign/tool authorities are disclosed synthetic source fixtures.
+                # Campaign/tool/runner prerequisites are disclosed synthetic source fixtures.
                 roots={k:Path(directory)/k for k in ('research','baseline','historical')}
                 for root in roots.values():root.mkdir()
                 task.chmod(0o700);p['capture'].chmod(0o700)
@@ -304,7 +305,8 @@ class CentralControls(unittest.TestCase):
                 plan.update(protocol='salah-hosted-native-lanes/1',sequential=True,workOrders=['R002F'])
                 body.update(protocol='salah-hosted-native-observation/1',engine='chromium',workOrders=['R002F'],
                             preparation={'returncode':0,'timedOut':False,'elapsedSeconds':1},lanes=[row],status='OBSERVED')
-                with patch.object(P,'load',side_effect=source_fixture_load):
+                with patch.object(P,'load',side_effect=source_fixture_load), \
+                     patch.object(P.runner_environment,'current',return_value={'scope':'SOURCE_CONTROL_ONLY'}):
                     for phase in ('acquisition','observation'):
                         identity=P.producer_identity(phase,task,roots)
                         self.assertIn('r002f_bfcache_preload.cjs',identity['sources'])

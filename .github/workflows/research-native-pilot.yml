@@ -13,9 +13,54 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  observe:
+  select_runner:
     if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/chatgpt/hosted-native-research-20261125'
     runs-on: ubuntu-22.04
+    # Source inspection only. This separate job does not extend any native budget.
+    timeout-minutes: 5
+    outputs:
+      runner: ${{ steps.select.outputs.runner }}
+      payload: ${{ steps.select.outputs.payload }}
+      sha256: ${{ steps.select.outputs.sha256 }}
+    steps:
+      - name: Receive exact dispatcher source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.sha }}
+          path: orchestration
+          fetch-depth: 1
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /tools/qa/hosted-native/
+            /tools/qa/r0033_isolation.cjs
+            /tools/qa/v1_net_guard.cjs
+            /tools/qa/r0041/real-witness.cjs
+            /tools/qa/r0041/iso.cjs
+            /tools/qa/r0041/png.cjs
+            /tools/r0035/psf_within_call.mjs
+            /tools/r0035/publish_diagnostic.mjs
+            /tools/r0035/publish_diagnostic_controls.cjs
+            /tools/r0035/live_lab.mjs
+            /tools/r0035/frame_guard.mjs
+            /tools/r0035/sample_history.mjs
+            /tools/r0035/changed_rectangles.mjs
+            /tools/r0035/native_trials.py
+            /tools/r0035/trial_admission.py
+            /tools/r0035/trial_clock.js
+            /real-sky/native-contract.mjs
+            /docs/state-contracts/R0040-native-capture-preflight.md
+            /docs/state-contracts/evidence/R0040/native-capture-preflight.json
+            /docs/state-contracts/evidence/R0040/native-capture-preparation-controls.json
+            /.github/workflows/research-native-pilot.yml
+      - name: Select the exact campaign runner and bind both jobs
+        id: select
+        shell: bash
+        run: python3 -B orchestration/tools/qa/hosted-native/runner_environment.py dispatch
+  observe:
+    needs: select_runner
+    if: github.repository == 'theislampill/salah_widget' && github.ref == 'refs/heads/chatgpt/hosted-native-research-20261125'
+    runs-on: ${{ needs.select_runner.outputs.runner }}
     # Shared safety ceiling; each campaign retains its smaller selected step budget.
     timeout-minutes: 300
     steps:
@@ -132,6 +177,9 @@ jobs:
           echo 'created=true' >> "$GITHUB_OUTPUT"
       - name: Acquire integrity-locked drivers and managed browsers
         timeout-minutes: ${{ fromJSON(steps.budget.outputs.acquisition_minutes) }}
+        env:
+          SALAH_RUNNER_DISPATCH: ${{ needs.select_runner.outputs.payload }}
+          SALAH_RUNNER_DISPATCH_SHA256: ${{ needs.select_runner.outputs.sha256 }}
         shell: bash
         run: |
           set -euo pipefail

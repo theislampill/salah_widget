@@ -110,6 +110,9 @@ class ReturnedCurrentness(unittest.TestCase):
             return {'returncode':0,'timedOut':False,'elapsedSeconds':0.01}
         with contextlib.ExitStack() as stack:
             for p in f.patches:stack.enter_context(p)
+            # Keep this existing route-currentness control downstream of the
+            # separately tested source-only runner prerequisite.
+            stack.enter_context(patch.object(O.runner_environment,'current',return_value={'scope':'SOURCE_CONTROL_ONLY'}))
             stack.enter_context(patch.object(sys,'argv',args))
             stack.enter_context(patch.object(O,'isolated_command',return_value=['synthetic-preparation']))
             stack.enter_context(patch.object(O,'run_bounded',side_effect=prepare_only))

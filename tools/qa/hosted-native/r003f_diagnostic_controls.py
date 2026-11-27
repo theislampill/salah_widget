@@ -160,7 +160,10 @@ class DiagnosticCentral(unittest.TestCase):
         for root in roots.values():root.mkdir(exist_ok=True)
         original=P.load
         def load(path):return copy.deepcopy(campaign) if Path(path)==HERE/'campaign.json' else original(path)
-        with mock.patch.object(P,'load',side_effect=load):
+        # Runner admission is an explicit source-control prerequisite here;
+        # dedicated acquisition controls test its real refusal boundary.
+        with mock.patch.object(P,'load',side_effect=load), \
+             mock.patch.object(P.runner_environment,'current',return_value={'scope':'SOURCE_CONTROL_ONLY'}):
             def completed(phase,code):
                 identity=P.producer_identity(phase,self.task,roots)
                 value={'protocol':P.PRODUCER_PROTOCOL,'identity':identity,'phase':phase}

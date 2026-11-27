@@ -17,6 +17,7 @@ test -z "$(git -C "$native_baseline" status --porcelain)"
 test -z "$(git -C "$native_historical" status --porcelain)"
 # Qualify the runner's actual OpenSSL CMS and Python behavior before capture.
 python3 -m unittest discover -s "$native_tools" -p test_envelope.py -v
+python3 -B "$native_tools/runner_environment.py" admit --task "$native_task"
 native_engine="$(python3 -c 'import json,sys; x=json.load(open(sys.argv[1])); assert x["schemaVersion"]==1 and x["engine"] in ("chromium","firefox","webkit"); print(x["engine"])' "$native_tools/campaign.json")"
 mkdir "$native_task/node" "$native_task/temporary" "$native_task/cache" "$native_task/config" "$native_task/runtime" "$native_task/work"
 cp "$native_tools/node/package.json" "$native_tools/node/package-lock.json" "$native_task/node/"

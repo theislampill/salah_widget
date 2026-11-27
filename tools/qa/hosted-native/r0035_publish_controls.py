@@ -445,7 +445,7 @@ class PublishRoute(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError,'declared complete'):p.source_identity()
                 self.assertEqual(p.source_identity(),identity)
 
-    def test_both_producer_phases_bind_the_whole_composed_closure_only_when_selected(self):
+    def test_both_producer_phases_bind_the_whole_composed_closure_for_every_route(self):
         p=self.module();import capture_pipeline as pipeline;import r0040_autoattach_central as auto
         expected={name:p.original_support.sha((HERE/name).read_bytes()) for name in p.producer_source_files()}
         self.assertEqual(set(auto.caller_sources()),set(expected))
@@ -461,8 +461,20 @@ class PublishRoute(unittest.TestCase):
                     with self.subTest(campaign=campaign,phase=phase),patch.object(pipeline,'load',return_value=campaign):
                         actual=pipeline.producer_identity(phase,task,roots)
                     self.assertEqual(actual['sources'],expected)
-            with patch.object(pipeline,'load',return_value={}):
-                self.assertEqual(set(pipeline.producer_identity('acquisition',task,roots)['sources']),{'capture_pipeline.py','acquire.sh','campaign.json'})
+            # Runner admission executes for ordinary routes too. The selected
+            # matrix parser additionally reads its original catalogue; its
+            # separate central/native body guards remain unchanged.
+            for campaign in ({},{'r003fHarness':'corrected-matrix'}):
+                wanted=dict(expected)
+                if campaign:
+                    name='r003f-matrix-catalogue.json'
+                    wanted[name]=p.original_support.sha((HERE/name).read_bytes())
+                for phase in ('acquisition','observation'):
+                    with self.subTest(campaign=campaign,phase=phase),patch.object(pipeline,'load',return_value=campaign):
+                        actual=pipeline.producer_identity(phase,task,roots)
+                    self.assertEqual(actual['sources'],wanted)
+                    self.assertEqual(list(actual['sources'])[:3],
+                                     ['capture_pipeline.py','acquire.sh' if phase=='acquisition' else 'observe.py','campaign.json'])
 
     def retained_fixture(self,task):
         p=self.module();import r0035_stage_materialize as material;import r003f_matrix_campaign as boundary
