@@ -176,8 +176,9 @@ def decoder_candidate(policy, madison):
     return candidate
 
 
-def records(literals):
+def records(literals, *, observed=None):
     result = {name: tools.file_record(literal, system=True) for name, literal in literals.items()}
+    if observed is not None: observed.update(result)
     need(all(row['uid'] == 0 and not row['mode'] & 0o022 and (name in ('archiveKeyring', 'caCertificates') or row['mode'] & 0o111)
              for name, row in result.items()), 'root-owned system executable/keyring identity differs')
     return result
@@ -251,8 +252,18 @@ def provision(task, folder, deadline, *, execute=None):
         need(os.getuid() > 0, 'original nonroot hosted worker required')
         # util-linux is deliberately reinstalled below; unshare's old inode is
         # historical launcher input, not a falsely current post-install record.
+        observed_bootstrap = {}
+        try:
+            bootstrap = records(BOOTSTRAP, observed=observed_bootstrap)
+        except Exception:
+            # Retain only a complete original population, without admitting it
+            # or adding an I/O failure before the unchanged ownership guard.
+            if set(observed_bootstrap) == set(BOOTSTRAP):
+                result['bootstrapRefusal'] = {'scope': 'HISTORICAL_UNADMITTED_BOOTSTRAP_SYSTEM_FILES',
+                    'records': observed_bootstrap}
+            raise
         result['bootstrapBefore'] = {'scope': 'HISTORICAL_PRE_PROVISION_SYSTEM_FILES',
-            'receipt': tools.save(folder / 'bootstrap-before.json', records(BOOTSTRAP))}
+            'receipt': tools.save(folder / 'bootstrap-before.json', bootstrap)}
         work, result['configuration'] = create_workspace(folder)
         result['work'] = str(work); source = work / 'sources.list'; environment = command_environment(work)
         result['effectiveConfig'] = run('apt-effective-config'); admit_effective_config(result['effectiveConfig'], work)

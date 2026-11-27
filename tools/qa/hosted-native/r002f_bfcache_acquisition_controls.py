@@ -71,6 +71,36 @@ def retain_control(name, body, folder=None):
 
 
 @contextmanager
+def bootstrap_metadata_fixture(test, module, read_error=None):
+    """Synthetic UID/mode observations; real receipt I/O and no command authority."""
+    with tempfile.TemporaryDirectory(prefix='bfcache-bootstrap-metadata-control-') as directory, ExitStack() as stack:
+        root = Path(directory); task = root / 'task'; folder = task / 'capture/r002f-bfcache-tools'
+        folder.mkdir(parents=True, mode=0o700)
+        fake = root / 'synthetic-system'; fake.mkdir()
+        actual_record = module.tools.file_record; literals = {}; rows = {}; calls = []
+        for name in module.BOOTSTRAP:
+            path = fake / name; path.write_bytes(('SOURCE_CONTROL_ONLY metadata ' + name).encode())
+            path.chmod(0o644 if name in ('archiveKeyring', 'caCertificates') else 0o755)
+            literals[name] = str(path); rows[name] = actual_record(path, system=True)
+            rows[name]['uid'] = 0  # Explicit metadata fixture, never actual root custody.
+        names = {value: name for name, value in literals.items()}
+        def record(path, **kwargs):
+            name = names.get(str(path))
+            if name is None: return actual_record(path, **kwargs)
+            test.assertEqual(kwargs, {'system': True}); calls.append(name)
+            if name == read_error: raise OSError('SOURCE_CONTROL_ONLY descriptor read failed')
+            return copy.deepcopy(rows[name])
+        selected = {'scope': 'SOURCE_CONTROL_ONLY', 'selection': {
+            'scope': 'R002F_BFCACHE_UBUNTU24_DIAGNOSTIC', 'runner': 'ubuntu-24.04'}}
+        stack.enter_context(patch.object(module, 'BOOTSTRAP', literals))
+        stack.enter_context(patch.object(module.tools, 'file_record', side_effect=record))
+        stack.enter_context(patch.object(module.runner, 'current', return_value=selected))
+        workspace = stack.enter_context(patch.object(module, 'create_workspace',
+            side_effect=AssertionError('metadata control must stop before package configuration')))
+        yield task, folder, literals, rows, calls, workspace
+
+
+@contextmanager
 def package_transport_fixture(test, module, fault):
     """Mock APT/root authority; only harmless Python children actually execute.
 
@@ -91,8 +121,12 @@ def package_transport_fixture(test, module, fault):
             if str(path) == '/var/lib/dpkg/status': path = fake / 'status'
             if str(path) == '/var/lib/dpkg/info/ffmpeg.md5sums': path = fake / 'md5sums'
             return actual_record(path, **kwargs)
+        def synthetic_records(literals, *, observed=None):
+            rows = {name: actual_record(fake / name) for name in literals}
+            if observed is not None: observed.update(rows)
+            return rows
         stack.enter_context(patch.object(module.runner, 'current', return_value=runner))
-        stack.enter_context(patch.object(module, 'records', side_effect=lambda literals: {name: actual_record(fake / name) for name in literals}))
+        stack.enter_context(patch.object(module, 'records', side_effect=synthetic_records))
         stack.enter_context(patch.object(module.tools, 'file_record', side_effect=record))
         bodies = {}; calls = []; workspaces = []
         def root_admission(value, argv, current_folder, label):
@@ -538,6 +572,53 @@ class AcquisitionControls(unittest.TestCase):
             path = Path(directory) / 'substitute'; path.write_bytes(b'not an acquired system tool'); path.chmod(0o777)
             with self.assertRaises(ValueError): m.records({'decoder': str(path)})
 
+    def test_bootstrap_identity_refusal_retains_complete_observed_descriptors_before_commands(self):
+        """Losing the pre-guard rows prevents diagnosis of a genuine refusal."""
+        m = feature(self, 'r002f_bfcache_system')
+        names = ('sudo', 'env', 'aptGet', 'aptCache', 'aptConfig', 'gpgv', 'git', 'bash',
+                 'openssl', 'archiveKeyring', 'caCertificates', 'timeout', 'unshare', 'systemPython')
+        self.assertGreater(os.getuid(), 0, 'this is an actual nonroot source control')
+        with tempfile.TemporaryDirectory(prefix='bfcache-bootstrap-retention-control-') as directory:
+            root = Path(directory); task = root / 'task'; folder = task / 'capture/r002f-bfcache-tools'
+            folder.mkdir(parents=True, mode=0o700)
+            inputs = root / 'synthetic-system'; inputs.mkdir()
+            literals = {}; expected = {}
+            for name in names:
+                file = inputs / name; body = ('SOURCE_CONTROL_ONLY bootstrap ' + name + '\n').encode()
+                file.write_bytes(body)
+                mode = 0o777 if name == 'openssl' else 0o644 if name in ('archiveKeyring', 'caCertificates') else 0o755
+                file.chmod(mode); literals[name] = str(file)
+                expected[name] = {'path': str(file), 'bytes': len(body), 'sha256': hashlib.sha256(body).hexdigest(),
+                                  'mode': mode, 'uid': file.stat().st_uid}
+            selected = {'scope': 'SOURCE_CONTROL_ONLY', 'selection': {
+                'scope': 'R002F_BFCACHE_UBUNTU24_DIAGNOSTIC', 'runner': 'ubuntu-24.04'}}
+            result = None
+            try:
+                with patch.object(m, 'BOOTSTRAP', literals), patch.object(m.runner, 'current', return_value=selected), \
+                     patch.object(m, 'create_workspace', side_effect=AssertionError('refusal must precede package configuration')):
+                    result = m.provision(task, folder, time.monotonic() + 180)
+                self.assertEqual(result['status'], 'INCOMPLETE')
+                self.assertEqual(result['error'], 'ValueError: root-owned system executable/keyring identity differs')
+                self.assertEqual(result['commands'], [])
+                self.assertNotIn('configuration', result)
+                self.assertFalse(result['nativeObservation'])
+                self.assertIn('bootstrapRefusal', result,
+                              'complete original bootstrap descriptors must survive the unchanged ownership refusal')
+                self.assertEqual(result['bootstrapRefusal']['scope'], 'HISTORICAL_UNADMITTED_BOOTSTRAP_SYSTEM_FILES')
+                retained = result['bootstrapRefusal']['records']
+                self.assertEqual(set(retained), set(names))
+                for name in names:
+                    self.assertEqual({key: retained[name][key] for key in expected[name]}, expected[name])
+                    self.assertTrue(retained[name]['system'])
+                self.assertNotIn('bootstrapBefore', result)
+                self.assertFalse((folder / 'bootstrap-before.json').exists())
+                self.assertEqual(m.tools.load(folder / 'system-provision.json'), result)
+                with self.assertRaisesRegex(ValueError, 'selected system provision incomplete'):
+                    m.current(result, task, folder)
+            finally:
+                retain_control('bootstrap-before-identity-refusal', {'result': result, 'expectedDescriptors': expected,
+                    'deliberateWritableFixture': 'openssl', 'native35OffendingPath': 'NOT_INFERRED'}, folder)
+
     def test_failed_system_provision_stops_before_managed_query_or_decoder_capability(self):
         import r002f_bfcache_tools as tools
         import r002f_bfcache_central as central
@@ -560,6 +641,84 @@ class AcquisitionControls(unittest.TestCase):
             self.assertEqual(value['provision']['error'], 'actual package command failed')
             self.assertFalse(value['nativeObservation'])
             self.assertEqual(tools.load(task / 'capture/r002f-bfcache-tools/receipt.json'), value)
+
+    def test_bootstrap_policy_refusals_keep_complete_first_and_last_rows_unadmitted(self):
+        m = feature(self, 'r002f_bfcache_system')
+        faults = (('sudo', 'uid', 1001), ('systemPython', 'uid', 1001),
+                  ('openssl', 'mode', 0o775), ('openssl', 'mode', 0o757), ('openssl', 'mode', 0o644),
+                  ('archiveKeyring', 'mode', 0o664), ('caCertificates', 'uid', 1001))
+        for index, (name, field, value) in enumerate(faults):
+            with self.subTest(name=name, field=field, value=value), bootstrap_metadata_fixture(self, m) as fixture:
+                task, folder, literals, rows, calls, workspace = fixture
+                rows[name][field] = value
+                result = m.provision(task, folder, time.monotonic() + 180)
+                self.assertEqual(calls, list(literals)); self.assertEqual(len(calls), 14)
+                self.assertEqual(result['status'], 'INCOMPLETE')
+                self.assertEqual(result['error'], 'ValueError: root-owned system executable/keyring identity differs')
+                self.assertEqual(result['bootstrapRefusal'], {
+                    'scope': 'HISTORICAL_UNADMITTED_BOOTSTRAP_SYSTEM_FILES', 'records': rows})
+                self.assertEqual(result['commands'], []); workspace.assert_not_called()
+                self.assertNotIn('bootstrapBefore', result); self.assertNotIn('configuration', result)
+                self.assertFalse((folder / 'bootstrap-before.json').exists())
+                self.assertEqual(m.tools.load(folder / 'system-provision.json'), result)
+                with self.assertRaisesRegex(ValueError, 'selected system provision incomplete'):
+                    m.current(result, task, folder)
+                retain_control('bootstrap-policy-refusal-' + str(index), {
+                    'result': result, 'syntheticDescriptors': rows, 'readOrder': calls,
+                    'packageOrPrivilegedCommandExecuted': False}, folder)
+
+    def test_bootstrap_valid_metadata_keeps_original_setuid_and_data_exceptions(self):
+        m = feature(self, 'r002f_bfcache_system')
+        with bootstrap_metadata_fixture(self, m) as fixture:
+            task, folder, literals, rows, calls, workspace = fixture
+            rows['sudo']['mode'] = 0o4755
+            for name in ('archiveKeyring', 'caCertificates'): rows[name]['mode'] = 0o444
+            self.assertEqual(m.records(literals), rows)
+            self.assertEqual(calls, list(literals)); workspace.assert_not_called()
+            retain_control('bootstrap-valid-metadata', {'syntheticDescriptors': rows, 'readOrder': calls,
+                'packageOrPrivilegedCommandExecuted': False})
+
+    def test_bootstrap_writer_failure_after_valid_guard_is_not_identity_refusal(self):
+        m = feature(self, 'r002f_bfcache_system')
+        with bootstrap_metadata_fixture(self, m) as fixture:
+            task, folder, literals, rows, calls, workspace = fixture
+            collision = folder / 'bootstrap-before.json'; original = b'SOURCE_CONTROL_ONLY existing bootstrap receipt\n'
+            collision.write_bytes(original)
+            result = m.provision(task, folder, time.monotonic() + 180)
+            self.assertEqual(result['status'], 'INCOMPLETE'); self.assertTrue(result['error'].startswith('FileExistsError:'))
+            self.assertNotIn('bootstrapRefusal', result); self.assertNotIn('bootstrapBefore', result)
+            self.assertEqual(calls, list(literals)); self.assertEqual(result['commands'], []); workspace.assert_not_called()
+            self.assertEqual(collision.read_bytes(), original)
+            self.assertEqual(m.tools.load(folder / 'system-provision.json'), result)
+            retain_control('bootstrap-valid-guard-writer-refusal', {'result': result, 'readOrder': calls}, folder)
+
+    def test_bootstrap_early_descriptor_failure_does_not_invent_complete_rows(self):
+        m = feature(self, 'r002f_bfcache_system')
+        with bootstrap_metadata_fixture(self, m, read_error='openssl') as fixture:
+            task, folder, literals, rows, calls, workspace = fixture
+            result = m.provision(task, folder, time.monotonic() + 180)
+            self.assertEqual(result['status'], 'INCOMPLETE')
+            self.assertEqual(result['error'], 'OSError: SOURCE_CONTROL_ONLY descriptor read failed')
+            self.assertEqual(calls, list(literals)[:list(literals).index('openssl') + 1])
+            self.assertNotIn('bootstrapRefusal', result); self.assertNotIn('bootstrapBefore', result)
+            self.assertEqual(result['commands'], []); workspace.assert_not_called()
+            self.assertFalse((folder / 'bootstrap-before.json').exists())
+            self.assertEqual(m.tools.load(folder / 'system-provision.json'), result)
+            retain_control('bootstrap-incomplete-descriptor-collection', {'result': result, 'readOrder': calls}, folder)
+
+    def test_bootstrap_final_receipt_collision_keeps_original_writer_exception(self):
+        m = feature(self, 'r002f_bfcache_system')
+        with bootstrap_metadata_fixture(self, m) as fixture:
+            task, folder, literals, rows, calls, workspace = fixture
+            rows['sudo']['uid'] = 1001
+            collision = folder / 'system-provision.json'; original = b'SOURCE_CONTROL_ONLY existing final receipt\n'
+            collision.write_bytes(original)
+            with self.assertRaises(FileExistsError): m.provision(task, folder, time.monotonic() + 180)
+            self.assertEqual(calls, list(literals)); workspace.assert_not_called()
+            self.assertFalse((folder / 'bootstrap-before.json').exists())
+            self.assertEqual(collision.read_bytes(), original)
+            retain_control('bootstrap-final-receipt-writer-refusal', {'readOrder': calls,
+                'observedException': 'FileExistsError', 'newReceiptPersisted': False}, folder)
 
     def test_complete_mock_package_transport_and_currentness_keep_historical_bootstrap_separate(self):
         m = feature(self, 'r002f_bfcache_system')
