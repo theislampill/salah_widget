@@ -5164,3 +5164,43 @@ The merged `install.sh` and `install.ps1` were re-read for five transition class
 
 No transition was traced end to end that violates an accepted staging, ownership,
 transactional-publication or preview no-effect guarantee on the merged bytes.
+
+## Fixed BF source-only preparation collection (2026-11-27)
+
+This task-scoped descriptive entry covers the separate
+`tools/qa/hosted-native/bfcache_source_preparation.py` collector and
+`.github/workflows/bfcache-source-preparation.yml`. It does not revise the
+installer findings above, a verification level, native acceptance, or owner policy.
+
+The collector starts with an exact 16-file harness declaration, the fixed111
+target manifest and three immutable original source roles. Independent Git-body
+admission precedes target import. The original BF source identity has rich
+physical file records; its complete111-name map is joined by root, commit, tree,
+path, mode, size and hash to the compact Git map while preserving all physical
+fields. A later source or physical change blocks completion.
+
+Locked source SDK setup precedes original common900-second and R002F900-second
+preparation. The fixed source child calls original common custody with
+`native=False`, the original narrower generated-source admission and the original
+blocked BF planner. It preserves one non-runnable lane. The specific original
+common isolation refusal and original central missing-runtime refusal are
+different observations and are retained separately. Failed/incomplete processes
+stop succeeding phases; they cannot acquire native authority through a success
+label or a reconstructed missing receipt.
+
+Sealing preserves actual source-only results through the unchanged original
+transport/envelope in bounded raw-object shards and an exact encrypted index.
+Only root-authenticated run/artifact/index/object identities can later bind
+offline inspection. The retained reader's successful state is
+`SOURCE_PROCESS_GATE_PASS_PENDING_IMMUTABLE_ANCHOR`; the independently reviewed
+five-tree anchor on the same open population is mandatory before a combined
+genuine source-preparation verdict. Neither state supplies native runtime,
+acquisition, isolation, browser, witness or scientific acceptance authority.
+
+Controls exercise exact path/physical-map joins, fixed commands/ceilings,
+specific refusals, child ownership and teardown, source-only failure precedence,
+closed shard/object populations and offline metadata relations. Complete-tree
+implementation review and actual hosted/source evidence remain separate from
+design approval and synthetic controls. See
+`tools/qa/hosted-native/BF_SOURCE_PREPARATION.md` and
+`tools/qa/hosted-native/BF_SOURCE_PREPARATION_PLAN.md`.
