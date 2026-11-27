@@ -23,6 +23,7 @@ import time
 import types
 import r003f_diagnostics as diagnostics
 import r002f_bfcache_central as bfcache
+import r0035_publish as publish
 import r0040_mechanism_central as mechanism
 import r0040_autoattach_central as autoattach
 
@@ -39,6 +40,7 @@ OBSERVED_LANE_STATUSES = {'PASS','ADMITTED_FOR_OFFLINE_VERIFICATION',
     'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE','OBSERVED_PSF_DIAGNOSTIC'}
 OBSERVED_LANE_STATUSES |= {row['status'] for row in diagnostics.ROUTES.values()}
 OBSERVED_LANE_STATUSES.add(bfcache.STATUS)
+OBSERVED_LANE_STATUSES.add(publish.OBSERVED)
 LANE_STATUSES = OBSERVED_LANE_STATUSES | {'FAIL','INCOMPLETE','INCONCLUSIVE','ANDON',
     'ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED'}
 
@@ -114,6 +116,8 @@ def producer_identity(phase, task, roots):
     campaign=load(HERE/'campaign.json')
     if bfcache.campaign_selected(campaign) or campaign.get('r0040Mode') == autoattach.MODE:
         files += bfcache.producer_source_files()
+    if campaign.get('r0035Publish',False) is True:
+        files += publish.producer_source_files()
     need(all(isinstance(x,str) and x for x in command), 'DEPENDENCY')
     return {'argv':command, 'sources':{name:hashlib.sha256((HERE/name).read_bytes()).hexdigest() for name in files}}
 
@@ -176,6 +180,12 @@ def completed(task, roots, phase):
          and all(end[k]==v for k,v in wanted.items()) and end['returned'] is True
          and end['interrupted'] is False and known_process(end['process'],False), 'PRODUCER_INCOMPLETE')
     return end['process']['returncode']
+
+
+def publish_complete_record(campaign,plan,body,task):
+    try:return publish.producer_gate(campaign,plan,body,task)
+    except (OSError,ValueError,KeyError,TypeError,AttributeError,subprocess.SubprocessError):
+        raise Rejected('PRODUCER_INCOMPLETE') from None
 
 
 def psf_complete_record(campaign,plan,body):
@@ -426,13 +436,14 @@ def admit_producers(task, roots):
                      and 'innerStatus' in row and known_process(row.get('namespaceProcess')),
                      'PRODUCER_INCOMPLETE')
         statuses=[row['status'] for row in body['lanes']]
+        publish_complete=publish_complete_record(campaign,plan,body,task)
         psf_complete=psf_complete_record(campaign,plan,body)
         mechanism_complete=mechanism_complete_record(campaign,plan,body)
         autoattach_complete=autoattach_complete_record(campaign,plan,body)
         expected=next((x for x in ('ISOLATION_FAIL','ISOLATION_UNCONFIRMED','EXTERNAL_CONTINUATION_VETOED')
                        if x in statuses),None)
         if expected is None:
-            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) and psf_complete is not False and mechanism_complete is not False and autoattach_complete is not False else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+            expected='OBSERVED' if all(x in OBSERVED_LANE_STATUSES for x in statuses) and publish_complete is not False and psf_complete is not False and mechanism_complete is not False and autoattach_complete is not False else 'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
         need(body['status']==expected, 'PRODUCER_INCOMPLETE')
         return 'COMPLETED_OBSERVATION'
     except Rejected:raise

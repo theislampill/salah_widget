@@ -34,6 +34,7 @@ import r0040_passive_central as passive
 import r0040_mechanism_central as mechanism
 import r0040_autoattach_central as autoattach
 import r0035_psf as psf
+import r0035_publish as publish
 from observe_r0035_stages import inspect as inspect_stage_trace
 from observe_r0035_costs import inspect as inspect_cost_trace, BASE_WRAPPER_SHA256 as COST_BASE_WRAPPER_SHA256
 import r003f_diagnostics as diagnostics
@@ -124,6 +125,15 @@ def psf_lane(lane):
     return isinstance(lane.get('psfObservation'),dict) and lane['psfObservation'].get('protocol')=='r0035-psf-paired-diagnostic/1'
 
 
+def publish_campaign(args):
+    return publish.mode(getattr(args,'r0035_publish',False),campaign_selection(args),star_campaign(args),args.engine,
+                        psf=getattr(args,'r0035_psf',False),stages=getattr(args,'r0035_stages',False),
+                        costs=getattr(args,'r0035_costs',False),retained=getattr(args,'retain_evidence',False),
+                        r002f=getattr(args,'r002f',False),moon=getattr(args,'r003f_harness','published'),
+                        rain=getattr(args,'r0040_mode','options'),matrix=getattr(args,'r003f_matrix',None),
+                        r002f_route=getattr(args,'r002f_route','offscreen'))
+
+
 def cost_lane(lane):
     return lane.get('stageObservation',{}).get('protocol')=='r0035-cost-diagnostic/1'
 
@@ -159,6 +169,13 @@ def tabhide_campaign(args):
 
 def campaign_budget(campaign):
     """Keep independent route envelopes; unreviewed combinations never use max()."""
+    if isinstance(campaign,dict) and publish.mode(campaign.get('r0035Publish',False),
+            campaign.get('workOrders',['R0040','R003F','R0035','R002F']),star_controls(campaign.get('r0035')),
+            campaign.get('engine','chromium'),psf=campaign.get('r0035Psf',False),stages=campaign.get('r0035Stages',False),
+            costs=campaign.get('r0035Costs',False),retained=campaign.get('evidenceRetention',False),
+            r002f=campaign.get('r002f',{}).get('enabled',False),moon=campaign.get('r003fHarness','published'),
+            rain=campaign.get('r0040Mode','options'),matrix=campaign.get('r003fMatrix'),r002f_route=campaign.get('r002fRoute','offscreen')):
+        return publish.budget()
     if isinstance(campaign,dict) and bfcache.campaign_selected(campaign):
         return {key:bfcache.budget()[key] for key in ('coordinatorSeconds','workflowObservationMinutes','workflowAcquisitionMinutes')}
     if not isinstance(campaign, dict) or campaign.get('r002fRoute', 'offscreen') not in ('offscreen', 'tabhide'):
@@ -213,7 +230,8 @@ def observation_budget(args):
     return campaign_budget({'r002fRoute': tabhide_campaign(args), 'r003fHarness': moon_campaign(args),
                             'r003fMatrix': getattr(args, 'r003f_matrix', None),
                             'r0035Costs': getattr(args, 'r0035_costs', False), 'r0035Stages': stage_campaign(args),
-                            'r0035Psf':getattr(args,'r0035_psf',False),'r0040Mode':rain_campaign(args),
+                            'r0035Psf':getattr(args,'r0035_psf',False),'r0035Publish':getattr(args,'r0035_publish',False),
+                            'r0040Mode':rain_campaign(args),
                             'r0035': star_campaign(args), 'r002f': {'enabled': getattr(args, 'r002f', False),
                             'dpr':getattr(args,'r002f_dpr',1),'rounds':getattr(args,'r002f_rounds',1),'section':getattr(args,'r002f_section','all')},
                             'evidenceRetention': getattr(args, 'retain_evidence', False),
@@ -336,6 +354,14 @@ def retain_currentness(args, lane, process, argv, seconds):
 
 
 def admit_plan(plan, args, runtime):
+    if publish_campaign(args):
+        if getattr(args,'inside',False) and getattr(args,'phase',None)=='lane':
+            if getattr(args,'lane',None)!=publish.LANE:raise ValueError('unknown publish diagnostic lane')
+            retained=args.task/'capture/r0035-publish-preadmission.json'
+        else:retained=args.task/'capture/r0035-publish-outer-admission.json'
+        return publish.admit_plan(plan,args.task,runtime,native=True,retain=retained)
+    if plan.get('r0035Publish',False) is not False:
+        raise ValueError('publish plan requires its explicit diagnostic campaign')
     if psf_campaign(args):
         phase=getattr(args,'phase',None);identifier=getattr(args,'lane',None)
         native=True
@@ -1400,6 +1426,9 @@ def classify_lane(lane, returncode, timed_out=False):
         return {**result, 'status': VETO_STATUS, 'stopAll': True, 'reason': VETO_REASON}
     if returncode == ISOLATION_EXIT or kind in ('r003f-b0','r003f-matrix') and returncode == 3:
         return {**result, 'status': 'ISOLATION_FAIL', 'stopAll': True}
+    if kind == 'r0035-trials' and publish.lane_selected(lane):
+        original=classify_lane({k:v for k,v in lane.items() if k!='publishObservation'},returncode,timed_out)
+        return publish.classify(lane,original,publish.post_observation(lane,returncode,timed_out),returncode,timed_out)
     if kind == 'r0035-trials' and psf_lane(lane):
         original=classify_lane({k:v for k,v in lane.items() if k!='psfObservation'},returncode,timed_out)
         supplemental=psf.post_observation(lane,returncode,timed_out)
@@ -1493,7 +1522,7 @@ def namespace_status(lane, process, inner):
     outer_admitted = (isinstance(process, dict) and type(process.get('returncode')) is int
                       and type(process.get('timedOut')) is bool)
     admitted = (isinstance(inner, dict) and inner.get('id') == lane['id']
-                and inner.get('status') in (bfcache.STATUS, psf.OBSERVED, 'PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, autoattach.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()])
+                and inner.get('status') in (bfcache.STATUS, publish.OBSERVED, psf.OBSERVED, 'PASS', 'FAIL', 'INCOMPLETE', 'INCONCLUSIVE', 'ANDON', 'ISOLATION_FAIL', VETO_STATUS, CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, autoattach.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()])
                 and isinstance(inner.get('stopAll'), bool))
     if admitted:
         admitted = inner['stopAll'] == (inner['status'] in ('ISOLATION_FAIL', VETO_STATUS))
@@ -1501,6 +1530,8 @@ def namespace_status(lane, process, inner):
         admitted=diagnostics.namespace_admitted(lane,inner)
     if admitted:
         admitted=bfcache.namespace_admitted(lane,inner)
+    if admitted:
+        admitted=publish.namespace_admitted(lane,inner)
     if admitted and inner['status'] == VETO_STATUS:
         admitted = retained_lane(lane) and inner.get('returncode') == 86 and inner['stopAll'] is True
     if admitted and inner['status'] == CAPTURE_ADMITTED:
@@ -1640,6 +1671,13 @@ def prepare_stages(args, runtime, destination):
     return record
 
 
+def prepare_publish(args,runtime):
+    command=publish.prepare_argv(args.task,runtime)
+    child=run_bounded(command,str(HERE),dict(os.environ),args.task/'capture/r0035-publish-preparation.stdout',
+                      args.task/'capture/r0035-publish-preparation.stderr',240)
+    return publish.preparation_entry(args.task,runtime,child)
+
+
 def prepare_psf(args,runtime):
     command=psf.prepare_argv(args.task,runtime)
     child=run_bounded(command,str(HERE),dict(os.environ),args.task/'capture/r0035-psf-preparation.stdout',
@@ -1695,7 +1733,7 @@ def inside(args, runtime):
         if (destination/'receipts').exists():
             shutil.copytree(destination/'receipts', args.task/'capture'/'preparation')
         write_json(args.task/'capture'/'preparation-process.json', result)
-        if matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args) or tabhide_campaign(args)==bfcache.MODE:
+        if matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args) or publish_campaign(args) or tabhide_campaign(args)==bfcache.MODE:
             matrix.save(args.task/'capture/preparation-context.json',{'protocol':'hosted-common-preparation-execution/1',
                 'argv':command,'cwd':str(HERE),'timeoutSeconds':900,'sourceSha256':digest(HERE/'prepare.py'),
                 'nativeIsolationClaim':True,'isolation':matrix.record(receipt)})
@@ -1703,6 +1741,7 @@ def inside(args, runtime):
         if matrix_campaign(args):prepare_matrix(args,runtime,destination)
         if diagnostic_campaign(args):prepare_diagnostic(args,runtime)
         if psf_campaign(args):prepare_psf(args,runtime)
+        if publish_campaign(args):prepare_publish(args,runtime)
         if stage_campaign(args):
             prepare_stages(args, runtime, destination)
         r0040_destination = args.task/'work'/'r0040-capture'
@@ -1775,6 +1814,7 @@ def inside(args, runtime):
             command += ['--r0035-stages', '--r0035-stage-process', str(folder/'process.json')]
         if cost_campaign(args): command.append('--r0035-costs')
         if psf_campaign(args): command.append('--r0035-psf')
+        if publish_campaign(args): command.append('--r0035-publish')
         command += ['--r003f-harness', moon_campaign(args)]
         if matrix_campaign(args):command += ['--r003f-matrix',json.dumps(args.r003f_matrix),'--r003f-matrix-entry',str(args.task/'capture/r003f-matrix-preparation-entry.json')]
         command += ['--r0040-mode', rain_campaign(args)]
@@ -1794,7 +1834,7 @@ def inside(args, runtime):
                         '--r002f-section', args.r002f_section]
             if tabhide_campaign(args) in ('tabhide',bfcache.MODE): command += ['--r002f-route',tabhide_campaign(args)]
         plan = run_bounded(command, str(HERE), dict(os.environ), args.task/'capture'/'lanes.json',
-                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args) or tabhide_campaign(args)==bfcache.MODE else 30)
+                           args.task/'capture'/'plan.stderr', 120 if rain_campaign(args) in R0040_CAPTURE_MODES or stage_campaign(args) or matrix_campaign(args) or diagnostic_campaign(args) or psf_campaign(args) or publish_campaign(args) or tabhide_campaign(args)==bfcache.MODE else 30)
         return 0 if plan['returncode'] == 0 and not plan['timedOut'] else 2
     plan = json.loads((args.task/'capture'/'lanes.json').read_text())
     try:lane = next(x for x in admit_plan(plan, args, runtime) if x['id'] == args.lane)
@@ -1803,6 +1843,11 @@ def inside(args, runtime):
             write_json(args.task/'capture/lane-status'/(args.lane+'.json'),{'id':args.lane,'status':'INCOMPLETE','stopAll':False,
                 'returncode':None,'timedOut':False,'reason':str(error),'nativeStatus':'NOT_RUN',
                 'preExecutionCurrentness':error.process,'currentnessReceipt':error.receipt})
+            return 0
+        if publish_campaign(args):
+            write_json(args.task/'capture/lane-status'/(args.lane+'.json'),
+                       {'id':args.lane,'status':'INCOMPLETE','stopAll':False,'returncode':None,'timedOut':False,
+                        'reason':'publish actual current source admission failed: '+str(error),'nativeStatus':'NOT_RUN'})
             return 0
         if not psf_campaign(args):raise
         write_json(args.task/'capture/lane-status'/(args.lane+'.json'),
@@ -1848,6 +1893,7 @@ def isolated_command(args, runtime, phase, lane=None):
     if stage_campaign(args): inner.append('--r0035-stages')
     if cost_campaign(args): inner.append('--r0035-costs')
     if psf_campaign(args): inner.append('--r0035-psf')
+    if publish_campaign(args): inner.append('--r0035-publish')
     inner += ['--r003f-harness', moon_campaign(args)]
     if matrix_campaign(args):inner += ['--r003f-matrix',json.dumps(args.r003f_matrix)]
     inner += ['--r0040-mode', rain_campaign(args)]
@@ -1873,6 +1919,7 @@ def outside(args, runtime):
                               capture/'namespace-preparation.stdout', capture/'namespace-preparation.stderr',
                               bfcache.budget()['preparationSeconds'] if tabhide_campaign(args)==bfcache.MODE else
                               diagnostic_campaign(args)['budget']['preparationSeconds'] if diagnostic_campaign(args) else
+                              publish.PREPARATION_SECONDS if publish_campaign(args) else
                               psf.PREPARATION_SECONDS if psf_campaign(args) else
                               matrix_campaign(args)['budget']['preparationSeconds'] if matrix_campaign(args) else
                               (1920 if getattr(args, 'r002f', False) else 1020) + (330 if rain_campaign(args) in R0040_CAPTURE_MODES else 0)
@@ -1882,6 +1929,7 @@ def outside(args, runtime):
                'r0035Controls': star_campaign(args),
                'r0035Stages': stage_campaign(args),
                **({'r0035Psf':True,'budget':budget} if psf_campaign(args) else {}),
+               **({'r0035Publish':True,'budget':budget} if publish_campaign(args) else {}),
                'r003fHarness': moon_campaign(args),
                **({'r003fMatrix':args.r003f_matrix} if matrix_campaign(args) else {}),
                'r0040Mode': rain_campaign(args),
@@ -1906,6 +1954,11 @@ def outside(args, runtime):
         overall['status']='OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
         write_json(capture/'observation.json',overall);return 2
     except (OSError,ValueError,KeyError,TypeError) as error:
+        if publish_campaign(args):
+            overall['lanes']=[{'id':publish.LANE,'workOrder':'R0035','status':'NOT_RUN',
+                               'reason':'publish outer current source admission failed: '+str(error)}]
+            overall['status']='OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES'
+            write_json(capture/'observation.json',overall);return 2
         if not psf_campaign(args):raise
         overall['lanes']=[{'id':'r0035-chromium-psf-'+role,'workOrder':'R0035','status':'NOT_RUN',
                            'reason':'PSF outer current source admission failed: '+str(error)} for role in psf.ROLES]
@@ -1927,6 +1980,7 @@ def outside(args, runtime):
             result = run_bounded(isolated_command(args, runtime, 'lane', lane['id']), str(HERE), parent_env,
                                  capture/'namespaces'/(lane['id']+'.stdout'), capture/'namespaces'/(lane['id']+'.stderr'),
                                  min(bfcache.budget()['namespaceSeconds'] if bfcache.lane_selected(lane) else
+                                     publish.LANE_SECONDS if publish.lane_selected(lane) else
                                      psf.LANE_SECONDS if psf_lane(lane) else
                                      diagnostics.budget(diagnostics.mode_for_lane(lane))['namespaceSeconds'] if diagnostics.mode_for_lane(lane)
                                      else lane['timeoutSeconds'] + 75 + (lane.get('postCaptureCheckSeconds',0) if lane.get('result',{}).get('kind') in ('r0040-capture-dateonly', passive.KIND, mechanism.KIND, autoattach.KIND, 'r003f-matrix') else 0)
@@ -1949,7 +2003,7 @@ def outside(args, runtime):
     overall['status'] = ('ISOLATION_FAIL' if any(x['status'] == 'ISOLATION_FAIL' for x in overall['lanes']) else
                          'ISOLATION_UNCONFIRMED' if any(x['status'] == 'ISOLATION_UNCONFIRMED' for x in overall['lanes']) else
                          VETO_STATUS if any(x['status'] == VETO_STATUS for x in overall['lanes']) else
-                         'OBSERVED' if overall['lanes'] and all(x['status'] in (bfcache.STATUS, psf.OBSERVED, 'PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, autoattach.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()]) for x in overall['lanes']) else
+                         'OBSERVED' if overall['lanes'] and all(x['status'] in (bfcache.STATUS, publish.OBSERVED, psf.OBSERVED, 'PASS', CAPTURE_ADMITTED, R0040_DATEONLY_ADMITTED, passive.ADMITTED, mechanism.ADMITTED, autoattach.ADMITTED, STAGES_OBSERVED, COSTS_OBSERVED, TABHIDE_OBSERVED, 'ADMITTED_MATRIX_DIAGNOSTIC','VERIFIED_MATRIX_CAPTURE', *[r['status'] for r in diagnostics.ROUTES.values()]) for x in overall['lanes']) else
                          'OBSERVED_WITH_INCOMPLETE_OR_FAILED_LANES')
     if psf_campaign(args):
         overall['psfPair']=psf.pair_status(plan,overall['lanes'])
@@ -1977,6 +2031,7 @@ def main():
     parser.add_argument('--r0035-stages', action='store_true')
     parser.add_argument('--r0035-costs', action='store_true')
     parser.add_argument('--r0035-psf', action='store_true')
+    parser.add_argument('--r0035-publish', action='store_true')
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-dpr', type=int, choices=(1, 2, 3), default=1)
     parser.add_argument('--r002f-rounds', type=int, choices=range(1, 11), default=1)
@@ -2006,6 +2061,7 @@ def main():
             args.r0035_stages = campaign.get('r0035Stages', False)
             args.r0035_costs = campaign.get('r0035Costs', False)
             args.r0035_psf = campaign.get('r0035Psf', False)
+            args.r0035_publish = campaign.get('r0035Publish', False)
             for key, value in star_controls(campaign.get('r0035')).items():
                 setattr(args, 'r0035_'+key, value)
             write_json(args.task/'capture'/'campaign.json', campaign)
@@ -2014,6 +2070,7 @@ def main():
         stage_campaign(args)
         cost_campaign(args)
         psf_campaign(args)
+        publish_campaign(args)
         moon_campaign(args)
         matrix_campaign(args)
         diagnostic_campaign(args)

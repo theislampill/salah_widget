@@ -234,7 +234,10 @@ class ToolsControls(unittest.TestCase):
             folder=Path(directory)
             bad=m.run_bounded([sys.executable,'-c','import time;time.sleep(2)'],folder,'unknown-map',3,mapping_rows=[])
             self.assertFalse(bad['complete']);self.assertTrue(bad['mappingErrors']);self.assertTrue(bad['signals'])
-            rows=[m.file_record(p,system=True) for p in m.mapped_files(os.getpid())]
+            # A fresh child can map the loader cache before the parent's
+            # post-startup snapshot would contain it. Bind the same explicit
+            # data dependencies as production; unknown mappings still refuse.
+            rows=m.mapping_data()+[m.file_record(p,system=True) for p in m.mapped_files(os.getpid())]
             good=m.run_bounded([sys.executable,'-c','import time;time.sleep(.1);print("source-control-only")'],
                                folder,'admitted-map',3,mapping_rows=rows)
             self.assertTrue(good['complete'],json.dumps(good));self.assertTrue(good['mappingsComplete']);self.assertGreater(good['mappingSnapshots'],0)
@@ -258,7 +261,7 @@ class ToolsControls(unittest.TestCase):
 
     def test_mapping_snapshot_distinguishes_actual_exit_from_empty_live_population(self):
         m=feature(self);real=m.mapped_files
-        rows=[m.file_record(p,system=True) for p in real(os.getpid())]
+        rows=m.mapping_data()+[m.file_record(p,system=True) for p in real(os.getpid())]
         calls=[]
         def exit_during_snapshot(pid):
             calls.append(pid)

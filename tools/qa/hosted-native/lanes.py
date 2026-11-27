@@ -29,6 +29,7 @@ import r0040_passive_central as passive
 import r0040_mechanism_central as mechanism
 import r0040_autoattach_central as autoattach
 import r0035_psf as psf
+import r0035_publish as publish
 import r002f_bfcache_central as bfcache
 
 R0035_PSF_PINS = '8902d6cd226b7d8e9f415f3e796ab5bd1b9c2ad9d9f2ada09cec1e7babff1c8a'
@@ -516,6 +517,7 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
               r002f_dpr=1, r002f_rounds=1, r002f_section='all', work_orders=None, retain_evidence=False,
               r0035_guard='default', r0035_scope='all', r0035_mode='both',
               r0035_stages=False, r0035_stage_preparation=None, r0035_costs=False, r0035_psf=False, r0035_psf_preparation=None,
+              r0035_publish=False, r0035_publish_preparation=None,
               r003f_harness='published', r003f_preparation=None, r003f_matrix=None, r003f_matrix_preparation=None,
               r0040_mode='options', r0040_preparation=None, r002f_route='offscreen', r003f_diagnostic_preparation=None):
     if engine not in ('chromium', 'firefox', 'webkit') or type(r003f_dpr) is not int or r003f_dpr not in (1, 2):
@@ -537,8 +539,15 @@ def make_plan(prepared, out, *, python_playwright, node, node_modules, pngjs,
         raise ValueError('evidence retention must be boolean')
     stage_mode(r0035_stages, selected, stars, retain_evidence)
     cost_mode(r0035_costs, r0035_stages, selected, stars, engine, retain_evidence, include_r002f)
+    publish.mode(r0035_publish,selected,stars,engine,psf=r0035_psf,stages=r0035_stages,costs=r0035_costs,
+                 retained=retain_evidence,r002f=include_r002f,moon=r003f_harness,rain=r0040_mode,
+                 matrix=r003f_matrix,r002f_route=r002f_route)
     psf.mode(r0035_psf,selected,stars,engine,stages=r0035_stages,costs=r0035_costs,
              retained=retain_evidence,r002f=include_r002f,moon=r003f_harness,rain=r0040_mode,matrix=r003f_matrix)
+    if r0035_publish:
+        authority={'python':str(python_playwright),'node':str(node),'modules':str(node_modules),
+                   'playwright':str(node_modules/'playwright'),'pngjs':str(pngjs)}
+        return publish.make_plan(prepared,out,authority,r0035_publish_preparation or {'status':'INCOMPLETE','reason':'publish preparation missing'})
     if r0035_psf:
         authority={'python':str(python_playwright),'node':str(node),'modules':str(node_modules),
                    'playwright':str(node_modules/'playwright'),'pngjs':str(pngjs)}
@@ -824,6 +833,7 @@ def main():
     parser.add_argument('--r0035-stages', action='store_true')
     parser.add_argument('--r0035-costs', action='store_true')
     parser.add_argument('--r0035-psf', action='store_true')
+    parser.add_argument('--r0035-publish', action='store_true')
     parser.add_argument('--r0035-stage-process', type=Path)
     parser.add_argument('--r002f', action='store_true')
     parser.add_argument('--r002f-prepared', type=Path)
@@ -842,6 +852,16 @@ def main():
         out = args.out.resolve()
         prepared = validate_prepared(args.prepared.resolve())
         roots = [Path(row['root']).resolve() for group in ('sources', 'trees') for row in prepared[group].values()]
+        publish_admission=None
+        if args.r0035_publish:
+            task=args.prepared.absolute().parents[3];authority=publish.load(task/'runtime.json')
+            if (authority.get('python')!=sys.executable or any(authority.get(k)!=str(v) for k,v in
+                    (('python',args.python_playwright),('node',args.node),('modules',args.node_modules),('pngjs',args.pngjs)))):
+                raise ValueError('publish planner runtime differs from actual acquired authority')
+            try:publish_admission=publish.current_admission(task,authority)
+            except (OSError,ValueError,KeyError,TypeError,AttributeError) as error:
+                publish_admission={'status':'INCOMPLETE','reason':str(error)}
+            if publish_admission.get('status')=='PASS':roots.append(Path(publish_admission['root']))
         psf_admission=None
         if args.r0035_psf:
             task=args.prepared.absolute().parents[3];authority=psf.load(task/'runtime.json')
@@ -904,6 +924,7 @@ def main():
                          r0035_guard=args.r0035_guard, r0035_scope=args.r0035_scope, r0035_mode=args.r0035_mode,
                          r0035_stages=args.r0035_stages, r0035_stage_preparation=r0035_stage, r0035_costs=args.r0035_costs,
                          r0035_psf=args.r0035_psf, r0035_psf_preparation=psf_admission,
+                         r0035_publish=args.r0035_publish, r0035_publish_preparation=publish_admission,
                          r003f_harness=args.r003f_harness, r003f_preparation=r003f,
                          r003f_diagnostic_preparation=diagnostic_admission,
                          r003f_matrix=args.r003f_matrix,r003f_matrix_preparation=matrix_admission,

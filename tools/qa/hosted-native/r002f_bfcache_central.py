@@ -75,10 +75,19 @@ def source_files():
            'r0040_passive.cjs','r0040_passive_sampler.cjs','r0040_passive_runtime.cjs','r0040_dateonly.cjs',
            'retain_r0040_capture.cjs','retain_r0040.cjs','retention-pins.json','retain_r0035.py',
            'r0035_cost_controls.py','r0035_stage_controls.py','r0040_capture_preparation_controls.py',
-           'r0040_passive_central_controls.py','retention_controls.py','test_lanes.py','test_observe.py']
+           'r0040_passive_central_controls.py','retention_controls.py','test_lanes.py','test_observe.py',
+           # The additive publish route is imported by the composed callers.
+           'r0035_publish.py','observe_r0035_publish.py','r0035_publish_io.mjs','r0035-publish-pins.json','R0035_PUBLISH.md',
+           'r0035_publish_controls.py','r0035_publish_io_controls.cjs','observe_r0035_psf.py',
+           'r0035-stage-pins.json','r0035-psf-native-pins.json','r0035_psf_transform.mjs',
+           'test_capture_pipeline.py','test_envelope.py','r0035_psf_controls.py']
     return sorted(['tools/qa/hosted-native/'+name for name in names]+['tools/qa/r0041/'+name for name in
         ('real-witness.cjs','iso.cjs','png.cjs')]+['.github/workflows/research-native-pilot.yml',
-        'docs/state-contracts/R0040-native-capture-preflight.md','docs/state-contracts/evidence/R0040/native-capture-preflight.json'])
+        'docs/state-contracts/R0040-native-capture-preflight.md','docs/state-contracts/evidence/R0040/native-capture-preflight.json',
+        'tools/r0035/publish_diagnostic.mjs','tools/r0035/publish_diagnostic_controls.cjs',
+        'tools/r0035/live_lab.mjs','tools/r0035/frame_guard.mjs','tools/r0035/sample_history.mjs',
+        'tools/r0035/changed_rectangles.mjs','tools/r0035/psf_within_call.mjs','real-sky/native-contract.mjs',
+        'tools/r0035/native_trials.py','tools/r0035/trial_admission.py','tools/r0035/trial_clock.js'])
 
 
 def producer_source_files():

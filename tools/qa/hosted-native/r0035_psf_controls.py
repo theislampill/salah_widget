@@ -272,7 +272,8 @@ class Controls(unittest.TestCase):
                                     'namespaceProcess':{'returncode':0,'timedOut':False,'elapsedSeconds':1.0}}]
                     with self.subTest(status=status):
                         if status in ('OBSERVED_FIREFOX_POLICY','OBSERVED_PRECONNECT_INPUT_DIAGNOSTIC',
-                                      pipeline.mechanism.ADMITTED,pipeline.autoattach.ADMITTED,pipeline.bfcache.STATUS):
+                                      pipeline.mechanism.ADMITTED,pipeline.autoattach.ADMITTED,pipeline.bfcache.STATUS,
+                                      pipeline.publish.OBSERVED):
                             # This original Chromium fixture has no separately selected diagnostic route or custody.
                             with self.assertRaisesRegex(pipeline.Rejected,'^PRODUCER_INCOMPLETE$'):
                                 pipeline.admit_producers(task,{})
