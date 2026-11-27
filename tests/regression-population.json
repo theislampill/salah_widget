@@ -7645,6 +7645,70 @@
         "PYTHONUTF8": "1",
         "PYTHONDONTWRITEBYTECODE": "1"
       }
+    },
+    {
+      "name": "hosted-source-r0035-preparation-controls",
+      "owner": "R0035",
+      "argv": [
+        "{python}",
+        "-B",
+        "tools/qa/hosted-native/r0035_source_preparation_controls.py",
+        "-v"
+      ],
+      "protocol": "unittest-cases",
+      "expectedCases": 33,
+      "timeout": 120,
+      "covers": [
+        "tools/qa/hosted-native/r0035_source_preparation_controls.py"
+      ],
+      "inputs": [
+        "tools/qa/hosted-native/r0035_source_preparation.py",
+        "tools/qa/hosted-native/r0035_source_supervisor.py",
+        "tools/qa/hosted-native/r0035_source_payload.py",
+        "tools/qa/hosted-native/r0035-source-preparation.json",
+        "tools/qa/hosted-native/r0035-publish-pins.json",
+        "tools/qa/hosted-native/capture_transport.py",
+        "tools/qa/hosted-native/envelope.py",
+        "tools/qa/hosted-native/recipient.crt",
+        ".github/workflows/r0035-source-preparation.yml",
+        ".github/workflows/research-native-pilot.yml"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
+    },
+    {
+      "name": "hosted-source-r0035-payload-controls",
+      "owner": "R0035",
+      "argv": [
+        "{python}",
+        "-B",
+        "tools/qa/hosted-native/r0035_source_payload_controls.py",
+        "-v"
+      ],
+      "protocol": "unittest-cases",
+      "expectedCases": 22,
+      "timeout": 120,
+      "covers": [
+        "tools/qa/hosted-native/r0035_source_payload_controls.py"
+      ],
+      "inputs": [
+        "tools/qa/hosted-native/r0035_source_preparation.py",
+        "tools/qa/hosted-native/r0035_source_supervisor.py",
+        "tools/qa/hosted-native/r0035_source_payload.py",
+        "tools/qa/hosted-native/r0035-source-preparation.json",
+        "tools/qa/hosted-native/r0035-publish-pins.json",
+        "tools/qa/hosted-native/capture_transport.py",
+        "tools/qa/hosted-native/envelope.py",
+        "tools/qa/hosted-native/recipient.crt",
+        ".github/workflows/r0035-source-preparation.yml",
+        ".github/workflows/research-native-pilot.yml"
+      ],
+      "env": {
+        "PYTHONUTF8": "1",
+        "PYTHONDONTWRITEBYTECODE": "1"
+      }
     }
   ],
   "modules": [
@@ -7863,6 +7927,21 @@
       "path": "tools/qa/hosted-native/r0035_publish_io.mjs",
       "owner": "R0035",
       "reason": "Exact one-file derivation/inverse and primitive owner-event decoder; no browser API or scientific predicate changes."
+    },
+    {
+      "path": "tools/qa/hosted-native/r0035_source_preparation.py",
+      "owner": "R0035",
+      "reason": "separate source-only preparation/custody helper; no native observation instrument"
+    },
+    {
+      "path": "tools/qa/hosted-native/r0035_source_supervisor.py",
+      "owner": "R0035",
+      "reason": "separate source-only preparation/custody helper; no native observation instrument"
+    },
+    {
+      "path": "tools/qa/hosted-native/r0035_source_payload.py",
+      "owner": "R0035",
+      "reason": "separate source-only preparation/custody helper; no native observation instrument"
     }
   ],
   "exclusions": [
